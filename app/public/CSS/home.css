@@ -1,15 +1,46 @@
 :root {
-  --projecteur-eteint: #0d1b2a;
-  --rideau-bleu: #1c2541;
-  --popcorn-dore: #c6a664;
-  --projecteur-rouge: #d72638;
-  --ecran-argente: #e8e8e8;
+  --bleu-nuit: #0d1b2a;
+  --bleu-intermediaire: #1c2541;
+  --dore-popcorn: #c6a664;
+  --rouge-projecteur: #d72638;
+  --argent-ecran: #e8e8e8;
+  --ombre-bleue: rgba(28, 37, 65, 0.4);
+
   --font-h1: "Fascinate Inline", cursive;
   --font-h2-h6: "Limelight", cursive;
   --font-body: "Lato", sans-serif;
-  --transition: 0.3s;
+  --transition: 0.3s ease;
   --gap: 2rem;
   --max-width: 1440px;
+}
+
+/* BASE & STRUCTURE */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  line-height: 1.6;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Overlay grain cinéma */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23f)' opacity='0.05'/></svg>");
+  background-repeat: repeat;
+  z-index: 0;
 }
 
 * {
@@ -18,19 +49,9 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--projecteur-eteint);
-  color: var(--ecran-argente);
-  line-height: 1.6;
-  padding: 2rem 4rem;
-  max-width: var(--max-width);
-  margin: 0 auto;
-}
-
 h1 {
   font-family: var(--font-h1);
-  color: var(--popcorn-dore);
+  color: var(--dore-popcorn);
   font-size: 2.5rem;
 }
 
@@ -40,17 +61,23 @@ h4,
 h5,
 h6 {
   font-family: var(--font-h2-h6);
-  color: var(--projecteur-eteint);
+  color: var(--dore-popcorn);
 }
-
 h2 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
 }
-
 h3 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+}
+
+a {
+  color: var(--argent-ecran);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--rouge-projecteur);
 }
 
 /* HEADER */
@@ -61,33 +88,31 @@ h3 {
   padding-bottom: 3rem;
   flex-wrap: wrap;
   gap: 1rem;
+  width: 1360px;
+  margin: 0 auto 0 auto;
 }
 
 .title {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--ecran-argente);
+  color: var(--argent-ecran);
 }
-
 .title span {
-  color: var(--projecteur-rouge);
+  color: var(--rouge-projecteur);
   font-family: var(--font-h1);
 }
-
 .navigationheader {
   display: flex;
   align-items: center;
   gap: var(--gap);
 }
-
 .navigationheader-link {
-  color: var(--ecran-argente);
+  color: var(--argent-ecran);
   text-decoration: none;
   font-weight: bold;
   transition: color var(--transition);
   position: relative;
 }
-
 .navigationheader-link::after {
   content: "";
   position: absolute;
@@ -95,310 +120,327 @@ h3 {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--popcorn-dore),
-    var(--projecteur-rouge)
-  );
+  background: linear-gradient(90deg, var(--dore-popcorn), var(--rouge-projecteur));
   transition: width var(--transition);
 }
-
 .navigationheader-link:hover {
-  color: var(--popcorn-dore);
+  color: var(--dore-popcorn);
 }
-
 .navigationheader-link:hover::after {
   width: 100%;
 }
-
 .buttons__header {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-
 .registration,
 .login {
   font-weight: bold;
   font-family: var(--font-body);
   padding: 0.75rem 1.5rem;
-  border-radius: 2rem;
+  border-radius: 1rem;
   cursor: pointer;
   transition: all var(--transition);
   border: none;
   font-size: 1rem;
   text-transform: capitalize;
 }
-
 .registration {
-  background-color: var(--projecteur-rouge);
-  color: var(--ecran-argente);
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
 }
-
 .registration:hover {
   background-color: #b81f2e;
   transform: translateY(-2px);
+  animation: cinema-glow 0.2s linear;
 }
-
 .login {
   background-color: transparent;
-  color: var(--popcorn-dore);
-  border: 2px solid var(--popcorn-dore);
+  color: var(--dore-popcorn);
+  border: 2px solid var(--dore-popcorn);
 }
-
 .login:hover {
-  background-color: var(--popcorn-dore);
-  color: var(--projecteur-eteint);
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
   transform: translateY(-2px);
+  animation: cinema-glow 0.2s linear;
 }
 
-/* WELCOME */
+/* HERO / WELCOME */
 .welcome {
-  background: linear-gradient(rgba(13, 27, 42, 0.5), rgba(13, 27, 42, 0.5)),
-    url("../images/cinoche1.jpg");
+  background: linear-gradient(rgba(13, 27, 42, 0.2), rgba(13, 27, 42, 0.2)), url("../images/cinoche1.jpg");
   background-size: cover;
   background-position: center;
-  min-height: 400px;
+  width: 1360px;
+  height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4rem 2rem;
-  border-radius: 1.5rem;
-  margin-bottom: 4rem;
-  border: 2px solid var(--rideau-bleu);
+  padding: 0;
+  border-radius: 6px;
+  margin: 0 auto 4rem auto;
+  border: 2px solid var(--bleu-intermediaire);
+  box-sizing: border-box;
 }
-
 .welcome-content {
+  width: 100%;
   max-width: 700px;
+  margin: 0 auto;
 }
-
 .welcome h1 {
   font-size: 2.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   margin-bottom: 1rem;
-  color: var(--ecran-argente);
+  color: var(--argent-ecran);
   font-family: var(--font-body);
   font-weight: 700;
 }
-
 .welcome p {
   font-size: 1rem;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
   margin-bottom: 2rem;
-  color: var(--ecran-argente);
+  color: var(--argent-ecran);
 }
-
 .cta-button {
   background-color: transparent;
-  color: var(--ecran-argente);
-  border: 2px solid var(--ecran-argente);
+  color: var(--argent-ecran);
+  border: 2px solid var(--argent-ecran);
   padding: 0.75rem 2rem;
-  border-radius: 2rem;
+  border-radius: 1rem;
   font-family: var(--font-body);
   font-weight: bold;
   cursor: pointer;
   transition: all var(--transition);
   font-size: 1rem;
 }
-
 .cta-button:hover {
-  background-color: var(--ecran-argente);
-  color: var(--projecteur-eteint);
+  background-color: var(--argent-ecran);
+  color: var(--bleu-nuit);
+  animation: cinema-glow 0.2s linear;
 }
 
 /* SECTIONS */
 .section-header {
   text-align: left;
   margin-bottom: 2rem;
+  width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
 }
-
 .section-subtitle {
-  color: var(--ecran-argente);
+  color: var(--argent-ecran);
   font-size: 0.95rem;
   margin-top: 0.5rem;
 }
 
-/* RECETTE DU JOUR */
-.recipeofthe__day {
-  padding: 4rem 0;
-}
-
+/* RECETTE DU JOUR - DAY RECIPE */
 .recipeofthe__day-container {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 2rem;
+  display: flex;
+  gap: 80px;
+  width: 1360px;
+  margin: 0 auto 0 auto;
 }
-
-.recipe-card {
-  background-color: var(--ecran-argente);
-  border-radius: 1.5rem;
-  overflow: hidden;
-  border: 2px solid #ccc;
-}
-
 .recipe-card--left {
+  width: 600px;
+  height: 400px;
+  background-color: var(--bleu-nuit);
+  border-radius: 6px;
+  box-shadow: none;
+  overflow: hidden;
+  border: none;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  transition: all var(--transition);
 }
-
-.recipe-image-placeholder,
-.film-image-placeholder {
-  width: 100%;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 1.2rem;
-  position: relative;
+/* Hover uniquement sur la carte recette à gauche */
+.recipe-card--left:hover {
+  border: 2px solid var(--dore-popcorn);
+  box-shadow: 0 0 8px var(--dore-popcorn);
+  animation: cinema-glow 0.2s linear;
+  transform: translateY(-2px) scale(1.01);
 }
 
 .recipe-image-placeholder {
-  height: 250px;
+  width: 560px;
+  height: 230px;
+  background-color: var(--bleu-intermediaire);
+  margin: 20px auto 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.recipe-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.recipe-info {
+  padding: 2rem;
+  background-color: var(--bleu-nuit);
+}
+.recipe-card--right {
+  width: 680px;
+  height: 400px;
+  background-color: var(--bleu-nuit);
+  border-radius: 6px;
+  box-shadow: none;
+  overflow: hidden;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+}
+/* Pas de hover, ni effet sur la carte film à droite */
+.recipe-card--right,
+.recipe-card--right:hover,
+.film-image-placeholder,
+.film-image-placeholder:hover {
+  border: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+  transform: none !important;
+  cursor: default;
 }
 
 .film-image-placeholder {
-  height: 100%;
-  min-height: 500px;
+  width: 680px;
+  height: 400px;
+  background-color: var(--bleu-intermediaire);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.recipe-image-placeholder img,
 .film-image-placeholder img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
-.recipe-info {
-  padding: 2rem;
-  background-color: var(--ecran-argente);
-}
-
 .recipe-info h3 {
-  color: var(--projecteur-eteint);
+  color: var(--argent-ecran);
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
 }
-
 .recipe-film {
-  color: #666;
+  color: #ccc;
   font-size: 0.9rem;
   margin-bottom: 1rem;
   font-weight: 600;
 }
-
 .recipe-description {
-  color: var(--projecteur-eteint);
+  color: var(--argent-ecran);
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
-
 .recipe-button {
   background-color: transparent;
-  color: var(--projecteur-eteint);
-  border: 2px solid var(--projecteur-eteint);
+  color: var(--argent-ecran);
+  border: 2px solid var(--argent-ecran);
   padding: 0.75rem 2rem;
-  border-radius: 2rem;
+  border-radius: 6px;
   font-family: var(--font-body);
   font-weight: bold;
   cursor: pointer;
   transition: all var(--transition);
   font-size: 0.95rem;
 }
-
 .recipe-button:hover {
-  background-color: var(--projecteur-eteint);
-  color: var(--ecran-argente);
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  animation: cinema-glow 0.2s linear;
 }
 
 /* TOP 3 RECETTES */
-.top-recettes {
-  padding: 4rem 0;
-}
-
 .top-recettes__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
+  display: flex;
+  gap: 40px;
+  width: 1360px;
+  margin: 0 auto 3rem auto;
 }
-
 .recette-card {
-  background-color: var(--ecran-argente);
-  border-radius: 1.5rem;
+  width: 420px;
+  height: 380px;
+  background-color: var(--bleu-nuit);
+  border-radius: 6px;
+  box-shadow: none;
   overflow: hidden;
-  border: 2px solid #ccc;
-  transition: transform var(--transition), box-shadow var(--transition);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: all var(--transition);
 }
-
+/* Hover uniquement sur les cartes Top 3 */
 .recette-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--dore-popcorn);
+  box-shadow: 0 0 8px var(--dore-popcorn);
+  animation: cinema-glow 0.2s linear;
+  transform: translateY(-2px) scale(1.01);
 }
-
 .recette-image {
-  width: 100%;
-  height: 180px;
-  background-color: #f0f0f0;
+  width: 360px;
+  height: 200px;
+  background-color: var(--bleu-intermediaire);
+  margin: 20px auto 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
-  overflow: hidden;
 }
-
 .recette-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .recette-content {
   padding: 1.5rem;
+  padding-top: 1rem;
 }
-
 .recette-content h3 {
-  color: var(--projecteur-eteint);
+  color: var(--argent-ecran);
   margin-bottom: 0.3rem;
   font-size: 1.3rem;
 }
-
 .recette-film {
-  color: #666;
+  color: #ccc;
   font-size: 0.85rem;
   margin-bottom: 0.8rem;
   font-weight: 600;
 }
-
 .recette-description {
-  color: var(--projecteur-eteint);
+  color: var(--argent-ecran);
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 1.2rem;
 }
-
 .center-button {
   text-align: center;
 }
-
 .cta-button-secondary {
   background-color: transparent;
-  color: var(--ecran-argente);
-  border: 2px solid var(--ecran-argente);
+  color: var(--argent-ecran);
+  border: 2px solid var(--argent-ecran);
   padding: 0.75rem 2.5rem;
-  border-radius: 2rem;
+  border-radius: 6px;
   font-family: var(--font-body);
   font-weight: bold;
   cursor: pointer;
   transition: all var(--transition);
   font-size: 1rem;
 }
-
 .cta-button-secondary:hover {
-  background-color: var(--ecran-argente);
-  color: var(--projecteur-eteint);
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  animation: cinema-glow 0.2s linear;
 }
 
 /* FOOTER */
@@ -408,60 +450,94 @@ h3 {
   align-items: center;
   padding: 2.5rem 0;
   margin-top: 4rem;
-  border-top: 2px solid var(--rideau-bleu);
+  border-top: 2px solid var(--bleu-intermediaire);
   flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.9rem;
+  width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.footer a {
-  color: var(--ecran-argente);
-  text-decoration: none;
-  transition: color var(--transition);
-}
-
-.footer a:hover {
-  color: var(--projecteur-rouge);
+/* ANIMATION CINÉMA - plus légère */
+@keyframes cinema-glow {
+  0% {
+    box-shadow: 0 0 0px var(--dore-popcorn);
+  }
+  100% {
+    box-shadow: 0 0 8px var(--dore-popcorn);
+  }
 }
 
 /* RESPONSIVE */
-@media (max-width: 1024px) {
-  body {
-    padding: 2rem;
-  }
-
-  .recipeofthe__day-container {
-    grid-template-columns: 1fr;
-  }
-
-  .film-image-placeholder {
-    min-height: 300px;
-  }
-
-  .top-recettes__grid {
-    grid-template-columns: 1fr;
+@media (max-width: 1440px) {
+  .header,
+  .welcome,
+  .recipeofthe__day-container,
+  .section-header,
+  .top-recettes__grid,
+  .footer {
+    width: 98vw;
+    min-width: unset;
+    max-width: 100vw;
   }
 }
 
-@media (max-width: 768px) {
-  body {
-    padding: 1rem;
+@media (max-width: 1100px) {
+  .header,
+  .welcome,
+  .recipeofthe__day-container,
+  .section-header,
+  .top-recettes__grid,
+  .footer {
+    width: 98vw;
+    min-width: unset;
+    max-width: 100vw;
   }
-
-  .header {
+  .recipeofthe__day-container,
+  .top-recettes__grid {
     flex-direction: column;
-    text-align: center;
+    gap: 2rem;
+    align-items: center;
   }
+}
 
+@media (max-width: 800px) {
+  body {
+    padding: 0.5rem;
+  }
+  .header,
+  .footer,
+  .section-header {
+    flex-direction: column;
+    width: 98vw;
+  }
   .navigationheader {
     display: none;
   }
-
-  .welcome h1 {
-    font-size: 2rem;
+  .welcome {
+    height: 250px !important;
+    min-height: 160px;
   }
-
-  h2 {
-    font-size: 1.6rem;
+  .recipe-card--left,
+  .recipe-card--right,
+  .recette-card {
+    width: 95vw !important;
+    max-width: 98vw !important;
+    height: unset !important;
+  }
+  .film-image-placeholder,
+  .recipe-image-placeholder,
+  .recette-image {
+    width: 90vw !important;
+    max-width: 98vw !important;
+    height: 120px !important;
+  }
+  .section-header,
+  .footer,
+  .header,
+  .welcome {
+    width: 100vw !important;
+    min-width: unset;
   }
 }
