@@ -14,7 +14,7 @@
   --max-width: 1440px;
 }
 
-/* BASE & STRUCTURE */
+/* BASE */
 body {
   font-family: var(--font-body);
   background-color: var(--bleu-nuit);
@@ -25,22 +25,6 @@ body {
   padding: 2rem 0;
   min-height: 100vh;
   box-sizing: border-box;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Overlay grain cinéma */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23f)' opacity='0.05'/></svg>");
-  background-repeat: repeat;
-  z-index: 0;
 }
 
 * {
@@ -65,7 +49,7 @@ h6 {
 }
 h2 {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: -0.8rem;
 }
 h3 {
   font-size: 1.5rem;
@@ -101,6 +85,7 @@ a:hover {
   color: var(--rouge-projecteur);
   font-family: var(--font-h1);
 }
+
 .navigationheader {
   display: flex;
   align-items: center;
@@ -134,37 +119,91 @@ a:hover {
   align-items: center;
   gap: 1rem;
 }
+
+/* BOUTONS HEADER & SECTION */
+button,
 .registration,
-.login {
+.login,
+.cta-button,
+.cta-button-secondary,
+.recipe-button {
   font-weight: bold;
   font-family: var(--font-body);
-  padding: 0.75rem 1.5rem;
-  border-radius: 1rem;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
   transition: all var(--transition);
-  border: none;
-  font-size: 1rem;
-  text-transform: capitalize;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Liseré intérieur pour tous les boutons */
+button::before,
+.registration::before,
+.login::before,
+.cta-button::before,
+.cta-button-secondary::before,
+.recipe-button::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  border-radius: 0.4rem;
+  border: 1px solid currentColor;
+  pointer-events: none;
+}
+
+/* HEADER BUTTON COLORS */
+.login {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+}
+.login:hover {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
 }
 .registration {
   background-color: var(--rouge-projecteur);
   color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
 }
 .registration:hover {
-  background-color: #b81f2e;
-  transform: translateY(-2px);
-  animation: cinema-glow 0.2s linear;
-}
-.login {
-  background-color: transparent;
-  color: var(--dore-popcorn);
-  border: 2px solid var(--dore-popcorn);
-}
-.login:hover {
   background-color: var(--dore-popcorn);
   color: var(--bleu-nuit);
-  transform: translateY(-2px);
-  animation: cinema-glow 0.2s linear;
+  border-color: var(--dore-popcorn);
+}
+
+/* SECTION BUTTON COLORS (Top 3 + Recette du jour) */
+.recipe-button,
+.cta-button-secondary {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
+}
+.recipe-button:hover,
+.cta-button-secondary:hover {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+}
+
+/* BOUTON SPÉCIAL WELCOME */
+.welcome .cta-button {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+}
+.welcome .cta-button:hover {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
 }
 
 /* HERO / WELCOME */
@@ -203,28 +242,11 @@ a:hover {
   margin-bottom: 2rem;
   color: var(--argent-ecran);
 }
-.cta-button {
-  background-color: transparent;
-  color: var(--argent-ecran);
-  border: 2px solid var(--argent-ecran);
-  padding: 0.75rem 2rem;
-  border-radius: 1rem;
-  font-family: var(--font-body);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all var(--transition);
-  font-size: 1rem;
-}
-.cta-button:hover {
-  background-color: var(--argent-ecran);
-  color: var(--bleu-nuit);
-  animation: cinema-glow 0.2s linear;
-}
 
 /* SECTIONS */
 .section-header {
   text-align: left;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   width: 1360px;
   margin-left: auto;
   margin-right: auto;
@@ -232,10 +254,10 @@ a:hover {
 .section-subtitle {
   color: var(--argent-ecran);
   font-size: 0.95rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
-/* RECETTE DU JOUR - DAY RECIPE */
+/* RECETTE DU JOUR */
 .recipeofthe__day-container {
   display: flex;
   gap: 80px;
@@ -255,14 +277,12 @@ a:hover {
   justify-content: flex-start;
   transition: all var(--transition);
 }
-/* Hover uniquement sur la carte recette à gauche */
 .recipe-card--left:hover {
   border: 2px solid var(--dore-popcorn);
   box-shadow: 0 0 8px var(--dore-popcorn);
+  transform: translateY(-3px) scale(1.01);
   animation: cinema-glow 0.2s linear;
-  transform: translateY(-2px) scale(1.01);
 }
-
 .recipe-image-placeholder {
   width: 560px;
   height: 230px;
@@ -283,6 +303,25 @@ a:hover {
   padding: 2rem;
   background-color: var(--bleu-nuit);
 }
+.recipe-info h3 {
+  color: var(--dore-popcorn);
+  margin-bottom: -0.5rem;
+  font-size: 1.5rem;
+}
+.recipe-film {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+.recipe-description {
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* CARTE FILM DROITE */
 .recipe-card--right {
   width: 680px;
   height: 400px;
@@ -296,7 +335,6 @@ a:hover {
   justify-content: center;
   transition: none;
 }
-/* Pas de hover, ni effet sur la carte film à droite */
 .recipe-card--right,
 .recipe-card--right:hover,
 .film-image-placeholder,
@@ -307,7 +345,6 @@ a:hover {
   transform: none !important;
   cursor: default;
 }
-
 .film-image-placeholder {
   width: 680px;
   height: 400px;
@@ -322,40 +359,6 @@ a:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.recipe-info h3 {
-  color: var(--argent-ecran);
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-}
-.recipe-film {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-.recipe-description {
-  color: var(--argent-ecran);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-.recipe-button {
-  background-color: transparent;
-  color: var(--argent-ecran);
-  border: 2px solid var(--argent-ecran);
-  padding: 0.75rem 2rem;
-  border-radius: 6px;
-  font-family: var(--font-body);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all var(--transition);
-  font-size: 0.95rem;
-}
-.recipe-button:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  animation: cinema-glow 0.2s linear;
 }
 
 /* TOP 3 RECETTES */
@@ -378,12 +381,11 @@ a:hover {
   justify-content: flex-start;
   transition: all var(--transition);
 }
-/* Hover uniquement sur les cartes Top 3 */
 .recette-card:hover {
   border: 2px solid var(--dore-popcorn);
-  box-shadow: 0 0 8px var(--dore-popcorn);
+  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px) scale(1.02);
   animation: cinema-glow 0.2s linear;
-  transform: translateY(-2px) scale(1.01);
 }
 .recette-image {
   width: 360px;
@@ -406,8 +408,8 @@ a:hover {
   padding-top: 1rem;
 }
 .recette-content h3 {
-  color: var(--argent-ecran);
-  margin-bottom: 0.3rem;
+  color: var(--dore-popcorn);
+  margin-bottom: -0.4rem;
   font-size: 1.3rem;
 }
 .recette-film {
@@ -420,27 +422,10 @@ a:hover {
   color: var(--argent-ecran);
   font-size: 0.9rem;
   line-height: 1.5;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 .center-button {
   text-align: center;
-}
-.cta-button-secondary {
-  background-color: transparent;
-  color: var(--argent-ecran);
-  border: 2px solid var(--argent-ecran);
-  padding: 0.75rem 2.5rem;
-  border-radius: 6px;
-  font-family: var(--font-body);
-  font-weight: bold;
-  cursor: pointer;
-  transition: all var(--transition);
-  font-size: 1rem;
-}
-.cta-button-secondary:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  animation: cinema-glow 0.2s linear;
 }
 
 /* FOOTER */
@@ -459,10 +444,13 @@ a:hover {
   margin-right: auto;
 }
 
-/* ANIMATION CINÉMA - plus légère */
+/* ANIMATION CINÉMA */
 @keyframes cinema-glow {
   0% {
     box-shadow: 0 0 0px var(--dore-popcorn);
+  }
+  50% {
+    box-shadow: 0 0 6px var(--dore-popcorn);
   }
   100% {
     box-shadow: 0 0 8px var(--dore-popcorn);
