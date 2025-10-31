@@ -9,6 +9,7 @@ authRouter.get("/auth/me", authController.me);
 authRouter.get("/auth/register", authController.register);
 authRouter.get("/auth/login", authController.login);
 authRouter.get("/auth/profil", authController.profil);
+authRouter.get("/auth/avis", authController.quote);
 authRouter.get("/auth/logout", authController.logout);
 
 export default authRouter;
