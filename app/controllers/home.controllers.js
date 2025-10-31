@@ -1,7 +1,8 @@
 const homeController = {
   home(req, res) {
-    res.send("home");
+    res.render("home");
   },
 };
+
 
 export default homeController;
