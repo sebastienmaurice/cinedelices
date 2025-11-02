@@ -1,128 +1,138 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ciné Délices - Le goût du cinéma</title>
 
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Title -->
-    <title>Document</title>
-
-    <!-- styles -->
-    <link rel="stylesheet" href="../CSS/reset.css">
-    <link rel="stylesheet" href="../CSS/home.css">
-    
-    <!-- styles d'écriture -->
-    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&display=swap" rel="stylesheet">
-   
-
-    <!-- scripts -->
-  <script defer src="../js/header.js"></script>
-
+  <link rel="stylesheet" href="../css/home.css" /> 
+  <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 </head>
-
 <body>
-
-    <header class="header">
-
-            <div class="title">
-
-            <img class="header__image" src="../assets/logo.png" alt="Ciné délices logo">
-
-            <h1><span>Ciné</span> délices</h1>
-
-            </div>
-
-            <nav class="navigation__header">
-
-                <ul>
-                    <li><a class="navigation__header-link" href="home.html">Accueil</a></li>
-                    <li><a class="navigation__header-link" href="movies.html">Films</a></li>
-                    <li><a class="navigation__header-link" href="add-movie.html">Ajouter mon film</a></li> 
-                </ul>
-
-            </nav> 
-
-            <div class="buttons__header">
-        
-            <button class="login">se connecter</button>
-
-            <button class="registration">s'inscrire</button>
-
-            </div>
-
-    </header>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="title">🎬 <span>Ciné Délices</span></div>
+<nav class="navigationheader">
+  <a class="navigationheader-link" href="#accueil">Accueil</a>
+  <a class="navigationheader-link" href="#films">Films</a>
+  <a class="navigationheader-link" href="#ajouter">Ajouter un film</a>
+</nav>
+    <div class="buttons__header">
+      <button class="login">Connexion</button>
+      <button class="registration">Inscription</button>
+    </div>
+  </header>
 
     <main>
-        <h1>J'ajoute ma fiche de film et recette</h1>
+        <div class="container">
+          <h1>J'ajoute ma fiche de film et recette</h1>
+
+          <div class="row">
+            <section class="block movie-form">
+
+              <h2>J'ajoute mon film</h2>
+
+              <div class="box img-box">
+                <input type="file" accept="image/*, text/*" name="movie-image"/>
+                <span>Image du film</span>
+              </div>
+
+              <form class="form_movie" action="" method="post">
+                <input type="text" id="movie-title" name="movie-title" placeholder="Titre du film">
+                <input type="number" id="release-year" name="release-year" placeholder="Année de sortie">
+                <input type="text" id="genre" name="genre" placeholder="Genre">
+                <button type="submit">Ajouter le film</button>
+              </form>
+
+            </section>
             
-            <div class="movie-recipe-form">
-                <section class="movie-form">
-                    <h2>J'ajoute mon film</h2>
-                        <input type="file" accept="image/*, text/*" name="file"/>
-                            <form class="form_movie" action="" method="post">
+            <section class="block recipe-form">
 
-                                    <label for="movie-title">Titre du film :</label>
-                                    <input type="text" id="movie-title" name="movie-title"><br>
+              <h2>J'ajoute ma recette</h2>
 
-                                    <label for="release-year">Année de sortie :</label>
-                                    <input type="number" id="release-year" name="release-year"><br>
+              <div class="grid">
+                <div class="ma-recette">
+                  <input type="text" id="recipe-name" name="recipe-name" placeholder="Nom de la recette">
+                  <div class="box upload-box">
+                    <input type="file" accept="image/*, text/*" name="recipe-image"/>
+                    <span>Je télécharge mon image</span>
+                  </div>
 
-                                    <label for="genre">Genre :</label>
-                                    <input type="text" id="genre" name="genre"><br>
+                  <select id="time_recipe" name="timing">
+                    <option value="">Temps de préparation</option>
+                    <option value="5">5 min</option>
+                    <option value="30">30 min</option>
+                    <option value="35">35 min</option>
+                    <option value="40">40 min</option>
+                    <option value="50">50 min</option>
+                  </select>
 
-                                    <button type="submit">Ajouter le film</button>
-                            </form>
-                </section>
+                  <select id="difficulty_recipe" name="difficulty">
+                    <option value="">Difficulté</option>
+                    <option value="Facile">Facile</option>
+                    <option value="Intermédiaire">Intermédiaire</option>
+                    <option value="Difficile">Difficile</option>
+                    <option value="Très difficile">Très difficile</option>
+                  </select>
 
-                <section class="recipe-form">
-                    <h2>J'ajoute ma recette</h2>
-                        <input type="file" accept="image/*, text/*" name="file"/>
-                            <form class="form_recipe" action="" method="post">
-                                <label for="recipe-name">Nom de la recette :</label>
-                                    <input type="text" id="recipe-name" name="recipe-name"><br>
+                </div>
 
-                                <label for="time_recipe">Temps de préparation :</label>
-                                    <select id="time_recipe" name="timing">
-                                        <option value="">--en minutes--</option>
-                                        <option value="5 minutes">5min</option>
-                                        <option value="20 minutes">20min</option>
-                                        <option value="30 minutes">30min</option>
-                                        <option value="35 minutes">35min</option>
-                                        <option value="40 minutes">40min</option>
-                                        <option value="50 minutes">50min</option>
-                                    </select><br>
+                <div class="img-context-box">
 
-                                <label for="difficulty_recipe">Difficulté :</label>
-                                    <select id="difficulty_recipe" name="difficulty">
-                                        <option value="">-- --</option>
-                                        <option value="Facile">Facile</option>
-                                        <option value="Intermédiaire">Intermédiaire</option>
-                                        <option value="Difficile">Difficile</option>
-                                        <option value="Très difficile">Très difficile</option>
-                                    </select><br>
-                            </form>            
-                </section>                    
-                            <section class="context-timing">
-                                <h2>Contexte/timing</h2>
-                                    <textarea type="text" id="context-timing" name="context-timing"></textarea><br>
-                            </section>
+                  <div>IMAGE 1</div>
+                  <p class="note">* sous réserve de droits d’auteur et d’accord admin</p>
+                  <textarea placeholder="Contexte de la recette" id="context-timing" name="context-timing"></textarea>
+                </div>
+
+              </div>
+            </section>
+          </div>
+          
+          <div class="row ingredients-prepa">
+
+            <section class="block ingredients-list">
+              <h2>Ingrédients</h2>
+              <textarea id="ingredients" name="ingredients" placeholder="Liste des ingrédients"></textarea>
+            </section>
+
+            <section class="block preparation">
+              <h2>Étapes de préparation</h2>
+              <textarea id="preparation" name="preparation" placeholder="Décris ici les étapes"></textarea>
+            </section>
+            
+          </div>
+          <button type="submit">Ajouter ma fiche</button>
+          
+         
+          <section class="review">
+            <h2>Ils ont testé pour vous</h2>
+            <div class="review-list">
+
+              <article class="user_review">
+                <span>Note : ★★★★☆</span>
+                <p>"Une expérience culinaire et cinématographique inoubliable !"</p>
+                <img src="../assets/user1.jpg" alt="User 1 Photo">
+                <h3>Jean Dupont</h3>
+              </article>
+
+              <article class="user_review">
+                <span>Note : ★★★★☆</span>
+                <p>"Des recettes inspirées de films cultes, un vrai régal !"</p>
+                <img src="../assets/user3.jpg" alt="User 3 Photo">
+                <h3>Marie Curie</h3>
+              </article>
+              
+              <article class="user_review">
+                <span>Note : ★★★★☆</span>
+                <p>"Ciné délices a transformé mes soirées cinéma en festins gourmands."</p>
+                <img src="../assets/user3.jpg" alt="User 3 Photo">
+                <h3>Paul Martin</h3>
+              </article>
             </div>
-                            <section class="ingredients-list">
-                                <h2>Liste des ingreditens</h2>
-                                    <textarea type="text" id="ingredients" name="ingredients"></textarea><br>                                
-                            </section>
-
-                            <section class="preparation">
-                                <h2>Étapes de préparation</h2>
-                                        <textarea type="text" id="preparation" name="preparation"></textarea><br>
-                        
-                                        <button type="submit">Ajouter ma fiche</button>
-                            </section>
-
-        <section class="review"></section>
+          </section>
+        </div>
+      </main>
+      
     
 
 
@@ -135,30 +145,13 @@
 
 
 
-<footer>
-
-    <img class="footer__image" src="../assets/logo.png" alt="Ciné délices logo">
-
-    <p>Ciné délices</p>
-
-    <p>&copy; 2025 Ciné délices. Tous droits réservés.</p>
-
-    <nav>
-        <ul>
-            <li><a href="home.html">Accueil</a></li>
-            <li><a href="movies.html">Films</a></li>
-            <li><a href="add-movie.html">Ajouter mon film</a></li> 
-            <li><a href="legal_notices.html">Mentions légales</a></li>
-        </ul>
-
-
-
-    <img class="logo__facebook" src="../assets/facebook-logo.png" alt="Facebook Logo">
-    <img class="logo__instagram" src="../assets/instagram-logo.png" alt="Instagram Logo">
-    <img class="logo__X" src="../assets/twitter-logo.png" alt="Twitter Logo">
-
-</footer>
-
-</body>
-
-</html>
+      <footer class="footer">
+        <div>🎬 Ciné Délices - Où le 7ème art rencontre la gastronomie</div>
+        <div>
+          <a href="#mentions">Mentions légales</a> |
+          <a href="#contact">Contact</a> |
+          <a href="#apropos">À propos</a>
+        </div>
+      </footer>
+    </body>
+    </html>
