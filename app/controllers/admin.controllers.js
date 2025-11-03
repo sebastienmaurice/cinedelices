@@ -1,6 +1,8 @@
 // /app/controllers/admin.controllers.js
 const adminController = {
+
   // Page principale admin
+  //accueil admin
   admin(req, res) {
     res.render("admin/admin");
   },
@@ -70,6 +72,26 @@ const adminController = {
   // Suppression d'une recette
   deleteRecipe(req, res) {
     res.send(`POST deleteRecipe ${req.params.id} - à implémenter`);
+  },
+
+  // Supprimer une recette
+  deleteRecipe(req, res) {
+    res.send("supprimer une recette");
+  },
+
+  // modifier une recette
+  updateRecipe(req, res) {
+    res.send("mettre a jour recette");
+  },
+
+  // valider une recette
+  validateRecipe(req, res) {
+    res.send("valider une recette");
+  },
+
+  // supprimer un utilisateur
+  deleteUser(req, res) {
+    res.send("supprimer utilisateur");
   },
 };
 
