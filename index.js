@@ -15,5 +15,5 @@ app.use(express.static("./app/public"));
 app.use(router);
 
 app.listen(PORT, () => {
-  console.log(`Le serveur est démarré sur http://localhost:${PORT}/home`);
+  console.log(`Le serveur est démarré sur http://localhost:${PORT}`);
 });
