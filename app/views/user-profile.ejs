@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ciné Délices — Gérez votre compte et vos préférences cinéma & recettes"
+    />
+    <title>Mon compte - Ciné Délices</title>
+
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS global + spécifique -->
+    <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/user-profile.css" />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <!-- ================= HEADER ================= -->
+    <%- include("partials/header") %>
+
+    <!-- ================= MAIN ================= -->
+    <main>
+      <!-- ===== BANNER ===== -->
+      <section class="banner-title">
+        <div class="banner-content">
+          <h1>Mon compte</h1>
+          <p>
+            Gérez vos informations personnelles, votre pseudo et votre photo de
+            profil.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===== CONTAINER PRINCIPAL ===== -->
+      <section class="profile-container">
+        <!-- ===== Colonne 1 : Civilités ===== -->
+        <div class="profile-column">
+          <h2>Civilités</h2>
+          <form class="profile-form">
+            <!-- Groupe d'inputs -->
+            <div class="inputs-group">
+              <label for="firstname">Prénom</label>
+              <input type="text" id="firstname" placeholder="Votre prénom" />
+
+              <label for="lastname">Nom</label>
+              <input type="text" id="lastname" placeholder="Votre nom" />
+
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="Votre email" />
+
+              <label for="password">Choisir votre mot de passe</label>
+              <input
+                type="password"
+                id="password"
+                placeholder="Votre mot de passe"
+              />
+            </div>
+
+            <!-- Groupe boutons bas droite -->
+            <div class="btn-bottom-group">
+              <button type="submit" class="btn btn--red">Valider</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== Colonne 2 : Photo / pseudo ===== -->
+        <div class="profile-column">
+          <h2>Ma photo</h2>
+          <form class="profile-form">
+            <!-- Groupe d'inputs -->
+            <div class="inputs-group">
+              <!-- Bouton upload stylisé -->
+              <label class="upload-label" for="avatar">
+                Choisir votre photo <i class="fas fa-upload"></i>
+              </label>
+              <input type="file" id="avatar" accept="image/*" />
+
+              <!-- Input pseudo -->
+              <label for="username">Choisissez votre pseudo</label>
+              <input type="text" id="username" placeholder="Votre pseudo" />
+            </div>
+
+            <!-- Groupe boutons bas droite -->
+            <div class="btn-bottom-group">
+              <button type="submit" class="btn btn--red">Valider</button>
+              <button type="button" class="btn btn--red btn--sm">
+                Je supprime ma photo
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== Colonne 3 : Photo actuelle ===== -->
+        <div class="profile-column">
+          <h2>Photo actuelle</h2>
+          <img
+            src="/images/avatar-default.png"
+            alt="Avatar"
+            class="profile-photo"
+          />
+          <p class="small-text">*sous réserve de validation par admin</p>
+        </div>
+      </section>
+
+      <!-- ===== BAS DE PAGE (texte + bouton) ===== -->
+      <section class="profile-bottom">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec
+          egestas lectus. Integer sit amet lorem a justo luctus pharetra.
+        </p>
+        <button class="btn btn--red">Supprimer mon compte</button>
+      </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <%- include("partials/footer") %>
+  </body>
+</html>

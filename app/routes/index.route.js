@@ -9,7 +9,7 @@ import moviesRouter from "./movies.route.js";
 const router = Router();
 router.use(authRouter);
 router.use(homeRouter);
-router.use("/movies", moviesRouter); // Ajout du préfixe /movies pour les routes movies
-router.use("/admin", adminRouter); // Ajout du préfixe /admin pour les routes admin
+router.use("/movies", moviesRouter);
+router.use("/admin", adminRouter);
 
 export default router;

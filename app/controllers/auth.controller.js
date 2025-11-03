@@ -12,7 +12,7 @@ const authController = {
   },
   //page profil
   profil(req, res) {
-    res.send("page profil");
+    res.render("user-profile");
   },
   //page avis
   quote(req, res) {
