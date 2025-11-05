@@ -8,7 +8,7 @@ import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 
 const router = Router();
-router.use(authRouter);
+router.use("/auth", authRouter);
 router.use(homeRouter);
 
 router.use("/movies", moviesRouter); // Ajout du préfixe /movies pour les routes movies
