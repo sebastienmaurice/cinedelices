@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // ======================================================
-  // SIDEBAR : toggle des listes "À valider"
+  // SIDEBAR : toggle des listes
   // ======================================================
 
   const sidebarButtons = document.querySelectorAll(".sidebar-btn");
@@ -8,16 +8,28 @@ document.addEventListener("DOMContentLoaded", () => {
   sidebarButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const targetId = btn.dataset.target;
-      const targetList = document.getElementById(targetId);
 
-      if (!targetList) return;
+      // Cherche l'élément par ID ou par classe fallback
+      let targetList = document.getElementById(targetId);
+      if (!targetList) {
+        targetList = document.querySelector(
+          `.sidebar-list[data-id='${targetId}']`
+        );
+      }
+
+      if (!targetList) {
+        console.warn(`Toggle sidebar: aucun élément trouvé pour ${targetId}`);
+        return;
+      }
 
       // toggle affichage
-      targetList.style.display =
-        targetList.style.display === "flex" ? "none" : "flex";
-
-      // animation simple
+      const isVisible = targetList.style.display === "flex";
+      targetList.style.display = isVisible ? "none" : "flex";
       targetList.style.flexDirection = "column";
+
+      // Animation simple (fade)
+      targetList.style.opacity = isVisible ? 0 : 1;
+      targetList.style.transition = "opacity 0.3s ease";
     });
   });
 
@@ -30,14 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   listItems.forEach((item) => {
     item.addEventListener("click", () => {
-      // Désactive l'ancien actif
       listItems.forEach((el) => el.classList.remove("active-item"));
       item.classList.add("active-item");
 
-      const type = item.closest(".sidebar-list").id; // "recettes" ou "films"
+      const type = item.closest(".sidebar-list")?.id || "unknown";
       const name = item.textContent;
 
-      // Ici tu peux remplacer le innerHTML par un vrai rendu dynamique
       adminMain.scrollIntoView({ behavior: "smooth" });
       console.log(`Sélection: ${type} -> ${name}`);
     });
