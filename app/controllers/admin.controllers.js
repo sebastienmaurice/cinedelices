@@ -1,15 +1,13 @@
 // /app/controllers/admin.controllers.js
 const adminController = {
-
   // Page principale admin
-  //accueil admin
+  // accueil admin
   admin(req, res) {
-    res.render("admin/admin");
+    res.render("admin-dashboard");
   },
 
   // Page pour ajouter une recette inspirée d'un film
   addMovieRecipe(req, res) {
-    // 👇 on passe des données mock pour éviter les erreurs EJS
     res.render("admin/add-movie-recipe", {
       recipe: {
         image: "/images/test-recipe.jpg",
@@ -66,30 +64,20 @@ const adminController = {
 
   // Soumission de la modification d'une recette
   updateRecipe(req, res) {
-    res.send(`POST updateRecipe ${req.params.id} - à implémenter`);
+    res.send("mettre a jour recette");
   },
 
   // Suppression d'une recette
   deleteRecipe(req, res) {
-    res.send(`POST deleteRecipe ${req.params.id} - à implémenter`);
-  },
-
-  // Supprimer une recette
-  deleteRecipe(req, res) {
     res.send("supprimer une recette");
   },
 
-  // modifier une recette
-  updateRecipe(req, res) {
-    res.send("mettre a jour recette");
-  },
-
-  // valider une recette
+  // Valider une recette
   validateRecipe(req, res) {
     res.send("valider une recette");
   },
 
-  // supprimer un utilisateur
+  // Supprimer un utilisateur
   deleteUser(req, res) {
     res.send("supprimer utilisateur");
   },

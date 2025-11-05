@@ -7,45 +7,45 @@ import { mockAdmin } from "../middlewares/mock-admin.middleware.js";
 
 const adminRouter = Router();
 
-
 // Applique le mock à toutes les routes admin pour tester
 adminRouter.use(mockAdmin);
 
-// 🔹 Page principale admin
+/* ===============================================
+   PAGE PRINCIPALE ADMIN
+   =============================================== */
+// Cette route servira ton EJS "admin-dashboard"
 adminRouter.get("/admin", isAdmin, adminController.admin);
 
-//?prefix /admin dans index.route.js pourtoutes les routes ci-dessous
-
-// routes page admin
+/* ===============================================
+   AUTRES ROUTES ADMIN
+   =============================================== */
+// Route principale "racine" du router (peut rester, mais appelle aussi adminController.admin)
 adminRouter.get("/", isAdmin, adminController.admin);
-// routes recettes/films
-//! GET a remplacer par la bonne methode (DELETE, PUT, PATCH...)
+
+// Recettes / films
 adminRouter.get("/deleteR", adminController.deleteRecipe);
 adminRouter.get("/updateR", adminController.updateRecipe);
 adminRouter.get("/validateR", adminController.validateRecipe);
 
-// routes utilisateurs
-//! GET a remplacer par la bonne methode (DELETE, PUT, PATCH...)
+// Utilisateurs
 adminRouter.get("/deleteU", adminController.deleteUser);
 
-// 🔹 Page pour ajouter une recette inspirée d'un film (GET)
+// Ajouter une recette inspirée d’un film
 adminRouter.get(
   "/admin/add-movie-recipe",
   isAdmin,
   adminController.addMovieRecipe
 );
-
-// 🔹 Soumission du formulaire d'ajout de recette (POST)
 adminRouter.post(
   "/admin/add-movie-recipe",
   isAdmin,
   adminController.saveMovieRecipe
 );
 
-// 🔹 Liste des recettes pour admin
+// Liste des recettes
 adminRouter.get("/admin/recipes", isAdmin, adminController.listRecipes);
 
-// 🔹 Édition d'une recette
+// Édition d’une recette
 adminRouter.get("/admin/recipes/:id/edit", isAdmin, adminController.editRecipe);
 adminRouter.post(
   "/admin/recipes/:id/edit",
@@ -53,7 +53,7 @@ adminRouter.post(
   adminController.updateRecipe
 );
 
-// 🔹 Suppression d'une recette
+// Suppression d’une recette
 adminRouter.post(
   "/admin/recipes/:id/delete",
   isAdmin,
