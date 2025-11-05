@@ -13,7 +13,7 @@ adminRouter.use(mockAdmin);
 /* ===============================================
    PAGE PRINCIPALE ADMIN
    =============================================== */
-// Cette route servira ton EJS "admin-dashboard"
+// Cette route servira "admin-dashboard.ejs"
 adminRouter.get("/admin", isAdmin, adminController.admin);
 
 /* ===============================================
