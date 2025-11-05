@@ -1,5 +1,5 @@
 /* ====================================================== */
-/* =============== ADMIN DASHBOARD ===================== */
+/* ================= ADMIN DASHBOARD =================== */
 /* ====================================================== */
 
 /* ------------------ Bandeau Administrateur ------------ */
@@ -21,7 +21,7 @@
   display: flex;
   max-width: var(--max-width);
   margin: 2rem auto;
-  gap: 2rem;
+  gap: var(--gap);
   padding: 0 1rem;
 }
 
@@ -36,8 +36,11 @@
   gap: 0.5rem;
 }
 
-.sidebar-btn {
-  display: block;
+/* Dropdown buttons */
+.dropdown-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   background-color: #fff;
   color: var(--bleu-nuit);
@@ -47,33 +50,49 @@
   text-align: left;
   border: none;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s;
+  transition: all 0.3s ease;
 }
 
-.sidebar-btn:hover {
+.dropdown-btn:hover {
   background-color: var(--bleu-intermediaire);
   color: var(--dore-popcorn);
 }
 
-.sidebar-list {
+.dropdown-btn .toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.dropdown-btn .toggle-icon.rotate {
+  transform: rotate(180deg);
+}
+
+/* Sidebar lists */
+.dropdown-container {
   display: none;
   flex-direction: column;
   gap: 0.3rem;
   margin-top: 0.3rem;
 }
 
-.sidebar-list .list-item {
+.dropdown-container.show {
+  display: flex;
+}
+
+.dropdown-container .list-item {
   background-color: var(--bleu-nuit);
   color: #fff;
   padding: 0.5rem 0.8rem;
   border-radius: 0.4rem;
   cursor: pointer;
-  transition: background 0.3s;
+  font-weight: 500;
+  transition: all 0.25s ease;
 }
 
-.sidebar-list .list-item:hover,
-.sidebar-list .list-item.active {
+.dropdown-container .list-item:hover,
+.dropdown-container .list-item.active {
   background-color: var(--bleu-intermediaire);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ------------------ Contenu principal ---------------- */
@@ -84,7 +103,7 @@
   gap: 2rem;
 }
 
-/* ------------------ Sections FILM / RECETTE ---------------- */
+/* Sections film / recette */
 .admin-section {
   background-color: var(--gris-fonce-section);
   border-radius: 1rem;
@@ -97,14 +116,13 @@
 
 .admin-section p {
   margin-bottom: 0.5rem;
-  color: var(--bleu-nuit);
 }
 
 .admin-section p strong {
   font-weight: bold;
 }
 
-/* ------------------ Titres Contexte / Ingrédients / Préparation ---------------- */
+/* Titres des sous-sections */
 .recette-contexte h3,
 .recette-ingredients h3,
 .recette-preparation h3 {
@@ -115,60 +133,35 @@
   margin-bottom: 0.5rem;
 }
 
-/* ====================================================== */
-/* ========= RECETTE : PHOTO + CONTEXTE ================= */
-/* ====================================================== */
+/* Recette détails */
 .recette-details {
   display: flex;
-  align-items: flex-start;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
-/* Photo */
 .recette-photo img {
-  width: 370px;
-  height: auto;
+  width: 360px;
+  height: 200px;
   object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
   flex-shrink: 0;
 }
 
-/* Contexte à droite de la photo */
-.recette-contexte {
+.recette-texte {
   flex: 1;
+  background-color: #ffffff20;
+  padding: 1rem;
+  border-radius: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.recette-contexte h3 {
+  justify-content: center;
+  gap: 0.4rem;
   color: var(--bleu-nuit);
 }
 
-.recette-contexte textarea {
-  width: 100%;
-  min-height: 120px;
-  padding: 1rem;
-  border: 1px solid var(--argent-ecran);
-  border-radius: 8px;
-  background-color: #fff;
-  font-family: var(--font-body);
-  line-height: 1.5;
-  resize: vertical;
-}
-
-/* ====================================================== */
-/* ========= INGRÉDIENTS / PRÉPARATION ================== */
-/* ====================================================== */
-.recette-ingredients,
-.recette-preparation {
-  width: 100%;
-  margin-top: 1rem;
-}
-
+/* Textareas */
 textarea {
   width: 100%;
   min-height: 80px;
@@ -190,7 +183,7 @@ textarea:focus {
   box-shadow: 0 0 12px rgba(198, 166, 100, 0.5);
 }
 
-/* ------------------ Zone de validation ---------------- */
+/* Zone de validation */
 .admin-validation {
   display: flex;
   justify-content: flex-end;
@@ -231,9 +224,7 @@ textarea:focus {
   border-color: var(--rouge-refus-hover);
 }
 
-/* ====================================================== */
-/* ========= RESPONSIVE (mobile/tablette) =============== */
-/* ====================================================== */
+/* ------------------ Responsive ---------------------- */
 @media (max-width: 1000px) {
   .admin-container {
     flex-direction: column;
@@ -247,7 +238,7 @@ textarea:focus {
     padding: 0.5rem;
   }
 
-  .sidebar-list {
+  .dropdown-container {
     flex-direction: row;
     gap: 0.5rem;
   }
@@ -255,15 +246,14 @@ textarea:focus {
   .recette-details {
     flex-direction: column;
     align-items: center;
-    text-align: center;
   }
 
   .recette-photo img {
     width: 100%;
-    max-width: 340px;
+    height: auto;
   }
 
-  .recette-contexte textarea {
-    height: 160px;
+  .recette-texte {
+    width: 100%;
   }
 }
