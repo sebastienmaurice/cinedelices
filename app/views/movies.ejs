@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Films</title>
+
+    <!-- styles-->
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/films.css">
+
+    <!-- styles d'écriture -->
+    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+   
+
+    <!-- scripts -->
+  
+
+</head>
+
+
+<body>
+
+  <!-- ========== HEADER ============ -->
+
+  <header class="header" role="banner">
+
+    <div class="title" aria-label="Titre du site">
+
+      🎬 <span class="title-cine">Ciné</span> <span class="title-delices">Délices</span>
+
+    </div>
+
+    <nav class="navigationheader" role="navigation" aria-label="Navigation principale">
+
+      <a class="navigationheader-link" href="/">Accueil</a>
+      <a class="navigationheader-link" href="#films">Films</a>
+      <a class="navigationheader-link" href="#ajouter">Ajouter un film</a>
+
+    </nav>
+
+    <div class="buttons__header">
+
+      <button class="login" aria-label="Connexion">Connexion</button>
+      <button class="registration" aria-label="Inscription">Inscription</button>
+      
+    </div>
+
+  </header>
+
+<!-- ========== MAIN ============ -->
+
+  <main>
+  
+      <section class="banner">
+
+          <div class="banner__title">
+
+              <h2>Bienvenue dans nos films</h2>
+              <p>Le goût du cinéma et le cinéma de goût</p>
+          
+          </div>
+
+            <div class="banner__search__films">
+
+                <label for="search" class="search__label">Rechercher un film ou une série par genre:</label>
+
+                <select name="films" id="search" class="search__select__film">
+                    <option value="all">Tous</option>
+                    <option value="action">Action</option>
+                    <option value="anime">Animé</option>
+                    <option value="aventure">Aventure</option>
+                    <option value="comedy">Comédie</option>
+                    <option value="drama">Drame</option>
+                    <option value="fantastique">Fantastique</option>
+                    <option value="horror">Horreur</option>
+                    <option value="romance">Romantique</option>
+                    <option value="sci-fi">Science-Fiction</option>
+                    <option value="thriller">Thriller</option>
+                </select>
+
+            </div>
+
+      </section>
+
+    
+      <section id="films">
+
+        <div class="presentation__film">
+
+                <div class="presentation__text__film">
+
+                  <h3>Nos films et séries cultes</h3>
+                  <p>parce que le goût se partage</p>
+
+                </div>
+
+                <div class="presentation__button__film">
+
+                  <button class="add__film">Ajouter mon film</button>  
+                
+                </div>
+
+        </div>
+
+                
+
+        <div class="articles only__3__films">
+
+             <!-- bouclage des différents films pour les afficher un à un-->
+              <!-- movies (correspond au tableau récupéré par le controller)-->
+             <% movies.forEach(movie => { %>
+            <article>
+
+              <img src="../images/<%= movie.picture %>" alt="Affiche du film Crocodile Dundee"> 
+              <div>
+                <h4><%= movie.title %></h4> <!-- movie.title (correspond au titre du film bouclé)-->
+                <p><%= movie.year %></p>
+                <p><%= movie.genre %></p>
+                <a class="recipe-button" href="/recipes-movie/<%= movie.id %>">Voir les recettes</a>                                                  
+              </div>
+
+            </article>
+            <% }) %>
+
+          </div>
+
+          <div class="center-button">
+            <button class="cta-button-secondary" aria-label="Voir tous les films">Voir tous les films</button>
+          </div>
+
+      </section>
+
+    </main>
+
+    <!-- ========== FOOTER ============ -->
+
+    <footer class="footer" role="contentinfo">
+
+      <p>🎬 Ciné Délices — Où le 7e art rencontre la gastronomie.</p>
+
+      <nav aria-label="Liens de bas de page">
+
+        <a href="#mentions">Mentions légales</a> |
+        <a href="#contact">Contact</a> |
+        <a href="#apropos">À propos</a>
+
+      </nav>
+
+    </footer>
+
+    
+  </body>
+
+</html>
