@@ -10,6 +10,4 @@ moviesRouter.get("/", moviesController.moviesList);
 //Filtrage des films par genre (tous, action, comedie, drame...)
 moviesRouter.get("/filtredMovies", moviesController.filtredMovies);
 
-
-
 export default moviesRouter;
