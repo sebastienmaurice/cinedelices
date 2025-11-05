@@ -12,7 +12,7 @@ const authController = {
   },
   //page profil
   profil(req, res) {
-    res.render("user-profile");
+    res.render("user-profile"); // "user-profile" est le nom du fichier de la vue EJS
   },
   //page avis
   quote(req, res) {

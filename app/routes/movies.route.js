@@ -3,7 +3,7 @@ import moviesController from "../controllers/movies.controllers.js";
 
 const moviesRouter = Router();
 
-// route principale
+// route pour les films
 moviesRouter.get("/", moviesController.moviesList);
 
 //!changer les methodes selon les besoins
