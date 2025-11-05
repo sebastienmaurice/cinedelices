@@ -100,3 +100,16 @@
 - [ ] vues  
 - [ ] bdd
 - [ ] middleware authentification
+
+
+### sprint2:  
+
+- Après avoir réalisé la maquette, le MCD et le MLD => dispatching de la structure html et css à construire pour le site entre les différents membres de l'équipe.
+
+- Montage de la base de données à partir du MCD et du MLD :
+  
+  => installation de postgre SQL : npm install postgres
+
+  => création de table : CREATE TABLE
+
+  => remplissage de la base de donnée pour test : INSERT INTO

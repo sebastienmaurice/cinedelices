@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,20 +10,63 @@
     />
     <title>Ciné Délices - Le goût du cinéma</title>
 
-    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
-    <%- include("partials/head-resources") %>
+    <!-- Préchargement de l'image principale pour améliorer les performances -->
+    <link rel="preload" as="image" href="../images/marty-and-doc-eating.png" />
 
-    <!-- Styles spécifiques à la page -->
-    <link rel="stylesheet" href="/css/home.css" />
+    <!-- Optimisation des fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/home.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
-    <!-- HEADER -->
-    <%- include("partials/header") %>
+    <!-- =============================== -->
+    <!-- ========== HEADER ============ -->
+    <!-- =============================== -->
+    <header class="header" role="banner">
+      <div class="title" aria-label="Titre du site">
+        🎬 <span class="title-cine">Ciné</span>
+        <span class="title-delices">Délices</span>
+      </div>
 
-    <!-- MAIN -->
+      <!-- Menu burger pour mobile -->
+      <button class="burger-menu" aria-label="Menu" aria-expanded="false">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+
+      <!-- Navigation principale -->
+      <nav
+        class="navigationheader"
+        role="navigation"
+        aria-label="Navigation principale"
+      >
+        <a class="navigationheader-link" href="#accueil">Accueil</a>
+        <a class="navigationheader-link" href="#films">Films</a>
+        <a class="navigationheader-link" href="#ajouter">Ajouter un film</a>
+      </nav>
+
+      <!-- Boutons avec nouveau système BEM -->
+      <div class="buttons__header">
+        <button class="btn btn--gold" aria-label="Connexion">Connexion</button>
+        <button class="btn btn--red" aria-label="Inscription">
+          Inscription
+        </button>
+      </div>
+    </header>
+
+    <!-- =============================== -->
     <main>
-      <!-- BIENVENUE -->
+      <!-- =============================== -->
+      <!-- ========= BIENVENUE =========== -->
+      <!-- =============================== -->
       <section
         class="welcome"
         id="accueil"
@@ -35,11 +79,20 @@
             <span class="cine">Ciné</span> <span class="delices">Délices</span>
           </h1>
           <p>"Ciné Délices" : le goût du cinéma... et le cinéma a du goût.</p>
-          <a class="btn btn--gold btn--lg" href="/movies" aria-label="Découvrir les films">Découvrir les films</a>
+
+          <!-- Bouton CTA principal avec taille large -->
+          <button
+            class="btn btn--gold btn--lg"
+            aria-label="Découvrir les films"
+          >
+            Découvrir les films
+          </button>
         </div>
       </section>
 
-      <!-- RECETTE DU JOUR -->
+      <!-- =============================== -->
+      <!-- ========== RECETTE DU JOUR ==== -->
+      <!-- =============================== -->
       <section
         class="recipeofthe__day"
         id="recettes"
@@ -56,7 +109,7 @@
           <article class="recipe-card recipe-card--left">
             <div class="recipe-image-placeholder">
               <img
-                src="/images/dessert-backtothefuture-2.jpg"
+                src="../images/dessert-backtothefuture-2.jpg"
                 alt="Peach Pie de Hill Valley, dessert inspiré du film Retour vers le Futur"
                 loading="lazy"
                 width="600"
@@ -71,6 +124,8 @@
                 Hill Valley. Une tarte aux pêches caramélisées et une pointe de
                 nostalgie rétro.
               </p>
+
+              <!-- Bouton voir recette  -->
               <button
                 class="btn btn--red"
                 aria-label="Voir la recette du Peach Pie"
@@ -85,7 +140,7 @@
             <div class="film-image-placeholder">
               <img
                 class="img-default"
-                src="/images/doc-and-marty-peach-pie-1.jpg"
+                src="../images/doc-and-marty-peach-pie-1.jpg"
                 alt="Doc et Marty savourant un Peach Pie"
                 loading="lazy"
                 width="800"
@@ -93,13 +148,14 @@
               />
               <img
                 class="img-hover"
-                src="/images/marty-and-doc-eating.png"
+                src="../images/marty-and-doc-eating.png"
                 alt="Doc et Marty en pleine dégustation"
                 loading="lazy"
                 width="800"
                 height="400"
               />
             </div>
+
             <blockquote class="film-quote">
               <p>
                 « Marty, c'est incroyable ! Ce Peach Pie est plus délicieux que
@@ -114,7 +170,9 @@
         </div>
       </section>
 
-      <!-- TOP 3 RECETTES -->
+      <!-- =============================== -->
+      <!-- ========== TOP 3 RECETTES ===== -->
+      <!-- =============================== -->
       <section
         class="top-recettes"
         id="films"
@@ -133,7 +191,7 @@
           <article class="recette-card">
             <div class="recette-image">
               <img
-                src="/images/croco-dundee-2.jpg"
+                src="../images/croco-dundee-2.jpg"
                 alt="Steak d'Outback inspiré de Crocodile Dundee"
                 loading="lazy"
                 width="420"
@@ -148,6 +206,7 @@
                 sauce à la bière locale et des légumes rôtis en forme de
                 boomerang.
               </p>
+
               <button
                 class="btn btn--red"
                 aria-label="Voir la recette du Steak d'Outback"
@@ -161,7 +220,7 @@
           <article class="recette-card">
             <div class="recette-image">
               <img
-                src="/images/kaamelott-2.png"
+                src="../images/kaamelott-2.png"
                 alt="Soupe du roi Arthur inspirée de Kaamelott"
                 loading="lazy"
                 width="420"
@@ -175,6 +234,7 @@
                 Une soupe médiévale servie dans un bol en bois, garnie de
                 croûtons en forme d'épée et d'herbes aromatiques de Brocéliande.
               </p>
+
               <button
                 class="btn btn--red"
                 aria-label="Voir la recette de la Soupe du roi Arthur"
@@ -188,7 +248,7 @@
           <article class="recette-card">
             <div class="recette-image">
               <img
-                src="/images/sparrow-2.jpg"
+                src="../images/sparrow-2.jpg"
                 alt="Ragoût de pirate inspiré de Pirates des Caraïbes"
                 loading="lazy"
                 width="420"
@@ -202,6 +262,7 @@
                 Ragoût de fruits de mer servi dans un mini coffre, rehaussé d'un
                 soupçon de rhum caramélisé et d'épices exotiques.
               </p>
+
               <button
                 class="btn btn--red"
                 aria-label="Voir la recette du Ragoût de pirate"
@@ -214,6 +275,7 @@
 
         <!-- Bouton CTA secondaire -->
         <div class="center-button">
+          <!-- Bouton "Voir tous les films" -->
           <button
             class="btn btn--gold-inverse"
             aria-label="Voir tous les films"
@@ -224,21 +286,63 @@
       </section>
     </main>
 
-    <!-- FOOTER -->
-    <%- include("partials/footer") %>
+    <!-- =============================== -->
+    <!-- ========== FOOTER ============ -->
+    <!-- =============================== -->
+    <footer class="footer" role="contentinfo">
+      <div class="footer-main">
+        <div class="footer-left">
+          <h1 class="footer-logo-text">
+            <span class="cine">Ciné</span> <span class="delices">Délices</span>
+          </h1>
+          <p class="footer-slogan">🎬 Où le 7e art rencontre la gastronomie.</p>
+        </div>
+        <div class="footer-right">
+          <nav class="footer-menu" aria-label="Liens de bas de page">
+            <a href="#accueil">Accueil</a>
+            <a href="#films">Films</a>
+            <a href="#ajouter-film">Ajouter un film</a>
+            <a href="#mentions">Mentions légales</a>
+            <a href="#contact">Contact</a>
+            <a href="#apropos">À propos</a>
+          </nav>
+          <div class="footer-socials">
+            <a href="https://twitter.com" target="_blank" aria-label="Twitter"
+              >X</a
+            >
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              aria-label="Instagram"
+              >Instagram</a
+            >
+            <a href="https://facebook.com" target="_blank" aria-label="Facebook"
+              >Facebook</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Ciné Délices</p>
+      </div>
+    </footer>
 
     <!-- Script JS pour le menu burger -->
     <script>
+      // Gestion du menu burger
       const burgerMenu = document.querySelector(".burger-menu");
       const nav = document.querySelector(".navigationheader");
 
       burgerMenu.addEventListener("click", () => {
         const isExpanded = burgerMenu.getAttribute("aria-expanded") === "true";
+
+        // Toggle l'état
         burgerMenu.setAttribute("aria-expanded", !isExpanded);
         burgerMenu.classList.toggle("active");
         nav.classList.toggle("active");
       });
 
+      // Fermer le menu en cliquant sur un lien
       const navLinks = document.querySelectorAll(".navigationheader-link");
       navLinks.forEach((link) => {
         link.addEventListener("click", () => {
@@ -249,4 +353,5 @@
       });
     </script>
   </body>
+
 </html>

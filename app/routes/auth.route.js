@@ -6,10 +6,10 @@ const authRouter = Router();
 authRouter.get("/auth/me", authController.me);
 
 //! a passer en post
-authRouter.get("/auth/register", authController.register);
-authRouter.get("/auth/login", authController.login);
-authRouter.get("/auth/profil", authController.profil);
-authRouter.get("/auth/avis", authController.quote);
-authRouter.get("/auth/logout", authController.logout);
+authRouter.get("/register", authController.register);
+authRouter.get("/login", authController.login);
+authRouter.get("/profil", authController.profil);
+authRouter.get("/avis", authController.quote);
+authRouter.get("/logout", authController.logout);
 
 export default authRouter;
