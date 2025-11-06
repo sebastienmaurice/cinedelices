@@ -35,7 +35,13 @@
             <span class="cine">Ciné</span> <span class="delices">Délices</span>
           </h1>
           <p>"Ciné Délices" : le goût du cinéma... et le cinéma a du goût.</p>
-          <a class="btn btn--gold btn--lg" href="/movies" aria-label="Découvrir les films">Découvrir les films</a>
+          <a
+            class="btn btn--gold btn--lg"
+            href="/movies"
+            aria-label="Découvrir les films"
+          >
+            Découvrir les films
+          </a>
         </div>
       </section>
 
@@ -106,9 +112,7 @@
                 tout ce que j'ai jamais goûté ! On va révolutionner les desserts
                 du futur ! »
               </p>
-              <footer>
-                <cite>— Retour vers le Futur</cite>
-              </footer>
+              <footer><cite>— Retour vers le Futur</cite></footer>
             </blockquote>
           </article>
         </div>
@@ -212,7 +216,6 @@
           </article>
         </div>
 
-        <!-- Bouton CTA secondaire -->
         <div class="center-button">
           <button
             class="btn btn--gold-inverse"
@@ -227,26 +230,11 @@
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Script JS pour le menu burger -->
-    <script>
-      const burgerMenu = document.querySelector(".burger-menu");
-      const nav = document.querySelector(".navigationheader");
+    <!-- Scripts JS globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+    <script src="/js/modal.js" defer></script>
 
-      burgerMenu.addEventListener("click", () => {
-        const isExpanded = burgerMenu.getAttribute("aria-expanded") === "true";
-        burgerMenu.setAttribute("aria-expanded", !isExpanded);
-        burgerMenu.classList.toggle("active");
-        nav.classList.toggle("active");
-      });
-
-      const navLinks = document.querySelectorAll(".navigationheader-link");
-      navLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-          burgerMenu.setAttribute("aria-expanded", "false");
-          burgerMenu.classList.remove("active");
-          nav.classList.remove("active");
-        });
-      });
-    </script>
+    <!-- Scripts JS spécifiques à la page -->
+    <script src="/js/home.js" defer></script>
   </body>
 </html>
