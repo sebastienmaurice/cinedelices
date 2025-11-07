@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ciné Délices — Découvrez les recettes inspirées de vos films cultes préférés"
+    />
+    <title><%= movie.title %> - Recettes Ciné Délices</title>
 
-<head>
+    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
+    <%- include("partials/head-resources") %>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Film et ses recettes</title>
+    <!-- Styles spécifiques à la page -->
+    <link rel="stylesheet" href="/css/recipes-movie.css" />
+  </head>
 
     <!-- styles-->
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/recipes-movie.css">
 
-    <!-- styles d'écriture -->
-    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-   
+    <!-- MAIN -->
+    <main>
+      <!-- BANNIÈRE DU FILM -->
+      <section class="banner__film">
+        <div class="banner__film__title">
+          <h2><%= movie.title %></h2>
+          <p><%= movie.year %> / <%= movie.genre %></p>
+        </div>
 
     <!-- scripts -->
     <script src="/js/filtred-category.js" defer></script>
@@ -61,6 +75,10 @@
               <h2><%= movie.title %></h2>
               <p><%= movie.year %> / <%= movie.genre %></p>
 
+        <div class="presentation__recipes">
+          <div class="presentation__text__recipes">
+            <h3>Nos recettes cultes</h3>
+            <p>Parce que le goût se partage</p>
           </div>
 
             <div class="banner__search__recipes">
@@ -86,25 +104,7 @@
             <img src="/images/<%= movie.picture %>" class="banner__image__film" alt="Image du film Crocodile Dundee">
 
           </div>
-
-          <div class="presentation__recipes">
-
-                <div class="presentation__text__recipes">
-
-                  <h3>Nos recettes cultes</h3>
-                  <p>parce que le goût se partage</p>
-
-                </div>
-
-                <div class="presentation__button__recipes">
-
-                  <button class="add__recipe">Ajouter ma recette</button>  
-                  
-                </div>
-
-          </div>
-
-                
+        </div>
 
         <div class="articles only__3__recipes">
               <!-- bouclage des différentes recettes pour les afficher un à un-->
@@ -120,38 +120,25 @@
               <p><%= recipe.quote %>/5</p>
               <a class="recipe-button" href="/recipes-movie/details/<%= recipe.id %>">Voir les recettes</a>                                                  
             </div>
-
           </article>
           <% }) %>
-
         </div>
 
         <div class="center-button">
-          <button class="cta-button-secondary" aria-label="Voir tous les films">Voir toutes les recettes</button>
+          <button class="cta-button-secondary" aria-label="Voir tous les films">
+            Voir toutes les recettes
+          </button>
         </div>
+      </section>
+    </main>
+    <!-- FOOTER -->
+    <%- include("partials/footer") %>
 
-    </section>
+    <!-- Scripts JS globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+    <script src="/js/modal.js" defer></script>
 
-</main>
-
-<!-- ========== FOOTER ============ -->
-
-    <footer class="footer" role="contentinfo">
-
-      <p>🎬 Ciné Délices — Où le 7e art rencontre la gastronomie.</p>
-
-      <nav aria-label="Liens de bas de page">
-
-        <a href="#mentions">Mentions légales</a> |
-        <a href="#contact">Contact</a> |
-        <a href="#apropos">À propos</a>
-
-      </nav>
-
-    </footer>
-
+    <!-- Scripts JS spécifiques à la page -->
+    <script src="/js/recipes-movie.js" defer></script>
   </body>
-
 </html>
-
-            

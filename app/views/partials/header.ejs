@@ -13,8 +13,8 @@
   </nav>
 
   <div class="buttons__header">
-    <a href="/login" class="btn btn--gold btn--sm">Connexion</a>
-    <a href="/register" class="btn btn--red btn--sm">Inscription</a>
+    <a href="#" id="btnLogin" class="btn btn--gold btn--sm">Connexion</a>
+    <a href="#" id="btnRegister" class="btn btn--red btn--sm">Inscription</a>
   </div>
 
   <!-- Burger menu for mobile -->
@@ -24,3 +24,51 @@
     <span class="burger-line"></span>
   </button>
 </header>
+
+<!-- ===================== MODAL AUTH ===================== -->
+<div id="authModal" class="modal">
+  <div id="modalOverlay" class="modal-overlay"></div>
+  <div class="modal-content">
+    <button id="modalClose" class="modal-close">&times;</button>
+
+    <!-- ===== Connexion ===== -->
+    <div id="loginForm" class="auth-form active">
+      <h2>Connexion</h2>
+      <form>
+        <input type="email" placeholder="Adresse e-mail" required />
+        <input type="password" placeholder="Mot de passe" required />
+        <button type="submit" class="btn btn--gold btn--full">
+          Se connecter
+        </button>
+      </form>
+      <p class="switch-form">
+        Pas encore de compte ?
+        <button id="goToRegister" class="btn-link">S'inscrire</button>
+      </p>
+    </div>
+
+    <!-- ===== Inscription ===== -->
+    <div id="registerForm" class="auth-form">
+      <h2>Inscription</h2>
+      <form>
+        <input type="text" placeholder="Nom d'utilisateur" required />
+        <input type="email" placeholder="Adresse e-mail" required />
+        <input type="password" placeholder="Mot de passe" required />
+        <input
+          type="password"
+          placeholder="Confirmer le mot de passe"
+          required
+        />
+        <button type="submit" class="btn btn--red btn--full">
+          Créer mon compte
+        </button>
+      </form>
+      <p class="switch-form">
+        Déjà un compte ?
+        <button id="goToLogin" class="btn-link">Se connecter</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="/js/popup-connexion.js"></script>
