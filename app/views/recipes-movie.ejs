@@ -8,15 +8,15 @@
     <title>Film et ses recettes</title>
 
     <!-- styles-->
-    <link rel="stylesheet" href="../css/reset.css">
-    <link rel="stylesheet" href="../css/recipes-movie.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/recipes-movie.css">
 
     <!-- styles d'écriture -->
     <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@400;700&display=swap" rel="stylesheet">
    
 
     <!-- scripts -->
-  
+    <script src="/js/filtred-category.js" defer></script>
 
 </head>
 
@@ -56,7 +56,7 @@
   
     <section class="banner__film">
 
-          <div class="banner__film__title">
+          <div class="banner__film__title" id="movie" data-id="<%= movie.id %>">
 
               <h2><%= movie.title %></h2>
               <p><%= movie.year %> / <%= movie.genre %></p>
@@ -69,8 +69,8 @@
 
                 <select name="recipes" id="search" class="search__select__dish">
                     <option value="all">Tous</option>
-                    <option value="starter">Entrée</option>
-                    <option value="main__course">Plat</option>
+                    <option value="entrée">Entrée</option>
+                    <option value="plat">Plat</option>
                     <option value="dessert">Dessert</option>
 
                 </select>
@@ -83,7 +83,7 @@
 
           <div class="presentation__image">
 
-            <img src="../images/<%= movie.picture %>" class="banner__image__film" alt="Image du film Crocodile Dundee">
+            <img src="/images/<%= movie.picture %>" class="banner__image__film" alt="Image du film Crocodile Dundee">
 
           </div>
 
@@ -107,20 +107,22 @@
                 
 
         <div class="articles only__3__recipes">
-
+              <!-- bouclage des différentes recettes pour les afficher un à un-->
+            
+          <% recipes.forEach(recipe => { %> <!-- recipes (correspond au tableau récupéré par le controller)-->
           <article>
 
-            <img src="../images/dessert-backtothefuture-2.jpg">
+            <img src="/images/<%= recipe.picture %>">
 
             <div>
-              <h4>name</h4>
-              <p>category</p>
-              <p>quote</p>
-              <button class="recipe-button">Voir la recette</button>                                                  
+              <h4><%= recipe.name %></h4>
+              <p><%= recipe.category %></p>
+              <p><%= recipe.quote %>/5</p>
+              <a class="recipe-button" href="/recipes-movie/details/<%= recipe.id %>">Voir les recettes</a>                                                  
             </div>
 
           </article>
-
+          <% }) %>
 
         </div>
 

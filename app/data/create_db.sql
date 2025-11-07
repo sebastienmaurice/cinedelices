@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 
 INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role) VALUES
-    ('Ludovic', 'Trichereau', 'Ludo', 'ludo.trich@gmail.com', 'azerty', null, 'admin'),
-    ('Richard', 'François', 'Richie', 'rich.franc@gmail.com', 'azerty', null, 'admin'),
-    ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', 'azerty', null, 'admin'),
-    ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', 'azerty', null, 'admin'),
+    ('Ludovic', 'Trichereau', 'Ludo', 'ludo.trich@gmail.com', '****', null, 'admin'),
+    ('Richard', 'François', 'Richie', 'rich.franc@gmail.com', '***', null, 'admin'),
+    ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', '****', null, 'admin'),
+    ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
     ('John', 'Doe', 'Toto', 'john.doe@gmail.com', 'azerty', null, 'user');
 
 
@@ -64,11 +64,11 @@ CREATE TABLE IF NOT EXISTS "recipes" (
 );
 
 INSERT INTO recipes (name, description, picture, category, quote, ingredients, preparation, time, difficulty, status, id_movie) VALUES
-    ('Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'Plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('Recette Kaamelott', 'Recette inspirée du film Kaamelott', 'kaamelott-2.png', 'Entrée', 4, 'Ingrédients de Kaamelott', 'Préparation de Kaamelott', 30, 'Moyenne', TRUE, 2),
-    ('Recette Retour vers le futur', 'Recette inspirée du film Retour vers le futur', 'doc-and-marty-peach-pie-1.jpg', 'Dessert', 3, 'Ingrédients du futur', 'Préparation du futur', 45, 'Facile', TRUE, 3);
-
-
+    ('Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('Recette Kaamelott', 'Recette inspirée du film Kaamelott', 'kaamelott-2.png', 'entrée', 4, 'Ingrédients de Kaamelott', 'Préparation de Kaamelott', 30, 'Moyenne', TRUE, 2),
+    ('Recette Retour vers le futur', 'Recette inspirée du film Retour vers le futur', 'doc-and-marty-peach-pie-1.jpg', 'dessert', 3, 'Ingrédients du futur', 'Préparation du futur', 45, 'Facile', TRUE, 3),
+    ('2Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('3Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1);
 -- =====================================================
 -- TABLE NOTICES
 -- =====================================================
