@@ -49,263 +49,6 @@ a:hover {
 }
 
 /* ====================================================== */
-/* ====================== HEADER ======================= */
-/* ====================================================== */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 3rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-}
-
-.title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  font-family: var(--font-h1);
-}
-.title-cine {
-  color: var(--rouge-projecteur);
-}
-.title-delices {
-  color: var(--dore-popcorn);
-}
-
-.navigationheader {
-  display: flex;
-  align-items: center;
-  gap: var(--gap);
-}
-
-.navigationheader-link {
-  color: var(--argent-ecran);
-  text-decoration: none;
-  font-weight: bold;
-  position: relative;
-  transition: color var(--transition);
-}
-
-.navigationheader-link::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--dore-popcorn),
-    var(--rouge-projecteur)
-  );
-  transition: width var(--transition);
-}
-
-.navigationheader-link:hover {
-  color: var(--dore-popcorn);
-}
-.navigationheader-link:hover::after {
-  width: 100%;
-}
-
-.buttons__header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* ====================================================== */
-/* ====================== BOUTONS ====================== */
-/* ====================================================== */
-
-.btn {
-  /* Typographie */
-  font-weight: bold;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-
-  /* Espacements */
-  padding: 0.5rem 1rem;
-
-  /* Apparence */
-  border-radius: 0.6rem;
-  border: 2px solid transparent;
-  cursor: pointer;
-
-  /* Layout */
-  position: relative;
-  overflow: hidden;
-
-  /* Animations */
-  transition: all var(--transition);
-
-  /* Supprime les styles par défaut du navigateur */
-  background: none;
-
-  /* Empêche la sélection du texte lors du double-clic */
-  user-select: none;
-}
-
-/* -------------------- BORDURE INTERNE -------------------- */
-/* Effet de double bordure avec ::before */
-.btn::before {
-  content: "";
-  position: absolute;
-
-  /* Décalage de 2px sur tous les côtés */
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
-
-  /* Bordure qui suit la couleur du texte (currentColor) */
-  border: 1px solid currentColor;
-  border-radius: 0.4rem;
-
-  /* N'interfère pas avec les clics */
-  pointer-events: none;
-}
-
-/* -------------------- ÉTATS INTERACTIFS -------------------- */
-/* Effet au survol de la souris */
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-/* État actif (clic en cours) */
-.btn:active {
-  transform: translateY(0);
-  transition-duration: 0.1s;
-}
-
-/* État focus clavier (accessibilité) */
-.btn:focus-visible {
-  outline: 3px solid var(--dore-popcorn);
-  outline-offset: 3px;
-}
-
-/* État désactivé */
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* -------------------- VARIANTE DORÉE -------------------- */
-/* Bouton principal avec fond doré */
-.btn--gold {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-}
-
-.btn--gold:hover:not(:disabled) {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  box-shadow: 0 0 8px rgba(215, 38, 56, 0.5);
-}
-
-.btn--gold:active:not(:disabled) {
-  box-shadow: 0 0 12px rgba(215, 38, 56, 0.7);
-}
-
-/* -------------------- VARIANTE ROUGE -------------------- */
-/* Bouton secondaire avec fond rouge */
-.btn--red {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-}
-
-.btn--red:hover:not(:disabled) {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 0 8px rgba(198, 166, 100, 0.5);
-}
-
-.btn--red:active:not(:disabled) {
-  box-shadow: 0 0 12px rgba(198, 166, 100, 0.7);
-}
-
-/* -------------------- VARIANTE OUTLINE -------------------- */
-/* Bouton avec bordure uniquement (optionnel) */
-.btn--outline {
-  background-color: transparent;
-  color: var(--dore-popcorn);
-  border-color: var(--dore-popcorn);
-}
-
-.btn--outline:hover:not(:disabled) {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-}
-
-/* -------------------- TAILLES -------------------- */
-/* Petit bouton */
-.btn--sm {
-  font-size: 0.8rem;
-  padding: 0.4rem 0.8rem;
-}
-
-/* Grand bouton */
-.btn--lg {
-  font-size: 1rem;
-  padding: 0.7rem 1.5rem;
-}
-
-/* -------------------- BOUTON PLEINE LARGEUR -------------------- */
-.btn--full {
-  width: 100%;
-  display: block;
-}
-
-/* -------------------- ANIMATIONS RÉDUITES -------------------- */
-/* Respect des préférences utilisateur */
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-    transform: none !important;
-  }
-
-  .btn:hover {
-    transform: none;
-  }
-}
-
-/* -------------------- VARIANTE INVERSÉE -------------------- */
-/* Bouton doré avec liseré bleu nuit, devient rouge lumineux au hover */
-
-.btn--gold-inverse {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--bleu-nuit);
-  transition: all 0.3s ease, box-shadow 0.3s ease;
-}
-
-.btn--gold-inverse:hover:not(:disabled) {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-
-  /* Effet projecteur de cinéma */
-  box-shadow: 0 0 30px rgba(215, 38, 56, 0.7), 0 0 60px rgba(215, 38, 56, 0.5),
-    0 0 90px rgba(215, 38, 56, 0.3), 0 6px 20px rgba(0, 0, 0, 0.4);
-
-  transform: translateY(-3px);
-}
-
-.btn--gold-inverse:active:not(:disabled) {
-  box-shadow: 0 0 40px rgba(215, 38, 56, 0.9), 0 0 80px rgba(215, 38, 56, 0.6);
-
-  transform: translateY(-2px);
-}
-
-/* ====================================================== */
 /* ====================== BIENVENUE ==================== */
 /* ====================================================== */
 .welcome {
@@ -314,23 +57,20 @@ a:hover {
   background-size: cover;
   background-position: center;
   width: 100%;
-  max-width: 1360px;
-  height: 520px;
   max-width: 1440px;
   height: 640px;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start; /* on aligne vers le haut pour remonter le contenu */
   justify-content: center;
   text-align: center;
-  padding: 2rem;
   border-radius: 6px;
   margin: 0 auto 4rem auto;
   border: 2px solid var(--bleu-intermediaire);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  padding-top: 7rem;
-  perspective: 1000px; /* effet 3D léger */
+  padding-top: 6rem; /* réduit le padding pour remonter */
+  perspective: 1000px;
 }
 
 .welcome-content {
@@ -338,8 +78,6 @@ a:hover {
   max-width: 700px;
   margin: 0 auto;
   text-align: center;
-
-  /* Supprimer l'opacity et animation existantes */
   opacity: 1;
   animation: none;
 }
@@ -353,12 +91,10 @@ a:hover {
   margin-bottom: 0.3rem;
   line-height: 1.1;
 
-  /* Initial state : zoom + recul */
-  transform: scale(0.3) translateY(-50px) rotateX(15deg);
+  transform: scale(0.3) translateY(-20px) rotateX(15deg); /* moins haut */
   opacity: 0;
 
-  /* Animation */
-  animation: zoomInCine 1.5s ease-out 0.3s forwards; /* plus lent */
+  animation: zoomInCine 1.5s ease-out 0.3s forwards;
 }
 
 .welcome h1 .cine {
@@ -370,15 +106,6 @@ a:hover {
   font-weight: 700;
 }
 
-/* SECTIONS */
-.section-header {
-  text-align: left;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 1360px;
-  margin-left: auto;
-  margin-right: auto;
-}
 /* ====================== PARAGRAPHE ====================== */
 .welcome p {
   font-family: var(--font-body);
@@ -387,30 +114,16 @@ a:hover {
   margin-top: 0.5rem;
   margin-bottom: 1.4rem;
 
-  transform: scale(0.3) translateY(30px) rotateX(15deg);
+  transform: scale(0.3) translateY(10px) rotateX(15deg); /* moins bas */
   opacity: 0;
 
-  animation: zoomInCine 1.5s ease-out 1.2s forwards; /* apparition après le titre */
-}
-
-/* ====================== BOUTON ====================== */
-.cta-button {
-  opacity: 0;
-  transform: scale(0.3) translateY(40px);
-  animation: zoomInButton 0.9s ease-out 2.1s forwards;
-}
-
-.cta-button:hover {
-  background-color: var(--rouge-projecteur);
-  color: var(--bleu-nuit);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px var(--rouge-projecteur);
+  animation: zoomInCine 1.5s ease-out 1.2s forwards;
 }
 
 /* ====================== ANIMATION ====================== */
 @keyframes zoomInCine {
   from {
-    transform: scale(0.3) translateY(20px) rotateX(15deg);
+    transform: scale(0.3) translateY(10px) rotateX(15deg);
     opacity: 0;
   }
   to {
@@ -1095,12 +808,6 @@ a:hover {
 
   .hero-content p {
     font-size: 1rem;
-  }
-
-  /* Boutons */
-  .btn {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
   }
 
   /* Footer logo réduit */

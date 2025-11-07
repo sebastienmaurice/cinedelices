@@ -242,20 +242,36 @@ a:hover {
 /* ====================================================== */
 /* ====================== BOUTONS ====================== */
 /* ====================================================== */
+
 .btn {
+  /* Typographie */
   font-weight: bold;
   font-family: var(--font-body);
   font-size: 0.9rem;
+
+  /* Espacements */
   padding: 0.5rem 1rem;
+
+  /* Apparence */
   border-radius: 0.6rem;
   border: 2px solid transparent;
   cursor: pointer;
+
+  /* Layout */
   position: relative;
   overflow: hidden;
+
+  /* Animations */
   transition: all var(--transition);
+
+  /* Supprime les styles par défaut du navigateur */
   background: none;
+
+  /* Empêche la sélection du texte */
   user-select: none;
 }
+
+/* -------------------- BORDURE INTERNE -------------------- */
 .btn::before {
   content: "";
   position: absolute;
@@ -267,24 +283,29 @@ a:hover {
   border-radius: 0.4rem;
   pointer-events: none;
 }
+
+/* -------------------- ÉTATS INTERACTIFS -------------------- */
 .btn:hover {
   transform: translateY(-2px);
 }
+
 .btn:active {
   transform: translateY(0);
   transition-duration: 0.1s;
 }
+
 .btn:focus-visible {
   outline: 3px solid var(--dore-popcorn);
   outline-offset: 3px;
 }
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
 }
 
-/* --- Variantes --- */
+/* -------------------- VARIANTES -------------------- */
 .btn--gold {
   background-color: var(--dore-popcorn);
   color: var(--bleu-nuit);
@@ -293,6 +314,7 @@ a:hover {
 .btn--gold:hover:not(:disabled) {
   background-color: var(--rouge-projecteur);
   color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
   box-shadow: 0 0 8px rgba(215, 38, 56, 0.5);
 }
 .btn--red {
@@ -303,7 +325,72 @@ a:hover {
 .btn--red:hover:not(:disabled) {
   background-color: var(--dore-popcorn);
   color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
   box-shadow: 0 0 8px rgba(198, 166, 100, 0.5);
+}
+.btn--outline {
+  background-color: transparent;
+  color: var(--dore-popcorn);
+  border-color: var(--dore-popcorn);
+}
+.btn--outline:hover:not(:disabled) {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+}
+
+/* -------------------- TAILLES -------------------- */
+.btn--sm {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+}
+.btn--lg {
+  font-size: 1rem;
+  padding: 0.7rem 1.5rem;
+}
+
+/* -------------------- BOUTON PLEINE LARGEUR -------------------- */
+.btn--full {
+  width: 100%;
+  display: block;
+}
+
+/* -------------------- ANIMATIONS RÉDUITES -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+    transform: none !important;
+  }
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* -------------------- VARIANTE INVERSÉE -------------------- */
+/* Bouton doré avec liseré bleu nuit, devient rouge lumineux au hover */
+
+.btn--gold-inverse {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
+  transition: all 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn--gold-inverse:hover:not(:disabled) {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
+
+  /* Effet projecteur de cinéma */
+  box-shadow: 0 0 30px rgba(215, 38, 56, 0.7), 0 0 60px rgba(215, 38, 56, 0.5),
+    0 0 90px rgba(215, 38, 56, 0.3), 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  transform: translateY(-3px);
+}
+
+.btn--gold-inverse:active:not(:disabled) {
+  box-shadow: 0 0 40px rgba(215, 38, 56, 0.9), 0 0 80px rgba(215, 38, 56, 0.6);
+
+  transform: translateY(-2px);
 }
 
 /* ====================================================== */
@@ -428,8 +515,9 @@ a:hover {
 }
 .modal-close {
   position: absolute;
-  top: 0.6rem;
-  right: 1rem;
+  top: 0;
+  right: 0;
+  margin: 0.5rem;
   font-size: 1.6rem;
   background: none;
   border: none;
@@ -440,6 +528,7 @@ a:hover {
 .modal-close:hover {
   color: var(--dore-popcorn);
 }
+
 .auth-form {
   display: none;
 }

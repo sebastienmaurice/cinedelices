@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import router from "./app/routes/index.route.js";
 
-
 const app = express();
 
 app.set("view engine", "ejs");
@@ -15,8 +14,6 @@ app.use(express.static("./app/public"));
 
 // Routes
 app.use(router);
-
-
 
 app.listen(PORT, () => {
   console.log(`Le serveur est démarré sur http://localhost:${PORT}`);
