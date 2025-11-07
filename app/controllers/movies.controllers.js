@@ -3,9 +3,29 @@ import {Movie} from "../models/index.js";
 const moviesController = {
 
   //Filtrage des films par genre (tous, action, comedie, drame...)
-  filtredMovies(req, res) {
-    res.send("filtre des recettes du film");
+  async filtredMovies(req, res) {
+    try {
+      console.log(req.params);
+      const { genre } = req.params;
+
+      let movies;
+      if (!genre || genre === "all") {
+        movies = await Movie.findAll();
+      } else {
+        movies = await Movie.findAll({
+          where: {genre: genre},
+        });
+      }
+
+      // Rendu de la vue avec les genres filtrés
+      console.log(movies);
+      res.render("movies", { movies, genre });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("pages/error");
+    }
   },
+  
 
   // Affichage de la liste des films sur la page des films
   async moviesList(req, res) {

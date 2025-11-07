@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS "movies" (
 );
 
 INSERT INTO movies (title, year, genre, picture, status) VALUES
-    ('Crocodile Dundee', 1986, 'Aventure', 'croco-dundee-2.jpg', TRUE),
-    ('Kaamelott', 2005, 'Comédie', 'kaamelott-2.png', TRUE),
-    ('Retour vers le futur', 1985, 'Aventure', 'doc-et-marty-2.jpg', TRUE);
+    ('Crocodile Dundee', 1986, 'aventure', 'croco-dundee-2.jpg', TRUE),
+    ('Kaamelott', 2005, 'comédie', 'kaamelott-2.png', TRUE),
+    ('Retour vers le futur', 1985, 'aventure', 'doc-et-marty-2.jpg', TRUE);
 
 
 -- =====================================================

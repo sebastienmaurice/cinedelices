@@ -6,8 +6,8 @@ const moviesRouter = Router();
 // route pour les films
 moviesRouter.get("/", moviesController.moviesList);
 
-//!changer les methodes selon les besoins
+
 //Filtrage des films par genre (tous, action, comedie, drame...)
-moviesRouter.get("/filtredMovies", moviesController.filtredMovies);
+moviesRouter.get("/:genre", moviesController.filtredMovies);
 
 export default moviesRouter;
