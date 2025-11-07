@@ -10,27 +10,73 @@ const registerForm = document.getElementById("registerForm");
 const goToRegister = document.getElementById("goToRegister");
 const goToLogin = document.getElementById("goToLogin");
 
-btnLogin?.addEventListener("click", () => {
+let lastFocusedElement;
+
+// ---------------------- FONCTIONS ----------------------
+const openModal = (form) => {
+  lastFocusedElement = document.activeElement;
   modal.classList.add("active");
-  loginForm.classList.add("active");
-  registerForm.classList.remove("active");
+  document.body.style.overflow = "hidden"; // Bloque scroll
+  if (form === "login") {
+    loginForm.classList.add("active");
+    registerForm.classList.remove("active");
+    loginForm.querySelector("input")?.focus();
+  } else {
+    registerForm.classList.add("active");
+    loginForm.classList.remove("active");
+    registerForm.querySelector("input")?.focus();
+  }
+};
+
+const closeModal = () => {
+  if (!modal.classList.contains("active")) return;
+
+  modal.classList.add("fade-out");
+  document.body.style.overflow = "";
+
+  setTimeout(() => {
+    modal.classList.remove("active", "fade-out");
+    lastFocusedElement?.focus();
+  }, 300);
+};
+
+// Focus trap
+modal.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+  if (e.key === "Escape") {
+    closeModal();
+  }
 });
 
-btnRegister?.addEventListener("click", () => {
-  modal.classList.add("active");
-  registerForm.classList.add("active");
-  loginForm.classList.remove("active");
-});
+// ---------------------- EVENTS ----------------------
+btnLogin?.addEventListener("click", () => openModal("login"));
+btnRegister?.addEventListener("click", () => openModal("register"));
 
-modalClose?.addEventListener("click", () => modal.classList.remove("active"));
-modalOverlay?.addEventListener("click", () => modal.classList.remove("active"));
+modalClose?.addEventListener("click", closeModal);
+modalOverlay?.addEventListener("click", closeModal);
 
 goToRegister?.addEventListener("click", () => {
   loginForm.classList.remove("active");
   registerForm.classList.add("active");
+  registerForm.querySelector("input")?.focus();
 });
 
 goToLogin?.addEventListener("click", () => {
   registerForm.classList.remove("active");
   loginForm.classList.add("active");
+  loginForm.querySelector("input")?.focus();
 });
