@@ -1,33 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Découvrez les recettes inspirées de vos films cultes préférés"
-    />
-    <title><%= movie.title %> - Recettes Ciné Délices</title>
 
-    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
-    <%- include("partials/head-resources") %>
+<head>
 
-    <!-- Styles spécifiques à la page -->
-    <link rel="stylesheet" href="/css/recipes-movie.css" />
-  </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film et ses recettes</title>
 
     <!-- styles-->
     <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/base.css">
     <link rel="stylesheet" href="/css/recipes-movie.css">
 
-    <!-- MAIN -->
-    <main>
-      <!-- BANNIÈRE DU FILM -->
-      <section class="banner__film">
-        <div class="banner__film__title">
-          <h2><%= movie.title %></h2>
-          <p><%= movie.year %> / <%= movie.genre %></p>
-        </div>
+    <!-- styles d'écriture -->
+    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+   
 
     <!-- scripts -->
     <script src="/js/filtred-category.js" defer></script>
@@ -38,31 +25,8 @@
 <body>
 
 <!-- ========== HEADER ============ -->
+<%- include("partials/header") %>
 
-  <header class="header" role="banner">
-
-    <div class="title" aria-label="Titre du site">
-
-      🎬 <span class="title-cine">Ciné</span> <span class="title-delices">Délices</span>
-
-    </div>
-
-    <nav class="navigationheader" role="navigation" aria-label="Navigation principale">
-
-      <a class="navigationheader-link" href="/">Accueil</a>
-      <a class="navigationheader-link" href="/movies">Films</a>
-      <a class="navigationheader-link" href="#ajouter">Ajouter un film</a>
-
-    </nav>
-
-    <div class="buttons__header">
-
-      <button class="login" aria-label="Connexion">Connexion</button>
-      <button class="registration" aria-label="Inscription">Inscription</button>
-
-    </div>
-
-  </header>
 
 <!-- ========== MAIN ============ -->
 
@@ -75,10 +39,6 @@
               <h2><%= movie.title %></h2>
               <p><%= movie.year %> / <%= movie.genre %></p>
 
-        <div class="presentation__recipes">
-          <div class="presentation__text__recipes">
-            <h3>Nos recettes cultes</h3>
-            <p>Parce que le goût se partage</p>
           </div>
 
             <div class="banner__search__recipes">
@@ -86,7 +46,8 @@
                 <label for="search" class="search__label">Rechercher une recette par catégorie:</label>
 
                 <select name="recipes" id="search" class="search__select__dish">
-                    <option value="all">Tous</option>
+                    <option value="" selected>categories</option> 
+                    <option value="all">Toute</option>
                     <option value="entrée">Entrée</option>
                     <option value="plat">Plat</option>
                     <option value="dessert">Dessert</option>
@@ -104,7 +65,25 @@
             <img src="/images/<%= movie.picture %>" class="banner__image__film" alt="Image du film Crocodile Dundee">
 
           </div>
-        </div>
+
+          <div class="presentation__recipes">
+
+                <div class="presentation__text__recipes">
+
+                  <h3>Nos recettes cultes</h3>
+                  <p>parce que le goût se partage</p>
+
+                </div>
+
+                <div class="presentation__button__recipes">
+
+                  <button class="add__recipe">Ajouter ma recette</button>  
+                  
+                </div>
+
+          </div>
+
+                
 
         <div class="articles only__3__recipes">
               <!-- bouclage des différentes recettes pour les afficher un à un-->
@@ -120,25 +99,25 @@
               <p><%= recipe.quote %>/5</p>
               <a class="recipe-button" href="/recipes-movie/details/<%= recipe.id %>">Voir les recettes</a>                                                  
             </div>
+
           </article>
           <% }) %>
+
         </div>
 
         <div class="center-button">
-          <button class="cta-button-secondary" aria-label="Voir tous les films">
-            Voir toutes les recettes
-          </button>
+          <button class="cta-button-secondary" aria-label="Voir tous les films">Voir toutes les recettes</button>
         </div>
-      </section>
-    </main>
-    <!-- FOOTER -->
+
+    </section>
+
+</main>
+
+<!-- ========== FOOTER ============ -->
+
     <%- include("partials/footer") %>
-
-    <!-- Scripts JS globaux -->
-    <script src="/js/burger-menu.js" defer></script>
-    <script src="/js/modal.js" defer></script>
-
-    <!-- Scripts JS spécifiques à la page -->
-    <script src="/js/recipes-movie.js" defer></script>
   </body>
+
 </html>
+
+            
