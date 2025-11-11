@@ -14,8 +14,10 @@ const PORT = process.env.PORT || 3000;
 // Servir CSS, JS, images...
 app.use(express.static("./app/public"));
 
+app.use(express.urlencoded({ extended: true })); // pour parser les données des formulaires
 app.use(express.json()); // permet de parser le JSON
 app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.query, req.params
+
 
 // Routes
 app.use(router);

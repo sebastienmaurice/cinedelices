@@ -5,20 +5,68 @@ import { StatusCodes } from 'http-status-codes';
 
 const authController = {
 
+// pour se connecter
+async login(req, res) {
+    
+    const { pseudo, password } = req.body;
 
+    try {
+        const user = await User.findOne({ where: { pseudo: pseudo } });
 
-  //page d'inscription
+        if (!user) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Pseudo ou mot de passe invalide' });
+        }
+
+        // on récupère le mot de passe de l'utilisateur pour le comparer avec celui fourni après qu'il ai été haché
+        const hash = user.password;
+        // comparaison du mot de passe donné avec celui enregistré
+        const ok = await argon2.verify(hash, password);
+
+        if (!ok) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Pseudo ou mot de passe invalide' });
+        }
+
+        // Création du token
+        const token = jwt.sign(
+            // le payload: ce sont les infos que contient le token
+            { user_id: user.id, pseudo: user.pseudo, role: user.role },
+            // JWT SECRET est la clé de chiffrement des données
+            process.env.JWT_SECRET,
+            // temps de validité du token avant expiration
+            { expiresIn: '2h',},
+        );
+
+            // On stocke le token dans un cookie httpOnly
+            res.cookie("token", token, {
+            httpOnly: true,  // Sécurise contre les attaques XSS
+            secure: false,   // Mettre true pour etre en HTTPS
+            maxAge: 1000 * 60 * 60 * 2 // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
+  });
+
+        res.status(StatusCodes.OK).render("user-profile", { user });
+    } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(StatusCodes.CONFLICT).json({ error: 'le pseudo existe déjà' });
+        }
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+    }
+},
+
+  //pour s'inscrire
   async register(req, res) {
     // ! il faut sanitizer username
-    const { pseudo, email, password } = req.body;
+    const { first_name, last_name , pseudo, email, password } = req.body;
+
+    console.log(req.body);
 
     try {
         const hash = await argon2.hash(password);
         
-        const user = await User.create({ pseudo: pseudo,email: email, password: hash });
-        // const user = await User.create({ username, password: hash });
+        const user = await User.create({first_name: first_name, last_name: last_name, pseudo: pseudo,email: email, password: hash });
+        // const user = await User.create({ toutes les données });
 
-        res.status(StatusCodes.CREATED).json({ id: user.id, pseudo: user.pseudo, email: user.email });
+        res.status(StatusCodes.CREATED).json({ id: user.id, pseudo: user.pseudo});
     } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(StatusCodes.CONFLICT).json({ error: 'Ce pseudo est déjà utilisé' });
@@ -55,10 +103,7 @@ async profil(req, res) {
 },
 
 
-  //page de connexion
-  login(req, res) {
-    res.send("page auth login");
-  },
+
 
   //page avis
   quote(req, res) {

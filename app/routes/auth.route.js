@@ -10,7 +10,7 @@ authRouter.get("/profil/:id", authController.profil);
 //! a passer en post
 // 🧱 Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.post('/register', authController.register);
-authRouter.get("/login", authController.login);
+authRouter.post("/login", authController.login);
 authRouter.get("/avis", authController.quote);
 authRouter.get("/logout", authController.logout);
 
