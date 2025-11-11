@@ -19,7 +19,7 @@ User.init({
   },
   {
   sequelize, // instance sequelize pour lui donner le nom de la table où aller chercher les données
-  tableName: "recipes",
+  tableName: "users",
   });
 
 export default User;
