@@ -14,13 +14,14 @@ adminRouter.use(mockAdmin);
    PAGE PRINCIPALE ADMIN
    =============================================== */
 // Cette route servira "admin-dashboard.ejs"
-adminRouter.get("/admin", isAdmin, adminController.admin);
+//!route fonctionnelle
+adminRouter.get("/", adminController.admin);
 
 /* ===============================================
    AUTRES ROUTES ADMIN
    =============================================== */
 // Route principale "racine" du router (peut rester, mais appelle aussi adminController.admin)
-adminRouter.get("/", isAdmin, adminController.admin);
+//adminRouter.get("/", isAdmin, adminController.admin);
 
 // Recettes / films
 adminRouter.get("/deleteR", adminController.deleteRecipe);

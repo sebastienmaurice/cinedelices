@@ -31,29 +31,41 @@
           <i class="fa-solid fa-chevron-down toggle-icon"></i>
         </button>
         <div class="dropdown-container" id="recettes">
-          <button class="list-item">Tiramisu du Parrain</button>
-          <button class="list-item">Popcorn caramel - Grease</button>
-          <button class="list-item">Ramen du Voyage de Chihiro</button>
+          <% recipes.forEach(recipe => { %>
+          <button class="list-item"><%= recipe.id %> - <%= recipe.name %></button>
+          <% }) %>
         </div>
 
         <button class="dropdown-btn" data-target="films">
           <i class="fa-solid fa-film"></i> Films à valider
           <i class="fa-solid fa-chevron-down toggle-icon"></i>
         </button>
-        <div class="dropdown-container" id="films">
-          <button class="list-item">Le Parrain</button>
-          <button class="list-item">Ratatouille</button>
-          <button class="list-item">James Bond - Skyfall</button>
+         <div class="dropdown-container" id="films">
+          <% movies.forEach(movie => { %>
+          <button class="list-item"><%= movie.id %> - <%= movie.title %></button>
+          <% }) %>
         </div>
 
         <button class="dropdown-btn" data-target="avis">
           <i class="fa-solid fa-comment"></i> Avis à valider
           <i class="fa-solid fa-chevron-down toggle-icon"></i>
         </button>
-        <div class="dropdown-container" id="avis">
-          <button class="list-item">Avis de John Doe</button>
-          <button class="list-item">Avis de Jane Doe</button>
+         <div class="dropdown-container" id="avis">
+          <% avis.forEach(note => { %>
+          <button class="list-item"><%= note.id %> - <%= note.content %></button>
+          <% }) %>
         </div>
+
+        <button class="dropdown-btn" data-target="users">
+          <i class="fa-solid fa-comment"></i> Utilisateurs
+          <i class="fa-solid fa-chevron-down toggle-icon"></i>
+        </button>
+        <div class="dropdown-container" id="users">
+          <% users.forEach(user => { %>
+          <button class="list-item"><%= user.id %> - <%= user.first_name %></button>
+          <% }) %>
+        </div>
+
       </aside>
 
       <!-- CONTENU PRINCIPAL -->

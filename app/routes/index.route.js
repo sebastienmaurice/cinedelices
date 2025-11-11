@@ -8,6 +8,7 @@ import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 
 const router = Router();
+
 router.use("/auth", authRouter);
 router.use(homeRouter);
 

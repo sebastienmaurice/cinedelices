@@ -1,9 +1,23 @@
-// /app/controllers/admin.controllers.js
+import { Recipe, Movie, Notice, User } from "../models/index.js";
 const adminController = {
   // Page principale admin
   // accueil admin
-  admin(req, res) {
-    res.render("admin-dashboard");
+  //!route fonctionnelle
+  async admin(req, res) {
+    try {
+      const recipes = await Recipe.findAll({
+        where: { status: "false" },
+      });
+      const movies = await Movie.findAll({
+        where: { status: "false" },
+      });
+      const avis = await Notice.findAll();
+      const users = await User.findAll();
+      res.render("admin-dashboard", { recipes, movies, avis, users });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("pages/error");
+    }
   },
 
   // Page pour ajouter une recette inspirée d'un film
