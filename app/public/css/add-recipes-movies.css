@@ -1,0 +1,763 @@
+/* ====================================================== */
+/* ================ ADD-RECIPES-MOVIES.CSS ============= */
+/* ====================================================== */
+/* 
+  Styles spécifiques à la page d'ajout de film et recette.
+  Les styles communs (reset, typo, header, footer, boutons) 
+  sont définis dans base.css
+*/
+
+/* ====================================================== */
+/* ================== LAYOUT PRINCIPAL ================== */
+/* ====================================================== */
+.add-recipe-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ====================================================== */
+/* ================ BANNIÈRE HERO ====================== */
+/* ====================================================== */
+.hero-banner {
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(
+    135deg,
+    var(--bleu-nuit) 0%,
+    var(--bleu-intermediaire) 100%
+  );
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/images/bg-8.jpg") center/cover;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--argent-ecran);
+}
+
+.hero-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--argent-ecran);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ====================================================== */
+/* ============== EN-TÊTE DE SECTION =================== */
+/* ====================================================== */
+.section-header-custom {
+  margin: 0 2rem 2rem 2rem;
+}
+
+.section-header-custom h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--dore-popcorn);
+  font-family: var(--font-h1);
+  margin: 0;
+}
+
+/* ====================================================== */
+/* ============= SECTION 1: AJOUT DU FILM =============== */
+/* ====================================================== */
+.add-film-section {
+  background: rgba(13, 27, 42, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem 0;
+  margin-bottom: 1rem;
+}
+
+.film-form-container {
+  --hue: 0; /* rouge pour overlay */
+  --saturation: 70%;
+  --lightness: 50%;
+  --hsl: var(--hue), var(--saturation), var(--lightness);
+  position: relative;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 0 2rem 1.5rem 2rem;
+  color: #eceff1;
+  transition: 400ms background ease, 400ms border-color ease;
+  will-change: background, border-color;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.film-form-container:hover {
+  --lightness: 95%;
+  background: hsla(var(--hsl), 0.1);
+}
+
+/* Overlay pour effet glassmorphism sur .film-form-container */
+.film-form-container .overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--opacity, 0);
+  -webkit-mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  transition: 400ms mask ease;
+  will-change: mask;
+  z-index: 1;
+  border-radius: 15px;
+}
+
+.film-form-container .overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 25rem at var(--x) var(--y),
+    var(--rouge-projecteur) 0%,
+    transparent 50%
+  );
+  opacity: 0.15;
+  pointer-events: none;
+  border-radius: 15px;
+  z-index: 1;
+}
+
+.film-form-container .overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
+    0 0 20px var(--rouge-projecteur);
+  opacity: var(--opacity, 0);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* S'assurer que les éléments intérieurs ne sont pas affectés par l'overlay */
+.film-form-container > *:not(.overlay) {
+  position: relative;
+  z-index: 2;
+}
+
+.film-inputs-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0;
+}
+
+.film-inputs-row .form-input,
+.film-inputs-row .form-select {
+  flex: 1;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  margin: 0 2rem;
+}
+
+.form-footer p {
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0.75rem 0 0;
+  opacity: 0.9;
+}
+
+.form-footer-btn {
+  margin: 0;
+}
+
+/* ====================================================== */
+/* =========== SECTION 2: AJOUT DE LA RECETTE =========== */
+/* ====================================================== */
+.add-recipe-section {
+  background: rgba(13, 27, 42, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 2rem 0;
+}
+
+.recipe-form-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Overlay pour effet glassmorphism (inspiré du CodePen) */
+.recipe-column .overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--opacity, 0);
+  -webkit-mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  transition: 400ms mask ease;
+  will-change: mask;
+  z-index: 1;
+  border-radius: 15px;
+}
+
+.recipe-column .overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 25rem at var(--x) var(--y),
+    var(--rouge-projecteur) 0%,
+    transparent 50%
+  );
+  opacity: 0.15;
+  pointer-events: none;
+  border-radius: 15px;
+  z-index: 1;
+}
+
+.recipe-column .overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
+    0 0 20px var(--rouge-projecteur);
+  opacity: var(--opacity, 0);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.recipe-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+/* S'assurer que les éléments intérieurs ne sont pas affectés par l'overlay */
+.recipe-column > *:not(.overlay) {
+  position: relative;
+  z-index: 2;
+}
+
+/* Les boutons doivent rester interactifs */
+.recipe-column .btn {
+  position: relative;
+  z-index: 3;
+}
+
+/* Les textareas ne sont pas affectés par l'overlay glowy */
+.recipe-textarea,
+.recipe-context-textarea {
+  position: relative;
+  z-index: 10;
+  background-color: var(--argent-ecran) !important;
+  border: 1px solid rgba(236, 239, 241, 0.2) !important;
+  isolation: isolate;
+  /* Masquer l'overlay en créant un contexte de stacking */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.recipe-column h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--argent-ecran);
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-h2-h6);
+}
+
+.recipe-context-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--argent-ecran);
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-h2-h6);
+}
+
+/* Colonne gauche: Film sélectionné */
+.recipe-column-left {
+  --hue: 0; /* rouge pour overlay */
+  --saturation: 70%;
+  --lightness: 50%;
+  --hsl: var(--hue), var(--saturation), var(--lightness);
+  position: relative;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: #eceff1;
+  transition: 400ms background ease, 400ms border-color ease;
+  will-change: background, border-color;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.recipe-column-left:hover {
+  --lightness: 95%;
+  background: hsla(var(--hsl), 0.1);
+}
+
+.film-selected-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: var(--bleu-intermediaire);
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.film-selected-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  box-shadow: inset 0 0 25px rgba(0, 24, 60, 0.6);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.film-selected-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.film-image-note {
+  font-size: 0.75rem;
+  color: var(--argent-ecran);
+  margin: 0 0 1rem 0;
+  padding-top: 0;
+  opacity: 0.9;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.film-info-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.film-info-box h4 {
+  color: var(--argent-ecran);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+}
+
+.film-info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.film-info-box li {
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.film-info-box li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--dore-popcorn);
+  font-weight: bold;
+}
+
+/* Colonne centrale: Ma recette */
+.recipe-column-center {
+  --hue: 0; /* rouge pour overlay */
+  --saturation: 70%;
+  --lightness: 50%;
+  --hsl: var(--hue), var(--saturation), var(--lightness);
+  position: relative;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: #eceff1;
+  transition: 400ms background ease, 400ms border-color ease;
+  will-change: background, border-color;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.recipe-column-center:hover {
+  --lightness: 95%;
+  background: hsla(var(--hsl), 0.1);
+}
+
+.recipe-column-center .form-input,
+.recipe-column-center .form-select {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.btn-upload {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Colonne droite: Image et contexte */
+.recipe-column-right {
+  --hue: 0; /* rouge pour overlay */
+  --saturation: 70%;
+  --lightness: 50%;
+  --hsl: var(--hue), var(--saturation), var(--lightness);
+  position: relative;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: #eceff1;
+  transition: 400ms background ease, 400ms border-color ease;
+  will-change: background, border-color;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.recipe-column-right:hover {
+  --lightness: 95%;
+  background: hsla(var(--hsl), 0.1);
+}
+
+.recipe-image-upload {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.recipe-image-upload::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.recipe-image-upload img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  display: block;
+}
+
+.image-copyright {
+  font-size: 0.75rem;
+  color: var(--argent-ecran);
+  margin: 0.5rem 0 0 0;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.recipe-context-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background-color: var(--argent-ecran);
+  color: var(--bleu-nuit);
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  resize: vertical;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: all var(--transition);
+  font-family: var(--font-body);
+}
+
+.recipe-context-textarea:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 0 12px rgba(198, 166, 100, 0.5);
+}
+
+/* ====================================================== */
+/* ========== INGRÉDIENTS ET PRÉPARATION ================ */
+/* ====================================================== */
+.ingredients-preparation-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ingredients-column,
+.preparation-column {
+  --hue: 0; /* rouge pour overlay */
+  --saturation: 70%;
+  --lightness: 50%;
+  --hsl: var(--hue), var(--saturation), var(--lightness);
+  position: relative;
+  background-color: #142436;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: #eceff1;
+  transition: 400ms background ease, 400ms border-color ease;
+  will-change: background, border-color;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ingredients-column:hover,
+.preparation-column:hover {
+  --lightness: 95%;
+  background: hsla(var(--hsl), 0.1);
+}
+
+.ingredients-column .overlay,
+.preparation-column .overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--opacity, 0);
+  -webkit-mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  mask: radial-gradient(
+    25rem 25rem at var(--x) var(--y),
+    #000 1%,
+    transparent 50%
+  );
+  transition: 400ms mask ease;
+  will-change: mask;
+  z-index: 1;
+  border-radius: 15px;
+}
+
+.ingredients-column .overlay::before,
+.preparation-column .overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 25rem at var(--x) var(--y),
+    var(--rouge-projecteur) 0%,
+    transparent 50%
+  );
+  opacity: 0.15;
+  pointer-events: none;
+  border-radius: 15px;
+}
+
+.ingredients-column .overlay::after,
+.preparation-column .overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
+    0 0 20px var(--rouge-projecteur);
+  opacity: var(--opacity, 0);
+  pointer-events: none;
+}
+
+.ingredients-column h3,
+.preparation-column h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--argent-ecran);
+  margin: 0 0 1rem 0;
+  font-family: var(--font-h2-h6);
+}
+
+.recipe-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background-color: var(--argent-ecran);
+  color: var(--bleu-nuit);
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  resize: vertical;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: all var(--transition);
+  font-family: var(--font-body);
+}
+
+.recipe-textarea:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 0 12px rgba(198, 166, 100, 0.5);
+}
+
+/* ====================================================== */
+/* ============= FOOTER DE VALIDATION ================== */
+/* ====================================================== */
+.form-validation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  margin-top: 2rem;
+}
+
+.validation-note {
+  font-size: 0.85rem;
+  color: var(--argent-ecran);
+  opacity: 0.7;
+  margin: 0 0.75rem 0 0;
+}
+
+.form-validation-btn {
+  margin: 0;
+}
+
+/* ====================================================== */
+/* ====================== FORMULAIRES =================== */
+/* ====================================================== */
+.form-input,
+.form-select {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(236, 239, 241, 0.2);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--bleu-nuit);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: all var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--bleu-nuit);
+  box-shadow: 0 0 8px rgba(13, 27, 42, 0.3);
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* ====================================================== */
+/* ====================== RESPONSIVE =================== */
+/* ====================================================== */
+@media (max-width: 1000px) {
+  .recipe-form-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .ingredients-preparation-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-footer p {
+    margin: 0 0 0.75rem 0;
+  }
+
+  .form-validation-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .validation-note {
+    margin: 0 0 0.75rem 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .section-header-custom {
+    margin: 0 1rem 2rem 1rem;
+  }
+
+  .film-form-container {
+    margin: 0 1rem 1.5rem 1rem;
+  }
+
+  .form-footer {
+    margin: 0 1rem;
+  }
+
+  .film-inputs-row {
+    flex-direction: column;
+  }
+
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-header-custom h2 {
+    font-size: 1.5rem;
+  }
+}

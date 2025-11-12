@@ -1,46 +1,42 @@
 console.clear();
 
-const cardsContainer = document.querySelector(".cards");
-const cardsContainerInner = document.querySelector(".cards__inner");
-const cards = Array.from(document.querySelectorAll(".card"));
-const overlay = document.querySelector(".overlay");
+// Sélectionner toutes les colonnes avec overlay
+const columns = document.querySelectorAll(
+  ".recipe-column-left, .recipe-column-center, .recipe-column-right, .ingredients-column, .preparation-column, .film-form-container"
+);
 
-const applyOverlayMask = (e) => {
-  const overlayEl = e.currentTarget;
-  const x = e.pageX - cardsContainer.offsetLeft;
-  const y = e.pageY - cardsContainer.offsetTop;
+columns.forEach((column) => {
+  const overlay = column.querySelector(".overlay");
+  if (!overlay) return;
 
-  overlayEl.style = `--opacity: 1; --x: ${x}px; --y:${y}px;`;
-};
+  // Créer une carte overlay rouge (inspiré du CodePen)
+  const overlayCard = document.createElement("div");
+  overlayCard.classList.add("overlay-card");
+  overlay.appendChild(overlayCard);
 
-const createOverlayCta = (overlayCard, ctaEl) => {
-  const overlayCta = document.createElement("div");
-  overlayCta.classList.add("cta");
-  overlayCta.textContent = ctaEl.textContent;
-  overlayCta.setAttribute("aria-hidden", true);
-  overlayCard.append(overlayCta);
-};
+  // Synchroniser la taille de l'overlay avec la colonne
+  const resizeOverlay = () => {
+    overlayCard.style.width = `${column.offsetWidth}px`;
+    overlayCard.style.height = `${column.offsetHeight}px`;
+  };
 
-const observer = new ResizeObserver((entries) => {
-  entries.forEach((entry) => {
-    const cardIndex = cards.indexOf(entry.target);
-    let width = entry.borderBoxSize[0].inlineSize;
-    let height = entry.borderBoxSize[0].blockSize;
+  resizeOverlay();
+  window.addEventListener("resize", resizeOverlay);
 
-    if (cardIndex >= 0) {
-      overlay.children[cardIndex].style.width = `${width}px`;
-      overlay.children[cardIndex].style.height = `${height}px`;
-    }
+  // Mettre à jour la position du masque de l'overlay
+  const updateOverlayMask = (e) => {
+    const rect = column.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    overlay.style.setProperty("--opacity", "1");
+    overlay.style.setProperty("--x", `${x}px`);
+    overlay.style.setProperty("--y", `${y}px`);
+  };
+
+  // Déplacer le masque avec la souris
+  column.addEventListener("pointermove", updateOverlayMask);
+  column.addEventListener("pointerleave", () => {
+    overlay.style.setProperty("--opacity", "0");
   });
 });
-
-const initOverlayCard = (cardEl) => {
-  const overlayCard = document.createElement("div");
-  overlayCard.classList.add("card");
-  createOverlayCta(overlayCard, cardEl.lastElementChild);
-  overlay.append(overlayCard);
-  observer.observe(cardEl);
-};
-
-cards.forEach(initOverlayCard);
-document.body.addEventListener("pointermove", applyOverlayMask);
