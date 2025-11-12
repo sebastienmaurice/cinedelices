@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajouter un film et une recette - Ciné Délices</title>
+    <meta
+      name="description"
+      content="Ciné Délices — Ajoutez votre film et votre recette inspirée"
+    />
+
+    <!-- Ressources globales -->
+    <%- include("partials/head-resources") %>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <%- include("partials/header") %>
+
+    <!-- MAIN -->
+    <main class="add-recipe-main">
+      <!-- BANNIÈRE HERO -->
+      <section class="hero-banner">
+        <div class="hero-content">
+          <h1>IMAGE HERO D'AJOUT DE FILM et RECETTE</h1>
+          <button class="btn btn--red">J'ajoute mon film</button>
+        </div>
+      </section>
+
+      <!-- SECTION 1: AJOUT DU FILM -->
+      <section class="add-film-section">
+        <div class="section-header-custom">
+          <h2>1. J'ajoute mon film</h2>
+        </div>
+
+        <!-- Formulaire d'ajout de film -->
+        <div class="film-form-container">
+          <div class="overlay"></div>
+          <div class="film-inputs-row">
+            <input
+              type="text"
+              name="film-name"
+              id="film-name"
+              class="form-input"
+              placeholder="Nom du film"
+            />
+            <input
+              type="text"
+              name="film-year"
+              id="film-year"
+              class="form-input"
+              placeholder="Année"
+            />
+            <select name="film-genre" id="film-genre" class="form-select">
+              <option value="">Genre</option>
+              <option value="action">Action</option>
+              <option value="animé">Animé</option>
+              <option value="aventure">Aventure</option>
+              <option value="comédie">Comédie</option>
+              <option value="drame">Drame</option>
+              <option value="fantastique">Fantastique</option>
+              <option value="horreur">Horreur</option>
+              <option value="romantique">Romantique</option>
+              <option value="science-fiction">Science-fiction</option>
+              <option value="thriller">Thriller</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </p>
+          <button class="btn btn--red form-footer-btn">
+            Je passe à la recette
+          </button>
+        </div>
+      </section>
+
+      <!-- SECTION 2: AJOUT DE LA RECETTE -->
+      <section class="add-recipe-section">
+        <div class="section-header-custom">
+          <h2>2. Je veux ajouter une recette</h2>
+        </div>
+
+        <!-- Container 3 colonnes -->
+        <div class="recipe-form-container">
+          <!-- Colonne gauche: Film sélectionné -->
+          <div class="recipe-column recipe-column-left">
+            <div class="overlay"></div>
+            <h3>Mon film sélectionné</h3>
+            <div class="film-selected-image">
+              <img
+                src="/images/bg-8.jpg"
+                alt="Image du film ajouté par un admin Ciné Délices"
+              />
+            </div>
+            <p class="film-image-note">
+              * L'image de votre film sera intégrée prochainement par Ciné
+              Délices
+            </p>
+            <div class="film-info-box">
+              <h4>Les infos du film</h4>
+              <ul>
+                <li id="display-film-name">Pirates des Caraibes</li>
+                <li id="display-film-genre">Genre</li>
+                <li id="display-film-year">Année</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Colonne centrale: Ma recette -->
+          <div class="recipe-column recipe-column-center">
+            <div class="overlay"></div>
+            <h3>Ma recette</h3>
+            <p class="recipe-description">
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book.
+            </p>
+            <input
+              type="text"
+              name="recipe-name"
+              id="recipe-name"
+              class="form-input"
+              placeholder="Le nom de la recette"
+            />
+            <select
+              name="preparation-time"
+              id="preparation-time"
+              class="form-select"
+            >
+              <option value="">Temps de préparation</option>
+              <option value="2">2 minutes</option>
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="45">45 minutes</option>
+              <option value="60">1 heure</option>
+              <option value="90">1h30</option>
+              <option value="120">2 heures</option>
+              <option value="150">2h30</option>
+              <option value="180">3 heures</option>
+            </select>
+            <select name="difficulty" id="difficulty" class="form-select">
+              <option value="">Difficulté</option>
+              <option value="facile">Facile</option>
+              <option value="moyen">Moyen</option>
+              <option value="difficile">Difficile</option>
+            </select>
+            <button class="btn btn--red btn-upload">
+              Je télécharge mon image
+              <i class="fa-solid fa-upload btn-upload-icon"></i>
+            </button>
+          </div>
+
+          <!-- Colonne droite: Image recette et contexte -->
+          <div class="recipe-column recipe-column-right">
+            <div class="overlay"></div>
+            <div class="recipe-image-upload">
+              <img
+                src="/images/default-image-cine-delices-1.jpg"
+                alt="Image par défaut Ciné Délices"
+              />
+              <p class="image-copyright">
+                * sous reserve de droits d'auteur et d'accord par Ciné Délices
+              </p>
+            </div>
+            <h3 class="recipe-context-title">Contexte de la recette</h3>
+            <textarea
+              name="recipe-context"
+              id="recipe-context"
+              class="recipe-context-textarea"
+              placeholder="Racontes le moment où se situe la recette dans le film"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Section Ingrédients et Préparation -->
+        <div class="ingredients-preparation-container">
+          <div class="ingredients-column">
+            <div class="overlay"></div>
+            <h3>Ingrédients</h3>
+            <textarea
+              name="ingredients"
+              id="ingredients"
+              class="recipe-textarea"
+              placeholder="Liste des ingrédients..."
+            ></textarea>
+          </div>
+          <div class="preparation-column">
+            <div class="overlay"></div>
+            <h3>Préparation</h3>
+            <textarea
+              name="preparation"
+              id="preparation"
+              class="recipe-textarea"
+              placeholder="Étapes de préparation..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Footer du formulaire -->
+        <div class="form-validation-footer">
+          <p class="validation-note">
+            * sous reserves de validation par Ciné Délices
+          </p>
+          <button class="btn btn--red form-validation-btn">
+            Je valide ma fiche
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <%- include("partials/footer") %>
+
+    <!-- Scripts JS globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+    <!-- popup connexion -->
+    <script src="/js/modal.js" defer></script>
+    <!-- effet glassmorphism -->
+    <script src="/js/glowy-container.js" defer></script>
+  </body>
+</html>

@@ -4,7 +4,6 @@ import { xss } from 'express-xss-sanitizer';
 import cookieParser from 'cookie-parser';
 import router from "./app/routes/index.route.js";
 
-
 const app = express();
 
 app.set("view engine", "ejs");
@@ -24,8 +23,6 @@ app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.que
 
 // Routes
 app.use(router);
-
-
 
 app.listen(PORT, () => {
   console.log(`Le serveur est démarré sur http://localhost:${PORT}`);

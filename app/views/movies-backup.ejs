@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes" />
+  <title>Films - Ciné Délices</title>
+
+  <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
+  <%- include("partials/head-resources") %>
+
+<link rel="stylesheet" href="/css/reset.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/films.css">
+
+</head>
+
+<body>
+  <!-- HEADER -->
+  <%- include("partials/header") %>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- BANNIÈRE -->
+    <section class="banner">
+      <div class="banner__title">
+        <h2>Bienvenue dans nos films</h2>
+        <p>Le goût du cinéma et le cinéma de goût</p>
+      </div>
+
+      <!-- FILTRE PAR GENRE -->
+      <form method="GET" action="/movies" class="banner__search__films">
+        <label for="search" class="search__label">Rechercher un film ou une série par genre :</label>
+        <select name="genre" id="search" class="search__select__film" onchange="this.form.submit()">
+          <option value="tous" <%= selectedGenre === 'tous' ? 'selected' : '' %>>Tous</option>
+          <option value="action" <%= selectedGenre === 'action' ? 'selected' : '' %>>Action</option>
+          <option value="animé" <%= selectedGenre === 'animé' ? 'selected' : '' %>>Animé</option>
+          <option value="aventure" <%= selectedGenre === 'aventure' ? 'selected' : '' %>>Aventure</option>
+          <option value="comedie" <%= selectedGenre === 'comedie' ? 'selected' : '' %>>Comédie</option>
+          <option value="drame" <%= selectedGenre === 'drame' ? 'selected' : '' %>>Drame</option>
+          <option value="fantastique" <%= selectedGenre === 'fantastique' ? 'selected' : '' %>>Fantastique</option>
+          <option value="horreur" <%= selectedGenre === 'horreur' ? 'selected' : '' %>>Horreur</option>
+          <option value="romantique" <%= selectedGenre === 'romantique' ? 'selected' : '' %>>Romantique</option>
+          <option value="science-fiction" <%= selectedGenre === 'science-fiction' ? 'selected' : '' %>>Science-fiction</option>
+          <option value="thriller" <%= selectedGenre === 'thriller' ? 'selected' : '' %>>Thriller</option>
+        </select>
+      </form>
+    </section>
+
+    <!-- SECTION FILMS -->
+    <section id="films">
+      <div class="presentation__film">
+        <div class="presentation__text__film">
+          <h3>Nos films et séries cultes</h3>
+          <p>Parce que le goût se partage</p>
+        </div>
+        <div class="presentation__button__film">
+          <button class="add__film">Ajouter mon film</button>
+        </div>
+      </div>
+
+      <div class="articles only__3__films">
+        <% if (!movies || movies.length === 0) { %>
+          <p>Aucun film trouvé pour ce genre.</p>
+        <% } else { %>
+          <% movies.forEach(movie => { %>
+            <article>
+              <img src="/images/<%= movie.picture %>" alt="Affiche du film <%= movie.title %>" />
+              <div>
+                <h4><%= movie.title %></h4>
+                <p><%= movie.year %></p>
+                <p><%= movie.genre %></p>
+                <a class="recipe-button" href="/recipes-movie/<%= movie.id %>">Voir les recettes</a>
+              </div>
+            </article>
+          <% }) %>
+        <% } %>
+      </div>
+
+      <div class="center-button">
+        <button class="cta-button-secondary" aria-label="Voir tous les films">Voir tous les films</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <%- include("partials/footer") %>
+
+  <!-- Scripts JS globaux -->
+  <script src="/js/burger-menu.js" defer></script>
+  <script src="/js/modal.js" defer></script>
+</body>
+</html>

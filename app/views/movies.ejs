@@ -13,12 +13,11 @@
     <%- include("partials/head-resources") %>
 
     <!-- styles-->
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/films.css">
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/films.css" />
 
     <!-- scripts -->
     <script src="/js/filtred-genre.js" defer></script>
-
   </head>
 
   <body>
@@ -28,42 +27,34 @@
     <!-- MAIN -->
     <main>
       <!-- BANNIÈRE -->
+      <!-- BANNIÈRE -->
       <section class="banner">
+        <div class="banner__title">
+          <h2>Bienvenue dans nos films</h2>
+          <p>Le goût du cinéma et le cinéma de goût</p>
+        </div>
 
-          <div class="banner__title">
+        <div class="banner__search__films">
+          <label for="search" class="search__label"
+            >Rechercher un film ou une série par genre:</label
+          >
 
-              <h2>Bienvenue dans nos films</h2>
-              <p>Le goût du cinéma et le cinéma de goût</p>
-          
-          </div>
-
-            <div class="banner__search__films">
-
-                <label for="search" class="search__label">Rechercher un film ou une série par genre:</label>
-
-                <select name="films" id="search" class="search__select__film">
-                    <option value="">Genre</option>
-                    <option value="all">Tous les films</option>
-                    <option value="action">Action</option>
-                    <option value="animé">Animé</option>
-                    <option value="aventure">Aventure</option>
-                    <option value="comédie">Comédie</option>
-                    <option value="drame">Drame</option>
-                    <option value="fantastique">Fantastique</option>
-                    <option value="horreur">Horreur</option>
-                    <option value="romantique">Romantique</option>
-                    <option value="science-fiction">Science-fiction</option>
-                    <option value="thriller">Thriller</option>
-                </select>
-
-            </div>
-
+          <select name="films" id="search" class="search__select__film">
+            <option value="">Genre</option>
+            <option value="all">Tous les films</option>
+            <option value="action">Action</option>
+            <option value="animé">Animé</option>
+            <option value="aventure">Aventure</option>
+            <option value="comédie">Comédie</option>
+            <option value="drame">Drame</option>
+            <option value="fantastique">Fantastique</option>
+            <option value="horreur">Horreur</option>
+            <option value="romantique">Romantique</option>
+            <option value="science-fiction">Science-fiction</option>
+            <option value="thriller">Thriller</option>
+          </select>
+        </div>
       </section>
-
-    
-
-
-
 
       <!-- SECTION FILMS -->
       <section id="films">
@@ -72,33 +63,42 @@
             <h3>Nos films et séries cultes</h3>
             <p>Parce que le goût se partage</p>
           </div>
-
           <div class="presentation__button__film">
-            <button class="add__film">Ajouter mon film</button>
+            <button class="btn btn--gold">Ajouter mon film</button>
           </div>
         </div>
 
         <div class="articles only__3__films">
-          <% movies.forEach(movie => { %>
+          <% if (!movies || movies.length === 0) { %>
+          <p>Aucun film trouvé pour ce genre.</p>
+          <% } else { %> <% movies.forEach(movie => { %>
           <article>
-            <img
-              src="/images/<%= movie.picture %>"
-              alt="Affiche du film <%= movie.title %>"
-            />
-            <div>
-              <h4><%= movie.title %></h4>
-              <p><%= movie.year %></p>
-              <p><%= movie.genre %></p>
-              <a class="recipe-button" href="/recipes-movie/<%= movie.id %>">
+            <div class="film-card-image">
+              <img
+                src="/images/<%= movie.picture %>"
+                alt="Affiche du film <%= movie.title %>"
+              />
+            </div>
+            <div class="film-card-info">
+              <h4 class="film-title"><%= movie.title %></h4>
+              <div class="film-meta">
+                <span class="film-year"><%= movie.year %></span>
+                <span class="film-separator">•</span>
+                <span class="film-genre"><%= movie.genre %></span>
+              </div>
+              <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
                 Voir les recettes
               </a>
             </div>
           </article>
-          <% }) %>
+          <% }) %> <% } %>
         </div>
 
         <div class="center-button">
-          <button class="cta-button-secondary" aria-label="Voir tous les films">
+          <button
+            class="btn btn--gold-special"
+            aria-label="Voir tous les films"
+          >
             Voir tous les films
           </button>
         </div>

@@ -1,131 +1,18 @@
-/* =============================== */
-/* ========== BASE ============== */
-/* =============================== */
-body {
-  font-family: var(--font-body);
-  background-color: var(--bleu-nuit);
-  color: var(--argent-ecran);
-  line-height: 1.6;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 2rem 0;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+/* ====================================================== */
+/* ================= RECIPES-MOVIE.CSS ================== */
+/* ====================================================== */
+/* 
+  Styles spécifiques à la page Recettes uniquement.
+  Les styles communs (reset, typo, header, footer, boutons) 
+  sont définis dans base.css
+*/
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-h1 {
-  font-family: var(--font-h1);
-  color: var(--dore-popcorn);
-  font-size: 2.5rem;
-}
-
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
-}
-h2 {
-  font-size: 2rem;
-  margin-bottom: -0.8rem;
-}
-h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-a {
-  color: var(--argent-ecran);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--rouge-projecteur);
-}
-
-/* =============================== */
-/* ========== HEADER ============ */
-/* =============================== */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 3rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-  width: 1360px;
-  margin: 0 auto 0 auto;
-}
-
-.title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  font-family: var(--font-h1);
-}
-
-.title-cine {
-  color: var(--rouge-projecteur);
-}
-
-.title-delices {
-  color: var(--dore-popcorn);
-}
-
-.navigationheader {
-  display: flex;
-  align-items: center;
-  gap: var(--gap);
-}
-.navigationheader-link {
-  color: var(--argent-ecran);
-  text-decoration: none;
-  font-weight: bold;
-  transition: color var(--transition);
-  position: relative;
-}
-.navigationheader-link::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--dore-popcorn),
-    var(--rouge-projecteur)
-  );
-  transition: width var(--transition);
-}
-.navigationheader-link:hover {
-  color: var(--dore-popcorn);
-}
-.navigationheader-link:hover::after {
-  width: 100%;
-}
-.buttons__header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* =============================== */
-/* ========== MAIN ============ */
-/* =============================== */
-
-/* bannière bienvenue */
-
+/* ====================================================== */
+/* ================== BANNIÈRE RECHERCHE =============== */
+/* ====================================================== */
 .banner__film {
   background-color: var(--rouge-projecteur);
-  border-radius: 1rem;
+  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -133,7 +20,7 @@ a:hover {
 }
 
 .banner__film p,
-label {
+.banner__film label {
   color: var(--bleu-intermediaire);
   font-size: 1.2rem;
   font-weight: bold;
@@ -149,24 +36,18 @@ label {
   border-color: var(--bleu-intermediaire);
 }
 
-/* section des recettes */
-
-/* bannière présentation des recettes */
-
-#recipes {
-  width: 80%;
-  margin: 0 auto;
-}
-
+/* ====================================================== */
+/* ========== PRÉSENTATION DES RECETTES ================ */
+/* ====================================================== */
 .banner__image__film {
-  border-radius: 1rem;
+  border-radius: 12px;
 }
 
 .presentation__image {
   margin-top: 6rem;
   display: flex;
   justify-content: center;
-  border-radius: 1rem;
+  border-radius: 12px;
 }
 
 .presentation__recipes {
@@ -186,10 +67,13 @@ label {
   margin-top: -1.5rem;
 }
 
-/* pour afficher seulement 3 fiches de recettes*/
-/*code à venir */
-
-/* Carte des films */
+/* ====================================================== */
+/* ========== SECTION DES FICHES DE RECETTES =========== */
+/* ====================================================== */
+#recipes {
+  width: 80%;
+  margin: 0 auto;
+}
 
 #recipes .articles {
   display: grid;
@@ -198,19 +82,39 @@ label {
   margin-top: 1rem;
 }
 
+/* Carte des recettes */
+#recipes article {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, 
+    rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, 
+    rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border-radius: 12px;
+  transition: all var(--transition);
+}
+
+#recipes article {
+  overflow: hidden;
+}
+
 #recipes article img {
   width: 420px;
   background-color: var(--bleu-nuit);
-  border-radius: 6px;
+  border-radius: 12px;
   overflow: hidden;
   border: none;
   display: flex;
   flex-direction: column;
-  transition: all var(--transition);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.6s ease;
+}
+
+#recipes article:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.1) contrast(1.05);
 }
 
 /* Hover carte */
-
 #recipes article:hover {
   border: 2px solid var(--dore-popcorn);
   box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
@@ -218,116 +122,30 @@ label {
   animation: cinema-glow 0.2s linear;
 }
 
-#recipes article {
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  border-radius: 0.5rem;
-}
-
 #recipes article div {
   padding: 2rem;
   text-align: center;
 }
 
-/* =============================== /
-/ ========== BOUTONS ===== /
-/ =============================== */
-
-.login,
-.registration,
-.cta-button,
-.cta-button-secondary,
-.recipe-button,
-.add__recipe {
-  font-weight: bold;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all var(--transition);
-  border: 2px solid transparent;
-  box-sizing: border-box;
+/* ====================================================== */
+/* ====================== ANIMATIONS =================== */
+/* ====================================================== */
+@keyframes cinema-glow {
+  0% {
+    box-shadow: 0 0 0px var(--dore-popcorn);
+  }
+  50% {
+    box-shadow: 0 0 6px var(--dore-popcorn);
+  }
+  100% {
+    box-shadow: 0 0 8px var(--dore-popcorn);
+  }
 }
 
-/* Bordure intérieure */
-
-.login::before,
-.registration::before,
-.cta-button::before,
-.cta-button-secondary::before,
-.recipe-button::before,
-.add__recipe::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
-  border-radius: 0.4rem;
-  border: 1px solid currentColor;
-  pointer-events: none;
-}
-
-/* Connexion / CTA doré */
-
-.login,
-.cta-button-secondary,
-.add__recipe {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-}
-
-.login:hover,
-.cta-button-secondary:hover,
-.add__recipe:hover {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  transform: translateY(-2px);
-  box-shadow: 0 0 8px rgba(215, 38, 56, 0.5);
-}
-
-/* Inscription / CTA rouge */
-.registration,
-.recipe-button {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-}
-
-.registration:hover,
-.recipe-button:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  transform: translateY(-2px);
-  box-shadow: 0 0 8px rgba(198, 166, 100, 0.5);
-}
-
+/* ====================================================== */
+/* ====================== UTILITAIRES =================== */
+/* ====================================================== */
 .center-button {
   margin-top: 2rem;
   text-align: center;
-}
-
-/* =============================== */
-/* ========== FOOTER ============ */
-/* =============================== */
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.5rem 0;
-  margin-top: 4rem;
-  border-top: 2px solid var(--bleu-intermediaire);
-  flex-wrap: wrap;
-  gap: 1rem;
-  font-size: 0.9rem;
-  width: 1360px;
-  margin-left: auto;
-  margin-right: auto;
 }

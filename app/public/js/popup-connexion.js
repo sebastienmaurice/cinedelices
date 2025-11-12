@@ -1,66 +1,82 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Récupération des éléments
-  const modal = document.getElementById("authModal");
-  const overlay = document.getElementById("modalOverlay");
-  const closeBtn = document.getElementById("modalClose");
+// popup-connexion.js
+const modal = document.getElementById("authModal");
+const btnLogin = document.getElementById("btnLogin");
+const btnRegister = document.getElementById("btnRegister");
+const modalClose = document.getElementById("modalClose");
+const modalOverlay = document.getElementById("modalOverlay");
 
-  const btnLogin = document.getElementById("btnLogin"); // bouton header Connexion
-  const btnRegister = document.getElementById("btnRegister"); // bouton header Inscription
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const goToRegister = document.getElementById("goToRegister");
+const goToLogin = document.getElementById("goToLogin");
 
-  const loginForm = document.getElementById("loginForm"); // form Connexion
-  const registerForm = document.getElementById("registerForm"); // form Inscription
+let lastFocusedElement;
 
-  const goToRegister = document.getElementById("goToRegister"); // switch inside login
-  const goToLogin = document.getElementById("goToLogin"); // switch inside register
+// ---------------------- FONCTIONS ----------------------
+const openModal = (form) => {
+  lastFocusedElement = document.activeElement;
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden"; // Bloque scroll
+  if (form === "login") {
+    loginForm.classList.add("active");
+    registerForm.classList.remove("active");
+    loginForm.querySelector("input")?.focus();
+  } else {
+    registerForm.classList.add("active");
+    loginForm.classList.remove("active");
+    registerForm.querySelector("input")?.focus();
+  }
+};
 
-  if (!modal || !overlay || !closeBtn || !btnLogin || !btnRegister) return;
+const closeModal = () => {
+  if (!modal.classList.contains("active")) return;
 
-  // Ouvrir modal sur le formulaire désiré
-   function openModal(showLogin = true) {
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden"; // bloque scroll page
-    if (showLogin) {
-      loginForm.classList.add("active");
-      registerForm.classList.remove("active");
-    } else {
-      registerForm.classList.add("active");
-      loginForm.classList.remove("active");
+  modal.classList.add("fade-out");
+  document.body.style.overflow = "";
+
+  setTimeout(() => {
+    modal.classList.remove("active", "fade-out");
+    lastFocusedElement?.focus();
+  }, 300);
+};
+
+// Focus trap
+modal.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
     }
   }
-
-  // Fermer modal popup
-  function closeModal() {
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
+  if (e.key === "Escape") {
+    closeModal();
   }
-
-  // Écouteurs pour le header
-  btnLogin.addEventListener("click", (e) => {
-    e.preventDefault();
-    openModal(true); // ouvre Connexion
-  });
-  btnRegister.addEventListener("click", (e) => {
-    e.preventDefault();
-    openModal(false); // ouvre Inscription
-  });
-
-  // Écouteurs pour switcher entre formulaires
-  goToRegister.addEventListener("click", (e) => {
-    e.preventDefault();
-    openModal(false);
-  });
-  goToLogin.addEventListener("click", (e) => {
-    e.preventDefault();
-    openModal(true);
-  });
-
-  // Fermer modal au clic sur croix ou overlay
-  closeBtn.addEventListener("click", closeModal);
-  overlay.addEventListener("click", closeModal);
-
-  // Fermer modal avec ESC
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
-  });
 });
 
+// ---------------------- EVENTS ----------------------
+btnLogin?.addEventListener("click", () => openModal("login"));
+btnRegister?.addEventListener("click", () => openModal("register"));
+
+modalClose?.addEventListener("click", closeModal);
+modalOverlay?.addEventListener("click", closeModal);
+
+goToRegister?.addEventListener("click", () => {
+  loginForm.classList.remove("active");
+  registerForm.classList.add("active");
+  registerForm.querySelector("input")?.focus();
+});
+
+goToLogin?.addEventListener("click", () => {
+  registerForm.classList.remove("active");
+  loginForm.classList.add("active");
+  loginForm.querySelector("input")?.focus();
+});

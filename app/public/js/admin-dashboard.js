@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1️⃣ Toggle des dropdowns
+  // Toggle des dropdowns
   const dropdownButtons = document.querySelectorAll(".dropdown-btn");
 
   dropdownButtons.forEach((btn) => {
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 2️⃣ Activation d’un item sidebar
+  // Activation d’un item sidebar
   const listItems = document.querySelectorAll(".dropdown-container .list-item");
   const adminMain = document.querySelector(".admin-main");
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 3️⃣ Burger menu mobile
+  // Burger menu mobile
   const burger = document.querySelector(".burger-menu");
   const nav = document.querySelector(".navigationheader");
 
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4️⃣ Boutons validation
+  // Boutons validation
   const btnValid = document.querySelector(".btn-valid");
   const btnRefus = document.querySelector(".btn-refus");
 
