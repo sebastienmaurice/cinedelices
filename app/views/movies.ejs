@@ -27,6 +27,7 @@
     <!-- MAIN -->
     <main>
       <!-- BANNIÈRE -->
+      <!-- BANNIÈRE -->
       <section class="banner">
         <div class="banner__title">
           <h2>Bienvenue dans nos films</h2>
@@ -62,29 +63,35 @@
             <h3>Nos films et séries cultes</h3>
             <p>Parce que le goût se partage</p>
           </div>
-
           <div class="presentation__button__film">
             <button class="btn btn--gold">Ajouter mon film</button>
           </div>
         </div>
 
         <div class="articles only__3__films">
-          <% movies.forEach(movie => { %>
+          <% if (!movies || movies.length === 0) { %>
+          <p>Aucun film trouvé pour ce genre.</p>
+          <% } else { %> <% movies.forEach(movie => { %>
           <article>
-            <img
-              src="/images/<%= movie.picture %>"
-              alt="Affiche du film <%= movie.title %>"
-            />
-            <div>
-              <h4><%= movie.title %></h4>
-              <p><%= movie.year %></p>
-              <p><%= movie.genre %></p>
+            <div class="film-card-image">
+              <img
+                src="/images/<%= movie.picture %>"
+                alt="Affiche du film <%= movie.title %>"
+              />
+            </div>
+            <div class="film-card-info">
+              <h4 class="film-title"><%= movie.title %></h4>
+              <div class="film-meta">
+                <span class="film-year"><%= movie.year %></span>
+                <span class="film-separator">•</span>
+                <span class="film-genre"><%= movie.genre %></span>
+              </div>
               <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
                 Voir les recettes
               </a>
             </div>
           </article>
-          <% }) %>
+          <% }) %> <% } %>
         </div>
 
         <div class="center-button">
