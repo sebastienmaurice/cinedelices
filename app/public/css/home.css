@@ -1,51 +1,198 @@
 /* ====================================================== */
-/* ====================== BASE ========================= */
+/* ==================== HOME.CSS ======================= */
 /* ====================================================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* 
+  Styles spécifiques à la page d'accueil uniquement.
+  Les styles communs (reset, typo, header, footer, boutons) 
+  sont définis dans base.css
+*/
+
+/* ====================================================== */
+/* ================== BANNER SLIDER ==================== */
+/* ====================================================== */
+.banner {
+  position: relative;
+  height: clamp(360px, 60vh, 700px);
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 60px;
+  border: 2px solid var(--bleu-intermediaire);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--bleu-nuit);
-  color: var(--argent-ecran);
-  line-height: 1.6;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: 100vh;
+.banner-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  animation: slide 18s infinite;
+  inset: 0;
+  overflow: hidden;
+  cursor: pointer;
+  --slide-delay: 0s;
 }
 
-h1 {
-  font-family: var(--font-h1);
+.banner-card:nth-child(1) {
+  animation-delay: 0s;
+  --slide-delay: 0s;
+}
+
+.banner-card:nth-child(2) {
+  animation-delay: 6s;
+  --slide-delay: 6s;
+}
+
+.banner-card:nth-child(3) {
+  animation-delay: 12s;
+  --slide-delay: 12s;
+}
+
+@keyframes slide {
+  0% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  5% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  33.33% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  38.33% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s ease;
+  z-index: 1;
+}
+
+.banner-card:hover .banner-img {
+  transform: scale(1.1);
+}
+
+.banner-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 27, 42, 0) 20%,
+    rgba(13, 27, 42, 0.45) 55%,
+    rgba(13, 27, 42, 0.75) 100%
+  );
+  z-index: 2;
+}
+
+.banner-card .card-content {
+  position: absolute;
+  right: 80px;
+  bottom: 60px;
+  left: 80px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-card .card-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  margin-top: 10px;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: cinema-reveal 6s ease-out infinite;
+  animation-delay: calc(var(--slide-delay) + 0.6s);
+  animation-fill-mode: both;
+  order: 1;
+}
+
+.banner-card .card-info div {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.banner-card .card-info ion-icon {
+  font-size: 20px;
   color: var(--dore-popcorn);
-  font-size: 2.5rem;
-}
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
-}
-h2 {
-  font-size: 2rem;
-  margin-bottom: -0.8rem;
-}
-h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-right: 5px;
 }
 
-a {
-  color: var(--argent-ecran);
-  text-decoration: none;
+.banner-card .card-info span {
+  font-weight: 600;
 }
-a:hover {
-  color: var(--rouge-projecteur);
+
+.banner-card .card-info .recipe-banner {
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-weight: 700;
+  margin-right: 0;
+}
+
+.banner-card .card-title {
+  order: 0;
+  font-size: 2.4em;
+  color: var(--dore-popcorn);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55), 0 0 6px rgba(13, 27, 42, 0.6);
+  opacity: 0;
+  transform: translateY(24px);
+  animation: cinema-reveal 6s cubic-bezier(0.19, 1, 0.22, 1) infinite;
+  animation-delay: calc(var(--slide-delay) + 0.25s);
+  animation-fill-mode: both;
+}
+
+@keyframes cinema-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    letter-spacing: 0.02em;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 0.04em;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .banner-card .card-title {
+    font-size: 2.5em;
+  }
+
+  .banner-card .card-content {
+    bottom: 40px;
+    left: 60px;
+    right: 60px;
+  }
+
+  .banner-card .card-info div {
+    margin-right: 15px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .banner {
+    display: none;
+  }
 }
 
 /* ====================================================== */
@@ -57,13 +204,13 @@ a:hover {
   background-size: cover;
   background-position: center;
   width: 100%;
-  max-width: 1440px;
+  max-width: var(--max-width);
   height: 640px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 12px;
   margin: 0 auto 4rem auto;
   border: 2px solid var(--bleu-intermediaire);
   box-sizing: border-box;
@@ -82,18 +229,14 @@ a:hover {
   animation: none;
 }
 
-/* ====================== TITRE ====================== */
 .welcome h1 {
-  font-family: var(--font-h1);
   font-size: 2.8rem;
   color: var(--argent-ecran);
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
   margin-bottom: 0.3rem;
   line-height: 1.1;
-
-  transform: scale(0.3) translateY(-20px) rotateX(15deg); /* moins haut */
+  transform: scale(0.3) translateY(-20px) rotateX(15deg);
   opacity: 0;
-
   animation: zoomInCine 1.5s ease-out 0.3s forwards;
 }
 
@@ -101,26 +244,22 @@ a:hover {
   color: var(--rouge-projecteur);
   font-weight: 700;
 }
+
 .welcome h1 .delices {
   color: var(--dore-popcorn);
   font-weight: 700;
 }
 
-/* ====================== PARAGRAPHE ====================== */
 .welcome p {
-  font-family: var(--font-body);
   font-size: 1rem;
   color: var(--rouge-projecteur);
   margin-top: 0.5rem;
   margin-bottom: 1.4rem;
-
-  transform: scale(0.3) translateY(10px) rotateX(15deg); /* moins bas */
+  transform: scale(0.3) translateY(10px) rotateX(15deg);
   opacity: 0;
-
   animation: zoomInCine 1.5s ease-out 1.2s forwards;
 }
 
-/* ====================== ANIMATION ====================== */
 @keyframes zoomInCine {
   from {
     transform: scale(0.3) translateY(10px) rotateX(15deg);
@@ -148,6 +287,7 @@ a:hover {
   margin-bottom: 1.5rem;
   line-height: 1.4;
 }
+
 /* ====================================================== */
 /* ====================== RECETTE DU JOUR ============== */
 /* ====================================================== */
@@ -157,16 +297,16 @@ a:hover {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto 4rem auto;
-  justify-content: space-between; /* cartes alignées parfaitement */
+  justify-content: space-between;
   flex-wrap: wrap;
 }
 
 /* Carte gauche (recette) */
 .recipe-card--left {
-  flex: 1 1 600px; /* largeur flexible avec min 600px */
+  flex: 1 1 600px;
   min-height: 400px;
   background-color: var(--bleu-nuit);
-  border-radius: 6px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -183,7 +323,7 @@ a:hover {
 .recipe-image-placeholder {
   width: 100%;
   height: 260px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -203,9 +343,7 @@ a:hover {
 }
 
 .recipe-info h3 {
-  color: var(--dore-popcorn);
   margin-bottom: 0.6rem;
-  font-size: 1.5rem;
 }
 
 .recipe-film {
@@ -224,30 +362,30 @@ a:hover {
 
 /* Carte droite (film) */
 .recipe-card--right {
-  flex: 1 1 680px; /* largeur flexible avec min 680px */
+  flex: 1 1 680px;
   min-height: 400px;
   background-color: var(--bleu-nuit);
-  border-radius: 6px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* étirer pour aligner le contenu de cette image de merde */
+  align-items: stretch;
   justify-content: flex-start;
   padding: 0;
   margin: 0;
 }
 
-/* Image film */
 .film-image-placeholder {
   width: 100%;
   height: 400px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--bleu-intermediaire);
   position: relative;
+  margin-bottom: 0;
 }
 
 .film-image-placeholder img {
@@ -276,61 +414,141 @@ a:hover {
   transform: scale(0.98);
 }
 
-/* Quote film */
+/* Quote film - Style cinématographique */
 .film-quote {
-  font-family: "Lato", sans-serif;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2.5rem 2.8rem 2.8rem;
   font-style: italic;
+  color: var(--argent-ecran);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  background: linear-gradient(
+    0deg,
+    rgba(13, 27, 42, 0.95) 0%,
+    rgba(13, 27, 42, 0.85) 30%,
+    rgba(13, 27, 42, 0.6) 70%,
+    rgba(13, 27, 42, 0) 100%
+  );
+  border-top: 3px solid var(--dore-popcorn);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  box-shadow: 
+    0 -8px 32px rgba(13, 27, 42, 0.8),
+    0 -4px 16px rgba(198, 166, 100, 0.3),
+    inset 0 1px 0 rgba(198, 166, 100, 0.2);
+}
+
+/* Effet de projecteur - lumière dorée en haut */
+.film-quote::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--dore-popcorn) 20%,
+    var(--gold-popcorn) 50%,
+    var(--dore-popcorn) 80%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 0 20px var(--dore-popcorn),
+    0 0 40px rgba(198, 166, 100, 0.5),
+    0 0 60px rgba(198, 166, 100, 0.3);
+  animation: projector-glow 3s ease-in-out infinite;
+}
+
+/* Guillemets cinématographiques */
+.film-quote::after {
+  content: """;
+  position: absolute;
+  top: -18px;
+  left: 32px;
+  font-size: 5.5rem;
+  font-family: var(--font-h2-h6);
   color: var(--dore-popcorn);
-  text-align: left;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  line-height: 1.6;
-  opacity: 0.8;
+  text-shadow: 
+    0 0 20px var(--dore-popcorn),
+    0 0 40px rgba(198, 166, 100, 0.6),
+    0 0 60px rgba(198, 166, 100, 0.4);
+  opacity: 0.9;
+  line-height: 1;
+  z-index: 1;
 }
 
-.film-quote span {
-  display: block;
-  margin-top: 0.3rem;
-  font-size: 0.85rem;
-  color: #5975ac;
+/* Animation du projecteur */
+@keyframes projector-glow {
+  0%, 100% {
+    opacity: 0.8;
+    box-shadow: 
+      0 0 20px var(--dore-popcorn),
+      0 0 40px rgba(198, 166, 100, 0.5),
+      0 0 60px rgba(198, 166, 100, 0.3);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 
+      0 0 30px var(--gold-popcorn),
+      0 0 60px rgba(247, 201, 72, 0.7),
+      0 0 90px rgba(198, 166, 100, 0.5);
+  }
+}
+
+.recipe-card--right:hover .film-quote,
+.recipe-card--right:focus-within .film-quote {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.film-quote footer {
+  margin-top: 1.6rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--dore-popcorn);
   text-align: right;
-  opacity: 0.8;
+  text-shadow: 
+    0 0 10px var(--dore-popcorn),
+    0 0 20px rgba(198, 166, 100, 0.5),
+    0 2px 4px rgba(13, 27, 42, 0.8);
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  position: relative;
 }
 
-/* ====================== RESPONSIVE =================== */
-@media (max-width: 1100px) {
-  .recipeofthe__day-container {
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-  }
-
-  .recipe-card--left,
-  .recipe-card--right {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .film-image-placeholder,
-  .recipe-image-placeholder {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16/9;
-  }
+/* Ligne de séparation cinématographique */
+.film-quote footer::before {
+  content: "";
+  position: absolute;
+  top: -0.8rem;
+  right: 0;
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--dore-popcorn) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--dore-popcorn);
 }
 
-@media (max-width: 800px) {
-  .recipe-card--left,
-  .recipe-card--right {
-    width: 100%;
-  }
-
-  .film-image-placeholder,
-  .recipe-image-placeholder {
-    width: 100%;
-    height: 200px;
-  }
+.film-quote p {
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(13, 27, 42, 0.6);
+  position: relative;
+  z-index: 2;
 }
 
 /* ====================================================== */
@@ -338,10 +556,6 @@ a:hover {
 /* ====================================================== */
 .top-recettes__grid {
   display: flex;
-  gap: 40px;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto 3rem auto;
   gap: 60px;
   width: 100%;
   max-width: var(--max-width);
@@ -357,7 +571,7 @@ a:hover {
   min-height: 380px;
   flex: 1 1 420px;
   background-color: var(--bleu-nuit);
-  border-radius: 6px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -372,12 +586,10 @@ a:hover {
 }
 
 .recette-image {
-  width: calc(100% - 60px);
-  height: 200px;
   width: 100%;
   height: 220px;
   background-color: var(--bleu-intermediaire);
-  border-radius: 6px 6px 0 0;
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -390,20 +602,11 @@ a:hover {
   object-fit: cover;
 }
 
-/* responsive image  */
-@media (max-width: 800px) {
-  .recette-image {
-    height: auto;
-    aspect-ratio: 16/9;
-  }
-}
-
 .recette-content {
   padding: 1rem 1.5rem;
 }
 
 .recette-content h3 {
-  color: var(--dore-popcorn);
   margin-bottom: 0.5rem;
   font-size: 1.3rem;
 }
@@ -427,162 +630,6 @@ a:hover {
   margin-top: 2rem;
 }
 
-.footer {
-  display: flex;
-  flex-direction: column;
-  padding: 3rem 2rem;
-  border-top: 2px solid var(--bleu-intermediaire);
-  background: var(--bleu-nuit);
-  color: var(--dore-popcorn);
-  gap: 2rem;
-  font-size: 0.9rem;
-  width: 100%;
-  max-width: 1360px;
-  margin-left: auto;
-  margin-right: auto;
-  font-family: var(--font-body);
-}
-
-/* ====================================================== */
-/* ====================== FOOTER ======================= */
-/* ====================================================== */
-.footer {
-  display: flex;
-  flex-direction: column;
-  padding: 3rem 2rem;
-  border-top: 2px solid var(--bleu-intermediaire);
-  background: var(--bleu-nuit);
-  color: var(--dore-popcorn);
-  gap: 2rem;
-  font-size: 0.9rem;
-  font-family: var(--font-body);
-  margin-top: 4rem;
-}
-
-/* -------------------- Bloc principal -------------------- */
-.footer-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-/* Logo texte inline */
-.footer-logo-text {
-  font-family: var(--font-h1);
-  font-size: 2rem;
-  margin: 0;
-  display: flex;
-  gap: 0.3rem;
-}
-
-.footer-logo-text .cine {
-  color: var(--rouge-projecteur);
-}
-
-.footer-logo-text .delices {
-  color: var(--dore-popcorn);
-}
-
-/* Slogan */
-.footer-slogan {
-  font-size: 0.85rem;
-  color: var(--dore-popcorn);
-  font-weight: bold;
-  margin-top: 0.3rem;
-}
-
-/* Menu et réseaux sociaux */
-.footer-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-/* Menu liens */
-.footer-menu {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem 1.5rem;
-}
-
-.footer-menu a {
-  color: var(--argent-ecran);
-  text-decoration: none;
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.footer-menu a:hover {
-  color: var(--rouge-projecteur);
-  text-shadow: 0 0 5px var(--rouge-projecteur);
-}
-
-/* Réseaux sociaux */
-.footer-socials {
-  display: flex;
-  gap: 1.5rem;
-  font-weight: bold;
-}
-
-.footer-socials a {
-  color: var(--dore-popcorn);
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.footer-socials a:hover {
-  color: var(--rouge-projecteur);
-  text-shadow: 0 0 5px var(--rouge-projecteur);
-}
-
-/* -------------------- Copyright -------------------- */
-.footer-bottom {
-  text-align: center;
-  color: var(--argent-ecran);
-  font-size: 0.8rem;
-}
-
-/* ====================================================== */
-/* ====================== RESPONSIVE =================== */
-/* ====================================================== */
-
-/* Tablettes / écrans moyens */
-@media (max-width: 800px) {
-  .footer-main {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
-  .footer-left,
-  .footer-right {
-    align-items: center;
-  }
-
-  .footer-menu {
-    justify-content: center;
-    gap: 0.8rem 1rem;
-  }
-
-  .footer-socials {
-    justify-content: center;
-    gap: 1rem;
-  }
-}
-
-/* Très petits écrans */
-@media (max-width: 500px) {
-  .footer-logo-text {
-    font-size: 1.5rem;
-  }
-
-  .footer-slogan {
-    font-size: 0.8rem;
-  }
-}
-
 /* ====================================================== */
 /* ====================== ANIMATIONS =================== */
 /* ====================================================== */
@@ -601,30 +648,7 @@ a:hover {
 /* ====================================================== */
 /* ====================== RESPONSIVE =================== */
 /* ====================================================== */
-
-/* Large écrans : max 1440px */
-@media (max-width: 1440px) {
-  body {
-    padding: 2rem 1.5rem;
-    .header,
-    .welcome,
-    .recipeofthe__day,
-    .recipeofthe__day-container,
-    .section-header,
-    .top-recettes,
-    .top-recettes__grid,
-    .footer {
-      width: 95%;
-      margin-left: auto;
-      margin-right: auto;
-      transition: width 0.3s ease;
-    }
-  }
-}
-
-/* Tablettes / écrans moyens : 1100px et moins */
 @media (max-width: 1100px) {
-  /* Sections flexibles */
   .recipeofthe__day-container,
   .top-recettes__grid {
     flex-direction: column;
@@ -635,45 +659,38 @@ a:hover {
   .recipe-card--left,
   .recipe-card--right,
   .recette-card {
+    width: 100%;
     max-width: 100%;
   }
-  /* Cartes */
-  .recipe-card--left,
-  .recipe-card--right,
-  .recette-card {
-    width: 100%;
-    max-width: 600px;
-    transition: max-width 0.3s ease;
-  }
 
-  /* Images fluides */
   .film-image-placeholder,
   .recipe-image-placeholder,
   .recette-image {
     width: 100%;
     height: auto;
     aspect-ratio: 16/9;
-    object-fit: cover;
   }
 }
 
-/* Petits écrans / mobile : 800px et moins */
 @media (max-width: 800px) {
-  body {
-    padding: 1rem 0.5rem;
+  .recipe-card--left,
+  .recipe-card--right {
+    width: 100%;
+    min-height: auto;
   }
 
-  .header {
-    flex-direction: column;
-    padding-bottom: 2rem;
+  .film-image-placeholder,
+  .recipe-image-placeholder {
+    height: 200px;
   }
 
-  .navigationheader {
-    display: none;
+  .recette-image {
+    height: auto;
+    aspect-ratio: 16/9;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .recipe-info {
+    padding: 1.5rem;
   }
 
   .welcome {
@@ -694,151 +711,15 @@ a:hover {
     gap: 1.5rem;
   }
 
-  .recipe-card--left,
-  .recipe-card--right {
-    min-height: auto;
-  }
-
-  .recipe-image-placeholder,
-  .film-image-placeholder {
-    height: 200px;
-  }
-
-  .recipe-info {
-    padding: 1.5rem;
-  }
-
-  .recette-image {
-    height: 180px;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.2rem;
-  }
-
-  .footer {
-    flex-direction: column;
-    text-align: center;
-    padding: 1rem;
-    transition: padding 0.3s ease;
-  }
-
-  /* Header / Footer / Section header centrés */
-  .header,
-  .footer,
-  .section-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* Navigation cachée pour mobile */
-  .navigationheader {
-    display: none;
-  }
-
-  /* Section welcome */
-  .welcome {
-    height: auto;
-    min-height: 200px;
-    padding: 1rem;
-  }
-
-  /* Cartes */
-  .recipe-card--left,
-  .recipe-card--right,
-  .recette-card {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Images */
-  .film-image-placeholder,
-  .recipe-image-placeholder,
-  .recette-image {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16/9;
-  }
-
-  /* Gaps réduits pour petits écrans */
-  .recipeofthe__day-container,
-  .top-recettes__grid {
-    gap: 1.5rem;
-  }
-
-  /* Footer : logo et menu flexibles pour mobile */
-  .footer-main {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
-  .footer-left {
-    align-items: center;
-  }
-
-  .footer-right {
-    align-items: center;
-  }
-
-  .footer-menu {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.8rem 1rem;
-  }
-
-  .footer-socials {
-    justify-content: center;
-    gap: 1rem;
+  .film-quote {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Très petits écrans : 500px et moins */
 @media (max-width: 500px) {
-  /* Hero */
-  .hero-content h1 {
-    font-size: 1.8rem;
-  }
-
-  .hero-content p {
-    font-size: 1rem;
-  }
-
-  /* Footer logo réduit */
-  .footer-logo,
-  .footer-logo-text {
-    font-size: 1.5rem;
-  }
-
-  .footer-slogan {
-    font-size: 0.8rem;
-  }
-
-  /* Gaps réduits encore plus */
-  .recipeofthe__day-container,
-  .top-recettes__grid {
-    gap: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    padding: 0.5rem 0.25rem;
-  }
-
-  .title {
-    font-size: 1.3rem;
-  }
-
   .welcome {
     min-height: 250px;
-    border-radius: 4px;
   }
 
   .welcome h1 {
@@ -861,13 +742,8 @@ a:hover {
     padding: 1rem;
   }
 
-  button,
-  .registration,
-  .login,
-  .cta-button,
-  .cta-button-secondary,
-  .recipe-button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
+  .recipeofthe__day-container,
+  .top-recettes__grid {
+    gap: 1rem;
   }
 }

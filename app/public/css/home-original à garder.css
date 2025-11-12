@@ -1,0 +1,873 @@
+/* ====================================================== */
+/* ====================== BASE ========================= */
+/* ====================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  line-height: 1.6;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+
+h1 {
+  font-family: var(--font-h1);
+  color: var(--dore-popcorn);
+  font-size: 2.5rem;
+}
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-h2-h6);
+  color: var(--dore-popcorn);
+}
+h2 {
+  font-size: 2rem;
+  margin-bottom: -0.8rem;
+}
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+a {
+  color: var(--argent-ecran);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--rouge-projecteur);
+}
+
+/* ====================================================== */
+/* ====================== BIENVENUE ==================== */
+/* ====================================================== */
+.welcome {
+  background: linear-gradient(rgba(13, 27, 42, 0.25), rgba(13, 27, 42, 0.25)),
+    url("../images/bg-8.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  max-width: 1440px;
+  height: 640px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: center;
+  border-radius: 12px;
+  margin: 0 auto 4rem auto;
+  border: 2px solid var(--bleu-intermediaire);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  padding-top: 6rem;
+  perspective: 1000px;
+}
+
+.welcome-content {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  opacity: 1;
+  animation: none;
+}
+
+/* ====================== TITRE ====================== */
+.welcome h1 {
+  font-family: var(--font-h1);
+  font-size: 2.8rem;
+  color: var(--argent-ecran);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  margin-bottom: 0.3rem;
+  line-height: 1.1;
+
+  transform: scale(0.3) translateY(-20px) rotateX(15deg); /* moins haut */
+  opacity: 0;
+
+  animation: zoomInCine 1.5s ease-out 0.3s forwards;
+}
+
+.welcome h1 .cine {
+  color: var(--rouge-projecteur);
+  font-weight: 700;
+}
+.welcome h1 .delices {
+  color: var(--dore-popcorn);
+  font-weight: 700;
+}
+
+/* ====================== PARAGRAPHE ====================== */
+.welcome p {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--rouge-projecteur);
+  margin-top: 0.5rem;
+  margin-bottom: 1.4rem;
+
+  transform: scale(0.3) translateY(10px) rotateX(15deg); /* moins bas */
+  opacity: 0;
+
+  animation: zoomInCine 1.5s ease-out 1.2s forwards;
+}
+
+/* ====================== ANIMATION ====================== */
+@keyframes zoomInCine {
+  from {
+    transform: scale(0.3) translateY(10px) rotateX(15deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+/* ====================================================== */
+/* ====================== SECTION HEADER ============== */
+/* ====================================================== */
+.section-header {
+  margin-bottom: 2rem;
+  width: 100%;
+  margin: 0 auto 2rem auto;
+}
+
+.section-subtitle {
+  color: var(--argent-ecran);
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+/* ====================================================== */
+/* ====================== RECETTE DU JOUR ============== */
+/* ====================================================== */
+.recipeofthe__day-container {
+  display: flex;
+  gap: 60px;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 4rem auto;
+  justify-content: space-between; /* cartes alignées parfaitement */
+  flex-wrap: wrap;
+}
+
+/* Carte gauche (recette) */
+.recipe-card--left {
+  flex: 1 1 600px; /* largeur flexible avec min 600px */
+  min-height: 400px;
+  background-color: var(--bleu-nuit);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition);
+}
+
+.recipe-card--left:hover {
+  border: 2px solid var(--dore-popcorn);
+  box-shadow: 0 0 8px var(--dore-popcorn);
+  transform: translateY(-3px) scale(1.01);
+  animation: cinema-glow 0.2s linear;
+}
+
+.recipe-image-placeholder {
+  width: 100%;
+  height: 260px;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bleu-intermediaire);
+}
+
+.recipe-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.recipe-info {
+  padding: 1.5rem 2rem;
+}
+
+.recipe-info h3 {
+  color: var(--dore-popcorn);
+  margin-bottom: 0.6rem;
+  font-size: 1.5rem;
+}
+
+.recipe-film {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.recipe-description {
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Carte droite (film) */
+.recipe-card--right {
+  flex: 1 1 680px; /* largeur flexible avec min 680px */
+  min-height: 400px;
+  background-color: var(--bleu-nuit);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* étirer pour aligner le contenu de cette image de merde */
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+}
+
+/* Image film */
+.film-image-placeholder {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bleu-intermediaire);
+  position: relative;
+}
+
+.film-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.film-image-placeholder img.img-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform: scale(1.02);
+}
+
+.film-image-placeholder:hover img.img-hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.film-image-placeholder:hover img.img-default {
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+/* Quote film */
+.film-quote {
+  font-family: "Lato", sans-serif;
+  font-style: italic;
+  color: var(--dore-popcorn);
+  text-align: left;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.film-quote span {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #5975ac;
+  text-align: right;
+  opacity: 0.8;
+}
+
+/* ====================== RESPONSIVE =================== */
+@media (max-width: 1100px) {
+  .recipeofthe__day-container {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .recipe-card--left,
+  .recipe-card--right {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .film-image-placeholder,
+  .recipe-image-placeholder {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}
+
+@media (max-width: 800px) {
+  .recipe-card--left,
+  .recipe-card--right {
+    width: 100%;
+  }
+
+  .film-image-placeholder,
+  .recipe-image-placeholder {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+/* ====================================================== */
+/* ====================== TOP 3 RECETTES =============== */
+/* ====================================================== */
+.top-recettes__grid {
+  display: flex;
+  gap: 40px;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto 3rem auto;
+  gap: 60px;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 4rem auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recette-card {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  min-height: 380px;
+  flex: 1 1 420px;
+  background-color: var(--bleu-nuit);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition);
+  min-width: 300px;
+}
+
+.recette-card:hover {
+  border: 2px solid var(--dore-popcorn);
+  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.recette-image {
+  width: calc(100% - 60px);
+  height: 200px;
+  width: 100%;
+  height: 220px;
+  background-color: var(--bleu-intermediaire);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recette-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* responsive image  */
+@media (max-width: 800px) {
+  .recette-image {
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}
+
+.recette-content {
+  padding: 1rem 1.5rem;
+}
+
+.recette-content h3 {
+  color: var(--dore-popcorn);
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.recette-film {
+  color: #ccc;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.recette-description {
+  color: var(--argent-ecran);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.center-button {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 2rem;
+  border-top: 2px solid var(--bleu-intermediaire);
+  background: var(--bleu-nuit);
+  color: var(--dore-popcorn);
+  gap: 2rem;
+  font-size: 0.9rem;
+  width: 100%;
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: var(--font-body);
+}
+
+/* ====================================================== */
+/* ====================== FOOTER ======================= */
+/* ====================================================== */
+.footer {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 2rem;
+  border-top: 2px solid var(--bleu-intermediaire);
+  background: var(--bleu-nuit);
+  color: var(--dore-popcorn);
+  gap: 2rem;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  margin-top: 4rem;
+}
+
+/* -------------------- Bloc principal -------------------- */
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* Logo texte inline */
+.footer-logo-text {
+  font-family: var(--font-h1);
+  font-size: 2rem;
+  margin: 0;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.footer-logo-text .cine {
+  color: var(--rouge-projecteur);
+}
+
+.footer-logo-text .delices {
+  color: var(--dore-popcorn);
+}
+
+/* Slogan */
+.footer-slogan {
+  font-size: 0.85rem;
+  color: var(--dore-popcorn);
+  font-weight: bold;
+  margin-top: 0.3rem;
+}
+
+/* Menu et réseaux sociaux */
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Menu liens */
+.footer-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.footer-menu a {
+  color: var(--argent-ecran);
+  text-decoration: none;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.footer-menu a:hover {
+  color: var(--rouge-projecteur);
+  text-shadow: 0 0 5px var(--rouge-projecteur);
+}
+
+/* Réseaux sociaux */
+.footer-socials {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: bold;
+}
+
+.footer-socials a {
+  color: var(--dore-popcorn);
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.footer-socials a:hover {
+  color: var(--rouge-projecteur);
+  text-shadow: 0 0 5px var(--rouge-projecteur);
+}
+
+/* -------------------- Copyright -------------------- */
+.footer-bottom {
+  text-align: center;
+  color: var(--argent-ecran);
+  font-size: 0.8rem;
+}
+
+/* ====================================================== */
+/* ====================== RESPONSIVE =================== */
+/* ====================================================== */
+
+/* Tablettes / écrans moyens */
+@media (max-width: 800px) {
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .footer-left,
+  .footer-right {
+    align-items: center;
+  }
+
+  .footer-menu {
+    justify-content: center;
+    gap: 0.8rem 1rem;
+  }
+
+  .footer-socials {
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 500px) {
+  .footer-logo-text {
+    font-size: 1.5rem;
+  }
+
+  .footer-slogan {
+    font-size: 0.8rem;
+  }
+}
+
+/* ====================================================== */
+/* ====================== ANIMATIONS =================== */
+/* ====================================================== */
+@keyframes cinema-glow {
+  0% {
+    box-shadow: 0 0 0px var(--dore-popcorn);
+  }
+  50% {
+    box-shadow: 0 0 6px var(--dore-popcorn);
+  }
+  100% {
+    box-shadow: 0 0 8px var(--dore-popcorn);
+  }
+}
+
+/* ====================================================== */
+/* ====================== RESPONSIVE =================== */
+/* ====================================================== */
+
+/* Large écrans : max 1440px */
+@media (max-width: 1440px) {
+  body {
+    padding: 2rem 1.5rem;
+    .header,
+    .welcome,
+    .recipeofthe__day,
+    .recipeofthe__day-container,
+    .section-header,
+    .top-recettes,
+    .top-recettes__grid,
+    .footer {
+      width: 95%;
+      margin-left: auto;
+      margin-right: auto;
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+/* Tablettes / écrans moyens : 1100px et moins */
+@media (max-width: 1100px) {
+  /* Sections flexibles */
+  .recipeofthe__day-container,
+  .top-recettes__grid {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .recipe-card--left,
+  .recipe-card--right,
+  .recette-card {
+    max-width: 100%;
+  }
+  /* Cartes */
+  .recipe-card--left,
+  .recipe-card--right,
+  .recette-card {
+    width: 100%;
+    max-width: 600px;
+    transition: max-width 0.3s ease;
+  }
+
+  /* Images fluides */
+  .film-image-placeholder,
+  .recipe-image-placeholder,
+  .recette-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+}
+
+/* Petits écrans / mobile : 800px et moins */
+@media (max-width: 800px) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    padding-bottom: 2rem;
+  }
+
+  .navigationheader {
+    display: none;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .welcome {
+    height: auto;
+    min-height: 300px;
+    padding: 2rem 1rem;
+  }
+
+  .welcome h1 {
+    font-size: 1.8rem;
+  }
+
+  .welcome p {
+    font-size: 0.9rem;
+  }
+
+  .recipeofthe__day-container {
+    gap: 1.5rem;
+  }
+
+  .recipe-card--left,
+  .recipe-card--right {
+    min-height: auto;
+  }
+
+  .recipe-image-placeholder,
+  .film-image-placeholder {
+    height: 200px;
+  }
+
+  .recipe-info {
+    padding: 1.5rem;
+  }
+
+  .recette-image {
+    height: 180px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  .footer {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+    transition: padding 0.3s ease;
+  }
+
+  /* Header / Footer / Section header centrés */
+  .header,
+  .footer,
+  .section-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Navigation cachée pour mobile */
+  .navigationheader {
+    display: none;
+  }
+
+  /* Section welcome */
+  .welcome {
+    height: auto;
+    min-height: 200px;
+    padding: 1rem;
+  }
+
+  /* Cartes */
+  .recipe-card--left,
+  .recipe-card--right,
+  .recette-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Images */
+  .film-image-placeholder,
+  .recipe-image-placeholder,
+  .recette-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+
+  /* Gaps réduits pour petits écrans */
+  .recipeofthe__day-container,
+  .top-recettes__grid {
+    gap: 1.5rem;
+  }
+
+  /* Footer : logo et menu flexibles pour mobile */
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .footer-left {
+    align-items: center;
+  }
+
+  .footer-right {
+    align-items: center;
+  }
+
+  .footer-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem 1rem;
+  }
+
+  .footer-socials {
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+/* Très petits écrans : 500px et moins */
+@media (max-width: 500px) {
+  /* Hero */
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  /* Footer logo réduit */
+  .footer-logo,
+  .footer-logo-text {
+    font-size: 1.5rem;
+  }
+
+  .footer-slogan {
+    font-size: 0.8rem;
+  }
+
+  /* Gaps réduits encore plus */
+  .recipeofthe__day-container,
+  .top-recettes__grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+
+  .welcome {
+    min-height: 250px;
+    border-radius: 12px;
+  }
+
+  .welcome h1 {
+    font-size: 1.5rem;
+  }
+
+  .welcome p {
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .recipe-image-placeholder,
+  .film-image-placeholder,
+  .recette-image {
+    height: 160px;
+  }
+
+  .recipe-info,
+  .recette-content {
+    padding: 1rem;
+  }
+
+  button,
+  .registration,
+  .login,
+  .cta-button,
+  .cta-button-secondary,
+  .recipe-button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
