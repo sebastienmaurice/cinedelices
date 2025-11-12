@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!modal || !overlay || !closeBtn || !btnLogin || !btnRegister) return;
 
   // Ouvrir modal sur le formulaire désiré
-  function openModal(showLogin = true) {
+   function openModal(showLogin = true) {
     modal.classList.add("active");
     document.body.style.overflow = "hidden"; // bloque scroll page
     if (showLogin) {
@@ -63,3 +63,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") closeModal();
   });
 });
+

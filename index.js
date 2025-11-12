@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { xss } from 'express-xss-sanitizer';
+import cookieParser from 'cookie-parser';
 import router from "./app/routes/index.route.js";
 
 
@@ -11,6 +12,8 @@ app.set("views", "./app/views");
 
 const PORT = process.env.PORT || 3000;
 
+// Configuration de cookie-parser AVANT les middlewares/routes
+app.use(cookieParser());
 // Servir CSS, JS, images...
 app.use(express.static("./app/public"));
 

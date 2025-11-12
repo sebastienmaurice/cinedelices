@@ -12,7 +12,7 @@ async login(req, res) {
 
     try {
         const user = await User.findOne({ where: { pseudo: pseudo } });
-
+        
         if (!user) {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Pseudo ou mot de passe invalide' });
         }
@@ -42,13 +42,14 @@ async login(req, res) {
             secure: false,   // Mettre true pour etre en HTTPS
             maxAge: 1000 * 60 * 60 * 2 // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
   });
-
+  
         res.status(StatusCodes.OK).render("user-profile", { user });
+        
     } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(StatusCodes.CONFLICT).json({ error: 'le pseudo existe déjà' });
         }
-
+        
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
 },
