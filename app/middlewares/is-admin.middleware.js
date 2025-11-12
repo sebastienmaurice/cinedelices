@@ -5,7 +5,6 @@ export function isAdmin(req, res, next) {
   // 🔹 Si on est en dev et que req.userRole n'est pas défini, on peut forcer l'admin
   if (!userRole && process.env.NODE_ENV === "development") {
     console.warn("⚠️ Aucun rôle trouvé, on simule un admin en dev");
-    req.userRole = "admin";
     return next();
   }
 

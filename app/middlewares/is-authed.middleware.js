@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 
-
+// Middleware pour vérifier le token JWT
 
 function verifyToken(req, res, next) {
   const token = req.cookies.token;
   if (!token) {
-    return res.redirect("/?openModal=true");
+    return res.status(401).json({ error: "Veuillez vous connecter" });
   }
 
   try {
@@ -20,24 +20,43 @@ function verifyToken(req, res, next) {
     req.userPseudo = decoded.pseudo;
     req.userRole = decoded.role;
 
-    // Si la route contient :id ou si il n'y a pas d'id dans les params, on utilise l'id du token pour s'identifier au profil de l'id connecté
-    if (req.params.id === ':id' || req.params.id === undefined) {
-      req.params.id = req.userId;
-    }
-
     next();
   } catch (error) {
     console.error('Token invalide:', error.message);
     res.clearCookie('token');
     if (error.name === 'TokenExpiredError') {
-      return res.redirect("/?openModal=true&error=session_expired");
+      return res.status(401).json({ error: "Session expirée. Veuillez vous reconnecter" });
     } else {
-      return res.redirect("/?openModal=true&error=invalid_token");
+       return res.status(401).json({ error: "Session invalide. Veuillez vous reconnecter" });
     }
   }
+
 }
 
-export {verifyToken};
+// Middleware pour injecter l'id de l'utilisateur connecté dans les params si nécessaire
+
+function injectId(req, res, next) {
+  
+
+  try {
+    // Si la route contient :id ou si il n'y a pas d'id dans les params, on utilise l'id du token pour s'identifier au profil de l'id connecté
+    if (req.params.id === ':id' || req.params.id === undefined) {
+      req.params.id = req.userId;
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Token invalide:', error.message);
+    res.clearCookie('token');
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: "Session expirée. Veuillez vous reconnecter" });
+    } else {
+       return res.status(401).json({ error: "Session invalide. Veuillez vous reconnecter" });
+    }
+  }
+  
+}
+export {verifyToken, injectId};
 
 
 

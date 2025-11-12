@@ -42,8 +42,8 @@ async login(req, res) {
             secure: false,   // Mettre true pour etre en HTTPS
             maxAge: 1000 * 60 * 60 * 2 // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
   });
-  
-        res.status(StatusCodes.OK).render("user-profile", { user });
+        
+        res.status(StatusCodes.OK).render("home");
         
     } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
@@ -112,8 +112,9 @@ async profil(req, res) {
   },
 
   //deconnexion
-  logout(req, res) {
-    res.send("deconnecté: redirect to home");
+  async logout(req, res) {
+    res.clearCookie("token");
+    res.redirect("/");
   },
 };
 
