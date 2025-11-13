@@ -91,26 +91,15 @@
 }
 
 .film-form-container {
-  --hue: 0; /* rouge pour overlay */
-  --saturation: 70%;
-  --lightness: 50%;
-  --hsl: var(--hue), var(--saturation), var(--lightness);
   position: relative;
-  background-color: #142436;
+  background-color: var(--dore-popcorn);
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
   margin: 0 2rem 1.5rem 2rem;
   color: #eceff1;
-  transition: 400ms background ease, 400ms border-color ease;
-  will-change: background, border-color;
   overflow: hidden;
   isolation: isolate;
-}
-
-.film-form-container:hover {
-  --lightness: 95%;
-  background: hsla(var(--hsl), 0.1);
 }
 
 /* Overlay pour effet glassmorphism sur .film-form-container */
@@ -134,33 +123,6 @@
   will-change: mask;
   z-index: 1;
   border-radius: 15px;
-}
-
-.film-form-container .overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle 25rem at var(--x) var(--y),
-    var(--rouge-projecteur) 0%,
-    transparent 50%
-  );
-  opacity: 0.15;
-  pointer-events: none;
-  border-radius: 15px;
-  z-index: 1;
-}
-
-.film-form-container .overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 15px;
-  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
-    0 0 20px var(--rouge-projecteur);
-  opacity: var(--opacity, 0);
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* S'assurer que les éléments intérieurs ne sont pas affectés par l'overlay */
@@ -220,7 +182,7 @@
   margin-bottom: 2rem;
 }
 
-/* Overlay pour effet glassmorphism (inspiré du CodePen) */
+/* Overlay pour effet glassmorphism */
 .recipe-column .overlay {
   position: absolute;
   inset: 0;
@@ -243,33 +205,6 @@
   border-radius: 15px;
 }
 
-.recipe-column .overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle 25rem at var(--x) var(--y),
-    var(--rouge-projecteur) 0%,
-    transparent 50%
-  );
-  opacity: 0.15;
-  pointer-events: none;
-  border-radius: 15px;
-  z-index: 1;
-}
-
-.recipe-column .overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 15px;
-  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
-    0 0 20px var(--rouge-projecteur);
-  opacity: var(--opacity, 0);
-  pointer-events: none;
-  z-index: 1;
-}
-
 .recipe-column {
   display: flex;
   flex-direction: column;
@@ -277,7 +212,7 @@
   position: relative;
 }
 
-/* S'assurer que les éléments intérieurs ne sont pas affectés par l'overlay */
+/* Pour que les éléments intérieurs ne soient pas affectés par l'overlay */
 .recipe-column > *:not(.overlay) {
   position: relative;
   z-index: 2;
@@ -290,11 +225,10 @@
 }
 
 /* Les textareas ne sont pas affectés par l'overlay glowy */
-.recipe-textarea,
-.recipe-context-textarea {
+.recipe-textarea {
   position: relative;
   z-index: 10;
-  background-color: var(--argent-ecran) !important;
+  background-color: var(--beige-icecream) !important;
   border: 1px solid rgba(236, 239, 241, 0.2) !important;
   isolation: isolate;
   /* Masquer l'overlay en créant un contexte de stacking */
@@ -302,10 +236,23 @@
   will-change: transform;
 }
 
-.recipe-column h3 {
+.recipe-context-textarea {
+  position: relative;
+  z-index: 10;
+  background-color: var(--beige-icecream) !important;
+  border: 1px solid rgba(236, 239, 241, 0.2) !important;
+  isolation: isolate;
+  /* Masquer l'overlay en créant un contexte de stacking */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.recipe-column-left h3,
+.recipe-column-center h3,
+.recipe-column-right h3 {
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   margin: 0 0 0.5rem 0;
   font-family: var(--font-h2-h6);
 }
@@ -313,32 +260,21 @@
 .recipe-context-title {
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   margin: 0 0 0.75rem 0;
   font-family: var(--font-h2-h6);
 }
 
 /* Colonne gauche: Film sélectionné */
 .recipe-column-left {
-  --hue: 0; /* rouge pour overlay */
-  --saturation: 70%;
-  --lightness: 50%;
-  --hsl: var(--hue), var(--saturation), var(--lightness);
   position: relative;
-  background-color: #142436;
+  background-color: var(--dore-popcorn);
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
-  color: #eceff1;
-  transition: 400ms background ease, 400ms border-color ease;
-  will-change: background, border-color;
+  color: var(--bleu-nuit);
   overflow: hidden;
   isolation: isolate;
-}
-
-.recipe-column-left:hover {
-  --lightness: 95%;
-  background: hsla(var(--hsl), 0.1);
 }
 
 .film-selected-image {
@@ -373,7 +309,7 @@
 
 .film-image-note {
   font-size: 0.75rem;
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   margin: 0 0 1rem 0;
   padding-top: 0;
   opacity: 0.9;
@@ -383,7 +319,7 @@
 }
 
 .film-info-box {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--beige-icecream);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -392,7 +328,7 @@
 }
 
 .film-info-box h4 {
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   font-size: 1.1rem;
   font-weight: 700;
   margin: 0 0 0.75rem 0;
@@ -405,7 +341,7 @@
 }
 
 .film-info-box li {
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
   padding-left: 1.5rem;
@@ -422,25 +358,14 @@
 
 /* Colonne centrale: Ma recette */
 .recipe-column-center {
-  --hue: 0; /* rouge pour overlay */
-  --saturation: 70%;
-  --lightness: 50%;
-  --hsl: var(--hue), var(--saturation), var(--lightness);
   position: relative;
-  background-color: #142436;
+  background-color: var(--dore-popcorn);
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
-  color: #eceff1;
-  transition: 400ms background ease, 400ms border-color ease;
-  will-change: background, border-color;
+  color: var(--bleu-nuit);
   overflow: hidden;
   isolation: isolate;
-}
-
-.recipe-column-center:hover {
-  --lightness: 95%;
-  background: hsla(var(--hsl), 0.1);
 }
 
 .recipe-column-center .form-input,
@@ -455,45 +380,33 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  background-color: var(--bleu-intermediaire);
+  color: var(--jaune-blond);
+  border-color: var(--bleu-intermediaire);
+}
+
+.btn-upload:hover:not(:disabled) {
+  background-color: var(--bleu-nuit);
+  color: var(--dore-popcorn);
+  border-color: var(--bleu-nuit);
 }
 
 /* Colonne droite: Image et contexte */
 .recipe-column-right {
-  --hue: 0; /* rouge pour overlay */
-  --saturation: 70%;
-  --lightness: 50%;
-  --hsl: var(--hue), var(--saturation), var(--lightness);
   position: relative;
-  background-color: #142436;
+  background-color: var(--dore-popcorn);
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
-  color: #eceff1;
-  transition: 400ms background ease, 400ms border-color ease;
-  will-change: background, border-color;
+  color: var(--bleu-nuit);
   overflow: hidden;
   isolation: isolate;
-}
-
-.recipe-column-right:hover {
-  --lightness: 95%;
-  background: hsla(var(--hsl), 0.1);
 }
 
 .recipe-image-upload {
   position: relative;
   width: 100%;
   margin-bottom: 1rem;
-}
-
-.recipe-image-upload::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 15px;
-
-  pointer-events: none;
-  z-index: 1;
 }
 
 .recipe-image-upload img {
@@ -508,7 +421,7 @@
 
 .image-copyright {
   font-size: 0.75rem;
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   margin: 0.5rem 0 0 0;
   opacity: 0.8;
   text-align: center;
@@ -519,7 +432,7 @@
   min-height: 150px;
   padding: 0.8rem 1rem;
   border-radius: 1rem;
-  background-color: var(--argent-ecran);
+  background-color: var(--beige-icecream);
   color: var(--bleu-nuit);
   border: 1px solid rgba(236, 239, 241, 0.2);
   resize: vertical;
@@ -538,6 +451,15 @@
 /* ====================================================== */
 /* ========== INGRÉDIENTS ET PRÉPARATION ================ */
 /* ====================================================== */
+.ingredients-preparation-subtitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--dore-popcorn);
+  margin: 0 0 1.5rem 0;
+  font-family: var(--font-h2-h6);
+  text-align: center;
+}
+
 .ingredients-preparation-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -547,26 +469,14 @@
 
 .ingredients-column,
 .preparation-column {
-  --hue: 0; /* rouge pour overlay */
-  --saturation: 70%;
-  --lightness: 50%;
-  --hsl: var(--hue), var(--saturation), var(--lightness);
   position: relative;
-  background-color: #142436;
+  background-color: var(--dore-popcorn);
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
   color: #eceff1;
-  transition: 400ms background ease, 400ms border-color ease;
-  will-change: background, border-color;
   overflow: hidden;
   isolation: isolate;
-}
-
-.ingredients-column:hover,
-.preparation-column:hover {
-  --lightness: 95%;
-  background: hsla(var(--hsl), 0.1);
 }
 
 .ingredients-column .overlay,
@@ -592,38 +502,11 @@
   border-radius: 15px;
 }
 
-.ingredients-column .overlay::before,
-.preparation-column .overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle 25rem at var(--x) var(--y),
-    var(--rouge-projecteur) 0%,
-    transparent 50%
-  );
-  opacity: 0.15;
-  pointer-events: none;
-  border-radius: 15px;
-}
-
-.ingredients-column .overlay::after,
-.preparation-column .overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 15px;
-  box-shadow: 0 0 0 1px var(--rouge-projecteur) inset,
-    0 0 20px var(--rouge-projecteur);
-  opacity: var(--opacity, 0);
-  pointer-events: none;
-}
-
 .ingredients-column h3,
 .preparation-column h3 {
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   margin: 0 0 1rem 0;
   font-family: var(--font-h2-h6);
 }
@@ -633,7 +516,7 @@
   min-height: 200px;
   padding: 0.8rem 1rem;
   border-radius: 1rem;
-  background-color: var(--argent-ecran);
+  background-color: var(--beige-icecream);
   color: var(--bleu-nuit);
   border: 1px solid rgba(236, 239, 241, 0.2);
   resize: vertical;
@@ -674,26 +557,51 @@
 /* ====================================================== */
 /* ====================== FORMULAIRES =================== */
 /* ====================================================== */
-.form-input,
-.form-select {
+.add-recipe-main .form-input,
+.add-recipe-main .form-select,
+.film-form-container .form-input,
+.film-form-container .form-select,
+.recipe-column-center .form-input,
+.recipe-column-center .form-select {
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(236, 239, 241, 0.3);
+  background-color: var(--beige-icecream);
   color: var(--bleu-nuit);
   font-size: 1rem;
   font-family: var(--font-body);
-  transition: all var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.form-input:focus,
-.form-select:focus {
+.add-recipe-main .form-input:hover,
+.add-recipe-main .form-select:hover,
+.film-form-container .form-input:hover,
+.film-form-container .form-select:hover,
+.recipe-column-center .form-input:hover,
+.recipe-column-center .form-select:hover {
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 2px 8px rgba(198, 166, 100, 0.2),
+    0 0 0 1px rgba(198, 166, 100, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.add-recipe-main .form-input:focus,
+.add-recipe-main .form-select:focus,
+.film-form-container .form-input:focus,
+.film-form-container .form-select:focus,
+.recipe-column-center .form-input:focus,
+.recipe-column-center .form-select:focus {
   outline: none;
-  border-color: var(--bleu-nuit);
-  box-shadow: 0 0 8px rgba(13, 27, 42, 0.3);
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 0 0 3px rgba(198, 166, 100, 0.15),
+    0 4px 12px rgba(198, 166, 100, 0.25), 0 0 0 1px var(--dore-popcorn) !important;
+  transform: translateY(-1px) !important;
 }
 
-.form-select {
+.add-recipe-main .form-select,
+.film-form-container .form-select,
+.recipe-column-center .form-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -701,6 +609,19 @@
   background-size: 12px;
   padding-right: 2.5rem;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-image 0.3s ease;
+}
+
+.add-recipe-main .form-select:hover,
+.film-form-container .form-select:hover,
+.recipe-column-center .form-select:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c6a664' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+}
+
+.add-recipe-main .form-select:focus,
+.film-form-container .form-select:focus,
+.recipe-column-center .form-select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c6a664' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
 }
 
 /* ====================================================== */

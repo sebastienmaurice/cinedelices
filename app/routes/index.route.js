@@ -1,4 +1,4 @@
-//route pour aiguillage vers les autres
+// route pour aiguillage vers les autres
 
 import { Router } from "express";
 import authRouter from "./auth.route.js";
@@ -7,6 +7,8 @@ import adminRouter from "./admin.route.js";
 import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 import addRecipesMoviesRouter from "./add-recipes-movies.route.js";
+import { verifyToken } from "../middlewares/is-authed.middleware.js";
+import { isAdmin } from "../middlewares/is-admin.middleware.js";
 
 const router = Router();
 
