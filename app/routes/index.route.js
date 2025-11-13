@@ -8,6 +8,9 @@ import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 import addRecipesMoviesRouter from "./add-recipes-movies.route.js";
 
+import { isAdmin } from "../middlewares/is-admin.middleware.js";
+import { verifyToken } from "../middlewares/is-authed.middleware.js";
+
 const router = Router();
 
 router.use("/auth", authRouter);
