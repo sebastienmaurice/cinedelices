@@ -8,15 +8,6 @@
 */
 
 /* ====================================================== */
-/* ================== LAYOUT PRINCIPAL ================== */
-/* ====================================================== */
-.add-recipe-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-/* ====================================================== */
 /* ================ BANNIÈRE HERO ====================== */
 /* ====================================================== */
 .hero-banner {
@@ -31,9 +22,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 0;
+  padding-bottom: 4rem;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-banner::before {
@@ -66,11 +58,38 @@
 /* ====================================================== */
 /* ============== EN-TÊTE DE SECTION =================== */
 /* ====================================================== */
-.section-header-custom {
-  margin: 0 2rem 2rem 2rem;
+.add-film-section {
+  position: relative;
 }
 
-.section-header-custom h2 {
+/* Titre de la section film - Positionné sur l'image hero */
+.hero-banner + .add-film-section .section-header-film {
+  position: absolute;
+  top: -70px;
+  left: 2rem;
+  right: 2rem;
+  z-index: 10;
+  margin: 0;
+  pointer-events: none;
+  text-align: center;
+}
+
+.section-header-film h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--dore-popcorn);
+  font-family: var(--font-h1);
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 0 8px rgba(13, 27, 42, 0.6);
+}
+
+/* Titre de la section recette - Positionnement standard */
+.section-header-recipe {
+  margin: 0 2rem 1rem 4rem;
+  text-align: center;
+}
+
+.section-header-recipe h2 {
   font-size: 2rem;
   font-weight: 700;
   color: var(--dore-popcorn);
@@ -82,12 +101,14 @@
 /* ============= SECTION 1: AJOUT DU FILM =============== */
 /* ====================================================== */
 .add-film-section {
-  background: rgba(13, 27, 42, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 2rem 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 0;
+  padding: 0;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 5;
 }
 
 .film-form-container {
@@ -96,10 +117,13 @@
   border: 1px solid rgba(236, 239, 241, 0.2);
   border-radius: 15px;
   padding: 1.5rem;
-  margin: 0 2rem 1.5rem 2rem;
+  margin: -60px 2rem 1.5rem 2rem;
   color: #eceff1;
   overflow: hidden;
   isolation: isolate;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(198, 166, 100, 0.2),
+    0 4px 20px rgba(198, 166, 100, 0.15);
+  z-index: 10;
 }
 
 /* Overlay pour effet glassmorphism sur .film-form-container */
@@ -638,6 +662,16 @@
     gap: 1.5rem;
   }
 
+  .film-inputs-row {
+    gap: 0.9rem;
+  }
+
+  .film-form-container .form-input,
+  .film-form-container .form-select {
+    padding: 0.8rem 1rem;
+    font-size: 0.98rem;
+  }
+
   .form-footer {
     flex-direction: column;
     align-items: flex-start;
@@ -657,28 +691,440 @@
   }
 }
 
-@media (max-width: 600px) {
-  .section-header-custom {
-    margin: 0 1rem 2rem 1rem;
+@media (max-width: 768px) {
+  .add-recipe-main {
+    padding: 1.5rem 1rem;
   }
 
-  .film-form-container {
+  .hero-banner {
+    height: 250px;
+    padding-bottom: 3rem;
+    border-radius: 8px;
+  }
+
+  .hero-banner + .add-film-section .section-header-film {
+    top: -120px;
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .section-header-film h2 {
+    font-size: 1.8rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .section-header-recipe {
     margin: 0 1rem 1.5rem 1rem;
   }
 
-  .form-footer {
-    margin: 0 1rem;
+  .section-header-recipe h2 {
+    font-size: 1.8rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .film-form-container {
+    margin: -50px 1rem 1.5rem 1rem;
+    padding: 1.25rem;
+    border-radius: 12px;
   }
 
   .film-inputs-row {
     flex-direction: column;
+    gap: 0.875rem;
+    align-items: stretch;
   }
 
-  .hero-content h1 {
-    font-size: 1.5rem;
+  .film-inputs-row .form-input,
+  .film-inputs-row .form-select {
+    width: 100%;
+    flex: none;
   }
 
-  .section-header-custom h2 {
+  .film-form-container .form-input,
+  .film-form-container .form-select {
+    padding: 0.75rem 0.95rem;
+    font-size: 0.95rem;
+  }
+
+  .film-form-container .form-select {
+    padding-right: 2.5rem;
+    background-size: 11px;
+  }
+
+  .form-footer {
+    margin: 0 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-footer p {
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .form-footer-btn {
+    width: 100%;
+  }
+
+  .recipe-column-left,
+  .recipe-column-center,
+  .recipe-column-right {
+    padding: 1.25rem;
+  }
+
+  .recipe-column-left h3,
+  .recipe-column-center h3,
+  .recipe-column-right h3,
+  .recipe-context-title {
+    font-size: 1.1rem;
+  }
+
+  .ingredients-preparation-subtitle {
     font-size: 1.5rem;
+    margin: 0 1rem 1.5rem 1rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .ingredients-column,
+  .preparation-column {
+    padding: 1.25rem;
+  }
+
+  .ingredients-column h3,
+  .preparation-column h3 {
+    font-size: 1.1rem;
+  }
+
+  .form-validation-footer {
+    margin: 0 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-validation-btn {
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  .validation-note {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-recipe-main {
+    padding: 1rem 0.5rem;
+  }
+
+  .hero-banner {
+    height: 200px;
+    padding-bottom: 2.5rem;
+    border-radius: 8px;
+  }
+
+  .hero-banner + .add-film-section .section-header-film {
+    top: -100px;
+    left: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .section-header-film h2 {
+    font-size: 1.6rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .section-header-recipe {
+    margin: 0 0.5rem 1.5rem 0.5rem;
+  }
+
+  .section-header-recipe h2 {
+    font-size: 1.6rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .film-form-container {
+    margin: -40px 0.5rem 1.5rem 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .film-inputs-row {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .film-inputs-row .form-input,
+  .film-inputs-row .form-select {
+    width: 100%;
+    flex: none;
+  }
+
+  .form-footer {
+    margin: 0 0.5rem;
+    padding: 1rem 0;
+  }
+
+  .form-footer p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0 0 1rem 0;
+  }
+
+  .form-footer-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .recipe-form-container {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .recipe-column-left,
+  .recipe-column-center,
+  .recipe-column-right {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .recipe-column-left h3,
+  .recipe-column-center h3,
+  .recipe-column-right h3,
+  .recipe-context-title {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .film-selected-image {
+    height: 180px;
+    margin-bottom: 0.5rem;
+  }
+
+  .film-info-box {
+    padding: 0.75rem;
+  }
+
+  .film-info-box h4 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .film-info-box li {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .film-image-note {
+    font-size: 0.7rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .recipe-image-upload img {
+    height: 180px;
+  }
+
+  .image-copyright {
+    font-size: 0.7rem;
+    margin: 0.5rem 0 0 0;
+  }
+
+  .btn-upload {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+
+  .ingredients-preparation-subtitle {
+    font-size: 1.4rem;
+    margin: 0 0.5rem 1.25rem 0.5rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .ingredients-preparation-container {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ingredients-column,
+  .preparation-column {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .ingredients-column h3,
+  .preparation-column h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .recipe-textarea,
+  .recipe-context-textarea {
+    min-height: 150px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 0.75rem;
+  }
+
+  .form-validation-footer {
+    margin: 0 0.5rem;
+    padding: 1rem 0;
+  }
+
+  .form-validation-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .validation-note {
+    font-size: 0.75rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  /* Inputs et selects responsive */
+  .add-recipe-main .form-input,
+  .add-recipe-main .form-select,
+  .recipe-column-center .form-input,
+  .recipe-column-center .form-select {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+
+  .film-form-container .form-input,
+  .film-form-container .form-select {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    width: 100%;
+  }
+
+  .film-form-container .form-select {
+    padding-right: 2.25rem;
+    background-size: 10px;
+  }
+
+  .recipe-column-center .form-select {
+    padding-right: 2.25rem;
+    background-size: 10px;
+  }
+
+  .recipe-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .film-image-note,
+  .image-copyright {
+    font-size: 0.65rem;
+  }
+
+  .add-recipe-section {
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-recipe-main {
+    padding: 0.75rem 0.25rem;
+  }
+
+  .hero-banner {
+    height: 180px;
+    padding-bottom: 2rem;
+  }
+
+  .hero-banner + .add-film-section .section-header-film {
+    top: -90px;
+    left: 0.25rem;
+    right: 0.25rem;
+  }
+
+  .section-header-film h2 {
+    font-size: 1.4rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .section-header-recipe {
+    margin: 0 0.25rem 1.25rem 0.25rem;
+  }
+
+  .section-header-recipe h2 {
+    font-size: 1.4rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .film-form-container {
+    margin: -35px 0.25rem 1.25rem 0.25rem;
+    padding: 0.875rem;
+  }
+
+  .film-inputs-row {
+    gap: 0.65rem;
+  }
+
+  .film-form-container .form-input,
+  .film-form-container .form-select {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .film-form-container .form-select {
+    padding-right: 2.2rem;
+    background-size: 9px;
+  }
+
+  .form-footer,
+  .form-validation-footer {
+    margin: 0 0.25rem;
+    padding: 0.875rem 0;
+  }
+
+  .recipe-form-container {
+    gap: 0.75rem;
+  }
+
+  .recipe-column-left,
+  .recipe-column-center,
+  .recipe-column-right {
+    padding: 0.875rem;
+  }
+
+  .ingredients-preparation-subtitle {
+    font-size: 1.2rem;
+    margin: 0 0.25rem 1rem 0.25rem;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .ingredients-column,
+  .preparation-column {
+    padding: 0.875rem;
+  }
+
+  .recipe-textarea,
+  .recipe-context-textarea {
+    min-height: 120px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .form-input,
+  .form-select {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.85rem;
   }
 }
