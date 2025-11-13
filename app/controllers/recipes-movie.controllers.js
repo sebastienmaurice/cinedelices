@@ -49,7 +49,7 @@ const recipesController = {
 
       // Rendu de la vue avec les recettes filtrées
       console.log(recipes);
-      res.render("recipes-movie", { movie, recipes });
+      res.render("recipes-movie", { movie, recipes, role: req.session.role });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");

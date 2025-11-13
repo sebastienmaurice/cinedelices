@@ -45,7 +45,7 @@ const authController = {
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
 
-      res.status(StatusCodes.OK).render("home");
+      res.status(StatusCodes.OK).redirect("/");
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
         return res
@@ -64,8 +64,6 @@ const authController = {
     // ! il faut sanitizer username
     const { first_name, last_name, pseudo, email, password, role } = req.body;
 
-    console.log(req.body);
-
     try {
       const hash = await argon2.hash(password);
 
@@ -79,9 +77,7 @@ const authController = {
       });
       // const user = await User.create({ toutes les données });
 
-      res
-        .status(StatusCodes.CREATED)
-        .json({ id: user.id, pseudo: user.pseudo, role: user.role });
+      res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
         return res
@@ -113,8 +109,8 @@ const authController = {
       }
 
       // Rendu de la vue avec les données utilisateur
-      console.log(user);
-      res.render("user-profile", { user });
+      // ajout de la gestion de role
+      res.render("user-profile", { user, role: req.userRole });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
@@ -124,6 +120,8 @@ const authController = {
   //page avis
   quote(req, res) {
     res.send("donne note et avis");
+    // ajout de la gestion de role
+    //res.render("user-quote" ,{ role: req.userRole });
   },
 
   //deconnexion

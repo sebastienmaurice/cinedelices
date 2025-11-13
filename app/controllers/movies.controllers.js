@@ -17,8 +17,12 @@ const moviesController = {
       }
 
       // Rendu de la vue avec les genres filtrés
-      console.log(movies);
-      res.render("movies", { movies, selectedGenre: genre || "tous" });
+
+      res.render("movies", {
+        movies,
+        selectedGenre: genre || "tous",
+        role: req.userRole,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
@@ -39,7 +43,11 @@ const moviesController = {
         );
       }
 
-      res.render("movies", { movies: filteredMovies, selectedGenre });
+      res.render("movies", {
+        movies: filteredMovies,
+        selectedGenre,
+        role: req.userRole,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");

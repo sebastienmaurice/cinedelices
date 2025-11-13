@@ -2,7 +2,8 @@ const addRecipesMoviesController = {
   // Page d'ajout de film et recette
   addRecipesMovies(req, res) {
     try {
-      res.render("add-recipes-movies");
+      // ajout gestion du role
+      res.render("add-recipes-movies", { role: req.userRole });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
@@ -11,4 +12,3 @@ const addRecipesMoviesController = {
 };
 
 export default addRecipesMoviesController;
-
