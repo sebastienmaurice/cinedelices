@@ -11,16 +11,39 @@
 
   <nav class="navigationheader">
     <a href="/" class="navigationheader-link">Accueil</a>
+    <!-- admin visible uniquement avec role admin -->
+    <!-- typeof est utilisé pour le type de la variable ("string", "undefined") et sans c'est la valeur de la variable (admin) -->
+    <% if ( role === "admin") { %>
     <a href="/admin/" class="navigationheader-link">Admin</a>
+    <% } %>
     <a href="/movies" class="navigationheader-link">Films</a>
+    <!-- mon compte visible uniquement avec user logger (user,admin) -->
+    <% if (typeof role !== "undefined") { %>
     <a href="/auth/profil/:id" class="navigationheader-link">Mon compte</a>
+    <% } %>
+
     <a href="#" class="navigationheader-link">Contact</a>
   </nav>
+  <!-- div botton_header visible uniquement si pas logger -->
 
+  <% if (typeof role === "undefined") { %>
   <div class="buttons__header">
     <a href="#" id="btnLogin" class="btn btn--gold btn--sm">Connexion</a>
     <a href="#" id="btnRegister" class="btn btn--red btn--sm">Inscription</a>
   </div>
+  <% } %>
+
+  <!-- alternative mon profil visible uniquement si logger -->
+  <% if (typeof role !== "undefined") { %>
+  <div class="buttons__header">
+    <a href="/auth/logout" id="btnLogout" class="btn btn--gold btn--sm"
+      >deconnexion</a
+    >
+    <a href="/auth/profil/:id" id="btnProfil" class="btn btn--red btn--sm"
+      >Mon compte</a
+    >
+  </div>
+  <% } %>
 
   <!-- Burger menu for mobile -->
   <button class="burger-menu">
@@ -39,9 +62,14 @@
     <!-- ===== Connexion ===== -->
     <div id="loginForm" class="auth-form active">
       <h2>Connexion</h2>
-      <form>
-        <input type="email" placeholder="Adresse e-mail" required />
-        <input type="password" placeholder="Mot de passe" required />
+      <form method="POST" action="/auth/login">
+        <input name="pseudo" placeholder="Nom d'utilisateur" required />
+        <input
+          name="password"
+          type="password"
+          placeholder="Mot de passe"
+          required
+        />
         <button type="submit" class="btn btn--gold btn--full">
           Se connecter
         </button>
@@ -55,15 +83,36 @@
     <!-- ===== Inscription ===== -->
     <div id="registerForm" class="auth-form">
       <h2>Inscription</h2>
-      <form>
-        <input type="text" placeholder="Nom d'utilisateur" required />
-        <input type="email" placeholder="Adresse e-mail" required />
-        <input type="password" placeholder="Mot de passe" required />
+      <form method="POST" action="/auth/register">
+        <input name="first_name" placeholder="Prénom" required />
+        <input name="last_name" placeholder="Nom" required />
+        <input name="pseudo" placeholder="Nom d'utilisateur" required />
         <input
+          name="email"
+          type="email"
+          placeholder="Adresse e-mail"
+          required
+        />
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Mot de passe"
+          required
+        />
+        <input
+          id="confirmPassword"
+          name="confirm_password"
           type="password"
           placeholder="Confirmer le mot de passe"
           required
         />
+        <!-- <input type="hidden" name="role" value="admin">  -->
+
+        <div id="errorMessage" class="error">
+          * Les mots de passe ne correspondent pas.
+        </div>
+
         <button type="submit" class="btn btn--red btn--full">
           Créer mon compte
         </button>
@@ -77,3 +126,4 @@
 </div>
 
 <script src="/js/popup-connexion.js"></script>
+<script src="/js/register-form.js"></script>

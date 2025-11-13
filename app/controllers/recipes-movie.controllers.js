@@ -15,7 +15,7 @@ const recipesController = {
       // Toutes les recettes du film
       const recipes = await Recipe.findAll({ where: { id_movie: movie.id } });
 
-      res.render("recipes-movie", { movie, recipes });
+      res.render("recipes-movie", { movie, recipes, role: req.userRole });
     } catch (error) {
       console.error(error);
       res.status(500).render("pages/error", { message: "Erreur serveur." });
@@ -49,7 +49,7 @@ const recipesController = {
 
       // Rendu de la vue avec les recettes filtrées
       console.log(recipes);
-      res.render("recipes-movie", { movie, recipes });
+      res.render("recipes-movie", { movie, recipes, role: req.userRole});
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");

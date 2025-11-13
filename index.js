@@ -1,8 +1,9 @@
 import "dotenv/config";
 import express from "express";
-import { xss } from 'express-xss-sanitizer';
-import cookieParser from 'cookie-parser';
+import { xss } from "express-xss-sanitizer";
+import cookieParser from "cookie-parser";
 import router from "./app/routes/index.route.js";
+import { verifyToken } from "./app/middlewares/is-authed.middleware.js";
 
 const app = express();
 
@@ -18,8 +19,9 @@ app.use(express.static("./app/public"));
 
 app.use(express.urlencoded({ extended: true })); // pour parser les données des formulaires
 app.use(express.json()); // permet de parser le JSON
-app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.query, req.params
 
+app.use(verifyToken); // Middleware global pour vérifier le token et définir req.user si connecté
+app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.query, req.params
 
 // Routes
 app.use(router);

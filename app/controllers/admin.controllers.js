@@ -13,7 +13,14 @@ const adminController = {
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
-      res.render("admin-dashboard", { recipes, movies, avis, users });
+      
+      res.render("admin-dashboard", {
+        recipes,
+        movies,
+        avis,
+        users,
+        role: req.userRole,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
