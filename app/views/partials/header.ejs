@@ -12,18 +12,16 @@
   <nav class="navigationheader">
     <a href="/" class="navigationheader-link">Accueil</a>
     <!-- admin visible uniquement avec role admin --> 
-      <% if (typeof role === "admin") { %>   
+    <!-- typeof est utilisé pour le type de la variable ("string", "undefined") et sans c'est la valeur de la variable (admin) -->
+    <% if ( role === "admin") { %> 
     <a href="/admin/" class="navigationheader-link">Admin</a>
-      <% } %>
+    <% } %>
     <a href="/movies" class="navigationheader-link">Films</a>
    <!-- mon compte visible uniquement avec user logger (user,admin) --> 
       <% if (typeof role !== "undefined") { %>   
     <a href="/auth/profil/:id" class="navigationheader-link">Mon compte</a>
       <% } %>
-    <!-- mon compte visible uniquement avec user logger (user,admin) --> 
-      <% if (typeof role !== "undefined") { %> 
-    <a href="/auth/logout" class="navigationheader-link">deconnexion</a>
-      <% } %>
+    
     <a href="#" class="navigationheader-link">Contact</a>
   </nav>
    <!-- div botton_header visible uniquement si pas logger -->      

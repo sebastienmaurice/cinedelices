@@ -13,7 +13,7 @@ const adminController = {
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
-      Role = string(req.userRole);
+      
       res.render("admin-dashboard", {
         recipes,
         movies,
