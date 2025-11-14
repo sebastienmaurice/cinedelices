@@ -1,10 +1,10 @@
 //  récupération des différents modèles pour faire les liaisons sans avoir à les faire dans chaque fichier
 
-import User from './user.js';
-import Recipe from './recipe.js';
-import Movie from './movie.js';
-import Notice from './notice.js';
-import UsersRecipes from './users_recipes.js';
+import User from './user.model.js';
+import Recipe from './recipe.model.js';
+import Movie from './movie.model.js';
+import Notice from './notice.model.js';
+import UsersRecipes from './users_recipes.model.js';
 
 
 

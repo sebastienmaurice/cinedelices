@@ -1,4 +1,4 @@
-import { Recipe, Movie, Notice, User } from "../models/index.js";
+import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 const adminController = {
   // Page principale admin
   // accueil admin

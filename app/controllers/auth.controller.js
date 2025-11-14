@@ -1,4 +1,4 @@
-import User from "../models/user.js";
+import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";

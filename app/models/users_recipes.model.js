@@ -1,5 +1,5 @@
 // app/models/users_recipes.js
-import { DataTypes, Model } from "sequelize";
+import { Model } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 
 class UsersRecipes extends Model {}

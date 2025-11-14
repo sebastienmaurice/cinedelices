@@ -1,9 +1,10 @@
+
 const form = document.getElementById("registerForm");
-const password = document.getElementById("password");
+const password = document.getElementById("password"); 
 const confirmPassword = document.getElementById("confirmPassword");
 const errorMessage = document.getElementById("errorMessage");
 
-// Vérification en temps réel
+// Vérification en temps réel que les mots de passe sont identiques
 confirmPassword.addEventListener("input", function () {
   if (password.value !== confirmPassword.value) {
     errorMessage.style.display = "block";
@@ -12,7 +13,7 @@ confirmPassword.addEventListener("input", function () {
   }
 });
 
-// Vérification finale à la soumission
+// Vérification finale à la soumission du formulaire
 form.addEventListener("submit", function (event) {
   if (password.value !== confirmPassword.value) {
     event.preventDefault(); // Empêche l'envoi du formulaire

@@ -1,4 +1,4 @@
-import { Movie } from "../models/index.js";
+import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 
 const moviesController = {
   //Filtrage des films par genre (tous, action, comedie, drame...)

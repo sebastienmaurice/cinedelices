@@ -1,4 +1,4 @@
-import { Movie, Recipe } from "../models/index.js";
+import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 
 const recipesController = {
   // Afficher le film et ses recettes
