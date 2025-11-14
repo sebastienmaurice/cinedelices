@@ -21,6 +21,13 @@ const recipesController = {
       res.status(500).render("pages/error", { message: "Erreur serveur." });
     }
   },
+  /*
+    movieRecipes :
+    - Récupère un film par son id avec Movie.findByPk
+    - Si aucun film trouvé => 404
+    - Charge toutes les recettes associées (Recipe.findAll avec id_movie)
+    - Rend la vue "recipes-movie" avec le film, les recettes et le rôle utilisateur
+  */
 
   // Filtrage des recettes du film par catégorie
   async filtredRecipes(req, res) {
@@ -55,8 +62,17 @@ const recipesController = {
       res.status(500).send("pages/error");
     }
   },
+  /*
+    filtredRecipes :
+    - Récupère les paramètres id du film et la catégorie
+    - Vérifie que le film existe sinon 404
+    - Charge les recettes du film :
+        * toutes si category absent ou "all"
+        * sinon filtre sur la colonne category
+    - Rend la vue "recipes-movie" avec la liste filtrée
+  */
 
-  // Afficher le détail d'une recette spécifique
+  // Afficher le détail d'une recette spécifique ajouté par SEB le 14 Nov à 18h30
   async detailRecipes(req, res) {
     try {
       const recipe = await Recipe.findByPk(req.params.id);
@@ -98,6 +114,14 @@ const recipesController = {
       res.status(500).send("pages/error");
     }
   },
+  /*
+    detailRecipes :
+    - Trouve une recette par son id
+    - Si introuvable => 404
+    - Convertit la recette en objet simple (plain)
+    - Formate description, ingrédients, préparation en tableaux prêts à afficher
+    - Rend la vue "recipe-detail" avec la recette et les blocs formatés
+  */
 };
 
 export default recipesController;

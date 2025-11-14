@@ -33,7 +33,6 @@
 
       <section class="banner__recipes" aria-labelledby="recipe-title">
         <div class="banner__recipes__content">
-          <p class="banner__meta">Recette culte</p>
           <h1 id="recipe-title"><%= recipe.name %></h1>
 
           <div class="banner__recipes__meta">
@@ -53,8 +52,8 @@
         </div>
 
         <div class="banner__recipes__rating" data-rating-container>
-          <p>
-            Note des gourmands :
+          <p class="rating-label">
+            Note de la recette :
             <span
               class="current-rating"
               id="banner-rating-output"
@@ -63,7 +62,7 @@
             >
           </p>
           <div
-            class="rating-stars"
+            class="rating-stars rating-stars--lifted"
             role="group"
             aria-label="Noter la recette"
             data-current-rating="<%= recipe.quote %>"
@@ -80,82 +79,110 @@
             </button>
             <% } %>
           </div>
-          <p class="rating-hint">Cliquez pour proposer votre note</p>
+          <button
+            type="button"
+            class="rating-hint__cta rating-hint__cta--primary"
+          >
+            Je donne mon avis
+          </button>
         </div>
       </section>
 
-      <section class="recipe-overview" aria-labelledby="overview-title">
-        <div class="overview-card">
-          <div class="overview-card__description">
-            <h3 class="overview-card__title">
-              La recette culte de : <span><%= recipe.name %></span>
-            </h3>
-            <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
-            descriptionBlocks.forEach((paragraph, index) => { %>
-            <label class="sr-only" for="desc-<%= index %>"
-              >Description paragraphe <%= index + 1 %></label
-            >
-            <textarea readonly id="desc-<%= index %>" class="recipe-textarea">
+      <section
+        class="recipe-details-group"
+        aria-label="Détails complets de la recette"
+      >
+        <div class="recipe-overview" aria-labelledby="overview-title">
+          <div class="overview-card">
+            <div class="overview-card__description">
+              <h3 class="overview-card__title">
+                La recette culte de : <span><%= recipe.name %></span>
+              </h3>
+              <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
+              descriptionBlocks.forEach((paragraph, index) => { %>
+              <label class="sr-only" for="desc-<%= index %>"
+                >Description paragraphe <%= index + 1 %></label
+              >
+              <textarea readonly id="desc-<%= index %>" class="recipe-textarea">
 <%= paragraph %></textarea
-            >
-            <% }) %> <% } else { %>
-            <textarea readonly class="recipe-textarea">
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
 Aucune description détaillée n'a encore été partagée pour cette
-              recette.</textarea
+                recette.</textarea
+              >
+              <% } %>
+            </div>
+          </div>
+
+          <div class="overview-image">
+            <button
+              type="button"
+              class="overview-image-button"
+              data-lightbox-trigger
+              data-lightbox-image="/images/<%= recipeImage %>"
+              data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
+              aria-label="Voir l'image de <%= recipe.name %> en plein écran"
             >
-            <% } %>
+              <img
+                src="/images/<%= recipeImage %>"
+                alt="Présentation de la recette <%= recipe.name %>"
+                loading="lazy"
+              />
+              <span class="overview-image-hint">Clique pour voir + grand</span>
+            </button>
           </div>
         </div>
-      </section>
 
-      <section class="recipe-columns">
-        <div class="recipe-column column-ingredients">
-          <div class="column-overlay" aria-hidden="true"></div>
-          <div class="column-header">
-            <h3>Les Ingrédients</h3>
-            <p>Prêts à cuisiner ?</p>
-          </div>
-          <div class="textarea-stack">
-            <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
-            ingredientsBlocks.forEach((ingredient, index) => { %>
-            <label class="sr-only" for="ingredient-<%= index %>"
-              >Ingrédient <%= index + 1 %></label
-            >
-            <textarea
-              readonly
-              id="ingredient-<%= index %>"
-              class="recipe-textarea"
-            >
+        <div class="recipe-columns">
+          <div class="recipe-column column-ingredients">
+            <div class="column-overlay" aria-hidden="true"></div>
+            <div class="column-header">
+              <h3>Les Ingrédients</h3>
+              <p>Prêts à cuisiner ?</p>
+            </div>
+            <div class="textarea-stack">
+              <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
+              ingredientsBlocks.forEach((ingredient, index) => { %>
+              <label class="sr-only" for="ingredient-<%= index %>"
+                >Ingrédient <%= index + 1 %></label
+              >
+              <textarea
+                readonly
+                id="ingredient-<%= index %>"
+                class="recipe-textarea"
+              >
 <%= ingredient %></textarea
-            >
-            <% }) %> <% } else { %>
-            <textarea readonly class="recipe-textarea">
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
 Les ingrédients seront bientôt disponibles.</textarea
-            >
-            <% } %>
+              >
+              <% } %>
+            </div>
           </div>
-        </div>
 
-        <div class="recipe-column column-preparation">
-          <div class="column-overlay" aria-hidden="true"></div>
-          <div class="column-header">
-            <h3>La Préparation</h3>
-            <p>Pas à pas</p>
-          </div>
-          <div class="textarea-stack">
-            <% if (preparationBlocks && preparationBlocks.length) { %> <%
-            preparationBlocks.forEach((step, index) => { %>
-            <label class="sr-only" for="step-<%= index %>"
-              >Étape <%= index + 1 %></label
-            >
-            <textarea readonly id="step-<%= index %>" class="recipe-textarea">
+          <div class="recipe-column column-preparation">
+            <div class="column-overlay" aria-hidden="true"></div>
+            <div class="column-header">
+              <h3>La Préparation</h3>
+              <p>Pas à pas</p>
+            </div>
+            <div class="textarea-stack">
+              <% if (preparationBlocks && preparationBlocks.length) { %> <%
+              preparationBlocks.forEach((step, index) => { %>
+              <label class="sr-only" for="step-<%= index %>"
+                >Étape <%= index + 1 %></label
+              >
+              <textarea readonly id="step-<%= index %>" class="recipe-textarea">
 <%= step %></textarea
-            >
-            <% }) %> <% } else { %>
-            <textarea readonly class="recipe-textarea">
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
 Le détail de cette préparation arrive bientôt.</textarea
-            >
-            <% } %>
+              >
+              <% } %>
+            </div>
           </div>
         </div>
       </section>
@@ -165,103 +192,33 @@ Le détail de cette préparation arrive bientôt.</textarea
           Revenir aux recettes du film
         </a>
         <a class="btn btn--red" href="/add-recipes-movies/">
-          Partager ma version
+          Je veux créer ma recette
         </a>
       </section>
 
-      <section class="recipe-feedback" aria-labelledby="feedback-title">
-        <div class="feedback-card">
-          <div class="feedback-visual" aria-hidden="true">
-            <img
-              src="/images/marty-and-doc-eating.png"
-              alt="Fans de cinéma dégustant une recette culte"
-              loading="lazy"
-            />
-          </div>
-
-          <div class="feedback-content">
-            <p class="feedback-overline">J'ajoute mon avis sur la recette</p>
-            <h3 id="feedback-title">Partage ton moment culte</h3>
-            <p class="feedback-text">
-              Inspire la communauté Ciné Délices : raconte-nous ce que tu as
-              pensé de cette recette ou ce que tu as ressenti en la dégustant
-              devant ton film préféré.
-            </p>
-
-            <form class="feedback-form">
-              <div class="feedback-form__group">
-                <label for="feedback-name">Ton prénom</label>
-                <input
-                  type="text"
-                  id="feedback-name"
-                  name="feedback-name"
-                  placeholder="Ex. : Seb"
-                />
-              </div>
-
-              <div class="feedback-form__group">
-                <label for="feedback-email">Ton email</label>
-                <input
-                  type="email"
-                  id="feedback-email"
-                  name="feedback-email"
-                  placeholder="Ex. : cine-delices@email.com"
-                />
-              </div>
-
-              <div class="feedback-form__group feedback-form__group--full">
-                <label for="feedback-rating-display">Ta note</label>
-                <div class="feedback-rating">
-                  <span
-                    class="feedback-rating__value"
-                    id="feedback-rating-display"
-                    >0/5</span
-                  >
-                  <div
-                    class="rating-stars"
-                    role="group"
-                    aria-label="Noter la recette"
-                    data-current-rating="0"
-                    data-output="#feedback-rating-display"
-                    data-input="#feedback-rating-value"
-                  >
-                    <% for (let i = 1; i <= 5; i++) { %>
-                    <button
-                      type="button"
-                      class="rating-star"
-                      data-value="<%= i %>"
-                      aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
-                    >
-                      ★
-                    </button>
-                    <% } %>
-                  </div>
-                </div>
-                <input
-                  type="hidden"
-                  id="feedback-rating-value"
-                  name="feedback-rating"
-                  value="0"
-                />
-              </div>
-
-              <div class="feedback-form__group feedback-form__group--full">
-                <label for="feedback-message">Ton avis</label>
-                <textarea
-                  id="feedback-message"
-                  name="feedback-message"
-                  rows="4"
-                  placeholder="Donne ton avis sur la recette..."
-                ></textarea>
-              </div>
-
-              <button type="button" class="btn btn--gold">
-                Je donne mon avis
-              </button>
-            </form>
-          </div>
+      <div class="recipe-lightbox" id="recipe-lightbox" aria-hidden="true">
+        <div
+          class="recipe-lightbox__backdrop"
+          data-lightbox-close
+          aria-hidden="true"
+        ></div>
+        <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            class="recipe-lightbox__close"
+            aria-label="Fermer l'aperçu"
+            data-lightbox-close
+          >
+            &times;
+          </button>
+          <img
+            src=""
+            alt="Recette Ciné Délices"
+            class="recipe-lightbox__image"
+            loading="lazy"
+          />
         </div>
-      </section>
+      </div>
     </main>
 
     <%- include("partials/footer") %>

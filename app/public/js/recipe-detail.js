@@ -69,3 +69,49 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const lightbox = document.getElementById("recipe-lightbox");
+  const triggers = document.querySelectorAll("[data-lightbox-trigger]");
+
+  if (!lightbox || !triggers.length) {
+    return;
+  }
+
+  const imageElement = lightbox.querySelector(".recipe-lightbox__image");
+  const closeElements = lightbox.querySelectorAll("[data-lightbox-close]");
+
+  const openLightbox = (src, alt) => {
+    if (!src) return;
+    imageElement.src = src;
+    imageElement.alt = alt || "Recette Ciné Délices";
+    lightbox.classList.add("is-visible");
+    document.body.classList.add("lightbox-open");
+  };
+
+  const closeLightbox = () => {
+    lightbox.classList.remove("is-visible");
+    document.body.classList.remove("lightbox-open");
+    setTimeout(() => {
+      imageElement.src = "";
+    }, 300);
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      const src = trigger.dataset.lightboxImage;
+      const alt = trigger.dataset.lightboxAlt;
+      openLightbox(src, alt);
+    });
+  });
+
+  closeElements.forEach((element) => {
+    element.addEventListener("click", closeLightbox);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lightbox.classList.contains("is-visible")) {
+      closeLightbox();
+    }
+  });
+});
