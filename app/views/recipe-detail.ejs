@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ciné Délices — Découvrez les détails de la recette cultissime <%= recipe.name %>"
+    />
+    <title><%= recipe.name %> - Ciné Délices</title>
+
+    <%- include("partials/head-resources") %>
+
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/recipe-detail.css" />
+  </head>
+
+  <body>
+    <%- include("partials/header") %>
+
+    <main class="recipe-detail-main">
+      <% const recipeImage = recipe.picture ||
+      "default-image-cine-delices-1.jpg"; %>
+
+      <section class="banner__image__recipes" aria-hidden="true">
+        <div class="banner__image__recipes__overlay"></div>
+        <img
+          src="/images/<%= recipeImage %>"
+          alt="Visuel de la recette <%= recipe.name %>"
+          loading="lazy"
+        />
+      </section>
+
+      <section class="banner__recipes" aria-labelledby="recipe-title">
+        <div class="banner__recipes__content">
+          <p class="banner__meta">Recette culte</p>
+          <h1 id="recipe-title"><%= recipe.name %></h1>
+
+          <div class="banner__recipes__meta">
+            <span class="meta-pill meta-pill--category">
+              <i class="fa-solid fa-utensils" aria-hidden="true"></i>
+              <%= recipe.category %>
+            </span>
+            <span class="meta-pill">
+              <i class="fa-regular fa-clock" aria-hidden="true"></i>
+              <%= recipe.time %> min
+            </span>
+            <span class="meta-pill">
+              <i class="fa-solid fa-fire" aria-hidden="true"></i>
+              Difficulté : <%= recipe.difficulty %>
+            </span>
+          </div>
+        </div>
+
+        <div class="banner__recipes__rating" data-rating-container>
+          <p>
+            Note des gourmands :
+            <span
+              class="current-rating"
+              id="banner-rating-output"
+              data-rating-output
+              ><%= recipe.quote %>/5</span
+            >
+          </p>
+          <div
+            class="rating-stars"
+            role="group"
+            aria-label="Noter la recette"
+            data-current-rating="<%= recipe.quote %>"
+            data-output="#banner-rating-output"
+          >
+            <% for (let i = 1; i <= 5; i++) { %>
+            <button
+              type="button"
+              class="rating-star"
+              data-value="<%= i %>"
+              aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
+            >
+              ★
+            </button>
+            <% } %>
+          </div>
+          <p class="rating-hint">Cliquez pour proposer votre note</p>
+        </div>
+      </section>
+
+      <section class="recipe-overview" aria-labelledby="overview-title">
+        <div class="overview-card">
+          <div class="overview-card__description">
+            <h3 class="overview-card__title">
+              La recette culte de : <span><%= recipe.name %></span>
+            </h3>
+            <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
+            descriptionBlocks.forEach((paragraph, index) => { %>
+            <label class="sr-only" for="desc-<%= index %>"
+              >Description paragraphe <%= index + 1 %></label
+            >
+            <textarea readonly id="desc-<%= index %>" class="recipe-textarea">
+<%= paragraph %></textarea
+            >
+            <% }) %> <% } else { %>
+            <textarea readonly class="recipe-textarea">
+Aucune description détaillée n'a encore été partagée pour cette
+              recette.</textarea
+            >
+            <% } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="recipe-columns">
+        <div class="recipe-column column-ingredients">
+          <div class="column-overlay" aria-hidden="true"></div>
+          <div class="column-header">
+            <h3>Les Ingrédients</h3>
+            <p>Prêts à cuisiner ?</p>
+          </div>
+          <div class="textarea-stack">
+            <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
+            ingredientsBlocks.forEach((ingredient, index) => { %>
+            <label class="sr-only" for="ingredient-<%= index %>"
+              >Ingrédient <%= index + 1 %></label
+            >
+            <textarea
+              readonly
+              id="ingredient-<%= index %>"
+              class="recipe-textarea"
+            >
+<%= ingredient %></textarea
+            >
+            <% }) %> <% } else { %>
+            <textarea readonly class="recipe-textarea">
+Les ingrédients seront bientôt disponibles.</textarea
+            >
+            <% } %>
+          </div>
+        </div>
+
+        <div class="recipe-column column-preparation">
+          <div class="column-overlay" aria-hidden="true"></div>
+          <div class="column-header">
+            <h3>La Préparation</h3>
+            <p>Pas à pas</p>
+          </div>
+          <div class="textarea-stack">
+            <% if (preparationBlocks && preparationBlocks.length) { %> <%
+            preparationBlocks.forEach((step, index) => { %>
+            <label class="sr-only" for="step-<%= index %>"
+              >Étape <%= index + 1 %></label
+            >
+            <textarea readonly id="step-<%= index %>" class="recipe-textarea">
+<%= step %></textarea
+            >
+            <% }) %> <% } else { %>
+            <textarea readonly class="recipe-textarea">
+Le détail de cette préparation arrive bientôt.</textarea
+            >
+            <% } %>
+          </div>
+        </div>
+      </section>
+
+      <section class="recipe-cta">
+        <a class="btn btn--gold" href="/recipes-movie/<%= recipe.id_movie %>">
+          Revenir aux recettes du film
+        </a>
+        <a class="btn btn--red" href="/add-recipes-movies/">
+          Partager ma version
+        </a>
+      </section>
+
+      <section class="recipe-feedback" aria-labelledby="feedback-title">
+        <div class="feedback-card">
+          <div class="feedback-visual" aria-hidden="true">
+            <img
+              src="/images/marty-and-doc-eating.png"
+              alt="Fans de cinéma dégustant une recette culte"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="feedback-content">
+            <p class="feedback-overline">J'ajoute mon avis sur la recette</p>
+            <h3 id="feedback-title">Partage ton moment culte</h3>
+            <p class="feedback-text">
+              Inspire la communauté Ciné Délices : raconte-nous ce que tu as
+              pensé de cette recette ou ce que tu as ressenti en la dégustant
+              devant ton film préféré.
+            </p>
+
+            <form class="feedback-form">
+              <div class="feedback-form__group">
+                <label for="feedback-name">Ton prénom</label>
+                <input
+                  type="text"
+                  id="feedback-name"
+                  name="feedback-name"
+                  placeholder="Ex. : Seb"
+                />
+              </div>
+
+              <div class="feedback-form__group">
+                <label for="feedback-email">Ton email</label>
+                <input
+                  type="email"
+                  id="feedback-email"
+                  name="feedback-email"
+                  placeholder="Ex. : cine-delices@email.com"
+                />
+              </div>
+
+              <div class="feedback-form__group feedback-form__group--full">
+                <label for="feedback-rating-display">Ta note</label>
+                <div class="feedback-rating">
+                  <span
+                    class="feedback-rating__value"
+                    id="feedback-rating-display"
+                    >0/5</span
+                  >
+                  <div
+                    class="rating-stars"
+                    role="group"
+                    aria-label="Noter la recette"
+                    data-current-rating="0"
+                    data-output="#feedback-rating-display"
+                    data-input="#feedback-rating-value"
+                  >
+                    <% for (let i = 1; i <= 5; i++) { %>
+                    <button
+                      type="button"
+                      class="rating-star"
+                      data-value="<%= i %>"
+                      aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
+                    >
+                      ★
+                    </button>
+                    <% } %>
+                  </div>
+                </div>
+                <input
+                  type="hidden"
+                  id="feedback-rating-value"
+                  name="feedback-rating"
+                  value="0"
+                />
+              </div>
+
+              <div class="feedback-form__group feedback-form__group--full">
+                <label for="feedback-message">Ton avis</label>
+                <textarea
+                  id="feedback-message"
+                  name="feedback-message"
+                  rows="4"
+                  placeholder="Donne ton avis sur la recette..."
+                ></textarea>
+              </div>
+
+              <button type="button" class="btn btn--gold">
+                Je donne mon avis
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script src="/js/burger-menu.js" defer></script>
+    <script src="/js/recipe-detail.js" defer></script>
+  </body>
+</html>

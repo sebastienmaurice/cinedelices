@@ -49,7 +49,7 @@ const recipesController = {
 
       // Rendu de la vue avec les recettes filtrées
       console.log(recipes);
-      res.render("recipes-movie", { movie, recipes, role: req.userRole});
+      res.render("recipes-movie", { movie, recipes, role: req.userRole });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
@@ -65,9 +65,34 @@ const recipesController = {
         return res.status(404).send("pages/error");
       }
 
-      // Rendu de la page détail avec la recette
-      res.send("pas de page pour l'instant");
-      // res.render("recipe-detail", { recipe });
+      const plainRecipe = recipe.get({ plain: true });
+
+      const descriptionBlocks = (plainRecipe.description || "")
+        .replace(/\r\n/g, "\n")
+        .split(/\n{2,}/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
+
+      const ingredientsBlocks = (plainRecipe.ingredients || "")
+        .replace(/\r\n/g, "\n")
+        .split(/\n+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      const preparationBlocks = (plainRecipe.preparation || "")
+        .replace(/\r\n/g, "\n")
+        .split(/\n{2,}/)
+        .flatMap((chunk) => chunk.split(/\n/))
+        .map((step) => step.trim())
+        .filter(Boolean);
+
+      res.render("recipe-detail", {
+        role: req.userRole,
+        recipe: plainRecipe,
+        descriptionBlocks,
+        ingredientsBlocks,
+        preparationBlocks,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("pages/error");
