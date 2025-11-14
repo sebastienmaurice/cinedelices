@@ -25,68 +25,74 @@
     <%- include("partials/header") %>
 
     <!-- MAIN -->
-  <main>
-  
-    <section class="banner">
-        <div class="banner__film" id="movie" data-id="<%= movie.id %>">
-              <h2><%= movie.title %></h2>
-              <p><%= movie.year %> / <%= movie.genre %></p>
+    <main>
+      <section class="banner__image__film" aria-hidden="true">
+        <div class="banner__image__film__overlay"></div>
+        <img
+          src="/images/<%= movie.picture %>"
+          alt="Image du film <%= movie.title %>"
+        />
+      </section>
+
+      <section class="banner" aria-labelledby="movie-title">
+        <div class="banner__title" id="movie" data-id="<%= movie.id %>">
+          <p class="banner__meta">Film culte</p>
+          <h2 id="movie-title"><%= movie.title %></h2>
+          <p class="banner__subtitle">
+            <span class="film-year"><%= movie.year %></span>
+            <span class="film-separator">•</span>
+            <span class="film-genre"><%= movie.genre %></span>
+          </p>
+        </div>
+
+        <div class="banner__search__films">
+          <label for="search" class="search__label">
+            Rechercher une recette par catégorie :
+          </label>
+
+          <select name="recipes" id="search" class="search__select__film">
+            <option value="" selected>Catégories</option>
+            <option value="all">Toutes les recettes</option>
+            <option value="entrée">Entrée</option>
+            <option value="plat">Plat</option>
+            <option value="dessert">Dessert</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- SECTION RECETTES -->
+      <section id="recipes">
+        <div class="presentation__recipes">
+          <div class="presentation__text__recipes">
+            <h3>Nos recettes cultes</h3>
+            <p>Parce que le goût se partage</p>
           </div>
 
-            <div class="banner__search__recipes">
-                <label for="search" class="search__label">Rechercher une recette par catégorie:</label>
-
-                <select name="recipes" id="search" class="search__select__dish">
-                    <option value="" selected>Categories</option> 
-                    <option value="all">Toutes les recettes</option>
-                    <option value="entrée">Entrée</option>
-                    <option value="plat">Plat</option>
-                    <option value="dessert">Dessert</option>
-                </select>
-            </div>
-    </section>
-
-    <!-- SECTION RECETTES -->
-    <section id="recipes">
-
-          <div class="presentation__image">
-
-            <img src="/images/<%= movie.picture %>" class="banner__image__film" alt="Image du film Crocodile Dundee">
-
+          <div class="presentation__button__recipes">
+            <a class="btn btn--gold" href="/add-recipes-movies/"
+              >Ajouter ma recette</a
+            >
           </div>
-
-          <div class="presentation__recipes">
-
-                <div class="presentation__text__recipes">
-
-                  <h3>Nos recettes cultes</h3>
-                  <p>parce que le goût se partage</p>
-
-                </div>
-
-                <div class="presentation__button__recipes">
-
-                  <a class="btn btn--gold" href="/add-recipes-movies/">Ajouter ma recette</a>
-                  
-                </div>
-
-          </div>
-
-                
+        </div>
 
         <div class="articles only__3__recipes">
-              <!-- bouclage des différentes recettes pour les afficher une à une-->
-            
-          <% recipes.forEach(recipe => { %> <!-- recipes (correspond au tableau récupéré par le controller)-->
+          <% if (!recipes || recipes.length === 0) { %>
+          <p class="no-recipes">
+            Aucune recette n'est disponible pour ce film.
+          </p>
+          <% } else { %> <% recipes.forEach(recipe => { %>
           <article>
             <div class="recipe-card-image">
-              <img src="/images/<%= recipe.picture %>" alt="recette du film <%= recipe.title %>"/>
+              <img
+                src="/images/<%= recipe.picture %>"
+                alt="Recette du film <%= recipe.title %>"
+              />
             </div>
-            
+
             <div class="recipe-card-info">
               <h4 class="recipe-title"><%= recipe.name %></h4>
               <div class="recipe-meta">
-                <span class="recipe-category"><%= recipe.category %> </span>
+                <span class="recipe-category"><%= recipe.category %></span>
                 <span class="recipe-separator">•</span>
                 <span class="recipe-duration"><%= recipe.duration %> min</span>
                 <span class="recipe-separator">•</span>
@@ -94,24 +100,28 @@
                 <span class="recipe-separator">•</span>
                 <span class="recipe-quote"><%= recipe.quote %>/5</span>
               </div>
-              
-              
-              
-              <a class="btn btn--red" href="/recipes-movie/details/<%= recipe.id %>">Voir la recette</a>                                                  
+
+              <a
+                class="btn btn--red"
+                href="/recipes-movie/details/<%= recipe.id %>"
+              >
+                Voir la recette
+              </a>
             </div>
-
           </article>
-          <% }) %>
-
+          <% }) %> <% } %>
         </div>
 
         <div class="center-button">
-          <button class="btn btn--gold-special" aria-label="Voir tous les films" aria-label="Voir tous les films">Voir toutes les recettes</button>
+          <button
+            class="btn btn--gold-special"
+            aria-label="Voir toutes les recettes"
+          >
+            Voir toutes les recettes
+          </button>
         </div>
-
-    </section>
-
-</main>
+      </section>
+    </main>
 
     <!-- FOOTER -->
     <%- include("partials/footer") %>
@@ -124,6 +134,3 @@
     <script src="/js/films.js" defer></script>
   </body>
 </html>
-
-
-            

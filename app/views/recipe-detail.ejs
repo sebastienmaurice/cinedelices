@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ciné Délices — Découvrez les détails de la recette cultissime <%= recipe.name %>"
+    />
+    <title><%= recipe.name %> - Ciné Délices</title>
+
+    <%- include("partials/head-resources") %>
+
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/recipe-detail.css" />
+  </head>
+
+  <body>
+    <%- include("partials/header") %>
+
+    <main class="recipe-detail-main">
+      <% const recipeImage = recipe.picture ||
+      "default-image-cine-delices-1.jpg"; %>
+
+      <section class="banner__image__recipes" aria-hidden="true">
+        <div class="banner__image__recipes__overlay"></div>
+        <img
+          src="/images/<%= recipeImage %>"
+          alt="Visuel de la recette <%= recipe.name %>"
+          loading="lazy"
+        />
+      </section>
+
+      <section class="banner__recipes" aria-labelledby="recipe-title">
+        <div class="banner__recipes__content">
+          <h1 id="recipe-title"><%= recipe.name %></h1>
+
+          <div class="banner__recipes__meta">
+            <span class="meta-pill meta-pill--category">
+              <i class="fa-solid fa-utensils" aria-hidden="true"></i>
+              <%= recipe.category %>
+            </span>
+            <span class="meta-pill">
+              <i class="fa-regular fa-clock" aria-hidden="true"></i>
+              <%= recipe.time %> min
+            </span>
+            <span class="meta-pill">
+              <i class="fa-solid fa-fire" aria-hidden="true"></i>
+              Difficulté : <%= recipe.difficulty %>
+            </span>
+          </div>
+        </div>
+
+        <div class="banner__recipes__rating" data-rating-container>
+          <p class="rating-label">
+            Note de la recette :
+            <span
+              class="current-rating"
+              id="banner-rating-output"
+              data-rating-output
+              ><%= recipe.quote %>/5</span
+            >
+          </p>
+          <div
+            class="rating-stars rating-stars--lifted"
+            role="group"
+            aria-label="Noter la recette"
+            data-current-rating="<%= recipe.quote %>"
+            data-output="#banner-rating-output"
+          >
+            <% for (let i = 1; i <= 5; i++) { %>
+            <button
+              type="button"
+              class="rating-star"
+              data-value="<%= i %>"
+              aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
+            >
+              ★
+            </button>
+            <% } %>
+          </div>
+          <button
+            type="button"
+            class="rating-hint__cta rating-hint__cta--primary"
+          >
+            Je donne mon avis
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="recipe-details-group"
+        aria-label="Détails complets de la recette"
+      >
+        <div class="recipe-overview" aria-labelledby="overview-title">
+          <div class="overview-card">
+            <div class="overview-card__description">
+              <h3 class="overview-card__title">
+                La recette culte de : <span><%= recipe.name %></span>
+              </h3>
+              <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
+              descriptionBlocks.forEach((paragraph, index) => { %>
+              <label class="sr-only" for="desc-<%= index %>"
+                >Description paragraphe <%= index + 1 %></label
+              >
+              <textarea readonly id="desc-<%= index %>" class="recipe-textarea">
+<%= paragraph %></textarea
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
+Aucune description détaillée n'a encore été partagée pour cette
+                recette.</textarea
+              >
+              <% } %>
+            </div>
+          </div>
+
+          <div class="overview-image">
+            <button
+              type="button"
+              class="overview-image-button"
+              data-lightbox-trigger
+              data-lightbox-image="/images/<%= recipeImage %>"
+              data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
+              aria-label="Voir l'image de <%= recipe.name %> en plein écran"
+            >
+              <img
+                src="/images/<%= recipeImage %>"
+                alt="Présentation de la recette <%= recipe.name %>"
+                loading="lazy"
+              />
+              <span class="overview-image-hint">Clique pour voir + grand</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="recipe-columns">
+          <div class="recipe-column column-ingredients">
+            <div class="column-overlay" aria-hidden="true"></div>
+            <div class="column-header">
+              <h3>Les Ingrédients</h3>
+              <p>Prêts à cuisiner ?</p>
+            </div>
+            <div class="textarea-stack">
+              <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
+              ingredientsBlocks.forEach((ingredient, index) => { %>
+              <label class="sr-only" for="ingredient-<%= index %>"
+                >Ingrédient <%= index + 1 %></label
+              >
+              <textarea
+                readonly
+                id="ingredient-<%= index %>"
+                class="recipe-textarea"
+              >
+<%= ingredient %></textarea
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
+Les ingrédients seront bientôt disponibles.</textarea
+              >
+              <% } %>
+            </div>
+          </div>
+
+          <div class="recipe-column column-preparation">
+            <div class="column-overlay" aria-hidden="true"></div>
+            <div class="column-header">
+              <h3>La Préparation</h3>
+              <p>Pas à pas</p>
+            </div>
+            <div class="textarea-stack">
+              <% if (preparationBlocks && preparationBlocks.length) { %> <%
+              preparationBlocks.forEach((step, index) => { %>
+              <label class="sr-only" for="step-<%= index %>"
+                >Étape <%= index + 1 %></label
+              >
+              <textarea readonly id="step-<%= index %>" class="recipe-textarea">
+<%= step %></textarea
+              >
+              <% }) %> <% } else { %>
+              <textarea readonly class="recipe-textarea">
+Le détail de cette préparation arrive bientôt.</textarea
+              >
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="recipe-cta">
+        <a class="btn btn--gold" href="/recipes-movie/<%= recipe.id_movie %>">
+          Revenir aux recettes du film
+        </a>
+        <a class="btn btn--red" href="/add-recipes-movies/">
+          Je veux créer ma recette
+        </a>
+      </section>
+
+      <div class="recipe-lightbox" id="recipe-lightbox" aria-hidden="true">
+        <div
+          class="recipe-lightbox__backdrop"
+          data-lightbox-close
+          aria-hidden="true"
+        ></div>
+        <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            class="recipe-lightbox__close"
+            aria-label="Fermer l'aperçu"
+            data-lightbox-close
+          >
+            &times;
+          </button>
+          <img
+            src=""
+            alt="Recette Ciné Délices"
+            class="recipe-lightbox__image"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script src="/js/burger-menu.js" defer></script>
+    <script src="/js/recipe-detail.js" defer></script>
+  </body>
+</html>

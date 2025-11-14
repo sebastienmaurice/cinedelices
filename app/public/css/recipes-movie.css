@@ -1,53 +1,122 @@
 /* ====================================================== */
 /* ================= RECIPES-MOVIE.CSS ================== */
 /* ====================================================== */
-/* 
-  Styles spécifiques à la page Recettes uniquement.
-  Les styles communs (reset, typo, header, footer, boutons) 
-  sont définis dans base.css
+/*
+  Harmonisation visuelle avec la page films :
+  - Les sections et les cartes reprennent le design de films.css
+  - La bannière et l'image principale suivent le style hero/formulaire
+    de add-recipes-movies.css
 */
 
 /* ====================================================== */
-/* ================== BANNIÈRE RECHERCHE =============== */
+/* =================== HERO IMAGE ======================= */
 /* ====================================================== */
+.banner__image__film {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 3rem auto;
+  height: 350px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(198, 166, 100, 0.2);
+  isolation: isolate;
+  background: linear-gradient(
+    135deg,
+    rgba(13, 27, 42, 0.95) 0%,
+    rgba(30, 52, 76, 0.95) 100%
+  );
+}
 
+.banner__image__film__overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(198, 166, 100, 0.35),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(255, 255, 255, 0.25),
+      transparent 40%
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.banner__image__film img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  filter: brightness(0.9) contrast(1.05);
+  transition: transform 0.6s ease;
+}
+
+.banner__image__film:hover img {
+  transform: scale(1.02);
+}
+
+/* ====================================================== */
+/* ================== BANNIÈRE RECHERCHE ================ */
+/* ====================================================== */
 .banner {
-  background: var(--bleu-fond);
-  border-radius: 8px;
-  padding: 1.5rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--bleu-nuit) 0%,
+    var(--bleu-intermediaire) 100%
+  );
+  border-radius: 12px;
+  padding: 1rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  border: 1px solid rgba(198, 166, 100, 0.15);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--bleu-intermediaire);
+  box-shadow: 0 10px 20px rgba(0, 2, 12, 0.35);
   position: relative;
-  margin-bottom: 2.5rem;
+  z-index: 5;
+  width: calc(100% - 4rem);
+  max-width: calc(var(--max-width) - 4rem);
+  margin: -110px auto 2.5rem auto;
 }
 
-.banner__film {
+.banner__title {
   flex: 0 0 auto;
   z-index: 1;
 }
 
-.banner__film h2 {
-  color: var(--dore-popcorn);
-  font-size: 1.4rem;
-  margin: 0 0 -0.5rem 0;
-  font-weight: 600;
-  opacity: 0.95;
-}
-
-.banner__film p {
-  color: var(--argent-ecran);
+.banner__meta {
   font-size: 0.85rem;
-  margin: 0;
-  opacity: 0.7;
-  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(236, 239, 241, 0.8);
+  margin: 0 0 0.25rem 0;
 }
 
-.banner__filters {
+.banner__title h2 {
+  color: var(--dore-popcorn);
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem 0;
+  font-weight: 700;
+  font-family: var(--font-h2-h6);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.banner__subtitle {
+  color: var(--argent-ecran);
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.banner__search__films {
   flex: 1;
   display: flex;
   align-items: center;
@@ -56,135 +125,137 @@
   z-index: 1;
 }
 
-
-
 .search__label {
   color: var(--dore-popcorn);
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
-  opacity: 0.8;
+  opacity: 0.9;
   white-space: nowrap;
+  margin-right: 1rem;
 }
 
-.search__select__dish {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+.search__select__film {
+  background-color: var(--bleu-clair);
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--argent-ecran);
-  border: 1px solid rgba(198, 166, 100, 0.2);
+  border: 1px solid rgba(236, 239, 241, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23e8e8e8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e8e8e8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 10px;
-  min-width: 140px;
+  background-position: right 1rem center;
+  background-size: 12px;
+  min-width: 180px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.search__select__dish:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(198, 166, 100, 0.4);
+.search__select__film:hover {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border: 1px solid rgba(236, 239, 241, 0.3);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
 }
 
-.search__select__dish:focus {
+.search__select__film:focus {
   outline: none;
-  border-color: var(--dore-popcorn);
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 2px rgba(198, 166, 100, 0.2);
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border: 1px solid rgba(236, 239, 241, 0.3);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
 }
 
-.search__select__dish option {
-  background-color: var(--bleu-nuit);
-  color: var(--argent-ecran);
+.search__select__film option {
+  background-color: var(--argent-ecran);
+  color: var(--bleu-nuit);
   padding: 0.5rem;
 }
 
 /* ====================================================== */
-/* ========== PRÉSENTATION DES RECETTES ================ */
+/* ========== PRÉSENTATION DES RECETTES ================= */
 /* ====================================================== */
-
-.banner__image__film {
-  border-radius: 12px;
-}
-
-.presentation__image {
-  margin-top: 6rem;
-  display: flex;
-  justify-content: center;
-  border-radius: 12px;
+#recipes {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .presentation__recipes {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 4rem 1rem 4rem;
+  margin: 0 auto 1.5rem auto;
+  padding: 0;
 }
 
 .presentation__text__recipes h3 {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
+  color: var(--dore-popcorn);
+  font-family: var(--font-h2-h6);
+  font-weight: 700;
+  margin-bottom: -0.8rem;
 }
 
 .presentation__text__recipes p {
-  font-size: 1.5rem;
-  margin-top: -1.5rem;
+  font-size: 1rem;
+  color: var(--argent-ecran);
+  margin: 0;
+  opacity: 0.9;
+}
+
+.presentation__button__recipes .btn {
+  white-space: nowrap;
 }
 
 /* ====================================================== */
-/* ========== SECTION DES FICHES DE RECETTES =========== */
+/* ========== SECTION DES FICHES DE RECETTES ============ */
 /* ====================================================== */
-
-#recipes {
-  width: 100%;
-  margin: 0 auto;
-}
-
 #recipes .articles {
   display: flex;
-  gap: 3rem;
+  gap: 2rem;
   width: 100%;
-  max-width: var(--max-width);
   margin: 0 auto 4rem auto;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
-/* Carte des recettes - Style glassmorphism simplifié */
+.only__3__recipes {
+  max-width: 100%;
+}
+
 #recipes article {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  min-height: 380px;
-  flex: 1 1 420px;
-  background: rgba(13, 27, 42, 0.4);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-radius: 16px;
-  border: 1px solid rgba(211, 162, 97, 0.2);
+  width: calc((100% - 4rem) / 3);
+  min-height: 350px;
+  flex: 0 0 calc((100% - 4rem) / 3);
+  background: linear-gradient(
+    0deg,
+    var(--bleu-nuit) 0%,
+    var(--bleu-intermediaire) 100%
+  );
+  border-radius: 12px;
+  border: 2px solid var(--bleu-intermediaire);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  min-width: 300px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: all var(--transition);
+  box-shadow: 0 10px 20px rgba(0, 2, 12, 0.35);
 }
 
 #recipes article:hover {
   border: 2px solid var(--dore-popcorn);
-  box-shadow: 0 0 8px var(--dore-popcorn), 0 10px 20px rgba(198, 166, 100, 0.5),
-    0 4px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
   transform: translateY(-3px) scale(1.02);
   animation: cinema-glow 0.2s linear;
 }
 
-/* Container image - Style glassmorphism simplifié */
 .recipe-card-image {
   width: 100%;
   height: 220px;
-  border-radius: 16px 16px 0 0;
+  border-radius: 12px 12px 0 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -197,49 +268,35 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
   border-radius: 12px;
-  transition: transform 0.4s ease;
-}
-
-#recipes article img {
-  width: 420px;
-  background-color: var(--bleu-nuit);
-  border-radius: 12px;
-  overflow: hidden;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-              filter 0.6s ease;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s ease;
 }
 
 #recipes article:hover .recipe-card-image img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(1.1) contrast(1.05);
 }
 
-/* Informations de la carte - Style glassmorphism simplifié */
 .recipe-card-info {
   padding: 0 1.5rem 2rem 1.5rem;
-  background: rgba(13, 27, 42, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: transparent;
 }
 
 .recipe-title {
-  margin-bottom: 0.75rem;
-  font-size: 1.4rem;
+  margin-bottom: -0.2rem;
+  font-size: 1.3rem;
   color: var(--dore-popcorn);
   font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: var(--font-h2-h6);
   letter-spacing: 0.5px;
 }
 
 .recipe-meta {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  color: var(--argent-ecran);
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
   font-weight: 500;
+  opacity: 0.9;
 }
 
 .recipe-category,
@@ -248,8 +305,8 @@
 .recipe-difficulty,
 .recipe-quote {
   display: inline;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
+  color: var(--argent-ecran);
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -258,95 +315,79 @@
   margin: 0 0.25rem;
 }
 
-.recipe-genre {
-  text-transform: capitalize;
-}
-
 .recipe-card-info .btn {
-  margin-top: 0.5rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  display: inline-block;
+  margin-top: 1rem;
+  width: auto;
+  transition: all var(--transition);
 }
 
-#recipes article:hover .film-card-info .btn {
-  box-shadow: 0 4px 15px rgba(215, 38, 56, 0.4), 0 0 10px rgba(215, 38, 56, 0.2);
+#recipes article:hover .recipe-card-info .btn {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 4px 15px rgba(198, 166, 100, 0.4),
+    0 0 10px rgba(198, 166, 100, 0.2);
   transform: translateY(-2px);
 }
 
-/* ====================================================== */
-/* ====================== ANIMATIONS =================== */
-/* ====================================================== */
+.no-recipes {
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--argent-ecran);
+  margin: 2rem 0;
+}
 
+.center-button {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* ====================================================== */
+/* ====================== ANIMATIONS ==================== */
+/* ====================================================== */
 @keyframes cinema-glow {
   0% {
-    box-shadow: 0 0 0px var(--dore-popcorn),
-      0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0px var(--dore-popcorn);
   }
   50% {
-    box-shadow: 0 0 6px var(--dore-popcorn),
-      0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 6px var(--dore-popcorn);
   }
   100% {
-    box-shadow: 0 0 8px var(--dore-popcorn),
-      0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px var(--dore-popcorn);
   }
 }
 
 /* ====================================================== */
-/* ====================== RESPONSIVE =================== */
+/* ====================== RESPONSIVE ==================== */
 /* ====================================================== */
-@media (max-width: 800px) {
+@media (max-width: 1200px) {
+  #recipes article {
+    width: calc((100% - 2rem) / 2);
+    flex: 0 0 calc((100% - 2rem) / 2);
+  }
+}
+
+@media (max-width: 900px) {
   .banner {
     flex-direction: column;
     align-items: flex-start;
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    gap: 1.25rem;
+    width: calc(100% - 3rem);
+    margin: -70px 1.5rem 2rem 1.5rem;
   }
 
-  .banner__title {
-    width: 100%;
-  }
-
-  .banner__title h2 {
-    font-size: 1.2rem;
-  }
-
-  .banner__title p {
-    font-size: 0.8rem;
-  }
-
-  .banner__filters {
+  .banner__search__films {
     width: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
   }
 
-  .filter-tabs {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .filter-tab {
-    flex: 1;
-    min-width: calc(25% - 0.5rem);
-    font-size: 0.75rem;
-    padding: 0.4rem 0.5rem;
-  }
-
-  .filter-select-wrapper {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
   .search__label {
-    font-size: 0.8rem;
+    margin-right: 0;
   }
 
   .search__select__film {
@@ -354,21 +395,55 @@
     min-width: auto;
   }
 
-  #films article {
-    width: 100%;
-    max-width: 100%;
+  .banner__image__film {
+    height: 260px;
   }
 
-  .film-card-image {
-    height: auto;
-    aspect-ratio: 16/9;
+  #recipes {
+    padding: 0 1.5rem;
+  }
+
+  .presentation__recipes {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 }
 
-/* ====================================================== */
-/* ====================== UTILITAIRES =================== */
-/* ====================================================== */
-.center-button {
-  margin-top: 2rem;
-  text-align: center;
+@media (max-width: 800px) {
+  #recipes article {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .banner__title h2 {
+    font-size: 1.6rem;
+  }
+
+  .search__label {
+    font-size: 0.9rem;
+  }
+
+  .search__select__dish {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 540px) {
+  .banner {
+    padding: 1.1rem 1.25rem;
+    gap: 1rem;
+    width: calc(100% - 2rem);
+    margin: -45px 1rem 1.75rem 1rem;
+  }
+
+  .banner__image__film {
+    height: 220px;
+    margin: 0 auto 2rem auto;
+  }
+
+  .presentation__text__recipes h3 {
+    font-size: 1.5rem;
+  }
 }
