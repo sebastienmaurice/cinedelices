@@ -1,48 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes"
+    />
+    <title>Recettes du film - Ciné Délices</title>
 
-<head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Film et ses recettes</title>
+    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
+    <%- include("partials/head-resources") %>
 
     <!-- styles-->
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/recipes-movie.css">
-
-    <!-- styles d'écriture -->
-    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&family=Limelight&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-   
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/recipes-movie.css" />
 
     <!-- scripts -->
     <script src="/js/filtred-category.js" defer></script>
+  </head>
 
-</head>
+  <body>
+    <!-- HEADER -->
+    <%- include("partials/header") %>
 
-
-<body>
-
-<!-- ========== HEADER ============ -->
-<%- include("partials/header") %>
-
-
-<!-- ========== MAIN ============ -->
-
+    <!-- MAIN -->
   <main>
   
-    <section class="banner__film">
-
-          <div class="banner__film__title" id="movie" data-id="<%= movie.id %>">
-
+    <section class="banner">
+        <div class="banner__film" id="movie" data-id="<%= movie.id %>">
               <h2><%= movie.title %></h2>
               <p><%= movie.year %> / <%= movie.genre %></p>
-
           </div>
 
             <div class="banner__search__recipes">
-
                 <label for="search" class="search__label">Rechercher une recette par catégorie:</label>
 
                 <select name="recipes" id="search" class="search__select__dish">
@@ -51,13 +42,11 @@
                     <option value="entrée">Entrée</option>
                     <option value="plat">Plat</option>
                     <option value="dessert">Dessert</option>
-
                 </select>
             </div>
-
     </section>
 
-    
+    <!-- SECTION RECETTES -->
     <section id="recipes">
 
           <div class="presentation__image">
@@ -77,7 +66,7 @@
 
                 <div class="presentation__button__recipes">
 
-                  <button class="add__recipe">Ajouter ma recette</button>  
+                  <button class="btn btn--gold">Ajouter ma recette</button>  
                   
                 </div>
 
@@ -86,18 +75,29 @@
                 
 
         <div class="articles only__3__recipes">
-              <!-- bouclage des différentes recettes pour les afficher un à un-->
+              <!-- bouclage des différentes recettes pour les afficher une à une-->
             
           <% recipes.forEach(recipe => { %> <!-- recipes (correspond au tableau récupéré par le controller)-->
           <article>
-
-            <img src="/images/<%= recipe.picture %>">
-
-            <div>
-              <h4><%= recipe.name %></h4>
-              <p><%= recipe.category %></p>
-              <p><%= recipe.quote %>/5</p>
-              <a class="recipe-button" href="/recipes-movie/details/<%= recipe.id %>">Voir les recettes</a>                                                  
+            <div class="recipe-card-image">
+              <img src="/images/<%= recipe.picture %>" alt="recette du film <%= recipe.title %>"/>
+            </div>
+            
+            <div class="recipe-card-info">
+              <h4 class="recipe-title"><%= recipe.name %></h4>
+              <div class="recipe-meta">
+                <span class="recipe-category"><%= recipe.category %> </span>
+                <span class="recipe-separator">•</span>
+                <span class="recipe-duration"><%= recipe.duration %> min</span>
+                <span class="recipe-separator">•</span>
+                <span class="recipe-difficulty"><%= recipe.difficulty %></span>
+                <span class="recipe-separator">•</span>
+                <span class="recipe-quote"><%= recipe.quote %>/5</span>
+              </div>
+              
+              
+              
+              <a class="btn btn--red" href="/recipes-movie/details/<%= recipe.id %>">Voir la recette</a>                                                  
             </div>
 
           </article>
@@ -106,18 +106,24 @@
         </div>
 
         <div class="center-button">
-          <button class="cta-button-secondary" aria-label="Voir tous les films">Voir toutes les recettes</button>
+          <button class="btn btn--gold-special" aria-label="Voir tous les films" aria-label="Voir tous les films">Voir toutes les recettes</button>
         </div>
 
     </section>
 
 </main>
 
-<!-- ========== FOOTER ============ -->
-
+    <!-- FOOTER -->
     <%- include("partials/footer") %>
-  </body>
 
+    <!-- Scripts JS globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+    <script src="/js/modal.js" defer></script>
+
+    <!-- Scripts JS spécifiques à la page -->
+    <script src="/js/films.js" defer></script>
+  </body>
 </html>
+
 
             
