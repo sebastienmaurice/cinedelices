@@ -26,13 +26,17 @@ function verifyToken(req, res, next) {
     console.error("Token invalide:", error.message);
     res.clearCookie("token");
     if (error.name === "TokenExpiredError") {
-      return res
-        .status(401)
-        .json({ error: "Session expirée. Veuillez vous reconnecter" });
+      return res.status(401).render("error", {
+        error: "401",
+        message: "Session expirée. Veuillez vous reconnecter",
+        role: req.userRole,
+      });
     } else {
-      return res
-        .status(401)
-        .json({ error: "Session invalide. Veuillez vous reconnecter" });
+      return res.status(401).render("error", {
+        error: "401",
+        message: "session invalide. Veuillez vous reconnecter",
+        role: req.userRole,
+      });
     }
   }
 }
@@ -51,13 +55,17 @@ function injectId(req, res, next) {
     console.error("Token invalide:", error.message);
     res.clearCookie("token");
     if (error.name === "TokenExpiredError") {
-      return res
-        .status(401)
-        .json({ error: "Session expirée. Veuillez vous reconnecter" });
+      return res.status(401).render("error", {
+        error: "401",
+        message: "Session expirée. Veuillez vous reconnecter",
+        role: req.userRole,
+      });
     } else {
-      return res
-        .status(401)
-        .json({ error: "Session invalide. Veuillez vous reconnecter" });
+      return res.status(401).render("error", {
+        error: "401",
+        message: "Session invalide. Veuillez vous reconnecter",
+        role: req.userRole,
+      });
     }
   }
 }
@@ -71,7 +79,11 @@ function isLogged(req, res, next) {
   } else {
     // Accès interdit
 
-    res.status(403).send("Route interdite. Vous n'êtes pas connecté.");
+    res.status(403).render("error", {
+      error: "403",
+      message: "Route interdite. Vous n'êtes pas connecté.",
+      role: req.userRole,
+    });
   }
 }
 

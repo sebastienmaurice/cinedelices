@@ -7,9 +7,11 @@ const recipesController = {
       const movie = await Movie.findByPk(req.params.id);
 
       if (!movie) {
-        return res
-          .status(404)
-          .render("pages/error", { message: "Film introuvable." });
+        return res.status(404).render("error", {
+          error: "404",
+          message: "Film introuvable.",
+          role: req.userRole,
+        });
       }
 
       // Toutes les recettes du film
@@ -18,7 +20,11 @@ const recipesController = {
       res.render("recipes-movie", { movie, recipes, role: req.userRole });
     } catch (error) {
       console.error(error);
-      res.status(500).render("pages/error", { message: "Erreur serveur." });
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
   /*
@@ -37,9 +43,11 @@ const recipesController = {
 
       const movie = await Movie.findByPk(id);
       if (!movie) {
-        return res
-          .status(404)
-          .send("pages/error", { message: "Film introuvable." });
+        return res.status(404).render("error", {
+          error: "404",
+          message: "Film introuvable pour cette categorie.",
+          role: req.userRole,
+        });
       }
 
       let recipes;
@@ -59,7 +67,11 @@ const recipesController = {
       res.render("recipes-movie", { movie, recipes, role: req.userRole });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
   /*
@@ -78,7 +90,11 @@ const recipesController = {
       const recipe = await Recipe.findByPk(req.params.id);
 
       if (!recipe) {
-        return res.status(404).send("pages/error");
+        return res.status(404).render("error", {
+          error: "404",
+          message: "recette indisponible.",
+          role: req.userRole,
+        });
       }
 
       const plainRecipe = recipe.get({ plain: true });
@@ -111,7 +127,11 @@ const recipesController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
   /*

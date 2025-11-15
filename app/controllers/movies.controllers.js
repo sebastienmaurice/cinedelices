@@ -25,7 +25,11 @@ const moviesController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 
@@ -50,7 +54,11 @@ const moviesController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 };

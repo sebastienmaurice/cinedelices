@@ -13,7 +13,7 @@ const adminController = {
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
-      
+
       res.render("admin-dashboard", {
         recipes,
         movies,
@@ -23,7 +23,11 @@ const adminController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 

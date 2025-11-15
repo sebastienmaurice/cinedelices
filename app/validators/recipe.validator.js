@@ -1,159 +1,126 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 /**
  * description : Middleware de validation avec joi pour la création d'une recette.
  * dossier validators : recipe.validator.js
  */
 
-function validateRecipeCreate (req, res, next) {
-    const recipeSchema = Joi.object({
+function validateRecipeCreate(req, res, next) {
+  const recipeSchema = Joi.object({
+    name: Joi.string().required().messages({
+      "string.empty": "Le nom de la recette est obligatoire.",
+    }),
 
-      name: Joi.string()
-        .required()
-        .messages({
-          'string.empty': 'Le nom de la recette est obligatoire.'
-        }),
+    description: Joi.string().max(2000).required().messages({
+      "string.empty": "La description est obligatoire.",
+      "string.max": "La description ne peut pas dépasser 2000 caractères.",
+    }),
 
-      description: Joi.string()
-        .max(2000)
-        .required()
-        .messages({
-          'string.empty': 'La description est obligatoire.',
-          'string.max': 'La description ne peut pas dépasser 2000 caractères.'
-        }),
+    picture: Joi.string().max(255).allow(null, "").optional(),
 
-      picture: Joi.string()
-        .max(255)
-        .allow(null, '')
-        .optional(),
+    category: Joi.string()
+      .max(100)
+      .valid("entrée", "plat", "dessert")
+      .required()
+      .messages({
+        "string.empty": "La catégorie est obligatoire.",
+        "any.only": 'La catégorie doit être "entrée", "plat" ou "dessert".',
+      }),
 
-      category: Joi.string()
-        .max(100)
-        .valid('entrée', 'plat', 'dessert')
-        .required()
-        .messages({
-          'string.empty': 'La catégorie est obligatoire.',
-          'any.only': 'La catégorie doit être "entrée", "plat" ou "dessert".'
-        }),
+    quote: Joi.number().integer().min(0).max(5).default(0).optional().messages({
+      "number.min": "La note doit être entre 0 et 5.",
+      "number.max": "La note doit être entre 0 et 5.",
+    }),
 
-      quote: Joi.number()
-        .integer()
-        .min(0)
-        .max(5)
-        .default(0)
-        .optional()
-        .messages({
-          'number.min': 'La note doit être entre 0 et 5.',
-          'number.max': 'La note doit être entre 0 et 5.'
-        }),
+    ingredients: Joi.string().max(1000).required().messages({
+      "string.empty": "Les ingrédients sont obligatoires.",
+      "string.max": "Les ingrédients ne peuvent pas dépasser 1000 caractères.",
+    }),
 
-      ingredients: Joi.string()
-        .max(1000)
-        .required()
-        .messages({
-          'string.empty': 'Les ingrédients sont obligatoires.',
-          'string.max': 'Les ingrédients ne peuvent pas dépasser 1000 caractères.'
-        }),
+    preparation: Joi.string().max(2000).required().messages({
+      "string.empty": "La préparation est obligatoire.",
+      "string.max": "La préparation ne peut pas dépasser 2000 caractères.",
+    }),
 
-      preparation: Joi.string()
-        .max(2000)
-        .required()
-        .messages({
-          'string.empty': 'La préparation est obligatoire.',
-          'string.max': 'La préparation ne peut pas dépasser 2000 caractères.'
-        }),
+    time: Joi.number().integer().min(1).required().messages({
+      "number.base": "Le temps doit être un nombre.",
+      "number.min": "Le temps doit être au moins 1 minute.",
+      "any.required": "Le temps de préparation est obligatoire.",
+    }),
 
-      time: Joi.number()
-        .integer()
-        .min(1)
-        .required()
-        .messages({
-          'number.base': 'Le temps doit être un nombre.',
-          'number.min': 'Le temps doit être au moins 1 minute.',
-          'any.required': 'Le temps de préparation est obligatoire.'
-        }),
+    difficulty: Joi.string()
+      .max(50)
+      .valid("Facile", "Moyenne", "Difficile")
+      .required()
+      .messages({
+        "string.empty": "La difficulté est obligatoire.",
+        "any.only":
+          'La difficulté doit être "Facile", "Moyenne" ou "Difficile".',
+      }),
 
-      difficulty: Joi.string()
-        .max(50)
-        .valid('Facile', 'Moyenne', 'Difficile')
-        .required()
-        .messages({
-          'string.empty': 'La difficulté est obligatoire.',
-          'any.only': 'La difficulté doit être "Facile", "Moyenne" ou "Difficile".'
-        }),
+    status: Joi.boolean().default(false).optional(),
 
-      status: Joi.boolean()
-        .default(false)
-        .optional(),
+    id_movie: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .optional()
+      .messages({
+        "number.base": "L'ID du film doit être un nombre.",
+        "number.positive": "L'ID du film doit être positif.",
+      }),
+  });
 
-      id_movie: Joi.number()
-        .integer()
-        .positive()
-        .allow(null)
-        .optional()
-        .messages({
-          'number.base': 'L\'ID du film doit être un nombre.',
-          'number.positive': 'L\'ID du film doit être positif.'
-        })
+  const { error } = recipeSchema.validate(req.body);
+  if (error) {
+    return res.status(400).render("error", {
+      error: "400",
+      message: `${error.details[0].message}`,
+      role: req.userRole,
     });
-  
-    const { error } = recipeSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
-    next();
-  };
-  
+  }
+  next();
+}
+
 /**
-* description : Middleware de validation avec joi pour la mise à jour d'une recette.
-* dossier validators : recipe.validator.js
-*/
-  
-function validateRecipeUpdate (req, res, next) {
-    const recipeSchema = Joi.object({
+ * description : Middleware de validation avec joi pour la mise à jour d'une recette.
+ * dossier validators : recipe.validator.js
+ */
 
-      name: Joi.string().optional(),
+function validateRecipeUpdate(req, res, next) {
+  const recipeSchema = Joi.object({
+    name: Joi.string().optional(),
 
-      description: Joi.string().max(2000).optional(),
+    description: Joi.string().max(2000).optional(),
 
-      picture: Joi.string().max(255).allow(null, '').optional(),
+    picture: Joi.string().max(255).allow(null, "").optional(),
 
-      category: Joi.string()
-        .valid('entrée', 'plat', 'dessert')
-        .optional(),
+    category: Joi.string().valid("entrée", "plat", "dessert").optional(),
 
-      quote: Joi.number()
-        .integer()
-        .min(0)
-        .max(5)
-        .optional(),
+    quote: Joi.number().integer().min(0).max(5).optional(),
 
-      ingredients: Joi.string().max(1000).optional(),
+    ingredients: Joi.string().max(1000).optional(),
 
-      preparation: Joi.string().max(2000).optional(),
+    preparation: Joi.string().max(2000).optional(),
 
-      time: Joi.number().integer().min(1).optional(),
+    time: Joi.number().integer().min(1).optional(),
 
-      difficulty: Joi.string()
-        .valid('Facile', 'Moyenne', 'Difficile')
-        .optional(),
+    difficulty: Joi.string().valid("Facile", "Moyenne", "Difficile").optional(),
 
-      status: Joi.boolean().optional(),
+    status: Joi.boolean().optional(),
 
-      id_movie: Joi.number()
-        .integer()
-        .positive()
-        .allow(null)
-        .optional()
-    }).min(1);
-  
-    const { error } = recipeSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
-    next();
-  };
-  
-  export default { validateRecipeCreate, validateRecipeUpdate};
-  
-  
+    id_movie: Joi.number().integer().positive().allow(null).optional(),
+  }).min(1);
+
+  const { error } = recipeSchema.validate(req.body);
+  if (error) {
+    return res.status(400).render("error", {
+      error: "400",
+      message: `${error.details[0].message}`,
+      role: req.userRole,
+    });
+  }
+  next();
+}
+
+export default { validateRecipeCreate, validateRecipeUpdate };

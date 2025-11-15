@@ -80,14 +80,18 @@ const authController = {
       res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
-        return res
-          .status(StatusCodes.CONFLICT)
-          .json({ error: "Ce pseudo est déjà utilisé" });
+        return res.status(StatusCodes.CONFLICT).render("error", {
+          error: "409",
+          message: "Ce pseudo est déjà utilisé.",
+          role: req.userRole,
+        });
       }
 
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Internal Server Error" });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 
@@ -105,7 +109,11 @@ const authController = {
       });
 
       if (!user) {
-        return res.status(404).send("Utilisateur non trouvé");
+        return res.status(404).render("error", {
+          error: "404",
+          message: "Utilisateur non trouvé",
+          role: req.userRole,
+        });
       }
 
       // Rendu de la vue avec les données utilisateur
@@ -113,7 +121,11 @@ const authController = {
       res.render("user-profile", { user, role: req.userRole });
     } catch (error) {
       console.error(error);
-      res.status(500).send("pages/error");
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 

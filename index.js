@@ -26,6 +26,11 @@ app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.que
 // Routes
 app.use(router);
 
+// middleware (404)
+app.use((req, res) => {
+  res.status(404).render("error", { role: req.userRole });
+});
+
 app.listen(PORT, () => {
   console.log(`Le serveur est démarré sur http://localhost:${PORT}`);
 });
