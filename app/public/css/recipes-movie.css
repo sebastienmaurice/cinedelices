@@ -59,7 +59,7 @@
 }
 
 .banner__image__film:hover img {
-  transform: scale(1.02);
+  transform: none; /* supprime le zoom pour éviter flou */
 }
 
 /* ====================================================== */
@@ -247,9 +247,11 @@
 
 #recipes article:hover {
   border: 2px solid var(--dore-popcorn);
-  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
-  transform: translateY(-3px) scale(1.02);
-  animation: cinema-glow 0.2s linear;
+  box-shadow: 0 8px 16px rgba(198, 166, 100, 0.35),
+    0 3px 5px rgba(0, 0, 0, 0.35);
+  transform: translateY(
+    -2px
+  ); /* suppression du scale pour éviter la déformation/flou */
 }
 
 .recipe-card-image {
@@ -273,13 +275,23 @@
 }
 
 #recipes article:hover .recipe-card-image img {
-  transform: scale(1.08);
-  filter: brightness(1.1) contrast(1.05);
+  transform: none; /* pas de zoom pour éviter le flou de rééchantillonnage */
+  filter: none; /* suppression des boosts contrast/brightness */
 }
 
 .recipe-card-info {
   padding: 0 1.5rem 2rem 1.5rem;
   background-color: transparent;
+  position: relative; /* nécessaire pour positionner la note en absolu */
+}
+
+/* Ligne d'actions: bouton + étoiles alignés verticalement au centre */
+.recipe-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .recipe-title {
@@ -289,6 +301,10 @@
   font-weight: 700;
   font-family: var(--font-h2-h6);
   letter-spacing: 0.5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .recipe-meta {
@@ -329,6 +345,64 @@
   box-shadow: 0 4px 15px rgba(198, 166, 100, 0.4),
     0 0 10px rgba(198, 166, 100, 0.2);
   transform: translateY(-2px);
+}
+
+/* Note générale au survol: placée à droite du bouton */
+/* Les étoiles se placent à droite, centrées sur la hauteur de la ligne */
+.recipe-card-rating {
+  display: inline-flex;
+  flex-direction: column; /* permet d'afficher le libellé au-dessus des étoiles */
+  align-items: flex-end; /* aligné à droite par rapport au bouton */
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+.recipe-card-rating .stars-caption {
+  font-size: 0.8rem;
+  color: var(--argent-ecran);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+.recipe-card-rating .stars-caption strong {
+  color: var(--bleu-nuit);
+  font-weight: 700;
+}
+
+/* plus besoin de toggle display au hover */
+
+.recipe-card-rating .star {
+  font-size: 1.6rem; /* étoiles plus grandes */
+  line-height: 1;
+  color: var(--argent-ecran);
+  opacity: 0.3; /* filigrane au repos, plus perceptible */
+  /* ombre subtile harmonisée avec --bleu-intermediaire */
+  text-shadow: 0 0 0.6px var(--ombre-intermediaire);
+}
+
+#recipes article:hover .recipe-card-rating .star {
+  opacity: 0.65; /* léger renforcement au hover */
+  text-shadow: 0 0 0.8px var(--ombre-intermediaire-strong);
+}
+#recipes article:hover .recipe-card-rating .star.is-active {
+  color: var(--dore-popcorn); /* colorées au hover */
+  opacity: 1;
+  text-shadow: 0 0 1px rgba(198, 166, 100, 0.5);
+}
+.recipe-card-rating .stars-value {
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--bleu-nuit);
+  font-weight: 700;
+}
+
+/* Caption responsive: on simplifie sous 500px */
+@media (max-width: 500px) {
+  .recipe-card-rating .stars-caption {
+    display: none;
+  }
+  .recipe-card-rating .stars-value {
+    font-size: 0.8rem;
+  }
 }
 
 .no-recipes {
@@ -445,5 +519,9 @@
 
   .presentation__text__recipes h3 {
     font-size: 1.5rem;
+  }
+  /* gap cartes légèrement réduit sur écrans très étroits */
+  #recipes .articles {
+    gap: 1.25rem;
   }
 }

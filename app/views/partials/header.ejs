@@ -9,7 +9,7 @@
     <span class="title-delices">Délices</span>
   </a>
 
-  <nav class="navigationheader">
+  <nav class="navigationheader" role="navigation" aria-label="Navigation principale" aria-hidden="true" id="site-nav">
     <a href="/" class="navigationheader-link">Accueil</a>
     <!-- admin visible uniquement avec role admin -->
     <!-- typeof est utilisé pour le type de la variable ("string", "undefined") et sans c'est la valeur de la variable (admin) -->
@@ -23,6 +23,14 @@
     <% } %>
 
     <a href="#" class="navigationheader-link">Contact</a>
+
+    <% if (typeof role === "undefined") { %>
+    <!-- Boutons auth en version mobile (affichés dans le menu burger) -->
+    <div class="navigationheader-auth">
+      <a href="#" class="btn btn--gold btn--sm js-login">Connexion</a>
+      <a href="#" class="btn btn--red btn--sm js-register">Inscription</a>
+    </div>
+    <% } %>
   </nav>
   <!-- div botton_header visible uniquement si pas logger -->
 
@@ -46,12 +54,28 @@
   <% } %>
 
   <!-- Burger menu for mobile -->
-  <button class="burger-menu">
+  <button class="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-nav">
     <span class="burger-line"></span>
     <span class="burger-line"></span>
     <span class="burger-line"></span>
   </button>
 </header>
+<script>
+  (function () {
+    const current = location.pathname;
+    const links = document.querySelectorAll(".navigationheader-link");
+    links.forEach((a) => {
+      const href = a.getAttribute("href");
+      if (href === "/" && current === "/") {
+        a.classList.add("is-active");
+      } else if (href === "/movies" && current.startsWith("/movies")) {
+        a.classList.add("is-active");
+      } else if (href && href !== "/" && current.startsWith(href)) {
+        a.classList.add("is-active");
+      }
+    });
+  })();
+</script>
 
 <!-- ===================== MODAL AUTH ===================== -->
 <div id="authModal" class="modal">

@@ -177,6 +177,12 @@
   transform: scale(1.05);
 }
 
+/* Lecture seule pour la note générale de la bannière */
+.rating-stars[data-readonly="true"] .rating-star {
+  pointer-events: none;
+  cursor: default;
+}
+
 .rating-hint__cta {
   border: 1px solid rgba(6, 25, 48, 0.3);
   background: rgba(6, 25, 48, 0.08);
@@ -532,6 +538,225 @@ body.lightbox-open {
   justify-content: center;
   margin-top: 2.5rem;
   flex-wrap: wrap;
+}
+
+/* ================= RECIPE REVIEW BANNER ================= */
+.recipe-review-banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.45fr 0.55fr; /* partie droite plus étroite */
+  align-items: stretch;
+  gap: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--red-cine);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(198, 166, 100, 0.25);
+  border: 1px solid rgba(198, 166, 100, 0.35);
+  margin-top: 2rem;
+}
+
+.review-banner__content {
+  position: relative;
+  z-index: 1;
+  padding: 2.25rem; /* ajoute de l’air côté rouge */
+}
+
+/* Colonne illustration: fond doré + image par-dessus en ::after pour déborder */
+.review-banner__illustration {
+  position: relative;
+  overflow: visible;
+  background:
+    /* fond doré plus fin à droite, se fondant rapidement */ linear-gradient(
+      to left,
+      var(--dore-popcorn) 0 40%,
+      rgba(198, 166, 100, 0) 60%
+    ),
+    var(--dore-popcorn);
+  min-height: 260px;
+}
+
+/* Illustration popcorn plus grande, débordement accentué */
+.review-banner__illustration::after {
+  content: "";
+  position: absolute;
+  top: -18px;
+  bottom: -18px;
+  right: -60px; /* débordement conservé */
+  width: 160%; /* débordement conservé */
+  background: url("/images/img-popcorn-bg-banner-comments.png") right center /
+    contain no-repeat;
+  background-position: 92% center; /* décale l’image vers la gauche pour rendre visible "Ciné Délices" */
+  pointer-events: none;
+  z-index: 3;
+}
+
+.review-banner__texts h2 {
+  font-family: var(--font-h1);
+  color: var(--argent-ecran);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+}
+
+.review-banner__subtitle {
+  color: var(--bleu-nuit);
+  margin-bottom: 1.1rem;
+}
+.review-banner__subtitle .subtitle--brand {
+  color: var(--argent-ecran);
+  font-weight: 700;
+}
+
+.review-banner__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.review-banner__form .form-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: nowrap;
+}
+
+.review-input {
+  height: 48px;
+  border-radius: 12px;
+  padding: 0 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  max-width: 380px;
+  width: 100%;
+  justify-self: start;
+  flex: 0 0 380px; /* largeur fixe pour l’alignement */
+}
+
+.review-input::placeholder,
+.review-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.review-textarea {
+  width: 100%;
+  min-height: 110px;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  resize: vertical;
+}
+
+.review-submit {
+  align-self: end;
+  justify-self: start;
+}
+
+.review-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 0;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  min-width: 420px; /* réserve l’espace pour libellé + 5 étoiles */
+}
+.review-stars__label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--argent-ecran);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.review-stars__value {
+  color: var(--bleu-nuit);
+  font-weight: 700;
+}
+
+.stars-group {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap; /* garde les 5 étoiles sur une seule ligne */
+  white-space: nowrap; /* prévention supplémentaire d’un retour à la ligne */
+  min-width: 200px; /* espace réservé pour 5 étoiles à 2.1rem */
+}
+
+.stars-group input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stars-group label {
+  font-size: 2.1rem;
+  color: var(--bleu-nuit);
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease, text-shadow 0.2s ease,
+    filter 0.2s ease;
+  user-select: none;
+  text-shadow: 0 0 0.8px var(--ombre-intermediaire); /* bords un peu plus doux */
+  filter: drop-shadow(
+    0 0 0.6px var(--ombre-intermediaire)
+  ); /* arrondit légèrement les pointes */
+}
+
+.stars-group label.is-active {
+  color: var(--dore-popcorn);
+  text-shadow: 0 0 1.2px var(--ombre-intermediaire-strong);
+  filter: drop-shadow(0 0 1.2px var(--ombre-intermediaire-strong));
+}
+
+.stars-group input:checked + label,
+.stars-group label:hover,
+.stars-group label:focus {
+  color: var(--dore-popcorn);
+  transform: translateY(-1px) scale(1.05);
+  text-shadow: 0 0 6px rgba(198, 166, 100, 0.5);
+}
+
+.review-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) auto;
+  gap: 0.9rem;
+  align-items: end;
+}
+
+.review-textarea {
+  resize: none;
+  line-height: 1.4;
+  min-height: calc(1.4em * 3 + 1.8rem);
+  max-height: calc(1.4em * 3 + 1.8rem);
+  max-width: 520px; /* réduit la largeur visible */
+  justify-self: start; /* aligne bien à gauche */
+}
+
+@media (max-width: 1024px) {
+  .recipe-review-banner {
+    grid-template-columns: 1fr;
+  }
+  .review-banner__illustration {
+    display: none;
+  }
+  .review-submit {
+    align-self: stretch;
+  }
+  .review-banner__form .form-row {
+    flex-wrap: wrap;
+  }
+  .review-actions {
+    grid-template-columns: 1fr; /* revient en pile sur mobile */
+  }
+  .review-textarea,
+  .review-submit {
+    justify-self: stretch;
+  }
 }
 
 /* ==================== RESPONSIVE ====================== */
