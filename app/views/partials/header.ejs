@@ -52,6 +52,22 @@
     <span class="burger-line"></span>
   </button>
 </header>
+<script>
+  (function () {
+    const current = location.pathname;
+    const links = document.querySelectorAll(".navigationheader-link");
+    links.forEach((a) => {
+      const href = a.getAttribute("href");
+      if (href === "/" && current === "/") {
+        a.classList.add("is-active");
+      } else if (href === "/movies" && current.startsWith("/movies")) {
+        a.classList.add("is-active");
+      } else if (href && href !== "/" && current.startsWith(href)) {
+        a.classList.add("is-active");
+      }
+    });
+  })();
+</script>
 
 <!-- ===================== MODAL AUTH ===================== -->
 <div id="authModal" class="modal">

@@ -301,6 +301,10 @@
   font-weight: 700;
   font-family: var(--font-h2-h6);
   letter-spacing: 0.5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .recipe-meta {
@@ -371,13 +375,13 @@
   line-height: 1;
   color: var(--argent-ecran);
   opacity: 0.3; /* filigrane au repos, plus perceptible */
-  /* ombre subtile harmonisée avec --bleu-intermediaire (#1b263b) */
-  text-shadow: 0 0 0.6px rgba(27, 38, 59, 0.35);
+  /* ombre subtile harmonisée avec --bleu-intermediaire */
+  text-shadow: 0 0 0.6px var(--ombre-intermediaire);
 }
 
 #recipes article:hover .recipe-card-rating .star {
   opacity: 0.65; /* léger renforcement au hover */
-  text-shadow: 0 0 0.8px rgba(27, 38, 59, 0.45);
+  text-shadow: 0 0 0.8px var(--ombre-intermediaire-strong);
 }
 #recipes article:hover .recipe-card-rating .star.is-active {
   color: var(--dore-popcorn); /* colorées au hover */
@@ -515,5 +519,9 @@
 
   .presentation__text__recipes h3 {
     font-size: 1.5rem;
+  }
+  /* gap cartes légèrement réduit sur écrans très étroits */
+  #recipes .articles {
+    gap: 1.25rem;
   }
 }

@@ -32,6 +32,9 @@
   --beige-icecream: #f5ead1;
   --ombre-bleue: rgba(28, 37, 65, 0.4);
   --ombre-bleue-foncee: rgba(13, 27, 42, 0.8);
+  /* Ombres textuelles mutualisées */
+  --ombre-intermediaire: rgba(27, 38, 59, 0.35);
+  --ombre-intermediaire-strong: rgba(27, 38, 59, 0.45);
 
   /* Boutons validation */
   --vert-valid: #28a745;
@@ -61,6 +64,14 @@
   --transition: 0.3s ease;
   --gap: 2rem;
   --max-width: 1440px;
+}
+
+/* Utilitaires mutualisés (réutilisables sur toutes les pages) */
+.u-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ====================================================== */
@@ -201,6 +212,12 @@ a:hover {
 }
 .navigationheader-link:hover::after {
   width: 100%;
+}
+
+/* État actif de la navigation */
+.navigationheader-link.is-active {
+  color: var(--dore-fonce);
+  text-shadow: 0 0 6px rgba(165, 131, 61, 0.25);
 }
 
 .buttons__header {
@@ -617,13 +634,16 @@ a:hover {
 .footer-social-link {
   color: var(--dore-popcorn);
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border: 2px solid var(--dore-popcorn);
-  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--dore-popcorn);
+  border-radius: 999px;
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
   background: rgba(198, 166, 100, 0.1);
+}
+.footer-social-link i {
+  font-size: 0.95rem;
 }
 
 .footer-social-link::before {
@@ -672,9 +692,29 @@ a:hover {
   opacity: 0.6;
 }
 
-/* Copyright */
+/* Bas de footer: copyright + retour haut */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.back-to-top {
+  color: var(--argent-ecran);
+  text-decoration: none;
+  border: 1px solid var(--dore-popcorn);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+.back-to-top:hover {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  box-shadow: 0 0 10px rgba(198, 166, 100, 0.5);
+}
 .footer-copyright {
-  text-align: center;
+  text-align: right;
   color: var(--dore-popcorn);
   font-size: 0.85rem;
   margin: 0;
@@ -857,6 +897,13 @@ a:hover {
   }
   .footer-socials {
     justify-content: center;
+  }
+  .footer-bottom {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  .footer-copyright {
+    text-align: center;
   }
   .modal-content {
     padding: 1.5rem;
