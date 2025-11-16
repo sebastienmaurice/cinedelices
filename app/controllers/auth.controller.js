@@ -73,7 +73,7 @@ const authController = {
         pseudo: pseudo,
         email: email,
         password: hash,
-        role: role,
+        role: "user",
       });
       // const user = await User.create({ toutes les données });
 

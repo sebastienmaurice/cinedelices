@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role) VALUES
     ('Ludovic', 'Trichereau', 'Ludo', 'ludo.trich@gmail.com', '****', null, 'admin'),
-    ('Richard', 'François', 'Richie', 'rich.franc@gmail.com', '***', null, 'admin'),
+    ('Richard', 'François', 'Riri', 'rich.franc@gmail.com', '***', null, 'admin'),
     ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', '****', null, 'admin'),
     ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
     ('John', 'Doe', 'Toto', 'john.doe@gmail.com', 'azerty', null, 'user');
