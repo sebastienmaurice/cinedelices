@@ -22,27 +22,18 @@
 
 `npm i ejs`
 
-<<<<<<< HEAD
 - 5 install orm sequelize (Object Relational Mapping)  
   
   programme qui se place en interface entre l'appli et la bdd
-=======
-- 5 install sequelize
->>>>>>> feat/redesign-page
 
 `npm i sequelize`
 
-<<<<<<< HEAD
 - 6 install SGBD postgresql  
   
   (Système de Gestion de Base de Données relationnel)
-=======
-- 6 install postgresql
->>>>>>> feat/redesign-page
 
 `npm i pg`
 
-<<<<<<< HEAD
 - 7 install programme pour hacher et verifier les mots de passe
 
 `npm i argon2`
@@ -75,9 +66,6 @@
 `npm i joi`
 
 </details>  
-=======
-</details>
->>>>>>> feat/redesign-page
 
 <details>
 
@@ -92,20 +80,21 @@
   - fichier `.env`
   - `journal.md` perso
 
-- `package.json`
-  ````json ...
+- `package.json`  
+  
+  ```json ...
     "type":"module",
     ...
     "scripts": {
     "dev": "node --watch index.js"
     }
-    ```
+    ```  
+
   </details>
-  ````
 
 ---
 
-<details>
+<details>  
 
 <summary>structure</summary>
 
@@ -213,13 +202,9 @@
 
 </details>
 
-<<<<<<< HEAD
 ## Conception
 
 ### MVP  
-=======
-## MVP
->>>>>>> feat/redesign-page
 
 - enregistrement des utilisateurs
 - authentification des utilisateurs
@@ -233,7 +218,6 @@
 - ajouter, supprimer et modifier les recettes,
 - le droit de révoquer les utilisateurs (suppression de compte)
 
-<<<<<<< HEAD
 ### wireframe  
 
 - dans le drive cinedelices
@@ -265,49 +249,10 @@
   
     - database /sequelize-client.js  
 
-
-=======
-## wireframe
-
-- dans le drive cinedelices
-
-## maquette
-
-- dans le drive cinedelices
-
-## MCD
-
-![MCD](/docs/MCD.png)
-
-## MLD
-
-![MLD](/docs/MLD.png)
-
-- [ ] routes
-
-  - index (aiguillage des routes)
-  - home
-  - movies
-  - recipes-movie
-  - user-profile
-  - admin
-  - auth
-
-- [ ] vues
-  - home.ejs
-  - movies.ejs
-  - recipes-movie.ejs
-  - user-profile.ejs
-- [x] bdd
-  - creation script a partir du MLD
-  - creation des models
->>>>>>> feat/redesign-page
-
 ### BDD
 
 ![BDD](/docs/schema_bdd.jpg)
 
-<<<<<<< HEAD
 ## Partie serveur
 
 ### création des routes  
@@ -483,14 +428,3 @@ géré par le moteur de vue EJS
 ### dynamisation des vues  
 
 - [X] dynamisation barre de navigation suivant les droits de l'utilisateur (simple utilisateur, user logger, admin)
-=======
-### dynamisation des vues
-
-- [ ] home
-- [x] movies
-- [ ] recipes-movie
-
-### securisation et authentification
-
-- [ ] middleware authentification
->>>>>>> feat/redesign-page
