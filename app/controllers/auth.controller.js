@@ -12,9 +12,11 @@ const authController = {
       const user = await User.findOne({ where: { pseudo: pseudo } });
 
       if (!user) {
-        return res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({ error: "Pseudo ou mot de passe invalide" });
+        return res.status(StatusCodes.UNAUTHORIZED).render("error", {
+          error: "401",
+          message: "pseudo ou mot de passe invalide",
+          role: req.userRole,
+        });
       }
 
       // on récupère le mot de passe de l'utilisateur pour le comparer avec celui fourni après qu'il ai été haché
@@ -23,9 +25,11 @@ const authController = {
       const ok = await argon2.verify(hash, password);
 
       if (!ok) {
-        return res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({ error: "Pseudo ou mot de passe invalide" });
+        return res.status(StatusCodes.UNAUTHORIZED).render("error", {
+          error: "401",
+          message: "Pseudo ou mot de passe invalide",
+          role: req.userRole,
+        });
       }
 
       // Création du token
@@ -48,14 +52,18 @@ const authController = {
       res.status(StatusCodes.OK).redirect("/");
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
-        return res
-          .status(StatusCodes.CONFLICT)
-          .json({ error: "le pseudo existe déjà" });
+        return res.status(StatusCodes.CONFLICT).render("error", {
+          error: "409",
+          message: "le pseudo existe déjà.",
+          role: req.userRole,
+        });
       }
 
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Internal Server Error" });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
     }
   },
 

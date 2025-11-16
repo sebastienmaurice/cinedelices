@@ -1,4 +1,73 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Review banner stars (radio based): persistent selection + label update
+  const reviewStarGroups = document.querySelectorAll(".review-stars");
+  reviewStarGroups.forEach((fieldset) => {
+    const legend = fieldset.querySelector(".review-stars__label");
+    const inputs = Array.from(fieldset.querySelectorAll("input[type='radio']"));
+    const labels = inputs
+      .map((input) => ({
+        input,
+        label: fieldset.querySelector(`label[for='${input.id}']`),
+        value: Number(input.value || input.id.replace(/\D+/g, "")),
+      }))
+      .filter(({ label }) => !!label)
+      // Assure un ordre ascendant 1..5 pour gérer l'activation
+      .sort((a, b) => a.value - b.value);
+
+    let selected = 0;
+
+    const render = (value) => {
+      const active = typeof value === "number" ? value : selected || 0;
+      labels.forEach(({ label, value }) => {
+        label.classList.toggle("is-active", value <= active);
+      });
+      if (legend) {
+        legend.innerHTML = `Ta note pour la recette <span class="review-stars__value">${active}/5</span> :`;
+      }
+    };
+
+    inputs.forEach((inputObj) => {
+      inputObj.addEventListener("change", () => {
+        selected = Number(inputObj.value);
+        render();
+      });
+    });
+
+    // Cliquer sur l'étoile (label) coche l'input et déclenche render
+    labels.forEach(({ label, input, value }) => {
+      label.addEventListener("click", (e) => {
+        e.preventDefault();
+        input.checked = true;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      // Aperçu au survol (facultatif, non persistant)
+      label.addEventListener("mouseenter", () => render(value));
+      label.addEventListener("mouseleave", () => render());
+    });
+
+    render(0);
+  });
+});
+
+// Smooth scroll to review banner from the top CTA
+document.addEventListener("DOMContentLoaded", () => {
+  const ctaAnchor = document.querySelector(
+    'a.rating-hint__cta--primary[href="#review-banner"]'
+  );
+  if (!ctaAnchor) return;
+  ctaAnchor.addEventListener("click", (event) => {
+    event.preventDefault();
+    const target = document.getElementById("review-banner");
+    if (target && typeof target.scrollIntoView === "function") {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (target) {
+      // fallback
+      window.location.hash = "#review-banner";
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   const ratingContainers = document.querySelectorAll(".rating-stars");
   if (!ratingContainers.length) {
     return;
@@ -23,6 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ? document.querySelector(inputSelector)
       : ratingContainer.querySelector("input[type='hidden']");
 
+    const isReadonly = ratingContainer.dataset.readonly === "true";
+
     const renderStars = (value) => {
       const activeValue =
         typeof value === "number" ? value : committedValue || 0;
@@ -39,30 +110,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderStars();
 
-    stars.forEach((star) => {
-      const starValue = Number(star.dataset.value);
-      const preview = () => renderStars(starValue);
-      const reset = () => renderStars();
+    if (!isReadonly) {
+      stars.forEach((star) => {
+        const starValue = Number(star.dataset.value);
+        const preview = () => renderStars(starValue);
+        const reset = () => renderStars();
 
-      star.addEventListener("mouseenter", preview);
-      star.addEventListener("focus", preview);
-      star.addEventListener("mouseleave", reset);
-      star.addEventListener("blur", reset);
-      star.addEventListener("click", () => {
-        committedValue = starValue;
-        ratingContainer.dataset.currentRating = starValue;
-        ratingContainer.setAttribute(
-          "aria-label",
-          `Note proposée ${starValue} sur 5`
-        );
+        star.addEventListener("mouseenter", preview);
+        star.addEventListener("focus", preview);
+        star.addEventListener("mouseleave", reset);
+        star.addEventListener("blur", reset);
+        star.addEventListener("click", () => {
+          committedValue = starValue;
+          ratingContainer.dataset.currentRating = starValue;
+          ratingContainer.setAttribute(
+            "aria-label",
+            `Note proposée ${starValue} sur 5`
+          );
 
-        if (inputElement) {
-          inputElement.value = starValue;
-        }
+          if (inputElement) {
+            inputElement.value = starValue;
+          }
 
-        renderStars();
+          renderStars();
+        });
       });
-    });
+    } else {
+      // lecture seule: désactive tab et interactions
+      stars.forEach((star) => {
+        star.setAttribute("tabindex", "-1");
+        star.style.pointerEvents = "none";
+      });
+    }
 
     ratingContainer.addEventListener("mouseleave", () => {
       renderStars();

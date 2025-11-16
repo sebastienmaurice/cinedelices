@@ -31,6 +31,9 @@
         <img
           src="/images/<%= movie.picture %>"
           alt="Image du film <%= movie.title %>"
+          width="1440"
+          height="350"
+          decoding="async"
         />
       </section>
 
@@ -85,7 +88,11 @@
             <div class="recipe-card-image">
               <img
                 src="/images/<%= recipe.picture %>"
-                alt="Recette du film <%= recipe.title %>"
+                alt="<%= recipe.name %>"
+                loading="lazy"
+                width="640"
+                height="360"
+                decoding="async"
               />
             </div>
 
@@ -97,16 +104,37 @@
                 <span class="recipe-duration"><%= recipe.duration %> min</span>
                 <span class="recipe-separator">•</span>
                 <span class="recipe-difficulty"><%= recipe.difficulty %></span>
-                <span class="recipe-separator">•</span>
-                <span class="recipe-quote"><%= recipe.quote %>/5</span>
+                <!-- note retirée de la méta, affichée désormais avec les étoiles -->
               </div>
 
-              <a
-                class="btn btn--red"
-                href="/recipes-movie/details/<%= recipe.id %>"
-              >
-                Voir la recette
-              </a>
+              <div class="recipe-card-actions">
+                <a
+                  class="btn btn--red"
+                  href="/recipes-movie/details/<%= recipe.id %>"
+                >
+                  Voir la recette
+                </a>
+                <div
+                  class="recipe-card-rating"
+                  aria-label="Note générale de la recette : <%= recipe.quote %>/5"
+                >
+                  <div class="stars-caption">
+                    Note générale&nbsp;: <strong><%= recipe.quote %>/5</strong>
+                  </div>
+                  <div
+                    class="stars stars--readonly"
+                    data-rating="<%= recipe.quote %>"
+                  >
+                    <% for (let i = 1; i <= 5; i++) { %>
+                    <span
+                      class="star <%= i <= recipe.quote ? 'is-active' : '' %>"
+                      >★</span
+                    >
+                    <% } %>
+                    <span class="stars-value"><%= recipe.quote %>/5</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </article>
           <% }) %> <% } %>

@@ -53,7 +53,7 @@
 
         <div class="banner__recipes__rating" data-rating-container>
           <p class="rating-label">
-            Note de la recette :
+            Note générale de la recette :
             <span
               class="current-rating"
               id="banner-rating-output"
@@ -64,9 +64,10 @@
           <div
             class="rating-stars rating-stars--lifted"
             role="group"
-            aria-label="Noter la recette"
+            aria-label="Note générale (lecture seule)"
             data-current-rating="<%= recipe.quote %>"
             data-output="#banner-rating-output"
+            data-readonly="true"
           >
             <% for (let i = 1; i <= 5; i++) { %>
             <button
@@ -79,12 +80,13 @@
             </button>
             <% } %>
           </div>
-          <button
-            type="button"
+          <a
+            href="#review-banner"
             class="rating-hint__cta rating-hint__cta--primary"
+            aria-label="Aller à la bannière d'avis"
           >
             Je donne mon avis
-          </button>
+          </a>
         </div>
       </section>
 
@@ -185,6 +187,90 @@ Le détail de cette préparation arrive bientôt.</textarea
             </div>
           </div>
         </div>
+
+        <!-- RECIPE REVIEW BANNER -->
+        <section
+          id="review-banner"
+          class="recipe-review-banner"
+          aria-labelledby="review-banner-title"
+        >
+          <div class="review-banner__content">
+            <div class="review-banner__texts">
+              <h2 id="review-banner-title">Partage ton moment culte</h2>
+              <p class="review-banner__subtitle">
+                <span class="subtitle--lead">Inspires la communauté</span>
+                <span class="subtitle--brand">Ciné Délices</span>
+                <span class="subtitle--lead">
+                  : Raconte ce que tu as pensé de la recette
+                </span>
+                <span class="subtitle--brand">ou</span>
+                <span class="subtitle--lead">
+                  ton ressenti en dégustant cette recette devant ton film
+                  préféré !</span
+                >
+              </p>
+            </div>
+
+            <form
+              class="review-banner__form"
+              action="#"
+              method="post"
+              novalidate
+            >
+              <div class="form-row">
+                <label for="review-username" class="sr-only">Ton pseudo</label>
+                <input
+                  id="review-username"
+                  name="username"
+                  type="text"
+                  class="review-input"
+                  placeholder="Ton pseudo"
+                  autocomplete="name"
+                />
+
+                <!-- Bloc note en ligne: libellé + 5 étoiles alignés sur une seule ligne -->
+                <fieldset
+                  class="review-stars"
+                  aria-label="Ta note pour la recette"
+                >
+                  <legend class="review-stars__label">
+                    Ta note pour la recette
+                    <span class="review-stars__value">0/5</span> :
+                  </legend>
+                  <div class="stars-group" role="group" aria-label="Note sur 5">
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" aria-label="1 étoile">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" aria-label="2 étoiles">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" aria-label="3 étoiles">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" aria-label="4 étoiles">★</label>
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" aria-label="5 étoiles">★</label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="review-actions">
+                <label for="review-comment" class="sr-only"
+                  >Donne ton avis sur la recette</label
+                >
+                <textarea
+                  id="review-comment"
+                  name="comment"
+                  class="review-textarea"
+                  placeholder="Donne ton avis sur la recette..."
+                  rows="3"
+                ></textarea>
+                <button type="submit" class="btn btn--gold review-submit">
+                  Je donne mon avis
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="review-banner__illustration" aria-hidden="true"></div>
+        </section>
       </section>
 
       <section class="recipe-cta">
