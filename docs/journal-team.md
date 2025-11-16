@@ -1,69 +1,69 @@
-# Journal du groupe  
+# Journal du groupe
 
-## Installation  
+## Installation
 
-<details>  
+<details>
 
 <summary>installation environnement</summary>
 
-- 1 initialise le projet  
+- 1 initialise le projet
 
-`npm init -y`  
+`npm init -y`
 
-- 2 install express  
+- 2 install express
 
-`npm i express`  
+`npm i express`
 
-- 3 install variables d'environnement  
+- 3 install variables d'environnement
 
-`npm i dotenv`  
+`npm i dotenv`
 
-- 4 install moteur de vues  
+- 4 install moteur de vues
 
-`npm i ejs`  
+`npm i ejs`
 
-- 5 install sequelize  
+- 5 install sequelize
 
-`npm i sequelize`  
+`npm i sequelize`
 
-- 6 install postgresql  
+- 6 install postgresql
 
-`npm i pg`  
+`npm i pg`
 
-</details>  
+</details>
 
-<details>  
+<details>
 
 <summary>preparation structure</summary>
 
 - créer un fichier `.env`  
-  ==> *prendre exemple sur .env.example*
+  ==> _prendre exemple sur .env.example_
 
-- `.gitignore`  
-  
-    - dossier "node.modules
-    - fichier `.env`
-    - `journal.md` perso
+- `.gitignore`
 
-- `package.json`  
-  
-  ```json     ...
+  - dossier "node.modules
+  - fichier `.env`
+  - `journal.md` perso
+
+- `package.json`
+  ````json ...
     "type":"module",
     ...
     "scripts": {
     "dev": "node --watch index.js"
     }
-    ```  
-</details>  
+    ```
+  </details>
+  ````
 
----  
+---
 
-<details>  
+<details>
 
-<summary>structure</summary>  
+<summary>structure</summary>
 
 ```structure
-    
+
 .
 ├── app
 │   ├── controllers
@@ -146,11 +146,11 @@
 ├── package-lock.json
 └── README.md
 
-```  
+```
 
-</details>  
+</details>
 
-## MVP  
+## MVP
 
 - enregistrement des utilisateurs
 - authentification des utilisateurs
@@ -164,51 +164,51 @@
 - ajouter, supprimer et modifier les recettes,
 - le droit de révoquer les utilisateurs (suppression de compte)
 
-## wireframe  
+## wireframe
 
 - dans le drive cinedelices
 
-## maquette  
+## maquette
 
 - dans le drive cinedelices
 
-## MCD  
+## MCD
 
 ![MCD](/docs/MCD.png)
 
-## MLD  
+## MLD
 
 ![MLD](/docs/MLD.png)
 
-- [ ] routes  
+- [ ] routes
+
   - index (aiguillage des routes)
   - home
   - movies
   - recipes-movie
   - user-profile
   - admin
-  - auth  
+  - auth
 
-- [ ] vues  
-  - home.ejs  
+- [ ] vues
+  - home.ejs
   - movies.ejs
   - recipes-movie.ejs
-  - user-profile.ejs  
-  
-- [x] bdd  
+  - user-profile.ejs
+- [x] bdd
   - creation script a partir du MLD
-  - creation des models  
+  - creation des models
 
-### BDD  
+### BDD
 
 ![BDD](/docs/schema_bdd.jpg)
 
-### dynamisation des vues  
+### dynamisation des vues
 
 - [ ] home
 - [x] movies
 - [ ] recipes-movie
 
-### securisation et authentification  
+### securisation et authentification
 
 - [ ] middleware authentification
