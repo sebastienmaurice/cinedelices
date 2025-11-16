@@ -65,6 +65,19 @@ modal.addEventListener("keydown", (e) => {
 // ---------------------- EVENTS ----------------------
 btnLogin?.addEventListener("click", () => openModal("login"));
 btnRegister?.addEventListener("click", () => openModal("register"));
+// Boutons de la navigation mobile (menu burger)
+document.querySelectorAll(".js-login").forEach((el) =>
+  el.addEventListener("click", (e) => {
+    e.preventDefault();
+    openModal("login");
+  })
+);
+document.querySelectorAll(".js-register").forEach((el) =>
+  el.addEventListener("click", (e) => {
+    e.preventDefault();
+    openModal("register");
+  })
+);
 
 modalClose?.addEventListener("click", closeModal);
 modalOverlay?.addEventListener("click", closeModal);
