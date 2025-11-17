@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const main = document.querySelector("main");
   const footer = document.querySelector("footer");
 
-  if (!burgerMenu || !nav) return; // sécurité si éléments manquants
+  if (!burgerMenu || !nav) return;
 
   // Ouvrir / fermer le menu burger
   function openMenu() {
@@ -46,7 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fermer avec la touche Échap
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && burgerMenu.getAttribute("aria-expanded") === "true") {
+    if (
+      e.key === "Escape" &&
+      burgerMenu.getAttribute("aria-expanded") === "true"
+    ) {
       closeMenu();
     }
   });
