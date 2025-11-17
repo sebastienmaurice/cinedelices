@@ -6,13 +6,15 @@ const addRecipesMoviesController = {
       res.render("add-recipes-movies", { role: req.userRole });
     } catch (error) {
       console.error(error);
-      res.status(500).render("error", {
+      
+       // ← ici, on rend la page d'erreur avec loginPopup: false
+       res.status(500).render("error", {
         error: "500",
         message: "Erreur serveur.",
         role: req.userRole,
+        loginPopup: false
       });
     }
-  },
+  }
 };
-
 export default addRecipesMoviesController;

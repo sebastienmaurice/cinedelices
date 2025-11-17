@@ -99,12 +99,12 @@ function isLogged(req, res, next) {
   if (userRole === "user" || userRole === "admin") {
     next();
   } else {
-    // Accès interdit
-
+    // Accès interdit - on ajoute un paramètre pour ouvrir le popup
     res.status(403).render("error", {
       error: "403",
       message: "Route interdite. Vous n'êtes pas connecté.",
       role: req.userRole,
+      openLoginPopup: true  // 👈 Nouveau paramètre
     });
   }
 }

@@ -43,7 +43,13 @@ INSERT INTO movies (title, year, genre, picture, status) VALUES
     ('Crocodile Dundee', 1986, 'aventure', 'croco-dundee-2.jpg', TRUE),
     ('Kaamelott', 2005, 'comédie', 'kaamelott-2.png', TRUE),
     ('Retour vers le futur', 1985, 'aventure', 'doc-et-marty-2.jpg', TRUE),
-    ('Harry Potter', 2001, 'fantastique', 'harry-potter-1.png', TRUE);
+    ('Harry Potter', 2001, 'fantastique', 'harry-potter-1.png', TRUE),
+    ('Le Seigneur des Anneaux', 2001, 'fantastique', 'seigneur-des-anneaux-1.jpg', TRUE),
+    ('Inception', 2010, 'science-fiction', 'inception-1.jpg', TRUE),
+    ('The Dark Knight', 2008, 'action', 'the-dark-knight-1.jpg', TRUE),
+    ('Forrest Gump', 1994, 'drame', 'forrest-gump-1.jpg', TRUE),
+    ('The Matrix', 1999, 'science-fiction', 'the-matrix-1.jpg', TRUE),
+    ('Gladiator', 2000, 'action', 'gladiator-1.jpg', TRUE);
 
 
 -- =====================================================
@@ -69,7 +75,11 @@ INSERT INTO recipes (name, description, picture, category, quote, ingredients, p
     ('Recette Kaamelott', 'Recette inspirée du film Kaamelott', 'kaamelott-2.png', 'entrée', 4, 'Ingrédients de Kaamelott', 'Préparation de Kaamelott', 30, 'Moyenne', TRUE, 2),
     ('Recette Retour vers le futur', 'Recette inspirée du film Retour vers le futur', 'doc-and-marty-peach-pie-1.jpg', 'dessert', 3, 'Ingrédients du futur', 'Préparation du futur', 45, 'Facile', TRUE, 3),
     ('2Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('3Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1);
+    ('3Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('4Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('5Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('6Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('7Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1);
 -- =====================================================
 -- TABLE NOTICES
 -- =====================================================

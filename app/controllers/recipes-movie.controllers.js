@@ -142,6 +142,9 @@ const recipesController = {
     - Formate description, ingrédients, préparation en tableaux prêts à afficher
     - Rend la vue "recipe-detail" avec la recette et les blocs formatés
   */
+
+
+  
 };
 
 export default recipesController;

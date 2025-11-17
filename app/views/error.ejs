@@ -19,6 +19,8 @@
   </head>
 
   <body>
+
+  
     <!-- HEADER -->
     <%- include("partials/header") %>
 
@@ -62,6 +64,21 @@
 
     <!-- Scripts JS spécifiques à la page -->
     <script src="/js/popup-connexion.js" defer></script>
+
+    <!-- Script pour ouvrir automatiquement le popup de connexion -->
+    <% if (typeof openLoginPopup !== 'undefined' && openLoginPopup) { %>
+    <script>
+      // On attend que le DOM et popup-connexion.js soient chargés
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const modal = document.getElementById("authModal");
+          if (modal && typeof openModal === 'function') {
+            openModal("login");
+          }
+        }, 100);
+      });
+    </script>
+    <% } %>
 
     <!-- Scripts JS spécifiques à la page -->
     <script
