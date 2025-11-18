@@ -36,25 +36,42 @@
         </div>
 
         <!-- Formulaire d'ajout de film -->
+        <form action="/add-recipes-movies/movie" method="post">
         <div class="film-form-container">
           <div class="overlay"></div>
           <div class="film-inputs-row">
             <input
               type="text"
-              name="film-name"
+              name="title"
               id="film-name"
               class="form-input"
+              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
               placeholder="Nom du film"
+              <% } else { %>
+              placeholder="<%= newMovie.title %>"
+              <% } %>
+              value=""
             />
+
             <input
               type="text"
-              name="film-year"
+              name="year"
               id="film-year"
               class="form-input"
-              placeholder="Année"
+              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+              placeholder="Année du film"
+              <% } else { %>
+              placeholder="<%= newMovie.year %>"
+              <% } %>
+              value=""
             />
-            <select name="film-genre" id="film-genre" class="form-select">
+            <select name="genre" id="film-genre" class="form-select">
+              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
               <option value="">Genre</option>
+              <% } else { %>
+              <option value=""><%= newMovie.genre %></option>
+              <% } %>
+
               <option value="action">Action</option>
               <option value="animé">Animé</option>
               <option value="aventure">Aventure</option>
@@ -74,10 +91,14 @@
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>
-          <button class="btn btn--red form-footer-btn">
+            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+            <button class="btn btn--red form-footer-btn">
             Je passe à la recette
-          </button>
+            </button>
+            <% } %>
+
         </div>
+        </form>
       </section>
 
       <!-- SECTION 2: AJOUT DE LA RECETTE -->
@@ -85,6 +106,14 @@
         <div class="section-header-recipe">
           <h2>2. Je veux ajouter une recette</h2>
         </div>
+
+      <!-- FORMULAIRE RECETTE-->
+        <form action="/add-recipes-movies/recipe" method="post">
+
+          <!-- STOCKAGE ID DU FILM -->
+          <% if (typeof newMovie !== "undefined" && newMovie && newMovie.id) { %>
+            <input type="hidden" name="id" value="<%= newMovie.id %>">
+          <% } %>
 
         <!-- Container 3 colonnes -->
         <div class="recipe-form-container">
@@ -104,11 +133,21 @@
             </p>
             <div class="film-info-box">
               <h4>Les infos du film</h4>
+
+            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
               <ul>
-                <li id="display-film-name">Pirates des Caraibes</li>
-                <li id="display-film-genre">Genre</li>
-                <li id="display-film-year">Année</li>
+                <li id="display-film-name">titre</li>
+                <li id="display-film-genre">genre</li>
+                <li id="display-film-year">année</li>
               </ul>
+              <% } else { %>
+              <ul>
+                <li id="display-film-name"><%= newMovie.title %></li>
+                <li id="display-film-genre"><%= newMovie.genre %></li>
+                <li id="display-film-year"><%= newMovie.year %></li>
+              </ul>
+              <% } %>
+
             </div>
           </div>
 
@@ -124,28 +163,25 @@
             </p>
             <input
               type="text"
-              name="recipe-name"
+              name="name"
               id="recipe-name"
               class="form-input"
               placeholder="Le nom de la recette"
+              value=""
             />
-            <select
-              name="preparation-time"
-              id="preparation-time"
-              class="form-select"
-            >
-              <option value="">Temps de préparation</option>
-              <option value="2">2 minutes</option>
-              <option value="5">5 minutes</option>
-              <option value="10">10 minutes</option>
-              <option value="15">15 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="45">45 minutes</option>
-              <option value="60">1 heure</option>
-              <option value="90">1h30</option>
-              <option value="120">2 heures</option>
-              <option value="150">2h30</option>
-              <option value="180">3 heures</option>
+            <input
+              type="text"
+              name="time"
+              id="recipe-time"
+              class="form-input"
+              placeholder="temps de préparation"
+              value=""
+            />
+            <select name="category" id="category" class="form-select">
+              <option value="">catégorie</option>
+              <option value="entrée">entrée</option>
+              <option value="plat">plat</option>
+              <option value="dessert">dessert</option>
             </select>
             <select name="difficulty" id="difficulty" class="form-select">
               <option value="">Difficulté</option>
@@ -173,7 +209,7 @@
             </div>
             <h3 class="recipe-context-title">Contexte de la recette</h3>
             <textarea
-              name="recipe-context"
+              name="description"
               id="recipe-context"
               class="recipe-context-textarea"
               placeholder="Racontes le moment où se situe la recette dans le film"
@@ -217,6 +253,7 @@
             Je valide ma fiche
           </button>
         </div>
+</form>
       </section>
     </main>
 

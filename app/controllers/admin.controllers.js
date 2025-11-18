@@ -1,4 +1,10 @@
-import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import {
+  Recipe,
+  Movie,
+  Notice,
+  User,
+  UsersRecipes,
+} from "../models/index.model.js";
 const adminController = {
   // Page principale admin
   // accueil admin
@@ -31,47 +37,6 @@ const adminController = {
     }
   },
 
-  // Page pour ajouter une recette inspirée d'un film
-  addMovieRecipe(req, res) {
-    res.render("admin/add-movie-recipe", {
-      recipe: {
-        image: "/images/test-recipe.jpg",
-        alt: "Image test recette",
-        title: "Recette Test",
-        film: "Film Test",
-        description: "Description test de la recette",
-        movieImageDefault: "/images/test-movie-default.jpg",
-        movieAltDefault: "Film default",
-        movieImageHover: "/images/test-movie-hover.jpg",
-        movieAltHover: "Film hover",
-        quote: { text: "Une citation de film test", film: "Film Test" },
-      },
-      topRecipes: [
-        {
-          image: "/images/test1.jpg",
-          alt: "Recette 1",
-          title: "Top Recette 1",
-          film: "Film 1",
-          description: "Description 1",
-        },
-        {
-          image: "/images/test2.jpg",
-          alt: "Recette 2",
-          title: "Top Recette 2",
-          film: "Film 2",
-          description: "Description 2",
-        },
-        {
-          image: "/images/test3.jpg",
-          alt: "Recette 3",
-          title: "Top Recette 3",
-          film: "Film 3",
-          description: "Description 3",
-        },
-      ],
-    });
-  },
-
   // Soumission du formulaire d'ajout de recette (POST)
   saveMovieRecipe(req, res) {
     res.send("POST saveMovieRecipe - à implémenter");
@@ -82,9 +47,31 @@ const adminController = {
     res.send("Liste des recettes - à implémenter");
   },
 
-  // Page d'édition d'une recette
-  editRecipe(req, res) {
-    res.send(`Page édition recette ${req.params.id} - à implémenter`);
+  //! en cours de construction Page d'édition d'une recette
+  async editRecipe(req, res) {
+    try {
+      const recipe = await Recipe.findByPk(req.params.id);
+
+      if (!recipe) {
+        return res.status(404).render("error", {
+          error: "404",
+          message: "recette indisponible.",
+          role: req.userRole,
+        });
+      }
+
+      res.render("recipe-detail", {
+        role: req.userRole,
+        recipe,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
+    }
   },
 
   // Soumission de la modification d'une recette
@@ -102,9 +89,40 @@ const adminController = {
     res.send("valider une recette");
   },
 
-  // Supprimer un utilisateur
-  deleteUser(req, res) {
-    res.send("supprimer utilisateur");
+  //! Supprimer un utilisateur
+  async deleteUser(req, res) {
+    try {
+      const userId = req.params.id;
+
+      // Vérifier si l'utilisateur existe
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        return res.status(404).render("error", {
+          error: "404",
+          message: "Utilisateur introuvable.",
+          role: req.userRole,
+        });
+      }
+
+      // Supprimer d'abord les notices (avis) associées à cet utilisateur
+      // Supprimer les entrées dans la table de jonction UsersRecipes
+      await Notice.destroy({ where: { id_user: userId } });
+      await UsersRecipes.destroy({ where: { id_user: userId } });
+
+      // Ensuite, supprimer l'utilisateur
+      await User.destroy({ where: { id: userId } });
+
+      // Rediriger vers le tableau de bord admin avec un message de succès
+      res.redirect("/admin?success=user_deleted");
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur lors de la suppression de l'utilisateur.",
+        role: req.userRole,
+      });
+    }
   },
 };
 

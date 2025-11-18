@@ -62,7 +62,12 @@
         </button>
         <div class="dropdown-container" id="users">
           <% users.forEach(user => { %>
-          <button class="list-item"><%= user.id %> - <%= user.first_name %></button>
+            <form method="POST" action="/admin/deleteUser/<%= user.id %>" >
+              <button type="submit" class="list-item dropdown-btn" title="Supprimer <%= user.first_name %>">
+                <%= user.id %> - <%= user.first_name %>
+              </button>
+            </form>
+          <!-- <button class="list-item"><%= user.id %> - <%= user.first_name %></button> -->
           <% }) %>
         </div>
 
