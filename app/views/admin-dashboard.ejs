@@ -37,12 +37,12 @@
         </div>
 
         <button class="dropdown-btn" data-target="films">
-          <i class="fa-solid fa-film"></i> Films à valider
+          <i class="fa-solid fa-film"></i> Validation des films
           <i class="fa-solid fa-chevron-down toggle-icon"></i>
         </button>
-         <div class="dropdown-container" id="films">
+        <div class="dropdown-container" id="films">
           <% movies.forEach(movie => { %>
-          <button class="list-item"><%= movie.id %> - <%= movie.title %></button>
+          <button class="list-item"><a href="/admin/movie/<%= movie.id %>"><%= movie.id %> - <%= movie.title %></a></button>
           <% }) %>
         </div>
 
@@ -79,11 +79,32 @@
         <h2 class="admin-section-title">Film</h2>
         <section class="admin-section film-section">
           <div class="section-content">
-            <p><strong>Nom du film :</strong> <span>Le Parrain</span></p>
-            <p><strong>Année du film :</strong> <span>1972</span></p>
-            <p><strong>Genre :</strong> <span>Drame, Mafia</span></p>
+            <p><strong>Nom du film :<% if (typeof upMovie === "undefined") { %> </strong> <span> le film</span></p>  <% } else { %>
+              <%= upMovie.title %> 
+              <% } %>
+            <p><strong>Année du film :<% if (typeof upMovie === "undefined") { %> </strong> <span>l'année</span></p> <% } else { %>
+              <%= upMovie.year %> 
+              <% } %>
+            <p><strong>Genre :<% if (typeof upMovie === "undefined") { %> </strong> <span>le genre</span></p> <% } else { %>
+              <%= upMovie.genre %> 
+              <% } %>
           </div>
         </section>
+
+        <!-- BOUTONS DE VALIDATION -->
+<div class="admin-validation">
+  <% if (typeof upMovie !== "undefined") { %>
+    <form method="POST" action="/admin/validateMovie/<%= upMovie.id %>">
+      <button type="submit" class="btn btn-valid">Valider le film</button>
+    </form>
+    <form method="POST" action="/admin/rejectMovie/<%= upMovie.id %>">
+      <button type="submit" class="btn btn-refus">Refuser le film</button>
+    </form>
+  <% } else { %>
+    <button class="btn btn-valid" disabled>Valider le film</button>
+    <button class="btn btn-refus" disabled>Refuser le film</button>
+  <% } %>
+</div>
 
         <!-- RECETTE -->
         <h2 class="admin-section-title">Recette</h2>
@@ -103,7 +124,7 @@
 Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
                                 </textarea>
               <% } else { %>
-                                <textarea readonly>"<%= upRecipe.description %>"</textarea>
+                                <textarea readonly><%= upRecipe.description %></textarea>
               <% } %>
 
             </div>
@@ -111,18 +132,24 @@ Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique
 
           <div class="recette-ingredients">
             <h3>Ingrédients</h3>
-            <textarea readonly>
-Sucre, farine, beurre, œufs, vanille, chocolat.
-          </textarea
-            >
+            <% if (typeof upRecipe === "undefined") { %>
+              <textarea readonly>
+Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
+              </textarea>
+<% } else { %>
+              <textarea readonly><%= upRecipe.ingredients %></textarea>
+<% } %>
           </div>
 
           <div class="recette-preparation">
             <h3>Préparation</h3>
-            <textarea readonly>
-1. Préchauffer le four. 2. Mélanger les ingrédients. 3. Cuire 25 min. 4. Laisser refroidir.
-          </textarea
-            >
+            <% if (typeof upRecipe === "undefined") { %>
+              <textarea readonly>
+Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
+              </textarea>
+<% } else { %>
+              <textarea readonly><%= upRecipe.preparation %></textarea>
+<% } %>
           </div>
         </section>
 
