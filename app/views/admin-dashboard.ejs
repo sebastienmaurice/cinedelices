@@ -32,7 +32,7 @@
         </button>
         <div class="dropdown-container" id="recettes">
           <% recipes.forEach(recipe => { %>
-          <button class="list-item"><%= recipe.id %> - <%= recipe.name %></button>
+          <button class="list-item"><a href="/admin/recipe/<%= recipe.id %>"><%= recipe.id %> - <%= recipe.name %></a></button>
           <% }) %>
         </div>
 
@@ -98,10 +98,14 @@
 
             <div class="recette-texte">
               <h3>Contexte de la recette dans le film</h3>
-              <textarea readonly>
+              <% if (typeof upRecipe === "undefined") { %>
+                                <textarea readonly>
 Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
-            </textarea
-              >
+                                </textarea>
+              <% } else { %>
+                                <textarea readonly>"<%= upRecipe.description %>"</textarea>
+              <% } %>
+
             </div>
           </div>
 

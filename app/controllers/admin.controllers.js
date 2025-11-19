@@ -48,21 +48,26 @@ const adminController = {
   },
 
   //! en cours de construction Page d'édition d'une recette
+
   async editRecipe(req, res) {
     try {
-      const recipe = await Recipe.findByPk(req.params.id);
-
-      if (!recipe) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "recette indisponible.",
-          role: req.userRole,
-        });
-      }
-
-      res.render("recipe-detail", {
+      const recipes = await Recipe.findAll({
+        where: { status: "false" },
+      });
+      const movies = await Movie.findAll({
+        where: { status: "false" },
+      });
+      const avis = await Notice.findAll();
+      const users = await User.findAll();
+      const recipeId = req.params.id;
+      const upRecipe = await Recipe.findByPk(recipeId);
+      res.render("admin-dashboard", {
+        recipes,
+        movies,
+        avis,
+        users,
+        upRecipe,
         role: req.userRole,
-        recipe,
       });
     } catch (error) {
       console.error(error);
