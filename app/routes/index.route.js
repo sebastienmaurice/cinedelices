@@ -7,6 +7,7 @@ import adminRouter from "./admin.route.js";
 import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 import addRecipesMoviesRouter from "./add-recipes-movies.route.js";
+import contactAboutRouter from "./contact-about.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.use("/movies", moviesRouter); // Ajout du préfixe /movies pour les route
 router.use("/admin", isAdmin, adminRouter); // Ajout du préfixe /admin pour les routes admin
 router.use("/recipes-movie", recipesRouter); // Ajout du préfixe /recipes pour les routes recipes
 router.use("/add-recipes-movies", addRecipesMoviesRouter); // Route pour ajouter un film et une recette
+router.use(contactAboutRouter); // Route pour la page Contact + À propos
 
 export default router;

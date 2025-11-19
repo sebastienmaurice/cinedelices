@@ -177,7 +177,6 @@
   transform: scale(1.05);
 }
 
-/* Lecture seule pour la note générale de la bannière */
 .rating-stars[data-readonly="true"] .rating-star {
   pointer-events: none;
   cursor: default;
@@ -563,7 +562,7 @@ body.lightbox-open {
 .recipe-review-banner {
   position: relative;
   display: grid;
-  grid-template-columns: 1.45fr 0.55fr; /* partie droite plus étroite */
+  grid-template-columns: 1.45fr 0.55fr;
   align-items: stretch;
   gap: 0;
   border-radius: 15px;
@@ -579,15 +578,13 @@ body.lightbox-open {
 .review-banner__content {
   position: relative;
   z-index: 1;
-  padding: 2.25rem; /* ajoute de l’air côté rouge */
+  padding: 2.25rem;
 }
 
-/* Colonne illustration: fond doré + image par-dessus en ::after pour déborder */
 .review-banner__illustration {
   position: relative;
   overflow: visible;
-  background:
-    /* fond doré plus fin à droite, se fondant rapidement */ linear-gradient(
+  background: linear-gradient(
       to left,
       var(--dore-popcorn) 0 40%,
       rgba(198, 166, 100, 0) 60%
@@ -596,17 +593,16 @@ body.lightbox-open {
   min-height: 260px;
 }
 
-/* Illustration popcorn plus grande, débordement accentué */
 .review-banner__illustration::after {
   content: "";
   position: absolute;
   top: -18px;
   bottom: -18px;
-  right: -15px; /* débordement conservé */
-  width: 145%; /* débordement conservé */
+  right: -15px;
+  width: 145%;
   background: url("/images/img-popcorn-bg-banner-comments.png") right center /
     contain no-repeat;
-  background-position: 92% center; /* décale l’image vers la gauche pour rendre visible "Ciné Délices" */
+  background-position: 92% center;
   pointer-events: none;
   z-index: 3;
 }
@@ -651,7 +647,7 @@ body.lightbox-open {
   max-width: 380px;
   width: 100%;
   justify-self: start;
-  flex: 0 0 380px; /* largeur fixe pour l’alignement */
+  flex: 0 0 380px;
 }
 
 .review-input::placeholder,
@@ -684,7 +680,7 @@ body.lightbox-open {
   margin: 0;
   padding: 0;
   flex: 1 1 auto;
-  min-width: 420px; /* réserve l’espace pour libellé + 5 étoiles */
+  min-width: 420px;
 }
 .review-stars__label {
   font-size: 1rem;
@@ -703,9 +699,9 @@ body.lightbox-open {
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
-  flex-wrap: nowrap; /* garde les 5 étoiles sur une seule ligne */
-  white-space: nowrap; /* prévention supplémentaire d’un retour à la ligne */
-  min-width: 200px; /* espace réservé pour 5 étoiles à 2.1rem */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: 200px;
 }
 
 .stars-group input {
@@ -721,10 +717,8 @@ body.lightbox-open {
   transition: transform 0.2s ease, color 0.2s ease, text-shadow 0.2s ease,
     filter 0.2s ease;
   user-select: none;
-  text-shadow: 0 0 0.8px var(--ombre-intermediaire); /* bords un peu plus doux */
-  filter: drop-shadow(
-    0 0 0.6px var(--ombre-intermediaire)
-  ); /* arrondit légèrement les pointes */
+  text-shadow: 0 0 0.8px var(--ombre-intermediaire);
+  filter: drop-shadow(0 0 0.6px var(--ombre-intermediaire));
 }
 
 .stars-group label.is-active {
@@ -753,8 +747,8 @@ body.lightbox-open {
   line-height: 1.4;
   min-height: calc(1.4em * 3 + 1.8rem);
   max-height: calc(1.4em * 3 + 1.8rem);
-  max-width: 520px; /* réduit la largeur visible */
-  justify-self: start; /* aligne bien à gauche */
+  max-width: 520px;
+  justify-self: start;
 }
 
 @media (max-width: 1024px) {
@@ -771,7 +765,7 @@ body.lightbox-open {
     flex-wrap: wrap;
   }
   .review-actions {
-    grid-template-columns: 1fr; /* revient en pile sur mobile */
+    grid-template-columns: 1fr;
   }
   .review-textarea,
   .review-submit {
