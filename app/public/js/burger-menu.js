@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (footer) footer.setAttribute("aria-hidden", "true");
     nav.setAttribute("aria-hidden", "false");
   }
+
   function closeMenu() {
     burgerMenu.setAttribute("aria-expanded", "false");
     burgerMenu.classList.remove("active");
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (footer) footer.removeAttribute("aria-hidden");
     nav.setAttribute("aria-hidden", "true");
   }
+
   burgerMenu.addEventListener("click", () => {
     const isExpanded = burgerMenu.getAttribute("aria-expanded") === "true";
     if (isExpanded) closeMenu();
