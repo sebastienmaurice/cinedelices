@@ -36,7 +36,7 @@ const moviesController = {
   // Affichage de la liste des films sur la page des films
   async moviesList(req, res) {
     try {
-      const movies = await Movie.findAll();
+      const movies = await Movie.findAll({where: {status: true},});
       const selectedGenre = req.query.genre || "tous";
 
       // Si un genre est passé en query, filtrer les films

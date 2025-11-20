@@ -1,8 +1,6 @@
 import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
 
-// 🔹 Middleware temporaire pour mock admin (à retirer quand authentification réelle en place)
-import { mockAdmin } from "../middlewares/mock-admin.middleware.js";
 
 const adminRouter = Router();
 
@@ -12,8 +10,6 @@ const adminRouter = Router();
 adminRouter.get("/", adminController.admin);
 
 
-// Applique le mock à toutes les routes ????????
-adminRouter.use(mockAdmin); 
 
 /* ===============================================
    coté gauche
