@@ -263,7 +263,7 @@ a:hover {
   width: 28px;
   height: 3px;
   background-color: var(--dore-popcorn);
-  border-radius: 2px;
+  border-radius: 12px;
   transition: all 0.3s ease;
 }
 .burger-menu.active .burger-line:nth-child(1) {
@@ -278,6 +278,26 @@ a:hover {
 
 /* Menu mobile responsive */
 @media (max-width: 800px) {
+  /* Masquer les boutons Connexion/Inscription car ils sont dans le menu burger */
+  .buttons__header {
+    display: none;
+  }
+
+  /* Agrandir le logo en mode mobile */
+  .logo-header {
+    height: 4rem;
+  }
+
+  /* Agrandir le texte du logo */
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .title-cine,
+  .title-delices {
+    font-size: 2.2rem;
+  }
+
   .burger-menu {
     display: flex;
   }
@@ -314,7 +334,7 @@ a:hover {
   font-family: var(--font-body);
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
+  border-radius: 8px;
   border: 2px solid transparent;
   cursor: pointer;
   position: relative;
@@ -332,7 +352,7 @@ a:hover {
   left: 2px;
   right: 2px;
   border: 1px solid currentColor; /* liseré extérieur dynamique */
-  border-radius: 0.4rem;
+  border-radius: 8px;
   pointer-events: none;
 }
 
@@ -400,7 +420,7 @@ a:hover {
   background-color: var(--dore-popcorn); /* fond or */
   color: var(--bleu-nuit); /* texte bleu nuit */
   border: 2px solid var(--bleu-nuit); /* liseré bleu nuit */
-  border-radius: 0.6rem;
+  border-radius: 8px;
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   font-weight: bold;
@@ -423,7 +443,7 @@ a:hover {
   background-color: var(--rouge-projecteur);
   color: var(--argent-ecran);
   border: 2px solid var(--rouge-projecteur);
-  border-radius: 0.6rem;
+  border-radius: 8px;
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   font-weight: bold;
@@ -443,6 +463,71 @@ a:hover {
 }
 
 /* ====================================================== */
+/* 4.5. TAGS / BADGES
+====================================================== */
+.tag,
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+/* Tag Rouge */
+.tag--red,
+.badge--red {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
+}
+
+.tag--red:hover,
+.badge--red:hover {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+  transform: translateY(-2px);
+}
+
+/* Tag Or */
+.tag--gold,
+.badge--gold {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+}
+
+.tag--gold:hover,
+.badge--gold:hover {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border-color: var(--rouge-projecteur);
+  transform: translateY(-2px);
+}
+
+/* Tag Bleu */
+.tag--blue,
+.badge--blue {
+  background-color: var(--bleu-intermediaire);
+  color: var(--argent-ecran);
+  border-color: var(--bleu-intermediaire);
+}
+
+.tag--blue:hover,
+.badge--blue:hover {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+  transform: translateY(-2px);
+}
+
+/* ====================================================== */
 /* 5. FORMULAIRES & INPUTS
 ====================================================== */
 .input-container {
@@ -450,10 +535,11 @@ a:hover {
   width: 100%;
   margin-bottom: 1.5rem;
 }
-.input-container input {
+.input-container input,
+.input-container textarea {
   width: 100%;
   padding: 1.5rem 0.75rem 1rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 2px solid var(--jaune-blond);
   background-color: #fff;
   font-family: var(--font-body);
@@ -462,7 +548,12 @@ a:hover {
   outline: none;
   transition: all var(--transition);
 }
-.input-container input::placeholder {
+.input-container textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.input-container input::placeholder,
+.input-container textarea::placeholder {
   color: var(--bleu-secondaire);
   opacity: 1;
 }
@@ -479,7 +570,9 @@ a:hover {
   z-index: 1;
 }
 .input-container input:focus + label,
-.input-container input:not(:placeholder-shown) + label {
+.input-container input:not(:placeholder-shown) + label,
+.input-container textarea:focus + label,
+.input-container textarea:not(:placeholder-shown) + label {
   top: -0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -487,9 +580,10 @@ a:hover {
   color: var(--argent-ecran);
   background-color: var(--dore-popcorn);
   padding: 0 0.5rem;
-  border-radius: 5px;
+  border-radius: 12px;
 }
-.input-container input:focus {
+.input-container input:focus,
+.input-container textarea:focus {
   border-color: var(--dore-fonce);
   box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
 }
@@ -768,7 +862,7 @@ a:hover {
   position: relative;
   background: var(--bleu-intermediaire);
   padding: 2rem;
-  border-radius: 0.8rem;
+  border-radius: 12px;
   width: 90%;
   max-width: 400px;
   color: var(--argent-ecran);
@@ -838,7 +932,7 @@ a:hover {
   width: 100%;
   padding: 0.6rem 0.8rem;
   margin-bottom: 1rem;
-  border-radius: 0.4rem;
+  border-radius: 12px;
   border: 1px solid var(--argent-ecran);
   background: var(--bleu-nuit);
   color: var(--argent-ecran);
@@ -933,7 +1027,7 @@ a:hover {
     font-size: 1.5rem;
   }
   .logo-header {
-    height: 2.5rem;
+    height: 4rem;
   }
   .footer-logo {
     height: 2.5rem;
