@@ -66,6 +66,8 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
+      console.log("Données de la recette reçues :", req.body);
+
       //! Récupération du chemin de l'image uploadée (si présente)
       let imagePath = null;
       if (req.file) {
