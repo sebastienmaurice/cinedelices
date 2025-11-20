@@ -39,16 +39,12 @@ document.addEventListener("DOMContentLoaded", function () {
             showMemberProfileFunc("sebastien");
           }
         } else if (targetSection === "contact") {
-          // Activer la carte Contact
-          const contactSideCard = document.querySelector(
-            '[data-member="contact"]'
-          );
-          if (contactSideCard && showContactFormFunc) {
+          // Afficher le formulaire de contact directement
+          if (showContactFormFunc) {
             const allSideCards = document.querySelectorAll(
               ".team-pirate-card-side"
             );
             allSideCards.forEach((c) => c.classList.remove("active"));
-            contactSideCard.classList.add("active");
             showContactFormFunc();
           }
         } else if (targetSection === "cine-delices-about") {
@@ -69,8 +65,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const targetElement =
           targetSection === "contact" ? contactSection : aboutSection;
 
-        // Si c'est "about", scroller vers .about-section__container
+        // Si c'est "about", scroller vers .team-section
         if (targetSection === "about" && targetElement) {
+          const teamSection = targetElement.querySelector(".team-section");
+          if (teamSection) {
+            const offsetTop = teamSection.offsetTop - 100;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: "smooth",
+            });
+            return;
+          }
+          // Fallback vers le container si team-section n'existe pas
           const container = targetElement.querySelector(
             ".about-section__container"
           );
@@ -126,7 +132,10 @@ document.addEventListener("DOMContentLoaded", function () {
       `.banner__nav-btn[data-section="${hash}"]`
     );
     if (targetBtn) {
-      targetBtn.click();
+      // Petit délai pour s'assurer que tout est chargé
+      setTimeout(() => {
+        targetBtn.click();
+      }, 100);
     }
   }
 
@@ -386,13 +395,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Ajouter l'état actif à la carte cliquée
       this.classList.add("active");
 
-      // Si c'est la carte Contact, afficher le formulaire
-      if (memberKey === "contact") {
-        showContactForm();
-      } else {
-        // Sinon, afficher le profil du membre
-        showMemberProfile(memberKey);
-      }
+      // Afficher le profil du membre
+      showMemberProfile(memberKey);
     });
 
     // Effet hover pour prévisualiser
