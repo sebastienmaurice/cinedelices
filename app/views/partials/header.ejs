@@ -29,6 +29,14 @@
       <a href="#" class="btn btn--red btn--sm js-register">Inscription</a>
     </div>
     <% } %>
+    
+    <% if (typeof role !== "undefined") { %>
+    <!-- Boutons déconnexion et compte en version mobile (affichés dans le menu burger) -->
+    <div class="navigationheader-auth">
+      <a href="/auth/logout" class="btn btn--gold btn--sm">Déconnexion</a>
+      <a href="/auth/profil/<%= userId %>" class="btn btn--red btn--sm">Mon compte</a>
+    </div>
+    <% } %>
   </nav>
  
 
@@ -43,9 +51,9 @@
   <% if (typeof role !== "undefined") { %>
   <div class="buttons__header">
     <a href="/auth/logout" id="btnLogout" class="btn btn--gold btn--sm"
-      >deconnexion</a
+      >Déconnexion</a
     >
-    <a href="/auth/profil/:id" id="btnProfil" class="btn btn--red btn--sm"
+    <a href="/auth/profil/<%= userId %>" id="btnProfil" class="btn btn--red btn--sm"
       >Mon compte</a
     >
   </div>

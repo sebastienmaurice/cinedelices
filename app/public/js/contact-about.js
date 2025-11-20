@@ -39,16 +39,12 @@ document.addEventListener("DOMContentLoaded", function () {
             showMemberProfileFunc("sebastien");
           }
         } else if (targetSection === "contact") {
-          // Activer la carte Contact
-          const contactSideCard = document.querySelector(
-            '[data-member="contact"]'
-          );
-          if (contactSideCard && showContactFormFunc) {
+          // Afficher le formulaire de contact directement
+          if (showContactFormFunc) {
             const allSideCards = document.querySelectorAll(
               ".team-pirate-card-side"
             );
             allSideCards.forEach((c) => c.classList.remove("active"));
-            contactSideCard.classList.add("active");
             showContactFormFunc();
           }
         } else if (targetSection === "cine-delices-about") {
@@ -386,13 +382,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Ajouter l'état actif à la carte cliquée
       this.classList.add("active");
 
-      // Si c'est la carte Contact, afficher le formulaire
-      if (memberKey === "contact") {
-        showContactForm();
-      } else {
-        // Sinon, afficher le profil du membre
-        showMemberProfile(memberKey);
-      }
+      // Afficher le profil du membre
+      showMemberProfile(memberKey);
     });
 
     // Effet hover pour prévisualiser

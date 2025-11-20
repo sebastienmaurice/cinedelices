@@ -918,7 +918,7 @@
   opacity: 1;
 }
 
-.team-pirate-card-side:not(.team-pirate-card-side--contact):hover {
+.team-pirate-card-side:hover {
   border: 2px solid var(--dore-popcorn);
   box-shadow: 0 12px 30px rgba(198, 166, 100, 0.55),
     0 6px 12px rgba(0, 0, 0, 0.45), 0 0 25px rgba(198, 166, 100, 0.35);
@@ -961,68 +961,6 @@
   overflow: hidden;
   border: 2px solid var(--bleu-intermediaire);
   transition: all 0.4s ease;
-}
-
-/* Carte Contact - fond rouge avec contraste */
-.team-pirate-card-side--contact {
-  background: var(--bleu-intermediaire);
-  border-color: var(--bleu-secondaire);
-}
-
-.team-pirate-card-side--contact .team-pirate-card-side__name {
-  color: #7495be;
-}
-
-.team-pirate-card-side--contact .team-pirate-card-side__role {
-  color: #5a7391;
-}
-
-.team-pirate-card-side--contact .team-pirate-card-side__tag--contact {
-  background: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--jaune-blond);
-}
-
-.team-pirate-card-side--contact .team-pirate-card-side__icon {
-  color: var(--argent-ecran);
-}
-
-.team-pirate-card-side--contact:hover {
-  background: var(--dore-popcorn);
-  border-color: var(--dore-fonce);
-  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
-  transform: translateY(-3px) scale(1.02);
-  animation: cinema-glow 0.2s linear;
-}
-
-.team-pirate-card-side--contact:hover .team-pirate-card-side__name,
-.team-pirate-card-side--contact:hover .team-pirate-card-side__role {
-  color: var(--bleu-nuit);
-}
-
-.team-pirate-card-side--contact:hover .team-pirate-card-side__icon {
-  color: var(--bleu-nuit);
-}
-
-.team-pirate-card-side--contact.active {
-  background: var(--rouge-projecteur);
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 6px 25px rgba(215, 38, 56, 0.6);
-}
-
-.team-pirate-card-side--contact.active .team-pirate-card-side__name,
-.team-pirate-card-side--contact.active .team-pirate-card-side__role {
-  color: var(--bleu-nuit);
-}
-
-.team-pirate-card-side--contact.active .team-pirate-card-side__tag {
-  background: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-}
-
-.team-pirate-card-side--contact.active .team-pirate-card-side__icon {
-  color: var(--argent-ecran);
 }
 
 .team-pirate-card-side:hover .team-pirate-card-side__image {
@@ -1105,19 +1043,6 @@
   transform: translateY(-2px);
 }
 
-.team-pirate-card-side__tag--contact {
-  background: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--jaune-blond);
-}
-
-.team-pirate-card-side__tag--contact:hover {
-  background: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  transform: translateY(-2px);
-}
-
 /* Icône flèche */
 .team-pirate-card-side__icon {
   flex-shrink: 0;
@@ -1147,15 +1072,20 @@
 
 .team-pirate-card-center {
   width: 100%;
-  background: var(--dore-popcorn);
+  background: linear-gradient(
+    0deg,
+    var(--bleu-nuit) 0%,
+    var(--bleu-intermediaire) 100%
+  );
   border-radius: 12px;
-  border: 2px solid var(--dore-popcorn);
+  border: 2px solid var(--bleu-intermediaire);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
   animation: pirateCardAppear 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   height: 100%;
+  box-shadow: 0 10px 20px rgba(0, 2, 12, 0.35);
 }
 
 /* Conteneur des colonnes */
@@ -1203,26 +1133,27 @@
     opacity: 0;
     transform: scale(0.92) translateY(25px);
     filter: blur(6px);
-    box-shadow: 0 0 0px rgba(198, 166, 100, 0);
+    box-shadow: 0 0 0px rgba(13, 27, 42, 0);
   }
   40% {
     opacity: 0.6;
     transform: scale(0.98) translateY(8px);
     filter: blur(3px);
-    box-shadow: 0 8px 25px rgba(198, 166, 100, 0.4);
+    box-shadow: 0 8px 25px rgba(13, 27, 42, 0.5), 0 0 20px rgba(27, 38, 59, 0.4);
   }
   70% {
     opacity: 0.95;
     transform: scale(1.02) translateY(-3px);
     filter: blur(1px);
-    box-shadow: 0 15px 40px rgba(198, 166, 100, 0.6),
-      0 0 30px rgba(198, 166, 100, 0.35);
+    box-shadow: 0 15px 40px rgba(13, 27, 42, 0.7),
+      0 0 30px rgba(27, 38, 59, 0.5), 0 0 50px rgba(65, 90, 119, 0.3);
   }
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
     filter: blur(0);
-    box-shadow: 0 10px 30px rgba(198, 166, 100, 0.4);
+    box-shadow: 0 10px 30px rgba(13, 27, 42, 0.5),
+      0 10px 20px rgba(0, 2, 12, 0.35);
   }
 }
 
@@ -1267,8 +1198,8 @@
 /* Réseaux sociaux en overlay sur le bord droit de l'image */
 .team-pirate-card-center__socials-overlay {
   position: absolute;
-  right: 40px;
-  top: 25%;
+  right: 20px;
+  top: 20%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -1279,7 +1210,7 @@
 /* Image centrale */
 .team-pirate-card-center__image {
   width: 100%;
-  height: 325x;
+  height: 325px;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
@@ -1299,7 +1230,7 @@
   object-position: center top;
   display: block;
   border-radius: 12px;
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: auto;
   backface-visibility: hidden;
   transform: translateZ(0);
   will-change: transform;
@@ -1328,6 +1259,7 @@
   letter-spacing: 0.5px;
   border: 1px solid var(--rouge-projecteur);
   transition: all var(--transition);
+  box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .team-pirate-card-center__tag:hover {
@@ -1335,6 +1267,7 @@
   color: var(--bleu-nuit);
   border-color: var(--dore-popcorn);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(198, 166, 100, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Contenu de la carte centrale */
@@ -1343,9 +1276,10 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: var(--dore-popcorn);
+  background: transparent;
   overflow-y: auto;
   min-height: 0;
+  padding: 1rem 0;
 }
 /* 
   Utilisation de l’unité typographique `cap` :
@@ -1358,17 +1292,20 @@
 .team-pirate-card-center__name {
   font-size: 2.4rem;
   font-weight: 700;
-  color: var(--bleu-nuit);
+  color: var(--dore-popcorn);
   font-family: var(--font-h2-h6);
   margin-bottom: -1.2rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .team-pirate-card-center__bio {
   font-size: 0.95rem;
-  color: var(--bleu-nuit);
+  color: var(--argent-ecran);
   line-height: 1.6;
   margin: 0;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-weight: 500;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
@@ -1379,7 +1316,7 @@
 /* Section Spé technique - Colonne droite */
 .team-pirate-card-center__tech-title {
   font-size: 0.9rem;
-  color: var(--bleu-nuit);
+  color: var(--argent-ecran);
   font-family: var(--font-h2-h6);
   font-weight: 600;
   margin-bottom: 0.75rem;
@@ -1387,6 +1324,7 @@
   align-items: center;
   gap: 0.5rem;
   letter-spacing: 0.5px;
+  opacity: 0.95;
 }
 
 .team-pirate-card-center__tech {
@@ -1394,9 +1332,10 @@
   flex-direction: column;
   height: 100%;
   padding: 1rem;
-  background: rgba(13, 27, 42, 0.1);
+  background: rgba(236, 239, 241, 0.08);
   border-radius: 12px;
-  border: 1px solid rgba(13, 27, 42, 0.2);
+  border: 1px solid rgba(236, 239, 241, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .team-pirate-card-center__tech-title i {
@@ -1654,12 +1593,12 @@
 .team-pirate-card-center__favorites {
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 2px solid rgba(13, 27, 42, 0.2);
+  border-top: 2px solid rgba(236, 239, 241, 0.2);
 }
 
 .team-pirate-card-center__favorites-title {
   font-size: 0.9rem;
-  color: var(--bleu-nuit);
+  color: var(--dore-popcorn);
   font-family: var(--font-h2-h6);
   font-weight: 600;
   margin-bottom: 0.75rem;
@@ -1683,20 +1622,22 @@
 .team-pirate-card-center__favorite-item {
   display: inline-block;
   padding: 0.5rem 1rem;
-  background: var(--bleu-nuit);
+  background: rgba(236, 239, 241, 0.12);
   color: var(--argent-ecran);
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
-  border: 1px solid var(--bleu-nuit);
+  border: 1px solid rgba(236, 239, 241, 0.25);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .team-pirate-card-center__favorite-item:hover {
   background: var(--rouge-projecteur);
   border-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(215, 38, 56, 0.3);
+  box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* Réseaux sociaux en overlay - styles pour les liens */
@@ -1708,13 +1649,13 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--bleu-nuit);
-  color: var(--argent-ecran);
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 2px solid var(--bleu-nuit);
+  border: 2px solid var(--dore-popcorn);
   font-size: 1.2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .team-pirate-card-center__socials-overlay
@@ -1744,19 +1685,21 @@
 .team-pirate-card-center__contact-header {
   padding: 2rem 2rem 1.5rem 2rem;
   text-align: center;
-  border-bottom: 2px solid rgba(13, 27, 42, 0.1);
+  border-bottom: 2px solid rgba(236, 239, 241, 0.2);
 }
 
 .team-pirate-card-center__contact-title {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--bleu-nuit);
+  color: var(--dore-popcorn);
   font-family: var(--font-h2-h6);
   margin: 0 0 0.75rem 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .team-pirate-card-center__contact-title i {
@@ -1766,10 +1709,11 @@
 
 .team-pirate-card-center__contact-subtitle {
   font-size: 0.95rem;
-  color: var(--bleu-nuit);
-  opacity: 0.85;
+  color: var(--argent-ecran);
+  opacity: 0.95;
   margin: 0;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .team-pirate-contact-form {
@@ -1801,13 +1745,16 @@
 
 .team-pirate-contact-form .input-container input:focus,
 .team-pirate-contact-form .input-container textarea:focus {
-  border-color: var(--dore-fonce);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.5),
+    0 0 8px rgba(198, 166, 100, 0.3);
+  outline: none;
 }
 
 .team-pirate-contact-form .input-container label {
-  color: var(--bleu-secondaire);
+  color: var(--argent-ecran);
   background-color: transparent;
+  opacity: 0.9;
 }
 
 .team-pirate-contact-form .input-container input:focus + label,
