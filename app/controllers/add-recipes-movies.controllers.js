@@ -63,11 +63,11 @@ const addRecipesMoviesController = {
         preparation,
         time,
         difficulty,
-        id,
+        id_movie,
       } = req.body;
 
-      const id_movie = id; // Associer la recette au film ajouté précédemment
-
+     
+      
       // Ajout de la recette à la base de données (simulation)
       const newRecipe = await Recipe.create({
         name: name,

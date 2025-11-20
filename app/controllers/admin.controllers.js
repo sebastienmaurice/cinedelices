@@ -9,10 +9,10 @@ const adminController = {
   async admin(req, res) {
     try {
       const recipes = await Recipe.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const movies = await Movie.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
@@ -22,6 +22,7 @@ const adminController = {
         movies,
         avis,
         users,
+        success: req.query.success,
         role: req.userRole,
       });
     } catch (error) {
@@ -39,10 +40,10 @@ const adminController = {
   async editRecipe(req, res) {
     try {
       const recipes = await Recipe.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const movies = await Movie.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
@@ -54,6 +55,7 @@ const adminController = {
         avis,
         users,
         upRecipe,
+        success: req.query.success,
         role: req.userRole,
       });
     } catch (error) {
@@ -71,10 +73,10 @@ const adminController = {
   async editMovie(req, res) {
     try {
       const recipes = await Recipe.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const movies = await Movie.findAll({
-        where: { status: "false" },
+        where: { status: false },
       });
       const avis = await Notice.findAll();
       const users = await User.findAll();
@@ -86,6 +88,7 @@ const adminController = {
         avis,
         users,
         upMovie,
+        success: req.query.success,
         role: req.userRole,
       });
     } catch (error) {
@@ -199,28 +202,6 @@ async rejectRecipe (req, res) {
   }
 },
 
-
-
-
-
-
-
-// Soumission du formulaire d'ajout de recette (POST)
-saveMovieRecipe(req, res) {
-  res.send("POST saveMovieRecipe - à implémenter");
-},
-
-// Liste des recettes pour admin
-listRecipes(req, res) {
-  res.send("Liste des recettes - à implémenter");
-},
-  // Soumission de la modification d'une recette
-  updateRecipe(req, res) {
-    res.send("mettre a jour recette");
-  },
-
-  
-  
 
   //! Supprimer un utilisateur
   async deleteUser(req, res) {
