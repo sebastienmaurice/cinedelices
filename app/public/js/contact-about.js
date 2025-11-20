@@ -65,8 +65,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const targetElement =
           targetSection === "contact" ? contactSection : aboutSection;
 
-        // Si c'est "about", scroller vers .about-section__container
+        // Si c'est "about", scroller vers .team-section
         if (targetSection === "about" && targetElement) {
+          const teamSection = targetElement.querySelector(".team-section");
+          if (teamSection) {
+            const offsetTop = teamSection.offsetTop - 100;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: "smooth",
+            });
+            return;
+          }
+          // Fallback vers le container si team-section n'existe pas
           const container = targetElement.querySelector(
             ".about-section__container"
           );
@@ -122,7 +132,10 @@ document.addEventListener("DOMContentLoaded", function () {
       `.banner__nav-btn[data-section="${hash}"]`
     );
     if (targetBtn) {
-      targetBtn.click();
+      // Petit délai pour s'assurer que tout est chargé
+      setTimeout(() => {
+        targetBtn.click();
+      }, 100);
     }
   }
 
