@@ -32,7 +32,7 @@
         </button>
         <div class="dropdown-container" id="recettes">
           <% recipes.forEach(recipe => { %>
-          <button class="list-item"><%= recipe.id %> - <%= recipe.name %></button>
+          <button class="list-item"><a href="/admin/recipe/<%= recipe.id %>"><%= recipe.id %> - <%= recipe.name %></a></button>
           <% }) %>
         </div>
 
@@ -57,12 +57,17 @@
         </div>
 
         <button class="dropdown-btn" data-target="users">
-          <i class="fa-solid fa-comment"></i> Utilisateurs
+          <i class="fa-solid fa-user"></i> Utilisateurs
           <i class="fa-solid fa-chevron-down toggle-icon"></i>
         </button>
         <div class="dropdown-container" id="users">
           <% users.forEach(user => { %>
-          <button class="list-item"><%= user.id %> - <%= user.first_name %></button>
+            <form method="POST" action="/admin/deleteUser/<%= user.id %>" >
+              <button type="submit" class="list-item dropdown-btn" title="Supprimer <%= user.first_name %>">
+                <%= user.id %> - <%= user.first_name %>
+              </button>
+            </form>
+          <!-- <button class="list-item"><%= user.id %> - <%= user.first_name %></button> -->
           <% }) %>
         </div>
 
@@ -93,10 +98,14 @@
 
             <div class="recette-texte">
               <h3>Contexte de la recette dans le film</h3>
-              <textarea readonly>
+              <% if (typeof upRecipe === "undefined") { %>
+                                <textarea readonly>
 Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
-            </textarea
-              >
+                                </textarea>
+              <% } else { %>
+                                <textarea readonly>"<%= upRecipe.description %>"</textarea>
+              <% } %>
+
             </div>
           </div>
 

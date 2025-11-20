@@ -3,39 +3,61 @@ import jwt from "jsonwebtoken";
 // Middleware pour vérifier le token JWT
 
 function verifyToken(req, res, next) {
+  // On récupère le token JWT stocké dans les cookies du navigateur
   const token = req.cookies.token;
+  
+  // Si aucun token n'est trouvé (utilisateur pas connecté)
   if (!token) {
-    //return res.status(401).json({ error: "Veuillez vous connecter" });
+    // ➡️ On laisse passer quand même (pas d'erreur)
+    // L'utilisateur pourra accéder aux pages publiques
+    // Mais req.userRole restera undefined
     return next();
   }
-
+  
+  // Si un token existe, on essaie de le vérifier
   try {
+    // On décode le token avec la clé secrète
+    // Si le token est valide, decoded contiendra les données (user_id, pseudo, role)
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // On vérifie que toutes les données importantes sont présentes
     if (!decoded.user_id || !decoded.pseudo || !decoded.role) {
+      // S'il manque des données, on considère le token comme invalide
       throw new Error("Token invalide: données manquantes");
     }
-
-    // Stockage des propriétés pour un accès facile
-    req.user = decoded;
-    req.userId = decoded.user_id;
-    req.userPseudo = decoded.pseudo;
-    req.userRole = decoded.role;
-
+    
+    // On stocke les données décodées dans req pour les utiliser partout
+    req.user = decoded;              // Objet complet
+    req.userId = decoded.user_id;     // ID de l'utilisateur
+    req.userPseudo = decoded.pseudo;  // Pseudo de l'utilisateur
+    req.userRole = decoded.role;      // Rôle (admin ou user)
+    
+    // ➡️ Tout est OK, on passe à la suite (route suivante ou middleware suivant)
     next();
+    
   } catch (error) {
+    // Si une erreur se produit (token invalide, expiré, ou corrompu)
+    
+    // On log l'erreur dans la console pour le debug
     console.error("Token invalide:", error.message);
+    
+    // On supprime le cookie invalide du navigateur
     res.clearCookie("token");
+    
+    // On vérifie si c'est une erreur d'expiration
     if (error.name === "TokenExpiredError") {
+      // Token expiré : message spécifique
       return res.status(401).render("error", {
-        error: "401",
+        error: "401",  // Code d'erreur HTTP
         message: "Session expirée. Veuillez vous reconnecter",
-        role: req.userRole,
+        role: undefined,  // Pas de rôle car token invalide
       });
     } else {
+      // Autre erreur (token modifié, signature invalide, etc.)
       return res.status(401).render("error", {
         error: "401",
-        message: "session invalide. Veuillez vous reconnecter",
-        role: req.userRole,
+        message: "Session invalide. Veuillez vous reconnecter",
+        role: undefined,  // Pas de rôle car token invalide
       });
     }
   }
@@ -77,12 +99,12 @@ function isLogged(req, res, next) {
   if (userRole === "user" || userRole === "admin") {
     next();
   } else {
-    // Accès interdit
-
+    // Accès interdit - on ajoute un paramètre pour ouvrir le popup
     res.status(403).render("error", {
       error: "403",
       message: "Route interdite. Vous n'êtes pas connecté.",
       role: req.userRole,
+      openLoginPopup: true  // 👈 Nouveau paramètre
     });
   }
 }

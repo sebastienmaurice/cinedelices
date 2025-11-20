@@ -29,14 +29,10 @@ adminRouter.get("/updateR", adminController.updateRecipe);
 adminRouter.get("/validateR", adminController.validateRecipe);
 
 // Utilisateurs
-adminRouter.get("/deleteU", adminController.deleteUser);
+adminRouter.post("/deleteUser/:id", adminController.deleteUser);
 
-// Ajouter une recette inspirée d’un film
-adminRouter.get(
-  "/admin/add-movie-recipe",
-  isAdmin,
-  adminController.addMovieRecipe
-);
+//! Ajouter une recette inspirée d’un film
+adminRouter.get("/recipe/:id", isAdmin, adminController.editRecipe);
 adminRouter.post(
   "/admin/add-movie-recipe",
   isAdmin,
@@ -47,7 +43,7 @@ adminRouter.post(
 adminRouter.get("/admin/recipes", isAdmin, adminController.listRecipes);
 
 // Édition d’une recette
-adminRouter.get("/admin/recipes/:id/edit", isAdmin, adminController.editRecipe);
+adminRouter.get("recipes/:id", isAdmin, adminController.editRecipe);
 adminRouter.post(
   "/admin/recipes/:id/edit",
   isAdmin,

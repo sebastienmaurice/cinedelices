@@ -140,8 +140,8 @@
             <article class="recipe-card recipe-card--left">
               <div class="recipe-image-placeholder">
                 <img
-                  src="/images/dessert-backtothefuture-2.jpg"
-                  alt="Peach Pie de Hill Valley, dessert inspiré du film Retour vers le Futur"
+                  src="/images/<%= topRecipe.picture %>"
+                  alt="Recette inspiré du film <%= topRecipe.Movie.title %>"
                   loading="lazy"
                   width="600"
                   height="260"
@@ -152,21 +152,17 @@
                     que tout ce que j'ai jamais goûté ! On va révolutionner les
                     desserts du futur ! »
                   </p>
-                  <footer><cite>— Retour vers le Futur</cite></footer>
+                  <footer><cite>— <%= topRecipe.Movie.title %></cite></footer>
                 </blockquote>
               </div>
               <div class="recipe-info">
-                <h3>Peach Pie de Hill Valley</h3>
-                <p class="recipe-film">Retour vers le Futur</p>
-                <p class="recipe-description">
-                  Le dessert emblématique que Marty McFly savoure dans le café
-                  de Hill Valley. Une tarte aux pêches caramélisées et une
-                  pointe de nostalgie rétro.
-                </p>
+              <h3><%= topRecipe.name %></h3>
+              <p class="recipe-film"><%= topRecipe.Movie.title %></p>
+                <p class="recipe-description"><%= topRecipe.description %></p>
                 <a
                   class="btn btn--red"
-                  href="/movies"
-                  aria-label="Voir la recette du Peach Pie (accéder aux films et recettes)"
+                  href="/recipes-movie/details/<%= topRecipe.id %>"
+                  aria-label="Voir la recette <%= topRecipe.name %> (accéder à la fiche recette)"
                 >
                   Voir la recette
                 </a>
@@ -316,90 +312,34 @@
         </div>
 
         <div class="top-recettes__grid">
-          <!-- Carte 1 -->
+          <!-- boucle sur les 3 recettes -->
+            <% recipes.forEach(recipe => { %>
           <article class="recette-card">
             <div class="recette-image">
               <img
-                src="/images/croco-dundee-2.jpg"
-                alt="Steak d'Outback inspiré de Crocodile Dundee"
+                src="/images/<%= recipe.picture %>"
+                alt="<%= recipe.name %> inspiré de <%= recipe.Movie.title %>"
                 loading="lazy"
                 width="420"
                 height="220"
               />
             </div>
             <div class="recette-content">
-              <h3>Steak d'Outback</h3>
-              <p class="recette-film">Crocodile Dundee</p>
+              <h3><%= recipe.name %></h3>
+              <p class="recette-film"><%= recipe.Movie.title %></p>
               <p class="recette-description">
-                Un steak épais grillé à la manière australienne, servi avec une
-                sauce à la bière locale et des légumes rôtis en forme de
-                boomerang.
+                <%= recipe.description %>
               </p>
               <a
                 class="btn btn--red"
-                href="/movies"
-                aria-label="Voir la recette du Steak d'Outback (accéder aux films et recettes)"
+                href="/recipes-movie/details/<%= recipe.id %>"
+                aria-label="Voir la recette <%= recipe.name %> (accéder à la fiche recette)"
               >
                 Voir la recette
               </a>
             </div>
           </article>
-
-          <!-- Carte 2 -->
-          <article class="recette-card">
-            <div class="recette-image">
-              <img
-                src="/images/kaamelott-2.png"
-                alt="Soupe du roi Arthur inspirée de Kaamelott"
-                loading="lazy"
-                width="420"
-                height="220"
-              />
-            </div>
-            <div class="recette-content">
-              <h3>Soupe du roi Arthur</h3>
-              <p class="recette-film">Kaamelott</p>
-              <p class="recette-description">
-                Une soupe médiévale servie dans un bol en bois, garnie de
-                croûtons en forme d'épée et d'herbes aromatiques de Brocéliande.
-              </p>
-              <a
-                class="btn btn--red"
-                href="/movies"
-                aria-label="Voir la recette de la Soupe du roi Arthur (accéder aux films et recettes)"
-              >
-                Voir la recette
-              </a>
-            </div>
-          </article>
-
-          <!-- Carte 3 -->
-          <article class="recette-card">
-            <div class="recette-image">
-              <img
-                src="/images/sparrow-2.jpg"
-                alt="Ragoût de pirate inspiré de Pirates des Caraïbes"
-                loading="lazy"
-                width="420"
-                height="220"
-              />
-            </div>
-            <div class="recette-content">
-              <h3>Ragoût de pirate</h3>
-              <p class="recette-film">Pirates des Caraïbes</p>
-              <p class="recette-description">
-                Ragoût de fruits de mer servi dans un mini coffre, rehaussé d'un
-                soupçon de rhum caramélisé et d'épices exotiques.
-              </p>
-              <a
-                class="btn btn--red"
-                href="/movies"
-                aria-label="Voir la recette du Ragoût de pirate (accéder aux films et recettes)"
-              >
-                Voir la recette
-              </a>
-            </div>
-          </article>
+          <% }) %>
         </div>
 
         <div class="center-button">
