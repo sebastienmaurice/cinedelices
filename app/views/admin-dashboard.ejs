@@ -153,13 +153,20 @@ Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique
           </div>
         </section>
 
-        <!-- BOUTONS DE VALIDATION -->
+        <!-- BOUTONS DE VALIDATION RECETTE-->
         <div class="admin-validation">
-          <button class="btn btn-valid">Valider la fiche</button>
-          <button class="btn btn-refus">Refuser la fiche</button>
+          <% if (typeof upRecipe !== "undefined") { %>
+            <form method="POST" action="/admin/validateRecipe/<%= upRecipe.id %>">
+              <button type="submit" class="btn btn-valid">Valider la recette</button>
+            </form>
+            <form method="POST" action="/admin/rejectRecipe/<%= upRecipe.id %>">
+              <button type="submit" class="btn btn-refus">Refuser la recette</button>
+            </form>
+          <% } else { %>
+            <button class="btn btn-valid" disabled>Valider la recette</button>
+            <button class="btn btn-refus" disabled>Refuser la recette</button>
+          <% } %>
         </div>
-      </main>
-    </div>
 
     <!-- FOOTER -->
     <%- include("partials/footer") %>

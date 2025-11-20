@@ -32,11 +32,11 @@ adminRouter.post("/deleteUser/:id", adminController.deleteUser);
 //Ajouter une recette inspirée d’un film à valider
 adminRouter.get("/recipe/:id", adminController.editRecipe);
 
-// Soumission de la validation d’une recette
-adminRouter.post("/add-movie-recipe", adminController.saveMovieRecipe);
+// Valider un film
+adminRouter.post('/validateRecipe/:id', adminController.validateRecipe);
 
-// Suppression d’une recette
-adminRouter.post("/recipes/:id/delete", adminController.deleteRecipe);
+// Refuser un film
+adminRouter.post('/rejectRecipe/:id', adminController.rejectRecipe);
 
 /* ===============================================
    action films
