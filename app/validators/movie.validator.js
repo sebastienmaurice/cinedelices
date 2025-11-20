@@ -7,32 +7,42 @@ import Joi from "joi";
 
 function validateMovieCreate(req, res, next) {
   const movieSchema = Joi.object({
-    title: Joi.string().required().messages({
+    title: Joi.string()
+    .trim()
+    .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
+    .required()
+    .messages({
       "string.empty": "Le titre est obligatoire.",
     }),
 
     year: Joi.number()
       .integer()
       .min(1888) // Première année du cinéma
-      .max(new Date().getFullYear() + 5) // Films à venir
+      .max(new Date().getFullYear()) // Films à venir
       .required()
       .messages({
         "number.base": "L'année doit être un nombre.",
         "number.min": "L'année doit être supérieure ou égale à 1888.",
-        "number.max": `L'année ne peut pas dépasser ${
-          new Date().getFullYear() + 5
-        }.`,
+        "number.max": "L'année renseignée n'existe pas encore",
         "any.required": "L'année est obligatoire.",
       }),
 
-    genre: Joi.string().max(100).required().messages({
+    genre: Joi.string()
+    .valid("action","animé", "aventure", "comédie", "drame", "fantastique", "horreur", "romantique", "science-fiction", "thriller")
+    .required()
+    .messages({
       "string.empty": "Le genre est obligatoire.",
       "string.max": "Le genre ne peut pas dépasser 100 caractères.",
+      "any.only": "Le genre doit correspondre au sélecteur",
     }),
 
-    picture: Joi.string().max(255).allow(null, "").optional(),
+    picture: Joi.string()
+    .max(255).allow(null, "")
+    .optional(),
 
-    status: Joi.boolean().default(false).optional(),
+    status: Joi.boolean()
+    .default(false)
+    .optional(),
   });
 
   const { error } = movieSchema.validate(req.body);
@@ -79,4 +89,4 @@ function validateMovieUpdate(req, res, next) {
   next();
 }
 
-export default { validateMovieCreate, validateMovieUpdate };
+export { validateMovieCreate, validateMovieUpdate };

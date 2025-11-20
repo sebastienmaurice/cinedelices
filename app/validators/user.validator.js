@@ -126,9 +126,13 @@ function validateUserUpdate(req, res, next) {
           "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
       }),
 
-    picture: Joi.string().max(255).allow(null, "").optional(),
+    picture: Joi.string()
+    .max(255).allow(null, "")
+    .optional(),
 
-    role: Joi.string().valid("user", "admin").optional(),
+    role: Joi.string()
+    .valid("user", "admin")
+    .optional(),
   }).min(1); // Au moins un champ doit être fourni
 
   const { error } = updateSchema.validate(req.body);

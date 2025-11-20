@@ -63,10 +63,8 @@ const addRecipesMoviesController = {
         preparation,
         time,
         difficulty,
-        id,
+        id_movie,
       } = req.body;
-
-      const id_movie = id; // Associer la recette au film ajouté précédemment
 
       //! Récupération du chemin de l'image uploadée (si présente)
       let imagePath = null;
@@ -77,7 +75,7 @@ const addRecipesMoviesController = {
       }
 
       // Ajout de la recette à la base de données (simulation)
-      //! ajout picture: imagePath (la colonne s'appelle 'picture' dans le modèle)
+
       const newRecipe = await Recipe.create({
         name: name,
         description: description,
@@ -87,7 +85,7 @@ const addRecipesMoviesController = {
         time: time,
         difficulty: difficulty,
         id_movie: id_movie,
-        picture: imagePath, // Ajout du chemin de l'image (colonne 'picture')
+        picture: imagePath, // !Ajout du chemin de l'image (colonne 'picture')
       });
       console.log("Nouvelle recette ajoutée :", newRecipe);
 
