@@ -20,5 +20,6 @@ router.use("/movies", moviesRouter); // Ajout du préfixe /movies pour les route
 router.use("/admin", isAdmin, adminRouter); // Ajout du préfixe /admin pour les routes admin
 router.use("/recipes-movie", recipesRouter); // Ajout du préfixe /recipes pour les routes recipes
 router.use("/add-recipes-movies", isLogged, addRecipesMoviesRouter); // Route pour ajouter un film et une recette
+router.use("/contact-about", contactAboutRouter); // Route pour la page de contact et à propos
 
 export default router;

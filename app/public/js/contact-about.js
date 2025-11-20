@@ -163,15 +163,29 @@ document.addEventListener("DOMContentLoaded", function () {
       ],
     },
     ludovic: {
-      name: "Ludo l'Oeil-Maudit",
+      name: "Ludo la Lame Sombre",
       image: "/images/profil-contact/profil-ludovic.jpg",
       bio: "Passionné de cinéma et de cuisine, Ludovic a créé Ciné Délices pour partager sa passion des recettes inspirées des films cultes. Fondateur visionnaire, il guide l'équipe vers de nouveaux horizons culinaires.",
       tags: ["Développeur full stack", "Back-end"],
-      tech: ["Svelte", "JavaScript", "Node.js", "Express", "MongoDB"],
-      favorites: ["Harry Potter", "Pirates des Caraïbes", "Commando"],
+      tech: [
+        "Svelte",
+        "JavaScript",
+        "Node.js",
+        "Express",
+        "PostgreSQL",
+        "HTML5",
+        "CSS3",
+        "Git",
+      ],
+      favorites: [
+        "Harry Potter",
+        "Pirates des Caraïbes",
+        "300",
+        "V pour vendetta",
+      ],
     },
     denis: {
-      name: "Denis la Lame Sombre",
+      name: "Denis l'Oeil-Maudit",
       image: "/images/profil-contact/profil-denis.jpg",
       bio: "Développeur full-stack, Denis transforme les idées en expériences web interactives pour partager les recettes avec la communauté. Maître des technologies, il forge les outils qui font vivre Ciné Délices.",
       tags: ["Développeur full stack", "Back-end"],
@@ -184,7 +198,12 @@ document.addEventListener("DOMContentLoaded", function () {
       bio: "Journaliste gastronomique et grande cinéphile, Richard rédige les recettes et les articles qui font le lien entre cinéma et cuisine. Sa plume agile navigue entre les saveurs et les émotions cinématographiques.",
       tags: ["Développeur full stack", "Back-end"],
       tech: ["Svelte", "JavaScript", "Node.js", "CSS3", "Git"],
-      favorites: ["Ratatouille", "Amélie Poulain", "Le Dîner de Cons"],
+      favorites: [
+        "Ratatouille",
+        "Amélie Poulain",
+        "Le Dîner de Cons",
+        "Tatanique",
+      ],
     },
   };
 
