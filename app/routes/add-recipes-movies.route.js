@@ -1,5 +1,7 @@
 import { Router } from "express";
 import addRecipesMoviesController from "../controllers/add-recipes-movies.controllers.js";
+import { validateRecipeCreate} from "../validators/recipe.validator.js";
+import { validateMovieCreate } from "../validators/movie.validator.js";
 
 const addRecipesMoviesRouter = Router();
 
@@ -7,7 +9,7 @@ const addRecipesMoviesRouter = Router();
 addRecipesMoviesRouter.get("/", addRecipesMoviesController.addRecipesMovies);
 
 // Route pour l'ajout d'un film
-addRecipesMoviesRouter.post("/movie", addRecipesMoviesController.addMovie);
-addRecipesMoviesRouter.post("/recipe", addRecipesMoviesController.addRecipe);
+addRecipesMoviesRouter.post("/movie", validateMovieCreate, addRecipesMoviesController.addMovie);
+addRecipesMoviesRouter.post("/recipe", validateRecipeCreate, addRecipesMoviesController.addRecipe);
 
 export default addRecipesMoviesRouter;
