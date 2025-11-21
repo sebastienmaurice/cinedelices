@@ -65,17 +65,7 @@
 
 `npm i joi`
 
-<<<<<<< Updated upstream
-- 13 install "multer",  
-  
-  Multer est un node.js middleware pour la gestion de téléchargement de fichiers  
-
-`npm i multer`
-
-</details>  
-=======
 </details>
->>>>>>> Stashed changes
 
 <details>
 

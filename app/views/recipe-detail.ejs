@@ -131,7 +131,9 @@ Aucune description détaillée n'a encore été partagée pour cette
                 alt="Présentation de la recette <%= recipe.name %>"
                 loading="lazy"
               />
-              <span class="overview-image-hint">Clique pour voir + grand</span>
+              <span class="overview-image-hint">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
             </button>
           </div>
         </div>
@@ -289,6 +291,115 @@ Le détail de cette préparation arrive bientôt.</textarea
           </div>
           <div class="review-banner__illustration" aria-hidden="true"></div>
         </section>
+
+        <!-- SECTION AVIS DES VISITEURS -->
+        <% if (notices && notices.length > 0) { %>
+        <section class="reviews-display-section" aria-labelledby="reviews-title">
+          <div class="reviews-header">
+            <h2 id="reviews-title" class="reviews-title">
+              <i class="fa-solid fa-comments"></i>
+              Avis des visiteurs
+            </h2>
+            <p class="reviews-count">
+              <%= notices.length %> avis<%= notices.length > 1 ? '' : '' %>
+            </p>
+          </div>
+
+          <div class="reviews-container">
+            <div class="reviews-grid" id="reviewsList">
+              <% notices.slice(0, 5).forEach((notice, index) => { %>
+              <article class="review-card review-card-<%= index === 0 ? 'large' : index === 1 || index === 4 ? 'medium' : 'small' %>" data-review-index="<%= index %>">
+                <div class="review-card-header">
+                  <div class="review-user-info">
+                    <div class="review-user-avatar">
+                      <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="review-user-details">
+                      <h3 class="review-user-name">
+                        <% if (notice.User) { %>
+                          <%= notice.User.first_name %> <%= notice.User.last_name %>
+                        <% } else { %>
+                          Visiteur anonyme
+                        <% } %>
+                      </h3>
+                      <span class="review-date">
+                        <% if (notice.createdAt) { %>
+                          <% const date = new Date(notice.createdAt); %>
+                          <%= date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                        <% } else { %>
+                          Avis récent
+                        <% } %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="review-rating">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                    <span class="review-star <%= i <= notice.quote ? 'active' : '' %>">
+                      ★
+                    </span>
+                    <% } %>
+                    <span class="review-rating-value"><%= notice.quote %>/5</span>
+                  </div>
+                </div>
+                <div class="review-card-body">
+                  <p class="review-content-main"><%= notice.content %></p>
+                </div>
+              </article>
+              <% }) %>
+
+              <!-- Avis supplémentaires (cachés initialement) -->
+              <% if (notices.length > 5) { %>
+                <% notices.slice(5).forEach((notice, index) => { %>
+                <article class="review-card review-card-hidden review-card-<%= (index + 5) % 3 === 0 ? 'large' : (index + 5) % 3 === 1 ? 'medium' : 'small' %>" data-review-index="<%= index + 5 %>">
+                  <div class="review-card-header">
+                    <div class="review-user-info">
+                      <div class="review-user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                      </div>
+                      <div class="review-user-details">
+                        <h3 class="review-user-name">
+                          <% if (notice.User) { %>
+                            <%= notice.User.first_name %> <%= notice.User.last_name %>
+                          <% } else { %>
+                            Visiteur anonyme
+                          <% } %>
+                        </h3>
+                        <span class="review-date">
+                          <% if (notice.createdAt) { %>
+                            <% const date = new Date(notice.createdAt); %>
+                            <%= date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                          <% } else { %>
+                            Avis récent
+                          <% } %>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="review-rating">
+                      <% for (let i = 1; i <= 5; i++) { %>
+                      <span class="review-star <%= i <= notice.quote ? 'active' : '' %>">
+                        ★
+                      </span>
+                      <% } %>
+                      <span class="review-rating-value"><%= notice.quote %>/5</span>
+                    </div>
+                  </div>
+                  <div class="review-card-body">
+                    <p class="review-content-main"><%= notice.content %></p>
+                  </div>
+                </article>
+                <% }) %>
+              <% } %>
+            </div>
+
+            <% if (notices.length > 5) { %>
+            <button type="button" class="btn btn--gold btn-see-more-reviews" id="seeMoreReviews">
+              <i class="fa-solid fa-chevron-down"></i>
+              Voir Plus (<%= notices.length - 5 %>)
+            </button>
+            <% } %>
+          </div>
+        </section>
+        <% } %>
       </section>
 
       <div class="recipe-lightbox" id="recipe-lightbox" aria-hidden="true">
