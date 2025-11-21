@@ -24,6 +24,7 @@ INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role
     ('Richard', 'François', 'Riri', 'rich.franc@gmail.com', '***', null, 'admin'),
     ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', '****', null, 'admin'),
     ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
+    ('admin2', 'test2', 'admin2_2025', 'admin2@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$z/u9bVWrzHucKTXQYsxXFQ$/pW7Z7KlCrsC1W/xW/NJ1bdeo+Ci5oFsHd+rtO8Fi5I', null, 'admin'),
     ('pi', 'pou', 'pipou', 'pi@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$4E0hz9IgK5N70B3BlijyFQ$envgJnqFUewcMi7Zda10T85NXUpo6pUoBq9s2EURUQE', null, 'admin');
     
 

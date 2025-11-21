@@ -19,6 +19,29 @@ const addRecipesMoviesController = {
     }
   },
 
+  //! Page d'ajout d'une recette dans un film existant
+  async addRecipeToMovies(req, res) {
+    try {
+      const id = req.params.id;
+
+      const newMovie = await Movie.findByPk(id);
+
+      // Rendu de la vue pour le pre-remplissage du film
+
+      res.render("add-recipes-movies", {
+        newMovie,
+        role: req.userRole,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).render("error", {
+        error: "500",
+        message: "Erreur serveur.",
+        role: req.userRole,
+      });
+    }
+  },
+
   // POST - Ajout du film
   async addMovie(req, res) {
     try {
