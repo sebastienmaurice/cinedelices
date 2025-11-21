@@ -1,7 +1,10 @@
 import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 const adminRouter = Router();
 
 // toutes les routes sont préfixées par /admin que l'on rerovue dans index.route.js
@@ -9,8 +12,11 @@ const adminRouter = Router();
 // route principale admin
 adminRouter.get("/", adminController.admin);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> develop
 /* ===============================================
    coté gauche
    =============================================== */
@@ -29,10 +35,10 @@ adminRouter.post("/deleteUser/:id", adminController.deleteUser);
 adminRouter.get("/recipe/:id", adminController.editRecipe);
 
 // Valider un film
-adminRouter.post('/validateRecipe/:id', adminController.validateRecipe);
+adminRouter.post("/validateRecipe/:id", adminController.validateRecipe);
 
 // Refuser un film
-adminRouter.post('/rejectRecipe/:id', adminController.rejectRecipe);
+adminRouter.post("/rejectRecipe/:id", adminController.rejectRecipe);
 
 /* ===============================================
    action films
@@ -42,19 +48,9 @@ adminRouter.post('/rejectRecipe/:id', adminController.rejectRecipe);
 adminRouter.get("/movie/:id", adminController.editMovie);
 
 // Valider un film
-adminRouter.post('/validateMovie/:id', adminController.validateMovie);
+adminRouter.post("/validateMovie/:id", adminController.validateMovie);
 
 // Refuser un film
-adminRouter.post('/rejectMovie/:id', adminController.rejectMovie);
-
-
-
-
-
-
-
-
-
-
+adminRouter.post("/rejectMovie/:id", adminController.rejectMovie);
 
 export default adminRouter;

@@ -1,7 +1,9 @@
 import { Router } from "express";
 import addRecipesMoviesController from "../controllers/add-recipes-movies.controllers.js";
-import { validateRecipeCreate} from "../validators/recipe.validator.js";
+import { validateRecipeCreate } from "../validators/recipe.validator.js";
 import { validateMovieCreate } from "../validators/movie.validator.js";
+//! ajout import upload middleware
+import upload from "../middlewares/upload.middleware.js";
 
 const addRecipesMoviesRouter = Router();
 
@@ -9,7 +11,19 @@ const addRecipesMoviesRouter = Router();
 addRecipesMoviesRouter.get("/", addRecipesMoviesController.addRecipesMovies);
 
 // Route pour l'ajout d'un film
-addRecipesMoviesRouter.post("/movie", validateMovieCreate, addRecipesMoviesController.addMovie);
-addRecipesMoviesRouter.post("/recipe", validateRecipeCreate, addRecipesMoviesController.addRecipe);
+
+addRecipesMoviesRouter.post(
+  "/movie",
+  validateMovieCreate,
+  addRecipesMoviesController.addMovie
+);
+
+//! Route pour l'ajout d'une recette avec upload d'image
+addRecipesMoviesRouter.post(
+  "/recipe",
+  upload.single("recipeImage"),
+  validateRecipeCreate,
+  addRecipesMoviesController.addRecipe
+);
 
 export default addRecipesMoviesRouter;
