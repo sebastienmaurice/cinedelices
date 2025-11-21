@@ -126,6 +126,300 @@
   color: var(--bleu-nuit);
 }
 
+/* Section film limitée à 150px de hauteur */
+.admin-section.film-section {
+  max-height: 150px;
+  overflow: hidden;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Container pour la section film avec deux colonnes */
+.film-section-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+}
+
+/* Colonne de contenu (70%) */
+.film-section-content {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.film-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+  margin: 0;
+  padding: 0;
+  line-height: 1.3;
+  font-family: var(--font-h2-h6);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.film-meta-badges {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.film-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border: 1px solid var(--or-200);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.film-badge i {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.film-badge-value {
+  margin: 0;
+  padding: 0;
+}
+
+.film-badge-year {
+  background-color: rgba(198, 166, 100, 0.15);
+  border-color: var(--dore-popcorn);
+}
+
+.film-badge-genre {
+  background-color: rgba(198, 166, 100, 0.2);
+  border-color: var(--or-200);
+  text-transform: capitalize;
+}
+
+/* Colonne upload/image (30%) */
+.film-section-upload {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.film-upload-zone {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Image du film simple (identique à recette-photo) */
+.film-upload-zone .overview-image {
+  flex: 0 0 180px;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.film-upload-zone .overview-image-button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  margin: 0;
+  display: block;
+  cursor: zoom-in;
+  position: relative;
+}
+
+.film-upload-zone .overview-image-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.film-upload-zone .overview-image-hint,
+.recette-photo-button .overview-image-hint {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background: rgba(13, 27, 42, 0.7);
+  color: var(--argent-ecran);
+  padding: 0.5rem;
+  border-radius: 50%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  pointer-events: none;
+  z-index: 1;
+  margin: 0;
+  line-height: 1;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.film-upload-zone .overview-image-button:hover .overview-image-hint,
+.recette-photo-button:hover .overview-image-hint {
+  background: rgba(13, 27, 42, 0.9);
+  transform: scale(1.1);
+}
+
+.film-upload-zone .overview-image-hint i,
+.recette-photo-button .overview-image-hint i {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Contrôles upload à gauche de l'image */
+.film-upload-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.film-upload-controls .btn-upload-film {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border: 2px solid var(--or-200);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.film-upload-controls .btn-upload-film i {
+  margin: 0;
+}
+
+.film-upload-controls .btn-upload-film:hover:not(:disabled) {
+  background-color: var(--dore-fonce);
+  border-color: var(--dore-popcorn);
+}
+
+
+/* ====================================================== */
+/* ================ LIGHTBOX (ZOOM IMAGE) ================ */
+/* ====================================================== */
+.recipe-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 13, 26, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.recipe-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.recipe-lightbox.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.recipe-lightbox__dialog {
+  position: relative;
+  max-width: min(900px, 95vw);
+  max-height: 90vh;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(8, 14, 27, 0.85);
+  transform: translateY(20px);
+  transition: transform 0.35s ease;
+}
+
+.recipe-lightbox.is-visible .recipe-lightbox__dialog {
+  transform: translateY(0);
+}
+
+.recipe-lightbox__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.recipe-lightbox__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(13, 27, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--argent-ecran);
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.recipe-lightbox__close:hover,
+.recipe-lightbox__close:focus-visible {
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  transform: scale(1.05);
+}
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
 .admin-section p {
   margin-bottom: 0.5rem;
 }
@@ -154,12 +448,33 @@
   flex-wrap: wrap;
 }
 
-.recette-photo img {
+.recette-photo {
+  position: relative;
+}
+
+.recette-photo-button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  margin: 0;
+  display: block;
+  cursor: zoom-in;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.recette-photo-button img {
   width: 360px;
   height: 200px;
   object-fit: cover;
   border-radius: 12px;
   flex-shrink: 0;
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
 .recette-texte {
@@ -242,6 +557,22 @@ textarea:focus {
 /* ====================================================== */
 /* ====================== RESPONSIVE =================== */
 /* ====================================================== */
+/* Media query pour tablettes (écrans moyens) */
+@media (max-width: 1200px) and (min-width: 769px) {
+  .film-section-content {
+    flex: 0 0 65%;
+  }
+
+  .film-section-upload {
+    flex: 0 0 35%;
+  }
+
+  .film-upload-zone .overview-image {
+    flex: 0 0 160px;
+  }
+}
+
+/* Media query pour petits écrans et tablettes */
 @media (max-width: 1000px) {
   .admin-container {
     flex-direction: column;
@@ -265,12 +596,76 @@ textarea:focus {
     align-items: center;
   }
 
-  .recette-photo img {
+  .recette-photo-button {
+    width: 100%;
+  }
+
+  .recette-photo-button img {
     width: 100%;
     height: auto;
   }
 
   .recette-texte {
     width: 100%;
+  }
+
+  .admin-section.film-section {
+    max-height: none;
+  }
+
+  .film-section-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .film-section-content {
+    flex: 1;
+  }
+
+  .film-section-upload {
+    flex: 1;
+  }
+
+  .film-upload-zone {
+    flex-direction: column;
+  }
+
+  .film-upload-zone .overview-image {
+    height: 200px;
+    flex: 0 0 200px;
+  }
+}
+
+/* Media query pour mobiles */
+@media (max-width: 768px) {
+  .admin-section.film-section {
+    padding: 0.5rem 1rem;
+  }
+
+  .film-section-container {
+    gap: 0.75rem;
+  }
+
+  .film-title {
+    font-size: 1rem;
+  }
+
+  .film-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .film-upload-zone {
+    gap: 0.5rem;
+  }
+
+  .film-upload-zone .overview-image {
+    height: 150px;
+    flex: 0 0 150px;
+  }
+
+  .film-upload-controls .btn-upload-film {
+    width: 35px;
+    height: 35px;
   }
 }

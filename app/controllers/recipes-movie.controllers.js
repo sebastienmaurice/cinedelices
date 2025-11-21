@@ -118,12 +118,27 @@ const recipesController = {
         .map((step) => step.trim())
         .filter(Boolean);
 
+      // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
+      const notices = await Notice.findAll({
+        where: { id_recipe: req.params.id },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "first_name", "last_name"],
+          },
+        ],
+        order: [["id", "DESC"]], // Plus récents en premier
+      });
+
+      const plainNotices = notices.map((notice) => notice.get({ plain: true }));
+
       res.render("recipe-detail", {
         role: req.userRole,
         recipe: plainRecipe,
         descriptionBlocks,
         ingredientsBlocks,
         preparationBlocks,
+        notices: plainNotices,
       });
     } catch (error) {
       console.error(error);
@@ -142,9 +157,6 @@ const recipesController = {
     - Formate description, ingrédients, préparation en tableaux prêts à afficher
     - Rend la vue "recipe-detail" avec la recette et les blocs formatés
   */
-
-
-  
 };
 
 export default recipesController;

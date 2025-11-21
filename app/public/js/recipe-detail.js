@@ -194,3 +194,81 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// Gestion du bouton "Voir Plus" pour afficher les avis supplémentaires
+document.addEventListener("DOMContentLoaded", () => {
+  const seeMoreButton = document.getElementById("seeMoreReviews");
+  const hiddenReviews = document.querySelectorAll(".review-card-hidden");
+
+  if (!seeMoreButton || !hiddenReviews.length) {
+    return;
+  }
+
+  let isExpanded = false;
+
+  seeMoreButton.addEventListener("click", () => {
+    if (!isExpanded) {
+      // Afficher tous les avis cachés avec animation
+      hiddenReviews.forEach((review, index) => {
+        setTimeout(() => {
+          review.classList.add("show");
+          // Réorganiser la grille pour les nouveaux avis
+          const grid = document.getElementById("reviewsList");
+          if (grid) {
+            // Calculer la position dans la grille
+            const totalIndex = index + 5; // 5 avis déjà affichés
+            const cardType =
+              totalIndex % 3 === 0
+                ? "large"
+                : totalIndex % 3 === 1
+                ? "medium"
+                : "small";
+            review.className = `review-card review-card-${cardType} show`;
+          }
+        }, index * 100); // Délai progressif pour l'animation
+      });
+
+      // Mettre à jour le bouton
+      seeMoreButton.classList.add("expanded");
+      const currentText = seeMoreButton.innerHTML;
+      const countMatch = currentText.match(/\((\d+)\)/);
+      if (countMatch) {
+        seeMoreButton.innerHTML = `
+          <i class="fa-solid fa-chevron-up"></i>
+          Voir Moins
+        `;
+      }
+
+      isExpanded = true;
+
+      // Scroll vers le premier avis affiché
+      setTimeout(() => {
+        hiddenReviews[0].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 300);
+    } else {
+      // Masquer les avis supplémentaires
+      hiddenReviews.forEach((review) => {
+        review.classList.remove("show");
+      });
+
+      // Mettre à jour le bouton
+      seeMoreButton.classList.remove("expanded");
+      const totalHidden = hiddenReviews.length;
+      seeMoreButton.innerHTML = `
+        <i class="fa-solid fa-chevron-down"></i>
+        Voir Plus (${totalHidden})
+      `;
+
+      isExpanded = false;
+
+      // Scroll vers le bouton
+      seeMoreButton.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  });
+});

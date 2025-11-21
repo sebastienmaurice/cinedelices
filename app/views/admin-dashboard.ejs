@@ -78,16 +78,83 @@
         <!-- FILM -->
         <h2 class="admin-section-title">Film</h2>
         <section class="admin-section film-section">
-          <div class="section-content">
-            <p><strong>Nom du film :<% if (typeof upMovie === "undefined") { %> </strong> <span> le film</span></p>  <% } else { %>
-              <%= upMovie.title %> 
-              <% } %>
-            <p><strong>Année du film :<% if (typeof upMovie === "undefined") { %> </strong> <span>l'année</span></p> <% } else { %>
-              <%= upMovie.year %> 
-              <% } %>
-            <p><strong>Genre :<% if (typeof upMovie === "undefined") { %> </strong> <span>le genre</span></p> <% } else { %>
-              <%= upMovie.genre %> 
-              <% } %>
+          <div class="film-section-container">
+            <div class="film-section-content">
+              <h3 class="film-title">
+                <% if (typeof upMovie === "undefined") { %>
+                  le film
+                <% } else { %>
+                  <%= upMovie.title %>
+                <% } %>
+              </h3>
+              <div class="film-meta-badges">
+                <span class="film-badge film-badge-year">
+                  <i class="fa-solid fa-calendar"></i>
+                  <span class="film-badge-value">
+                    <% if (typeof upMovie === "undefined") { %>
+                      l'année
+                    <% } else { %>
+                      <%= upMovie.year %>
+                    <% } %>
+                  </span>
+                </span>
+                <span class="film-badge film-badge-genre">
+                  <i class="fa-solid fa-film"></i>
+                  <span class="film-badge-value">
+                    <% if (typeof upMovie === "undefined") { %>
+                      le genre
+                    <% } else { %>
+                      <%= upMovie.genre %>
+                    <% } %>
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="film-section-upload">
+              <div class="film-upload-zone">
+                <div class="film-upload-controls">
+                  <input 
+                    type="file" 
+                    name="filmImage" 
+                    id="filmImageInput" 
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    style="display: none;"
+                  />
+                  <button type="button" class="btn btn--red btn-upload-film" id="uploadFilmButton">
+                    <i class="fa-solid fa-upload"></i>
+                  </button>
+                </div>
+                <div class="overview-image">
+                  <button
+                    type="button"
+                    class="overview-image-button"
+                    data-lightbox-trigger
+                    <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
+                    data-lightbox-image="/images/<%= upMovie.picture %>"
+                    data-lightbox-alt="Affiche du film <%= upMovie.title %>"
+                    <% } else { %>
+                    data-lightbox-image="/images/bg-img-default-boys.jpg"
+                    data-lightbox-alt="Image du film"
+                    <% } %>
+                    aria-label="Voir l'image du film en plein écran"
+                  >
+                    <img
+                      id="filmImagePreview"
+                      <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
+                      src="/images/<%= upMovie.picture %>"
+                      alt="Affiche du film <%= upMovie.title %>"
+                      <% } else { %>
+                      src="/images/bg-img-default-boys.jpg"
+                      alt="Image du film"
+                      <% } %>
+                    />
+                    <span class="overview-image-hint">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -111,10 +178,32 @@
         <section class="admin-section recette-section">
           <div class="recette-details">
             <div class="recette-photo">
-              <img
-                src="/images/dessert-backtothefuture-2.jpg"
-                alt="Photo de la recette"
-              />
+              <button
+                type="button"
+                class="recette-photo-button"
+                data-lightbox-trigger
+                <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
+                data-lightbox-image="/images/<%= upRecipe.picture %>"
+                data-lightbox-alt="Photo de la recette <%= upRecipe.name %>"
+                <% } else { %>
+                data-lightbox-image="/images/dessert-backtothefuture-2.jpg"
+                data-lightbox-alt="Photo de la recette"
+                <% } %>
+                aria-label="Voir l'image de la recette en plein écran"
+              >
+                <img
+                  <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
+                  src="/images/<%= upRecipe.picture %>"
+                  alt="Photo de la recette <%= upRecipe.name %>"
+                  <% } else { %>
+                  src="/images/dessert-backtothefuture-2.jpg"
+                  alt="Photo de la recette"
+                  <% } %>
+                />
+                <span class="overview-image-hint">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+              </button>
             </div>
 
             <div class="recette-texte">
@@ -168,10 +257,36 @@ Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique
           <% } %>
         </div>
 
+    <!-- Lightbox pour zoom image -->
+    <div id="recipe-lightbox" class="recipe-lightbox">
+      <div
+        class="recipe-lightbox__backdrop"
+        data-lightbox-close
+        aria-hidden="true"
+      ></div>
+      <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
+        <button
+          type="button"
+          class="recipe-lightbox__close"
+          aria-label="Fermer l'aperçu"
+          data-lightbox-close
+        >
+          &times;
+        </button>
+        <img
+          src=""
+          alt="Image du film Ciné Délices"
+          class="recipe-lightbox__image"
+          loading="lazy"
+        />
+      </div>
+    </div>
+
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
     <!-- JS Admin -->
     <script src="/js/admin-dashboard.js" defer></script>
+    <script src="/js/recipe-detail.js" defer></script>
   </body>
 </html>
