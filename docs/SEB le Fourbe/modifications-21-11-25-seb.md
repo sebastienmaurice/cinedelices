@@ -721,6 +721,7 @@ transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 **Principe :** Utilisation d'un système de lightbox réutilisable basé sur des data attributes HTML et JavaScript.
 
 **Code HTML :**
+
 ```html
 <button
   type="button"
@@ -740,11 +741,13 @@ transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 **Explication des data attributes :**
 
 1. **`data-lightbox-trigger`** :
+
    - Sélecteur utilisé par JavaScript pour identifier les éléments cliquables
    - Permet d'ajouter l'événement click à tous les éléments avec cet attribut
    - Pattern de sélection : `document.querySelectorAll("[data-lightbox-trigger]")`
 
 2. **`data-lightbox-image`** :
+
    - Contient l'URL de l'image à afficher en grand
    - Utilisé dynamiquement : `trigger.dataset.lightboxImage`
    - Permet de réutiliser le même système pour différentes images
@@ -763,6 +766,7 @@ transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 #### 4.2.2. JavaScript du lightbox (recipe-detail.js)
 
 **Code concerné :**
+
 ```javascript
 const lightbox = document.getElementById("recipe-lightbox");
 const triggers = document.querySelectorAll("[data-lightbox-trigger]");
@@ -779,10 +783,12 @@ triggers.forEach((trigger) => {
 **Concepts importants :**
 
 1. **`querySelectorAll()`** : Sélectionne tous les éléments correspondants
+
    - Retourne une NodeList (similaire à un array)
    - Permet d'itérer avec `forEach()`
 
 2. **`dataset` API** :
+
    - Accès aux data attributes via `element.dataset.nomAttribute`
    - Conversion automatique : `data-lightbox-image` → `dataset.lightboxImage`
    - Conversion kebab-case → camelCase automatique
@@ -803,6 +809,7 @@ triggers.forEach((trigger) => {
 #### 4.2.3. Structure du modal lightbox
 
 **HTML :**
+
 ```html
 <div id="recipe-lightbox" class="recipe-lightbox">
   <div class="recipe-lightbox__backdrop" data-lightbox-close></div>
@@ -816,10 +823,12 @@ triggers.forEach((trigger) => {
 **Concepts avancés :**
 
 1. **Backdrop cliquable** : Le fond du modal ferme aussi le lightbox
+
    - Même attribut `data-lightbox-close` sur le backdrop et le bouton
    - Pattern DRY (Don't Repeat Yourself)
 
 2. **`aria-modal="true"`** : Accessibilité
+
    - Indique aux lecteurs d'écran que c'est un modal
    - Bloque l'accès au contenu en arrière-plan
 
@@ -841,6 +850,7 @@ triggers.forEach((trigger) => {
 **Solution :** Utilisation de `-webkit-line-clamp` pour tronquer le texte sur plusieurs lignes.
 
 **Code CSS :**
+
 ```css
 .film-title {
   display: -webkit-box;
@@ -854,21 +864,25 @@ triggers.forEach((trigger) => {
 **Explication ligne par ligne :**
 
 1. **`display: -webkit-box`** :
+
    - Active le mode "flexbox legacy" (ancien système)
    - Nécessaire pour que `-webkit-line-clamp` fonctionne
    - ⚠️ Propriété non-standard mais largement supportée
 
 2. **`-webkit-line-clamp: 2`** :
+
    - Limite l'affichage à 2 lignes maximum
    - Propriété spécifique WebKit (Chrome, Safari, Edge)
    - Alternative moderne : `line-clamp: 2` (sans préfixe, support limité)
 
 3. **`-webkit-box-orient: vertical`** :
+
    - Définit l'orientation verticale du conteneur
    - Nécessaire pour que le line-clamp fonctionne
    - ⚠️ Doit être `vertical`, pas `horizontal`
 
 4. **`overflow: hidden`** :
+
    - Cache le texte qui dépasse
    - Obligatoire pour que le line-clamp fonctionne
 
@@ -896,6 +910,7 @@ triggers.forEach((trigger) => {
 **Contexte :** Affichage de l'année et du genre sous forme de badges/tags pour une meilleure lisibilité.
 
 **Code HTML :**
+
 ```html
 <div class="film-meta-badges">
   <span class="film-badge film-badge-year">
@@ -910,6 +925,7 @@ triggers.forEach((trigger) => {
 ```
 
 **Code CSS :**
+
 ```css
 .film-meta-badges {
   display: flex;
@@ -931,20 +947,24 @@ triggers.forEach((trigger) => {
 **Concepts flexbox utilisés :**
 
 1. **`display: flex`** sur le conteneur :
+
    - Aligne les badges horizontalement
    - Gère l'espacement entre eux
 
 2. **`flex-wrap: wrap`** :
+
    - Permet aux badges de passer à la ligne si nécessaire
    - Important pour le responsive
    - Évite le débordement sur petits écrans
 
 3. **`gap: 0.75rem`** :
+
    - Espacement uniforme entre les badges
    - Plus moderne que les marges (`margin-right`, `margin-bottom`)
    - Gère automatiquement les espacements
 
 4. **`display: inline-flex`** sur les badges :
+
    - Combine `inline` (comportement inline) et `flex` (layout flex)
    - Les badges restent inline mais utilisent flexbox en interne
    - Permet d'aligner l'icône et le texte avec `align-items: center`
@@ -968,6 +988,7 @@ triggers.forEach((trigger) => {
 **Contexte :** La page admin doit afficher soit les données du film/recette soumis par l'utilisateur, soit des placeholders si aucun élément n'est sélectionné.
 
 **Code EJS :**
+
 ```ejs
 <% if (typeof upMovie === "undefined") { %>
   le film
@@ -979,10 +1000,12 @@ triggers.forEach((trigger) => {
 **Explication technique :**
 
 1. **Vérification de l'existence** :
+
    - `typeof upMovie === "undefined"` : Vérifie si la variable existe
    - Protection contre les erreurs si l'admin arrive directement sur `/admin` sans sélectionner de film
 
 2. **Injection sécurisée** :
+
    - `<%= upMovie.title %>` : Échappe automatiquement les caractères HTML
    - Protection XSS intégrée dans EJS
    - ⚠️ Ne jamais utiliser `<%- %>` (non échappé) avec des données utilisateur
@@ -994,8 +1017,8 @@ triggers.forEach((trigger) => {
 **Flux de données :**
 
 ```
-Sidebar → Clic sur film → Route /admin/movie/:id 
-→ Controller editMovie() → Movie.findByPk(id) 
+Sidebar → Clic sur film → Route /admin/movie/:id
+→ Controller editMovie() → Movie.findByPk(id)
 → Render avec upMovie → Affichage des données utilisateur
 ```
 
@@ -1010,6 +1033,7 @@ Sidebar → Clic sur film → Route /admin/movie/:id
 #### 4.6.1. Application sur plusieurs images
 
 **Images concernées :**
+
 1. Image du film dans la section admin (`.film-upload-zone .overview-image`)
 2. Image de la recette dans la section admin (`.recette-photo-button`)
 3. Image de la recette dans recipe-detail (`.overview-image`)
@@ -1017,6 +1041,7 @@ Sidebar → Clic sur film → Route /admin/movie/:id
 **Unification du système :**
 
 Toutes utilisent le même système de lightbox avec :
+
 - Même structure HTML (bouton avec data attributes)
 - Même JavaScript (`recipe-detail.js`)
 - Même modal lightbox
@@ -1044,6 +1069,7 @@ Toutes utilisent le même système de lightbox avec :
 **Fichier :** `app/controllers/recipes-movie.controllers.js`
 
 **Code :**
+
 ```javascript
 // Récupérer les avis (notices) associés à cette recette avec les infos utilisateur
 const notices = await Notice.findAll({
@@ -1063,15 +1089,18 @@ const plainNotices = notices.map((notice) => notice.get({ plain: true }));
 **Concepts importants :**
 
 1. **`Notice.findAll()` avec `where`** :
+
    - Filtre les avis par `id_recipe` pour ne récupérer que ceux de la recette courante
    - Utilise la clé étrangère définie dans le modèle Sequelize
 
 2. **`include` avec `User`** :
+
    - **Jointure automatique** : Sequelize fait un `JOIN` entre `notices` et `users`
    - **`attributes`** : Sélectionne uniquement les colonnes nécessaires (`id`, `first_name`, `last_name`)
    - **Performance** : Évite de charger toutes les colonnes de `users`
 
 3. **`order: [["id", "DESC"]]`** :
+
    - Trie les avis par ID décroissant (plus récents en premier)
    - Syntaxe Sequelize : tableau de tableaux `[colonne, direction]`
 
@@ -1084,8 +1113,8 @@ const plainNotices = notices.map((notice) => notice.get({ plain: true }));
 
 ```javascript
 // Définies dans app/models/index.model.js
-Notice.belongsTo(User, { foreignKey: 'id_user' });
-Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
+Notice.belongsTo(User, { foreignKey: "id_user" });
+Notice.belongsTo(Recipe, { foreignKey: "id_recipe" });
 ```
 
 **Pourquoi cette approche ?**
@@ -1100,6 +1129,7 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 #### 5.3.1. Structure de la grille
 
 **Code CSS :**
+
 ```css
 .reviews-grid {
   display: grid;
@@ -1113,19 +1143,23 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 **Explication :**
 
 1. **`display: grid`** :
+
    - Active le layout CSS Grid
    - Permet un contrôle précis de la disposition
 
 2. **`grid-template-columns: repeat(4, 1fr)`** :
+
    - Crée 4 colonnes de largeur égale (`1fr` = fraction de l'espace disponible)
    - `repeat()` : Fonction CSS pour répéter un pattern
    - **Avantage** : S'adapte automatiquement à la largeur du conteneur
 
 3. **`grid-template-rows: repeat(2, auto)`** :
+
    - Crée 2 lignes avec hauteur automatique
    - `auto` : La hauteur s'adapte au contenu
 
 4. **`gap: 1.5rem`** :
+
    - Espacement uniforme entre les cartes (colonnes et lignes)
    - Plus moderne que les marges individuelles
 
@@ -1136,6 +1170,7 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 #### 5.3.2. Cartes de différentes tailles
 
 **Code CSS :**
+
 ```css
 /* Grande carte (première) - 2 colonnes */
 .review-card-large {
@@ -1174,10 +1209,12 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 **Concepts Grid :**
 
 1. **`grid-column: span 2`** :
+
    - La carte occupe 2 colonnes
    - `span` : Étend sur plusieurs colonnes/lignes
 
 2. **`grid-row: span 1`** :
+
    - La carte occupe 1 ligne
    - Par défaut, mais explicite pour la clarté
 
@@ -1199,6 +1236,7 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 **Principe :** Utiliser les sélecteurs CSS pour appliquer des styles différents selon le type de carte.
 
 **Code CSS :**
+
 ```css
 /* Texte selon le type de carte */
 .review-card-large .review-user-name {
@@ -1224,10 +1262,12 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 **Concepts avancés :**
 
 1. **Sélecteurs descendants multiples** :
+
    - `.review-card-medium .review-user-name` : Cible les éléments `.review-user-name` dans `.review-card-medium`
    - Permet d'appliquer des styles spécifiques sans modifier le HTML
 
 2. **Groupement de sélecteurs** :
+
    - `.review-card-medium .review-user-name, .review-card-small .review-user-name`
    - Applique le même style à plusieurs sélecteurs
    - **DRY** : Don't Repeat Yourself
@@ -1249,6 +1289,7 @@ Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });
 #### 5.5.1. Gestion du bouton "Voir Plus"
 
 **Code JavaScript :**
+
 ```javascript
 const seeMoreButton = document.getElementById("seeMoreReviews");
 const hiddenReviews = document.querySelectorAll(".review-card-hidden");
@@ -1263,7 +1304,12 @@ seeMoreButton.addEventListener("click", () => {
         review.classList.add("show");
         // Réorganiser la grille pour les nouveaux avis
         const totalIndex = index + 5; // 5 avis déjà affichés
-        const cardType = totalIndex % 3 === 0 ? 'large' : totalIndex % 3 === 1 ? 'medium' : 'small';
+        const cardType =
+          totalIndex % 3 === 0
+            ? "large"
+            : totalIndex % 3 === 1
+            ? "medium"
+            : "small";
         review.className = `review-card review-card-${cardType} show`;
       }, index * 100); // Délai progressif
     });
@@ -1281,16 +1327,19 @@ seeMoreButton.addEventListener("click", () => {
 **Concepts importants :**
 
 1. **`setTimeout()` avec délai progressif** :
+
    - `index * 100` : Chaque avis apparaît 100ms après le précédent
    - Crée un effet d'animation en cascade
    - **UX** : Plus agréable visuellement qu'un affichage instantané
 
 2. **Modification dynamique des classes** :
+
    - `review.className = ...` : Remplace toutes les classes
    - **Alternative** : `review.classList.add()` / `remove()` pour ajouter/supprimer
    - Ici, on reconstruit complètement pour changer le type de carte
 
 3. **Calcul du type de carte** :
+
    - `totalIndex % 3` : Modulo pour alterner les types
    - Pattern : `0 % 3 = 0` (large), `1 % 3 = 1` (medium), `2 % 3 = 2` (small)
    - **Avantage** : Distribution équilibrée des types de cartes
@@ -1312,6 +1361,7 @@ seeMoreButton.addEventListener("click", () => {
 #### 5.6.1. Animation d'apparition
 
 **Code CSS :**
+
 ```css
 .review-card-hidden {
   display: none;
@@ -1337,17 +1387,20 @@ seeMoreButton.addEventListener("click", () => {
 **Concepts avancés :**
 
 1. **`@keyframes`** :
+
    - Définit une animation nommée `fadeInUp`
    - `from` / `to` : États initial et final
    - **Alternative** : `0%` / `100%` pour des étapes intermédiaires
 
 2. **`animation`** :
+
    - `fadeInUp` : Nom de l'animation
    - `0.4s` : Durée
    - `ease` : Fonction de timing (accélération/décélération)
    - `forwards` : Garde l'état final après l'animation
 
 3. **`transform: translateY()`** :
+
    - Déplace l'élément verticalement
    - **Performance** : Utilise le GPU (accélération matérielle)
    - Plus fluide que `top` / `bottom`
@@ -1368,6 +1421,7 @@ seeMoreButton.addEventListener("click", () => {
 #### 5.7.1. Media queries pour différentes tailles d'écran
 
 **Code CSS :**
+
 ```css
 @media (max-width: 1024px) {
   .reviews-grid {
@@ -1393,6 +1447,7 @@ seeMoreButton.addEventListener("click", () => {
 **Stratégie responsive :**
 
 1. **Tablette (≤1024px)** :
+
    - Passe de 4 à 2 colonnes
    - Grande carte occupe toujours 2 colonnes (pleine largeur)
 
@@ -1413,13 +1468,14 @@ seeMoreButton.addEventListener("click", () => {
 #### 5.8.1. Utilisation de l'API Intl
 
 **Code EJS :**
+
 ```ejs
 <% if (notice.createdAt) { %>
   <% const date = new Date(notice.createdAt); %>
-  <%= date.toLocaleDateString('fr-FR', { 
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric' 
+  <%= date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
   }) %>
 <% } %>
 ```
@@ -1427,10 +1483,12 @@ seeMoreButton.addEventListener("click", () => {
 **Concepts importants :**
 
 1. **`new Date(notice.createdAt)`** :
+
    - Convertit la chaîne ISO en objet Date
    - Sequelize retourne les dates au format ISO (ex: `2024-11-25T10:30:00.000Z`)
 
 2. **`toLocaleDateString('fr-FR', options)`** :
+
    - Formate la date selon la locale française
    - `'fr-FR'` : Code de locale (langue + pays)
    - **Résultat** : "25 novembre 2024"
