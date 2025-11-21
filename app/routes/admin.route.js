@@ -1,10 +1,6 @@
 import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
 
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
 const adminRouter = Router();
 
 // toutes les routes sont préfixées par /admin que l'on rerovue dans index.route.js
@@ -12,11 +8,8 @@ const adminRouter = Router();
 // route principale admin
 adminRouter.get("/", adminController.admin);
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> develop
 /* ===============================================
    coté gauche
    =============================================== */
