@@ -130,7 +130,7 @@
                     class="overview-image-button"
                     data-lightbox-trigger
                     <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
-                    data-lightbox-image="/images/<%= upMovie.picture %>"
+                    data-lightbox-image="<%= upMovie.picture %>"
                     data-lightbox-alt="Affiche du film <%= upMovie.title %>"
                     <% } else { %>
                     data-lightbox-image="/images/bg-img-default-boys.jpg"
@@ -141,7 +141,7 @@
                     <img
                       id="filmImagePreview"
                       <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
-                      src="/images/<%= upMovie.picture %>"
+                      src="<%= upMovie.picture %>"
                       alt="Affiche du film <%= upMovie.title %>"
                       <% } else { %>
                       src="/images/bg-img-default-boys.jpg"
@@ -159,19 +159,19 @@
         </section>
 
         <!-- BOUTONS DE VALIDATION -->
-<div class="admin-validation">
-  <% if (typeof upMovie !== "undefined") { %>
-    <form method="POST" action="/admin/validateMovie/<%= upMovie.id %>">
-      <button type="submit" class="btn btn-valid">Valider le film</button>
-    </form>
-    <form method="POST" action="/admin/rejectMovie/<%= upMovie.id %>">
-      <button type="submit" class="btn btn-refus">Refuser le film</button>
-    </form>
-  <% } else { %>
-    <button class="btn btn-valid" disabled>Valider le film</button>
-    <button class="btn btn-refus" disabled>Refuser le film</button>
-  <% } %>
-</div>
+        <div class="admin-validation">
+          <% if (typeof upMovie !== "undefined") { %>
+            <form method="POST" action="/admin/validateMovie/<%= upMovie.id %>">
+              <button type="submit" class="btn btn-valid">Valider le film</button>
+            </form>
+            <form method="POST" action="/admin/rejectMovie/<%= upMovie.id %>">
+              <button type="submit" class="btn btn-refus">Refuser le film</button>
+            </form>
+          <% } else { %>
+            <button class="btn btn-valid" disabled>Valider le film</button>
+            <button class="btn btn-refus" disabled>Refuser le film</button>
+          <% } %>
+        </div>
 
         <!-- RECETTE -->
         <h2 class="admin-section-title">Recette</h2>
@@ -183,20 +183,20 @@
                 class="recette-photo-button"
                 data-lightbox-trigger
                 <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
-                data-lightbox-image="/images/<%= upRecipe.picture %>"
+                data-lightbox-image="<%= upRecipe.picture %>"
                 data-lightbox-alt="Photo de la recette <%= upRecipe.name %>"
                 <% } else { %>
-                data-lightbox-image="/images/dessert-backtothefuture-2.jpg"
+                data-lightbox-image="/images/default-recipe.jpg"
                 data-lightbox-alt="Photo de la recette"
                 <% } %>
                 aria-label="Voir l'image de la recette en plein écran"
               >
                 <img
                   <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
-                  src="/images/<%= upRecipe.picture %>"
+                  src="<%= upRecipe.picture %>"
                   alt="Photo de la recette <%= upRecipe.name %>"
                   <% } else { %>
-                  src="/images/dessert-backtothefuture-2.jpg"
+                  src="/images/default-recipe.jpg"
                   alt="Photo de la recette"
                   <% } %>
                 />
@@ -209,11 +209,10 @@
             <div class="recette-texte">
               <h3>Contexte de la recette dans le film</h3>
               <% if (typeof upRecipe === "undefined") { %>
-                                <textarea readonly>
-Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
-                                </textarea>
+                <textarea readonly>Contexte de la recette dans le film
+                </textarea>
               <% } else { %>
-                                <textarea readonly><%= upRecipe.description %></textarea>
+                <textarea readonly><%= upRecipe.description %></textarea>
               <% } %>
 
             </div>
@@ -222,23 +221,19 @@ Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique
           <div class="recette-ingredients">
             <h3>Ingrédients</h3>
             <% if (typeof upRecipe === "undefined") { %>
-              <textarea readonly>
-Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
-              </textarea>
-<% } else { %>
+              <textarea readonly>ingredients de la recette </textarea>
+            <% } else { %>
               <textarea readonly><%= upRecipe.ingredients %></textarea>
-<% } %>
+            <% } %>
           </div>
 
           <div class="recette-preparation">
             <h3>Préparation</h3>
             <% if (typeof upRecipe === "undefined") { %>
-              <textarea readonly>
-Le dessert apparaît dans le laboratoire du Doc, lors de la scène emblématique du voyage dans le temps.
-              </textarea>
-<% } else { %>
+              <textarea readonly>preparation de la recette </textarea>
+            <% } else { %>
               <textarea readonly><%= upRecipe.preparation %></textarea>
-<% } %>
+            <% } %>
           </div>
         </section>
 

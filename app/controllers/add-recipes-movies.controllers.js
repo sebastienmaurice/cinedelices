@@ -54,8 +54,6 @@ const addRecipesMoviesController = {
         year: year,
         genre: genre,
       });
-      //const newMovie = { title, year, genre, id };
-      console.log("Nouveau film ajouté :", newMovie);
 
       // Rendu de la page avec le rôle de l'utilisateur
       res
@@ -89,14 +87,12 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      console.log("Données de la recette reçues :", req.body);
-
       //! Récupération du chemin de l'image uploadée (si présente)
       let imagePath = null;
       if (req.file) {
         // Chemin relatif pour l'affichage dans le HTML
         imagePath = `/images/recipes/${req.file.filename}`;
-        console.log("Image uploadée :", imagePath);
+        //console.log("Image uploadée :", imagePath);
       }
 
       // Ajout de la recette à la base de données (simulation)
@@ -112,7 +108,6 @@ const addRecipesMoviesController = {
         id_movie: id_movie,
         picture: imagePath, // !Ajout du chemin de l'image (colonne 'picture')
       });
-      console.log("Nouvelle recette ajoutée :", newRecipe);
 
       // Rendu de la page avec le rôle de l'utilisateur
       res
@@ -126,7 +121,6 @@ const addRecipesMoviesController = {
         error: "500",
         message: "Erreur serveur.",
         role: req.userRole,
-        //loginPopup: false,
       });
     }
   },
