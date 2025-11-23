@@ -10,7 +10,15 @@ avant de commencer les features a venir.
   - fait
   - "app/public/images/default-recipe.jpg"  
   - nettoyage code et indentation.  
-- [ ] upload image de film;  
+  
+- [x] upload image de film;  
+  - fichiers impactés:
+    - app/middlewares/upload-movie.middleware.js (nouveau)
+    - app/public/js/admin-dashboard.js (lignes 59 - 128)
+    - app/controllers/movies.controllers.js
+    - app/routes/admin.route.js
+    - app/views/admin-dashboard.ejs
+
 - [ ] (FRONT) affichage des avis a valider;  
 - [ ] (BACK)affichage des avis a valider;  
 - [ ] valider l'avis;  
@@ -47,5 +55,13 @@ avant de commencer les features a venir.
 
 - [x] app/controllers/add-recipes-movies.controllers.js;  
   - suppression console.log() devenu inutile  
-- [x] docs/  
+  
+- [x] app/views/recipe-detail.ejs  
+  - debug images  
+
+- [x] app/views/add-recipes-movies.ejs  
+  - preview image fonctionnelle  
+  
+- [x] docs/
   - deplacement de MULTER_IMPLEMENTATION.md dans le dossier docs/ludo ...
+  - ajout UPLOAD_IMAGE_FILM_ADMIN.md  
