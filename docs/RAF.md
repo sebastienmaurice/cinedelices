@@ -65,3 +65,10 @@ avant de commencer les features a venir.
 - [x] docs/
   - deplacement de MULTER_IMPLEMENTATION.md dans le dossier docs/ludo ...
   - ajout UPLOAD_IMAGE_FILM_ADMIN.md  
+
+- [x] optimisation page home
+  - suppression de l'image cinoche1.jpg du module events (perfo passée de 45% a 83%)  
+
+- [x] optimisation page admin
+  - deplacement du js de upload image film de "admin-dashboard.js" vers "admin-picture-upload.js"
+  - conditionnement de l'activation "admin-picture-upload.js" (!pas besoin si pas de film a valider sur la partie droite ==> perfo a 90%)  
