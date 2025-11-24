@@ -7,9 +7,11 @@ Tous les partials ont été restructurés et standardisés pour assurer une coh�
 ## 🗂️ Partials disponibles
 
 ### 1. `partials/head-resources.ejs`
+
 **Ressources globales chargées dans le `<head>`**
 
 Contient :
+
 - Meta tags (charset, viewport)
 - Google Fonts (Fascinate Inline, Limelight, Lato)
 - CSS communs (base.css, burger-menu.css)
@@ -18,52 +20,63 @@ Contient :
 - Script burger-menu.js
 
 **Utilisation :**
+
 ```ejs
 <%- include("partials/head-resources") %>
 ```
 
 ### 2. `partials/header.ejs`
+
 **Header principal avec navigation**
 
 Contient :
+
 - Logo/titre du site
 - Navigation principale
 - Boutons connexion/inscription (conditionnels selon `user`)
 - Burger menu pour mobile
 
 **Logique conditionnelle :**
+
 - Si `!user` : affiche bouton "Connexion / S'enregistrer"
 - Si `user` : affiche "Mon compte" et "Déconnexion"
 
 **Utilisation :**
+
 ```ejs
 <%- include("partials/header") %>
 ```
 
 ### 3. `partials/footer.ejs`
+
 **Footer global du site**
 
 Contient :
+
 - Logo et slogan
 - Menu de navigation
 - Réseaux sociaux
 - Copyright
 
 **Utilisation :**
+
 ```ejs
 <%- include("partials/footer") %>
 ```
 
 ### 4. `partials/popup-connexion.ejs`
+
 **Modal de connexion/inscription**
 
 Contient :
+
 - Modal avec overlay
 - Formulaire de connexion
 - Formulaire d'inscription
 - Boutons de basculement entre les deux
 
 **Utilisation conditionnelle :**
+
 ```ejs
 <% if (!user && (typeof showLoginPopup === 'undefined' || showLoginPopup)) { %>
   <%- include("partials/popup-connexion") %>
@@ -82,24 +95,24 @@ Contient :
   <head>
     <meta name="description" content="..." />
     <title>...</title>
-    
+
     <%- include("partials/head-resources") %>
     <link rel="stylesheet" href="/css/[page-specific].css" />
   </head>
 
   <body>
     <%- include("partials/header") %>
-    
+
     <main>
       <!-- Contenu spécifique à la page -->
     </main>
-    
+
     <%- include("partials/footer") %>
-    
+
     <!-- Scripts JS spécifiques -->
     <script src="/js/popup-connexion.js" defer></script>
     <script src="/js/[page-specific].js" defer></script>
-    
+
     <!-- Popup connexion conditionnel -->
     <% if (!user && (typeof showLoginPopup === 'undefined' || showLoginPopup)) { %>
       <%- include("partials/popup-connexion") %>
@@ -118,23 +131,23 @@ Contient :
   <head>
     <meta name="description" content="..." />
     <title>...</title>
-    
+
     <%- include("partials/head-resources") %>
     <link rel="stylesheet" href="/css/[page-specific].css" />
   </head>
 
   <body>
     <%- include("partials/header") %>
-    
+
     <main>
       <!-- Contenu spécifique à la page -->
     </main>
-    
+
     <%- include("partials/footer") %>
-    
+
     <!-- Scripts JS spécifiques -->
     <script src="/js/[page-specific].js" defer></script>
-    
+
     <!-- Pas de popup connexion (utilisateur doit être connecté) -->
   </body>
 </html>
@@ -145,6 +158,7 @@ Contient :
 ### Variables requises
 
 1. **`user`** (optionnel)
+
    - Objet utilisateur si connecté
    - `undefined` ou `null` si non connecté
    - Utilisé pour :
@@ -161,7 +175,7 @@ Contient :
 ```javascript
 // Page publique avec popup
 home(req, res) {
-  res.render("home", { 
+  res.render("home", {
     user: req.user || null,
     showLoginPopup: true  // optionnel, true par défaut
   });
@@ -169,14 +183,14 @@ home(req, res) {
 
 // Page authentifiée (pas de popup)
 profil(req, res) {
-  res.render("user-profile", { 
+  res.render("user-profile", {
     user: req.user  // requis pour cette page
   });
 }
 
 // Page publique sans popup (ex: page connexion)
 login(req, res) {
-  res.render("login", { 
+  res.render("login", {
     user: null,
     showLoginPopup: false  // masque le popup
   });
@@ -186,15 +200,18 @@ login(req, res) {
 ## ✅ Pages standardisées
 
 ### ✅ Pages publiques (avec popup)
+
 - ✅ `home.ejs` - Page d'accueil
 - ✅ `movies.ejs` - Liste des films
 - ✅ `recipes-movie.ejs` - Recettes d'un film
 
 ### ✅ Pages authentifiées (sans popup)
+
 - ✅ `user-profile.ejs` - Profil utilisateur
 - ✅ `admin-dashboard.ejs` - Dashboard admin
 
 ### ⚠️ Pages à créer/standardiser
+
 - ⚠️ `connexion.ejs` - Page de connexion (showLoginPopup: false)
 - ⚠️ `inscription.ejs` - Page d'inscription (showLoginPopup: false)
 - ⚠️ `contact.ejs` - Page contact (showLoginPopup: false)
@@ -224,4 +241,3 @@ login(req, res) {
 2. Créer/standardiser les pages manquantes (connexion, inscription, contact, etc.)
 3. Tester le popup sur toutes les pages publiques
 4. Vérifier que le header affiche correctement les boutons selon l'état de connexion
-

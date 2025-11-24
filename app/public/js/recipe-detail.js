@@ -272,3 +272,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// Ajustement automatique de la hauteur des textarea pour s'adapter au contenu
+document.addEventListener("DOMContentLoaded", () => {
+  /**
+   * Ajuste la hauteur d'un textarea pour qu'elle corresponde à son contenu
+   * @param {HTMLTextAreaElement} textarea - L'élément textarea à ajuster
+   */
+  function adjustTextareaHeight(textarea) {
+    // Réinitialiser la hauteur pour obtenir le scrollHeight correct
+    textarea.style.height = "auto";
+    // Définir la hauteur en fonction du contenu (scrollHeight inclut le padding)
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  // Sélectionner tous les textarea de recette (description, ingrédients, préparation)
+  const recipeTextareas = document.querySelectorAll(".recipe-textarea");
+
+  if (recipeTextareas.length === 0) {
+    return;
+  }
+
+  // Ajuster la hauteur de chaque textarea au chargement
+  recipeTextareas.forEach((textarea) => {
+    adjustTextareaHeight(textarea);
+  });
+
+  // Observer les changements de contenu (pour les cas dynamiques)
+  const resizeObserver = new ResizeObserver((entries) => {
+    entries.forEach((entry) => {
+      const textarea = entry.target;
+      if (textarea.classList.contains("recipe-textarea")) {
+        adjustTextareaHeight(textarea);
+      }
+    });
+  });
+
+  recipeTextareas.forEach((textarea) => {
+    resizeObserver.observe(textarea);
+  });
+});

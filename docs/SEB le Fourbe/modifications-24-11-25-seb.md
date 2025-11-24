@@ -911,3 +911,100 @@ if (!topMovies || topMovies.length === 0) {
 **Note :** Toutes les modifications ont été testées et validées. La page home est maintenant plus robuste, plus professionnelle et ne plantera plus en cas de données insuffisantes.
 
 ---
+
+## Après-midi - 24 novembre 2025
+
+### Page Home - Ajustements d'alignement et de hauteur
+
+#### 1. Alignement de la hauteur des colonnes
+
+- **Problème** : La colonne `.recipe-column-left` n'avait pas la même hauteur que les 4 cartes de `.films-columns-right`
+- **Solution** :
+  - Ajout de `align-items: stretch` sur `.recipeofthe__day-container`
+  - Ajout de `height: 100%` sur `.recipe-column-left` et `.films-columns-right`
+  - Suppression de `min-height: 500px` sur `.recipe-card--left` pour permettre l'adaptation avec `flex: 1`
+  - Ajout de `flex: 1` et `justify-content: space-between` sur `.recipe-info` pour adapter le contenu
+  - Ajout de `min-height: 636px` sur `.recipe-column-left` pour correspondre à la hauteur totale
+- **Fichiers modifiés** : `app/public/css/home.css`
+
+#### 2. Remise du bouton à taille normale
+
+- **Problème** : Le bouton "Voir la recette" dans `.recipe-info .btn` était trop petit
+- **Solution** :
+  - Ajout explicite de `font-size: 0.9rem` et `padding: 0.5rem 1rem` (valeurs par défaut)
+  - Correction des media queries (800px et 500px) pour utiliser les mêmes valeurs
+- **Fichiers modifiés** : `app/public/css/home.css`
+
+### Page Recipe Detail - Création et amélioration de recette
+
+#### 3. Création d'une recette complète pour "Steak d'Outback Australien"
+
+- **Recette ID 6** : Création d'une recette complète inspirée de Crocodile Dundee
+- **Détails** :
+  - Nom : "Steak d'Outback Australien"
+  - Description : Explication détaillée du contexte dans le film (scène du restaurant local)
+  - Ingrédients : Liste complète avec 17 ingrédients (524 caractères)
+  - Préparation : 5 étapes détaillées (1260 caractères)
+  - Temps : 75 minutes
+  - Difficulté : Moyenne
+  - Catégorie : Plat
+- **Fichiers modifiés** :
+  - Base de données : Mise à jour de la recette ID 6
+  - `app/data/create_db.sql` : Ajout de la recette complète pour les prochaines initialisations
+
+#### 4. Ajustement des textarea pour s'adapter au contenu
+
+- **Tentative** : Modification des textarea pour qu'ils s'adaptent automatiquement au contenu
+- **Annulation** : Retour à l'état précédent après demande d'annulation
+- **Fichiers concernés** : `app/views/recipe-detail.ejs`, `app/public/css/recipe-detail.css`, `app/public/js/recipe-detail.js`
+
+### Page Recipe Detail - Amélioration de la structure et du contenu
+
+#### 5. Modification du titre de la section contexte
+
+- **Problème** : Le titre "La recette culte de : [nom]" était redondant avec le titre dans la bannière
+- **Solution** :
+  - Changement du titre en "Le Contexte de la recette"
+  - Suppression de la référence au nom de la recette dans le titre
+- **Fichiers modifiés** : `app/views/recipe-detail.ejs`
+
+#### 6. Ajout d'un sous-titre pour le contexte
+
+- **Ajout** : Sous-titre "Cadre cinématographique" sous le titre "Le Contexte de la recette"
+- **Structure** : Création de `.overview-card__header` pour contenir le titre et le sous-titre
+- **Alignement** : Structure identique à `.column-header` (Les Ingrédients / Prêts à cuisiner ?)
+- **Styles** :
+  - `.overview-card__title` : Identique à `.column-header h3`
+  - `.overview-card__subtitle` : Identique à `.column-header p`
+- **Fichiers modifiés** :
+  - `app/views/recipe-detail.ejs` : Ajout de la structure HTML
+  - `app/public/css/recipe-detail.css` : Ajout des styles
+
+#### 7. Mise à jour de la description de la recette
+
+- **Modification** : Description mise à jour pour expliquer où se situe le contexte dans le film
+- **Nouvelle description** : "Cette recette trouve son origine dans les scènes emblématiques de Crocodile Dundee où Mick Dundee, le héros australien, savoure les saveurs authentiques de l'Outback. On peut notamment voir cette scène lors de son passage dans un restaurant local où il déguste un steak épais et juteux, grillé à la manière australienne, accompagné d'une sauce à la bière locale et de légumes rôtis. Cette scène illustre parfaitement la culture culinaire australienne et l'authenticité des saveurs de l'Outback."
+- **Fichiers modifiés** :
+  - Base de données : Mise à jour de la description de la recette ID 6
+  - `app/data/create_db.sql` : Mise à jour pour les prochaines initialisations
+
+#### 8. Tentative de création d'un slider d'images
+
+- **Tentative** : Transformation de l'image unique en slider avec 2-5 images et navigation par points
+- **Annulation** : Retour à l'image unique après demande d'annulation
+- **Fichiers concernés** : `app/views/recipe-detail.ejs`, `app/public/css/recipe-detail.css`, `app/public/js/recipe-detail.js`
+
+### Statistiques de l'après-midi
+
+- **Fichiers modifiés** : 4 fichiers
+  - `app/public/css/home.css` : Ajustements d'alignement et de bouton
+  - `app/views/recipe-detail.ejs` : Modifications de structure et de contenu
+  - `app/public/css/recipe-detail.css` : Ajout de styles pour le header
+  - `app/data/create_db.sql` : Mise à jour de la recette complète
+- **Base de données** : 1 recette complétée (ID 6)
+- **Améliorations** :
+  - Alignement visuel amélioré sur la page home
+  - Structure cohérente sur la page recipe-detail
+  - Contenu enrichi pour la recette "Steak d'Outback Australien"
+
+---
