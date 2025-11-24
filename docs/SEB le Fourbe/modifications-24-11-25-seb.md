@@ -316,3 +316,102 @@ Pour faciliter le diagnostic futur, les logs suivants ont été ajoutés :
 ---
 
 **Note :** Toutes les modifications ont été testées et validées. Le code est maintenant plus maintenable, plus robuste, plus accessible et **optimisé pour de meilleures performances** grâce à l'allègement du code (~320 lignes supprimées) et à la déplacement des fonctions/mappings en constantes globales.
+
+---
+
+## 👤 Création du compte admin Semauri
+
+**Date :** 24 novembre 2025 après-midi  
+**Type :** Administration / Base de données
+
+### 11. **Création d'un nouveau compte administrateur**
+
+**Objectif :**
+
+- Créer un compte administrateur pour Seb (Semauri)
+- Permettre l'accès au dashboard admin de Ciné Délices
+- Assurer la persistance du compte lors des réinitialisations de base de données
+
+**Méthode utilisée :**
+
+1. **Création du compte via script Node.js**
+
+   - Script temporaire créé : `scripts/create-admin-user.js`
+   - Utilisation de Sequelize pour la connexion à la base de données
+   - Hachage du mot de passe avec argon2 (algorithme de hachage sécurisé)
+
+2. **Insertion en base de données PostgreSQL**
+   - Table : `users`
+   - Base de données : `cinedelices`
+   - Utilisateur : `cinedelices`
+
+**Détails du compte créé :**
+
+- **ID :** 7
+- **Prénom :** Seb
+- **Nom :** Mauri
+- **Pseudo :** Semauri
+- **Email :** semauri@cinedelices.com
+- **Rôle :** admin
+- **Mot de passe :** (haché avec argon2)
+
+**Hash du mot de passe :**
+
+```
+$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU
+```
+
+**Fichiers modifiés :**
+
+1. **`app/data/create_db.sql`**
+   - Ajout de la ligne d'insertion pour le compte Semauri (ligne 29)
+   - Format cohérent avec les autres comptes admin existants
+   - Mot de passe haché inclus pour permettre la réinitialisation de la base
+
+**Ligne ajoutée dans `create_db.sql` :**
+
+```sql
+('Seb', 'Mauri', 'Semauri', 'semauri@cinedelices.com', '$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU', null, 'admin'),
+```
+
+**Vérifications effectuées :**
+
+- ✅ Compte créé avec succès en base de données
+- ✅ Rôle admin correctement assigné
+- ✅ Mot de passe correctement haché
+- ✅ Compte ajouté dans `create_db.sql` pour persistance
+- ✅ Vérification de l'existence du compte en base
+
+**Liste des comptes admin (après création) :**
+
+1. Ludo (Ludovic Trichereau) - ID: 1
+2. Riri (Richard François) - ID: 2
+3. La malice (Denis Faucon) - ID: 3
+4. Le fourbe (Sebastien Maurice) - ID: 4
+5. admin2_2025 - ID: 5
+6. pipou - ID: 6
+7. **Semauri (Seb Mauri) - ID: 7** ⭐ Nouveau
+
+**Identifiants de connexion :**
+
+- **Pseudo :** `Semauri`
+- **Mot de passe :** `me demander`
+
+**Avantages :**
+
+- ✅ Accès immédiat au dashboard admin (`/admin/`)
+- ✅ Compte persistant lors des réinitialisations de base de données
+- ✅ Mot de passe sécurisé avec argon2
+- ✅ Documentation complète pour référence future
+
+**Commandes utiles :**
+
+```bash
+# Vérifier le compte en base de données
+PGPASSWORD=cinedelices psql -U cinedelices -d cinedelices -c "SELECT id, pseudo, email, role FROM users WHERE pseudo = 'Semauri';"
+
+# Réinitialiser la base de données (inclut le compte Semauri)
+psql -U cinedelices -d cinedelices -f ./app/data/create_db.sql
+```
+
+---
