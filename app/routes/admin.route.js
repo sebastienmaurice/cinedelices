@@ -1,5 +1,6 @@
 import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
+import uploadMovie from "../middlewares/upload-movie.middleware.js";
 
 const adminRouter = Router();
 
@@ -38,8 +39,12 @@ adminRouter.post("/rejectRecipe/:id", adminController.rejectRecipe);
 // ajouter un film à valdier
 adminRouter.get("/movie/:id", adminController.editMovie);
 
-// Valider un film
-adminRouter.post("/validateMovie/:id", adminController.validateMovie);
+//! Valider un film (avec upload d'image optionnel)
+adminRouter.post(
+  "/validateMovie/:id",
+  uploadMovie.single("filmImage"),
+  adminController.validateMovie
+);
 
 // Refuser un film
 adminRouter.post("/rejectMovie/:id", adminController.rejectMovie);

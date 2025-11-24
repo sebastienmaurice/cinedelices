@@ -25,7 +25,7 @@
       <section class="banner__image__recipes" aria-hidden="true">
         <div class="banner__image__recipes__overlay"></div>
         <img
-          src="<%= recipeImage %>"
+          src="/images/default-image-cine-delices-2.jpg"
           alt="Visuel de la recette <%= recipe.name %>"
           loading="lazy"
         />
@@ -58,14 +58,14 @@
               class="current-rating"
               id="banner-rating-output"
               data-rating-output
-              ><%= recipe.quote %>/5</span
+              ><%= averageQuote %>/5</span
             >
           </p>
           <div
             class="rating-stars rating-stars--lifted"
             role="group"
             aria-label="Note générale (lecture seule)"
-            data-current-rating="<%= recipe.quote %>"
+            data-current-rating="<%= averageQuote %>"
             data-output="#banner-rating-output"
             data-readonly="true"
           >
@@ -122,12 +122,12 @@ Aucune description détaillée n'a encore été partagée pour cette
               type="button"
               class="overview-image-button"
               data-lightbox-trigger
-              data-lightbox-image="/images/<%= recipeImage %>"
+              data-lightbox-image="<%= recipeImage %>"
               data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
               aria-label="Voir l'image de <%= recipe.name %> en plein écran"
             >
               <img
-                src="/images/<%= recipeImage %>"
+                src="<%= recipeImage %>"
                 alt="Présentation de la recette <%= recipe.name %>"
                 loading="lazy"
               />
@@ -282,6 +282,8 @@ Le détail de cette préparation arrive bientôt.</textarea
                   class="review-textarea"
                   placeholder="Donne ton avis sur la recette..."
                   rows="3"
+                  spellcheck="true" 
+                  lang="fr en"
                 ></textarea>
                 <button type="submit" class="btn btn--gold review-submit">
                   Je donne mon avis

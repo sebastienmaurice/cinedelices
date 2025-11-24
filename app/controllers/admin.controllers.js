@@ -1,11 +1,16 @@
-import {Recipe, Movie, Notice, User, UsersRecipes,} from "../models/index.model.js";
+import {
+  Recipe,
+  Movie,
+  Notice,
+  User,
+  UsersRecipes,
+} from "../models/index.model.js";
 
 const adminController = {
-
   // Page principale admin
 
   // accueil admin
- 
+
   async admin(req, res) {
     try {
       const recipes = await Recipe.findAll({
@@ -101,107 +106,111 @@ const adminController = {
     }
   },
 
+  // passage du film de false a true
 
-// passage du film de false a true
+  async validateMovie(req, res) {
+    // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
 
-async validateMovie (req, res) {
-  // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
-  
-  try {
-    const movieId = parseInt(req.params.id);
-    // 👆 Récupère l'ID du film depuis l'URL (/admin/validateMovie/5)
-    // parseInt() convertit le texte "5" en nombre 5
-    
-    await Movie.update(
-      //Appelle la méthode update() de Sequelize
-      
-      { status: true },
-      //met le champ "status" à true (validé)
-      
-      { where: { id: movieId } }
-      // QUEL film modifier : celui qui a cet ID
-      // Équivalent SQL : UPDATE movies SET status = true WHERE id
-    );
-    
-    res.redirect('/admin?success=movie_validated');
-    
-  } catch (error) {
-    console.error('Erreur lors de la validation du film:', error);
-    res.status(500).send('Erreur lors de la validation du film');
-  }
-},
+    try {
+      const movieId = parseInt(req.params.id);
+      // 👆 Récupère l'ID du film depuis l'URL (/admin/validateMovie/5)
+      // parseInt() convertit le texte "5" en nombre 5
 
-// Refuser un film (le supprime)
-async rejectMovie (req, res) {
-  try {
-    const movieId = parseInt(req.params.id);
-    //Récupère l'ID du film à supprimer depuis l'URL
+      // Préparer les données à mettre à jour
+      const updateData = { status: true };
 
-    
-    await Movie.destroy({
-      // 👆 Appelle la méthode destroy() de Sequelize = SUPPRIMER
-      where: { id: movieId }
+      // Si un fichier a été uploadé
+      if (req.file) {
+        // Construire le chemin relatif de l'image pour la BDD
+        updateData.picture = `/images/movies/${req.file.filename}`;
+      }
+
+      await Movie.update(
+        //Appelle la méthode update() de Sequelize
+
+        updateData,
+        // Met à jour le status ET l'image si elle existe
+
+        { where: { id: movieId } }
+        // QUEL film modifier : celui qui a cet ID
+        // Équivalent SQL : UPDATE movies SET status = true WHERE id
+      );
+      console.log("fichierData:", updateData);
+
+      res.redirect("/admin?success=movie_validated");
+    } catch (error) {
+      console.error("Erreur lors de la validation du film:", error);
+      res.status(500).send("Erreur lors de la validation du film");
+    }
+  },
+
+  // Refuser un film (le supprime)
+  async rejectMovie(req, res) {
+    try {
+      const movieId = parseInt(req.params.id);
+      //Récupère l'ID du film à supprimer depuis l'URL
+
+      await Movie.destroy({
+        // 👆 Appelle la méthode destroy() de Sequelize = SUPPRIMER
+        where: { id: movieId },
         // 👆 QUEL film supprimer : celui avec cet ID
-      // Équivalent SQL : DELETE FROM movies WHERE id
-    });
-    
-    res.redirect('/admin?success=movie_rejected');
-  } catch (error) {
-    console.error('Erreur lors du refus du film:', error);
-    res.status(500).send('Erreur lors du refus du film');
-  }
-},
+        // Équivalent SQL : DELETE FROM movies WHERE id
+      });
 
-// passage de la recette de false a true
+      res.redirect("/admin?success=movie_rejected");
+    } catch (error) {
+      console.error("Erreur lors du refus du film:", error);
+      res.status(500).send("Erreur lors du refus du film");
+    }
+  },
 
-async validateRecipe (req, res) {
-  // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
-  
-  try {
-    const recipeId = parseInt(req.params.id);
-    // 👆 ===Récupère l'ID de la recette depuis l'URL (/admin/validateRecipe/5)
-    // parseInt() convertit le texte "5" en nombre 5
-    
-    await Recipe.update(
-      //Appelle la méthode update() de Sequelize
-      
-      { status: true },
-      //met le champ "status" à true (validé)
-      
-      { where: { id: recipeId } }
-      // quelle recette, modifier : celle qui a cet ID
-      // Équivalent SQL : UPDATE Recipes SET status = true WHERE id
-    );
-    
-    res.redirect('/admin?success=recipe_validated');
-    
-  } catch (error) {
-    console.error('Erreur lors de la validation de la recette:', error);
-    res.status(500).send('Erreur lors de la validation de la recette');
-  }
-},
+  // passage de la recette de false a true
 
-// Refuser une recette (la supprime)
-async rejectRecipe (req, res) {
-  try {
-    const recipeId = parseInt(req.params.id);
-    //Récupère l'ID de la recette à supprimer depuis l'URL
+  async validateRecipe(req, res) {
+    // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
 
-    
-    await Recipe.destroy({
-      // Appelle la méthode destroy() de Sequelize = SUPPRIMER
-      where: { id: recipeId }
+    try {
+      const recipeId = parseInt(req.params.id);
+      // 👆 ===Récupère l'ID de la recette depuis l'URL (/admin/validateRecipe/5)
+      // parseInt() convertit le texte "5" en nombre 5
+
+      await Recipe.update(
+        //Appelle la méthode update() de Sequelize
+
+        { status: true },
+        //met le champ "status" à true (validé)
+
+        { where: { id: recipeId } }
+        // quelle recette, modifier : celle qui a cet ID
+        // Équivalent SQL : UPDATE Recipes SET status = true WHERE id
+      );
+
+      res.redirect("/admin?success=recipe_validated");
+    } catch (error) {
+      console.error("Erreur lors de la validation de la recette:", error);
+      res.status(500).send("Erreur lors de la validation de la recette");
+    }
+  },
+
+  // Refuser une recette (la supprime)
+  async rejectRecipe(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id);
+      //Récupère l'ID de la recette à supprimer depuis l'URL
+
+      await Recipe.destroy({
+        // Appelle la méthode destroy() de Sequelize = SUPPRIMER
+        where: { id: recipeId },
         // quelle recette, supprimer : celle avec cet ID
-      // Équivalent SQL : DELETE FROM Recipes WHERE id
-    });
-    
-    res.redirect('/admin?success=recipe_rejected');
-  } catch (error) {
-    console.error('Erreur lors du refus de la recette:', error);
-    res.status(500).send('Erreur lors du refus de la recette');
-  }
-},
+        // Équivalent SQL : DELETE FROM Recipes WHERE id
+      });
 
+      res.redirect("/admin?success=recipe_rejected");
+    } catch (error) {
+      console.error("Erreur lors du refus de la recette:", error);
+      res.status(500).send("Erreur lors du refus de la recette");
+    }
+  },
 
   //! Supprimer un utilisateur
   async deleteUser(req, res) {

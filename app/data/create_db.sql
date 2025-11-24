@@ -24,7 +24,9 @@ INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role
     ('Richard', 'François', 'Riri', 'rich.franc@gmail.com', '***', null, 'admin'),
     ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', '****', null, 'admin'),
     ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
-    ('John', 'Doe', 'Toto', 'john.doe@gmail.com', 'azerty', null, 'user');
+    ('admin2', 'test2', 'admin2_2025', 'admin2@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$z/u9bVWrzHucKTXQYsxXFQ$/pW7Z7KlCrsC1W/xW/NJ1bdeo+Ci5oFsHd+rtO8Fi5I', null, 'admin'),
+    ('pi', 'pou', 'pipou', 'pi@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$4E0hz9IgK5N70B3BlijyFQ$envgJnqFUewcMi7Zda10T85NXUpo6pUoBq9s2EURUQE', null, 'admin');
+    
 
 
 -- =====================================================
@@ -40,16 +42,14 @@ CREATE TABLE IF NOT EXISTS "movies" (
 );
 
 INSERT INTO movies (title, year, genre, picture, status) VALUES
-    ('Crocodile Dundee', 1986, 'aventure', 'croco-dundee-2.jpg', TRUE),
-    ('Kaamelott', 2005, 'comédie', 'kaamelott-2.png', TRUE),
-    ('Retour vers le futur', 1985, 'aventure', 'doc-et-marty-2.jpg', TRUE),
-    ('Harry Potter', 2001, 'fantastique', 'harry-potter-1.png', TRUE),
-    ('Le Seigneur des Anneaux', 2001, 'fantastique', 'seigneur-des-anneaux-1.jpg', TRUE),
-    ('Inception', 2010, 'science-fiction', 'inception-1.jpg', TRUE),
-    ('The Dark Knight', 2008, 'action', 'the-dark-knight-1.jpg', TRUE),
-    ('Forrest Gump', 1994, 'drame', 'forrest-gump-1.jpg', TRUE),
-    ('The Matrix', 1999, 'science-fiction', 'the-matrix-1.jpg', TRUE),
-    ('Gladiator', 2000, 'action', 'gladiator-1.jpg', TRUE);
+    ('Crocodile Dundee', 1986, 'aventure', '/images/movies/croco-dundee-2.jpg', TRUE),
+    ('Kaamelott', 2005, 'comédie', '/images/movies/kaamelott-2.png', TRUE),
+    ('Retour vers le futur', 1985, 'aventure', '/images/movies/doc-et-marty-2.jpg', TRUE),
+    ('Harry Potter', 2001, 'fantastique', '/images/movies/harry-potter-1.png', TRUE),
+    ('Commando', 2001, 'action', '/images/movies/commando-shwarzy-1.png', TRUE),
+    ('John Wick', 2010, 'action', '/images/movies/johnwick.jpg', TRUE),
+    ('Pirates des caraibes', 2008, 'fantastique', '/images/movies/sparrow-2.jpg', TRUE);
+    
 
 
 -- =====================================================
@@ -71,15 +71,15 @@ CREATE TABLE IF NOT EXISTS "recipes" (
 );
 
 INSERT INTO recipes (name, description, picture, category, quote, ingredients, preparation, time, difficulty, status, id_movie) VALUES
-    ('Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('Recette Kaamelott', 'Recette inspirée du film Kaamelott', 'kaamelott-2.png', 'entrée', 4, 'Ingrédients de Kaamelott', 'Préparation de Kaamelott', 30, 'Moyenne', TRUE, 2),
-    ('Recette Retour vers le futur', 'Recette inspirée du film Retour vers le futur', 'doc-and-marty-peach-pie-1.jpg', 'dessert', 3, 'Ingrédients du futur', 'Préparation du futur', 45, 'Facile', TRUE, 3),
-    ('2Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('3Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('4Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('5Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('6Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
-    ('7Recette Croco', 'Recette inspirée du film Crocodile Dundee', 'croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1);
+    ('Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('Recette Kaamelott', 'Recette inspirée du film Kaamelott', '/images/recipes/kaamelott-2.png', 'entrée', 4, 'Ingrédients de Kaamelott', 'Préparation de Kaamelott', 30, 'Moyenne', TRUE, 2),
+    ('Recette Retour vers le futur', 'Recette inspirée du film Retour vers le futur', '/images/recipes/doc-and-marty-peach-pie-1.jpg', 'dessert', 3, 'Ingrédients du futur', 'Préparation du futur', 45, 'Facile', TRUE, 3),
+    ('2Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('3Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('4Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('5Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'entrée', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('6Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'dessert', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1),
+    ('7Recette Croco', 'Recette inspirée du film Crocodile Dundee', '/images/recipes/croco-dundee-2.jpg', 'plat', 5, 'Ingrédients du croco', 'Préparation du croco', 60, 'Difficile', TRUE, 1);
 -- =====================================================
 -- TABLE NOTICES
 -- =====================================================

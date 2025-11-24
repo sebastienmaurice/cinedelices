@@ -45,6 +45,8 @@
               name="title"
               id="film-name"
               class="form-input"
+              spellcheck="true" 
+              lang="fr en"
               <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
               placeholder="Nom du film"
               <% } else { %>
@@ -123,10 +125,18 @@
             <div class="overlay"></div>
             <h3>Mon film sélectionné</h3>
             <div class="film-selected-image">
+            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.picture === null|| newMovie.length === 0) { %>
               <img
                 src="/images/bg-img-default-boys.jpg"
+                alt="Image de film par defaut"
+              />
+              <% } else { %>
+              <img
+                src="<%= newMovie.picture %>"
                 alt="Image du film ajouté par un admin Ciné Délices"
               />
+              <% } %>
+
             </div>
             <p class="film-image-note">
               * L'image de votre film sera intégrée prochainement par Ciné
@@ -169,13 +179,15 @@
               class="form-input"
               placeholder="Le nom de la recette"
               value=""
+              spellcheck="true" 
+              lang="fr"
             />
             <input
               type="text"
               name="time"
               id="recipe-time"
               class="form-input"
-              placeholder="temps de préparation"
+              placeholder="temps de préparation en minutes (ex: 70)"
               value=""
             />
             <select name="category" id="category" class="form-select">
@@ -225,6 +237,8 @@
               id="recipe-context"
               class="recipe-context-textarea"
               placeholder="Racontes le moment où se situe la recette dans le film"
+              spellcheck="true" 
+              lang="fr"
             ></textarea>
           </div>
         </div>
@@ -242,6 +256,8 @@
               id="ingredients"
               class="recipe-textarea"
               placeholder="Liste des ingrédients..."
+              spellcheck="true" 
+              lang="fr"
             ></textarea>
           </div>
           <div class="preparation-column">
@@ -252,6 +268,8 @@
               id="preparation"
               class="recipe-textarea"
               placeholder="Étapes de préparation..."
+              spellcheck="true" 
+              lang="fr"
             ></textarea>
           </div>
         </div>
@@ -261,9 +279,12 @@
           <p class="validation-note">
             * sous reserves de validation par Ciné Délices
           </p>
-          <button class="btn btn--red form-validation-btn">
-            Je valide ma fiche
-          </button>
+            <% if (typeof newMovie !== "undefined" ) { %>
+            <button class="btn btn--red form-validation-btn">
+            Je valide ma recette
+            </button>
+            <% } %>
+
         </div>
 </form>
       </section>

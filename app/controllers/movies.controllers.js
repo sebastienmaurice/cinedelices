@@ -4,7 +4,6 @@ const moviesController = {
   //Filtrage des films par genre (tous, action, comedie, drame...)
   async filtredMovies(req, res) {
     try {
-      console.log(req.params);
       const { genre } = req.params;
 
       let movies;
