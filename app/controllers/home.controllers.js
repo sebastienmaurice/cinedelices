@@ -31,7 +31,7 @@ const homeController = {
         });
       }
 
-      // recete du jour en aléatoire
+      // recette du jour en aléatoire
       const topRecipe = await Recipe.findOne({
         include: [{ model: Movie }],
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
@@ -50,7 +50,7 @@ const homeController = {
         order: [Sequelize.literal("RANDOM()")],
         limit: 4,
       });
-      if (!topMovies) {
+      if (!topMovies || topMovies.length === 0) {
         return res.status(404).render("error", {
           error: "404",
           message: "Films introuvables.",

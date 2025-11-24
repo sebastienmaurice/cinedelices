@@ -23,102 +23,137 @@
 
     <!-- MAIN -->
     <main>
-      <!-- BANNER -->
-      <section class="banner">
-        <!-- BANNER CARDS 1 -->
+      <!-- HERO SLIDER -->
+      <section class="hero-slider">
+        <!-- HERO SLIDER CARDS 1 -->
 
-        <div class="banner-card">
+        <div class="hero-slider__card">
           <img
             src="<%= recipeImages[0] %>"
             alt="Harry potter"
-            class="banner-img"
+            class="hero-slider__img"
           />
 
-          <div class="card-content">
-            <div class="card-info">
-              <div class="genre">
+          <div class="hero-slider__content">
+            <div class="hero-slider__info">
+              <div class="hero-slider__genre">
                 <ion-icon name="film"></ion-icon>
                 <span>Aventure/Fantastique</span>
               </div>
 
-              <div class="year">
+              <div class="hero-slider__year">
                 <ion-icon name="calendar"></ion-icon>
                 <span>2003</span>
               </div>
 
-              <div class="duration">
+              <div class="hero-slider__duration">
                 <ion-icon name="time"></ion-icon>
                 <span>2h 23min</span>
               </div>
 
-              <div class="recipe-banner">Le Gâteau Étoilé</div>
+              <div class="hero-slider__recipe-badge">Le Gâteau Étoilé</div>
             </div>
-            <h2 class="card-title">Harry Potter</h2>
+            <h2 class="hero-slider__title">Harry Potter</h2>
           </div>
         </div>
-        <!-- BANNER CARDS 2 -->
+        <!-- HERO SLIDER CARDS 2 -->
 
-        <div class="banner-card">
+        <div class="hero-slider__card">
           <img
             src="<%= recipeImages[1] %>"
             alt="Jack Sparrow"
-            class="banner-img"
+            class="hero-slider__img"
           />
 
-          <div class="card-content">
-            <div class="card-info">
-              <div class="genre">
+          <div class="hero-slider__content">
+            <div class="hero-slider__info">
+              <div class="hero-slider__genre">
                 <ion-icon name="film"></ion-icon>
                 <span>Action/Aventure</span>
               </div>
 
-              <div class="year">
+              <div class="hero-slider__year">
                 <ion-icon name="calendar"></ion-icon>
                 <span>2003</span>
               </div>
 
-              <div class="duration">
+              <div class="hero-slider__duration">
                 <ion-icon name="time"></ion-icon>
                 <span>2h 20min</span>
               </div>
 
-              <div class="recipe-banner">La recette du Pélican Maudit</div>
+              <div class="hero-slider__recipe-badge">
+                La recette du Pélican Maudit
+              </div>
             </div>
-            <h2 class="card-title">Pirates des Caraïbes</h2>
+            <h2 class="hero-slider__title">Pirates des Caraïbes</h2>
           </div>
         </div>
 
-        <!-- BANNER CARDS 3 -->
-        <div class="banner-card">
+        <!-- HERO SLIDER CARDS 3 -->
+        <div class="hero-slider__card">
           <img
             src="<%= recipeImages[2] %>"
             alt="Shwarzy-1"
-            class="banner-img"
+            class="hero-slider__img"
           />
 
-          <div class="card-content">
-            <div class="card-info">
-              <div class="genre">
+          <div class="hero-slider__content">
+            <div class="hero-slider__info">
+              <div class="hero-slider__genre">
                 <ion-icon name="film"></ion-icon>
                 <span>Action</span>
               </div>
 
-              <div class="year">
+              <div class="hero-slider__year">
                 <ion-icon name="calendar"></ion-icon>
                 <span>2006</span>
               </div>
 
-              <div class="duration">
+              <div class="hero-slider__duration">
                 <ion-icon name="time"></ion-icon>
                 <span>2h 11min</span>
               </div>
 
-              <div class="recipe-banner">La recette du Commando</div>
+              <div class="hero-slider__recipe-badge">
+                La recette du Commando
+              </div>
             </div>
-            <h2 class="card-title">Commando</h2>
+            <h2 class="hero-slider__title">Commando</h2>
           </div>
         </div>
-        <!-- FIN BANNER CARDS -->
+
+        <!-- HERO SLIDER CARDS 4 -->
+        <div class="hero-slider__card">
+          <img
+            src="<%= recipeImages[3] %>"
+            alt="Maman j'ai raté l'avion"
+            class="hero-slider__img"
+          />
+
+          <div class="hero-slider__content">
+            <div class="hero-slider__info">
+              <div class="hero-slider__genre">
+                <ion-icon name="film"></ion-icon>
+                <span>Comédie</span>
+              </div>
+
+              <div class="hero-slider__year">
+                <ion-icon name="calendar"></ion-icon>
+                <span>1990</span>
+              </div>
+
+              <div class="hero-slider__duration">
+                <ion-icon name="time"></ion-icon>
+                <span>2h 23min</span>
+              </div>
+
+              <div class="hero-slider__recipe-badge">la Pizza au fromage</div>
+            </div>
+            <h2 class="hero-slider__title">Maman j'ai raté l'avion</h2>
+          </div>
+        </div>
+        <!-- FIN HERO SLIDER CARDS -->
       </section>
 
       <!-- RECETTE DU JOUR -->
@@ -170,18 +205,20 @@
             </article>
           </div>
 
-          <!-- Colonnes droite : Les 2 films du jour -->
+          <!-- Colonnes droite : Les 4 films du jour -->
           <div class="films-columns-right">
             <div class="section-header">
               <h2>Quelques films Ciné Délices</h2>
               <p class="section-subtitle">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                Découvrez une sélection de films cultes et leurs recettes
+                inspirantes. Plongez dans l'univers cinématographique et
+                savourez le goût du cinéma.
               </p>
             </div>
             <div class="films-container">
+              <% if (topMovies && topMovies.length > 0) { %>
               <!-- Première carte film -->
+              <% if (topMovies[0]) { %>
               <a
                 href="/recipes-movie/<%= topMovies[0].id %>"
                 class="recipe-card recipe-card--right"
@@ -209,8 +246,10 @@
                   </span>
                 </div>
               </a>
+              <% } %>
 
               <!-- Deuxième carte film -->
+              <% if (topMovies[1]) { %>
               <a
                 href="/recipes-movie/<%= topMovies[1].id %>"
                 class="recipe-card recipe-card--right"
@@ -238,8 +277,10 @@
                   </span>
                 </div>
               </a>
+              <% } %>
 
               <!-- Troisième carte film -->
+              <% if (topMovies[2]) { %>
               <a
                 href="/recipes-movie/<%= topMovies[2].id %>"
                 class="recipe-card recipe-card--right"
@@ -267,8 +308,10 @@
                   </span>
                 </div>
               </a>
+              <% } %>
 
               <!-- Quatrième carte film -->
+              <% if (topMovies[3]) { %>
               <a
                 href="/recipes-movie/<%= topMovies[3].id %>"
                 class="recipe-card recipe-card--right"
@@ -287,14 +330,18 @@
                 <div class="film-info">
                   <h3><%= topMovies[3].title %></h3>
                   <p class="film-description">
-                    Des recettes puissantes et énergétiques inspirées de ce film
-                    d'action légendaire avec Arnold Schwarzenegger.
+                    Découvrez toutes les recettes inspirées de ce film ou de
+                    cette série culte et plongez vous dans l'univers de <%=
+                    topMovies[3].title %>.
                   </p>
                   <span class="btn btn--red" aria-hidden="true">
                     Voir le film
                   </span>
                 </div>
               </a>
+              <% } %> <% } else { %>
+              <p class="no-movies">Aucun film disponible pour le moment.</p>
+              <% } %>
             </div>
           </div>
         </div>
