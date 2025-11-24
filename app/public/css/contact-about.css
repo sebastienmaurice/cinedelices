@@ -1186,7 +1186,7 @@
 /* Conteneur des colonnes */
 .team-pirate-card-center__columns {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.75rem;
   height: 100%;
   padding: 2cap;
 }
@@ -1202,10 +1202,14 @@
 
 /* Colonne technique */
 .team-pirate-card-center__column-tech {
-  flex: 0 0 15%;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: 55px;
+  max-width: 65px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible; /* Permettre aux tooltips de dépasser */
 }
 
 /* Carte contact cachée par défaut */
@@ -1415,288 +1419,155 @@
 }
 
 /* Section Spé technique - Colonne droite */
-/* Contraste optimisé : argent-ecran sur fond bleu nuit pour lisibilité */
+/* Titre supprimé - masqué */
 .team-pirate-card-center__tech-title {
-  font-size: 0.9rem;
-  color: var(--argent-ecran);
-  font-family: var(--font-h2-h6);
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  letter-spacing: 0.5px;
-  opacity: 0.95;
+  display: none;
 }
 
-/* Container tech avec fond semi-transparent pour contraste */
+/* Container tech sans fond */
 .team-pirate-card-center__tech {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 1rem;
-  background: var(--argent-ecran-08);
-  border-radius: 12px;
-  border: 1px solid var(--argent-ecran-15);
-  box-shadow: 0 2px 8px var(--ombre-noire-30);
-}
-
-.team-pirate-card-center__tech-title i {
-  font-size: 0.85rem;
-  color: var(--rouge-projecteur);
+  width: 100%;
+  padding: 0.25rem 0;
+  background: transparent;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible; /* Permettre aux tooltips de dépasser */
 }
 
 .team-pirate-card-center__tech-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-items: stretch;
-  margin-top: 0.75rem;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 0.25rem;
+  justify-content: flex-start;
+  overflow: visible; /* Permettre aux tooltips de dépasser */
 }
 
-.team-pirate-card-center__tech-item {
-  display: block;
-  width: 100%;
-  padding: 0.35rem 0.8rem;
+/* Boutons carrés avec icônes */
+.tech-circle-button {
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
+  border: 1px solid var(--argent-ecran-25);
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
+  position: relative;
+  background: var(--argent-ecran-12);
+  overflow: hidden;
+  box-shadow: 0 2px 6px var(--ombre-noire-30);
 }
 
-/* Styles spécifiques par technologie - Couleurs en état normal */
-
-/* JavaScript - Jaune */
-.team-pirate-card-center__tech-item[data-tech="javascript"],
-.team-pirate-card-center__tech-item[data-tech="js"] {
-  background: #f7df1e;
-  color: #000000;
-  border: 1px solid #f7df1e;
+.tech-circle-button img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  /* Convertir l'icône colorée en gris (--argent-ecran: #e8e8e8) */
+  /* grayscale(100%) désature, brightness() et contrast() ajustent pour obtenir #e8e8e8 */
+  filter: grayscale(100%) brightness(1.1) contrast(0.9);
+  transition: filter 0.3s ease;
 }
 
-.team-pirate-card-center__tech-item[data-tech="javascript"]:hover,
-.team-pirate-card-center__tech-item[data-tech="js"]:hover {
-  background: #d4be1a;
-  border-color: #d4be1a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(247, 223, 30, 0.4);
+/* Tooltip JavaScript - Positionné en dehors de la hiérarchie pour éviter overflow */
+.tech-tooltip {
+  position: fixed;
+  background: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 100000;
+  box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4);
+  transform: translate(-50%, -100%) translateY(-4px);
 }
 
-/* CSS3 - Bleu */
-.team-pirate-card-center__tech-item[data-tech="css3"],
-.team-pirate-card-center__tech-item[data-tech="css"] {
-  background: #1572b6;
-  color: #ffffff;
-  border: 1px solid #1572b6;
+.tech-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--rouge-projecteur);
 }
 
-.team-pirate-card-center__tech-item[data-tech="css3"]:hover,
-.team-pirate-card-center__tech-item[data-tech="css"]:hover {
-  background: #0f5a8f;
-  border-color: #0f5a8f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(21, 114, 182, 0.4);
+.tech-tooltip.visible {
+  opacity: 1;
+  transform: translate(-50%, -100%) translateY(0);
 }
 
-/* HTML5 - Orange/Rouge */
-.team-pirate-card-center__tech-item[data-tech="html5"],
-.team-pirate-card-center__tech-item[data-tech="html"] {
-  background: #e34c26;
-  color: #ffffff;
-  border: 1px solid #e34c26;
+.tech-circle-button:hover {
+  background: var(--argent-ecran-12);
+  border-color: var(--argent-ecran-25);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px var(--ombre-noire-30),
+    0 2px 6px var(--ombre-noire-30);
 }
 
-.team-pirate-card-center__tech-item[data-tech="html5"]:hover,
-.team-pirate-card-center__tech-item[data-tech="html"]:hover {
-  background: #c73e1f;
-  border-color: #c73e1f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(227, 76, 38, 0.4);
-}
 
-/* Node.js - Vert */
-.team-pirate-card-center__tech-item[data-tech="node-js"],
-.team-pirate-card-center__tech-item[data-tech="nodejs"] {
-  background: #339933;
-  color: #ffffff;
-  border: 1px solid #339933;
-}
+/* Styles spécifiques par technologie - Restaurer les couleurs originales au hover */
 
-.team-pirate-card-center__tech-item[data-tech="node-js"]:hover,
-.team-pirate-card-center__tech-item[data-tech="nodejs"]:hover {
-  background: #2d7d2d;
-  border-color: #2d7d2d;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(51, 153, 51, 0.4);
-}
-
-/* Express - Gris foncé */
-.team-pirate-card-center__tech-item[data-tech="express"] {
-  background: #000000;
-  color: #ffffff;
-  border: 1px solid #000000;
-}
-
-.team-pirate-card-center__tech-item[data-tech="express"]:hover {
-  background: #1a1a1a;
-  border-color: #1a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-/* Svelte - Orange/Rouge */
-.team-pirate-card-center__tech-item[data-tech="svelte"] {
-  background: #ff3e00;
-  color: #ffffff;
-  border: 1px solid #ff3e00;
-}
-
-.team-pirate-card-center__tech-item[data-tech="svelte"]:hover {
-  background: #cc3000;
-  border-color: #cc3000;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 62, 0, 0.4);
-}
-
-/* PostgreSQL - Bleu */
-.team-pirate-card-center__tech-item[data-tech="postgresql"],
-.team-pirate-card-center__tech-item[data-tech="postgres"] {
-  background: #336791;
-  color: #ffffff;
-  border: 1px solid #336791;
-}
-
-.team-pirate-card-center__tech-item[data-tech="postgresql"]:hover,
-.team-pirate-card-center__tech-item[data-tech="postgres"]:hover {
-  background: #2a5474;
-  border-color: #2a5474;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(51, 103, 145, 0.4);
-}
-
-/* MongoDB - Vert */
-.team-pirate-card-center__tech-item[data-tech="mongodb"],
-.team-pirate-card-center__tech-item[data-tech="mongo"] {
-  background: #47a248;
-  color: #ffffff;
-  border: 1px solid #47a248;
-}
-
-.team-pirate-card-center__tech-item[data-tech="mongodb"]:hover,
-.team-pirate-card-center__tech-item[data-tech="mongo"]:hover {
-  background: #3a823b;
-  border-color: #3a823b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(71, 162, 72, 0.4);
-}
-
-/* Figma - Orange */
-.team-pirate-card-center__tech-item[data-tech="figma"] {
-  background: #f24e1e;
-  color: #ffffff;
-  border: 1px solid #f24e1e;
-}
-
-.team-pirate-card-center__tech-item[data-tech="figma"]:hover {
-  background: #c93e18;
-  border-color: #c93e18;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(242, 78, 30, 0.4);
-}
-
-/* GitHub - Noir/Gris */
-.team-pirate-card-center__tech-item[data-tech="github"] {
-  background: #181717;
-  color: #ffffff;
-  border: 1px solid #181717;
-}
-
-.team-pirate-card-center__tech-item[data-tech="github"]:hover {
-  background: #0f0f0f;
-  border-color: #0f0f0f;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 23, 23, 0.5);
-}
-
-/* Git - Orange/Rouge */
-.team-pirate-card-center__tech-item[data-tech="git"] {
-  background: #f05032;
-  color: #ffffff;
-  border: 1px solid #f05032;
-}
-
-.team-pirate-card-center__tech-item[data-tech="git"]:hover {
-  background: #c03e26;
-  border-color: #c03e26;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(240, 80, 50, 0.4);
-}
-
-/* API REST - Bleu */
-.team-pirate-card-center__tech-item[data-tech="api-rest"],
-.team-pirate-card-center__tech-item[data-tech="rest"],
-.team-pirate-card-center__tech-item[data-tech="api"] {
-  background: #0066cc;
-  color: #ffffff;
-  border: 1px solid #0066cc;
-}
-
-.team-pirate-card-center__tech-item[data-tech="api-rest"]:hover,
-.team-pirate-card-center__tech-item[data-tech="rest"]:hover,
-.team-pirate-card-center__tech-item[data-tech="api"]:hover {
-  background: #0052a3;
-  border-color: #0052a3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
-}
-
-/* Illustrator - Orange */
-.team-pirate-card-center__tech-item[data-tech="illustrator"] {
-  background: #ff9a00;
-  color: #ffffff;
-  border: 1px solid #ff9a00;
-}
-
-.team-pirate-card-center__tech-item[data-tech="illustrator"]:hover {
-  background: #cc7a00;
-  border-color: #cc7a00;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 154, 0, 0.4);
-}
-
-/* Photoshop - Bleu */
-.team-pirate-card-center__tech-item[data-tech="photoshop"] {
-  background: #31a8ff;
-  color: #ffffff;
-  border: 1px solid #31a8ff;
-}
-
-.team-pirate-card-center__tech-item[data-tech="photoshop"]:hover {
-  background: #2787cc;
-  border-color: #2787cc;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(49, 168, 255, 0.4);
-}
-
-/* InDesign - Rose/Magenta */
-.team-pirate-card-center__tech-item[data-tech="indesign"] {
-  background: #ff3366;
-  color: #ffffff;
-  border: 1px solid #ff3366;
-}
-
-.team-pirate-card-center__tech-item[data-tech="indesign"]:hover {
-  background: #cc2852;
-  border-color: #cc2852;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 51, 102, 0.4);
+/* Au hover, enlever le filtre grayscale pour afficher les couleurs originales des icônes */
+.tech-circle-button:hover img {
+  filter: none;
 }
 
 .team-pirate-card-center__favorites {
   margin-top: auto;
   padding-top: 1rem;
   border-top: 2px solid var(--argent-ecran-20);
+}
+
+/* Section tech mobile - masquée par défaut */
+.team-pirate-card-center__tech-section-mobile {
+  display: none;
+}
+
+.team-pirate-card-center__tech-title-mobile {
+  font-size: 0.9rem;
+  color: var(--dore-popcorn);
+  font-family: var(--font-h2-h6);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.team-pirate-card-center__tech-title-mobile i {
+  font-size: 0.85rem;
+  color: var(--rouge-projecteur);
+}
+
+.team-pirate-card-center__tech-mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+}
+
+.team-pirate-card-center__tech-list-mobile {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .team-pirate-card-center__favorites-title {
@@ -2035,29 +1906,29 @@
 
   .team-pirate-card-center__tech {
     max-height: none;
+    padding: 0.5rem 0;
+    background: transparent;
   }
 
   .team-pirate-card-center__tech-list {
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 0.4rem;
+    justify-content: center;
+    gap: 0.6rem;
   }
 
-  .team-pirate-card-center__tech-item {
-    flex: 0 0 auto;
-    min-width: auto;
-    width: auto;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.65rem;
-    font-weight: 500;
-    border-radius: 6px;
+  .tech-circle-button {
+    width: 33px;
+    height: 33px;
   }
 
-  /* Réduire l'importance visuelle des tags Tech Stack en mobile */
-  .team-pirate-card-center__tech-item:hover {
-    transform: none;
-    box-shadow: none;
+  .tech-circle-button img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .tech-circle-button:hover {
+    transform: scale(1.05);
   }
 }
 
@@ -2191,6 +2062,36 @@
     gap: 1.25rem;
   }
 
+  /* Masquer la colonne tech desktop en mobile */
+  .team-pirate-card-center__column-tech {
+    display: none;
+  }
+
+  /* Afficher la section tech mobile */
+  .team-pirate-card-center__tech-section-mobile {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--argent-ecran-20);
+  }
+
+  /* Icônes horizontales et plus petites en mobile */
+  .team-pirate-card-center__tech-list-mobile {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .team-pirate-card-center__tech-list-mobile .tech-circle-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .team-pirate-card-center__tech-list-mobile .tech-circle-button img {
+    width: 22px;
+    height: 22px;
+  }
+
   .team-pirate-card-center__image {
     height: 280px;
   }
@@ -2223,21 +2124,18 @@
     padding: 0.3rem 0.6rem;
   }
 
-  /* Tech Stack optimisé pour mobile - tags plus petits et en wrap horizontal */
-  .team-pirate-card-center__tech-title {
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-  }
+  /* Tech Stack optimisé pour mobile - le titre est masqué */
 
   .team-pirate-card-center__tech {
-    padding: 0.7rem;
+    padding: 0.4rem 0;
+    background: transparent;
   }
 
   .team-pirate-card-center__tech-list {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
-    gap: 0.4rem;
+    gap: 0.5rem;
     margin-top: 0.5rem;
   }
 
@@ -2416,16 +2314,19 @@
   }
 
   .team-pirate-card-center__tech-title {
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.65rem;
+    margin-bottom: 0.25rem;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
   }
 
   .team-pirate-card-center__tech {
-    padding: 0.75rem;
+    padding: 0.35rem 0;
+    background: transparent;
   }
 
   .team-pirate-card-center__tech-list {
-    gap: 0.35rem;
+    gap: 0.45rem;
     margin-top: 0.5rem;
   }
 
@@ -2606,17 +2507,20 @@
   }
 
   .team-pirate-card-center__tech-title {
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
+    font-size: 0.6rem;
+    margin-bottom: 0.2rem;
     opacity: 0.9;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
   }
 
   .team-pirate-card-center__tech {
-    padding: 0.6rem 0.5rem;
+    padding: 0.3rem 0;
+    background: transparent;
   }
 
   .team-pirate-card-center__tech-list {
-    gap: 0.3rem;
+    gap: 0.4rem;
     margin-top: 0.4rem;
     justify-content: flex-start;
   }
