@@ -17,19 +17,26 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     const nameWithoutExt = path.basename(file.originalname, ext);
-    cb(null, nameWithoutExt + "-" + uniqueSuffix + ext);
+    cb(null, "recipe-" + nameWithoutExt + "-" + uniqueSuffix + ext);
   },
 });
 
 // Filtre pour accepter uniquement les images
 const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-  
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
-      new Error("Format de fichier non supporté. Utilisez JPG, JPEG, PNG ou WEBP."),
+      new Error(
+        "Format de fichier non supporté. Utilisez JPG, JPEG, PNG ou WEBP."
+      ),
       false
     );
   }

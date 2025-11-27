@@ -146,23 +146,20 @@ Aucune description détaillée n'a encore été partagée pour cette
               <h3>Les Ingrédients</h3>
               <p>Prêts à cuisiner ?</p>
             </div>
-            <div class="textarea-stack">
-              <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
-              ingredientsBlocks.forEach((ingredient, index) => { %>
-              <label class="sr-only" for="ingredient-<%= index %>"
-                >Ingrédient <%= index + 1 %></label
-              >
-              <textarea
-                readonly
-                id="ingredient-<%= index %>"
-                class="recipe-textarea"
-              >
-<%= ingredient %></textarea
-              >
-              <% }) %> <% } else { %>
-              <textarea readonly class="recipe-textarea">
-Les ingrédients seront bientôt disponibles.</textarea
-              >
+            <div class="ingredients-list">
+              <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
+                <% ingredientsBlocks.forEach((ingredient, index) => { %>
+                <div class="ingredient-item">
+                  <span class="ingredient-text"><%= ingredient %></span>
+                  <% if (index < ingredientsBlocks.length - 1) { %>
+                  <div class="ingredient-separator"></div>
+                  <% } %>
+                </div>
+                <% }) %>
+              <% } else { %>
+                <div class="ingredient-item">
+                  <span class="ingredient-text">Les ingrédients seront bientôt disponibles.</span>
+                </div>
               <% } %>
             </div>
           </div>
@@ -173,19 +170,27 @@ Les ingrédients seront bientôt disponibles.</textarea
               <h3>La Préparation</h3>
               <p>Pas à pas</p>
             </div>
-            <div class="textarea-stack">
-              <% if (preparationBlocks && preparationBlocks.length) { %> <%
-              preparationBlocks.forEach((step, index) => { %>
-              <label class="sr-only" for="step-<%= index %>"
-                >Étape <%= index + 1 %></label
-              >
-              <textarea readonly id="step-<%= index %>" class="recipe-textarea">
-<%= step %></textarea
-              >
-              <% }) %> <% } else { %>
-              <textarea readonly class="recipe-textarea">
-Le détail de cette préparation arrive bientôt.</textarea
-              >
+            <div class="preparation-list">
+              <% if (preparationBlocks && preparationBlocks.length) { %>
+                <% preparationBlocks.forEach((step, index) => { %>
+                <div class="preparation-step">
+                  <div class="step-number-wrapper">
+                    <span class="step-number"><%= index + 1 %></span>
+                    <% if (index < preparationBlocks.length - 1) { %>
+                    <div class="step-line"></div>
+                    <% } %>
+                  </div>
+                  <div class="step-content">
+                    <p class="step-text"><%= step %></p>
+                  </div>
+                </div>
+                <% }) %>
+              <% } else { %>
+                <div class="preparation-step">
+                  <div class="step-content">
+                    <p class="step-text">Le détail de cette préparation arrive bientôt.</p>
+                  </div>
+                </div>
               <% } %>
             </div>
           </div>
