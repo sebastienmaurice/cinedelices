@@ -23,7 +23,30 @@
 
     <!-- MAIN -->
     <main class="add-recipe-main">
-      
+      <!-- Message de confirmation/erreur -->
+      <% if (typeof success !== "undefined" && success && typeof successMessage
+      !== "undefined" && successMessage) { %>
+      <div class="alert alert-success">
+        <i class="fa-solid fa-check-circle"></i>
+        <p><%= successMessage %></p>
+      </div>
+      <% } %> <% if (typeof error !== "undefined" && error && typeof
+      errorMessage !== "undefined" && errorMessage) { %>
+      <div class="alert alert-error">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <p><%= errorMessage %></p>
+      </div>
+      <% } %> <% if (typeof duplicateWarning !== "undefined" &&
+      duplicateWarning) { %>
+      <div class="alert alert-info">
+        <i class="fa-solid fa-info-circle"></i>
+        <p>
+          Ce film existe déjà dans notre base de données. Vous pouvez continuer
+          à ajouter votre recette.
+        </p>
+      </div>
+      <% } %>
+
       <!-- BANNIÈRE HERO -->
       <section class="hero-banner">
         <div class="hero-content"></div>
@@ -35,71 +58,66 @@
           <h2>1. J'ajoute mon film</h2>
         </div>
 
-        <!-- Formulaire d'ajout de film -->
-        <form action="/add-recipes-movies/movie" method="post">
-        <div class="film-form-container">
-          <div class="overlay"></div>
-          <div class="film-inputs-row">
-            <input
-              type="text"
-              name="title"
-              id="film-name"
-              class="form-input"
-              spellcheck="true" 
-              lang="fr en"
-              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-              placeholder="Nom du film"
-              <% } else { %>
-              placeholder="<%= newMovie.title %>"
-              <% } %>
-              value=""
-            />
+        <!-- Formulaire d'ajout de film (pour prévisualisation seulement) -->
+        <form id="film-preview-form" method="post" onsubmit="return false;">
+          <div class="film-form-container">
+            <div class="overlay"></div>
+            <div class="film-inputs-row">
+              <!-- Wrapper pour l'autocomplétion avec position relative -->
+              <div class="film-name-input-wrapper">
+                <input type="text" name="title" id="film-name"
+                class="form-input" spellcheck="true" lang="fr en"
+                autocomplete="off" <% if (typeof newMovie === "undefined" ||
+                !newMovie || newMovie.length === 0) { %> placeholder="Nom du
+                film" <% } else { %> placeholder="<%= newMovie.title %>" <% } %>
+                value="" />
+                <!-- Dropdown pour les résultats de recherche -->
+                <div
+                  id="film-search-results"
+                  class="film-search-results"
+                  aria-live="polite"
+                ></div>
+              </div>
 
-            <input
-              type="text"
-              name="year"
-              id="film-year"
-              class="form-input"
-              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-              placeholder="Année du film"
-              <% } else { %>
-              placeholder="<%= newMovie.year %>"
-              <% } %>
-              value=""
-            />
-            <select name="genre" id="film-genre" class="form-select">
-              <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-              <option value="">Genre</option>
-              <% } else { %>
-              <option value=""><%= newMovie.genre %></option>
-              <% } %>
+              <input type="number" name="year" id="film-year" class="form-input"
+              min="1888" max="<%= new Date().getFullYear() + 5 %>" <% if (typeof
+              newMovie === "undefined" || !newMovie || newMovie.length === 0) {
+              %> placeholder="Année du film" <% } else { %> placeholder="<%=
+              newMovie.year %>" <% } %> value="" />
+              <select name="genre" id="film-genre" class="form-select">
+                <% if (typeof newMovie === "undefined" || !newMovie ||
+                newMovie.length === 0) { %>
+                <option value="">Genre</option>
+                <% } else { %>
+                <option value=""><%= newMovie.genre %></option>
+                <% } %>
 
-              <option value="action">Action</option>
-              <option value="animé">Animé</option>
-              <option value="aventure">Aventure</option>
-              <option value="comédie">Comédie</option>
-              <option value="drame">Drame</option>
-              <option value="fantastique">Fantastique</option>
-              <option value="horreur">Horreur</option>
-              <option value="romantique">Romantique</option>
-              <option value="science-fiction">Science-fiction</option>
-              <option value="thriller">Thriller</option>
-            </select>
+                <option value="action">Action</option>
+                <option value="animé">Animé</option>
+                <option value="aventure">Aventure</option>
+                <option value="comédie">Comédie</option>
+                <option value="drame">Drame</option>
+                <option value="fantastique">Fantastique</option>
+                <option value="horreur">Horreur</option>
+                <option value="romantique">Romantique</option>
+                <option value="science-fiction">Science-fiction</option>
+                <option value="thriller">Thriller</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="form-footer">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
-            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+          <div class="form-footer">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <% if (typeof newMovie === "undefined" || !newMovie ||
+            newMovie.length === 0) { %>
             <button class="btn btn--red form-footer-btn">
-            Je passe à la recette
+              Je passe à la recette
             </button>
             <% } %>
-
-        </div>
+          </div>
         </form>
       </section>
 
@@ -109,184 +127,200 @@
           <h2>2. Je veux ajouter une recette</h2>
         </div>
 
-      <!-- FORMULAIRE RECETTE-->
-       <!-- AJOUT enctype="multipart/form-data"-->
-        <form action="/add-recipes-movies/recipe" method="post" enctype="multipart/form-data">
+        <!-- FORMULAIRE UNIFIÉ FILM + RECETTE-->
+        <!-- AJOUT enctype="multipart/form-data"-->
+        <form
+          id="unified-form"
+          action="/add-recipes-movies/movie-and-recipe"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <!-- STOCKAGE ID DU FILM (sera rempli par l'autocomplétion ou laisser vide pour nouveau film) -->
+          <input type="hidden" name="filmId" id="filmId-hidden" value="<% if
+          (typeof newMovie !== "undefined" && newMovie && newMovie.id) { %><%=
+          newMovie.id %><% } %>" />
 
-          <!-- STOCKAGE ID DU FILM -->
-          <% if (typeof newMovie !== "undefined" && newMovie && newMovie.id) { %>
-            <input type="hidden" name="id_movie" value="<%= newMovie.id %>">
-          <% } %>
+          <!-- Champs film (utilisés si filmId vide, pour créer un nouveau film) -->
+          <input type="hidden" name="title" id="film-title-hidden" value="" />
+          <input type="hidden" name="year" id="film-year-hidden" value="" />
+          <input type="hidden" name="genre" id="film-genre-hidden" value="" />
 
-        <!-- Container 3 colonnes -->
-        <div class="recipe-form-container">
-          <!-- Colonne gauche: Film sélectionné -->
-          <div class="recipe-column recipe-column-left">
-            <div class="overlay"></div>
-            <h3>Mon film sélectionné</h3>
-            <div class="film-selected-image">
-            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.picture === null|| newMovie.length === 0) { %>
-              <img
-                src="/images/image-default-movie.jpg"
-                alt="Image de film par defaut"
-              />
-              <% } else { %>
-              <img
-                src="<%= newMovie.picture %>"
-                alt="Image du film ajouté par un admin Ciné Délices"
-              />
-              <% } %>
-
-            </div>
-            <p class="film-image-note">
-              * L'image de votre film sera intégrée prochainement par Ciné
-              Délices
-            </p>
-            <div class="film-info-box">
-              <h4>Les infos du film</h4>
-
-            <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-              <ul>
-                <li id="display-film-name">titre</li>
-                <li id="display-film-genre">genre</li>
-                <li id="display-film-year">année</li>
-              </ul>
-              <% } else { %>
-              <ul>
-                <li id="display-film-name"><%= newMovie.title %></li>
-                <li id="display-film-genre"><%= newMovie.genre %></li>
-                <li id="display-film-year"><%= newMovie.year %></li>
-              </ul>
-              <% } %>
-
-            </div>
-          </div>
-
-          <!-- Colonne centrale: Ma recette -->
-          <div class="recipe-column recipe-column-center">
-            <div class="overlay"></div>
-            <h3>Ma recette</h3>
-            <p class="recipe-description">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
-            </p>
-            <input
-              type="text"
-              name="name"
-              id="recipe-name"
-              class="form-input"
-              placeholder="Le nom de la recette"
-              value=""
-              spellcheck="true" 
-              lang="fr"
-            />
-            <input
-              type="text"
-              name="time"
-              id="recipe-time"
-              class="form-input"
-              placeholder="temps de préparation en minutes (ex: 70)"
-              value=""
-            />
-            <select name="category" id="category" class="form-select">
-              <option value="">catégorie</option>
-              <option value="entrée">entrée</option>
-              <option value="plat">plat</option>
-              <option value="dessert">dessert</option>
-            </select>
-            <select name="difficulty" id="difficulty" class="form-select">
-              <option value="">Difficulté</option>
-              <option value="Facile">Facile</option>
-              <option value="Moyenne">Moyenne</option>
-              <option value="Difficile">Difficile</option>
-            </select>
-          </div>
-
-          <!-- Colonne droite: Image recette et contexte -->
-          <div class="recipe-column recipe-column-right">
-            <div class="overlay"></div>
-            <h3>Image de la recette</h3>
-            <div class="recipe-image-upload">
-              <img
-                id="recipeImagePreview"
-                src="/images/image-default-movie.jpg"
-                alt="Image par défaut Ciné Délices"
-              />
-              <!-- Input file caché pour l'upload d'image -->
-              <input 
-                type="file" 
-                name="recipeImage" 
-                id="recipeImageInput" 
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-                style="display: none;"
-              />
-              <!-- Bouton pour déclencher l'upload -->
-              <button type="button" class="btn btn--red btn-upload" id="uploadButton">
-                Je télécharge mon image
-                <i class="fa-solid fa-upload btn-upload-icon"></i>
-              </button>
-              <p class="image-copyright">
-                * sous reserve de droits d'auteur et d'accord par Ciné Délices
+          <!-- Container 3 colonnes -->
+          <div class="recipe-form-container">
+            <!-- Colonne gauche: Film sélectionné -->
+            <div class="recipe-column recipe-column-left">
+              <div class="overlay"></div>
+              <h3>Mon film sélectionné</h3>
+              <div class="film-selected-image">
+                <% if (typeof newMovie === "undefined" || !newMovie ||
+                newMovie.picture === null|| newMovie.length === 0) { %>
+                <img
+                  src="/images/image-default-movie.jpg"
+                  alt="Image de film par defaut"
+                />
+                <% } else { %>
+                <img
+                  src="<%= newMovie.picture %>"
+                  alt="Image du film ajouté par un admin Ciné Délices"
+                />
+                <% } %>
+              </div>
+              <p class="film-image-note">
+                * L'image de votre film sera intégrée prochainement par Ciné
+                Délices
               </p>
+              <div class="film-info-box">
+                <h4>Les infos du film</h4>
+
+                <% if (typeof newMovie === "undefined" || !newMovie ||
+                newMovie.length === 0) { %>
+                <ul>
+                  <li id="display-film-name">titre</li>
+                  <li id="display-film-genre">genre</li>
+                  <li id="display-film-year">année</li>
+                </ul>
+                <% } else { %>
+                <ul>
+                  <li id="display-film-name"><%= newMovie.title %></li>
+                  <li id="display-film-genre"><%= newMovie.genre %></li>
+                  <li id="display-film-year"><%= newMovie.year %></li>
+                </ul>
+                <% } %>
+              </div>
             </div>
-            <h3 class="recipe-context-title">Contexte de la recette</h3>
-            <textarea
-              name="description"
-              id="recipe-context"
-              class="recipe-context-textarea"
-              placeholder="Racontes le moment où se situe la recette dans le film"
-              spellcheck="true" 
-              lang="fr"
-            ></textarea>
-          </div>
-        </div>
 
-        <!-- Section Ingrédients et Préparation -->
-        <h4 class="ingredients-preparation-subtitle">
-          3. J'ajoute ma liste d'ingrédients et ma préparation étape par étape
-        </h4>
-        <div class="ingredients-preparation-container">
-          <div class="ingredients-column">
-            <div class="overlay"></div>
-            <h3>Ingrédients</h3>
-            <textarea
-              name="ingredients"
-              id="ingredients"
-              class="recipe-textarea"
-              placeholder="Liste des ingrédients..."
-              spellcheck="true" 
-              lang="fr"
-            ></textarea>
-          </div>
-          <div class="preparation-column">
-            <div class="overlay"></div>
-            <h3>Préparation</h3>
-            <textarea
-              name="preparation"
-              id="preparation"
-              class="recipe-textarea"
-              placeholder="Étapes de préparation..."
-              spellcheck="true" 
-              lang="fr"
-            ></textarea>
-          </div>
-        </div>
+            <!-- Colonne centrale: Ma recette -->
+            <div class="recipe-column recipe-column-center">
+              <div class="overlay"></div>
+              <h3>Ma recette</h3>
+              <p class="recipe-description">
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy
+                text ever since the 1500s, when an unknown printer took a galley
+                of type and scrambled it to make a type specimen book.
+              </p>
+              <input
+                type="text"
+                name="name"
+                id="recipe-name"
+                class="form-input"
+                placeholder="Le nom de la recette"
+                value=""
+                spellcheck="true"
+                lang="fr"
+              />
+              <input
+                type="number"
+                name="time"
+                id="recipe-time"
+                class="form-input"
+                min="1"
+                step="1"
+                placeholder="Temps de préparation en minutes (ex: 70)"
+                value=""
+              />
+              <select name="category" id="category" class="form-select">
+                <option value="">catégorie</option>
+                <option value="entrée">entrée</option>
+                <option value="plat">plat</option>
+                <option value="dessert">dessert</option>
+              </select>
+              <select name="difficulty" id="difficulty" class="form-select">
+                <option value="">Difficulté</option>
+                <option value="Facile">Facile</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Difficile">Difficile</option>
+              </select>
+            </div>
 
-        <!-- Footer du formulaire -->
-        <div class="form-validation-footer">
-          <p class="validation-note">
-            * sous reserves de validation par Ciné Délices
-          </p>
-            <% if (typeof newMovie !== "undefined" ) { %>
-            <button class="btn btn--red form-validation-btn">
-            Je valide ma recette
+            <!-- Colonne droite: Image recette et contexte -->
+            <div class="recipe-column recipe-column-right">
+              <div class="overlay"></div>
+              <h3>Image de la recette</h3>
+              <div class="recipe-image-upload">
+                <img
+                  id="recipeImagePreview"
+                  src="/images/image-default-movie.jpg"
+                  alt="Image par défaut Ciné Délices"
+                />
+                <!-- Input file caché pour l'upload d'image -->
+                <input
+                  type="file"
+                  name="recipeImage"
+                  id="recipeImageInput"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  style="display: none"
+                />
+                <!-- Bouton pour déclencher l'upload -->
+                <button
+                  type="button"
+                  class="btn btn--red btn-upload"
+                  id="uploadButton"
+                >
+                  Je télécharge mon image
+                  <i class="fa-solid fa-upload btn-upload-icon"></i>
+                </button>
+                <p class="image-copyright">
+                  * sous reserve de droits d'auteur et d'accord par Ciné Délices
+                </p>
+              </div>
+              <h3 class="recipe-context-title">Contexte de la recette</h3>
+              <textarea
+                name="description"
+                id="recipe-context"
+                class="recipe-context-textarea"
+                placeholder="Racontes le moment où se situe la recette dans le film"
+                spellcheck="true"
+                lang="fr"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Section Ingrédients et Préparation -->
+          <h4 class="ingredients-preparation-subtitle">
+            3. J'ajoute ma liste d'ingrédients et ma préparation étape par étape
+          </h4>
+          <div class="ingredients-preparation-container">
+            <div class="ingredients-column">
+              <div class="overlay"></div>
+              <h3>Ingrédients</h3>
+              <textarea
+                name="ingredients"
+                id="ingredients"
+                class="recipe-textarea"
+                placeholder="Liste des ingrédients..."
+                spellcheck="true"
+                lang="fr"
+              ></textarea>
+            </div>
+            <div class="preparation-column">
+              <div class="overlay"></div>
+              <h3>Préparation</h3>
+              <textarea
+                name="preparation"
+                id="preparation"
+                class="recipe-textarea"
+                placeholder="Étapes de préparation..."
+                spellcheck="true"
+                lang="fr"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Footer du formulaire -->
+          <div class="form-validation-footer">
+            <p class="validation-note">
+              * sous reserves de validation par Ciné Délices
+            </p>
+            <button
+              type="submit"
+              class="btn btn--red form-validation-btn"
+              id="submit-unified-form"
+            >
+              Je valide ma recette
             </button>
-            <% } %>
-
-        </div>
-</form>
+          </div>
+        </form>
       </section>
     </main>
 
@@ -299,5 +333,11 @@
     <script src="/js/glowy-container.js" defer></script>
     <!-- prévisualisation image upload -->
     <script src="/js/recipe-image-upload.js" defer></script>
+    <!-- autocomplétion film dans formulaire -->
+    <script src="/js/movie-autocomplete-form.js" defer></script>
+    <!-- gestionnaire formulaire unifié -->
+    <script src="/js/unified-form-handler.js" defer></script>
+    <!-- gestionnaire bouton "Je passe à la recette" -->
+    <script src="/js/film-preview-handler.js" defer></script>
   </body>
 </html>
