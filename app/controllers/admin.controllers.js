@@ -7,6 +7,7 @@ import {
 } from "../models/index.model.js";
 import { logUpload, logUploadError } from "../utils/logger.js";
 import { IMAGE_TYPES } from "../utils/image-utils.js";
+import sequelize from "../database/sequelize-client.js";
 
 const adminController = {
   // Page principale admin
@@ -169,19 +170,55 @@ const adminController = {
 
   // Refuser un film (le supprime)
   async rejectMovie(req, res) {
+    // Démarrer une transaction pour assurer l'atomicité
+    const transaction = await sequelize.transaction();
+
     try {
       const movieId = parseInt(req.params.id);
-      //Récupère l'ID du film à supprimer depuis l'URL
+      // Récupère l'ID du film à supprimer depuis l'URL
 
-      await Movie.destroy({
-        // 👆 Appelle la méthode destroy() de Sequelize = SUPPRIMER
-        where: { id: movieId },
-        // 👆 QUEL film supprimer : celui avec cet ID
-        // Équivalent SQL : DELETE FROM movies WHERE id
+      // 1. Récupérer toutes les recettes associées au film
+      const recipes = await Recipe.findAll({
+        where: { id_movie: movieId },
+        transaction,
       });
+
+      // 2. Pour chaque recette, supprimer les dépendances
+      for (const recipe of recipes) {
+        const recipeId = recipe.id;
+
+        // 2.1. Supprimer les notices (avis) associées à la recette
+        await Notice.destroy({
+          where: { id_recipe: recipeId },
+          transaction,
+        });
+
+        // 2.2. Supprimer les entrées dans la table de jonction UsersRecipes
+        await UsersRecipes.destroy({
+          where: { id_recipe: recipeId },
+          transaction,
+        });
+
+        // 2.3. Supprimer la recette elle-même
+        await Recipe.destroy({
+          where: { id: recipeId },
+          transaction,
+        });
+      }
+
+      // 3. Maintenant que toutes les dépendances sont supprimées, supprimer le film
+      await Movie.destroy({
+        where: { id: movieId },
+        transaction,
+      });
+
+      // 4. Tout s'est bien passé : commit la transaction
+      await transaction.commit();
 
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
+      // En cas d'erreur : rollback pour annuler toutes les modifications
+      await transaction.rollback();
       console.error("Erreur lors du refus du film:", error);
       res.status(500).send("Erreur lors du refus du film");
     }

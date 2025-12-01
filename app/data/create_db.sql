@@ -34,15 +34,19 @@ CREATE TABLE IF NOT EXISTS "movies" (
     "year" INT NOT NULL,
     "genre" VARCHAR(100) NOT NULL,
     "picture" VARCHAR(255),
-    "status" BOOLEAN DEFAULT FALSE
+    "status" BOOLEAN DEFAULT FALSE,
+    "tmdb_id" INTEGER UNIQUE
 );
 
-INSERT INTO movies (title, year, genre, picture, status) VALUES
-    ('Harry Potter', 2001, 'fantastique', '/images/movies/movie-harry_potter-1763858232674-340071843.png', TRUE),
-    ('American pie', 1999, 'comédie', '/images/movies/movie-american_pie-1764103560707-335098533.png', TRUE),
-    ('Bienvenue chez les Ch''tis', 2008, 'comédie', '/images/movies/movie-bienvenue_chtis-1764103577240-542365048.png', TRUE),
-    ('Le silence des agneaux', 1991, 'thriller', '/images/movies/movie-Le silence des agneaux-1764145159444-648907832.png', true),
-    ('Indiana Jones et les Aventuriers de l’Arche perdue', 1981, 'aventure', '/images/movies/movie-affiche-indiana-jones-cinema-v1-1764166572172-810980920.jpg', true);
+INSERT INTO movies (title, year, genre, picture, status, tmdb_id) VALUES
+    ('Harry Potter', 2001, 'fantastique', '/images/movies/movie-harry_potter-1763858232674-340071843.png', TRUE, NULL),
+    ('American pie', 1999, 'comédie', '/images/movies/movie-american_pie-1764103560707-335098533.png', TRUE, NULL),
+    ('Bienvenue chez les Ch''tis', 2008, 'comédie', '/images/movies/movie-bienvenue_chtis-1764103577240-542365048.png', TRUE, NULL),
+    ('Le silence des agneaux', 1991, 'thriller', '/images/movies/movie-Le silence des agneaux-1764145159444-648907832.png', true, NULL),
+    ('Indiana Jones et les Aventuriers de l’Arche perdue', 1981, 'aventure', '/images/movies/movie-affiche-indiana-jones-cinema-v1-1764166572172-810980920.jpg', true, NULL);
+
+-- Créer un index pour améliorer les performances de recherche sur tmdb_id
+CREATE INDEX IF NOT EXISTS idx_movies_tmdb_id ON movies(tmdb_id);
 
 
 
