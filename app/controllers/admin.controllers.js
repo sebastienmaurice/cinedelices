@@ -5,6 +5,8 @@ import {
   User,
   UsersRecipes,
 } from "../models/index.model.js";
+import { logUpload, logUploadError } from "../utils/logger.js";
+import { IMAGE_TYPES } from "../utils/image-utils.js";
 
 const adminController = {
   // Page principale admin
@@ -122,7 +124,23 @@ const adminController = {
       // Si un fichier a été uploadé
       if (req.file) {
         // Construire le chemin relatif de l'image pour la BDD
-        updateData.picture = `/images/movies/${req.file.filename}`;
+        updateData.picture = `/images/movies/cards/${req.file.filename}`;
+
+        // Journaliser l'upload d'image
+        try {
+          await logUpload({
+            type: IMAGE_TYPES.MOVIE_CARD,
+            filename: req.file.filename,
+            originalName: req.file.originalname,
+            destination: req.file.destination,
+            size: req.file.size,
+            mimetype: req.file.mimetype,
+            entityId: movieId,
+          });
+        } catch (logError) {
+          // Ne pas bloquer si la journalisation échoue
+          console.error("Erreur lors de la journalisation:", logError);
+        }
       }
 
       await Movie.update(
@@ -135,10 +153,15 @@ const adminController = {
         // QUEL film modifier : celui qui a cet ID
         // Équivalent SQL : UPDATE movies SET status = true WHERE id
       );
-      console.log("fichierData:", updateData);
 
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
+      // Journaliser l'erreur
+      await logUploadError(error, {
+        type: IMAGE_TYPES.MOVIE_CARD,
+        entityId: req.params.id ? parseInt(req.params.id) : null,
+        action: "validateMovie",
+      });
       console.error("Erreur lors de la validation du film:", error);
       res.status(500).send("Erreur lors de la validation du film");
     }

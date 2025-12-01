@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/css/movies.css" />
 
     <!-- scripts -->
-    <script src="/js/filtred-genre.js" defer></script>
+    <script src="/js/movie-search.js" defer></script>
     <script src="/js/more-views.js" defer></script>
   </head>
 
@@ -48,24 +48,39 @@
         </div>
 
         <div class="banner__search__films">
-          <label for="search" class="search__label"
-            >Rechercher un film ou une série par genre :</label
+          <label for="search-movie" class="search__label"
+            >Rechercher un film ou une série :</label
           >
 
-          <select name="films" id="search" class="search__select__film">
-            <option value="">Genre</option>
-            <option value="all">Tous les films</option>
-            <option value="action">Action</option>
-            <option value="animé">Animé</option>
-            <option value="aventure">Aventure</option>
-            <option value="comédie">Comédie</option>
-            <option value="drame">Drame</option>
-            <option value="fantastique">Fantastique</option>
-            <option value="horreur">Horreur</option>
-            <option value="romantique">Romantique</option>
-            <option value="science-fiction">Science-fiction</option>
-            <option value="thriller">Thriller</option>
-          </select>
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                id="search-movie"
+                name="search-movie"
+                class="search__input__film"
+                placeholder="Titre, année, genre..."
+                autocomplete="off"
+                aria-label="Rechercher un film"
+              />
+              <button
+                type="button"
+                id="search-ai-button"
+                class="btn btn--ai"
+                title="Recherche IA (à venir)"
+                aria-label="Recherche IA"
+                disabled
+              >
+                <i class="fa-solid fa-robot"></i>
+                <span>IA</span>
+              </button>
+            </div>
+
+            <!-- Dropdown des résultats de recherche -->
+            <div id="search-results" class="search-results" aria-live="polite">
+              <!-- Les résultats s'afficheront ici dynamiquement -->
+            </div>
+          </div>
         </div>
       </section>
 
@@ -110,7 +125,13 @@
         </div>
 
         <div class="center-button">
-          <button id="see__all__movies__button" class="btn btn--gold-special" aria-label="Voir tous les films">Voir moins</button>
+          <button
+            id="see__all__movies__button"
+            class="btn btn--gold-special"
+            aria-label="Voir tous les films"
+          >
+            Voir moins
+          </button>
         </div>
       </section>
     </main>

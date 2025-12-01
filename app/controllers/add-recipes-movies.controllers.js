@@ -1,4 +1,6 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { logUpload, logUploadError } from "../utils/logger.js";
+import { IMAGE_TYPES } from "../utils/image-utils.js";
 
 const addRecipesMoviesController = {
   // Page d'ajout de film et recette
@@ -91,11 +93,10 @@ const addRecipesMoviesController = {
       let imagePath = null;
       if (req.file) {
         // Chemin relatif pour l'affichage dans le HTML
-        imagePath = `/images/recipes/${req.file.filename}`;
-        //console.log("Image uploadée :", imagePath);
+        imagePath = `/images/recipes/cards/${req.file.filename}`;
       }
 
-      // Ajout de la recette à la base de données (simulation)
+      // Ajout de la recette à la base de données
 
       const newRecipe = await Recipe.create({
         name: name,
@@ -109,11 +110,36 @@ const addRecipesMoviesController = {
         picture: imagePath, // !Ajout du chemin de l'image (colonne 'picture')
       });
 
+      // Journaliser l'upload d'image après création de la recette (pour avoir l'ID)
+      if (req.file && newRecipe.id) {
+        try {
+          await logUpload({
+            type: IMAGE_TYPES.RECIPE_CARD,
+            filename: req.file.filename,
+            originalName: req.file.originalname,
+            destination: req.file.destination,
+            size: req.file.size,
+            mimetype: req.file.mimetype,
+            entityId: newRecipe.id,
+          });
+        } catch (logError) {
+          // Ne pas bloquer si la journalisation échoue
+          console.error("Erreur lors de la journalisation:", logError);
+        }
+      }
+
       // Rendu de la page avec le rôle de l'utilisateur
       res
         .status(201)
         .render("add-recipes-movies", { newRecipe, role: req.userRole });
     } catch (error) {
+      // Journaliser l'erreur
+      await logUploadError(error, {
+        type: IMAGE_TYPES.RECIPE_CARD,
+        action: "addRecipe",
+        id_movie: req.body.id_movie || null,
+      });
+
       console.error(error);
 
       // ← ici, on rend la page d'erreur avec loginPopup: false
