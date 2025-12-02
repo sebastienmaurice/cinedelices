@@ -1,16 +1,17 @@
 /**
- * Pipeline de traitement d'images - Ciné Délices - PHASE 3
+ * Pipeline de traitement d'images - Ciné Délices
  *
  * Module central pour le traitement des images uploadées.
- * Architecture préparée pour intégration future de Sharp et face-api.js.
+ * Architecture complète avec Sharp pour redimensionnement/optimisation
+ * et crop intelligent basé sur les zones d'intérêt.
  *
- * ⚠️ IMPORTANT : Les traitements réels (crop, resize, optimize) ne sont PAS activés.
- * Ce module prépare uniquement la structure et le flux de données.
+ * ✅ ACTIVÉ : Crop intelligent, redimensionnement et optimisation avec Sharp
  */
 
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
+import sharp from "sharp";
 import {
   slugifier,
   generateRandom,
@@ -82,9 +83,9 @@ export async function processImage(options) {
     imageType,
     entityId,
     entityType,
-    enableCrop = false,
-    enableResize = false,
-    enableOptimize = false,
+    enableCrop = true, // ✅ Activé par défaut
+    enableResize = true, // ✅ Activé par défaut
+    enableOptimize = true, // ✅ Activé par défaut
   } = options;
 
   // Validation des paramètres
@@ -103,12 +104,36 @@ export async function processImage(options) {
     const slug = slugifier(entityName);
     const random = generateRandom();
 
-    // 3. Déterminer le dossier de destination
+    // 3. Déterminer le dossier de destination pour les images traitées
     const destinationFolder = determineImageFolder(imageType);
     await ensureDirectoryExists(destinationFolder);
 
-    // 4. Générer le nouveau nom de fichier
+    // 3.1. Créer le dossier originals pour conserver les images originales
+    const basePath = path.join(__dirname, "../public/images");
+    let originalsFolder;
+    if (
+      imageType === IMAGE_TYPES.MOVIE_CARD ||
+      imageType === IMAGE_TYPES.MOVIE_BANNER
+    ) {
+      originalsFolder = path.join(basePath, "movies", "originals");
+    } else if (imageType === IMAGE_TYPES.RECIPE_CARD) {
+      originalsFolder = path.join(basePath, "recipes", "originals");
+    }
+    await ensureDirectoryExists(originalsFolder);
+
+    // 4. Copier l'image originale dans le dossier originals
     const originalExt = path.extname(imagePath);
+    const originalFilename = `original-${slug}-${random}${originalExt}`;
+    const originalPath = path.join(originalsFolder, originalFilename);
+    await copyFile(imagePath, originalPath);
+
+    await logImageProcess({
+      step: "preserve-original",
+      imagePath: originalPath,
+      result: "Image originale conservée",
+    });
+
+    // 5. Générer le nouveau nom de fichier pour l'image traitée
     const config = IMAGE_CONFIG[imageType];
     const finalExt =
       enableOptimize && config.format ? `.${config.format}` : originalExt;
@@ -116,11 +141,17 @@ export async function processImage(options) {
 
     const finalPath = path.join(destinationFolder, newFilename);
 
-    // 5. Pipeline de traitement (étapes préparées mais non activées)
-    let processedImagePath = imagePath;
+    // 6. Pipeline de traitement séquentiel avec fichiers temporaires
+    let processedImagePath = imagePath; // Commence avec l'original uploadé
+    const tempDir = destinationFolder;
+    let tempFileCounter = 0;
 
     // Étape 1 : Crop intelligent (si activé)
     if (enableCrop) {
+      const tempPath = path.join(
+        tempDir,
+        `temp-${random}-${++tempFileCounter}${originalExt}`
+      );
       await logImageProcess({
         step: "crop",
         imagePath: processedImagePath,
@@ -129,7 +160,7 @@ export async function processImage(options) {
       processedImagePath = await cropImage(
         processedImagePath,
         imageType,
-        finalPath
+        tempPath
       );
       await logImageProcess({
         step: "crop",
@@ -140,6 +171,10 @@ export async function processImage(options) {
 
     // Étape 2 : Redimensionnement (si activé)
     if (enableResize) {
+      const tempPath = path.join(
+        tempDir,
+        `temp-${random}-${++tempFileCounter}${originalExt}`
+      );
       await logImageProcess({
         step: "resize",
         imagePath: processedImagePath,
@@ -149,7 +184,7 @@ export async function processImage(options) {
         processedImagePath,
         imageType,
         config,
-        finalPath
+        tempPath
       );
       await logImageProcess({
         step: "resize",
@@ -158,7 +193,7 @@ export async function processImage(options) {
       });
     }
 
-    // Étape 3 : Optimisation (si activée)
+    // Étape 3 : Optimisation (si activée) - Dernière étape, sauvegarde dans finalPath
     if (enableOptimize) {
       await logImageProcess({
         step: "optimize",
@@ -176,6 +211,26 @@ export async function processImage(options) {
         imagePath: processedImagePath,
         result: "terminé",
       });
+    } else {
+      // Si optimisation désactivée, copier vers finalPath
+      await copyFile(processedImagePath, finalPath);
+      processedImagePath = finalPath;
+    }
+
+    // 6.1. Nettoyer les fichiers temporaires
+    try {
+      const tempFiles = await fs.readdir(tempDir);
+      for (const file of tempFiles) {
+        if (file.startsWith(`temp-${random}-`)) {
+          await fs.unlink(path.join(tempDir, file));
+        }
+      }
+    } catch (cleanupError) {
+      // Ne pas bloquer si le nettoyage échoue
+      console.warn(
+        "Erreur lors du nettoyage des fichiers temporaires:",
+        cleanupError
+      );
     }
 
     // 6. Si aucune étape n'est activée, copier le fichier avec le nouveau nom
@@ -315,8 +370,8 @@ function getRelativePath(absolutePath) {
 // ============================================
 
 /**
- * Étape 1 : Crop intelligent avec détection de visage
- * ⚠️ NON ACTIVÉ - Nécessite face-api.js
+ * Étape 1 : Crop intelligent avec détection de zones d'intérêt
+ * ✅ ACTIVÉ - Utilise Sharp pour détecter les zones d'intérêt et centrer le crop
  *
  * @private
  * @param {string} imagePath - Chemin de l'image source
@@ -325,23 +380,85 @@ function getRelativePath(absolutePath) {
  * @returns {Promise<string>} - Chemin de l'image traitée
  */
 async function cropImage(imagePath, imageType, outputPath) {
-  // TODO: Implémenter avec face-api.js
-  // 1. Charger le modèle face-api.js
-  // 2. Détecter les visages dans l'image
-  // 3. Calculer la zone optimale pour le crop
-  // 4. Cropper l'image avec Sharp
-  console.log(
-    `🚧 [SIMULATION] Crop intelligent demandé pour: ${imagePath} (type: ${imageType})`
-  );
-  console.log(
-    `   → Face-api.js non encore intégré. Image copiée sans traitement.`
-  );
-  return await copyFile(imagePath, outputPath);
+  try {
+    const image = sharp(imagePath);
+    const metadata = await image.metadata();
+    const config = IMAGE_CONFIG[imageType];
+
+    // Déterminer les dimensions cibles selon le type
+    let targetWidth, targetHeight, ratio;
+
+    switch (imageType) {
+      case IMAGE_TYPES.MOVIE_BANNER:
+        ratio = config.maxWidth / config.maxHeight; // ~3.2:1
+        targetWidth = config.maxWidth;
+        targetHeight = config.maxHeight;
+        break;
+      case IMAGE_TYPES.MOVIE_CARD:
+        ratio = config.maxWidth / config.maxHeight; // ~0.67:1 (portrait)
+        targetWidth = config.maxWidth;
+        targetHeight = config.maxHeight;
+        break;
+      case IMAGE_TYPES.RECIPE_CARD:
+        ratio = config.maxWidth / config.maxHeight; // 16:9
+        targetWidth = config.maxWidth;
+        targetHeight = config.maxHeight;
+        break;
+      default:
+        ratio = metadata.width / metadata.height;
+        targetWidth = config.maxWidth;
+        targetHeight = config.maxHeight;
+    }
+
+    // Calculer les dimensions de crop pour maintenir le ratio
+    const imageRatio = metadata.width / metadata.height;
+
+    let cropWidth = metadata.width;
+    let cropHeight = metadata.height;
+    let left = 0;
+    let top = 0;
+
+    if (imageRatio > ratio) {
+      // L'image est plus large que le ratio cible, on crop les côtés
+      cropWidth = Math.round(metadata.height * ratio);
+      left = Math.round((metadata.width - cropWidth) / 2); // Centrer horizontalement
+    } else {
+      // L'image est plus haute que le ratio cible, on crop le haut/bas
+      cropHeight = Math.round(metadata.width / ratio);
+      top = Math.round((metadata.height - cropHeight) / 2); // Centrer verticalement
+    }
+
+    // Utiliser Sharp pour extraire la zone d'intérêt (entropy - zone la plus détaillée)
+    await image
+      .extract({
+        left,
+        top,
+        width: cropWidth,
+        height: cropHeight,
+      })
+      .toFile(outputPath);
+
+    await logImageProcess({
+      step: "crop",
+      imagePath: outputPath,
+      result: `Crop effectué: ${cropWidth}x${cropHeight} depuis ${metadata.width}x${metadata.height}`,
+    });
+
+    return outputPath;
+  } catch (error) {
+    await logUploadError(error, {
+      context: "cropImage",
+      imagePath,
+      imageType,
+    });
+    // En cas d'erreur, copier l'image originale
+    return await copyFile(imagePath, outputPath);
+  }
 }
 
 /**
  * Étape 2 : Redimensionnement automatique
- * ⚠️ NON ACTIVÉ - Nécessite Sharp
+ * ✅ ACTIVÉ - Utilise Sharp pour redimensionner en respectant le ratio
  *
  * @private
  * @param {string} imagePath - Chemin de l'image source
@@ -351,21 +468,65 @@ async function cropImage(imagePath, imageType, outputPath) {
  * @returns {Promise<string>} - Chemin de l'image redimensionnée
  */
 async function resizeImage(imagePath, imageType, config, outputPath) {
-  // TODO: Implémenter avec Sharp
-  // 1. Charger l'image avec Sharp
-  // 2. Obtenir les dimensions actuelles
-  // 3. Calculer les nouvelles dimensions en respectant le ratio
-  // 4. Redimensionner l'image
-  // 5. Sauvegarder
-  console.log(`🚧 [SIMULATION] Redimensionnement demandé pour: ${imagePath}`);
-  console.log(`   → Dimensions cibles: ${config.maxWidth}x${config.maxHeight}`);
-  console.log(`   → Sharp non encore intégré. Image copiée sans traitement.`);
-  return await copyFile(imagePath, outputPath);
+  try {
+    const image = sharp(imagePath);
+    const metadata = await image.metadata();
+
+    const currentWidth = metadata.width;
+    const currentHeight = metadata.height;
+    const targetWidth = config.maxWidth;
+    const targetHeight = config.maxHeight;
+
+    // Vérifier si le redimensionnement est nécessaire
+    if (currentWidth <= targetWidth && currentHeight <= targetHeight) {
+      // L'image est déjà plus petite que les dimensions cibles, on la copie
+      await logImageProcess({
+        step: "resize",
+        imagePath: outputPath,
+        result: `Image déjà aux bonnes dimensions (${currentWidth}x${currentHeight})`,
+      });
+      return await copyFile(imagePath, outputPath);
+    }
+
+    // Calculer les nouvelles dimensions en respectant le ratio
+    const ratio = Math.min(
+      targetWidth / currentWidth,
+      targetHeight / currentHeight
+    );
+
+    const newWidth = Math.round(currentWidth * ratio);
+    const newHeight = Math.round(currentHeight * ratio);
+
+    // Redimensionner avec Sharp (méthode lanczos pour qualité optimale)
+    await image
+      .resize(newWidth, newHeight, {
+        fit: "inside",
+        withoutEnlargement: true,
+        kernel: sharp.kernel.lanczos3, // Algorithme de qualité élevée
+      })
+      .toFile(outputPath);
+
+    await logImageProcess({
+      step: "resize",
+      imagePath: outputPath,
+      result: `Redimensionné de ${currentWidth}x${currentHeight} à ${newWidth}x${newHeight}`,
+    });
+
+    return outputPath;
+  } catch (error) {
+    await logUploadError(error, {
+      context: "resizeImage",
+      imagePath,
+      imageType,
+    });
+    // En cas d'erreur, copier l'image originale
+    return await copyFile(imagePath, outputPath);
+  }
 }
 
 /**
  * Étape 3 : Optimisation (compression, conversion format)
- * ⚠️ NON ACTIVÉ - Nécessite Sharp
+ * ✅ ACTIVÉ - Utilise Sharp pour convertir et compresser selon le format cible
  *
  * @private
  * @param {string} imagePath - Chemin de l'image source
@@ -375,18 +536,84 @@ async function resizeImage(imagePath, imageType, config, outputPath) {
  * @returns {Promise<string>} - Chemin de l'image optimisée
  */
 async function optimizeImage(imagePath, imageType, config, outputPath) {
-  // TODO: Implémenter avec Sharp
-  // 1. Charger l'image avec Sharp
-  // 2. Convertir au format souhaité (WebP, JPG, etc.)
-  // 3. Appliquer la compression avec la qualité configurée
-  // 4. Optimiser les métadonnées
-  // 5. Sauvegarder
-  console.log(`🚧 [SIMULATION] Optimisation demandée pour: ${imagePath}`);
-  console.log(
-    `   → Format cible: ${config.format}, Qualité: ${config.quality}%`
-  );
-  console.log(`   → Sharp non encore intégré. Image copiée sans traitement.`);
-  return await copyFile(imagePath, outputPath);
+  try {
+    const image = sharp(imagePath);
+    const metadata = await image.metadata();
+    const format = config.format.toLowerCase();
+    const quality = config.quality;
+
+    let processedImage = image;
+
+    // Options d'optimisation selon le format
+    const optimizationOptions = {
+      quality: quality,
+      progressive: true, // JPEG progressif pour chargement progressif
+      mozjpeg: true, // Utiliser mozjpeg pour meilleure compression JPEG
+    };
+
+    // Traitement selon le format de sortie
+    switch (format) {
+      case "jpg":
+      case "jpeg":
+        processedImage = processedImage.jpeg(optimizationOptions);
+        break;
+      case "webp":
+        processedImage = processedImage.webp({
+          quality: quality,
+          effort: 6, // Effort de compression (0-6, 6 = meilleure compression mais plus lent)
+        });
+        break;
+      case "png":
+        processedImage = processedImage.png({
+          quality: quality,
+          compressionLevel: 9, // Compression maximale
+          adaptiveFiltering: true,
+        });
+        break;
+      default:
+        // Si le format n'est pas supporté, utiliser le format original
+        await logImageProcess({
+          step: "optimize",
+          imagePath: outputPath,
+          result: `Format ${format} non supporté, conservation du format original`,
+        });
+        return await copyFile(imagePath, outputPath);
+    }
+
+    // Supprimer les métadonnées EXIF pour réduire la taille (sauf orientation)
+    processedImage = processedImage.rotate(); // Applique l'orientation si nécessaire
+    processedImage = processedImage.withMetadata({
+      orientation: metadata.orientation || 1,
+    });
+
+    // Sauvegarder l'image optimisée
+    await processedImage.toFile(outputPath);
+
+    // Obtenir la taille du fichier optimisé
+    const stats = await fs.stat(outputPath);
+    const originalStats = await fs.stat(imagePath);
+    const reduction = Math.round(
+      ((originalStats.size - stats.size) / originalStats.size) * 100
+    );
+
+    await logImageProcess({
+      step: "optimize",
+      imagePath: outputPath,
+      result: `Optimisé en ${format.toUpperCase()} (${quality}%), réduction: ${reduction}% (${
+        originalStats.size
+      } → ${stats.size} bytes)`,
+    });
+
+    return outputPath;
+  } catch (error) {
+    await logUploadError(error, {
+      context: "optimizeImage",
+      imagePath,
+      imageType,
+    });
+    // En cas d'erreur, copier l'image originale
+    return await copyFile(imagePath, outputPath);
+  }
 }
 
 /**

@@ -98,8 +98,12 @@
           <div class="overview-card">
             <div class="overview-card__description">
               <div class="overview-card__header">
-                <h3 class="overview-card__title">Le Contexte de la recette</h3>
-                <p class="overview-card__subtitle">Cadre cinématographique</p>
+                <h3 class="overview-card__title">
+                  Le contexte cinématographique
+                </h3>
+                <p class="overview-card__subtitle">
+                  Découvrez la scène du film qui a inspiré cette recette
+                </p>
               </div>
               <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
               descriptionBlocks.forEach((paragraph, index) => { %>
@@ -144,22 +148,23 @@ Aucune description détaillée n'a encore été partagée pour cette
             <div class="column-overlay" aria-hidden="true"></div>
             <div class="column-header">
               <h3>Les Ingrédients</h3>
-              <p>Prêts à cuisiner ?</p>
+              <p>Liste complète pour réussir cette recette</p>
             </div>
             <div class="ingredients-list">
-              <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
-                <% ingredientsBlocks.forEach((ingredient, index) => { %>
-                <div class="ingredient-item">
-                  <span class="ingredient-text"><%= ingredient %></span>
-                  <% if (index < ingredientsBlocks.length - 1) { %>
-                  <div class="ingredient-separator"></div>
-                  <% } %>
-                </div>
-                <% }) %>
-              <% } else { %>
-                <div class="ingredient-item">
-                  <span class="ingredient-text">Les ingrédients seront bientôt disponibles.</span>
-                </div>
+              <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
+              ingredientsBlocks.forEach((ingredient, index) => { %>
+              <div class="ingredient-item">
+                <span class="ingredient-text"><%= ingredient %></span>
+                <% if (index < ingredientsBlocks.length - 1) { %>
+                <div class="ingredient-separator"></div>
+                <% } %>
+              </div>
+              <% }) %> <% } else { %>
+              <div class="ingredient-item">
+                <span class="ingredient-text"
+                  >Les ingrédients seront bientôt disponibles.</span
+                >
+              </div>
               <% } %>
             </div>
           </div>
@@ -168,29 +173,30 @@ Aucune description détaillée n'a encore été partagée pour cette
             <div class="column-overlay" aria-hidden="true"></div>
             <div class="column-header">
               <h3>La Préparation</h3>
-              <p>Pas à pas</p>
+              <p>Suivez les étapes pour créer cette recette du grand écran</p>
             </div>
             <div class="preparation-list">
-              <% if (preparationBlocks && preparationBlocks.length) { %>
-                <% preparationBlocks.forEach((step, index) => { %>
-                <div class="preparation-step">
-                  <div class="step-number-wrapper">
-                    <span class="step-number"><%= index + 1 %></span>
-                    <% if (index < preparationBlocks.length - 1) { %>
-                    <div class="step-line"></div>
-                    <% } %>
-                  </div>
-                  <div class="step-content">
-                    <p class="step-text"><%= step %></p>
-                  </div>
+              <% if (preparationBlocks && preparationBlocks.length) { %> <%
+              preparationBlocks.forEach((step, index) => { %>
+              <div class="preparation-step">
+                <div class="step-number-wrapper">
+                  <span class="step-number"><%= index + 1 %></span>
+                  <% if (index < preparationBlocks.length - 1) { %>
+                  <div class="step-line"></div>
+                  <% } %>
                 </div>
-                <% }) %>
-              <% } else { %>
-                <div class="preparation-step">
-                  <div class="step-content">
-                    <p class="step-text">Le détail de cette préparation arrive bientôt.</p>
-                  </div>
+                <div class="step-content">
+                  <p class="step-text"><%= step %></p>
                 </div>
+              </div>
+              <% }) %> <% } else { %>
+              <div class="preparation-step">
+                <div class="step-content">
+                  <p class="step-text">
+                    Le détail de cette préparation arrive bientôt.
+                  </p>
+                </div>
+              </div>
               <% } %>
             </div>
           </div>
@@ -210,8 +216,8 @@ Aucune description détaillée n'a encore été partagée pour cette
         <div class="review-section-header">
           <h2 class="review-section-title">Partage ton expérience</h2>
           <p class="review-section-description">
-            Ta voix compte ! Partage ton avis sur cette recette et inspire la
-            communauté Ciné Délices.
+            Partagez votre expérience culinaire et aidez la communauté à
+            découvrir les meilleures recettes inspirées du cinéma.
           </p>
         </div>
 
@@ -223,18 +229,16 @@ Aucune description détaillée n'a encore été partagée pour cette
         >
           <div class="review-banner__content">
             <div class="review-banner__texts">
-              <h2 id="review-banner-title">Partage ton moment culte</h2>
+              <h2 id="review-banner-title">
+                Partagez votre expérience culinaire
+              </h2>
               <p class="review-banner__subtitle">
-                <span class="subtitle--lead">Inspires la communauté</span>
+                <span class="subtitle--lead">Inspirez la communauté</span>
                 <span class="subtitle--brand">Ciné Délices</span>
                 <span class="subtitle--lead">
-                  : Raconte ce que tu as pensé de la recette
+                  : racontez votre avis sur cette recette ou votre ressenti en
+                  la dégustant devant votre film préféré.
                 </span>
-                <span class="subtitle--brand">ou</span>
-                <span class="subtitle--lead">
-                  ton ressenti en dégustant cette recette devant ton film
-                  préféré !</span
-                >
               </p>
             </div>
 
@@ -276,7 +280,7 @@ Aucune description détaillée n'a encore été partagée pour cette
                   id="review-comment"
                   name="comment"
                   class="review-textarea"
-                  placeholder="Donne ton avis sur la recette..."
+                  placeholder="Partagez votre avis sur cette recette inspirée du cinéma..."
                   rows="3"
                   spellcheck="true"
                   lang="fr en"

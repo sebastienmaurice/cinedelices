@@ -8,6 +8,7 @@ import moviesRouter from "./movies.route.js";
 import recipesRouter from "./recipes-movie.route.js";
 import addRecipesMoviesRouter from "./add-recipes-movies.route.js";
 import contactAboutRouter from "./contact-about.route.js";
+import tmdbRouter from "./tmdb.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
@@ -21,5 +22,6 @@ router.use("/admin", isAdmin, adminRouter); // Ajout du préfixe /admin pour les
 router.use("/recipes-movie", recipesRouter); // Ajout du préfixe /recipes pour les routes recipes
 router.use("/add-recipes-movies", isLogged, addRecipesMoviesRouter); // Route pour ajouter un film et une recette
 router.use("/contact-about", contactAboutRouter); // Route pour la page de contact et à propos
+router.use("/api/tmdb", isLogged, tmdbRouter); // Route API pour TMDB (protégée par authentification)
 
 export default router;

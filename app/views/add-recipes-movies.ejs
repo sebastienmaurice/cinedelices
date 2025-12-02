@@ -55,7 +55,7 @@
       <!-- SECTION 1: AJOUT DU FILM -->
       <section class="add-film-section">
         <div class="section-header-film">
-          <h2>1. J'ajoute mon film</h2>
+          <h2>1. J'ajoute mon film ou ma série</h2>
         </div>
 
         <!-- Formulaire d'ajout de film (pour prévisualisation seulement) -->
@@ -64,52 +64,86 @@
             <div class="overlay"></div>
             <div class="film-inputs-row">
               <!-- Wrapper pour l'autocomplétion avec position relative -->
-              <div class="film-name-input-wrapper">
-                <input type="text" name="title" id="film-name"
-                class="form-input" spellcheck="true" lang="fr en"
-                autocomplete="off" <% if (typeof newMovie === "undefined" ||
-                !newMovie || newMovie.length === 0) { %> placeholder="Nom du
-                film" <% } else { %> placeholder="<%= newMovie.title %>" <% } %>
-                value="" />
-                <!-- Dropdown pour les résultats de recherche -->
-                <div
-                  id="film-search-results"
-                  class="film-search-results"
-                  aria-live="polite"
-                ></div>
+              <div class="film-input-group">
+                <label for="film-name" class="film-input-label">
+                  <i class="fa-solid fa-film"></i>
+                  <span>Nom du film ou de la série</span>
+                </label>
+                <div class="film-name-input-wrapper">
+                  <input type="text" name="title" id="film-name"
+                  class="form-input film-input-enhanced" spellcheck="true"
+                  lang="fr en" autocomplete="off" <% if (typeof newMovie ===
+                  "undefined" || !newMovie || newMovie.length === 0) { %>
+                  placeholder="Ex: Retour vers le futur, Breaking Bad..." <% }
+                  else { %> placeholder="<%= newMovie.title %>" <% } %> value=""
+                  />
+                  <!-- Dropdown pour les résultats de recherche -->
+                  <div
+                    id="film-search-results"
+                    class="film-search-results"
+                    aria-live="polite"
+                  ></div>
+                </div>
               </div>
 
-              <input type="number" name="year" id="film-year" class="form-input"
-              min="1888" max="<%= new Date().getFullYear() + 5 %>" <% if (typeof
-              newMovie === "undefined" || !newMovie || newMovie.length === 0) {
-              %> placeholder="Année du film" <% } else { %> placeholder="<%=
-              newMovie.year %>" <% } %> value="" />
-              <select name="genre" id="film-genre" class="form-select">
-                <% if (typeof newMovie === "undefined" || !newMovie ||
-                newMovie.length === 0) { %>
-                <option value="">Genre</option>
-                <% } else { %>
-                <option value=""><%= newMovie.genre %></option>
-                <% } %>
+              <div class="film-input-group">
+                <label for="film-year" class="film-input-label">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <span>Année de sortie</span>
+                </label>
+                <input type="number" name="year" id="film-year"
+                class="form-input film-input-enhanced" min="1888" max="<%= new
+                Date().getFullYear() + 5 %>" <% if (typeof newMovie ===
+                "undefined" || !newMovie || newMovie.length === 0) { %>
+                placeholder="Ex: 1985, 2008..." <% } else { %> placeholder="<%=
+                newMovie.year %>" <% } %> value="" />
+              </div>
 
-                <option value="action">Action</option>
-                <option value="animé">Animé</option>
-                <option value="aventure">Aventure</option>
-                <option value="comédie">Comédie</option>
-                <option value="drame">Drame</option>
-                <option value="fantastique">Fantastique</option>
-                <option value="horreur">Horreur</option>
-                <option value="romantique">Romantique</option>
-                <option value="science-fiction">Science-fiction</option>
-                <option value="thriller">Thriller</option>
-              </select>
+              <div class="film-input-group">
+                <label for="film-genre" class="film-input-label">
+                  <i class="fa-solid fa-tags"></i>
+                  <span>Genre</span>
+                </label>
+                <select
+                  name="genre"
+                  id="film-genre"
+                  class="form-select film-input-enhanced"
+                >
+                  <% if (typeof newMovie === "undefined" || !newMovie ||
+                  newMovie.length === 0) { %>
+                  <option value="">Sélectionner un genre</option>
+                  <% } else { %>
+                  <option value=""><%= newMovie.genre %></option>
+                  <% } %>
+
+                  <option value="action">Action</option>
+                  <option value="animation">Animation</option>
+                  <option value="aventure">Aventure</option>
+                  <option value="comédie">Comédie</option>
+                  <option value="crime">Crime</option>
+                  <option value="documentaire">Documentaire</option>
+                  <option value="drame">Drame</option>
+                  <option value="familial">Familial</option>
+                  <option value="fantastique">Fantastique</option>
+                  <option value="guerre">Guerre</option>
+                  <option value="histoire">Histoire</option>
+                  <option value="horreur">Horreur</option>
+                  <option value="musique">Musique</option>
+                  <option value="mystère">Mystère</option>
+                  <option value="romance">Romance</option>
+                  <option value="science-fiction">Science-Fiction</option>
+                  <option value="thriller">Thriller</option>
+                  <option value="téléfilm">Téléfilm</option>
+                  <option value="western">Western</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <div class="form-footer">
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Une fois votre film ou série renseigné, vous pourrez passer à
+              l'ajout de votre recette inspirée du grand écran.
             </p>
             <% if (typeof newMovie === "undefined" || !newMovie ||
             newMovie.length === 0) { %>
@@ -144,6 +178,17 @@
           <input type="hidden" name="title" id="film-title-hidden" value="" />
           <input type="hidden" name="year" id="film-year-hidden" value="" />
           <input type="hidden" name="genre" id="film-genre-hidden" value="" />
+
+          <!-- Champs TMDB pour validation intelligente -->
+          <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
+          <input type="hidden" name="titleFR" id="titleFR-hidden" value="" />
+          <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="" />
+          <input
+            type="hidden"
+            name="tmdbGenre"
+            id="tmdbGenre-hidden"
+            value=""
+          />
 
           <!-- Container 3 colonnes -->
           <div class="recipe-form-container">
@@ -194,10 +239,9 @@
               <div class="overlay"></div>
               <h3>Ma recette</h3>
               <p class="recipe-description">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                Partagez votre recette inspirée du film ou de la série que vous
+                avez sélectionné. Décrivez-la clairement pour que la communauté
+                Ciné Délices puisse la cuisiner à son tour.
               </p>
               <input
                 type="text"
@@ -261,7 +305,8 @@
                   <i class="fa-solid fa-upload btn-upload-icon"></i>
                 </button>
                 <p class="image-copyright">
-                  * sous reserve de droits d'auteur et d'accord par Ciné Délices
+                  * Votre image sera validée par Ciné Délices avant publication
+                  (respect des droits d'auteur requis).
                 </p>
               </div>
               <h3 class="recipe-context-title">Contexte de la recette</h3>
@@ -269,7 +314,7 @@
                 name="description"
                 id="recipe-context"
                 class="recipe-context-textarea"
-                placeholder="Racontes le moment où se situe la recette dans le film"
+                placeholder="Décrivez la scène du film où cette recette apparaît ou qui vous a inspiré..."
                 spellcheck="true"
                 lang="fr"
               ></textarea>
@@ -288,7 +333,7 @@
                 name="ingredients"
                 id="ingredients"
                 class="recipe-textarea"
-                placeholder="Liste des ingrédients..."
+                placeholder="Ex: 200g de farine, 3 œufs, 100g de sucre..."
                 spellcheck="true"
                 lang="fr"
               ></textarea>
@@ -300,7 +345,7 @@
                 name="preparation"
                 id="preparation"
                 class="recipe-textarea"
-                placeholder="Étapes de préparation..."
+                placeholder="Étape 1 : Préchauffer le four à 180°C...&#10;Étape 2 : Mélanger les ingrédients..."
                 spellcheck="true"
                 lang="fr"
               ></textarea>
@@ -310,7 +355,8 @@
           <!-- Footer du formulaire -->
           <div class="form-validation-footer">
             <p class="validation-note">
-              * sous reserves de validation par Ciné Délices
+              * Votre recette sera soumise à validation par l'équipe Ciné
+              Délices avant publication.
             </p>
             <button
               type="submit"
@@ -339,5 +385,9 @@
     <script src="/js/unified-form-handler.js" defer></script>
     <!-- gestionnaire bouton "Je passe à la recette" -->
     <script src="/js/film-preview-handler.js" defer></script>
+    <!-- validation intelligente TMDB -->
+    <script src="/js/tmdb-validator.js" defer></script>
+    <!-- pré-remplissage formulaire depuis TMDB -->
+    <script src="/js/tmdb-form-prefill.js" defer></script>
   </body>
 </html>

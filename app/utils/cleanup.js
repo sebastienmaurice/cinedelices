@@ -242,3 +242,4 @@ export async function cleanupTempFiles(maxAgeHours = 24, dryRun = true) {
     `Nettoyage des fichiers temporaires (non implémenté pour l'instant)`
   );
 }
+

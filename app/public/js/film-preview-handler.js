@@ -205,3 +205,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Gestionnaire bouton 'Je passe à la recette' initialisé");
 });
+

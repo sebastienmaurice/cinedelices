@@ -48,3 +48,4 @@ export const MULTER_COMMON_CONFIG = {
     fileSize: MAX_FILE_SIZE,
   },
 };
+

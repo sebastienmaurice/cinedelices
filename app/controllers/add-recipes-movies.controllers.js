@@ -1,6 +1,7 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { logUpload, logUploadError } from "../utils/logger.js";
 import { IMAGE_TYPES } from "../utils/image-utils.js";
+import { processImage } from "../utils/image-pipeline.js";
 import { Op } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 
@@ -111,14 +112,8 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      //! Récupération du chemin de l'image uploadée (si présente)
+      //! Créer la recette d'abord (sans image pour avoir l'ID)
       let imagePath = null;
-      if (req.file) {
-        // Chemin relatif pour l'affichage dans le HTML
-        imagePath = `/images/recipes/cards/${req.file.filename}`;
-      }
-
-      // Ajout de la recette à la base de données
 
       const newRecipe = await Recipe.create({
         name: name,
@@ -129,24 +124,48 @@ const addRecipesMoviesController = {
         time: time,
         difficulty: difficulty,
         id_movie: id_movie,
-        picture: imagePath, // !Ajout du chemin de l'image (colonne 'picture')
+        picture: null, // Sera mis à jour après traitement de l'image
       });
 
-      // Journaliser l'upload d'image après création de la recette (pour avoir l'ID)
+      //! Traitement de l'image avec le pipeline (après création pour avoir l'ID)
       if (req.file && newRecipe.id) {
         try {
+          // Utiliser le pipeline pour traiter l'image (crop, resize, optimize)
+          const imageResult = await processImage({
+            imagePath: req.file.path, // Chemin absolu de l'image uploadée
+            imageType: IMAGE_TYPES.RECIPE_CARD,
+            entityId: newRecipe.id,
+            entityType: "recipe",
+            enableCrop: true,
+            enableResize: true,
+            enableOptimize: true,
+          });
+
+          // Mettre à jour la recette avec le chemin de l'image traitée
+          imagePath = imageResult.relativePath;
+          await newRecipe.update({ picture: imagePath });
+
+          // Journaliser l'upload d'image
           await logUpload({
             type: IMAGE_TYPES.RECIPE_CARD,
-            filename: req.file.filename,
+            filename: imageResult.filename,
             originalName: req.file.originalname,
             destination: req.file.destination,
             size: req.file.size,
             mimetype: req.file.mimetype,
             entityId: newRecipe.id,
           });
-        } catch (logError) {
-          // Ne pas bloquer si la journalisation échoue
-          console.error("Erreur lors de la journalisation:", logError);
+        } catch (imageError) {
+          // En cas d'erreur de traitement, utiliser l'image originale
+          console.error("Erreur lors du traitement de l'image:", imageError);
+          imagePath = `/images/recipes/cards/${req.file.filename}`;
+          await newRecipe.update({ picture: imagePath });
+
+          await logUploadError(imageError, {
+            type: IMAGE_TYPES.RECIPE_CARD,
+            entityId: newRecipe.id,
+            action: "addRecipe-image-processing",
+          });
         }
       }
 
@@ -191,6 +210,8 @@ const addRecipesMoviesController = {
         title, // Titre du film (si nouveau film)
         year, // Année du film
         genre, // Genre du film
+        tmdbId, // ID TMDB pour validation intelligente
+        titleFR, // Titre français depuis TMDB
         // Données de la recette
         name,
         description,
@@ -229,47 +250,56 @@ const addRecipesMoviesController = {
           });
         }
 
-        // Vérifier si un film similaire existe déjà (détection doublons)
-        // On cherche seulement les films non validés pour éviter les doublons
-        const existingMovie = await Movie.findOne({
+        // VALIDATION TMDB : Bloquer la création si aucun tmdbId (empêcher films fictifs)
+        if (!tmdbId || tmdbId.trim() === "") {
+          await transaction.rollback();
+          return res.status(400).render("add-recipes-movies", {
+            role: req.userRole,
+            error: true,
+            errorMessage:
+              "Aucun film correspondant trouvé. Veuillez vérifier le titre du film.",
+          });
+        }
+
+        // Vérifier si un film avec ce tmdb_id existe déjà
+        const existingMovieByTmdbId = await Movie.findOne({
           where: {
-            title: {
-              [Op.iLike]: title.trim(),
-            },
-            year: parseInt(year),
-            status: false, // Seulement les films non validés
+            tmdb_id: parseInt(tmdbId),
           },
           transaction,
         });
 
-        if (existingMovie) {
-          // Film similaire non validé trouvé : utiliser celui-ci
-          movie = existingMovie;
-          movieId = existingMovie.id;
+        if (existingMovieByTmdbId) {
+          // Film avec ce tmdb_id existe déjà : utiliser celui-ci (évite doublons)
+          movie = existingMovieByTmdbId;
+          movieId = existingMovieByTmdbId.id;
         } else {
-          // Vérifier si un film validé existe déjà
-          const validatedMovie = await Movie.findOne({
+          // Vérifier si un film similaire existe déjà (détection doublons par titre/année)
+          const existingMovie = await Movie.findOne({
             where: {
               title: {
-                [Op.iLike]: title.trim(),
+                [Op.iLike]: (titleFR || title).trim(),
               },
               year: parseInt(year),
-              status: true, // Film déjà validé
+              status: false, // Seulement les films non validés
             },
             transaction,
           });
 
-          if (validatedMovie) {
-            // Film déjà validé : utiliser celui-ci (pas de doublon)
-            movie = validatedMovie;
-            movieId = validatedMovie.id;
+          if (existingMovie) {
+            // Film similaire non validé trouvé : mettre à jour avec tmdb_id
+            existingMovie.tmdb_id = parseInt(tmdbId);
+            await existingMovie.save({ transaction });
+            movie = existingMovie;
+            movieId = existingMovie.id;
           } else {
-            // Créer le nouveau film
+            // Créer le nouveau film avec tmdb_id
             movie = await Movie.create(
               {
-                title: title.trim(),
+                title: (titleFR || title).trim(), // Utiliser le titre FR de TMDB si disponible
                 year: parseInt(year),
                 genre: genre.trim(),
+                tmdb_id: parseInt(tmdbId),
                 status: false, // En attente de validation admin
               },
               { transaction }
@@ -297,13 +327,7 @@ const addRecipesMoviesController = {
         });
       }
 
-      // 4. Gérer l'image de la recette (si présente)
-      let imagePath = null;
-      if (req.file) {
-        imagePath = `/images/recipes/cards/${req.file.filename}`;
-      }
-
-      // 5. Créer la recette
+      // 4. Créer la recette d'abord (sans image pour avoir l'ID)
       const newRecipe = await Recipe.create(
         {
           name: name.trim(),
@@ -314,27 +338,52 @@ const addRecipesMoviesController = {
           time: parseInt(time),
           difficulty: difficulty.trim(),
           id_movie: movieId,
-          picture: imagePath,
+          picture: null, // Sera mis à jour après traitement de l'image
           status: false, // En attente de validation admin
         },
         { transaction }
       );
 
-      // 6. Journaliser l'upload d'image après création de la recette
+      // 5. Gérer l'image de la recette avec le pipeline (après création pour avoir l'ID)
+      let imagePath = null;
       if (req.file && newRecipe.id) {
         try {
+          // Utiliser le pipeline pour traiter l'image (crop, resize, optimize)
+          const imageResult = await processImage({
+            imagePath: req.file.path, // Chemin absolu de l'image uploadée
+            imageType: IMAGE_TYPES.RECIPE_CARD,
+            entityId: newRecipe.id,
+            entityType: "recipe",
+            enableCrop: true,
+            enableResize: true,
+            enableOptimize: true,
+          });
+
+          // Mettre à jour la recette avec le chemin de l'image traitée (dans la transaction)
+          imagePath = imageResult.relativePath;
+          await newRecipe.update({ picture: imagePath }, { transaction });
+
+          // Journaliser l'upload d'image
           await logUpload({
             type: IMAGE_TYPES.RECIPE_CARD,
-            filename: req.file.filename,
+            filename: imageResult.filename,
             originalName: req.file.originalname,
             destination: req.file.destination,
             size: req.file.size,
             mimetype: req.file.mimetype,
             entityId: newRecipe.id,
           });
-        } catch (logError) {
-          console.error("Erreur lors de la journalisation:", logError);
-          // Ne pas bloquer si la journalisation échoue
+        } catch (imageError) {
+          // En cas d'erreur de traitement, utiliser l'image originale
+          console.error("Erreur lors du traitement de l'image:", imageError);
+          imagePath = `/images/recipes/cards/${req.file.filename}`;
+          await newRecipe.update({ picture: imagePath }, { transaction });
+
+          await logUploadError(imageError, {
+            type: IMAGE_TYPES.RECIPE_CARD,
+            entityId: newRecipe.id,
+            action: "addMovieAndRecipe-image-processing",
+          });
         }
       }
 

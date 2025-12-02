@@ -228,3 +228,4 @@ initLogger().catch((error) => {
 
 // Export des niveaux pour utilisation externe
 export { LOG_LEVELS };
+

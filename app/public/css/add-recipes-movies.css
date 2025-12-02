@@ -113,17 +113,29 @@
 
 .film-form-container {
   position: relative;
-  background-color: var(--dore-popcorn);
-  border: 1px solid rgba(236, 239, 241, 0.2);
+  background: linear-gradient(
+    135deg,
+    var(--dore-popcorn) 0%,
+    rgba(214, 191, 120, 0.95) 50%,
+    var(--dore-popcorn) 100%
+  );
+  border: 2px solid rgba(198, 166, 100, 0.4);
   border-radius: 15px;
-  padding: 1.5rem;
+  padding: 2rem;
   margin: -60px 2rem 1.5rem 2rem;
   color: #eceff1;
-  overflow: hidden;
+  overflow: visible; /* Permettre au dropdown de s'afficher au-dessus */
   isolation: isolate;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(198, 166, 100, 0.2),
-    0 4px 20px rgba(198, 166, 100, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(198, 166, 100, 0.3),
+    0 6px 24px rgba(198, 166, 100, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.film-form-container:hover {
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.55),
+    0 0 0 2px rgba(198, 166, 100, 0.4), 0 8px 28px rgba(198, 166, 100, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 /* Overlay pour effet glassmorphism sur .film-form-container */
@@ -157,14 +169,349 @@
 
 .film-inputs-row {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  gap: 1.5rem;
+  align-items: flex-start;
   margin: 0;
+  position: relative;
+  overflow: visible; /* Permettre au dropdown de dépasser du row */
+}
+
+/* Groupe d'input avec label */
+.film-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+/* Label avec icône pour chaque champ */
+.film-input-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--bleu-nuit);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  margin: 0;
+  opacity: 0.95;
+  transition: all 0.3s ease;
+}
+
+.film-input-label i {
+  color: var(--dore-popcorn);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.film-input-group:hover .film-input-label,
+.film-input-group:focus-within .film-input-label {
+  opacity: 1;
+  color: var(--bleu-nuit);
+}
+
+.film-input-group:hover .film-input-label i,
+.film-input-group:focus-within .film-input-label i {
+  color: var(--dore-fonce);
+  transform: scale(1.1);
 }
 
 .film-inputs-row .form-input,
 .film-inputs-row .form-select {
   flex: 1;
+  width: 100%;
+}
+
+/* Wrapper pour l'input de recherche avec autocomplétion */
+.film-name-input-wrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  z-index: 1001; /* Plus élevé que le container pour que le dropdown apparaisse au-dessus */
+  overflow: visible; /* Permettre au dropdown de dépasser */
+}
+
+/* ====================================================== */
+/* ========== AMÉLIORATIONS VISUELLES INPUTS =========== */
+/* ====================================================== */
+/* Styles améliorés pour les inputs de la section film */
+.film-form-container .form-input,
+.film-form-container .form-select {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 0.98) 0%,
+    var(--beige-icecream) 100%
+  ) !important;
+  border: 2px solid rgba(198, 166, 100, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.film-form-container .form-input:hover,
+.film-form-container .form-select:hover {
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
+    0 0 0 2px rgba(198, 166, 100, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 1) 0%,
+    rgba(255, 255, 255, 0.98) 100%
+  ) !important;
+}
+
+.film-form-container .form-input:focus,
+.film-form-container .form-select:focus {
+  outline: none;
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
+    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
+    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
+  transform: translateY(-2px) scale(1.01) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 248, 235, 1) 100%
+  ) !important;
+}
+
+/* Inputs améliorés avec effets visuels */
+.film-input-enhanced {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.film-input-enhanced::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    var(--dore-popcorn) 0%,
+    var(--dore-fonce) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.film-input-enhanced:focus::before {
+  opacity: 1;
+}
+
+/* ====================================================== */
+/* ========== AUTOCOMPLÉTION FILM DANS FORMULAIRE ======== */
+/* ====================================================== */
+.film-search-results {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: rgba(13, 27, 42, 0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  border-radius: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1002; /* Augmenté pour être au-dessus du wrapper (1001) */
+  display: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease-out;
+}
+
+.film-search-results.active {
+  display: block;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.film-search-result-item {
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(236, 239, 241, 0.1);
+  transition: all 0.3s ease;
+}
+
+.film-search-result-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.film-search-result-item:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.film-search-result-item:hover {
+  background-color: rgba(198, 166, 100, 0.15);
+}
+
+.film-result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.film-result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dore-popcorn);
+  margin: 0;
+}
+
+.film-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--argent-ecran);
+  opacity: 0.8;
+}
+
+.film-result-year,
+.film-result-separator,
+.film-result-genre {
+  display: inline;
+}
+
+.film-result-separator {
+  opacity: 0.6;
+}
+
+.film-search-result-empty,
+.film-search-result-loading,
+.film-search-result-error {
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.film-result-message {
+  color: var(--argent-ecran);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.film-result-message i {
+  color: var(--dore-popcorn);
+}
+
+.film-result-help {
+  color: var(--argent-ecran);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.film-search-result-loading .film-result-content,
+.film-search-result-error .film-result-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--argent-ecran);
+}
+
+.film-search-result-loading i {
+  color: var(--dore-popcorn);
+}
+
+.film-search-result-error .film-result-content {
+  color: #ff6b6b;
+}
+
+.film-search-result-error i {
+  color: #ff6b6b;
+}
+
+/* ====================================================== */
+/* ========== MESSAGES DE CONFIRMATION/ERREUR =========== */
+/* ====================================================== */
+.alert {
+  margin: 1.5rem 2rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert-success {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.alert-success i {
+  color: #4caf50;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.alert-success p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.alert-info {
+  background: rgba(33, 150, 243, 0.15);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  color: #2196f3;
+}
+
+.alert-info i {
+  color: #2196f3;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.alert-info p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.alert-error {
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #f44336;
+}
+
+.alert-error i {
+  color: #f44336;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.alert-error p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .form-footer {
@@ -680,6 +1027,50 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Styles améliorés spécifiques pour les inputs de la section film */
+.film-form-container .form-input,
+.film-form-container .form-select {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 0.98) 0%,
+    var(--beige-icecream) 100%
+  ) !important;
+  border: 2px solid rgba(198, 166, 100, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Hover amélioré pour les inputs de la section film */
+.film-form-container .form-input:hover,
+.film-form-container .form-select:hover {
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
+    0 0 0 2px rgba(198, 166, 100, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 1) 0%,
+    rgba(255, 255, 255, 0.98) 100%
+  ) !important;
+}
+
+/* Focus amélioré pour les inputs de la section film */
+.film-form-container .form-input:focus,
+.film-form-container .form-select:focus {
+  outline: none;
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
+    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
+    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
+  transform: translateY(-2px) scale(1.01) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 248, 235, 1) 100%
+  ) !important;
+}
+
 .add-recipe-main .form-input:hover,
 .add-recipe-main .form-select:hover,
 .film-form-container .form-input:hover,
@@ -709,25 +1100,11 @@
 .film-form-container .form-select,
 .recipe-column-center .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 12px;
-  padding-right: 2.5rem;
+  /* Suppression de l'icône SVG personnalisée - design épuré */
+  background-image: none;
+  padding-right: 1rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-image 0.3s ease;
-}
-
-.add-recipe-main .form-select:hover,
-.film-form-container .form-select:hover,
-.recipe-column-center .form-select:hover {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c6a664' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
-}
-
-.add-recipe-main .form-select:focus,
-.film-form-container .form-select:focus,
-.recipe-column-center .form-select:focus {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c6a664' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ====================================================== */
@@ -745,7 +1122,15 @@
   }
 
   .film-inputs-row {
-    gap: 0.9rem;
+    gap: 1.25rem;
+  }
+
+  .film-input-label {
+    font-size: 0.85rem;
+  }
+
+  .film-input-label i {
+    font-size: 0.9rem;
   }
 
   .film-form-container .form-input,
@@ -814,8 +1199,20 @@
 
   .film-inputs-row {
     flex-direction: column;
-    gap: 0.875rem;
+    gap: 1rem;
     align-items: stretch;
+  }
+
+  .film-input-group {
+    width: 100%;
+  }
+
+  .film-input-label {
+    font-size: 0.85rem;
+  }
+
+  .film-input-label i {
+    font-size: 0.9rem;
   }
 
   .film-inputs-row .form-input,
@@ -831,8 +1228,7 @@
   }
 
   .film-form-container .form-select {
-    padding-right: 2.5rem;
-    background-size: 11px;
+    padding-right: 1rem;
   }
 
   .form-footer {
@@ -938,8 +1334,20 @@
 
   .film-inputs-row {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.875rem;
     align-items: stretch;
+  }
+
+  .film-input-group {
+    width: 100%;
+  }
+
+  .film-input-label {
+    font-size: 0.8rem;
+  }
+
+  .film-input-label i {
+    font-size: 0.85rem;
   }
 
   .film-inputs-row .form-input,
@@ -1093,13 +1501,11 @@
   }
 
   .film-form-container .form-select {
-    padding-right: 2.25rem;
-    background-size: 10px;
+    padding-right: 1rem;
   }
 
   .recipe-column-center .form-select {
-    padding-right: 2.25rem;
-    background-size: 10px;
+    padding-right: 1rem;
   }
 
   .recipe-description {
@@ -1166,8 +1572,7 @@
   }
 
   .film-form-container .form-select {
-    padding-right: 2.2rem;
-    background-size: 9px;
+    padding-right: 1rem;
   }
 
   .form-footer,
@@ -1209,5 +1614,143 @@
   .form-select {
     padding: 0.65rem 0.8rem;
     font-size: 0.85rem;
+  }
+}
+
+/* ====================================================== */
+/* ========== VALIDATION TMDB - SUGGESTIONS ============ */
+/* ====================================================== */
+.tmdb-suggestions {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: rgba(13, 27, 42, 0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  border-radius: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1003; /* Au-dessus du dropdown d'autocomplétion locale */
+  display: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease-out;
+}
+
+.tmdb-suggestions.active {
+  display: block;
+}
+
+.tmdb-suggestion-item {
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(198, 166, 100, 0.1);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Style pour les films existants dans la BDD locale */
+.tmdb-suggestion-item.suggestion-local {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid rgba(76, 175, 80, 0.8);
+  padding-left: calc(1.25rem - 3px);
+}
+
+.tmdb-suggestion-item.suggestion-local:hover {
+  background-color: rgba(76, 175, 80, 0.15);
+}
+
+.tmdb-suggestion-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tmdb-suggestion-poster {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tmdb-suggestion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tmdb-suggestion-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(76, 175, 80, 0.2);
+  color: rgba(76, 175, 80, 1);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+}
+
+.tmdb-suggestion-item:hover,
+.tmdb-suggestion-item:focus {
+  background-color: rgba(198, 166, 100, 0.15);
+  outline: none;
+}
+
+.tmdb-suggestion-item.suggestion-local:hover {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+/* Highlight sur la suggestion la plus probable (première) */
+.tmdb-suggestion-item.tmdb-suggestion-highlighted {
+  background-color: rgba(198, 166, 100, 0.1);
+  border-left: 3px solid var(--dore-popcorn);
+  padding-left: calc(1.25rem - 3px);
+}
+
+.tmdb-suggestion-item.tmdb-suggestion-highlighted .tmdb-suggestion-title {
+  font-weight: 600;
+  color: var(--dore-popcorn);
+}
+
+.tmdb-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.tmdb-suggestion-title {
+  color: var(--argent-ecran);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.tmdb-suggestion-year,
+.tmdb-suggestion-genre {
+  color: var(--argent-ecran);
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.tmdb-suggestion-loading {
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: var(--dore-popcorn);
+  font-size: 0.9rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -6,9 +6,10 @@ Ce dossier contient la documentation sur les problèmes rencontrés et leurs sol
 
 ## 📄 Documents disponibles
 
-- **PROBLEME_FILM_ADMIN.md** - Problème avec les films dans l'admin
-- **SOLUTION_FILM_ADMIN.md** - Solution au problème admin
+- **CORRECTION_FILM_ADMIN.md** - Correction du problème : film ne s'affiche pas dans la liste de validation admin
 - **PROBLEME_DB_INIT_ERREUR_500.md** - Erreur 500 après `npm run db:init` (colonne tmdb_id manquante)
+- **CORRECTION_RECHERCHE_RETOUR_VERS.md** - Correction recherche "Retour vers" ne trouve pas "Retour vers le futur"
+- **CORRECTION_IMAGE_FILM_URL_FORMULAIRE.md** - Correction image film et URL dans le formulaire
 
 ## 🎯 Utilisation
 

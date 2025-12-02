@@ -259,8 +259,39 @@
     // Mettre à jour l'affichage dans la colonne gauche
     updateFilmDisplayInLeftColumn(movie);
 
+    // Réinitialiser l'image à l'image par défaut (l'image est uploadée uniquement par l'admin)
+    resetFilmImage();
+
+    // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
+    updateURL();
+
     // Focus sur le champ suivant
     filmYearInput.focus();
+  }
+
+  /**
+   * Réinitialiser l'image à l'image par défaut
+   */
+  function resetFilmImage() {
+    const filmSelectedImage = document.querySelector(
+      ".film-selected-image img"
+    );
+    if (filmSelectedImage) {
+      filmSelectedImage.src = "/images/image-default-movie.jpg";
+      filmSelectedImage.alt = "Image de film par defaut";
+    }
+  }
+
+  /**
+   * Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
+   */
+  function updateURL() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("tmdb_id");
+    url.searchParams.delete("title");
+
+    // Mettre à jour l'URL sans recharger la page
+    window.history.replaceState({}, "", url.toString());
   }
 
   /**

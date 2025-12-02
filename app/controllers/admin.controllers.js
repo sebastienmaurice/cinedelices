@@ -7,6 +7,7 @@ import {
 } from "../models/index.model.js";
 import { logUpload, logUploadError } from "../utils/logger.js";
 import { IMAGE_TYPES } from "../utils/image-utils.js";
+import { processImage } from "../utils/image-pipeline.js";
 import sequelize from "../database/sequelize-client.js";
 
 const adminController = {
@@ -124,23 +125,41 @@ const adminController = {
 
       // Si un fichier a été uploadé
       if (req.file) {
-        // Construire le chemin relatif de l'image pour la BDD
-        updateData.picture = `/images/movies/cards/${req.file.filename}`;
-
-        // Journaliser l'upload d'image
         try {
+          // Utiliser le pipeline pour traiter l'image (crop, resize, optimize)
+          const imageResult = await processImage({
+            imagePath: req.file.path, // Chemin absolu de l'image uploadée
+            imageType: IMAGE_TYPES.MOVIE_CARD,
+            entityId: movieId,
+            entityType: "movie",
+            enableCrop: true,
+            enableResize: true,
+            enableOptimize: true,
+          });
+
+          // Utiliser le chemin relatif généré par le pipeline
+          updateData.picture = imageResult.relativePath;
+
+          // Journaliser l'upload d'image
           await logUpload({
             type: IMAGE_TYPES.MOVIE_CARD,
-            filename: req.file.filename,
+            filename: imageResult.filename,
             originalName: req.file.originalname,
             destination: req.file.destination,
             size: req.file.size,
             mimetype: req.file.mimetype,
             entityId: movieId,
           });
-        } catch (logError) {
-          // Ne pas bloquer si la journalisation échoue
-          console.error("Erreur lors de la journalisation:", logError);
+        } catch (imageError) {
+          // En cas d'erreur de traitement, utiliser l'image originale
+          console.error("Erreur lors du traitement de l'image:", imageError);
+          updateData.picture = `/images/movies/cards/${req.file.filename}`;
+
+          await logUploadError(imageError, {
+            type: IMAGE_TYPES.MOVIE_CARD,
+            entityId: movieId,
+            action: "validateMovie-image-processing",
+          });
         }
       }
 

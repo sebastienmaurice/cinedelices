@@ -51,31 +51,56 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Si un filmId est déjà présent (film existant via URL ou autocomplétion), ne rien changer
-    if (filmIdHidden.value) {
-      // Vider les champs pour nouveau film pour éviter la confusion
-      filmTitleHidden.value = "";
-      filmYearHidden.value = "";
-      filmGenreHidden.value = "";
-      return;
-    }
-
-    // Vérifier si un filmId existe (film sélectionné via autocomplétion)
-    // Le script d'autocomplétion crée un champ dans le formulaire unifié
+    // Vérifier si un filmId existe (film existant via URL ou autocomplétion)
     const existingFilmIdInput = unifiedForm.querySelector(
       'input[name="filmId"]'
     );
+    const hasFilmId =
+      filmIdHidden.value || (existingFilmIdInput && existingFilmIdInput.value);
 
-    if (existingFilmIdInput && existingFilmIdInput.value) {
-      // Film existant sélectionné via autocomplétion
-      filmIdHidden.value = existingFilmIdInput.value;
+    if (hasFilmId) {
+      // Film existant sélectionné : utiliser le filmId
+      if (existingFilmIdInput && existingFilmIdInput.value) {
+        filmIdHidden.value = existingFilmIdInput.value;
+      }
       // Vider les champs pour nouveau film
       filmTitleHidden.value = "";
       filmYearHidden.value = "";
       filmGenreHidden.value = "";
+
+      // Vérifier si un tmdbId est présent (film sélectionné via TMDB)
+      const tmdbIdHidden = document.getElementById("tmdbId-hidden");
+      if (tmdbIdHidden) {
+        tmdbIdHidden.value = "";
+      }
+      return;
+    }
+
+    // Nouveau film : copier les valeurs des champs film
+    filmIdHidden.value = "";
+
+    // Utiliser les valeurs des champs cachés TMDB si présents (sélection TMDB)
+    const tmdbIdHidden = document.getElementById("tmdbId-hidden");
+    const titleFRHidden = document.getElementById("titleFR-hidden");
+    const tmdbYearHidden = document.getElementById("tmdbYear-hidden");
+    const tmdbGenreHidden = document.getElementById("tmdbGenre-hidden");
+
+    if (tmdbIdHidden && tmdbIdHidden.value) {
+      // Film sélectionné via TMDB : utiliser les valeurs TMDB
+      filmTitleHidden.value =
+        titleFRHidden && titleFRHidden.value
+          ? titleFRHidden.value
+          : filmNameInput.value.trim();
+      filmYearHidden.value =
+        tmdbYearHidden && tmdbYearHidden.value
+          ? tmdbYearHidden.value
+          : filmYearInput.value.trim();
+      filmGenreHidden.value =
+        tmdbGenreHidden && tmdbGenreHidden.value
+          ? tmdbGenreHidden.value
+          : filmGenreSelect.value.trim();
     } else {
-      // Nouveau film : copier les valeurs des champs film
-      filmIdHidden.value = "";
+      // Film saisi manuellement : utiliser les valeurs des champs visibles
       filmTitleHidden.value = filmNameInput.value.trim();
       filmYearHidden.value = filmYearInput.value.trim();
       filmGenreHidden.value = filmGenreSelect.value.trim();
@@ -86,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Validation avant soumission
    */
   function validateUnifiedForm() {
-    // Vérifier que soit un filmId existe, soit les champs film sont remplis
+    // Vérifier que soit un filmId existe (film existant), soit les champs film sont remplis
     const hasFilmId = filmIdHidden && filmIdHidden.value;
     const hasFilmData =
       filmTitleHidden &&
@@ -96,11 +121,44 @@ document.addEventListener("DOMContentLoaded", () => {
       filmGenreHidden &&
       filmGenreHidden.value.trim();
 
-    if (!hasFilmId && !hasFilmData) {
-      alert(
-        "Veuillez sélectionner un film existant ou créer un nouveau film avant de soumettre la recette."
-      );
-      return false;
+    // Si film existant sélectionné, validation OK pour le film
+    // Mais on doit quand même valider les champs de la recette après
+    if (hasFilmId) {
+      // Film existant : pas besoin de vérifier tmdbId
+      // On continue pour valider les champs de la recette
+    } else {
+      // Nouveau film : vérifier que les champs sont remplis
+      if (!hasFilmData) {
+        alert(
+          "Veuillez sélectionner un film existant ou créer un nouveau film avant de soumettre la recette."
+        );
+        return false;
+      }
+
+      // Pour un nouveau film, vérifier qu'un tmdbId est présent (validation TMDB)
+      // Mais seulement si aucun filmId n'est présent (pas un film existant sélectionné)
+      const filmIdHidden = document.getElementById("filmId-hidden");
+      const tmdbIdHidden = document.getElementById("tmdbId-hidden");
+
+      // Si c'est un film existant (filmId présent), pas besoin de vérifier tmdbId
+      if (
+        !filmIdHidden ||
+        !filmIdHidden.value ||
+        filmIdHidden.value.trim() === ""
+      ) {
+        // C'est un nouveau film : vérifier tmdbId
+        if (
+          !tmdbIdHidden ||
+          !tmdbIdHidden.value ||
+          tmdbIdHidden.value.trim() === ""
+        ) {
+          alert(
+            "Aucun film correspondant trouvé sur TMDB. Veuillez sélectionner une suggestion ou corriger le titre du film."
+          );
+          filmNameInput?.focus();
+          return false;
+        }
+      }
     }
 
     // Vérifier les champs de la recette
@@ -182,3 +240,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Gestionnaire formulaire unifié initialisé");
 });
+

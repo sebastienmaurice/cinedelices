@@ -100,3 +100,4 @@ export const IMAGE_TYPES = {
   MOVIE_BANNER: "movie-banner",
   RECIPE_CARD: "recipe-card",
 };
+
