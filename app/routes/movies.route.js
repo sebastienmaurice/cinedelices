@@ -15,6 +15,9 @@ moviesRouter.get("/search-advanced", moviesController.searchMoviesAdvanced);
 // API Route pour récupérer les infos complètes d'un film TMDB (DOIT être avant /:genre)
 moviesRouter.get("/get-tmdb-info/:tmdb_id", moviesController.getTmdbInfo);
 
+// API Route pour récupérer un film par son ID (DOIT être avant /:genre)
+moviesRouter.get("/api/get/:id", moviesController.getMovieById);
+
 //Filtrage des films par genre (tous, action, comedie, drame...)
 moviesRouter.get("/:genre", moviesController.filtredMovies);
 

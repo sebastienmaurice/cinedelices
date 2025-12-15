@@ -102,7 +102,7 @@
 .banner__title h2 {
   color: var(--dore-popcorn);
   font-size: 1.5rem;
-  margin: 0 0 -0.3rem 0;
+  margin: 0 0 0 0;
   font-weight: 700;
   font-family: var(--font-h2-h6);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -285,7 +285,7 @@
   color: var(--dore-popcorn);
   font-family: var(--font-h2-h6);
   font-weight: 700;
-  margin-bottom: -0.8rem;
+  margin-bottom: 0;
 }
 
 .presentation__text__film p {
@@ -396,7 +396,7 @@
 }
 
 .film-title {
-  margin-bottom: -0.2rem;
+  margin-bottom: 0;
   font-size: 1.3rem;
   color: var(--dore-popcorn);
   font-weight: 700;
@@ -486,7 +486,7 @@
 
   .banner__title h2 {
     font-size: 1.3rem;
-    margin-bottom: -0.6rem;
+    margin-bottom: 0;
   }
 
   .banner__title p {
@@ -573,7 +573,7 @@
 
   .presentation__text__film h3 {
     font-size: 1.5rem;
-    margin-bottom: -0.6rem;
+    margin-bottom: 0;
   }
 
   .presentation__text__film p {
@@ -606,7 +606,7 @@
 
   .banner__title h2 {
     font-size: 1.1rem;
-    margin-bottom: -0.5rem;
+    margin-bottom: 0;
   }
 
   .banner__title p {
@@ -654,7 +654,7 @@
 
   .film-title {
     font-size: 1.1rem;
-    margin-bottom: -0.15rem;
+    margin-bottom: 0;
   }
 
   .film-meta {
@@ -676,7 +676,7 @@
 
   .presentation__text__film h3 {
     font-size: 1.3rem;
-    margin-bottom: -0.5rem;
+    margin-bottom: 0;
   }
 
   .presentation__text__film p {
@@ -697,7 +697,7 @@
 
   .banner__title h2 {
     font-size: 1rem;
-    margin-bottom: -0.4rem;
+    margin-bottom: 0;
   }
 
   .banner__title p {
@@ -764,7 +764,7 @@
 
   .presentation__text__film h3 {
     font-size: 1.1rem;
-    margin-bottom: -0.4rem;
+    margin-bottom: 0;
   }
 
   .presentation__text__film p {
@@ -1176,6 +1176,46 @@
   border-bottom: 1px solid rgba(236, 239, 241, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+  background-color: transparent;
+}
+
+/* Films existants dans Ciné Délices : background doré-popcorn */
+.search-result-card.is-local {
+  background-color: var(--dore-popcorn);
+  border-left: 3px solid var(--rouge-projecteur);
+}
+
+.search-result-card.is-local .search-result-card-title {
+  color: var(--bleu-nuit);
+}
+
+.search-result-card.is-local .search-result-card-meta,
+.search-result-card.is-local .search-result-card-year,
+.search-result-card.is-local .search-result-card-genre,
+.search-result-card.is-local .search-result-card-separator {
+  color: var(--bleu-nuit);
+  opacity: 0.8;
+}
+
+.search-result-card.is-local .search-result-card-overview {
+  color: var(--bleu-nuit);
+  opacity: 0.7;
+}
+
+.search-result-card.is-local .search-result-card-arrow {
+  color: var(--bleu-nuit);
+}
+
+.search-result-card.is-local:hover,
+.search-result-card.is-local.selected {
+  background-color: var(--dore-popcorn);
+  border-left: 3px solid var(--rouge-projecteur);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
+}
+
+/* Nouveaux films (TMDB) : background bleu nuit (actuel) */
+.search-result-card:not(.is-local) {
+  background-color: transparent;
 }
 
 .search-result-card:last-child {
@@ -1187,11 +1227,14 @@
   border-radius: 12px 12px 0 0;
 }
 
-.search-result-card:hover,
-.search-result-card.selected {
+/* Hover pour nouveaux films (TMDB) */
+.search-result-card:not(.is-local):hover,
+.search-result-card:not(.is-local).selected {
   background-color: rgba(198, 166, 100, 0.2);
   border-left: 3px solid var(--dore-popcorn);
 }
+
+/* Hover pour films existants (déjà défini dans .is-local) */
 
 .search-result-card-link {
   display: flex;
@@ -1259,18 +1302,19 @@
   min-width: 0;
 }
 
-/* Badge "Ciné Délices" pour films locaux */
+/* Badge "Ciné Délices" pour films locaux - Rouge projecteur */
 .search-result-card-badge {
   display: inline-block;
-  background-color: rgba(40, 167, 69, 0.2);
-  color: #28a745;
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
   font-size: 0.7rem;
   font-weight: 600;
   padding: 0.2em 0.5em;
   border-radius: 4px;
-  border: 1px solid rgba(40, 167, 69, 0.3);
+  border: 1px solid var(--rouge-projecteur);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
 }
 
 /* Badge type Film/Série */
@@ -1287,15 +1331,30 @@
 }
 
 .search-result-card-type--film {
-  background-color: rgba(198, 166, 100, 0.2);
-  color: var(--dore-popcorn);
-  border: 1px solid rgba(198, 166, 100, 0.4);
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border: 1px solid var(--rouge-projecteur);
 }
 
 .search-result-card-type--serie {
-  background-color: rgba(100, 181, 246, 0.2);
-  color: #64b5f6;
-  border: 1px solid rgba(100, 181, 246, 0.4);
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  border: 1px solid var(--bleu-nuit);
+}
+
+/* Badges contrastés sur fond doré-popcorn pour films existants */
+.search-result-card.is-local .search-result-card-type--film {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border: 1px solid var(--rouge-projecteur);
+  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
+}
+
+.search-result-card.is-local .search-result-card-type--serie {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  border: 1px solid var(--bleu-nuit);
+  box-shadow: 0 2px 4px rgba(13, 27, 42, 0.3);
 }
 
 /* Highlight des mots correspondants */

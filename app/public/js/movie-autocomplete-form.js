@@ -259,8 +259,8 @@
     // Mettre à jour l'affichage dans la colonne gauche
     updateFilmDisplayInLeftColumn(movie);
 
-    // Réinitialiser l'image à l'image par défaut (l'image est uploadée uniquement par l'admin)
-    resetFilmImage();
+    // Afficher l'image du film si c'est un film existant avec une image, sinon image par défaut
+    updateFilmImage(movie);
 
     // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
     updateURL();
@@ -270,16 +270,47 @@
   }
 
   /**
-   * Réinitialiser l'image à l'image par défaut
+   * Mettre à jour l'image du film
+   * Pour les films existants avec image : afficher l'image
+   * Pour les nouveaux films : afficher l'image par défaut
    */
-  function resetFilmImage() {
+  async function updateFilmImage(movie) {
     const filmSelectedImage = document.querySelector(
       ".film-selected-image img"
     );
-    if (filmSelectedImage) {
-      filmSelectedImage.src = "/images/image-default-movie.jpg";
-      filmSelectedImage.alt = "Image de film par defaut";
+    if (!filmSelectedImage) return;
+
+    // Si c'est un film existant (movie.id existe), récupérer ses données complètes pour avoir l'image
+    if (movie && movie.id) {
+      try {
+        // Récupérer les informations complètes du film depuis la BDD via une route API
+        const response = await fetch(`/movies/api/get/${movie.id}`);
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Si le film existe avec une image, l'afficher
+          if (data.success && data.movie && data.movie.picture) {
+            filmSelectedImage.src = data.movie.picture.startsWith("/")
+              ? data.movie.picture
+              : `/${data.movie.picture}`;
+            filmSelectedImage.alt = `Affiche du film ${
+              data.movie.title || movie.title
+            }`;
+            return;
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de l'image du film:",
+          error
+        );
+      }
     }
+
+    // Nouveau film ou film sans image : image par défaut
+    filmSelectedImage.src = "/images/image-default-movie.jpg";
+    filmSelectedImage.alt = "Image de film par defaut";
   }
 
   /**

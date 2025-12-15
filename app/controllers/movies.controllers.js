@@ -437,18 +437,19 @@ const moviesController = {
         combinedResults.push(movie);
       });
 
-      // Trier TOUS les résultats par score de pertinence décroissant
-      // Les films locaux avec scores élevés seront prioritaires
-      // Mais les films TMDB pertinents peuvent dépasser les films locaux avec scores faibles
+      // Trier TOUS les résultats : films locaux TOUJOURS en premier, puis par score
+      // Les films existants dans Ciné Délices doivent apparaître avant les nouveaux films TMDB
       combinedResults.sort((a, b) => {
-        // Priorité au score
+        // PRIORITÉ 1 : Films locaux (existants) TOUJOURS en premier
+        if (a.isLocal && !b.isLocal) return -1;
+        if (!a.isLocal && b.isLocal) return 1;
+
+        // PRIORITÉ 2 : Si les deux sont locaux ou les deux sont TMDB, trier par score
         if (b.score !== a.score) {
           return b.score - a.score;
         }
-        // En cas d'égalité, priorité aux films locaux
-        if (a.isLocal && !b.isLocal) return -1;
-        if (!a.isLocal && b.isLocal) return 1;
-        // Sinon, tri alphabétique
+
+        // PRIORITÉ 3 : En cas d'égalité de score, tri alphabétique
         return (a.title_fr || a.title || "").localeCompare(
           b.title_fr || b.title || ""
         );
@@ -705,6 +706,52 @@ const moviesController = {
         error: "500",
         message: "Erreur serveur.",
         role: req.userRole,
+      });
+    }
+  },
+
+  /**
+   * Récupérer un film par son ID (API JSON)
+   * GET /movies/api/get/:id
+   */
+  async getMovieById(req, res) {
+    try {
+      const { id } = req.params;
+
+      if (!id || isNaN(parseInt(id))) {
+        return res.status(400).json({
+          success: false,
+          message: "ID de film invalide",
+        });
+      }
+
+      const movie = await Movie.findByPk(parseInt(id));
+
+      if (!movie) {
+        return res.status(404).json({
+          success: false,
+          message: "Film non trouvé",
+        });
+      }
+
+      return res.json({
+        success: true,
+        movie: {
+          id: movie.id,
+          title: movie.title,
+          year: movie.year,
+          genre: movie.genre,
+          picture: movie.picture,
+          type: movie.type || "film",
+          tmdb_id: movie.tmdb_id,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération du film:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Erreur lors de la récupération du film",
+        error: error.message,
       });
     }
   },

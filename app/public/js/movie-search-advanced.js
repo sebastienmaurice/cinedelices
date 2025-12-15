@@ -89,6 +89,9 @@
       clearResults();
       if (query.length === 0) {
         loadAllMovies();
+      } else {
+        // Filtrer avec le terme partiel (afficher les films dont le titre commence par le terme)
+        filterMoviesListPartial(query);
       }
       return;
     }
@@ -221,6 +224,9 @@
         currentResults = data.results || [];
         displayResults(data.results, data.hasResults, query);
 
+        // Filtrer également la liste des films affichés dans #movies__list
+        filterMoviesList(query, data.results || []);
+
         // Afficher message cache si applicable
         if (data.cached) {
           console.log("📦 Résultats depuis le cache");
@@ -279,7 +285,12 @@
    */
   function createMovieCard(movie, query) {
     const card = document.createElement("div");
-    card.className = "search-result-card";
+    const isLocal = movie.isLocal === true;
+
+    // Ajouter la classe is-local pour les films existants dans Ciné Délices
+    card.className = isLocal
+      ? "search-result-card is-local"
+      : "search-result-card";
     card.setAttribute("data-movie-id", movie.id);
     card.setAttribute("role", "option");
     card.setAttribute("aria-selected", "false");
@@ -305,10 +316,11 @@
       : "";
 
     // Déterminer le lien : film local ou film TMDB à créer
-    const isLocal = movie.isLocal === true;
+    // Si film existant : rediriger vers add-recipes-movies avec l'ID pour pré-remplir et afficher l'image
+    // Si nouveau film : rediriger vers add-recipes-movies avec les paramètres TMDB
     const movieLink =
       isLocal && movie.id
-        ? `/recipes-movie/${movie.id}`
+        ? `/add-recipes-movies/${movie.id}`
         : `/add-recipes-movies/?tmdb_id=${
             movie.tmdb_id || ""
           }&title=${encodeURIComponent(movie.title_fr || movie.title || "")}${
@@ -475,6 +487,112 @@
     currentSearchQuery = "";
     currentResults = [];
     selectedIndex = -1;
+    // Restaurer l'affichage de tous les films
+    if (moviesList) {
+      const allArticles = moviesList.querySelectorAll("article");
+      allArticles.forEach((article) => {
+        article.style.display = "";
+      });
+    }
+  }
+
+  /**
+   * Filtre la liste des films affichés dans #movies__list
+   * Affiche uniquement les films correspondant aux résultats de recherche
+   */
+  function filterMoviesList(query, searchResults) {
+    if (!moviesList) return;
+
+    const normalizedQuery = normalizeTextForSearch(query);
+    const articles = moviesList.querySelectorAll("article");
+
+    articles.forEach((article) => {
+      const titleElement = article.querySelector(".film-title");
+      const genreElement = article.querySelector(".film-genre");
+
+      if (!titleElement) return;
+
+      const title = titleElement.textContent || "";
+      const genre = genreElement ? genreElement.textContent || "" : "";
+
+      // Normaliser les textes pour la recherche
+      const normalizedTitle = normalizeTextForSearch(title);
+      const normalizedGenre = normalizeTextForSearch(genre);
+
+      // Vérifier si le film correspond aux résultats de recherche
+      const isInSearchResults = searchResults.some((result) => {
+        const resultTitle = normalizeTextForSearch(
+          result.title_fr || result.title || ""
+        );
+        return (
+          resultTitle === normalizedTitle || article.id === `film-${result.id}`
+        );
+      });
+
+      // Vérifier si le titre ou le genre contient le terme de recherche
+      const matchesQuery =
+        normalizedTitle.includes(normalizedQuery) ||
+        normalizedGenre.includes(normalizedQuery);
+
+      // Afficher si le film est dans les résultats OU correspond au terme de recherche
+      if (isInSearchResults || matchesQuery) {
+        article.style.display = "";
+      } else {
+        article.style.display = "none";
+      }
+    });
+  }
+
+  /**
+   * Filtre la liste des films avec un terme partiel
+   * Affiche les films dont le titre commence par le terme saisi
+   */
+  function filterMoviesListPartial(query) {
+    if (!moviesList) return;
+
+    const normalizedQuery = normalizeTextForSearch(query);
+    const articles = moviesList.querySelectorAll("article");
+
+    articles.forEach((article) => {
+      const titleElement = article.querySelector(".film-title");
+      const genreElement = article.querySelector(".film-genre");
+
+      if (!titleElement) {
+        article.style.display = "none";
+        return;
+      }
+
+      const title = titleElement.textContent || "";
+      const genre = genreElement ? genreElement.textContent || "" : "";
+
+      // Normaliser les textes pour la recherche
+      const normalizedTitle = normalizeTextForSearch(title);
+      const normalizedGenre = normalizeTextForSearch(genre);
+
+      // Vérifier si le titre commence par le terme ou le contient
+      const matchesQuery =
+        normalizedTitle.startsWith(normalizedQuery) ||
+        normalizedTitle.includes(normalizedQuery) ||
+        normalizedGenre.includes(normalizedQuery);
+
+      if (matchesQuery) {
+        article.style.display = "";
+      } else {
+        article.style.display = "none";
+      }
+    });
+  }
+
+  /**
+   * Normalise le texte pour la recherche (minuscules, suppression accents)
+   */
+  function normalizeTextForSearch(text) {
+    if (!text) return "";
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
   }
 
   /**

@@ -347,6 +347,8 @@
   cursor: pointer;
   border-bottom: 1px solid rgba(236, 239, 241, 0.1);
   transition: all 0.3s ease;
+  background-color: var(--dore-popcorn);
+  border-left: 3px solid var(--rouge-projecteur);
 }
 
 .film-search-result-item:last-child {
@@ -359,7 +361,20 @@
 }
 
 .film-search-result-item:hover {
-  background-color: rgba(198, 166, 100, 0.15);
+  background-color: var(--dore-popcorn);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
+}
+
+.film-search-result-item .film-result-title {
+  color: var(--bleu-nuit);
+  font-weight: 600;
+}
+
+.film-search-result-item .film-result-meta,
+.film-search-result-item .film-result-year,
+.film-search-result-item .film-result-genre {
+  color: var(--bleu-nuit);
+  opacity: 0.8;
 }
 
 .film-result-content {
@@ -371,7 +386,7 @@
 .film-result-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
   margin: 0;
 }
 
@@ -624,7 +639,7 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--bleu-nuit);
-  margin: 0 0 -0.2rem 0;
+  margin: 0 0 0 0;
   font-family: var(--font-h2-h6);
   line-height: 1.1;
 }
@@ -633,7 +648,7 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--bleu-nuit);
-  margin: 0 0 -0.2rem 0;
+  margin: 0 0 0 0;
   font-family: var(--font-h2-h6);
   line-height: 1.1;
 }
@@ -1390,7 +1405,7 @@
   .recipe-column-right h3,
   .recipe-context-title {
     font-size: 1rem;
-    margin-bottom: -0.2rem;
+    margin-bottom: 0;
     line-height: 1.1;
   }
 
@@ -1652,15 +1667,27 @@
   gap: 0.25rem;
 }
 
-/* Style pour les films existants dans la BDD locale */
+/* Style pour les films existants dans la BDD locale - Background doré-popcorn */
 .tmdb-suggestion-item.suggestion-local {
-  background-color: rgba(76, 175, 80, 0.1);
-  border-left: 3px solid rgba(76, 175, 80, 0.8);
+  background-color: var(--dore-popcorn);
+  border-left: 3px solid var(--rouge-projecteur);
   padding-left: calc(1.25rem - 3px);
 }
 
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-title {
+  color: var(--bleu-nuit);
+  font-weight: 600;
+}
+
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-year,
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-genre {
+  color: var(--bleu-nuit);
+  opacity: 0.8;
+}
+
 .tmdb-suggestion-item.suggestion-local:hover {
-  background-color: rgba(76, 175, 80, 0.15);
+  background-color: var(--dore-popcorn);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
 }
 
 .tmdb-suggestion-content {
@@ -1689,13 +1716,15 @@
 .tmdb-suggestion-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  background-color: rgba(76, 175, 80, 0.2);
-  color: rgba(76, 175, 80, 1);
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
   margin-left: 0.5rem;
   text-transform: uppercase;
+  border: 1px solid var(--rouge-projecteur);
+  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
 }
 
 .tmdb-suggestion-item:hover,
@@ -1705,7 +1734,8 @@
 }
 
 .tmdb-suggestion-item.suggestion-local:hover {
-  background-color: rgba(76, 175, 80, 0.2);
+  background-color: var(--dore-popcorn);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
 }
 
 /* Highlight sur la suggestion la plus probable (première) */
@@ -1735,6 +1765,49 @@
   color: var(--argent-ecran);
   font-size: 0.875rem;
   opacity: 0.8;
+}
+
+/* Badge type Film/Série pour suggestions */
+.tmdb-suggestion-type {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tmdb-suggestion-type--film {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border: 1px solid var(--rouge-projecteur);
+  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
+}
+
+.tmdb-suggestion-type--serie {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  border: 1px solid var(--bleu-nuit);
+  box-shadow: 0 2px 4px rgba(13, 27, 42, 0.3);
+}
+
+/* Badges contrastés sur fond doré-popcorn pour films existants */
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-type--film {
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+  border: 1px solid var(--rouge-projecteur);
+  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.5);
+}
+
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-type--serie {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  border: 1px solid var(--bleu-nuit);
+  box-shadow: 0 2px 4px rgba(13, 27, 42, 0.5);
 }
 
 .tmdb-suggestion-loading {

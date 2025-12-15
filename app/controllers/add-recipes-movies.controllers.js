@@ -31,10 +31,20 @@ const addRecipesMoviesController = {
 
       const newMovie = await Movie.findByPk(id);
 
-      // Rendu de la vue pour le pre-remplissage du film
+      if (!newMovie) {
+        return res.status(404).render("error", {
+          error: "404",
+          message: "Film non trouvé.",
+          role: req.userRole,
+        });
+      }
 
+      // Convertir l'instance Sequelize en objet plain pour faciliter l'accès aux propriétés dans la vue
+      const movieData = newMovie.get({ plain: true });
+
+      // Rendu de la vue pour le pre-remplissage du film
       res.render("add-recipes-movies", {
-        newMovie,
+        newMovie: movieData,
         role: req.userRole,
       });
     } catch (error) {

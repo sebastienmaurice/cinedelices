@@ -387,6 +387,16 @@
       title.appendChild(badge);
     }
 
+    // Badge pour type (Film ou Série)
+    const typeBadge = document.createElement("span");
+    typeBadge.className =
+      movie.type && movie.type === "serie"
+        ? "tmdb-suggestion-type tmdb-suggestion-type--serie"
+        : "tmdb-suggestion-type tmdb-suggestion-type--film";
+    typeBadge.textContent =
+      movie.type && movie.type === "serie" ? "Série" : "Film";
+    title.appendChild(typeBadge);
+
     const year = document.createElement("span");
     year.className = "tmdb-suggestion-year";
     year.textContent = movie.year ? ` (${movie.year})` : "";
@@ -437,8 +447,14 @@
     fillFormWithMovieData(movie);
     lastValidatedMovie = movie;
 
-    // Réinitialiser l'image à l'image par défaut (l'image est uploadée uniquement par l'admin)
-    resetFilmImage();
+    // Mettre à jour l'image : afficher l'image si film existant, sinon image par défaut
+    if (movie.isLocal && movie.id) {
+      // Film existant : récupérer ses données complètes pour avoir l'image
+      updateFilmImage(movie);
+    } else {
+      // Nouveau film : image par défaut
+      updateFilmImage(null);
+    }
 
     // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
     updateURL();
@@ -461,16 +477,56 @@
   }
 
   /**
-   * Réinitialiser l'image à l'image par défaut
+   * Mettre à jour l'image du film
+   * Pour les films existants avec image : afficher l'image
+   * Pour les nouveaux films : afficher l'image par défaut
    */
   function resetFilmImage() {
+    updateFilmImage(null);
+  }
+
+  /**
+   * Mettre à jour l'image du film
+   * Pour les films existants avec image : afficher l'image
+   * Pour les nouveaux films : afficher l'image par défaut
+   */
+  async function updateFilmImage(movie) {
     const filmSelectedImage = document.querySelector(
       ".film-selected-image img"
     );
-    if (filmSelectedImage) {
-      filmSelectedImage.src = "/images/image-default-movie.jpg";
-      filmSelectedImage.alt = "Image de film par defaut";
+    if (!filmSelectedImage) return;
+
+    // Si c'est un film existant (movie.id existe), récupérer ses données complètes pour avoir l'image
+    if (movie && movie.id) {
+      try {
+        // Récupérer les informations complètes du film depuis la BDD via une route API
+        const response = await fetch(`/movies/api/get/${movie.id}`);
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Si le film existe avec une image, l'afficher
+          if (data.success && data.movie && data.movie.picture) {
+            filmSelectedImage.src = data.movie.picture.startsWith("/")
+              ? data.movie.picture
+              : `/${data.movie.picture}`;
+            filmSelectedImage.alt = `Affiche du film ${
+              data.movie.title || movie.title || movie.original_title || ""
+            }`;
+            return;
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de l'image du film:",
+          error
+        );
+      }
     }
+
+    // Nouveau film ou film sans image : image par défaut
+    filmSelectedImage.src = "/images/image-default-movie.jpg";
+    filmSelectedImage.alt = "Image de film par defaut";
   }
 
   /**
