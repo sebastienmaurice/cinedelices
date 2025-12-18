@@ -9,6 +9,9 @@
  * - Réduction de 2-3 fonctions dupliquées
  * - Cohérence de la logique d'affichage des images
  * - Facilité de maintenance (modification en un seul endroit)
+ *
+ * Note : Exposé globalement (window.updateFilmImage) pour être utilisé
+ * par les scripts non-modulaires
  */
 
 /**
@@ -26,7 +29,7 @@
  * // Nouveau film ou pas de film
  * updateFilmImage(null);
  */
-export async function updateFilmImage(movie) {
+async function updateFilmImage(movie) {
   const filmSelectedImage = document.querySelector(".film-selected-image img");
   if (!filmSelectedImage) return;
 
@@ -63,3 +66,7 @@ export async function updateFilmImage(movie) {
   filmSelectedImage.src = "/images/image-default-movie.jpg";
   filmSelectedImage.alt = "Image de film par defaut";
 }
+
+// Exposer la fonction globalement pour utilisation dans les scripts non-modulaires
+// Refactoring : centralisation de updateFilmImage pour éviter duplication
+window.updateFilmImage = updateFilmImage;

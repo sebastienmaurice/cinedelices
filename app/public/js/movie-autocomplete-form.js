@@ -269,50 +269,9 @@
     filmYearInput.focus();
   }
 
-  /**
-   * Mettre à jour l'image du film
-   * Pour les films existants avec image : afficher l'image
-   * Pour les nouveaux films : afficher l'image par défaut
-   */
-  async function updateFilmImage(movie) {
-    const filmSelectedImage = document.querySelector(
-      ".film-selected-image img"
-    );
-    if (!filmSelectedImage) return;
-
-    // Si c'est un film existant (movie.id existe), récupérer ses données complètes pour avoir l'image
-    if (movie && movie.id) {
-      try {
-        // Récupérer les informations complètes du film depuis la BDD via une route API
-        const response = await fetch(`/movies/api/get/${movie.id}`);
-
-        if (response.ok) {
-          const data = await response.json();
-
-          // Si le film existe avec une image, l'afficher (utiliser cardPath si disponible)
-          const imagePath = data.movie?.cardPath || data.movie?.picture;
-          if (data.success && data.movie && imagePath) {
-            filmSelectedImage.src = imagePath.startsWith("/")
-              ? imagePath
-              : `/${imagePath}`;
-            filmSelectedImage.alt = `Affiche du film ${
-              data.movie.title || movie.title
-            }`;
-            return;
-          }
-        }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération de l'image du film:",
-          error
-        );
-      }
-    }
-
-    // Nouveau film ou film sans image : image par défaut
-    filmSelectedImage.src = "/images/image-default-movie.jpg";
-    filmSelectedImage.alt = "Image de film par defaut";
-  }
+  // Refactoring : fonction updateFilmImage() supprimée, maintenant centralisée dans
+  // /js/utils/film-image-utils.js et exposée globalement (window.updateFilmImage)
+  // Le script utils/film-image-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
