@@ -1,10 +1,10 @@
-# Pipeline de Traitement d'Images - PHASE 3
+# Pipeline de Traitement d'Images - ACTUEL
 
 ## 📋 Description
 
-Module centralisé pour le traitement des images uploadées dans Ciné Délices. Architecture préparée pour intégration future de **Sharp** et **face-api.js**.
+Module centralisé pour le traitement des images uploadées dans Ciné Délices. Architecture complète avec **Sharp** activé pour crop, resize et optimize.
 
-⚠️ **IMPORTANT** : Les traitements réels (crop, resize, optimize) ne sont **PAS encore activés**. Ce module prépare uniquement la structure et le flux de données.
+✅ **IMPORTANT** : Les traitements réels (crop, resize, optimize) sont **ACTIVÉS** et fonctionnels. Le pipeline utilise Sharp pour le traitement automatique des images.
 
 ---
 
@@ -29,9 +29,9 @@ Le pipeline permet de :
   imageType: string,      // Type : "movie-card", "movie-banner", "recipe-card"
   entityId: number,       // ID du film ou de la recette
   entityType: string,     // "movie" ou "recipe"
-  enableCrop: boolean,    // Activer crop intelligent (désactivé)
-  enableResize: boolean,  // Activer redimensionnement (désactivé)
-  enableOptimize: boolean // Activer optimisation (désactivé)
+  enableCrop: boolean,    // Activer crop intelligent (activé par défaut)
+  enableResize: boolean,  // Activer redimensionnement (activé par défaut)
+  enableOptimize: boolean // Activer optimisation (activé par défaut)
 }
 ```
 
@@ -103,18 +103,18 @@ await Recipe.update(
 );
 ```
 
-### Exemple 3 : Avec traitement activé (futur)
+### Exemple 3 : Avec traitement activé (actuel)
 
 ```javascript
-// ⚠️ Nécessite Sharp et face-api.js installés
+// ✅ Sharp est installé et activé
 const result = await processImage({
   imagePath: req.file.path,
   imageType: IMAGE_TYPES.MOVIE_CARD,
   entityId: movieId,
   entityType: "movie",
-  enableCrop: true, // Crop intelligent activé
-  enableResize: true, // Redimensionnement activé
-  enableOptimize: true, // Optimisation activée
+  enableCrop: true, // ✅ Crop intelligent activé (centré)
+  enableResize: true, // ✅ Redimensionnement activé
+  enableOptimize: true, // ✅ Optimisation activée
 });
 ```
 
@@ -133,10 +133,10 @@ const result = await processImage({
    ↓
 5. GÉNÉRATION NOUVEAU NOM DE FICHIER
    ↓
-6. PIPELINE DE TRAITEMENT
-   ├─→ Crop intelligent (si activé)
-   ├─→ Redimensionnement (si activé)
-   └─→ Optimisation (si activée)
+6. PIPELINE DE TRAITEMENT (✅ ACTIVÉ)
+   ├─→ Crop intelligent (centré, ratio préservé)
+   ├─→ Redimensionnement (maxWidth/maxHeight)
+   └─→ Optimisation (compression, conversion format)
    ↓
 7. COPIE/SAUVEGARDE FICHIER FINAL
    ↓
@@ -165,55 +165,77 @@ const result = await processImage({
 
 - **Dimensions max** : 640x360px
 - **Qualité** : 85%
-- **Format** : WebP (meilleure compression)
-- **Face detection** : Non activé
+- **Format** : WebP (toujours, même en dev - à corriger)
+- **Face detection** : Non activé (face-api.js non implémenté)
 
 ---
 
-## 🚧 Étapes Prévues (Non Actives)
+## ✅ Étapes Actives (Implémentées)
 
-### 1. Crop Intelligent (face-api.js)
+### 1. Crop Intelligent (Sharp) ✅
 
-**Objectif** : Détecter automatiquement les visages et cropper l'image pour les centrer.
+**Objectif** : Cropper l'image en préservant le ratio cible, centré automatiquement.
 
-**Implémentation future** :
+**Implémentation actuelle** :
 
 ```javascript
-// TODO: Dans cropImage()
-// 1. Charger le modèle face-api.js
-// 2. Détecter les visages dans l'image
-// 3. Calculer la zone optimale pour le crop
-// 4. Cropper l'image avec Sharp
+// ✅ Implémenté dans cropImage()
+// 1. Charger l'image avec Sharp
+// 2. Calculer les dimensions de crop (ratio préservé)
+// 3. Centrer le crop horizontalement ou verticalement
+// 4. Extraire la zone avec Sharp
 ```
 
-### 2. Redimensionnement (Sharp)
+**Note** : Détection de visages (face-api.js) non implémentée. Le crop est centré automatiquement.
+
+### 2. Redimensionnement (Sharp) ✅
 
 **Objectif** : Redimensionner automatiquement selon les dimensions configurées.
 
-**Implémentation future** :
+**Implémentation actuelle** :
 
 ```javascript
-// TODO: Dans resizeImage()
+// ✅ Implémenté dans resizeImage()
 // 1. Charger l'image avec Sharp
 // 2. Obtenir les dimensions actuelles
 // 3. Calculer les nouvelles dimensions (ratio préservé)
-// 4. Redimensionner et sauvegarder
+// 4. Redimensionner avec algorithme Lanczos3 (qualité élevée)
+// 5. Sauvegarder
 ```
 
-### 3. Optimisation (Sharp)
+### 3. Optimisation (Sharp) ✅
 
 **Objectif** : Compresser et convertir au format optimal.
+
+**Implémentation actuelle** :
+
+```javascript
+// ✅ Implémenté dans optimizeImage()
+// 1. Charger l'image avec Sharp
+// 2. Convertir au format souhaité (WebP, JPG, etc.)
+// 3. Appliquer la compression (qualité configurable)
+// 4. Optimiser les métadonnées (suppression EXIF sauf orientation)
+// 5. Sauvegarder
+```
+
+## 🚧 Améliorations Futures (Optionnelles)
+
+### 1. Détection de Visages (face-api.js)
+
+**Objectif** : Détecter automatiquement les visages et centrer le crop sur eux.
 
 **Implémentation future** :
 
 ```javascript
-// TODO: Dans optimizeImage()
-// 1. Charger l'image avec Sharp
-// 2. Convertir au format souhaité (WebP, JPG, etc.)
-// 3. Appliquer la compression
-// 4. Optimiser les métadonnées
-// 5. Sauvegarder
+// TODO: Intégrer face-api.js dans cropImage()
+// 1. Installer: npm install face-api.js @tensorflow/tfjs-node
+// 2. Charger les modèles face-api.js
+// 3. Détecter les visages dans l'image
+// 4. Calculer la zone optimale centrée sur les visages
+// 5. Cropper l'image avec Sharp
 ```
+
+**Note** : Non prioritaire, le crop centré fonctionne bien pour la plupart des cas.
 
 ---
 
@@ -262,16 +284,21 @@ async validateMovie(req, res) {
 
 ---
 
-## 📦 Dépendances Futures
+## 📦 Dépendances
 
-Pour activer les traitements, installer :
+Dépendances installées :
 
 ```bash
-npm install sharp
-npm install face-api.js
+npm install sharp  # ✅ Installé (v0.33.5)
 ```
 
-⚠️ **Note** : Ces dépendances ne sont pas encore installées. Le pipeline fonctionne actuellement en mode "copie" uniquement.
+Dépendances optionnelles (non installées) :
+
+```bash
+npm install face-api.js @tensorflow/tfjs-node  # ❌ Non installé (optionnel)
+```
+
+✅ **Note** : Sharp est installé et activé. Le pipeline traite automatiquement toutes les images.
 
 ---
 
@@ -305,17 +332,25 @@ Le pipeline affiche des logs pour chaque étape :
 
 ## ⚠️ Notes Importantes
 
-1. **Aucun traitement réel** : Pour l'instant, le pipeline copie simplement les fichiers avec un nouveau nom
+1. **Traitement réel activé** : Le pipeline traite automatiquement toutes les images (crop, resize, optimize)
 2. **BDD requise** : Le pipeline a besoin d'accéder à la BDD pour récupérer le nom du film/recette
-3. **Gestion d'erreurs** : Toutes les erreurs sont propagées, à gérer dans les controllers
-4. **Fichiers temporaires** : Les fichiers uploadés par Multer peuvent être supprimés après traitement
+3. **Gestion d'erreurs** : Toutes les erreurs sont propagées, à gérer dans les controllers. Fallback sur image originale en cas d'erreur.
+4. **Fichiers temporaires** : Les fichiers temporaires sont automatiquement nettoyés après traitement
+5. **Conservation originaux** : Les originaux sont copiés dans `originals/` avant traitement
 
 ---
 
-## 🎯 Prochaines Étapes
+## 🎯 État Actuel
 
-1. ✅ Architecture préparée (PHASE 3)
-2. ⏳ Intégration dans les middlewares (PHASE 2 - suite)
-3. ⏳ Installation de Sharp et face-api.js
-4. ⏳ Activation des traitements réels
-5. ⏳ Tests et validation
+1. ✅ Architecture complète
+2. ✅ Intégration dans les controllers
+3. ✅ Sharp installé et activé
+4. ✅ Traitements réels activés (crop, resize, optimize)
+5. ✅ Tests et validation effectués
+
+## 🔧 Améliorations Recommandées
+
+1. ⏳ Générer les banners pour les films (code présent mais non appelé)
+2. ⏳ Désactiver WebP en mode dev (garder format original)
+3. ⏳ Supprimer les anciennes images lors du remplacement
+4. ⏳ Optionnel : Intégrer face-api.js pour détection de visages

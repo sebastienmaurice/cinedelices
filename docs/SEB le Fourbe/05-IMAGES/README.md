@@ -9,7 +9,9 @@ Ce dossier contient la documentation technique sur la gestion et le traitement d
 ### Implémentation
 
 - **RAPPORT_IMPLEMENTATION.md** - Rapport d'implémentation des images
-- **AUDIT_IMPORT.md** - Audit de l'import d'images
+- **AUDIT_IMPORT.md** - Audit de l'import d'images (ancien, historique)
+- **AUDIT_COMPLET_2025.md** - ⭐ Audit complet actuel du pipeline
+- **RAPPORT_SYNTHETIQUE_FINAL.md** - ⭐⭐ **RAPPORT FINAL** - Synthèse audit + corrections
 
 ### Pipeline
 
@@ -33,8 +35,9 @@ Consultez ces documents pour comprendre :
 
 **Ordre de lecture recommandé :**
 
-1. `RAPPORT_IMPLEMENTATION.md` - Vue d'ensemble
-2. `AUDIT_IMPORT.md` - Audit
-3. `PIPELINE.md` - Pipeline technique
-4. `RATIO_ANALYSIS.md` - Détails ratios
-
+1. `RAPPORT_SYNTHETIQUE_FINAL.md` - ⭐⭐ **COMMENCER ICI** - Synthèse complète de l'audit et corrections
+2. `AUDIT_COMPLET_2025.md` - ⭐ Audit détaillé avec instructions
+3. `RAPPORT_IMPLEMENTATION.md` - Vue d'ensemble (mis à jour)
+4. `PIPELINE.md` - Pipeline technique (mis à jour)
+5. `AUDIT_IMPORT.md` - Audit historique (ancien, référence)
+6. `RATIO_ANALYSIS.md` - Détails ratios

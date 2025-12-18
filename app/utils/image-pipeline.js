@@ -24,6 +24,312 @@ import { logImageProcess, logUploadError, LOG_LEVELS } from "./logger.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Imports conditionnels pour face-api.js (chargés seulement si nécessaire)
+// Ces imports sont faits de manière lazy pour éviter les erreurs "Illegal instruction"
+// sur les systèmes qui ne supportent pas les instructions CPU requises par TensorFlow.js
+let faceapi = null;
+let canvas = null;
+let tfjsNodeLoaded = false;
+
+// État de chargement des modèles face-api.js
+let faceApiModelsLoaded = false;
+let faceApiLoadingPromise = null;
+
+/**
+ * Charge les dépendances face-api.js de manière lazy (seulement si nécessaire)
+ * Évite les erreurs "Illegal instruction" au démarrage si TensorFlow.js n'est pas supporté
+ *
+ * @returns {Promise<boolean>} - true si les dépendances sont chargées avec succès
+ */
+async function loadFaceApiDependencies() {
+  // Si déjà chargées, retourner immédiatement
+  if (faceapi && canvas) {
+    return true;
+  }
+
+  try {
+    // Charger TensorFlow.js Node seulement si nécessaire
+    if (!tfjsNodeLoaded) {
+      try {
+        await import("@tensorflow/tfjs-node");
+        tfjsNodeLoaded = true;
+      } catch (error) {
+        console.warn(
+          "⚠️ @tensorflow/tfjs-node non disponible, face-api.js utilisera le mode CPU standard"
+        );
+        // Continuer sans tfjs-node (face-api.js fonctionnera mais plus lentement)
+      }
+    }
+
+    // Charger canvas
+    canvas = await import("canvas");
+
+    // Charger face-api.js
+    faceapi = await import("face-api.js");
+
+    // Configuration de l'environnement face-api.js pour Node.js
+    // Monkey-patch nécessaire pour que face-api.js fonctionne avec canvas dans Node.js
+    const { Canvas, Image, ImageData } = canvas;
+    faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
+
+    return true;
+  } catch (error) {
+    console.error(
+      "❌ Erreur lors du chargement des dépendances face-api.js:",
+      error
+    );
+    return false;
+  }
+}
+
+/**
+ * Initialise et charge les modèles face-api.js pour la détection de visages
+ * Les modèles sont chargés une seule fois au premier appel
+ *
+ * @returns {Promise<boolean>} - true si les modèles sont chargés avec succès
+ */
+async function initializeFaceApiModels() {
+  // Si déjà chargé, retourner immédiatement
+  if (faceApiModelsLoaded) {
+    return true;
+  }
+
+  // Si un chargement est en cours, attendre qu'il se termine
+  if (faceApiLoadingPromise) {
+    return faceApiLoadingPromise;
+  }
+
+  // Démarrer le chargement
+  faceApiLoadingPromise = (async () => {
+    try {
+      // 1. Charger les dépendances face-api.js d'abord
+      const depsLoaded = await loadFaceApiDependencies();
+      if (!depsLoaded) {
+        console.warn("⚠️ Dépendances face-api.js non disponibles");
+        faceApiLoadingPromise = null;
+        return false;
+      }
+
+      console.log("🔄 Démarrage du chargement des modèles face-api.js...");
+
+      // Chemin vers les modèles face-api.js dans node_modules
+      const modelsPath = path.join(
+        __dirname,
+        "../../node_modules/face-api.js/weights"
+      );
+
+      // Vérifier que le dossier existe
+      try {
+        await fs.access(modelsPath);
+      } catch (error) {
+        console.warn(
+          "⚠️ Dossier des modèles face-api.js non trouvé:",
+          modelsPath
+        );
+        console.warn(
+          "⚠️ Les modèles doivent être téléchargés depuis: https://github.com/justadudewhohacks/face-api.js-models"
+        );
+        console.warn("⚠️ Placez-les dans: node_modules/face-api.js/weights/");
+        faceApiLoadingPromise = null;
+        return false;
+      }
+
+      // Charger les modèles nécessaires pour la détection de visages
+      // Utilisation de tinyFaceDetector (plus léger et rapide) ou ssdMobilenetv1 (plus précis)
+      console.log("📦 Chargement du modèle tinyFaceDetector...");
+      await faceapi.nets.tinyFaceDetector.loadFromDisk(modelsPath);
+
+      console.log("📦 Chargement du modèle faceLandmark68Net...");
+      await faceapi.nets.faceLandmark68Net.loadFromDisk(modelsPath);
+
+      console.log("📦 Chargement du modèle faceRecognitionNet...");
+      await faceapi.nets.faceRecognitionNet.loadFromDisk(modelsPath);
+
+      // Marquer comme chargé
+      faceApiModelsLoaded = true;
+      faceApiLoadingPromise = null;
+
+      console.log("✅ Modèles face-api.js chargés avec succès");
+      console.log("   - tinyFaceDetector: ✅");
+      console.log("   - faceLandmark68Net: ✅");
+      console.log("   - faceRecognitionNet: ✅");
+
+      await logImageProcess({
+        step: "face-api-init",
+        result: "Modèles face-api.js chargés avec succès",
+      });
+
+      return true;
+    } catch (error) {
+      faceApiLoadingPromise = null;
+      console.error(
+        "❌ Erreur lors du chargement des modèles face-api.js:",
+        error
+      );
+      await logUploadError(error, {
+        context: "initializeFaceApiModels",
+        message: "Échec du chargement des modèles face-api.js",
+      });
+      return false;
+    }
+  })();
+
+  return faceApiLoadingPromise;
+}
+
+/**
+ * Vérifie si les modèles face-api.js sont chargés et les charge si nécessaire
+ *
+ * @returns {Promise<boolean>} - true si les modèles sont disponibles
+ */
+async function ensureFaceApiModelsLoaded() {
+  if (!faceApiModelsLoaded) {
+    return await initializeFaceApiModels();
+  }
+  return true;
+}
+
+/**
+ * Détecte le visage principal dans une image et retourne ses coordonnées
+ *
+ * @param {string} imagePath - Chemin absolu de l'image à analyser
+ * @returns {Promise<Object|null>} - Coordonnées du visage principal { left, top, width, height } ou null si aucun visage détecté
+ *
+ * @example
+ * const faceCoords = await detectFace("/path/to/image.jpg");
+ * // Retourne: { left: 100, top: 50, width: 200, height: 250 } ou null
+ */
+async function detectFace(imagePath) {
+  try {
+    // 1. S'assurer que les modèles face-api.js sont chargés
+    const modelsLoaded = await ensureFaceApiModelsLoaded();
+
+    if (!modelsLoaded) {
+      console.warn(
+        "⚠️ Modèles face-api.js non disponibles, détection de visage impossible"
+      );
+      await logImageProcess({
+        step: "detectFace",
+        imagePath,
+        result: "Modèles face-api.js non disponibles",
+      });
+      return null;
+    }
+
+    // S'assurer que canvas est chargé
+    if (!canvas) {
+      await loadFaceApiDependencies();
+    }
+
+    console.log(`🔍 Démarrage de la détection de visage: ${imagePath}`);
+
+    // 2. Vérifier que le fichier existe
+    try {
+      await fs.access(imagePath);
+    } catch (error) {
+      console.error(`❌ Fichier image introuvable: ${imagePath}`);
+      await logUploadError(error, {
+        context: "detectFace",
+        imagePath,
+        message: "Fichier image introuvable",
+      });
+      return null;
+    }
+
+    // 3. Charger l'image avec canvas
+    const { loadImage } = canvas;
+    const img = await loadImage(imagePath);
+
+    console.log(`📷 Image chargée: ${img.width}x${img.height}px`);
+
+    // 4. Détecter tous les visages dans l'image
+    // Utilisation de tinyFaceDetector avec options pour meilleure précision
+    const detections = await faceapi
+      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+
+    console.log(`👤 Nombre de visages détectés: ${detections.length}`);
+
+    // 5. Si aucun visage détecté, retourner null
+    if (detections.length === 0) {
+      console.log("❌ Aucun visage détecté dans l'image");
+      await logImageProcess({
+        step: "detectFace",
+        imagePath,
+        result: "Aucun visage détecté",
+      });
+      return null;
+    }
+
+    // 6. Sélectionner le visage principal
+    // Critère : le visage le plus grand (surface = width * height)
+    let mainFace = detections[0];
+    let maxArea = mainFace.detection.box.width * mainFace.detection.box.height;
+
+    for (let i = 1; i < detections.length; i++) {
+      const face = detections[i];
+      const area = face.detection.box.width * face.detection.box.height;
+
+      if (area > maxArea) {
+        maxArea = area;
+        mainFace = face;
+      }
+    }
+
+    // 7. Extraire les coordonnées du visage principal
+    const box = mainFace.detection.box;
+    const faceCoords = {
+      left: Math.round(box.x),
+      top: Math.round(box.y),
+      width: Math.round(box.width),
+      height: Math.round(box.height),
+    };
+
+    // 8. Calculer le score de confiance (optionnel, pour logs)
+    const confidence = mainFace.detection.score || 0;
+
+    console.log(`✅ Visage principal détecté:`);
+    console.log(`   - Position: (${faceCoords.left}, ${faceCoords.top})`);
+    console.log(`   - Dimensions: ${faceCoords.width}x${faceCoords.height}px`);
+    console.log(`   - Surface: ${maxArea}px²`);
+    console.log(`   - Confiance: ${(confidence * 100).toFixed(1)}%`);
+
+    // 9. Vérifier que les coordonnées sont valides (dans les limites de l'image)
+    if (
+      faceCoords.left < 0 ||
+      faceCoords.top < 0 ||
+      faceCoords.left + faceCoords.width > img.width ||
+      faceCoords.top + faceCoords.height > img.height
+    ) {
+      console.warn(
+        "⚠️ Coordonnées du visage hors limites de l'image, ajustement nécessaire"
+      );
+    }
+
+    await logImageProcess({
+      step: "detectFace",
+      imagePath,
+      result: `Visage détecté: ${faceCoords.width}x${faceCoords.height}px à (${
+        faceCoords.left
+      }, ${faceCoords.top}), confiance: ${(confidence * 100).toFixed(1)}%`,
+    });
+
+    return faceCoords;
+  } catch (error) {
+    console.error(
+      `❌ Erreur lors de la détection de visage dans ${imagePath}:`,
+      error
+    );
+    await logUploadError(error, {
+      context: "detectFace",
+      imagePath,
+      message: "Erreur lors de la détection de visage",
+    });
+    return null;
+  }
+}
+
 /**
  * Configuration par défaut pour chaque type d'image
  */
@@ -370,8 +676,8 @@ function getRelativePath(absolutePath) {
 // ============================================
 
 /**
- * Étape 1 : Crop intelligent avec détection de zones d'intérêt
- * ✅ ACTIVÉ - Utilise Sharp pour détecter les zones d'intérêt et centrer le crop
+ * Étape 1 : Crop intelligent avec détection de visages via face-api.js
+ * ✅ ACTIVÉ - Utilise face-api.js pour détecter le visage principal et centrer le crop
  *
  * @private
  * @param {string} imagePath - Chemin de l'image source
@@ -417,18 +723,76 @@ async function cropImage(imagePath, imageType, outputPath) {
     let cropHeight = metadata.height;
     let left = 0;
     let top = 0;
+    let cropMethod = "centré classique"; // Par défaut : fallback
 
-    if (imageRatio > ratio) {
-      // L'image est plus large que le ratio cible, on crop les côtés
-      cropWidth = Math.round(metadata.height * ratio);
-      left = Math.round((metadata.width - cropWidth) / 2); // Centrer horizontalement
+    // 1. Tenter de détecter un visage dans l'image
+    const faceCoords = await detectFace(imagePath);
+
+    if (faceCoords) {
+      // 2. Visage détecté : centrer le crop sur le visage principal
+      console.log(
+        "🎯 Crop intelligent : visage détecté, centrage sur le visage"
+      );
+      cropMethod = "centré sur visage";
+
+      // Calculer le centre du visage
+      const faceCenterX = faceCoords.left + faceCoords.width / 2;
+      const faceCenterY = faceCoords.top + faceCoords.height / 2;
+
+      // Calculer les dimensions du crop
+      if (imageRatio > ratio) {
+        // L'image est plus large que le ratio cible, on crop les côtés
+        cropWidth = Math.round(metadata.height * ratio);
+        cropHeight = metadata.height;
+      } else {
+        // L'image est plus haute que le ratio cible, on crop le haut/bas
+        cropWidth = metadata.width;
+        cropHeight = Math.round(metadata.width / ratio);
+      }
+
+      // Centrer le crop sur le visage
+      left = Math.round(faceCenterX - cropWidth / 2);
+      top = Math.round(faceCenterY - cropHeight / 2);
+
+      // 3. Ajuster pour rester dans les limites de l'image
+      if (left < 0) {
+        left = 0;
+      } else if (left + cropWidth > metadata.width) {
+        left = metadata.width - cropWidth;
+      }
+
+      if (top < 0) {
+        top = 0;
+      } else if (top + cropHeight > metadata.height) {
+        top = metadata.height - cropHeight;
+      }
+
+      console.log(
+        `   📍 Crop centré sur visage: (${left}, ${top}) - ${cropWidth}x${cropHeight}px`
+      );
     } else {
-      // L'image est plus haute que le ratio cible, on crop le haut/bas
-      cropHeight = Math.round(metadata.width / ratio);
-      top = Math.round((metadata.height - cropHeight) / 2); // Centrer verticalement
+      // 4. Aucun visage détecté : utiliser le crop centré classique (fallback)
+      console.log(
+        "🔄 Crop intelligent : aucun visage détecté, utilisation du crop centré classique"
+      );
+      cropMethod = "centré classique (fallback)";
+
+      if (imageRatio > ratio) {
+        // L'image est plus large que le ratio cible, on crop les côtés
+        cropWidth = Math.round(metadata.height * ratio);
+        left = Math.round((metadata.width - cropWidth) / 2); // Centrer horizontalement
+      } else {
+        // L'image est plus haute que le ratio cible, on crop le haut/bas
+        cropHeight = Math.round(metadata.width / ratio);
+        top = Math.round((metadata.height - cropHeight) / 2); // Centrer verticalement
+      }
+
+      console.log(
+        `   📍 Crop centré classique: (${left}, ${top}) - ${cropWidth}x${cropHeight}px`
+      );
     }
 
-    // Utiliser Sharp pour extraire la zone d'intérêt (entropy - zone la plus détaillée)
+    // 5. Utiliser Sharp pour extraire la zone d'intérêt
     await image
       .extract({
         left,
@@ -441,7 +805,7 @@ async function cropImage(imagePath, imageType, outputPath) {
     await logImageProcess({
       step: "crop",
       imagePath: outputPath,
-      result: `Crop effectué: ${cropWidth}x${cropHeight} depuis ${metadata.width}x${metadata.height}`,
+      result: `Crop ${cropMethod}: ${cropWidth}x${cropHeight}px à (${left}, ${top}) depuis ${metadata.width}x${metadata.height}px`,
     });
 
     return outputPath;
@@ -625,3 +989,8 @@ export const PIPELINE_CONFIG = IMAGE_CONFIG;
  * Ré-export des types d'images pour facilité d'utilisation
  */
 export { IMAGE_TYPES } from "./image-utils.js";
+
+/**
+ * Export des fonctions d'initialisation face-api.js et de détection pour les tests
+ */
+export { initializeFaceApiModels, ensureFaceApiModelsLoaded, detectFace };
