@@ -5,10 +5,10 @@ import {
   User,
   UsersRecipes,
 } from "../models/index.model.js";
-import { logUpload, logUploadError } from "../utils/logger.js";
-import { IMAGE_TYPES } from "../utils/image-utils.js";
-import { processImage } from "../utils/image-pipeline.js";
-import sequelize from "../database/sequelize-client.js";
+import {
+  enrichMovieWithImagePaths,
+  enrichMoviesWithImagePaths,
+} from "../utils/movie-image-helper.js";
 
 const adminController = {
   // Page principale admin
@@ -26,9 +26,12 @@ const adminController = {
       const avis = await Notice.findAll();
       const users = await User.findAll();
 
+      // Enrichir les movies avec les chemins d'images
+      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+
       res.render("admin-dashboard", {
         recipes,
-        movies,
+        movies: enrichedMovies,
         avis,
         users,
         success: req.query.success,
@@ -58,9 +61,13 @@ const adminController = {
       const users = await User.findAll();
       const recipeId = req.params.id;
       const upRecipe = await Recipe.findByPk(recipeId);
+
+      // Enrichir les movies avec les chemins d'images
+      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+
       res.render("admin-dashboard", {
         recipes,
-        movies,
+        movies: enrichedMovies,
         avis,
         users,
         upRecipe,
@@ -91,12 +98,19 @@ const adminController = {
       const users = await User.findAll();
       const movieId = req.params.id;
       const upMovie = await Movie.findByPk(movieId);
+
+      // Enrichir upMovie avec les chemins d'images (cardPath pour la prévisualisation)
+      const enrichedUpMovie = upMovie
+        ? enrichMovieWithImagePaths(upMovie)
+        : null;
+      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+
       res.render("admin-dashboard", {
         recipes,
-        movies,
+        movies: enrichedMovies,
         avis,
         users,
-        upMovie,
+        upMovie: enrichedUpMovie,
         success: req.query.success,
         role: req.userRole,
       });
@@ -125,42 +139,9 @@ const adminController = {
 
       // Si un fichier a été uploadé
       if (req.file) {
-        try {
-          // Utiliser le pipeline pour traiter l'image (crop, resize, optimize)
-          const imageResult = await processImage({
-            imagePath: req.file.path, // Chemin absolu de l'image uploadée
-            imageType: IMAGE_TYPES.MOVIE_CARD,
-            entityId: movieId,
-            entityType: "movie",
-            enableCrop: true,
-            enableResize: true,
-            enableOptimize: true,
-          });
-
-          // Utiliser le chemin relatif généré par le pipeline
-          updateData.picture = imageResult.relativePath;
-
-          // Journaliser l'upload d'image
-          await logUpload({
-            type: IMAGE_TYPES.MOVIE_CARD,
-            filename: imageResult.filename,
-            originalName: req.file.originalname,
-            destination: req.file.destination,
-            size: req.file.size,
-            mimetype: req.file.mimetype,
-            entityId: movieId,
-          });
-        } catch (imageError) {
-          // En cas d'erreur de traitement, utiliser l'image originale
-          console.error("Erreur lors du traitement de l'image:", imageError);
-          updateData.picture = `/images/movies/cards/${req.file.filename}`;
-
-          await logUploadError(imageError, {
-            type: IMAGE_TYPES.MOVIE_CARD,
-            entityId: movieId,
-            action: "validateMovie-image-processing",
-          });
-        }
+        // Construire le chemin relatif de l'image pour la BDD
+        // Les images admin sont stockées dans movies/originals/
+        updateData.picture = `/images/movies/originals/${req.file.filename}`;
       }
 
       await Movie.update(
@@ -173,15 +154,10 @@ const adminController = {
         // QUEL film modifier : celui qui a cet ID
         // Équivalent SQL : UPDATE movies SET status = true WHERE id
       );
+      console.log("fichierData:", updateData);
 
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
-      // Journaliser l'erreur
-      await logUploadError(error, {
-        type: IMAGE_TYPES.MOVIE_CARD,
-        entityId: req.params.id ? parseInt(req.params.id) : null,
-        action: "validateMovie",
-      });
       console.error("Erreur lors de la validation du film:", error);
       res.status(500).send("Erreur lors de la validation du film");
     }
@@ -189,55 +165,19 @@ const adminController = {
 
   // Refuser un film (le supprime)
   async rejectMovie(req, res) {
-    // Démarrer une transaction pour assurer l'atomicité
-    const transaction = await sequelize.transaction();
-
     try {
       const movieId = parseInt(req.params.id);
-      // Récupère l'ID du film à supprimer depuis l'URL
+      //Récupère l'ID du film à supprimer depuis l'URL
 
-      // 1. Récupérer toutes les recettes associées au film
-      const recipes = await Recipe.findAll({
-        where: { id_movie: movieId },
-        transaction,
-      });
-
-      // 2. Pour chaque recette, supprimer les dépendances
-      for (const recipe of recipes) {
-        const recipeId = recipe.id;
-
-        // 2.1. Supprimer les notices (avis) associées à la recette
-        await Notice.destroy({
-          where: { id_recipe: recipeId },
-          transaction,
-        });
-
-        // 2.2. Supprimer les entrées dans la table de jonction UsersRecipes
-        await UsersRecipes.destroy({
-          where: { id_recipe: recipeId },
-          transaction,
-        });
-
-        // 2.3. Supprimer la recette elle-même
-        await Recipe.destroy({
-          where: { id: recipeId },
-          transaction,
-        });
-      }
-
-      // 3. Maintenant que toutes les dépendances sont supprimées, supprimer le film
       await Movie.destroy({
+        // 👆 Appelle la méthode destroy() de Sequelize = SUPPRIMER
         where: { id: movieId },
-        transaction,
+        // 👆 QUEL film supprimer : celui avec cet ID
+        // Équivalent SQL : DELETE FROM movies WHERE id
       });
-
-      // 4. Tout s'est bien passé : commit la transaction
-      await transaction.commit();
 
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
-      // En cas d'erreur : rollback pour annuler toutes les modifications
-      await transaction.rollback();
       console.error("Erreur lors du refus du film:", error);
       res.status(500).send("Erreur lors du refus du film");
     }

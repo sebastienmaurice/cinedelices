@@ -1,4 +1,5 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 
 const recipesController = {
   // Afficher le film et ses recettes
@@ -17,7 +18,14 @@ const recipesController = {
       // Toutes les recettes du film
       const recipes = await Recipe.findAll({ where: { id_movie: movie.id } });
 
-      res.render("recipes-movie", { movie, recipes, role: req.userRole });
+      // Enrichir le movie avec les chemins d'images
+      const enrichedMovie = enrichMovieWithImagePaths(movie);
+
+      res.render("recipes-movie", {
+        movie: enrichedMovie,
+        recipes,
+        role: req.userRole,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).render("error", {
@@ -62,9 +70,16 @@ const recipesController = {
         });
       }
 
+      // Enrichir le movie avec les chemins d'images
+      const enrichedMovie = enrichMovieWithImagePaths(movie);
+
       // Rendu de la vue avec les recettes filtrées
       console.log(recipes);
-      res.render("recipes-movie", { movie, recipes, role: req.userRole });
+      res.render("recipes-movie", {
+        movie: enrichedMovie,
+        recipes,
+        role: req.userRole,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).render("error", {

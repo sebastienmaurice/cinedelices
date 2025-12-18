@@ -1,49 +1,54 @@
-/**
- * Middleware d'upload pour les images de recettes
- * Ciné Délices - PHASE 7
- * Utilise les modules centralisés pour éviter les duplications
- */
-
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
-import {
-  determineImageFolder,
-  IMAGE_TYPES,
-  generateRandom,
-} from "../utils/image-utils.js";
-import {
-  createImageFilter,
-  MULTER_COMMON_CONFIG,
-} from "../utils/upload-config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration du stockage pour les recettes
+// Configuration du stockage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Utiliser la fonction centralisée pour déterminer le dossier
-    const uploadPath = determineImageFolder(IMAGE_TYPES.RECIPE_CARD);
+    // Les images seront stockées dans app/public/images/recipes
+    const uploadPath = path.join(__dirname, "../public/images/recipes");
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    // Utiliser la fonction centralisée pour générer un nombre aléatoire
-    const random = generateRandom();
+    // Génération d'un nom de fichier unique
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     const nameWithoutExt = path.basename(file.originalname, ext);
-    // Note: Le renommage intelligent (slug) sera intégré dans le pipeline
-    // Pour l'instant, on garde un nom basé sur le nom original
-    cb(null, "recipe-" + nameWithoutExt + "-" + random + ext);
+    cb(null, "recipe-" + nameWithoutExt + "-" + uniqueSuffix + ext);
   },
 });
 
-// Configuration de Multer pour les recettes
-// Utilise les fonctions centralisées pour éviter les duplications
+// Filtre pour accepter uniquement les images
+const fileFilter = (req, file, cb) => {
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        "Format de fichier non supporté. Utilisez JPG, JPEG, PNG ou WEBP."
+      ),
+      false
+    );
+  }
+};
+
+// Configuration de Multer
 const upload = multer({
   storage: storage,
-  fileFilter: createImageFilter(), // ✅ Fonction centralisée
-  ...MULTER_COMMON_CONFIG, // ✅ Configuration centralisée (limites)
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Limite de 5 MB
+  },
 });
 
 export default upload;

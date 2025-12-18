@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -76,11 +77,14 @@ const homeController = {
         // Si le dossier n'existe pas ou erreur, on continue avec un tableau vide
       }
 
+      // Enrichir les topMovies avec les chemins d'images (cards pour l'affichage)
+      const enrichedTopMovies = enrichMoviesWithImagePaths(topMovies);
+
       // Rendre la vue avec les recettes
       res.render("home", {
         recipes,
         topRecipe,
-        topMovies,
+        topMovies: enrichedTopMovies,
         recipeImages,
         role: req.userRole,
       });

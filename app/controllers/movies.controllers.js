@@ -9,6 +9,10 @@ import {
   extractKeywords,
 } from "../utils/search-utils.js";
 import searchCache from "../utils/search-cache.js";
+import {
+  enrichMoviesWithImagePaths,
+  enrichMovieWithImagePaths,
+} from "../utils/movie-image-helper.js";
 import "dotenv/config";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -28,10 +32,13 @@ const moviesController = {
           order: [["title", "ASC"]],
         });
 
+        // Enrichir les movies avec les chemins d'images
+        const enrichedMovies = enrichMoviesWithImagePaths(allMovies);
+
         return res.json({
           success: true,
-          movies: allMovies,
-          hasResults: allMovies.length > 0,
+          movies: enrichedMovies,
+          hasResults: enrichedMovies.length > 0,
         });
       }
 
@@ -70,10 +77,13 @@ const moviesController = {
         order: [["title", "ASC"]], // Ordre alphabétique simple
       });
 
+      // Enrichir les movies avec les chemins d'images
+      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+
       return res.json({
         success: true,
-        movies: movies,
-        hasResults: movies.length > 0,
+        movies: enrichedMovies,
+        hasResults: enrichedMovies.length > 0,
         query: searchTerm,
       });
     } catch (error) {
@@ -100,10 +110,12 @@ const moviesController = {
         });
       }
 
-      // Rendu de la vue avec les genres filtrés
+      // Enrichir les movies avec les chemins banner/card
+      const enrichedMovies = enrichMoviesWithImagePaths(movies);
 
+      // Rendu de la vue avec les genres filtrés
       res.render("movies", {
-        movies,
+        movies: enrichedMovies,
         selectedGenre: genre || "tous",
         role: req.userRole,
       });
@@ -478,21 +490,24 @@ const moviesController = {
           };
         }
 
+        // Enrichir le movie avec les chemins d'images
+        const enrichedMovie = enrichMovieWithImagePaths(movie);
+
         // Si c'est un film/série local
         return {
-          id: movie.id,
-          title_fr: movie.title,
-          title_en: movie.title,
-          year: movie.year,
-          genre: movie.genre,
+          id: enrichedMovie.id,
+          title_fr: enrichedMovie.title,
+          title_en: enrichedMovie.title,
+          year: enrichedMovie.year,
+          genre: enrichedMovie.genre,
           note: null,
           overview: null,
-          poster: movie.picture || null,
+          poster: enrichedMovie.cardPath || null, // Utiliser cardPath pour les miniatures
           score: movie.score,
           tmdb_enriched: false,
           isLocal: true,
-          tmdb_id: movie.tmdb_id || null,
-          type: movie.type || "film", // Type : "film" ou "serie"
+          tmdb_id: enrichedMovie.tmdb_id || null,
+          type: enrichedMovie.type || "film", // Type : "film" ou "serie"
         };
       });
 
@@ -695,8 +710,11 @@ const moviesController = {
         );
       }
 
+      // Enrichir les movies avec les chemins d'images (banner/card)
+      const enrichedMovies = enrichMoviesWithImagePaths(filteredMovies);
+
       res.render("movies", {
-        movies: filteredMovies,
+        movies: enrichedMovies,
         selectedGenre,
         role: req.userRole,
       });
@@ -734,16 +752,22 @@ const moviesController = {
         });
       }
 
+      // Enrichir le movie avec les chemins d'images
+      const enrichedMovie = enrichMovieWithImagePaths(movie);
+
       return res.json({
         success: true,
         movie: {
-          id: movie.id,
-          title: movie.title,
-          year: movie.year,
-          genre: movie.genre,
-          picture: movie.picture,
-          type: movie.type || "film",
-          tmdb_id: movie.tmdb_id,
+          id: enrichedMovie.id,
+          title: enrichedMovie.title,
+          year: enrichedMovie.year,
+          genre: enrichedMovie.genre,
+          picture: enrichedMovie.cardPath, // Utiliser cardPath pour la prévisualisation
+          originalPath: enrichedMovie.originalPath,
+          bannerPath: enrichedMovie.bannerPath,
+          cardPath: enrichedMovie.cardPath,
+          type: enrichedMovie.type || "film",
+          tmdb_id: enrichedMovie.tmdb_id,
         },
       });
     } catch (error) {

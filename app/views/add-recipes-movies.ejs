@@ -198,11 +198,13 @@
               <h3>Mon film sélectionné</h3>
               <div class="film-selected-image">
                 <% let hasMovieWithImage = false; if (typeof newMovie !==
-                "undefined" && newMovie && newMovie.picture && typeof
-                newMovie.picture === "string" && newMovie.picture.trim() !== "")
-                { hasMovieWithImage = true; } %> <% if (hasMovieWithImage) { %>
+                "undefined" && newMovie && (newMovie.cardPath ||
+                newMovie.picture) && typeof (newMovie.cardPath ||
+                newMovie.picture) === "string" && (newMovie.cardPath ||
+                newMovie.picture).trim() !== "") { hasMovieWithImage = true; }
+                %> <% if (hasMovieWithImage) { %>
                 <img
-                  src="<%= newMovie.picture %>"
+                  src="<%= newMovie.cardPath || newMovie.picture %>"
                   alt="Image du film ajouté par un admin Ciné Délices"
                 />
                 <% } else { %>

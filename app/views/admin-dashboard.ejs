@@ -129,8 +129,8 @@
                     type="button"
                     class="overview-image-button"
                     data-lightbox-trigger
-                    <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
-                    data-lightbox-image="<%= upMovie.picture %>"
+                    <% if (typeof upMovie !== "undefined" && upMovie && (upMovie.cardPath || upMovie.picture)) { %>
+                    data-lightbox-image="<%= upMovie.cardPath || upMovie.picture %>"
                     data-lightbox-alt="Affiche du film <%= upMovie.title %>"
                     <% } else { %>
                     data-lightbox-image="/images/image-default-movie.jpg"
@@ -140,8 +140,8 @@
                   >
                     <img
                       id="filmImagePreview"
-                      <% if (typeof upMovie !== "undefined" && upMovie && upMovie.picture) { %>
-                      src="<%= upMovie.picture %>"
+                      <% if (typeof upMovie !== "undefined" && upMovie && (upMovie.cardPath || upMovie.picture)) { %>
+                      src="<%= upMovie.cardPath || upMovie.picture %>"
                       alt="Affiche du film <%= upMovie.title %>"
                       <% } else { %>
                       src="/images/image-default-movie.jpg"

@@ -24,16 +24,17 @@
       if (response.ok) {
         const data = await response.json();
 
-        // Si le film existe avec une image, l'afficher
-        if (data.success && data.movie && data.movie.picture) {
+        // Si le film existe avec une image, l'afficher (utiliser cardPath si disponible)
+        const imagePath = data.movie?.cardPath || data.movie?.picture;
+        if (data.success && data.movie && imagePath) {
           const filmSelectedImage = document.querySelector(
             ".film-selected-image img"
           );
 
           if (filmSelectedImage) {
-            filmSelectedImage.src = data.movie.picture.startsWith("/")
-              ? data.movie.picture
-              : `/${data.movie.picture}`;
+            filmSelectedImage.src = imagePath.startsWith("/")
+              ? imagePath
+              : `/${imagePath}`;
             filmSelectedImage.alt = `Affiche du film ${data.movie.title || ""}`;
 
             // Cacher le message "* L'image de votre film sera intégrée..."
@@ -42,7 +43,7 @@
               filmImageNote.style.display = "none";
             }
 
-            console.log("✅ Image du film chargée:", data.movie.picture);
+            console.log("✅ Image du film chargée:", imagePath);
           }
         }
       }
