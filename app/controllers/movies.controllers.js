@@ -13,6 +13,7 @@ import {
   enrichMoviesWithImagePaths,
   enrichMovieWithImagePaths,
 } from "../utils/movie-image-helper.js";
+import { renderServerError } from "../utils/error-handler.js";
 import "dotenv/config";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -719,12 +720,8 @@ const moviesController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 

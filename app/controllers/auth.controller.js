@@ -2,6 +2,7 @@ import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
+import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 const authController = {
   // pour se connecter
@@ -110,30 +111,22 @@ const authController = {
       return res.status(400).render("ID utilisateur manquant");
     }
     try {
-      console.log(req.params.id);
-
+      // Refactoring : suppression du console.log de debug
       const user = await User.findByPk(req.params.id, {
         attributes: { exclude: ["password"] },
       });
 
+      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!user) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Utilisateur non trouvé",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Utilisateur", req.userRole);
       }
 
       // Rendu de la vue avec les données utilisateur
       // ajout de la gestion de role
       res.render("user-profile", { user, role: req.userRole });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 

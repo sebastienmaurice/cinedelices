@@ -1,6 +1,7 @@
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createFileFilter, MAX_FILE_SIZE } from "../utils/upload-config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,33 +38,15 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filtre pour accepter uniquement les images
-const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-  ];
+// Refactoring : utilisation du fileFilter centralisé depuis upload-config.js
+// Remplace le code dupliqué (lignes 41-59) par un appel à createFileFilter()
 
-  if (allowedMimeTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(
-      new Error(
-        "Format de fichier non supporté. Utilisez JPG, JPEG, PNG ou WEBP."
-      ),
-      false
-    );
-  }
-};
-
-// Configuration de Multer pour les films
+// Configuration de Multer pour les films (admin)
 const uploadMovie = multer({
   storage: storage,
-  fileFilter: fileFilter,
+  fileFilter: createFileFilter(), // Refactoring : fileFilter centralisé
   limits: {
-    fileSize: 5 * 1024 * 1024, // Limite de 5 MB
+    fileSize: MAX_FILE_SIZE, // Refactoring : limite centralisée
   },
 });
 
