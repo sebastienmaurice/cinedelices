@@ -1,5 +1,6 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
+import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 const addRecipesMoviesController = {
   // Page d'ajout de film et recette
@@ -27,12 +28,9 @@ const addRecipesMoviesController = {
 
       const newMovie = await Movie.findByPk(id);
 
+      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!newMovie) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Film non trouvé.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Film", req.userRole);
       }
 
       // Enrichir le movie avec les chemins d'images (card pour la prévisualisation)
@@ -77,15 +75,9 @@ const addRecipesMoviesController = {
           role: req.userRole,
         });
     } catch (error) {
-      console.error(error);
-
-      // ← ici, on rend la page d'erreur avec loginPopup: false
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-        //loginPopup: false,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      // Code commenté supprimé (loginPopup: false)
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -131,14 +123,8 @@ const addRecipesMoviesController = {
         .status(201)
         .render("add-recipes-movies", { newRecipe, role: req.userRole });
     } catch (error) {
-      console.error(error);
-
-      // ← ici, on rend la page d'erreur avec loginPopup: false
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 };

@@ -1,5 +1,6 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
+import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 const recipesController = {
   // Afficher le film et ses recettes
@@ -7,12 +8,10 @@ const recipesController = {
     try {
       const movie = await Movie.findByPk(req.params.id);
 
+      // Utilisation du helper centralisé pour les erreurs 404
+      // Refactoring : remplace le bloc dupliqué par un appel à renderNotFound()
       if (!movie) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Film introuvable.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Film", req.userRole);
       }
 
       // Toutes les recettes du film
@@ -27,12 +26,9 @@ const recipesController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Utilisation du helper centralisé pour les erreurs 500
+      // Refactoring : remplace le bloc dupliqué par un appel à renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
   /*
@@ -104,12 +100,9 @@ const recipesController = {
     try {
       const recipe = await Recipe.findByPk(req.params.id);
 
+      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!recipe) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "recette indisponible.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Recette", req.userRole);
       }
 
       const plainRecipe = recipe.get({ plain: true });
@@ -154,7 +147,7 @@ const recipesController = {
         const sum = plainNotices.reduce((acc, n) => acc + (n.quote || 0), 0); // Somme des notes
         averageQuote = Math.round(sum / plainNotices.length); // Moyenne arrondie a l'entier le plus proche
       }
-      console.log("note generale:", averageQuote);
+      // Refactoring : suppression du console.log de debug
 
       res.render("recipe-detail", {
         role: req.userRole,
@@ -166,12 +159,8 @@ const recipesController = {
         notices: plainNotices,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
   /*

@@ -36,6 +36,7 @@ catch (error) {
 ```
 
 **Occurrences** : ~15-20 occurrences dans :
+
 - `admin.controllers.js` (4 occurrences)
 - `add-recipes-movies.controllers.js` (3 occurrences)
 - `movies.controllers.js` (plusieurs occurrences)
@@ -66,6 +67,7 @@ if (!movie) {
 ```
 
 **Variations** :
+
 - "Film introuvable."
 - "Film non trouvé."
 - "Film introuvable pour cette categorie."
@@ -115,7 +117,8 @@ const enrichedMovies = enrichMoviesWithImagePaths(movies);
 
 **Bon point** : ✅ La logique est déjà centralisée dans `movie-image-helper.js`, mais l'appel est répété.
 
-**Occurrences** : 
+**Occurrences** :
+
 - `admin.controllers.js` : 3 fois
 - `movies.controllers.js` : plusieurs fois
 - `home.controllers.js` : 1 fois
@@ -128,6 +131,7 @@ C'est déjà bien centralisé, mais on pourrait créer un helper de controller q
 ### 1.5 Logs de debug non nécessaires
 
 **Fichiers concernés** :
+
 - `app/controllers/recipes-movie.controllers.js` : `console.log(req.params)`, `console.log(recipes)`, `console.log("note generale:", averageQuote)`
 - `app/controllers/admin.controllers.js` : `console.log("fichierData:", updateData)`
 - `app/controllers/auth.controller.js` : `console.log(req.params.id)`
@@ -135,6 +139,7 @@ C'est déjà bien centralisé, mais on pourrait créer un helper de controller q
 **Occurrences** : ~5-6 `console.log` de debug
 
 **Suggestion** :
+
 - Supprimer les logs de debug ou les remplacer par le système de logging centralisé (`logger.js`)
 - Utiliser un système de log conditionnel basé sur `process.env.NODE_ENV`
 
@@ -173,6 +178,7 @@ Créer des fonctions génériques `validateEntity(req, res, Model, successParam)
 **Fichier** : `app/controllers/add-recipes-movies.controllers.js`
 
 **Problème** :
+
 - Ligne 87 : `//loginPopup: false,` commenté
 - Ligne 18 : `loginPopup: false` dans le render d'erreur
 
@@ -186,6 +192,7 @@ Nettoyer le code commenté ou l'activer si nécessaire.
 ### 2.1 Duplication du fileFilter Multer
 
 **Fichiers concernés** :
+
 - `app/middlewares/upload.middleware.js`
 - `app/middlewares/upload-movie.middleware.js`
 
@@ -224,6 +231,7 @@ Créer un module `upload-config.js` avec une fonction `createFileFilter()` expor
 ### 2.2 Duplication des limites de taille
 
 **Fichiers concernés** :
+
 - `app/middlewares/upload.middleware.js`
 - `app/middlewares/upload-movie.middleware.js`
 
@@ -242,6 +250,7 @@ Centraliser dans `upload-config.js` avec une constante `MAX_FILE_SIZE`.
 ### 3.1 Fonction extractKeywords dupliquée
 
 **Fichiers concernés** :
+
 - `app/controllers/tmdb.controllers.js` (ligne 15-47)
 - `app/utils/search-utils.js` (probablement)
 
@@ -258,10 +267,12 @@ Vérifier si elle existe déjà dans `search-utils.js` et supprimer la duplicati
 **Fichier** : `app/utils/cleanup.js`
 
 **Problème** :
+
 - `CLEANUP_ENABLED = false` : fonctionnalité préparée mais jamais utilisée
 - Fonction `cleanupTempFiles()` a un TODO et n'est pas implémentée
 
 **Suggestion** :
+
 - Si non prévu d'utilisation proche : supprimer ou documenter clairement
 - Si prévu : compléter l'implémentation ou créer un ticket
 
@@ -272,6 +283,7 @@ Vérifier si elle existe déjà dans `search-utils.js` et supprimer la duplicati
 ### 4.1 Fonction updateFilmImage dupliquée
 
 **Fichiers concernés** :
+
 - `app/public/js/tmdb-validator.js` (ligne ~494)
 - `app/public/js/movie-autocomplete-form.js` (ligne ~277)
 - `app/public/js/load-existing-movie-image.js` (logique similaire)
@@ -283,7 +295,7 @@ La fonction `updateFilmImage(movie)` est **dupliquée** avec une logique presque
 async function updateFilmImage(movie) {
   const filmSelectedImage = document.querySelector(".film-selected-image img");
   if (!filmSelectedImage) return;
-  
+
   if (movie && movie.id) {
     try {
       const response = await fetch(`/movies/api/get/${movie.id}`);
@@ -310,6 +322,7 @@ Créer un module `film-image-utils.js` dans `/public/js/utils/` et exporter `upd
 ### 4.2 Logique de normalisation d'URL dupliquée
 
 **Fichiers concernés** :
+
 - `app/public/js/tmdb-validator.js`
 - `app/public/js/movie-autocomplete-form.js`
 
@@ -328,12 +341,14 @@ Centraliser dans un module utils.
 **Fichier** : `app/public/js/contact-about.js`
 
 **Problème** :
+
 - `const DEBUG_MODE = false;` avec plusieurs `if (DEBUG_MODE)` conditionnels
 - Code de debug non utilisé en production
 
 **Occurrences** : ~5-6 occurrences de `if (DEBUG_MODE)`
 
 **Suggestion** :
+
 - Si le debug n'est plus nécessaire : supprimer
 - Si nécessaire : utiliser `process.env.NODE_ENV === 'development'` ou un système de logging
 
@@ -344,12 +359,14 @@ Centraliser dans un module utils.
 **Fichier** : `app/public/js/movie-search.js`
 
 **Problème** :
+
 ```javascript
 // TODO: Intégrer la recherche IA dans le futur
 alert("La recherche IA sera disponible prochainement !");
 ```
 
 **Suggestion** :
+
 - Si la fonctionnalité est prévue : créer un ticket
 - Si abandonnée : supprimer le bouton/fonctionnalité
 
@@ -362,6 +379,7 @@ alert("La recherche IA sera disponible prochainement !");
 **Fichier** : `app/views/add-recipes-movies.ejs`
 
 **Problème** :
+
 - Commentaires EJS complexes sur plusieurs lignes qui peuvent causer des erreurs de syntaxe
 
 **Suggestion** :
@@ -375,6 +393,7 @@ Simplifier les commentaires EJS ou les convertir en commentaires HTML si nécess
 
 **Problème** :
 Les patterns suivants sont répétés :
+
 - `Movie.findAll({ where: { status: true/false } })`
 - `Recipe.findAll({ where: { status: false } })`
 - `Movie.findByPk(req.params.id)` avec vérification `!movie`
@@ -388,23 +407,23 @@ Créer des méthodes de modèle Sequelize ou des helpers de requête réutilisab
 
 ### Code dupliqué identifié
 
-| Type | Occurrences | Fichiers concernés |
-|------|-------------|-------------------|
-| Gestion d'erreurs 500 | ~15-20 | Tous les controllers |
-| Gestion d'erreurs 404 | ~10-12 | Tous les controllers |
-| Requêtes admin | 3 | `admin.controllers.js` |
-| fileFilter Multer | 2 | `upload*.middleware.js` |
-| updateFilmImage JS | 3 | `tmdb-validator.js`, `movie-autocomplete-form.js`, `load-existing-movie-image.js` |
-| Logs console.debug | ~8-10 | Plusieurs fichiers |
+| Type                  | Occurrences | Fichiers concernés                                                                |
+| --------------------- | ----------- | --------------------------------------------------------------------------------- |
+| Gestion d'erreurs 500 | ~15-20      | Tous les controllers                                                              |
+| Gestion d'erreurs 404 | ~10-12      | Tous les controllers                                                              |
+| Requêtes admin        | 3           | `admin.controllers.js`                                                            |
+| fileFilter Multer     | 2           | `upload*.middleware.js`                                                           |
+| updateFilmImage JS    | 3           | `tmdb-validator.js`, `movie-autocomplete-form.js`, `load-existing-movie-image.js` |
+| Logs console.debug    | ~8-10       | Plusieurs fichiers                                                                |
 
 ### Code inutile identifié
 
-| Type | Fichiers |
-|------|----------|
+| Type                   | Fichiers                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------- |
 | `console.log` de debug | `recipes-movie.controllers.js`, `admin.controllers.js`, `auth.controller.js` |
-| Code commenté | `add-recipes-movies.controllers.js` |
-| DEBUG_MODE non utilisé | `contact-about.js` |
-| Cleanup non activé | `cleanup.js` |
+| Code commenté          | `add-recipes-movies.controllers.js`                                          |
+| DEBUG_MODE non utilisé | `contact-about.js`                                                           |
+| Cleanup non activé     | `cleanup.js`                                                                 |
 
 ---
 
@@ -413,10 +432,12 @@ Créer des méthodes de modèle Sequelize ou des helpers de requête réutilisab
 ### 🔴 Priorité Haute (Impact important, facile à corriger)
 
 1. **Centraliser la gestion d'erreurs** (controllers)
+
    - Impact : Réduction de ~15-20 blocs de code dupliqué
    - Complexité : Faible
 
 2. **Centraliser fileFilter Multer** (middlewares)
+
    - Impact : Réduction de duplication, facilité de maintenance
    - Complexité : Faible
 
@@ -427,10 +448,12 @@ Créer des méthodes de modèle Sequelize ou des helpers de requête réutilisab
 ### 🟡 Priorité Moyenne (Impact moyen)
 
 4. **Créer helper loadAdminData** (admin controller)
+
    - Impact : Réduction de 3 blocs identiques
    - Complexité : Faible-Moyenne
 
 5. **Centraliser validate/reject entities** (admin controller)
+
    - Impact : Réduction de 4 fonctions similaires
    - Complexité : Moyenne
 
@@ -457,7 +480,7 @@ app/
     upload-config.js          # Configuration Multer partagée
     admin-data-loader.js      # Helper pour charger les données admin
     entity-validator.js       # Helpers pour validate/reject
-    
+
   public/js/
     utils/
       film-image-utils.js     # updateFilmImage et fonctions liées

@@ -9,6 +9,8 @@ import {
   enrichMovieWithImagePaths,
   enrichMoviesWithImagePaths,
 } from "../utils/movie-image-helper.js";
+import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+import { loadAdminData } from "../utils/admin-data-loader.js";
 
 const adminController = {
   // Page principale admin
@@ -17,33 +19,21 @@ const adminController = {
 
   async admin(req, res) {
     try {
-      const recipes = await Recipe.findAll({
-        where: { status: false },
-      });
-      const movies = await Movie.findAll({
-        where: { status: false },
-      });
-      const avis = await Notice.findAll();
-      const users = await User.findAll();
-
-      // Enrichir les movies avec les chemins d'images
-      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+      // Refactoring : utilisation du helper centralisé loadAdminData()
+      // Remplace 4 requêtes BDD répétitives + enrichissement par un seul appel
+      const { recipes, movies, avis, users } = await loadAdminData();
 
       res.render("admin-dashboard", {
         recipes,
-        movies: enrichedMovies,
+        movies,
         avis,
         users,
         success: req.query.success,
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -51,23 +41,15 @@ const adminController = {
 
   async editRecipe(req, res) {
     try {
-      const recipes = await Recipe.findAll({
-        where: { status: false },
-      });
-      const movies = await Movie.findAll({
-        where: { status: false },
-      });
-      const avis = await Notice.findAll();
-      const users = await User.findAll();
+      // Refactoring : utilisation du helper centralisé loadAdminData()
+      const { recipes, movies, avis, users } = await loadAdminData();
+
       const recipeId = req.params.id;
       const upRecipe = await Recipe.findByPk(recipeId);
 
-      // Enrichir les movies avec les chemins d'images
-      const enrichedMovies = enrichMoviesWithImagePaths(movies);
-
       res.render("admin-dashboard", {
         recipes,
-        movies: enrichedMovies,
+        movies,
         avis,
         users,
         upRecipe,
@@ -75,12 +57,8 @@ const adminController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -154,12 +132,13 @@ const adminController = {
         // QUEL film modifier : celui qui a cet ID
         // Équivalent SQL : UPDATE movies SET status = true WHERE id
       );
-      console.log("fichierData:", updateData);
+      // Refactoring : suppression du console.log de debug
 
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
-      console.error("Erreur lors de la validation du film:", error);
-      res.status(500).send("Erreur lors de la validation du film");
+      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
+      // Note : utiliser renderServerError au lieu de res.status(500).send() pour cohérence
+      return renderServerError(res, error, req.userRole, "Erreur lors de la validation du film");
     }
   },
 
@@ -206,8 +185,8 @@ const adminController = {
 
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
-      console.error("Erreur lors de la validation de la recette:", error);
-      res.status(500).send("Erreur lors de la validation de la recette");
+      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
+      return renderServerError(res, error, req.userRole, "Erreur lors de la validation de la recette");
     }
   },
 
@@ -226,8 +205,8 @@ const adminController = {
 
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {
-      console.error("Erreur lors du refus de la recette:", error);
-      res.status(500).send("Erreur lors du refus de la recette");
+      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
+      return renderServerError(res, error, req.userRole, "Erreur lors du refus de la recette");
     }
   },
 
@@ -258,12 +237,13 @@ const adminController = {
       // Rediriger vers le tableau de bord admin avec un message de succès
       res.redirect("/admin?success=user_deleted");
     } catch (error) {
-      console.error("Erreur lors de la suppression de l'utilisateur:", error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur lors de la suppression de l'utilisateur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la suppression de l'utilisateur."
+      );
     }
   },
 };

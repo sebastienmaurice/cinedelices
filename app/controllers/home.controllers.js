@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
+import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -38,12 +39,9 @@ const homeController = {
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
 
+      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!topRecipe) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Top recette non générée.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Top recette", req.userRole);
       }
 
       // afficher 4 films aléatoirement sur la page d'accueil
@@ -89,12 +87,8 @@ const homeController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 };
