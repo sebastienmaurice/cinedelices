@@ -9,15 +9,9 @@ const addRecipesMoviesController = {
       // ajout gestion du role
       res.render("add-recipes-movies", { role: req.userRole });
     } catch (error) {
-      console.error(error);
-
-      // ← ici, on rend la page d'erreur avec loginPopup: false
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-        loginPopup: false,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      // Note : loginPopup: false retiré car non utilisé dans la vue error
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -42,12 +36,8 @@ const addRecipesMoviesController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
     }
   },
 

@@ -42,16 +42,13 @@ const recipesController = {
   // Filtrage des recettes du film par catégorie
   async filtredRecipes(req, res) {
     try {
-      console.log(req.params);
+      // Refactoring : suppression du console.log de debug
       const { id, category } = req.params;
 
       const movie = await Movie.findByPk(id);
+      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!movie) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Film introuvable pour cette categorie.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Film", req.userRole);
       }
 
       let recipes;
@@ -70,7 +67,7 @@ const recipesController = {
       const enrichedMovie = enrichMovieWithImagePaths(movie);
 
       // Rendu de la vue avec les recettes filtrées
-      console.log(recipes);
+      // Refactoring : suppression du console.log de debug
       res.render("recipes-movie", {
         movie: enrichedMovie,
         recipes,
