@@ -1,15 +1,29 @@
-/* ====================================================== */
-/* ==================== FILMS.CSS ====================== */
-/* ====================================================== */
-/* 
-  Styles spécifiques à la page Films uniquement.
-  Les styles communs (reset, typo, header, footer, boutons) 
-  sont définis dans base.css
-*/
+/**
+ * ======================================================
+ * MOVIES.CSS - Styles de la page Films
+ * ======================================================
+ *
+ * Rôle : Styles spécifiques à la page qui liste tous les films.
+ *        Gère la bannière, la recherche, le filtrage par genre, les cartes de films.
+ *
+ * Pages concernées : /movies (page liste des films)
+ *
+ * Ordre de chargement : Chargé APRÈS base.css
+ *                       Les styles communs (reset, typo, header, footer, boutons)
+ *                       sont définis dans base.css
+ */
 
 /* ====================================================== */
 /* ===================== HERO IMAGE ===================== */
 /* ====================================================== */
+/**
+ * Bannière hero de la page films
+ * -------------------------------
+ * position: relative : Permet de positionner le overlay en absolute
+ * isolation: isolate : Crée un nouveau contexte d'empilement (z-index isolé)
+ *   (utile pour éviter les conflits de z-index avec les enfants)
+ * background: linear-gradient : Fond dégradé (visible si l'image ne charge pas)
+ */
 .banner__image__film {
   width: 100%;
   max-width: var(--max-width);
@@ -28,6 +42,15 @@
   );
 }
 
+/**
+ * Overlay avec dégradés radiaux (effet de lumière)
+ * --------------------------------------------------
+ * position: absolute + inset: 0 : Couvre toute la bannière
+ * radial-gradient : Dégradé circulaire (effet de "lumière" dorée/blanche)
+ *   - circle at 20% 20% : Cercle centré à 20% de la largeur et hauteur
+ * pointer-events: none : Ne bloque pas les interactions (clic passe à travers)
+ * z-index: 1 : Au-dessus de l'image mais sous le contenu textuel
+ */
 .banner__image__film__overlay {
   position: absolute;
   inset: 0;
