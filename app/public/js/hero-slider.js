@@ -62,7 +62,8 @@
       const foreground = activeSlide?.querySelector(".hero-slider__foreground");
       if (
         foreground &&
-        activeSlide.classList.contains("hero-slider__slide--active")
+        activeSlide.classList.contains("hero-slider__slide--active") &&
+        !foreground.classList.contains("slide-in") // Ne pas appliquer pendant l'animation d'entrée
       ) {
         const baseTransform = `translateX(calc(-50% + ${currentParallaxX}px)) translateY(${currentParallaxY}px)`;
         foreground.style.transform = baseTransform;
@@ -186,6 +187,15 @@
         // Appliquer slide-in après un petit délai pour transition fluide
         setTimeout(() => {
           activeForeground.classList.add("slide-in");
+
+          // Écouter la fin de l'animation slide-in pour activer la parallaxe
+          const handleAnimationEnd = () => {
+            // Retirer la classe slide-in pour laisser JS gérer le transform
+            activeForeground.classList.remove("slide-in");
+            // Maintenant le transform peut être géré par la parallaxe JS
+            activeForeground.removeEventListener("animationend", handleAnimationEnd);
+          };
+          activeForeground.addEventListener("animationend", handleAnimationEnd);
         }, 50);
       }
 
@@ -287,6 +297,13 @@
         // Appliquer animation d'entrée après un court délai
         setTimeout(() => {
           activeForeground.classList.add("slide-in");
+
+          // Écouter la fin de l'animation slide-in pour activer la parallaxe sur le premier slide
+          const handleAnimationEnd = () => {
+            activeForeground.classList.remove("slide-in");
+            activeForeground.removeEventListener("animationend", handleAnimationEnd);
+          };
+          activeForeground.addEventListener("animationend", handleAnimationEnd);
         }, 100);
       }
 
