@@ -25,7 +25,11 @@
  *   return renderNotFound(res, "Film", req.userRole);
  * }
  */
-export function renderNotFound(res, resourceType = "Ressource", userRole = null) {
+export function renderNotFound(
+  res,
+  resourceType = "Ressource",
+  userRole = null
+) {
   return res.status(404).render("error", {
     error: "404",
     message: `${resourceType} introuvable.`,
@@ -49,7 +53,12 @@ export function renderNotFound(res, resourceType = "Ressource", userRole = null)
  *   return renderServerError(res, error, req.userRole);
  * }
  */
-export function renderServerError(res, error = null, userRole = null, customMessage = null) {
+export function renderServerError(
+  res,
+  error = null,
+  userRole = null,
+  customMessage = null
+) {
   // Log l'erreur dans la console pour le debugging (si disponible)
   if (error) {
     console.error("Erreur serveur:", error);
@@ -64,7 +73,7 @@ export function renderServerError(res, error = null, userRole = null, customMess
 
 /**
  * Gère les erreurs de manière générique (wrapper pour try/catch)
- * 
+ *
  * ⚠️ NOTE : Cette fonction est préparée mais pas encore utilisée dans le code.
  * Elle pourrait être utilisée pour simplifier encore plus la gestion d'erreurs
  * dans les controllers dans une future refactorisation.
@@ -80,7 +89,12 @@ export function renderServerError(res, error = null, userRole = null, customMess
  *   // ...
  * }, res, req.userRole);
  */
-export async function handleAsyncError(asyncFn, res, userRole = null, customMessage = null) {
+export async function handleAsyncError(
+  asyncFn,
+  res,
+  userRole = null,
+  customMessage = null
+) {
   try {
     return await asyncFn();
   } catch (error) {

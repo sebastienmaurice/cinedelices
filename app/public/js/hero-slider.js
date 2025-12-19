@@ -193,7 +193,10 @@
             // Retirer la classe slide-in pour laisser JS gérer le transform
             activeForeground.classList.remove("slide-in");
             // Maintenant le transform peut être géré par la parallaxe JS
-            activeForeground.removeEventListener("animationend", handleAnimationEnd);
+            activeForeground.removeEventListener(
+              "animationend",
+              handleAnimationEnd
+            );
           };
           activeForeground.addEventListener("animationend", handleAnimationEnd);
         }, 50);
@@ -301,7 +304,10 @@
           // Écouter la fin de l'animation slide-in pour activer la parallaxe sur le premier slide
           const handleAnimationEnd = () => {
             activeForeground.classList.remove("slide-in");
-            activeForeground.removeEventListener("animationend", handleAnimationEnd);
+            activeForeground.removeEventListener(
+              "animationend",
+              handleAnimationEnd
+            );
           };
           activeForeground.addEventListener("animationend", handleAnimationEnd);
         }, 100);
