@@ -112,13 +112,14 @@ const addRecipesMoviesController = {
         time: time,
         difficulty: difficulty,
         id_movie: id_movie,
-        picture: imagePath, // !Ajout du chemin de l'image (colonne 'picture')
+        picture: imagePath, // Chemin de l'image (null si aucune image)
       });
 
-      // Rendu de la page avec le rôle de l'utilisateur
-      res
-        .status(201)
-        .render("add-recipes-movies", { newRecipe, role: req.userRole });
+      // Rendre la page avec la recette créée
+      res.status(201).render("add-recipes-movies", {
+        newRecipe,
+        role: req.userRole,
+      });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
       return renderServerError(res, error, req.userRole);
