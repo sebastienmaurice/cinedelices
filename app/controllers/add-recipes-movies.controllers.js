@@ -58,12 +58,10 @@ const addRecipesMoviesController = {
       const enrichedMovie = enrichMovieWithImagePaths(newMovie);
 
       // Rendu de la page avec le rôle de l'utilisateur
-      res
-        .status(201)
-        .render("add-recipes-movies", {
-          newMovie: enrichedMovie,
-          role: req.userRole,
-        });
+      res.status(201).render("add-recipes-movies", {
+        newMovie: enrichedMovie,
+        role: req.userRole,
+      });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
       // Code commenté supprimé (loginPopup: false)

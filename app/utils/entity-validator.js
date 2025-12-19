@@ -2,6 +2,10 @@
  * Helpers génériques pour la validation et le rejet d'entités (Movie, Recipe)
  * Ciné Délices - Refactoring Étape 2
  *
+ * ⚠️ NOTE : Ce module est préparé mais pas encore utilisé dans le code.
+ * Il pourrait être utilisé pour simplifier les fonctions validateMovie/validateRecipe
+ * et rejectMovie/rejectRecipe dans admin.controllers.js dans une future refactorisation.
+ *
  * Ce module centralise les fonctions validateMovie/validateRecipe et rejectMovie/rejectRecipe
  * qui avaient un pattern très similaire dans admin.controllers.js.
  *

@@ -16,7 +16,7 @@
 
 /**
  * Met à jour l'image du film dans le conteneur .film-selected-image
- * 
+ *
  * Pour les films existants avec image : récupère l'image depuis l'API et l'affiche
  * Pour les nouveaux films ou films sans image : affiche l'image par défaut
  *
@@ -25,7 +25,7 @@
  * @example
  * // Film existant
  * updateFilmImage({ id: 5, title: "Harry Potter" });
- * 
+ *
  * // Nouveau film ou pas de film
  * updateFilmImage(null);
  */
