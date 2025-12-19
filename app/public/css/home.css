@@ -155,6 +155,12 @@
   line-height: 1.1;
   letter-spacing: 0.02em;
   animation: slideFadeInZoom 1s ease-out;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.hero-slider__slide--active .hero-slider__h1 {
+  animation: slideFadeInZoom 1s ease-out;
 }
 
 /**
@@ -169,9 +175,14 @@
   color: var(--argent-ecran);
   margin: 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  animation: slideFadeInUp 1s ease-out 0.2s both;
   max-width: 600px;
   line-height: 1.5;
+  opacity: 0;
+  animation: slideFadeInUp 1s ease-out 0.2s both;
+}
+
+.hero-slider__slide--active .hero-slider__subtitle {
+  animation: slideFadeInUp 1s ease-out 0.2s both;
 }
 
 /**
@@ -183,11 +194,11 @@
 @keyframes slideFadeInZoom {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
 
@@ -203,57 +214,9 @@
 }
 
 /**
- * Animations spécifiques par slide
- * ---------------------------------
- * Slide 1 : fade-in + zoom léger (déjà géré par slideFadeInZoom)
- * Slide 2 : slide depuis la gauche
- * Slide 3 : slide depuis la droite
- * Slide 4 : zoom + fade
+ * Animations spécifiques par slide (définies dans le JavaScript)
+ * Les animations sont appliquées via les classes CSS lors du changement de slide
  */
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active .hero-slider__content {
-  animation: slideInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active .hero-slider__content {
-  animation: slideInFromRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active .hero-slider__content {
-  animation: slideZoomFade 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translate(-150%, -50%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translate(50%, -50%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@keyframes slideZoomFade {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
 
 /**
  * Boutons de navigation (flèches gauche/droite)
