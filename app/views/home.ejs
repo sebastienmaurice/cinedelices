@@ -24,136 +24,68 @@
     <!-- MAIN -->
     <main>
       <!-- HERO SLIDER -->
-      <section class="hero-slider">
-        <!-- HERO SLIDER CARDS 1 -->
-
-        <div class="hero-slider__card">
-          <img
-            src="<%= recipeImages[0] %>"
-            alt="Harry potter"
-            class="hero-slider__img"
-          />
-
-          <div class="hero-slider__content">
-            <div class="hero-slider__info">
-              <div class="hero-slider__genre">
-                <ion-icon name="film"></ion-icon>
-                <span>Aventure/Fantastique</span>
-              </div>
-
-              <div class="hero-slider__year">
-                <ion-icon name="calendar"></ion-icon>
-                <span>2003</span>
-              </div>
-
-              <div class="hero-slider__duration">
-                <ion-icon name="time"></ion-icon>
-                <span>2h 23min</span>
-              </div>
-
-              <div class="hero-slider__recipe-badge">Le Gâteau Étoilé</div>
+      <section class="hero-slider" aria-label="Carrousel principal">
+        <div class="hero-slider__container">
+          <!-- Slide 1 : Ciné Délices -->
+          <div class="hero-slider__slide hero-slider__slide--active" data-slide="1">
+            <div class="hero-slider__bg" style="background-image: url('/images/image-banner-movies.jpg');"></div>
+            <div class="hero-slider__overlay"></div>
+            <div class="hero-slider__content">
+              <h1 class="hero-slider__h1">Ciné Délices</h1>
+              <p class="hero-slider__subtitle">Découvrez des recettes cultes inspirées de vos films préférés</p>
+              <a href="/movies" class="btn btn--gold-special">Découvrir les films</a>
             </div>
-            <h2 class="hero-slider__title">Harry Potter</h2>
           </div>
-        </div>
-        <!-- HERO SLIDER CARDS 2 -->
 
-        <div class="hero-slider__card">
-          <img
-            src="<%= recipeImages[1] %>"
-            alt="Jack Sparrow"
-            class="hero-slider__img"
-          />
-
-          <div class="hero-slider__content">
-            <div class="hero-slider__info">
-              <div class="hero-slider__genre">
-                <ion-icon name="film"></ion-icon>
-                <span>Action/Aventure</span>
-              </div>
-
-              <div class="hero-slider__year">
-                <ion-icon name="calendar"></ion-icon>
-                <span>2003</span>
-              </div>
-
-              <div class="hero-slider__duration">
-                <ion-icon name="time"></ion-icon>
-                <span>2h 20min</span>
-              </div>
-
-              <div class="hero-slider__recipe-badge">
-                La recette du Pélican Maudit
-              </div>
+          <!-- Slide 2 : Noël / Événement -->
+          <div class="hero-slider__slide" data-slide="2">
+            <div class="hero-slider__bg" style="background-image: url('/images/image-home-dessert-backtothefuture.jpg');"></div>
+            <div class="hero-slider__overlay"></div>
+            <div class="hero-slider__content">
+              <h1 class="hero-slider__h1">Noël / Événement</h1>
+              <p class="hero-slider__subtitle">Des recettes festives pour célébrer les fêtes en famille</p>
+              <a href="/recipes-movie" class="btn btn--gold-special">Voir les recettes de Noël</a>
             </div>
-            <h2 class="hero-slider__title">Pirates des Caraïbes</h2>
+          </div>
+
+          <!-- Slide 3 : Recettes cultes -->
+          <div class="hero-slider__slide" data-slide="3">
+            <div class="hero-slider__bg" style="background-image: url('/images/image-default-recipe-1.jpg');"></div>
+            <div class="hero-slider__overlay"></div>
+            <div class="hero-slider__content">
+              <h1 class="hero-slider__h1">Recettes cultes</h1>
+              <p class="hero-slider__subtitle">Explorez les saveurs iconiques du grand écran</p>
+              <a href="/recipes-movie" class="btn btn--gold-special">Voir les recettes</a>
+            </div>
+          </div>
+
+          <!-- Slide 4 : Communauté / Partage -->
+          <div class="hero-slider__slide" data-slide="4">
+            <div class="hero-slider__bg" style="background-image: url('/images/image-home-marty-doc.png'); background-color: var(--bleu-nuit);"></div>
+            <div class="hero-slider__overlay"></div>
+            <div class="hero-slider__content">
+              <h1 class="hero-slider__h1">Communauté</h1>
+              <p class="hero-slider__subtitle">Partagez vos recettes et commentez celles des autres</p>
+              <a href="/auth/register" class="btn btn--gold-special">Rejoindre la communauté</a>
+            </div>
           </div>
         </div>
 
-        <!-- HERO SLIDER CARDS 3 -->
-        <div class="hero-slider__card">
-          <img
-            src="<%= recipeImages[2] %>"
-            alt="Shwarzy-1"
-            class="hero-slider__img"
-          />
+        <!-- Navigation flèches -->
+        <button class="hero-slider__nav hero-slider__nav--prev" aria-label="Slide précédent">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="hero-slider__nav hero-slider__nav--next" aria-label="Slide suivant">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
 
-          <div class="hero-slider__content">
-            <div class="hero-slider__info">
-              <div class="hero-slider__genre">
-                <ion-icon name="film"></ion-icon>
-                <span>Action</span>
-              </div>
-
-              <div class="hero-slider__year">
-                <ion-icon name="calendar"></ion-icon>
-                <span>2006</span>
-              </div>
-
-              <div class="hero-slider__duration">
-                <ion-icon name="time"></ion-icon>
-                <span>2h 11min</span>
-              </div>
-
-              <div class="hero-slider__recipe-badge">
-                La recette du Commando
-              </div>
-            </div>
-            <h2 class="hero-slider__title">Commando</h2>
-          </div>
+        <!-- Pagination -->
+        <div class="hero-slider__pagination" role="tablist">
+          <button class="hero-slider__pagination-dot hero-slider__pagination-dot--active" data-slide="1" aria-label="Aller au slide 1" role="tab" aria-selected="true"></button>
+          <button class="hero-slider__pagination-dot" data-slide="2" aria-label="Aller au slide 2" role="tab" aria-selected="false"></button>
+          <button class="hero-slider__pagination-dot" data-slide="3" aria-label="Aller au slide 3" role="tab" aria-selected="false"></button>
+          <button class="hero-slider__pagination-dot" data-slide="4" aria-label="Aller au slide 4" role="tab" aria-selected="false"></button>
         </div>
-
-        <!-- HERO SLIDER CARDS 4 -->
-        <div class="hero-slider__card">
-          <img
-            src="<%= recipeImages[3] %>"
-            alt="Maman j'ai raté l'avion"
-            class="hero-slider__img"
-          />
-
-          <div class="hero-slider__content">
-            <div class="hero-slider__info">
-              <div class="hero-slider__genre">
-                <ion-icon name="film"></ion-icon>
-                <span>Comédie</span>
-              </div>
-
-              <div class="hero-slider__year">
-                <ion-icon name="calendar"></ion-icon>
-                <span>1990</span>
-              </div>
-
-              <div class="hero-slider__duration">
-                <ion-icon name="time"></ion-icon>
-                <span>2h 23min</span>
-              </div>
-
-              <div class="hero-slider__recipe-badge">la Pizza au fromage</div>
-            </div>
-            <h2 class="hero-slider__title">Maman j'ai raté l'avion</h2>
-          </div>
-        </div>
-        <!-- FIN HERO SLIDER CARDS -->
       </section>
 
       <!-- RECETTE DU JOUR -->
@@ -411,5 +343,7 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
+    <!-- Script du hero slider -->
+    <script src="/js/hero-slider.js" defer></script>
   </body>
 </html>

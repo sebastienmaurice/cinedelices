@@ -17,13 +17,12 @@
 /* ================== HERO SLIDER ==================== */
 /* ====================================================== */
 /**
- * Conteneur du slider hero (carrousel d'images)
- * ----------------------------------------------
- * position: relative : Nécessaire pour positionner les cartes en absolute
- * height: clamp(360px, 60vh, 700px) : Hauteur responsive
- *   - clamp(min, préféré, max) : Hauteur minimale 360px, préférée 60% de la hauteur de l'écran,
- *     maximale 700px (s'adapte à la taille de l'écran)
- * overflow: hidden : Cache les cartes qui débordent (toutes sauf celle visible)
+ * Nouveau slider hero avec navigation et pagination
+ * --------------------------------------------------
+ * Dimensions identiques à l'ancien slider pour conserver le layout :
+ *   - height: clamp(360px, 60vh, 700px) : Hauteur responsive
+ *   - margin-bottom: 60px : Espacement identique
+ *   - border-radius: 12px : Coins arrondis identiques
  */
 .hero-slider {
   position: relative;
@@ -36,209 +35,348 @@
 }
 
 /**
- * Carte individuelle du slider
- * -----------------------------
- * position: absolute : Positionnée par rapport au .hero-slider (parent avec position: relative)
- *   - inset: 0 : Raccourci pour top: 0, right: 0, bottom: 0, left: 0 (remplit tout l'espace)
- * opacity: 0 : Invisible par défaut (animation la fait apparaître)
- * animation: slide 18s infinite : Animation "slide" de 18 secondes, répétée indéfiniment
- *   - Chaque carte apparaît à son tour pendant ~4.5s (18s / 4 cartes)
+ * Conteneur des slides
+ * --------------------
+ * position: relative : Pour positionner les slides en absolute
  */
-.hero-slider__card {
-  position: absolute;
+.hero-slider__container {
+  position: relative;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  animation: slide 18s infinite;
-  inset: 0;
-  overflow: hidden;
-  cursor: pointer;
-  --slide-delay: 0s;
-}
-
-.hero-slider__card:nth-child(1) {
-  animation-delay: 0s;
-  --slide-delay: 0s;
-}
-
-.hero-slider__card:nth-child(2) {
-  animation-delay: 4.5s;
-  --slide-delay: 4.5s;
-}
-
-.hero-slider__card:nth-child(3) {
-  animation-delay: 9s;
-  --slide-delay: 9s;
-}
-
-.hero-slider__card:nth-child(4) {
-  animation-delay: 13.5s;
-  --slide-delay: 13.5s;
 }
 
 /**
- * Animation du slider (keyframes)
- * --------------------------------
- * @keyframes slide : Définit les étapes de l'animation
- *   - 0% : Début (carte invisible, légèrement zoomée)
- *   - 2% : Apparition rapide (fade in + zoom out)
- *   - 23% : Visible et stable
- *   - 25% : Disparition (fade out + zoom in)
- *   - 100% : Reste invisible jusqu'au prochain cycle
- *
- * La durée totale est de 18s, chaque carte est visible ~4.5s
- * animation-delay sur chaque carte : Décalage pour que les cartes apparaissent à tour de rôle
+ * Slide individuel
+ * ----------------
+ * position: absolute : Toutes les slides superposées
+ * opacity: 0 par défaut : Cachées sauf la slide active
+ * transition : Animation fluide lors du changement de slide
  */
-@keyframes slide {
-  0% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-  2% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  23% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  25% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-}
-
-.hero-slider__img {
+.hero-slider__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.6s ease;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.8s;
+  transform: translateX(0);
+}
+
+.hero-slider__slide--active {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+  transform: translateX(0);
   z-index: 1;
 }
 
-.hero-slider__card:hover .hero-slider__img {
-  transform: none; /* supprime le zoom source de flou */
+/**
+ * Background image de chaque slide
+ * ---------------------------------
+ * background-size: cover : Couvre tout l'espace
+ * background-position: center : Centré
+ * transition: transform : Pour effet zoom au hover
+ */
+.hero-slider__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.6s ease;
 }
 
-.hero-slider__card::after {
-  content: "";
+.hero-slider__slide:hover .hero-slider__bg {
+  transform: scale(1.05);
+}
+
+/**
+ * Overlay sombre pour améliorer la lisibilité du texte
+ * -----------------------------------------------------
+ * Dégradé du bas vers le haut pour assombrir progressivement
+ */
+.hero-slider__overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
     180deg,
-    rgba(13, 27, 42, 0) 20%,
-    rgba(13, 27, 42, 0.45) 55%,
+    rgba(13, 27, 42, 0) 0%,
+    rgba(13, 27, 42, 0.3) 50%,
     rgba(13, 27, 42, 0.75) 100%
   );
-  z-index: 2;
+  z-index: 1;
 }
 
+/**
+ * Contenu textuel de chaque slide
+ * --------------------------------
+ * position: absolute : Positionné par rapport au slide
+ * z-index: 2 : Au-dessus du background et de l'overlay
+ * FLEXBOX : Centrage vertical et horizontal du contenu
+ */
 .hero-slider__content {
   position: absolute;
-  right: 80px;
-  bottom: 60px;
-  left: 80px;
-  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  padding: 2rem;
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
-}
-
-.hero-slider__info {
-  display: flex;
   align-items: center;
-  margin-bottom: 0;
-  margin-top: 10px;
-  opacity: 0;
-  transform: translateY(18px);
-  animation: cinema-reveal 6s ease-out infinite;
-  animation-delay: calc(var(--slide-delay) + 0.6s);
-  animation-fill-mode: both;
-  order: 1;
+  gap: 1.5rem;
 }
 
-.hero-slider__info > div {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
-}
-
-.hero-slider__genre,
-.hero-slider__year,
-.hero-slider__duration {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
-}
-
-.hero-slider__info ion-icon {
-  font-size: 20px;
+/**
+ * Titre principal (H1) - Fascinate Inline
+ * ----------------------------------------
+ * font-family: var(--font-h1) : Police "Fascinate Inline" (définie dans base.css)
+ * text-shadow avec glow rouge subtil : Effet de lueur
+ */
+.hero-slider__h1 {
+  font-family: var(--font-h1);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   color: var(--dore-popcorn);
-  margin-right: 5px;
+  text-shadow: 0 0 20px rgba(215, 38, 56, 0.3), 0 2px 12px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(198, 166, 100, 0.4);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  animation: slideFadeInZoom 1s ease-out;
 }
 
-.hero-slider__info span {
-  font-weight: 600;
-}
-
-.hero-slider__recipe-badge {
-  background: var(--rouge-projecteur);
+/**
+ * Sous-texte explicatif - Lato
+ * -----------------------------
+ * font-family: var(--font-body) : Police "Lato" (définie dans base.css)
+ * font-size responsive : S'adapte à la taille de l'écran
+ */
+.hero-slider__subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2vw, 1.3rem);
   color: var(--argent-ecran);
-  padding: 2px 5px;
-  border-radius: 8px;
-  font-weight: 700;
-  margin-right: 0;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  animation: slideFadeInUp 1s ease-out 0.2s both;
+  max-width: 600px;
+  line-height: 1.5;
 }
 
-.hero-slider__title {
-  order: 0;
-  font-size: 2.4em;
-  color: var(--dore-popcorn);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55), 0 0 6px rgba(13, 27, 42, 0.6);
-  opacity: 0;
-  transform: translateY(24px);
-  animation: cinema-reveal 6s cubic-bezier(0.19, 1, 0.22, 1) infinite;
-  animation-delay: calc(var(--slide-delay) + 0.25s);
-  animation-fill-mode: both;
-}
-
-@keyframes cinema-reveal {
+/**
+ * Animations d'entrée pour le contenu
+ * ------------------------------------
+ * slideFadeInZoom : Fade in + zoom léger (pour le H1)
+ * slideFadeInUp : Fade in + translation vers le haut (pour le sous-texte)
+ */
+@keyframes slideFadeInZoom {
   from {
     opacity: 0;
-    transform: translateY(24px);
-    letter-spacing: 0.02em;
+    transform: translate(-50%, -50%) scale(0.95);
   }
-  60% {
+  to {
     opacity: 1;
-    transform: translateY(-2px);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes slideFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    letter-spacing: 0.04em;
   }
 }
 
+/**
+ * Animations spécifiques par slide
+ * ---------------------------------
+ * Slide 1 : fade-in + zoom léger (déjà géré par slideFadeInZoom)
+ * Slide 2 : slide depuis la gauche
+ * Slide 3 : slide depuis la droite
+ * Slide 4 : zoom + fade
+ */
+.hero-slider__slide[data-slide="2"].hero-slider__slide--active .hero-slider__content {
+  animation: slideInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-slider__slide[data-slide="3"].hero-slider__slide--active .hero-slider__content {
+  animation: slideInFromRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-slider__slide[data-slide="4"].hero-slider__slide--active .hero-slider__content {
+  animation: slideZoomFade 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translate(-150%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translate(50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes slideZoomFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/**
+ * Boutons de navigation (flèches gauche/droite)
+ * ----------------------------------------------
+ * position: absolute : Positionnés sur les côtés du slider
+ * z-index: 10 : Au-dessus de tout
+ * backdrop-filter: blur : Effet de flou sur le background (glassmorphism)
+ */
+.hero-slider__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(13, 27, 42, 0.6);
+  backdrop-filter: blur(8px);
+  border: 2px solid var(--dore-popcorn);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dore-popcorn);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.hero-slider__nav:hover {
+  opacity: 1;
+  background: rgba(13, 27, 42, 0.9);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 20px rgba(198, 166, 100, 0.5);
+}
+
+.hero-slider__nav--prev {
+  left: 20px;
+}
+
+.hero-slider__nav--next {
+  right: 20px;
+}
+
+/**
+ * Pagination (points indicateurs)
+ * --------------------------------
+ * position: absolute : En bas du slider
+ * z-index: 10 : Au-dessus de tout
+ * FLEXBOX : Alignement horizontal des points
+ */
+.hero-slider__pagination {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/**
+ * Point de pagination individuel
+ * -------------------------------
+ * border-radius: 50% : Forme circulaire
+ * transition : Animation fluide lors de l'activation
+ */
+.hero-slider__pagination-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--dore-popcorn);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  opacity: 0.6;
+}
+
+.hero-slider__pagination-dot:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  background: rgba(198, 166, 100, 0.3);
+}
+
+.hero-slider__pagination-dot--active {
+  background: var(--dore-popcorn);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(198, 166, 100, 0.6);
+  transform: scale(1.2);
+}
+
+/**
+ * Responsive : Tablette
+ * ---------------------
+ */
 @media screen and (max-width: 1200px) {
-  .hero-slider__title {
-    font-size: 2.5em;
-  }
-
   .hero-slider__content {
-    bottom: 40px;
-    left: 60px;
-    right: 60px;
+    padding: 1.5rem;
+    max-width: 700px;
   }
 
-  .hero-slider__info > div {
-    margin-right: 15px;
+  .hero-slider__nav {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+
+  .hero-slider__nav--prev {
+    left: 15px;
+  }
+
+  .hero-slider__nav--next {
+    right: 15px;
   }
 }
 
+/**
+ * Responsive : Mobile
+ * -------------------
+ * Masquer le slider sur très petits écrans (comme l'ancien)
+ */
 @media screen and (max-width: 768px) {
   .hero-slider {
     display: none;
@@ -917,10 +1055,7 @@
 
 /* Mobile petit */
 @media (max-width: 500px) {
-  .hero-slider {
-    margin-bottom: 1.5rem;
-    border-radius: 12px;
-  }
+  /* Hero slider géré dans sa propre section responsive */
 
   .recipeofthe__day-container,
   .top-recettes__grid {
