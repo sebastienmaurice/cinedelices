@@ -216,24 +216,18 @@ const adminController = {
 
       // Vérifier si l'utilisateur existe
       const user = await User.findByPk(userId);
-
       if (!user) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Utilisateur introuvable.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Utilisateur", req.userRole);
       }
 
-      // Supprimer d'abord les notices (avis) associées à cet utilisateur
-      // Supprimer les entrées dans la table de jonction UsersRecipes
+      // Suppression en cascade des données associées (ordre important)
+      // 1. Supprimer les avis (notices) de l'utilisateur
       await Notice.destroy({ where: { id_user: userId } });
+      // 2. Supprimer les relations utilisateur-recette
       await UsersRecipes.destroy({ where: { id_user: userId } });
-
-      // Ensuite, supprimer l'utilisateur
+      // 3. Enfin, supprimer l'utilisateur lui-même
       await User.destroy({ where: { id: userId } });
 
-      // Rediriger vers le tableau de bord admin avec un message de succès
       res.redirect("/admin?success=user_deleted");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
