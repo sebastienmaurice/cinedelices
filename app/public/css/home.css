@@ -154,13 +154,14 @@
   margin: 0;
   line-height: 1.1;
   letter-spacing: 0.02em;
-  animation: slideFadeInZoom 1s ease-out;
   opacity: 0;
-  animation-fill-mode: forwards;
+  transform: scale(0.95);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 .hero-slider__slide--active .hero-slider__h1 {
-  animation: slideFadeInZoom 1s ease-out;
+  opacity: 1;
+  transform: scale(1);
 }
 
 /**
@@ -178,40 +179,19 @@
   max-width: 600px;
   line-height: 1.5;
   opacity: 0;
-  animation: slideFadeInUp 1s ease-out 0.2s both;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
 }
 
 .hero-slider__slide--active .hero-slider__subtitle {
-  animation: slideFadeInUp 1s ease-out 0.2s both;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /**
- * Animations d'entrée pour le contenu
- * ------------------------------------
- * slideFadeInZoom : Fade in + zoom léger (pour le H1)
- * slideFadeInUp : Fade in + translation vers le haut (pour le sous-texte)
+ * Les animations sont maintenant gérées par les transitions CSS
+ * plutôt que par @keyframes pour une meilleure performance et contrôle
  */
-@keyframes slideFadeInZoom {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideFadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /**
  * Animations spécifiques par slide (définies dans le JavaScript)
