@@ -503,7 +503,9 @@
   function filterMoviesList(query, searchResults) {
     if (!moviesList) return;
 
-    const normalizedQuery = normalizeTextForSearch(query);
+    // Refactoring : utilisation de la fonction centralisée normalizeText
+    const normalizeTextFn = window.normalizeText || ((t) => t?.toLowerCase().trim() || "");
+    const normalizedQuery = normalizeTextFn(query);
     const articles = moviesList.querySelectorAll("article");
 
     articles.forEach((article) => {
@@ -516,12 +518,12 @@
       const genre = genreElement ? genreElement.textContent || "" : "";
 
       // Normaliser les textes pour la recherche
-      const normalizedTitle = normalizeTextForSearch(title);
-      const normalizedGenre = normalizeTextForSearch(genre);
+      const normalizedTitle = normalizeTextFn(title);
+      const normalizedGenre = normalizeTextFn(genre);
 
       // Vérifier si le film correspond aux résultats de recherche
       const isInSearchResults = searchResults.some((result) => {
-        const resultTitle = normalizeTextForSearch(
+        const resultTitle = normalizeTextFn(
           result.title_fr || result.title || ""
         );
         return (
@@ -550,7 +552,9 @@
   function filterMoviesListPartial(query) {
     if (!moviesList) return;
 
-    const normalizedQuery = normalizeTextForSearch(query);
+    // Refactoring : utilisation de la fonction centralisée normalizeText
+    const normalizeTextFn = window.normalizeText || ((t) => t?.toLowerCase().trim() || "");
+    const normalizedQuery = normalizeTextFn(query);
     const articles = moviesList.querySelectorAll("article");
 
     articles.forEach((article) => {
@@ -566,8 +570,8 @@
       const genre = genreElement ? genreElement.textContent || "" : "";
 
       // Normaliser les textes pour la recherche
-      const normalizedTitle = normalizeTextForSearch(title);
-      const normalizedGenre = normalizeTextForSearch(genre);
+      const normalizedTitle = normalizeTextFn(title);
+      const normalizedGenre = normalizeTextFn(genre);
 
       // Vérifier si le titre commence par le terme ou le contient
       const matchesQuery =
