@@ -163,12 +163,15 @@
       targetParallaxY = 0;
 
       // Réinitialiser l'animation background (Ken Burns)
+      // L'animation CSS se relance automatiquement avec la classe --active
       const activeBg = activeSlide.querySelector(".hero-slider__bg");
       if (activeBg) {
-        // Forcer le reset de l'animation
+        // Forcer le reset de l'animation pour qu'elle redémarre
         activeBg.style.animation = "none";
-        activeBg.offsetHeight; // Trigger reflow
-        activeBg.style.animation = null;
+        // Trigger reflow pour forcer le reset
+        void activeBg.offsetHeight;
+        // Réappliquer l'animation
+        activeBg.style.animation = "backgroundKenBurns 7s linear forwards";
       }
 
       // Animation d'entrée sur le nouveau foreground
