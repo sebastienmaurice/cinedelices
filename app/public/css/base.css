@@ -1,21 +1,47 @@
-/* ====================================================== */
-/* ==================== BASE.CSS ======================= */
-/* ====================================================== */
-/* 
-  base.css prend en charge :
-  1. Variables globales (couleurs, fonts, boutons, gaps...)
-  2. Reset & typographie de base (body, h1-h6, p, a)
-  3. Header (structure, navigation, boutons, burger)
-  4. Boutons (styles génériques et variantes)
-  5. Formulaires & Inputs (labels flottants, focus)
-  6. Footer (structure et responsive)
-  7. Modal Auth (popup connexion / inscription)
-  8. Responsive (ajustements généraux <800px / <500px)
-*/
+/**
+ * ======================================================
+ * BASE.CSS - Styles globaux et composants réutilisables
+ * ======================================================
+ *
+ * Rôle : Ce fichier contient tous les styles partagés entre les pages :
+ *   - Variables CSS globales (couleurs, typographies, espacements)
+ *   - Reset et typographie de base
+ *   - Header et navigation (menu, burger)
+ *   - Boutons (styles génériques et variantes)
+ *   - Formulaires et inputs (avec labels flottants)
+ *   - Footer (structure et styles)
+ *   - Modal d'authentification (popup connexion/inscription)
+ *   - Règles responsive (adaptation mobile/tablette)
+ *
+ * Pages concernées : TOUTES les pages du site
+ *                    (chargé via head-resources.ejs sur chaque page)
+ *
+ * Ordre de chargement CSS :
+ *   1. reset.css (normalisation)
+ *   2. base.css (styles globaux) ← Ce fichier
+ *   3. burger-menu.css (compléments menu burger)
+ *   4. help.css (aide contextuelle)
+ *   5. CSS spécifiques à chaque page (home.css, movies.css, etc.)
+ *
+ * Note : Les fichiers CSS spécifiques sont chargés APRÈS base.css
+ *        pour pouvoir surcharger les styles globaux si nécessaire.
+ */
 
 /* ====================================================== */
-/* 1. VARIABLES GLOBALES
+/* 1. VARIABLES CSS GLOBALES (Custom Properties)
 ====================================================== */
+/**
+ * Les variables CSS (Custom Properties) permettent de stocker des valeurs
+ * réutilisables dans toute l'application. Déclarées dans :root, elles sont
+ * accessibles partout et peuvent être modifiées dynamiquement.
+ *
+ * Avantages :
+ *   - Cohérence des couleurs/tailles dans tout le site
+ *   - Modification facile d'un thème (changer une couleur = changer partout)
+ *   - Référence avec var(--nom-variable)
+ *
+ * Utilisation : color: var(--dore-popcorn);
+ */
 :root {
   /* ====================================================== */
   /* COULEURS PRINCIPALES - Palette Bleue
@@ -105,6 +131,18 @@
 /* ====================================================== */
 /* 3. RESET & TYPOGRAPHIE DE BASE
 ====================================================== */
+/**
+ * Reset CSS de base
+ * -----------------
+ * Ce reset s'applique à TOUS les éléments (*) pour supprimer les styles
+ * par défaut du navigateur et avoir un contrôle total sur le rendu.
+ *
+ * *::before et *::after : Applique aussi aux pseudo-éléments
+ *   (éléments générés par CSS, comme ::before et ::after)
+ *
+ * box-sizing: border-box : Inclut padding et border dans la largeur/hauteur
+ *   (plus pratique pour les calculs de mise en page)
+ */
 *,
 *::before,
 *::after {
@@ -113,11 +151,29 @@
   box-sizing: border-box;
 }
 
+/**
+ * Configuration HTML
+ * ------------------
+ * scroll-behavior: smooth : Défilement fluide lors des ancres (#section)
+ * scroll-padding-top: 2rem : Espace en haut lors du scroll vers une ancre
+ *   (évite que le titre soit masqué par un header fixe)
+ */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 2rem;
 }
 
+/**
+ * Style de base du body (conteneur principal)
+ * -------------------------------------------
+ * font-family : Police de caractères utilisée (définie dans les variables)
+ * margin: 0 auto : Centre le contenu horizontalement
+ *   (nécessite une largeur définie, ici max-width)
+ * max-width : Limite la largeur maximale (améliore la lisibilité sur grands écrans)
+ * padding : Espacement interne (haut/bas et gauche/droite)
+ * min-height: 100vh : Hauteur minimale = 100% de la hauteur de la fenêtre
+ *   (vh = viewport height, unité relative à la taille de l'écran)
+ */
 body {
   font-family: var(--font-body);
   background-color: var(--bleu-nuit);
@@ -129,7 +185,16 @@ body {
   min-height: 100vh;
 }
 
-/* Titres */
+/**
+ * Styles des titres (hiérarchie typographique)
+ * ---------------------------------------------
+ * Les titres utilisent des polices différentes selon leur niveau :
+ *   - h1 : Police "Fascinate Inline" (style cinéma)
+ *   - h2 à h6 : Police "Limelight" (style vintage)
+ *
+ * margin-bottom: 0 ou négatif : Réduit l'espacement pour un rendu plus serré
+ * line-height: 1.1 : Interligne réduit pour les titres (évite trop d'espace)
+ */
 h1 {
   font-family: var(--font-h1);
   color: var(--dore-popcorn);
@@ -156,9 +221,25 @@ h6 {
   margin-bottom: -0.2rem;
   line-height: 1.1;
 }
+
+/**
+ * Paragraphes
+ * -----------
+ * margin-bottom : Espacement minimal entre les paragraphes
+ */
 p {
   margin-bottom: 0.5rem;
 }
+
+/**
+ * Liens (éléments <a>)
+ * --------------------
+ * text-decoration: none : Supprime le soulignement par défaut
+ * transition : Animation fluide lors du changement de couleur
+ *   (transition sur la propriété "color", durée définie dans --transition)
+ *
+ * :hover : État au survol de la souris (pseudo-classe)
+ */
 a {
   color: var(--argent-ecran);
   text-decoration: none;
@@ -171,6 +252,17 @@ a:hover {
 /* ====================================================== */
 /* 4. HEADER & NAVIGATION
 ====================================================== */
+/**
+ * Conteneur principal du header
+ * ------------------------------
+ * FLEXBOX : display: flex transforme le header en conteneur flexible
+ *   - justify-content: space-between : Espace les éléments (logo à gauche, nav à droite)
+ *   - align-items: center : Aligne verticalement au centre
+ *   - flex-wrap: wrap : Permet le retour à la ligne si manque de place
+ *   - gap: 1rem : Espacement entre les éléments flexibles
+ *
+ * max-width + margin: 0 auto : Centre le header et limite sa largeur
+ */
 .header {
   display: flex;
   justify-content: space-between;
@@ -218,11 +310,30 @@ a:hover {
   color: var(--dore-popcorn);
 }
 
+/**
+ * Navigation principale
+ * ---------------------
+ * FLEXBOX : Conteneur flexible pour aligner les liens de navigation horizontalement
+ */
 .navigationheader {
   display: flex;
   align-items: center;
   gap: var(--gap);
 }
+
+/**
+ * Lien de navigation
+ * ------------------
+ * position: relative : Nécessaire pour positionner le ::after (soulignement animé)
+ *   Le ::after sera positionné par rapport à cet élément (position: absolute)
+ *
+ * PSEUDO-ÉLÉMENT ::after :
+ *   Crée un élément virtuel après le contenu du lien
+ *   Utilisé ici pour créer une ligne de soulignement animée
+ *   - content: "" : Obligatoire pour que ::after existe (même vide)
+ *   - position: absolute : Positionné par rapport au parent (position: relative)
+ *   - width: 0 initialement, passe à 100% au hover (animation)
+ */
 .navigationheader-link {
   color: var(--argent-ecran);
   font-weight: bold;
@@ -280,9 +391,23 @@ a:hover {
   gap: 1rem;
 }
 
-/* Burger menu */
-/* Note : Styles de base pour le burger menu. Les styles avancés (z-index, body.menu-open, etc.)
-   sont définis dans burger-menu.css qui est chargé après base.css */
+/**
+ * Menu burger (icône hamburger pour mobile)
+ * ------------------------------------------
+ * Note : Styles de base pour le burger menu. Les styles avancés (z-index, body.menu-open, etc.)
+ *        sont définis dans burger-menu.css qui est chargé après base.css
+ *
+ * display: none par défaut : Caché sur desktop
+ * flex-direction: column : Les 3 lignes empilées verticalement
+ * gap: 5px : Espacement entre les lignes
+ *
+ * SÉLECTEUR .burger-menu.active .burger-line:nth-child(n) :
+ *   Quand .burger-menu a la classe "active", on transforme chaque ligne :
+ *   - 1ère ligne : Rotation 45° + translation vers le bas (devient /)
+ *   - 2ème ligne : Opacité 0 (disparaît)
+ *   - 3ème ligne : Rotation -45° + translation vers le haut (devient \)
+ *   Résultat : Transformation en "X" (fermeture)
+ */
 .burger-menu {
   display: none;
   flex-direction: column;
@@ -309,7 +434,27 @@ a:hover {
   transform: rotate(-45deg) translateY(-8px);
 }
 
-/* Menu mobile responsive */
+/**
+ * Menu mobile responsive
+ * ----------------------
+ * MEDIA QUERY : @media (max-width: 800px)
+ *   Les styles à l'intérieur s'appliquent UNIQUEMENT si la largeur de l'écran ≤ 800px
+ *   (tablettes et smartphones)
+ *
+ * POSITION: FIXED :
+ *   Le menu navigation est fixé par rapport à la fenêtre (pas au document)
+ *   - top: 0 : En haut de l'écran
+ *   - right: -100% : Complètement à droite (hors de l'écran, donc caché)
+ *   - height: 100vh : Hauteur = 100% de la hauteur de l'écran
+ *   - z-index: 1000 : Au-dessus des autres éléments (ordre d'empilement)
+ *
+ * ANIMATION :
+ *   transition: right 0.4s : Animation fluide du déplacement
+ *   cubic-bezier : Courbe d'animation personnalisée (effet rebond)
+ *
+ * ÉTAT ACTIF :
+ *   .navigationheader.active { right: 0; } : Fait apparaître le menu (glisse depuis la droite)
+ */
 @media (max-width: 800px) {
   /* Masquer les boutons Connexion/Inscription car ils sont dans le menu burger */
   .buttons__header {
@@ -362,6 +507,20 @@ a:hover {
 /* ====================================================== */
 /* 5. BOUTONS
 ====================================================== */
+/**
+ * Style de base pour tous les boutons
+ * ------------------------------------
+ * position: relative : Permet de positionner le ::before par rapport au bouton
+ * overflow: hidden : Cache tout ce qui dépasse (important pour les animations)
+ * user-select: none : Empêche la sélection du texte au clic (meilleure UX)
+ * cursor: pointer : Change le curseur en main (indique que c'est cliquable)
+ *
+ * PSEUDO-ÉLÉMENT ::before :
+ *   Crée un liseré intérieur animé
+ *   - position: absolute : Positionné par rapport au bouton (parent avec position: relative)
+ *   - pointer-events: none : Ne bloque pas les clics (le clic passe au bouton)
+ *   - currentColor : Utilise la couleur du texte actuelle (s'adapte automatiquement)
+ */
 .btn {
   font-weight: bold;
   font-family: var(--font-body);
@@ -389,6 +548,25 @@ a:hover {
   pointer-events: none;
 }
 
+/**
+ * États du bouton
+ * ---------------
+ * :hover : Au survol de la souris
+ *   - transform: translateY(-2px) : Lève légèrement le bouton (effet 3D)
+ *
+ * :active : Pendant le clic
+ *   - transform: translateY(0) : Remet à la position initiale
+ *   - transition-duration: 0.1s : Animation rapide pour un retour immédiat
+ *
+ * :focus-visible : Quand le bouton est focus au clavier (accessibilité)
+ *   - outline : Contour visible pour les utilisateurs au clavier
+ *   - outline-offset : Espacement entre le contour et le bouton
+ *
+ * :disabled : Bouton désactivé
+ *   - opacity: 0.5 : Rendu semi-transparent (visuel "grisé")
+ *   - cursor: not-allowed : Curseur "interdit"
+ *   - !important : Force cette règle (annule le transform du hover)
+ */
 .btn:hover {
   transform: translateY(-2px);
 }
@@ -635,6 +813,14 @@ a:hover {
 /* ====================================================== */
 /* 8. FOOTER - Style Cinématographique
 ====================================================== */
+/**
+ * Conteneur principal du footer
+ * ------------------------------
+ * position: relative : Permet de positionner le ::before en absolute
+ * box-shadow avec inset : Ombre interne (effet de profondeur)
+ *   - Ombre externe : 0 -4px 20px (ombre vers le haut)
+ *   - Ombre interne : inset 0 1px 0 (lueur légère en haut)
+ */
 .footer {
   display: flex;
   flex-direction: column;
@@ -650,7 +836,14 @@ a:hover {
     inset 0 1px 0 rgba(198, 166, 100, 0.1);
 }
 
-/* Effet léger en haut */
+/**
+ * Effet de dégradé en haut du footer (pseudo-élément)
+ * ----------------------------------------------------
+ * ::before : Crée un élément virtuel avant le contenu du footer
+ * linear-gradient : Dégradé linéaire (transparent → doré → transparent)
+ *   - 90deg : Direction horizontale (de gauche à droite)
+ *   - Pourcentages : Points de transition dans le dégradé
+ */
 .footer::before {
   content: "";
   position: absolute;
@@ -866,8 +1059,18 @@ a:hover {
 }
 
 /* ====================================================== */
-/* 9. MODAL AUTH
+/* 9. MODAL AUTH (Popup de connexion/inscription)
 ====================================================== */
+/**
+ * Conteneur de la modal (fenêtre popup)
+ * --------------------------------------
+ * position: fixed : Fixé par rapport à la fenêtre (reste visible au scroll)
+ *   - top: 0, left: 0 : En haut à gauche de l'écran
+ *   - width: 100%, height: 100% : Couvre tout l'écran
+ * z-index: 2000 : Très élevé pour être au-dessus de tout (header, footer, etc.)
+ * display: none par défaut : Modal cachée
+ * display: flex quand .active : Modal visible, centrée avec flexbox
+ */
 .modal {
   position: fixed;
   top: 0;
@@ -882,6 +1085,13 @@ a:hover {
 .modal.active {
   display: flex;
 }
+
+/**
+ * Overlay (fond sombre derrière la modal)
+ * ----------------------------------------
+ * position: absolute : Positionné par rapport au .modal (parent avec position: fixed)
+ * backdrop-filter: blur(3px) : Floute le contenu derrière (effet glassmorphism)
+ */
 .modal-overlay {
   position: absolute;
   top: 0;
@@ -891,6 +1101,13 @@ a:hover {
   background: rgba(13, 27, 42, 0.8);
   backdrop-filter: blur(3px);
 }
+
+/**
+ * Contenu de la modal (la fenêtre elle-même)
+ * -------------------------------------------
+ * position: relative : Permet de positionner d'autres éléments (bouton fermer) en absolute
+ * animation: modalShowPop : Animation d'apparition (définie avec @keyframes)
+ */
 .modal-content {
   position: relative;
   background: var(--bleu-intermediaire);
@@ -902,6 +1119,17 @@ a:hover {
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
   animation: modalShowPop 0.3s ease-out;
 }
+/**
+ * Animation d'apparition de la modal
+ * -----------------------------------
+ * @keyframes : Définit une animation nommée "modalShowPop"
+ *   - from (0%) : État initial (plus petit, décalé vers le haut, invisible)
+ *   - to (100%) : État final (taille normale, position normale, visible)
+ *
+ * transform: scale(0.95) : Réduit la taille à 95%
+ * translateY(-10px) : Décale vers le haut de 10px
+ * transition fluide vers scale(1) translateY(0) : Retour à la taille et position normales
+ */
 @keyframes modalShowPop {
   from {
     transform: scale(0.95) translateY(-10px);
@@ -1008,8 +1236,18 @@ a:hover {
 }
 
 /* ====================================================== */
-/* 10. RESPONSIVE
+/* 10. RESPONSIVE (Adaptation mobile/tablette)
 ====================================================== */
+/**
+ * Media Queries : Règles CSS qui s'appliquent selon la taille de l'écran
+ * -----------------------------------------------------------------------
+ * @media (max-width: 800px) : Styles pour écrans de 800px et moins (tablettes, smartphones)
+ * @media (max-width: 500px) : Styles pour écrans de 500px et moins (smartphones uniquement)
+ *
+ * Principe "Mobile First" :
+ *   On part des styles desktop, puis on surcharge pour les petits écrans
+ *   (Alternative : commencer par mobile et utiliser min-width pour desktop)
+ */
 @media (max-width: 800px) {
   body {
     padding: 1rem 0.5rem;

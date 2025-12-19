@@ -1,26 +1,65 @@
-/*
-  Josh's Custom CSS Reset
-  https://www.joshwcomeau.com/css/custom-css-reset/
-  
-  Note : Ce reset est complémentaire au reset de base.css (* { margin: 0; padding: 0; box-sizing: border-box; })
-  pour fournir des normalisations supplémentaires (font smoothing, overflow-wrap, etc.)
-*/
+/**
+ * ======================================================
+ * RESET.CSS - Normalisation CSS globale
+ * ======================================================
+ *
+ * Rôle : Ce fichier normalise les styles par défaut du navigateur
+ * pour garantir un rendu cohérent sur tous les navigateurs.
+ *
+ * Source : Josh's Custom CSS Reset (https://www.joshwcomeau.com/css/custom-css-reset/)
+ *
+ * Note importante : Ce reset est complémentaire au reset de base.css
+ * (* { margin: 0; padding: 0; box-sizing: border-box; }) pour fournir
+ * des normalisations supplémentaires (font smoothing, overflow-wrap, etc.)
+ *
+ * Pages concernées : Toutes les pages du site (chargé via head-resources.ejs)
+ */
 
+/**
+ * Normalisation de la propriété box-sizing
+ * ----------------------------------------
+ * Par défaut, les navigateurs utilisent content-box, ce qui fait que
+ * padding et border s'ajoutent à la largeur/hauteur définie.
+ * border-box fait que padding et border sont inclus dans la largeur/hauteur,
+ * ce qui simplifie grandement les calculs de mise en page.
+ *
+ * *::before et *::after : Applique aussi aux pseudo-éléments (éléments générés par CSS)
+ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/**
+ * Suppression des marges par défaut
+ * ----------------------------------
+ * Tous les éléments HTML ont des marges par défaut imposées par le navigateur.
+ * On les supprime pour avoir un contrôle total sur l'espacement.
+ */
 * {
   margin: 0;
 }
 
+/**
+ * Normalisation du body
+ * ---------------------
+ * line-height: 1.5 : Interligne plus lisible (1.5 fois la taille de la police)
+ * -webkit-font-smoothing: antialiased : Lissage des polices pour un rendu plus net
+ *   (spécialement utile sur macOS pour améliorer la lisibilité)
+ */
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
+/**
+ * Normalisation des éléments médias
+ * ----------------------------------
+ * display: block : Évite l'espace blanc en bas des images (comportement inline par défaut)
+ * max-width: 100% : Empêche les images de dépasser leur conteneur
+ *   (responsive automatique)
+ */
 img,
 picture,
 video,
@@ -30,6 +69,13 @@ svg {
   max-width: 100%;
 }
 
+/**
+ * Héritage de la typographie pour les éléments de formulaire
+ * -----------------------------------------------------------
+ * Par défaut, les input/button/textarea/select n'héritent pas de la police du parent.
+ * font: inherit : Fait hériter tous les aspects de la typographie (famille, taille, poids)
+ *   Cela garantit une cohérence visuelle dans les formulaires.
+ */
 input,
 button,
 textarea,
@@ -37,6 +83,13 @@ select {
   font: inherit;
 }
 
+/**
+ * Gestion du retour à la ligne des textes
+ * ----------------------------------------
+ * overflow-wrap: break-word : Permet de couper les mots longs si nécessaire
+ *   pour éviter qu'ils ne débordent de leur conteneur.
+ *   Utile pour les URLs longues ou les mots composés très longs.
+ */
 p,
 h1,
 h2,

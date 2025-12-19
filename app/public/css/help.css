@@ -1,15 +1,46 @@
+/**
+ * ======================================================
+ * HELP.CSS - Aide contextuelle pour les formulaires
+ * ======================================================
+ *
+ * Rôle : Gère l'affichage de textes d'aide contextuelle dans les formulaires.
+ *        Le texte d'aide apparaît uniquement quand l'input a le focus.
+ *
+ * Technique utilisée :
+ *   - SÉLECTEUR ADJACENT (+) : input:focus + .help
+ *     Sélectionne l'élément .help qui suit immédiatement un input en focus
+ *
+ * Pages concernées : Toutes les pages avec formulaires
+ *                    (chargé via head-resources.ejs)
+ */
+
 .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .help {
-    display: none;
-    font-size: 0.75rem;
-    color: #b7b7b7; /* gris clair */
-    margin-top: 4px;
-  }
-  
-  /* 👉 le texte d'aide apparaît quand l'input est focus */
-  .form-group input:focus + .help {
-    display: block;
-  }
+  margin-bottom: 15px;
+}
+
+/**
+ * Texte d'aide (caché par défaut)
+ * --------------------------------
+ * display: none : Complètement caché (pas d'espace réservé)
+ *   (vs visibility: hidden qui garde l'espace)
+ */
+.help {
+  display: none;
+  font-size: 0.75rem;
+  color: #b7b7b7; /* gris clair */
+  margin-top: 4px;
+}
+
+/**
+ * Affichage de l'aide au focus de l'input
+ * ----------------------------------------
+ * SÉLECTEUR ADJACENT : input:focus + .help
+ *   - input:focus : Input qui a le focus (utilisateur clique dedans ou utilise Tab)
+ *   - + : Sélecteur adjacent (élément immédiatement suivant)
+ *   - .help : Classe du texte d'aide
+ *
+ * Quand l'input a le focus, le .help qui suit devient visible
+ */
+.form-group input:focus + .help {
+  display: block;
+}
