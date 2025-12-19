@@ -155,7 +155,8 @@
   opacity: 0;
   transform-origin: center center;
   /* Transition douce pour parallaxe avec inertie (gérée par JS via requestAnimationFrame) */
-  transition: transform 0.15s ease-out, opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.15s ease-out,
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /**
@@ -232,7 +233,7 @@
  * ----------------------------------------
  * font-family: var(--font-h1) : Police "Fascinate Inline" (définie dans base.css)
  * text-shadow avec glow rouge subtil : Effet de lueur
- * État initial : invisible et légèrement décalé à gauche pour animation fade-in
+ * Animation cinématographique : révélation dramatique avec blur et scale
  */
 .hero-slider__h1 {
   font-family: var(--font-h1);
@@ -244,14 +245,40 @@
   line-height: 1.1;
   letter-spacing: 0.02em;
   opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 1s ease-out 0s, transform 1s ease-out 0s;
+  transform: translateX(-50px) scale(0.9);
+  filter: blur(10px);
   position: relative;
+  animation: none;
 }
 
 .hero-slider__slide--active .hero-slider__h1 {
-  opacity: 1;
-  transform: translateX(0);
+  animation: titleCinematicReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    forwards;
+}
+
+/**
+ * Animation cinématographique de révélation pour le titre
+ * Effet de "rideau qui se lève" avec blur qui se dissipe et scale
+ */
+@keyframes titleCinematicReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.9);
+    filter: blur(10px);
+    letter-spacing: 0.1em;
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateX(5px) scale(1.02);
+    filter: blur(3px);
+    letter-spacing: 0.03em;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+    letter-spacing: 0.02em;
+  }
 }
 
 /**
@@ -339,6 +366,7 @@
  * -----------------------------
  * font-family: var(--font-body) : Police "Lato" (définie dans base.css)
  * font-size responsive : S'adapte à la taille de l'écran
+ * Animation cinématographique : fade-in avec révélation progressive
  */
 .hero-slider__subtitle {
   font-family: var(--font-body);
@@ -349,255 +377,88 @@
   max-width: 500px;
   line-height: 1.5;
   opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 1s ease-out 0.2s, transform 1s ease-out 0.2s;
+  transform: translateY(20px);
+  filter: blur(5px);
+  position: relative;
+  animation: none;
 }
 
 .hero-slider__slide--active .hero-slider__subtitle {
-  opacity: 1;
-  transform: translateX(0);
+  animation: subtitleCinematicReveal 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    0.3s forwards;
+}
+
+/**
+ * Animation cinématographique pour le sous-texte
+ * Révélation progressive avec blur et translation verticale
+ */
+@keyframes subtitleCinematicReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 /**
  * Bouton CTA dans le slider
  * --------------------------
  * Le bouton .btn--gold-special est défini dans base.css
- * Animation fade-in avec translation depuis la gauche
+ * Animation cinématographique : apparition avec scale et glow
  */
 .hero-slider__content .btn {
   opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 1s ease-out 0.4s, transform 1s ease-out 0.4s;
+  transform: translateY(30px) scale(0.8);
+  filter: blur(3px);
+  position: relative;
+  animation: none;
+  box-shadow: 0 0 0 rgba(198, 166, 100, 0);
 }
 
 .hero-slider__slide--active .hero-slider__content .btn {
-  opacity: 1;
-  transform: translateX(0);
+  animation: buttonCinematicReveal 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s
+    forwards;
+}
+
+/**
+ * Animation cinématographique pour le bouton CTA
+ * Apparition avec scale, glow progressif et translation
+ */
+@keyframes buttonCinematicReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    filter: blur(3px);
+    box-shadow: 0 0 0 rgba(198, 166, 100, 0);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translateY(-5px) scale(1.05);
+    filter: blur(0);
+    box-shadow: 0 0 20px rgba(198, 166, 100, 0.4);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    box-shadow: 0 0 30px rgba(198, 166, 100, 0.6),
+      0 0 60px rgba(198, 166, 100, 0.3);
+  }
 }
 
 /* ====================================================== */
-/* ANIMATIONS SPÉCIFIQUES PAR SLIDE
+/* ANIMATIONS CINÉMATOGRAPHIQUES UNIFIÉES
 ====================================================== */
-
 /**
- * SLIDE 1 : "Ciné Délices"
- * -------------------------
- * H1 : pop + glow (animation scale avec glow rouge-or)
- * Sous-texte : fade-in + translateY(-20px → 0)
- * Bouton CTA : scale léger (1 → 1.05 → 1)
+ * Les animations spécifiques par slide ont été remplacées
+ * par des animations cinématographiques unifiées qui s'appliquent
+ * à tous les slides pour un effet cohérent et théâtral.
  */
-.hero-slider__slide[data-slide="1"] .hero-slider__h1 {
-  transform: scale(0.8);
-}
-
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active
-  .hero-slider__h1 {
-  opacity: 1;
-  transform: scale(1);
-  animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
-}
-
-@keyframes popIn {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.hero-slider__slide[data-slide="1"] .hero-slider__subtitle {
-  transform: translateY(-20px);
-}
-
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active
-  .hero-slider__subtitle {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hero-slider__slide[data-slide="1"] .hero-slider__content .btn {
-  transform: scale(1);
-}
-
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active
-  .hero-slider__content
-  .btn {
-  animation: buttonPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
-}
-
-@keyframes buttonPop {
-  0% {
-    transform: scale(1);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/**
- * SLIDE 2 : "Noël / Événement"
- * -----------------------------
- * H1 : slide-in depuis gauche (-100% → 0)
- * Sous-texte : slide-in depuis droite (100% → 0)
- * Bouton CTA : pop léger
- */
-.hero-slider__slide[data-slide="2"] .hero-slider__h1 {
-  transform: translateX(-100%);
-}
-
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active
-  .hero-slider__h1 {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.hero-slider__slide[data-slide="2"] .hero-slider__subtitle {
-  transform: translateX(100%);
-}
-
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active
-  .hero-slider__subtitle {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.hero-slider__slide[data-slide="2"] .hero-slider__content .btn {
-  transform: scale(0.9);
-}
-
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active
-  .hero-slider__content
-  .btn {
-  transform: scale(1);
-  animation: buttonPop 0.6s ease-out 0.4s both;
-}
-
-/**
- * SLIDE 3 : "Recettes cultes"
- * ----------------------------
- * H1 + sous-texte : rotation 3D subtile (rotateX/Y ±5deg)
- * Background : zoom + léger tilt (déjà géré par animation backgroundZoom)
- * CTA : fade-in avec scale 0.9 → 1
- */
-.hero-slider__slide[data-slide="3"] .hero-slider__h1 {
-  transform: perspective(1000px) rotateX(-5deg) rotateY(5deg);
-}
-
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active
-  .hero-slider__h1 {
-  opacity: 1;
-  transform: perspective(1000px) rotateX(0) rotateY(0);
-  transition: opacity 1s ease-out 0s,
-    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
-}
-
-.hero-slider__slide[data-slide="3"] .hero-slider__subtitle {
-  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
-}
-
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active
-  .hero-slider__subtitle {
-  opacity: 1;
-  transform: perspective(1000px) rotateX(0) rotateY(0);
-}
-
-.hero-slider__slide[data-slide="3"] .hero-slider__bg {
-  animation: backgroundZoomTilt 20s ease-in-out infinite;
-}
-
-@keyframes backgroundZoomTilt {
-  0%,
-  100% {
-    transform: scale(1) rotateZ(0deg);
-  }
-  50% {
-    transform: scale(1.05) rotateZ(1deg);
-  }
-}
-
-.hero-slider__slide[data-slide="3"] .hero-slider__content .btn {
-  transform: scale(0.9);
-}
-
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active
-  .hero-slider__content
-  .btn {
-  transform: scale(1);
-}
-
-/**
- * SLIDE 4 : "Communauté"
- * -----------------------
- * H1 : pulse léger (scale 1 → 1.05 → 1)
- * Sous-texte : fade + translateY(-10px → 0)
- * Bouton CTA : bounce léger (translateY -5px → 0)
- */
-.hero-slider__slide[data-slide="4"] .hero-slider__h1 {
-  transform: scale(1);
-}
-
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active
-  .hero-slider__h1 {
-  opacity: 1;
-  transform: scale(1);
-  animation: pulseTitle 2s ease-in-out infinite 0.5s;
-}
-
-@keyframes pulseTitle {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.hero-slider__slide[data-slide="4"] .hero-slider__subtitle {
-  transform: translateY(-10px);
-}
-
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active
-  .hero-slider__subtitle {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hero-slider__slide[data-slide="4"] .hero-slider__content .btn {
-  transform: translateY(-5px);
-}
-
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active
-  .hero-slider__content
-  .btn {
-  transform: translateY(0);
-  animation: bounceButton 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
-}
-
-@keyframes bounceButton {
-  0% {
-    transform: translateY(-5px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(2px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
 .hero-slider__slide[data-slide="4"] .hero-slider__overlay {
   background: linear-gradient(
