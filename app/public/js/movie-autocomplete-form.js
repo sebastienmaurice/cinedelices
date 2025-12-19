@@ -263,7 +263,10 @@
     updateFilmImage(movie);
 
     // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-    updateURL();
+    // Refactoring : utilisation de la fonction centralisée
+    if (window.cleanMovieParamsFromURL) {
+      window.cleanMovieParamsFromURL();
+    }
 
     // Focus sur le champ suivant
     filmYearInput.focus();
@@ -273,17 +276,9 @@
   // /js/utils/film-image-utils.js et exposée globalement (window.updateFilmImage)
   // Le script utils/film-image-utils.js doit être chargé avant ce fichier dans la vue
 
-  /**
-   * Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-   */
-  function updateURL() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("tmdb_id");
-    url.searchParams.delete("title");
-
-    // Mettre à jour l'URL sans recharger la page
-    window.history.replaceState({}, "", url.toString());
-  }
+  // Refactoring : fonction updateURL() supprimée, maintenant centralisée dans
+  // /js/utils/url-utils.js et exposée globalement (window.cleanMovieParamsFromURL)
+  // Le script utils/url-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Mettre à jour l'affichage du film dans la colonne gauche

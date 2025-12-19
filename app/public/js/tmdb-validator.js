@@ -145,26 +145,18 @@
     }, 200);
   }
 
-  /**
-   * Normaliser un titre pour comparaison (retirer accents, espaces multiples, etc.)
-   */
-  function normalizeTitle(title) {
-    if (!title) return "";
-    return title
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // Retirer les accents
-      .replace(/\s+/g, " ") // Remplacer espaces multiples par un seul
-      .replace(/[^\w\s]/g, "") // Retirer ponctuation
-      .trim();
-  }
+  // Refactoring : fonction normalizeTitle() supprimée, maintenant centralisée dans
+  // /js/utils/text-utils.js et exposée globalement (window.normalizeTitle)
+  // Le script utils/text-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Comparer deux titres pour détecter si c'est le même film
    */
   function isSameMovie(movie1, movie2) {
-    const title1 = normalizeTitle(movie1.title || movie1.original_title || "");
-    const title2 = normalizeTitle(movie2.title || movie2.original_title || "");
+    // Refactoring : utilisation de la fonction centralisée normalizeTitle
+    const normalizeTitleFn = window.normalizeTitle || ((t) => t?.toLowerCase().trim() || "");
+    const title1 = normalizeTitleFn(movie1.title || movie1.original_title || "");
+    const title2 = normalizeTitleFn(movie2.title || movie2.original_title || "");
 
     // Comparer les titres normalisés
     if (title1 === title2) return true;
@@ -458,7 +450,10 @@
     }
 
     // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-    updateURL();
+    // Refactoring : utilisation de la fonction centralisée
+    if (window.cleanMovieParamsFromURL) {
+      window.cleanMovieParamsFromURL();
+    }
 
     // Fermer le dropdown
     hideSuggestions();
@@ -490,17 +485,9 @@
   // /js/utils/film-image-utils.js et exposée globalement (window.updateFilmImage)
   // Le script utils/film-image-utils.js doit être chargé avant ce fichier dans la vue
 
-  /**
-   * Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-   */
-  function updateURL() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("tmdb_id");
-    url.searchParams.delete("title");
-
-    // Mettre à jour l'URL sans recharger la page
-    window.history.replaceState({}, "", url.toString());
-  }
+  // Refactoring : fonction updateURL() supprimée, maintenant centralisée dans
+  // /js/utils/url-utils.js et exposée globalement (window.cleanMovieParamsFromURL)
+  // Le script utils/url-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Masquer le dropdown de suggestions

@@ -61,7 +61,10 @@
       resetFilmImage();
 
       // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-      updateURL();
+      // Refactoring : utilisation de la fonction centralisée
+      if (window.cleanMovieParamsFromURL) {
+        window.cleanMovieParamsFromURL();
+      }
 
       // Réinitialiser les champs cachés TMDB
       resetTmdbHiddenFields();
@@ -289,18 +292,9 @@
     }
   }
 
-  /**
-   * Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
-   * Appelé quand l'utilisateur modifie le film
-   */
-  function updateURL() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("tmdb_id");
-    url.searchParams.delete("title");
-
-    // Mettre à jour l'URL sans recharger la page
-    window.history.replaceState({}, "", url.toString());
-  }
+  // Refactoring : fonction updateURL() supprimée, maintenant centralisée dans
+  // /js/utils/url-utils.js et exposée globalement (window.cleanMovieParamsFromURL)
+  // Le script utils/url-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Afficher un indicateur de chargement

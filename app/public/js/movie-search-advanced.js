@@ -583,17 +583,9 @@
     });
   }
 
-  /**
-   * Normalise le texte pour la recherche (minuscules, suppression accents)
-   */
-  function normalizeTextForSearch(text) {
-    if (!text) return "";
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim();
-  }
+  // Refactoring : fonction normalizeTextForSearch() supprimée, maintenant centralisée dans
+  // /js/utils/text-utils.js et exposée globalement (window.normalizeText)
+  // Le script utils/text-utils.js doit être chargé avant ce fichier dans la vue
 
   /**
    * Échappe le HTML pour éviter les XSS

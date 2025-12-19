@@ -102,9 +102,15 @@ const recipesController = {
 
       // Formatage du texte pour l'affichage
       // Ces fonctions extraient les blocs de texte pour faciliter l'affichage dans la vue
-      const descriptionBlocks = formatDescriptionBlocks(plainRecipe.description);
-      const ingredientsBlocks = formatIngredientsBlocks(plainRecipe.ingredients);
-      const preparationBlocks = formatPreparationBlocks(plainRecipe.preparation);
+      const descriptionBlocks = formatDescriptionBlocks(
+        plainRecipe.description
+      );
+      const ingredientsBlocks = formatIngredientsBlocks(
+        plainRecipe.ingredients
+      );
+      const preparationBlocks = formatPreparationBlocks(
+        plainRecipe.preparation
+      );
 
       // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
       const notices = await Notice.findAll({

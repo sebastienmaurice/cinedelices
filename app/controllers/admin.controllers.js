@@ -133,7 +133,12 @@ const adminController = {
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
       // Note : utiliser renderServerError au lieu de res.status(500).send() pour cohérence
-      return renderServerError(res, error, req.userRole, "Erreur lors de la validation du film");
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation du film"
+      );
     }
   },
 
@@ -181,7 +186,12 @@ const adminController = {
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
-      return renderServerError(res, error, req.userRole, "Erreur lors de la validation de la recette");
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de la recette"
+      );
     }
   },
 
@@ -205,7 +215,12 @@ const adminController = {
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
-      return renderServerError(res, error, req.userRole, "Erreur lors du refus de la recette");
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de la recette"
+      );
     }
   },
 
