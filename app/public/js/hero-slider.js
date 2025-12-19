@@ -21,20 +21,59 @@
     const totalSlides = slides.length;
     let autoPlayInterval = null;
     const AUTO_PLAY_INTERVAL = 7000; // 7 secondes
-    const PARALLAX_INTENSITY = 10; // Intensité parallaxe en pixels (max 10px)
-    let parallaxX = 0;
-    let parallaxY = 0;
+    const PARALLAX_MAX_X = 15; // Maximum 15px sur X
+    const PARALLAX_MAX_Y = 10; // Maximum 10px sur Y
+    const PARALLAX_EASE = 0.15; // Facteur d'inertie (0.1 = plus lent, 0.3 = plus rapide)
+
+    // Variables pour parallaxe avec inertie
+    let targetParallaxX = 0;
+    let targetParallaxY = 0;
+    let currentParallaxX = 0;
+    let currentParallaxY = 0;
+    let parallaxAnimationFrame = null;
+    let isParallaxEnabled = true;
+
+    // Détecter si on est sur mobile ou si reduced-motion est actif
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (isMobile || prefersReducedMotion) {
+      isParallaxEnabled = false;
+    }
 
     /**
-     * Applique l'effet de parallaxe dynamique au premier plan PNG
-     * @param {HTMLElement} foreground - Élément PNG de premier plan
+     * Applique l'effet de parallaxe avec inertie au premier plan PNG
+     * Utilise requestAnimationFrame pour une animation fluide
      */
-    function applyDynamicParallax(foreground) {
-      if (!foreground) return;
+    function updateParallax() {
+      if (!isParallaxEnabled) return;
 
-      // Combiner transform de base avec parallaxe
-      const baseTransform = `translateX(calc(-50% + ${parallaxX}px)) translateY(${parallaxY}px)`;
-      foreground.style.transform = baseTransform;
+      // Calculer la différence (inertie)
+      const diffX = targetParallaxX - currentParallaxX;
+      const diffY = targetParallaxY - currentParallaxY;
+
+      // Appliquer l'inertie (effet retard)
+      currentParallaxX += diffX * PARALLAX_EASE;
+      currentParallaxY += diffY * PARALLAX_EASE;
+
+      // Appliquer au foreground du slide actif
+      const activeSlide = slides[currentSlide];
+      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
+      if (
+        foreground &&
+        activeSlide.classList.contains("hero-slider__slide--active")
+      ) {
+        const baseTransform = `translateX(calc(-50% + ${currentParallaxX}px)) translateY(${currentParallaxY}px)`;
+        foreground.style.transform = baseTransform;
+      }
+
+      // Continuer l'animation si nécessaire
+      if (Math.abs(diffX) > 0.1 || Math.abs(diffY) > 0.1) {
+        parallaxAnimationFrame = requestAnimationFrame(updateParallax);
+      } else {
+        parallaxAnimationFrame = null;
+      }
     }
 
     /**
@@ -42,6 +81,8 @@
      * @param {MouseEvent} e - Événement mousemove
      */
     function handleMouseMove(e) {
+      if (!isParallaxEnabled) return;
+
       const sliderRect = slider.getBoundingClientRect();
       const centerX = sliderRect.left + sliderRect.width / 2;
       const centerY = sliderRect.top + sliderRect.height / 2;
@@ -50,15 +91,13 @@
       const offsetX = (e.clientX - centerX) / (sliderRect.width / 2);
       const offsetY = (e.clientY - centerY) / (sliderRect.height / 2);
 
-      // Appliquer parallaxe avec intensité limitée
-      parallaxX = offsetX * PARALLAX_INTENSITY;
-      parallaxY = offsetY * PARALLAX_INTENSITY;
+      // Calculer parallaxe avec limites
+      targetParallaxX = offsetX * PARALLAX_MAX_X;
+      targetParallaxY = offsetY * PARALLAX_MAX_Y;
 
-      // Appliquer au foreground du slide actif
-      const activeSlide = slides[currentSlide];
-      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
-      if (foreground && activeSlide.classList.contains("hero-slider__slide--active")) {
-        applyDynamicParallax(foreground);
+      // Démarrer l'animation si elle n'est pas déjà en cours
+      if (!parallaxAnimationFrame) {
+        parallaxAnimationFrame = requestAnimationFrame(updateParallax);
       }
     }
 
@@ -66,13 +105,12 @@
      * Réinitialise la parallaxe au centre
      */
     function resetParallax() {
-      parallaxX = 0;
-      parallaxY = 0;
+      targetParallaxX = 0;
+      targetParallaxY = 0;
 
-      const activeSlide = slides[currentSlide];
-      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
-      if (foreground) {
-        foreground.style.transform = "translateX(-50%)";
+      // L'inertie va progressivement ramener le PNG au centre
+      if (!parallaxAnimationFrame && isParallaxEnabled) {
+        parallaxAnimationFrame = requestAnimationFrame(updateParallax);
       }
     }
 
@@ -93,7 +131,9 @@
 
       const previousSlideIndex = currentSlide;
       const previousSlide = slides[previousSlideIndex];
-      const previousForeground = previousSlide?.querySelector(".hero-slider__foreground");
+      const previousForeground = previousSlide?.querySelector(
+        ".hero-slider__foreground"
+      );
 
       // Animation de sortie sur l'ancien slide
       if (previousForeground) {
@@ -116,8 +156,25 @@
       const activeSlide = slides[index];
       activeSlide.classList.add("hero-slider__slide--active");
 
+      // Réinitialiser parallaxe pour le nouveau slide
+      currentParallaxX = 0;
+      currentParallaxY = 0;
+      targetParallaxX = 0;
+      targetParallaxY = 0;
+
+      // Réinitialiser l'animation background (Ken Burns)
+      const activeBg = activeSlide.querySelector(".hero-slider__bg");
+      if (activeBg) {
+        // Forcer le reset de l'animation
+        activeBg.style.animation = "none";
+        activeBg.offsetHeight; // Trigger reflow
+        activeBg.style.animation = null;
+      }
+
       // Animation d'entrée sur le nouveau foreground
-      const activeForeground = activeSlide.querySelector(".hero-slider__foreground");
+      const activeForeground = activeSlide.querySelector(
+        ".hero-slider__foreground"
+      );
       if (activeForeground) {
         // Réinitialiser les classes et le transform
         activeForeground.classList.remove("slide-out");
@@ -126,13 +183,6 @@
         // Appliquer slide-in après un petit délai pour transition fluide
         setTimeout(() => {
           activeForeground.classList.add("slide-in");
-          
-          // Appliquer parallaxe actuelle après l'animation (800ms)
-          setTimeout(() => {
-            if (parallaxX !== 0 || parallaxY !== 0) {
-              applyDynamicParallax(activeForeground);
-            }
-          }, 800);
         }, 50);
       }
 
@@ -224,15 +274,25 @@
     });
 
     // Initialiser le slide actif au chargement
-    const activeForeground = slides[0]?.querySelector(
-      ".hero-slider__foreground"
-    );
-    if (activeForeground) {
-      activeForeground.style.transform = "translateX(-50%)";
-      // Appliquer animation d'entrée après un court délai
-      setTimeout(() => {
-        activeForeground.classList.add("slide-in");
-      }, 100);
+    const activeSlide = slides[0];
+    if (activeSlide) {
+      const activeForeground = activeSlide.querySelector(
+        ".hero-slider__foreground"
+      );
+      if (activeForeground) {
+        activeForeground.style.transform = "translateX(-50%)";
+        // Appliquer animation d'entrée après un court délai
+        setTimeout(() => {
+          activeForeground.classList.add("slide-in");
+        }, 100);
+      }
+
+      // Démarrer l'animation Ken Burns du background
+      const activeBg = activeSlide.querySelector(".hero-slider__bg");
+      if (activeBg) {
+        // S'assurer que l'animation démarre
+        activeBg.style.animation = "backgroundKenBurns 7s linear forwards";
+      }
     }
   });
 })();

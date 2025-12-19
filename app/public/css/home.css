@@ -78,7 +78,7 @@
  * ---------------------------------
  * background-size: cover : Couvre tout l'espace
  * background-position: center : Centré
- * animation: zoom lent continu pour effet cinématographique
+ * Dézoom progressif (Ken Burns) pendant toute la durée du slide
  */
 .hero-slider__bg {
   position: absolute;
@@ -89,25 +89,28 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  animation: backgroundZoom 20s ease-in-out infinite;
+  transform: scale(1.1);
   transform-origin: center center;
+  transition: transform 0.3s ease-out;
 }
 
 /**
- * Animation de zoom lent du background (effet Ken Burns)
+ * Animation de dézoom progressif du background (effet Ken Burns)
+ * ---------------------------------------------------------------
+ * Dézoom de 1.1 → 1 pendant toute la durée du slide (7s)
+ * Animation linéaire très lente pour effet cinématographique
  */
-@keyframes backgroundZoom {
-  0%,
+@keyframes backgroundKenBurns {
+  0% {
+    transform: scale(1.1);
+  }
   100% {
     transform: scale(1);
   }
-  50% {
-    transform: scale(1.05);
-  }
 }
 
-.hero-slider__slide:hover .hero-slider__bg {
-  animation-duration: 10s; /* Accélère le zoom au hover */
+.hero-slider__slide--active .hero-slider__bg {
+  animation: backgroundKenBurns 7s linear forwards;
 }
 
 /**
@@ -132,10 +135,11 @@
 }
 
 /**
- * Premier plan PNG (parallaxe)
- * -----------------------------
- * Positionné à gauche centré verticalement, pleine hauteur du slider
+ * Premier plan PNG (parallaxe cinématographique)
+ * -----------------------------------------------
+ * Positionné au centre horizontal, pleine hauteur du slider
  * z-index: 2 : Entre overlay et contenu texte
+ * Transition douce pour parallaxe fluide avec inertie
  */
 .hero-slider__foreground {
   position: absolute;
@@ -147,16 +151,17 @@
   object-fit: contain;
   object-position: center;
   z-index: 2;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   transform-origin: center center;
+  /* Transition douce pour parallaxe avec inertie (gérée par JS via requestAnimationFrame) */
+  transition: transform 0.15s ease-out, opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /**
  * Animation d'entrée du PNG (slide-in)
  * -------------------------------------
- * Fade-in + scale (0.95 → 1) pour effet cinématographique
+ * Fade-in + scale (1.05 → 1) + translation légère pour effet cinématographique
+ * Le PNG entre dans le cadre comme un plan cinéma
  */
 .hero-slider__foreground.slide-in {
   animation: foregroundSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -165,7 +170,7 @@
 @keyframes foregroundSlideIn {
   0% {
     opacity: 0;
-    transform: translateX(-50%) scale(0.95);
+    transform: translateX(-50%) scale(1.05);
   }
   100% {
     opacity: 1;
@@ -176,12 +181,22 @@
 /**
  * Animation de sortie du PNG (slide-out)
  * ---------------------------------------
- * Fade-out + scale réduit (0.95) pour transition fluide
+ * Fade-out + scale réduit (1 → 0.95) pour transition fluide
+ * Le PNG sort du cadre en douceur
  */
 .hero-slider__foreground.slide-out {
-  opacity: 0;
-  transform: translateX(-50%) scale(0.95);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  animation: foregroundSlideOut 0.5s ease-out forwards;
+}
+
+@keyframes foregroundSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.95);
+  }
 }
 
 .hero-slider__slide--active .hero-slider__foreground {
@@ -374,7 +389,8 @@
   transform: scale(0.8);
 }
 
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active .hero-slider__h1 {
+.hero-slider__slide[data-slide="1"].hero-slider__slide--active
+  .hero-slider__h1 {
   opacity: 1;
   transform: scale(1);
   animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
@@ -398,7 +414,8 @@
   transform: translateY(-20px);
 }
 
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active .hero-slider__subtitle {
+.hero-slider__slide[data-slide="1"].hero-slider__slide--active
+  .hero-slider__subtitle {
   opacity: 1;
   transform: translateY(0);
 }
@@ -407,7 +424,9 @@
   transform: scale(1);
 }
 
-.hero-slider__slide[data-slide="1"].hero-slider__slide--active .hero-slider__content .btn {
+.hero-slider__slide[data-slide="1"].hero-slider__slide--active
+  .hero-slider__content
+  .btn {
   animation: buttonPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
 }
 
@@ -436,7 +455,8 @@
   transform: translateX(-100%);
 }
 
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active .hero-slider__h1 {
+.hero-slider__slide[data-slide="2"].hero-slider__slide--active
+  .hero-slider__h1 {
   opacity: 1;
   transform: translateX(0);
 }
@@ -445,7 +465,8 @@
   transform: translateX(100%);
 }
 
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active .hero-slider__subtitle {
+.hero-slider__slide[data-slide="2"].hero-slider__slide--active
+  .hero-slider__subtitle {
   opacity: 1;
   transform: translateX(0);
 }
@@ -454,7 +475,9 @@
   transform: scale(0.9);
 }
 
-.hero-slider__slide[data-slide="2"].hero-slider__slide--active .hero-slider__content .btn {
+.hero-slider__slide[data-slide="2"].hero-slider__slide--active
+  .hero-slider__content
+  .btn {
   transform: scale(1);
   animation: buttonPop 0.6s ease-out 0.4s both;
 }
@@ -470,7 +493,8 @@
   transform: perspective(1000px) rotateX(-5deg) rotateY(5deg);
 }
 
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active .hero-slider__h1 {
+.hero-slider__slide[data-slide="3"].hero-slider__slide--active
+  .hero-slider__h1 {
   opacity: 1;
   transform: perspective(1000px) rotateX(0) rotateY(0);
   transition: opacity 1s ease-out 0s,
@@ -481,7 +505,8 @@
   transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
 }
 
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active .hero-slider__subtitle {
+.hero-slider__slide[data-slide="3"].hero-slider__slide--active
+  .hero-slider__subtitle {
   opacity: 1;
   transform: perspective(1000px) rotateX(0) rotateY(0);
 }
@@ -504,7 +529,9 @@
   transform: scale(0.9);
 }
 
-.hero-slider__slide[data-slide="3"].hero-slider__slide--active .hero-slider__content .btn {
+.hero-slider__slide[data-slide="3"].hero-slider__slide--active
+  .hero-slider__content
+  .btn {
   transform: scale(1);
 }
 
@@ -519,7 +546,8 @@
   transform: scale(1);
 }
 
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active .hero-slider__h1 {
+.hero-slider__slide[data-slide="4"].hero-slider__slide--active
+  .hero-slider__h1 {
   opacity: 1;
   transform: scale(1);
   animation: pulseTitle 2s ease-in-out infinite 0.5s;
@@ -539,7 +567,8 @@
   transform: translateY(-10px);
 }
 
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active .hero-slider__subtitle {
+.hero-slider__slide[data-slide="4"].hero-slider__slide--active
+  .hero-slider__subtitle {
   opacity: 1;
   transform: translateY(0);
 }
@@ -548,7 +577,9 @@
   transform: translateY(-5px);
 }
 
-.hero-slider__slide[data-slide="4"].hero-slider__slide--active .hero-slider__content .btn {
+.hero-slider__slide[data-slide="4"].hero-slider__slide--active
+  .hero-slider__content
+  .btn {
   transform: translateY(0);
   animation: bounceButton 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
 }
