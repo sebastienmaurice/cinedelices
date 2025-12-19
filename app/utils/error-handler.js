@@ -64,7 +64,10 @@ export function renderServerError(res, error = null, userRole = null, customMess
 
 /**
  * Gère les erreurs de manière générique (wrapper pour try/catch)
- * Utile si on veut centraliser encore plus la gestion d'erreurs
+ * 
+ * ⚠️ NOTE : Cette fonction est préparée mais pas encore utilisée dans le code.
+ * Elle pourrait être utilisée pour simplifier encore plus la gestion d'erreurs
+ * dans les controllers dans une future refactorisation.
  *
  * @param {Function} asyncFn - Fonction asynchrone à exécuter
  * @param {Object} res - Objet response Express

@@ -11,11 +11,12 @@ import { Sequelize } from "sequelize";
     }
   });
 
- // test de la connexion entre sequelize et la bdd
-  try {
-    await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
-  } catch (error) {console.log("Unable to connect to the database:", error);
-  }
+// Test de la connexion entre Sequelize et la base de données
+try {
+  await sequelize.authenticate();
+  console.log("✅ Connexion à la base de données établie avec succès.");
+} catch (error) {
+  console.error("❌ Impossible de se connecter à la base de données:", error);
+}
 
 export default sequelize;

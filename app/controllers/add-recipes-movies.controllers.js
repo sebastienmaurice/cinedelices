@@ -93,12 +93,11 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      //! Récupération du chemin de l'image uploadée (si présente)
+      // Récupération du chemin de l'image uploadée (si présente)
       let imagePath = null;
       if (req.file) {
         // Chemin relatif pour l'affichage dans le HTML
         imagePath = `/images/recipes/${req.file.filename}`;
-        //console.log("Image uploadée :", imagePath);
       }
 
       // Ajout de la recette à la base de données (simulation)
