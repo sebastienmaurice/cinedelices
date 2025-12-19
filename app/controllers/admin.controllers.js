@@ -102,37 +102,32 @@ const adminController = {
     }
   },
 
-  // passage du film de false a true
-
+  /**
+   * Valide un film (passe status à true et optionnellement met à jour l'image)
+   * POST /admin/validateMovie/:id
+   *
+   * Processus :
+   * 1. Récupère l'ID du film depuis l'URL
+   * 2. Prépare les données de mise à jour (status: true + image si uploadée)
+   * 3. Met à jour le film en BDD
+   * 4. Redirige vers le dashboard admin avec message de succès
+   */
   async validateMovie(req, res) {
-    // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
-
     try {
       const movieId = parseInt(req.params.id);
-      // 👆 Récupère l'ID du film depuis l'URL (/admin/validateMovie/5)
-      // parseInt() convertit le texte "5" en nombre 5
 
       // Préparer les données à mettre à jour
       const updateData = { status: true };
 
-      // Si un fichier a été uploadé
+      // Si un fichier a été uploadé lors de la validation, l'ajouter aux données
+      // Les images admin sont stockées dans movies/originals/
       if (req.file) {
-        // Construire le chemin relatif de l'image pour la BDD
-        // Les images admin sont stockées dans movies/originals/
         updateData.picture = `/images/movies/originals/${req.file.filename}`;
       }
 
-      await Movie.update(
-        //Appelle la méthode update() de Sequelize
-
-        updateData,
-        // Met à jour le status ET l'image si elle existe
-
-        { where: { id: movieId } }
-        // QUEL film modifier : celui qui a cet ID
-        // Équivalent SQL : UPDATE movies SET status = true WHERE id
-      );
-      // Refactoring : suppression du console.log de debug
+      // Mise à jour en BDD : passe le status à true (et l'image si fournie)
+      // Équivalent SQL : UPDATE movies SET status = true, picture = ? WHERE id = ?
+      await Movie.update(updateData, { where: { id: movieId } });
 
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
@@ -142,18 +137,22 @@ const adminController = {
     }
   },
 
-  // Refuser un film (le supprime)
+  /**
+   * Refuse un film (suppression de la base de données)
+   * POST /admin/rejectMovie/:id
+   *
+   * Processus :
+   * 1. Récupère l'ID du film depuis l'URL
+   * 2. Supprime le film de la BDD
+   * 3. Redirige vers le dashboard admin avec message de succès
+   */
   async rejectMovie(req, res) {
     try {
       const movieId = parseInt(req.params.id);
-      //Récupère l'ID du film à supprimer depuis l'URL
 
-      await Movie.destroy({
-        // 👆 Appelle la méthode destroy() de Sequelize = SUPPRIMER
-        where: { id: movieId },
-        // 👆 QUEL film supprimer : celui avec cet ID
-        // Équivalent SQL : DELETE FROM movies WHERE id
-      });
+      // Suppression du film en BDD
+      // Équivalent SQL : DELETE FROM movies WHERE id = ?
+      await Movie.destroy({ where: { id: movieId } });
 
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
@@ -162,26 +161,22 @@ const adminController = {
     }
   },
 
-  // passage de la recette de false a true
-
+  /**
+   * Valide une recette (passe status à true)
+   * POST /admin/validateRecipe/:id
+   *
+   * Processus :
+   * 1. Récupère l'ID de la recette depuis l'URL
+   * 2. Met à jour le status à true en BDD
+   * 3. Redirige vers le dashboard admin avec message de succès
+   */
   async validateRecipe(req, res) {
-    // Déclare une méthode asynchrone qui reçoit la requête (req) et la réponse (res)
-
     try {
       const recipeId = parseInt(req.params.id);
-      // 👆 ===Récupère l'ID de la recette depuis l'URL (/admin/validateRecipe/5)
-      // parseInt() convertit le texte "5" en nombre 5
 
-      await Recipe.update(
-        //Appelle la méthode update() de Sequelize
-
-        { status: true },
-        //met le champ "status" à true (validé)
-
-        { where: { id: recipeId } }
-        // quelle recette, modifier : celle qui a cet ID
-        // Équivalent SQL : UPDATE Recipes SET status = true WHERE id
-      );
+      // Mise à jour en BDD : passe le status à true (validé)
+      // Équivalent SQL : UPDATE recipes SET status = true WHERE id = ?
+      await Recipe.update({ status: true }, { where: { id: recipeId } });
 
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
@@ -190,18 +185,22 @@ const adminController = {
     }
   },
 
-  // Refuser une recette (la supprime)
+  /**
+   * Refuse une recette (suppression de la base de données)
+   * POST /admin/rejectRecipe/:id
+   *
+   * Processus :
+   * 1. Récupère l'ID de la recette depuis l'URL
+   * 2. Supprime la recette de la BDD
+   * 3. Redirige vers le dashboard admin avec message de succès
+   */
   async rejectRecipe(req, res) {
     try {
       const recipeId = parseInt(req.params.id);
-      //Récupère l'ID de la recette à supprimer depuis l'URL
 
-      await Recipe.destroy({
-        // Appelle la méthode destroy() de Sequelize = SUPPRIMER
-        where: { id: recipeId },
-        // quelle recette, supprimer : celle avec cet ID
-        // Équivalent SQL : DELETE FROM Recipes WHERE id
-      });
+      // Suppression de la recette en BDD
+      // Équivalent SQL : DELETE FROM recipes WHERE id = ?
+      await Recipe.destroy({ where: { id: recipeId } });
 
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {

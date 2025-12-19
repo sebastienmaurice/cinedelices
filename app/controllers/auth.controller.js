@@ -68,9 +68,10 @@ const authController = {
     }
   },
 
-  //pour s'inscrire
+  // Pour s'inscrire (création de compte utilisateur)
   async register(req, res) {
-    // ! il faut sanitizer username
+    // Extraction des données du formulaire d'inscription
+    // Note : sanitization à prévoir pour le pseudo (futur amélioration sécurité)
     const { first_name, last_name, pseudo, email, password, role } = req.body;
 
     try {

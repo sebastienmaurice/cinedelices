@@ -97,24 +97,31 @@ const moviesController = {
     }
   },
 
-  //Filtrage des films par genre (tous, action, comedie, drame...)
+  /**
+   * Filtre les films par genre et affiche la page movies
+   * GET /movies/:genre
+   *
+   * Processus :
+   * 1. Récupère le genre depuis l'URL (ou "tous" si non spécifié)
+   * 2. Charge tous les films ou filtre par genre
+   * 3. Enrichit les films avec les chemins d'images (banner/card)
+   * 4. Rend la vue avec les films filtrés
+   */
   async filtredMovies(req, res) {
     try {
       const { genre } = req.params;
 
-      let movies;
-      if (!genre || genre === "all" || genre === "tous") {
-        movies = await Movie.findAll();
-      } else {
-        movies = await Movie.findAll({
-          where: { genre: genre },
-        });
-      }
+      // Charger tous les films ou filtrer par genre
+      // Si genre est "all", "tous" ou non défini → charger tous les films
+      const movies =
+        !genre || genre === "all" || genre === "tous"
+          ? await Movie.findAll()
+          : await Movie.findAll({ where: { genre: genre } });
 
-      // Enrichir les movies avec les chemins banner/card
+      // Enrichir les films avec les chemins d'images (banner/card)
       const enrichedMovies = enrichMoviesWithImagePaths(movies);
 
-      // Rendu de la vue avec les genres filtrés
+      // Rendre la vue avec les films filtrés
       res.render("movies", {
         movies: enrichedMovies,
         selectedGenre: genre || "tous",

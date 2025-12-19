@@ -27,11 +27,13 @@
  * @example
  * await validateEntity(Movie, movieId, "movie_validated", "film");
  */
-export async function validateEntity(Model, entityId, successParam, entityType = "entité") {
-  await Model.update(
-    { status: true },
-    { where: { id: entityId } }
-  );
+export async function validateEntity(
+  Model,
+  entityId,
+  successParam,
+  entityType = "entité"
+) {
+  await Model.update({ status: true }, { where: { id: entityId } });
 }
 
 /**
@@ -46,7 +48,12 @@ export async function validateEntity(Model, entityId, successParam, entityType =
  * @example
  * await rejectEntity(Movie, movieId, "movie_rejected", "film");
  */
-export async function rejectEntity(Model, entityId, successParam, entityType = "entité") {
+export async function rejectEntity(
+  Model,
+  entityId,
+  successParam,
+  entityType = "entité"
+) {
   return await Model.destroy({
     where: { id: entityId },
   });

@@ -104,24 +104,11 @@ const recipesController = {
 
       const plainRecipe = recipe.get({ plain: true });
 
-      const descriptionBlocks = (plainRecipe.description || "")
-        .replace(/\r\n/g, "\n")
-        .split(/\n{2,}/)
-        .map((paragraph) => paragraph.trim())
-        .filter(Boolean);
-
-      const ingredientsBlocks = (plainRecipe.ingredients || "")
-        .replace(/\r\n/g, "\n")
-        .split(/\n+/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-
-      const preparationBlocks = (plainRecipe.preparation || "")
-        .replace(/\r\n/g, "\n")
-        .split(/\n{2,}/)
-        .flatMap((chunk) => chunk.split(/\n/))
-        .map((step) => step.trim())
-        .filter(Boolean);
+      // Formatage du texte pour l'affichage
+      // Ces fonctions extraient les blocs de texte pour faciliter l'affichage dans la vue
+      const descriptionBlocks = formatDescriptionBlocks(plainRecipe.description);
+      const ingredientsBlocks = formatIngredientsBlocks(plainRecipe.ingredients);
+      const preparationBlocks = formatPreparationBlocks(plainRecipe.preparation);
 
       // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
       const notices = await Notice.findAll({
@@ -169,5 +156,50 @@ const recipesController = {
     - Rend la vue "recipe-detail" avec la recette et les blocs formatés
   */
 };
+
+/**
+ * Fonctions utilitaires internes pour le formatage du texte
+ * Simplification Étape 3.2 : Extraction des fonctions de formatage pour améliorer la lisibilité
+ */
+
+/**
+ * Formate la description en paragraphes (séparés par des retours à la ligne doubles)
+ * @param {string} description - Texte de description
+ * @returns {Array<string>} - Tableau de paragraphes formatés
+ */
+function formatDescriptionBlocks(description) {
+  return (description || "")
+    .replace(/\r\n/g, "\n") // Normaliser les retours à la ligne
+    .split(/\n{2,}/) // Séparer par retours à la ligne doubles (paragraphes)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean); // Retirer les chaînes vides
+}
+
+/**
+ * Formate les ingrédients en liste (un ingrédient par ligne)
+ * @param {string} ingredients - Texte des ingrédients
+ * @returns {Array<string>} - Tableau d'ingrédients formatés
+ */
+function formatIngredientsBlocks(ingredients) {
+  return (ingredients || "")
+    .replace(/\r\n/g, "\n") // Normaliser les retours à la ligne
+    .split(/\n+/) // Séparer par retours à la ligne (un ingrédient par ligne)
+    .map((item) => item.trim())
+    .filter(Boolean); // Retirer les chaînes vides
+}
+
+/**
+ * Formate la préparation en étapes (paragraphes puis lignes)
+ * @param {string} preparation - Texte de préparation
+ * @returns {Array<string>} - Tableau d'étapes formatées
+ */
+function formatPreparationBlocks(preparation) {
+  return (preparation || "")
+    .replace(/\r\n/g, "\n") // Normaliser les retours à la ligne
+    .split(/\n{2,}/) // Séparer par retours à la ligne doubles (paragraphes)
+    .flatMap((chunk) => chunk.split(/\n/)) // Diviser chaque paragraphe en lignes
+    .map((step) => step.trim())
+    .filter(Boolean); // Retirer les chaînes vides
+}
 
 export default recipesController;

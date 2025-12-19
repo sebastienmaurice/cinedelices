@@ -7,6 +7,7 @@
 ### ❌ À supprimer
 
 1. **`app/db/client.js`**
+
    - Client PostgreSQL non utilisé
    - Le projet utilise uniquement Sequelize (`app/database/sequelize-client.js`)
    - Aucune importation trouvée dans le codebase
@@ -21,6 +22,7 @@
 ### ⚠️ Conservés (avec justification)
 
 1. **`app/utils/entity-validator.js`**
+
    - **Statut** : Créé lors du refactoring Étape 2 mais non encore utilisé
    - **Raison** : Helper préparé pour une future simplification des fonctions validate/reject dans `admin.controllers.js`
    - **Action** : Conserver avec commentaire explicatif
