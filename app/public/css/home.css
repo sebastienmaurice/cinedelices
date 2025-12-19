@@ -122,34 +122,60 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(
-    180deg,
-    rgba(13, 27, 42, 0) 0%,
-    rgba(13, 27, 42, 0.3) 50%,
-    rgba(13, 27, 42, 0.75) 100%
+    90deg,
+    rgba(13, 27, 42, 0.85) 0%,
+    rgba(13, 27, 42, 0.6) 40%,
+    rgba(13, 27, 42, 0.2) 70%,
+    rgba(13, 27, 42, 0) 100%
   );
   z-index: 1;
+}
+
+/**
+ * Premier plan PNG (parallaxe)
+ * -----------------------------
+ * Positionné au centre, au-dessus du background mais en dessous du contenu texte
+ * Taille fixe pour tous les PNG (même dimension)
+ * z-index: 2 : Entre overlay et contenu texte
+ */
+.hero-slider__foreground {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+  object-position: center;
+  z-index: 2;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+}
+
+.hero-slider__slide--active .hero-slider__foreground {
+  opacity: 1;
 }
 
 /**
  * Contenu textuel de chaque slide
  * --------------------------------
  * position: absolute : Positionné par rapport au slide
- * z-index: 2 : Au-dessus du background et de l'overlay
- * FLEXBOX : Centrage vertical et horizontal du contenu
+ * Positionné à GAUCHE, aligné verticalement au centre
+ * z-index: 3 : Au-dessus du premier plan PNG
+ * FLEXBOX : Alignement vertical et horizontal gauche
  */
 .hero-slider__content {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 2;
+  left: 80px;
+  transform: translateY(-50%);
+  text-align: left;
+  z-index: 3;
   padding: 2rem;
-  width: 100%;
-  max-width: 800px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.5rem;
 }
 
@@ -158,20 +184,26 @@
  * ----------------------------------------
  * font-family: var(--font-h1) : Police "Fascinate Inline" (définie dans base.css)
  * text-shadow avec glow rouge subtil : Effet de lueur
- * État initial : invisible et légèrement réduit
+ * État initial : invisible et légèrement décalé à gauche pour animation fade-in
  */
 .hero-slider__h1 {
   font-family: var(--font-h1);
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   color: var(--dore-popcorn);
   text-shadow: 0 0 20px rgba(215, 38, 56, 0.3), 0 2px 12px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(198, 166, 100, 0.4);
+    0 0 40px rgba(198, 166, 100, 0.4), 0 0 60px rgba(198, 166, 100, 0.2);
   margin: 0;
   line-height: 1.1;
   letter-spacing: 0.02em;
   opacity: 0;
+  transform: translateX(-30px);
   transition: opacity 1s ease-out 0s, transform 1s ease-out 0s;
   position: relative;
+}
+
+.hero-slider__slide--active .hero-slider__h1 {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /**
@@ -265,26 +297,34 @@
   font-size: clamp(1rem, 2vw, 1.3rem);
   color: var(--argent-ecran);
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  max-width: 600px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  max-width: 500px;
   line-height: 1.5;
   opacity: 0;
+  transform: translateX(-30px);
   transition: opacity 1s ease-out 0.2s, transform 1s ease-out 0.2s;
+}
+
+.hero-slider__slide--active .hero-slider__subtitle {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /**
  * Bouton CTA dans le slider
  * --------------------------
  * Le bouton .btn--gold-special est défini dans base.css
- * On ajoute ici des animations spécifiques
+ * Animation fade-in avec translation depuis la gauche
  */
 .hero-slider__content .btn {
   opacity: 0;
+  transform: translateX(-30px);
   transition: opacity 1s ease-out 0.4s, transform 1s ease-out 0.4s;
 }
 
 .hero-slider__slide--active .hero-slider__content .btn {
   opacity: 1;
+  transform: translateX(0);
 }
 
 /* ====================================================== */
@@ -505,96 +545,58 @@
 }
 
 /**
- * Boutons de navigation (flèches gauche/droite)
- * ----------------------------------------------
- * position: absolute : Positionnés sur les côtés du slider
+ * Pagination verticale à droite
+ * ------------------------------
+ * position: absolute : Positionnée à droite du slider
  * z-index: 10 : Au-dessus de tout
- * backdrop-filter: blur : Effet de flou sur le background (glassmorphism)
+ * FLEXBOX : Alignement vertical des numéros
  */
-.hero-slider__nav {
+.hero-slider__pagination-vertical {
   position: absolute;
   top: 50%;
+  right: 40px;
   transform: translateY(-50%);
   z-index: 10;
-  background: rgba(13, 27, 42, 0.6);
-  backdrop-filter: blur(8px);
-  border: 2px solid var(--dore-popcorn);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
-  justify-content: center;
-  color: var(--dore-popcorn);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0.8;
-}
-
-.hero-slider__nav:hover {
-  opacity: 1;
-  background: rgba(13, 27, 42, 0.9);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 20px rgba(198, 166, 100, 0.5);
-}
-
-.hero-slider__nav--prev {
-  left: 20px;
-}
-
-.hero-slider__nav--next {
-  right: 20px;
 }
 
 /**
- * Pagination (points indicateurs)
+ * Numéro de pagination individuel
  * --------------------------------
- * position: absolute : En bas du slider
- * z-index: 10 : Au-dessus de tout
- * FLEXBOX : Alignement horizontal des points
+ * Style pour chaque numéro (01, 02, 03, 04)
+ * État inactif : blanc argent, taille normale
+ * État actif : doré-popcorn, zoom fort, glow subtil
  */
-.hero-slider__pagination {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-/**
- * Point de pagination individuel
- * -------------------------------
- * border-radius: 50% : Forme circulaire
- * transition : Animation fluide lors de l'activation
- * opacity: 0.4 : Rendu discret (comme demandé)
- */
-.hero-slider__pagination-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--dore-popcorn);
+.hero-slider__pagination-number {
   background: transparent;
+  border: none;
+  color: var(--argent-ecran);
+  font-family: var(--font-h2-h6);
+  font-size: 1.2rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
-  opacity: 0.4;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 0.5rem;
+  line-height: 1;
+  transform: scale(1);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-.hero-slider__pagination-dot:hover {
-  opacity: 0.8;
-  transform: scale(1.2);
-  background: rgba(198, 166, 100, 0.3);
+.hero-slider__pagination-number:hover {
+  color: var(--dore-popcorn);
+  transform: scale(1.1);
+  text-shadow: 0 0 15px rgba(198, 166, 100, 0.6);
 }
 
-.hero-slider__pagination-dot--active {
-  background: var(--dore-popcorn);
-  opacity: 0.7;
-  box-shadow: 0 0 8px rgba(198, 166, 100, 0.5);
-  transform: scale(1.2);
+.hero-slider__pagination-number--active {
+  color: var(--dore-popcorn);
+  font-size: 2rem;
+  transform: scale(1.3);
+  text-shadow: 0 0 20px rgba(198, 166, 100, 0.8),
+    0 0 40px rgba(198, 166, 100, 0.4);
 }
 
 /**
@@ -604,21 +606,26 @@
 @media screen and (max-width: 1200px) {
   .hero-slider__content {
     padding: 1.5rem;
-    max-width: 700px;
+    max-width: 450px;
+    left: 60px;
   }
 
-  .hero-slider__nav {
-    width: 45px;
-    height: 45px;
-    font-size: 1.3rem;
+  .hero-slider__foreground {
+    width: 350px;
+    height: 350px;
   }
 
-  .hero-slider__nav--prev {
-    left: 15px;
+  .hero-slider__pagination-vertical {
+    right: 30px;
+    gap: 1.25rem;
   }
 
-  .hero-slider__nav--next {
-    right: 15px;
+  .hero-slider__pagination-number {
+    font-size: 1.1rem;
+  }
+
+  .hero-slider__pagination-number--active {
+    font-size: 1.8rem;
   }
 }
 

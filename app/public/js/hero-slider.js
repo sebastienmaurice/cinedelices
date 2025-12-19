@@ -1,6 +1,7 @@
 /**
- * Hero Slider - Navigation, pagination et autoplay
- * Gère le changement de slides avec les flèches, la pagination et l'autoplay
+ * Hero Slider - Parallaxe et pagination verticale
+ * Gère le changement de slides avec parallaxe du premier plan,
+ * pagination verticale et autoplay
  */
 
 (function () {
@@ -12,14 +13,31 @@
     if (!slider) return;
 
     const slides = slider.querySelectorAll(".hero-slider__slide");
-    const prevBtn = slider.querySelector(".hero-slider__nav--prev");
-    const nextBtn = slider.querySelector(".hero-slider__nav--next");
-    const paginationDots = slider.querySelectorAll(".hero-slider__pagination-dot");
+    const paginationNumbers = slider.querySelectorAll(
+      ".hero-slider__pagination-number"
+    );
 
     let currentSlide = 0;
     const totalSlides = slides.length;
     let autoPlayInterval = null;
     const AUTO_PLAY_INTERVAL = 7000; // 7 secondes
+    const PARALLAX_OFFSET = 30; // Décalage parallaxe en pixels
+
+    /**
+     * Applique l'effet de parallaxe au premier plan PNG
+     * @param {HTMLElement} foreground - Élément PNG de premier plan
+     * @param {number} direction - Direction du déplacement (1 = droite, -1 = gauche)
+     */
+    function applyParallax(foreground, direction) {
+      if (!foreground) return;
+
+      // Le PNG se déplace plus vite que le background
+      // Décalage horizontal léger pour effet parallaxe
+      const offsetX = direction * PARALLAX_OFFSET;
+      const offsetY = direction * (PARALLAX_OFFSET * 0.5); // Décalage vertical plus faible
+
+      foreground.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+    }
 
     /**
      * Affiche un slide spécifique
@@ -33,17 +51,41 @@
         index = 0;
       }
 
-      // Retirer la classe active de toutes les slides et dots
-      slides.forEach((slide) => slide.classList.remove("hero-slider__slide--active"));
-      paginationDots.forEach((dot) => {
-        dot.classList.remove("hero-slider__pagination-dot--active");
-        dot.setAttribute("aria-selected", "false");
+      const previousSlide = currentSlide;
+      const direction = index > previousSlide ? 1 : -1; // Direction du changement
+
+      // Retirer la classe active de toutes les slides
+      slides.forEach((slide) =>
+        slide.classList.remove("hero-slider__slide--active")
+      );
+
+      // Retirer la classe active de tous les numéros de pagination
+      paginationNumbers.forEach((number) => {
+        number.classList.remove("hero-slider__pagination-number--active");
+        number.setAttribute("aria-selected", "false");
       });
 
-      // Activer la slide et le dot correspondants
-      slides[index].classList.add("hero-slider__slide--active");
-      paginationDots[index].classList.add("hero-slider__pagination-dot--active");
-      paginationDots[index].setAttribute("aria-selected", "true");
+      // Activer la slide correspondante
+      const activeSlide = slides[index];
+      activeSlide.classList.add("hero-slider__slide--active");
+
+      // Appliquer la parallaxe au premier plan PNG
+      const foreground = activeSlide.querySelector(".hero-slider__foreground");
+      if (foreground) {
+        // Reset puis appliquer la parallaxe
+        foreground.style.transform = "translate(-50%, -50%)";
+        setTimeout(() => {
+          applyParallax(foreground, direction);
+        }, 50);
+      }
+
+      // Activer le numéro de pagination correspondant
+      if (paginationNumbers[index]) {
+        paginationNumbers[index].classList.add(
+          "hero-slider__pagination-number--active"
+        );
+        paginationNumbers[index].setAttribute("aria-selected", "true");
+      }
 
       currentSlide = index;
     }
@@ -82,24 +124,9 @@
       }
     }
 
-    // Écouter les clics sur les boutons de navigation
-    if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-        nextSlide();
-        startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
-      });
-    }
-
-    if (prevBtn) {
-      prevBtn.addEventListener("click", () => {
-        prevSlide();
-        startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
-      });
-    }
-
-    // Écouter les clics sur les points de pagination
-    paginationDots.forEach((dot, index) => {
-      dot.addEventListener("click", () => {
+    // Écouter les clics sur les numéros de pagination
+    paginationNumbers.forEach((number, index) => {
+      number.addEventListener("click", () => {
         showSlide(index);
         startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
       });
@@ -131,5 +158,11 @@
     slider.addEventListener("touchend", () => {
       setTimeout(startAutoplay, 3000); // Reprendre après 3 secondes
     });
+
+    // Initialiser la parallaxe du slide actif au chargement
+    const activeForeground = slides[0]?.querySelector(".hero-slider__foreground");
+    if (activeForeground) {
+      activeForeground.style.transform = "translate(-50%, -50%)";
+    }
   });
 })();
