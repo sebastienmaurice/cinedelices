@@ -1,6 +1,6 @@
 /**
- * Hero Slider - Navigation et pagination
- * Gère le changement de slides avec les flèches et la pagination
+ * Hero Slider - Navigation, pagination et autoplay
+ * Gère le changement de slides avec les flèches, la pagination et l'autoplay
  */
 
 (function () {
@@ -18,6 +18,8 @@
 
     let currentSlide = 0;
     const totalSlides = slides.length;
+    let autoPlayInterval = null;
+    const AUTO_PLAY_INTERVAL = 7000; // 7 secondes
 
     /**
      * Affiche un slide spécifique
@@ -60,37 +62,74 @@
       showSlide(currentSlide - 1);
     }
 
+    /**
+     * Démarre l'autoplay
+     */
+    function startAutoplay() {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+      }
+      autoPlayInterval = setInterval(nextSlide, AUTO_PLAY_INTERVAL);
+    }
+
+    /**
+     * Arrête l'autoplay
+     */
+    function stopAutoplay() {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+      }
+    }
+
     // Écouter les clics sur les boutons de navigation
     if (nextBtn) {
-      nextBtn.addEventListener("click", nextSlide);
+      nextBtn.addEventListener("click", () => {
+        nextSlide();
+        startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
+      });
     }
 
     if (prevBtn) {
-      prevBtn.addEventListener("click", prevSlide);
+      prevBtn.addEventListener("click", () => {
+        prevSlide();
+        startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
+      });
     }
 
     // Écouter les clics sur les points de pagination
     paginationDots.forEach((dot, index) => {
-      dot.addEventListener("click", () => showSlide(index));
+      dot.addEventListener("click", () => {
+        showSlide(index);
+        startAutoplay(); // Redémarrer l'autoplay après navigation manuelle
+      });
     });
 
     // Navigation au clavier (accessibilité)
     slider.addEventListener("keydown", function (e) {
       if (e.key === "ArrowLeft") {
         prevSlide();
+        startAutoplay();
       } else if (e.key === "ArrowRight") {
         nextSlide();
+        startAutoplay();
       }
     });
 
     // Rendre le slider focusable pour la navigation clavier
     slider.setAttribute("tabindex", "0");
 
-    // Auto-play optionnel (décommentez pour activer)
-    // let autoPlayInterval = setInterval(nextSlide, 5000);
-    // slider.addEventListener("mouseenter", () => clearInterval(autoPlayInterval));
-    // slider.addEventListener("mouseleave", () => {
-    //   autoPlayInterval = setInterval(nextSlide, 5000);
-    // });
+    // Auto-play avec pause au hover
+    startAutoplay(); // Démarrer l'autoplay au chargement
+
+    // Pause au hover
+    slider.addEventListener("mouseenter", stopAutoplay);
+    slider.addEventListener("mouseleave", startAutoplay);
+
+    // Pause lors de l'interaction tactile (mobile)
+    slider.addEventListener("touchstart", stopAutoplay);
+    slider.addEventListener("touchend", () => {
+      setTimeout(startAutoplay, 3000); // Reprendre après 3 secondes
+    });
   });
 })();
