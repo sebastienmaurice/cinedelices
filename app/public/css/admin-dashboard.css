@@ -1,11 +1,17 @@
-/* ====================================================== */
-/* ================ ADMIN-DASHBOARD.CSS ================= */
-/* ====================================================== */
-/* 
-  Styles spécifiques à la page Admin Dashboard uniquement.
-  Les styles communs (reset, typo, header, footer, boutons) 
-  sont définis dans base.css
-*/
+/**
+ * ======================================================
+ * ADMIN-DASHBOARD.CSS - Styles de la page Admin Dashboard
+ * ======================================================
+ *
+ * Rôle : Styles spécifiques à la page d'administration uniquement.
+ *        Gère le layout avec sidebar, les dropdowns, les tableaux, etc.
+ *
+ * Pages concernées : /admin (dashboard administrateur uniquement)
+ *
+ * Ordre de chargement : Chargé APRÈS base.css
+ *                       Les styles communs (reset, typo, header, footer, boutons)
+ *                       sont définis dans base.css
+ */
 
 /* ====================================================== */
 /* ============= BANDEAU ADMINISTRATEUR ================ */
@@ -26,6 +32,14 @@
 /* ====================================================== */
 /* ================== LAYOUT GÉNÉRAL =================== */
 /* ====================================================== */
+/**
+ * Conteneur principal de la page admin
+ * -------------------------------------
+ * FLEXBOX : Layout flexible avec sidebar à gauche et contenu à droite
+ *   - display: flex : Active le mode flexbox
+ *   - gap: var(--gap) : Espacement entre sidebar et contenu principal
+ *   - margin: 2rem auto : Centre horizontalement avec espacement vertical
+ */
 .admin-container {
   display: flex;
   max-width: var(--max-width);
@@ -47,7 +61,13 @@
   gap: 0.5rem;
 }
 
-/* Dropdown buttons */
+/**
+ * Boutons dropdown (dépliant)
+ * ----------------------------
+ * FLEXBOX : justify-content: space-between
+ *   - Espace le texte à gauche et l'icône à droite
+ *   - align-items: center : Aligne verticalement au centre
+ */
 .dropdown-btn {
   display: flex;
   justify-content: space-between;
@@ -69,6 +89,12 @@
   color: var(--dore-popcorn);
 }
 
+/**
+ * Animation de rotation de l'icône dropdown
+ * ------------------------------------------
+ * transition: transform : Animation fluide de la rotation
+ * transform: rotate(180deg) : Rotation de 180° (flèche vers le bas devient vers le haut)
+ */
 .dropdown-btn .toggle-icon {
   transition: transform var(--transition);
 }
@@ -77,7 +103,13 @@
   transform: rotate(180deg);
 }
 
-/* Sidebar lists */
+/**
+ * Conteneur du menu déroulant
+ * ----------------------------
+ * display: none par défaut : Caché
+ * display: flex quand .show : Affiche le menu en colonne
+ *   (JavaScript ajoute/enlève la classe .show au clic)
+ */
 .dropdown-container {
   display: none;
   flex-direction: column;

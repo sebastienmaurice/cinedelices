@@ -1,15 +1,30 @@
-/* ====================================================== */
-/* ==================== HOME.CSS ======================= */
-/* ====================================================== */
-/* 
-  Styles spécifiques à la page d'accueil uniquement.
-  Les styles communs (reset, typo, header, footer, boutons) 
-  sont définis dans base.css
-*/
+/**
+ * ======================================================
+ * HOME.CSS - Styles de la page d'accueil
+ * ======================================================
+ *
+ * Rôle : Styles spécifiques à la page d'accueil uniquement.
+ *        Gère le hero slider, la recette du jour, les films à l'affiche, etc.
+ *
+ * Pages concernées : / (page d'accueil uniquement)
+ *
+ * Ordre de chargement : Chargé APRÈS base.css
+ *                       Les styles communs (reset, typo, header, footer, boutons)
+ *                       sont définis dans base.css
+ */
 
 /* ====================================================== */
 /* ================== HERO SLIDER ==================== */
 /* ====================================================== */
+/**
+ * Conteneur du slider hero (carrousel d'images)
+ * ----------------------------------------------
+ * position: relative : Nécessaire pour positionner les cartes en absolute
+ * height: clamp(360px, 60vh, 700px) : Hauteur responsive
+ *   - clamp(min, préféré, max) : Hauteur minimale 360px, préférée 60% de la hauteur de l'écran,
+ *     maximale 700px (s'adapte à la taille de l'écran)
+ * overflow: hidden : Cache les cartes qui débordent (toutes sauf celle visible)
+ */
 .hero-slider {
   position: relative;
   height: clamp(360px, 60vh, 700px);
@@ -20,6 +35,15 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
+/**
+ * Carte individuelle du slider
+ * -----------------------------
+ * position: absolute : Positionnée par rapport au .hero-slider (parent avec position: relative)
+ *   - inset: 0 : Raccourci pour top: 0, right: 0, bottom: 0, left: 0 (remplit tout l'espace)
+ * opacity: 0 : Invisible par défaut (animation la fait apparaître)
+ * animation: slide 18s infinite : Animation "slide" de 18 secondes, répétée indéfiniment
+ *   - Chaque carte apparaît à son tour pendant ~4.5s (18s / 4 cartes)
+ */
 .hero-slider__card {
   position: absolute;
   width: 100%;
@@ -52,6 +76,19 @@
   --slide-delay: 13.5s;
 }
 
+/**
+ * Animation du slider (keyframes)
+ * --------------------------------
+ * @keyframes slide : Définit les étapes de l'animation
+ *   - 0% : Début (carte invisible, légèrement zoomée)
+ *   - 2% : Apparition rapide (fade in + zoom out)
+ *   - 23% : Visible et stable
+ *   - 25% : Disparition (fade out + zoom in)
+ *   - 100% : Reste invisible jusqu'au prochain cycle
+ *
+ * La durée totale est de 18s, chaque carte est visible ~4.5s
+ * animation-delay sur chaque carte : Décalage pour que les cartes apparaissent à tour de rôle
+ */
 @keyframes slide {
   0% {
     opacity: 0;
