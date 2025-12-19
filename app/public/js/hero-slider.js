@@ -26,6 +26,57 @@
     let parallaxY = 0;
 
     /**
+     * Applique l'effet de parallaxe dynamique au premier plan PNG
+     * @param {HTMLElement} foreground - Élément PNG de premier plan
+     */
+    function applyDynamicParallax(foreground) {
+      if (!foreground) return;
+
+      // Combiner transform de base avec parallaxe
+      const baseTransform = `translateX(calc(-50% + ${parallaxX}px)) translateY(${parallaxY}px)`;
+      foreground.style.transform = baseTransform;
+    }
+
+    /**
+     * Gère le mouvement de la souris pour la parallaxe dynamique
+     * @param {MouseEvent} e - Événement mousemove
+     */
+    function handleMouseMove(e) {
+      const sliderRect = slider.getBoundingClientRect();
+      const centerX = sliderRect.left + sliderRect.width / 2;
+      const centerY = sliderRect.top + sliderRect.height / 2;
+
+      // Calculer offset relatif au centre (-1 à 1)
+      const offsetX = (e.clientX - centerX) / (sliderRect.width / 2);
+      const offsetY = (e.clientY - centerY) / (sliderRect.height / 2);
+
+      // Appliquer parallaxe avec intensité limitée
+      parallaxX = offsetX * PARALLAX_INTENSITY;
+      parallaxY = offsetY * PARALLAX_INTENSITY;
+
+      // Appliquer au foreground du slide actif
+      const activeSlide = slides[currentSlide];
+      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
+      if (foreground && activeSlide.classList.contains("hero-slider__slide--active")) {
+        applyDynamicParallax(foreground);
+      }
+    }
+
+    /**
+     * Réinitialise la parallaxe au centre
+     */
+    function resetParallax() {
+      parallaxX = 0;
+      parallaxY = 0;
+
+      const activeSlide = slides[currentSlide];
+      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
+      if (foreground) {
+        foreground.style.transform = "translateX(-50%)";
+      }
+    }
+
+    /**
      * Affiche un slide spécifique
      * @param {number} index - Index du slide à afficher (0-based)
      */
@@ -37,8 +88,18 @@
         index = 0;
       }
 
-      const previousSlide = currentSlide;
-      const direction = index > previousSlide ? 1 : -1; // Direction du changement
+      // Si c'est le même slide, ne rien faire
+      if (index === currentSlide) return;
+
+      const previousSlideIndex = currentSlide;
+      const previousSlide = slides[previousSlideIndex];
+      const previousForeground = previousSlide?.querySelector(".hero-slider__foreground");
+
+      // Animation de sortie sur l'ancien slide
+      if (previousForeground) {
+        previousForeground.classList.remove("slide-in");
+        previousForeground.classList.add("slide-out");
+      }
 
       // Retirer la classe active de toutes les slides
       slides.forEach((slide) =>
@@ -51,17 +112,27 @@
         number.setAttribute("aria-selected", "false");
       });
 
-      // Activer la slide correspondante
+      // Activer la nouvelle slide
       const activeSlide = slides[index];
       activeSlide.classList.add("hero-slider__slide--active");
 
-      // Appliquer la parallaxe au premier plan PNG
-      const foreground = activeSlide.querySelector(".hero-slider__foreground");
-      if (foreground) {
-        // Reset puis appliquer la parallaxe
-        foreground.style.transform = "translate(-50%, -50%)";
+      // Animation d'entrée sur le nouveau foreground
+      const activeForeground = activeSlide.querySelector(".hero-slider__foreground");
+      if (activeForeground) {
+        // Réinitialiser les classes et le transform
+        activeForeground.classList.remove("slide-out");
+        activeForeground.style.transform = "translateX(-50%)";
+
+        // Appliquer slide-in après un petit délai pour transition fluide
         setTimeout(() => {
-          applyParallax(foreground, direction);
+          activeForeground.classList.add("slide-in");
+          
+          // Appliquer parallaxe actuelle après l'animation (800ms)
+          setTimeout(() => {
+            if (parallaxX !== 0 || parallaxY !== 0) {
+              applyDynamicParallax(activeForeground);
+            }
+          }, 800);
         }, 50);
       }
 
