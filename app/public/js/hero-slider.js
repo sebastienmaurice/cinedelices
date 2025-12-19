@@ -21,23 +21,9 @@
     const totalSlides = slides.length;
     let autoPlayInterval = null;
     const AUTO_PLAY_INTERVAL = 7000; // 7 secondes
-    const PARALLAX_OFFSET = 30; // Décalage parallaxe en pixels
-
-    /**
-     * Applique l'effet de parallaxe au premier plan PNG
-     * @param {HTMLElement} foreground - Élément PNG de premier plan
-     * @param {number} direction - Direction du déplacement (1 = droite, -1 = gauche)
-     */
-    function applyParallax(foreground, direction) {
-      if (!foreground) return;
-
-      // Le PNG se déplace plus vite que le background
-      // Décalage horizontal léger pour effet parallaxe
-      const offsetX = direction * PARALLAX_OFFSET;
-      const offsetY = direction * (PARALLAX_OFFSET * 0.5); // Décalage vertical plus faible
-
-      foreground.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
-    }
+    const PARALLAX_INTENSITY = 10; // Intensité parallaxe en pixels (max 10px)
+    let parallaxX = 0;
+    let parallaxY = 0;
 
     /**
      * Affiche un slide spécifique
@@ -146,12 +132,19 @@
     // Rendre le slider focusable pour la navigation clavier
     slider.setAttribute("tabindex", "0");
 
+    // Parallaxe dynamique au mouvement de la souris
+    slider.addEventListener("mousemove", handleMouseMove);
+    slider.addEventListener("mouseleave", resetParallax);
+
     // Auto-play avec pause au hover
     startAutoplay(); // Démarrer l'autoplay au chargement
 
     // Pause au hover
     slider.addEventListener("mouseenter", stopAutoplay);
-    slider.addEventListener("mouseleave", startAutoplay);
+    slider.addEventListener("mouseleave", () => {
+      resetParallax();
+      startAutoplay();
+    });
 
     // Pause lors de l'interaction tactile (mobile)
     slider.addEventListener("touchstart", stopAutoplay);
@@ -159,10 +152,16 @@
       setTimeout(startAutoplay, 3000); // Reprendre après 3 secondes
     });
 
-    // Initialiser la parallaxe du slide actif au chargement
-    const activeForeground = slides[0]?.querySelector(".hero-slider__foreground");
+    // Initialiser le slide actif au chargement
+    const activeForeground = slides[0]?.querySelector(
+      ".hero-slider__foreground"
+    );
     if (activeForeground) {
-      activeForeground.style.transform = "translate(-50%, -50%)";
+      activeForeground.style.transform = "translateX(-50%)";
+      // Appliquer animation d'entrée après un court délai
+      setTimeout(() => {
+        activeForeground.classList.add("slide-in");
+      }, 100);
     }
   });
 })();
