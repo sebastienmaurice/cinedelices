@@ -30,14 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Scroll vers le main
       adminMain.scrollIntoView({ behavior: "smooth" });
-
-      // Debug
-      console.log(
-        "Sélection:",
-        item.closest(".dropdown-container")?.id,
-        "->",
-        item.textContent.trim()
-      );
     });
   });
 
