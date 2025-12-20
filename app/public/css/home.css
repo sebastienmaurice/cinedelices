@@ -246,17 +246,26 @@
 @keyframes foregroundSlideOut01 {
   0% {
     opacity: 1;
-    transform: translate(-50%, 0%) scale(1);
+    transform: translate(-50%, 0%) scale(0.83);
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4)) blur(0);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, 0%) scale(0.95);
+    transform: translate(-50%, 0%) scale(0.75);
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.2)) blur(3px);
   }
 }
 
 .hero-slider__slide--active .hero-slider__foreground {
   opacity: 1;
 }
+
+/**
+ * Autoriser le débordement du foreground du slide 01 à droite
+ * Effet "affiche de film" + profondeur
+ * Le parent .hero-slider a overflow: hidden, mais on permet le débordement
+ * visuel via le positionnement et un léger dépassement accepté
+ */
 
 /**
  * Positionnement spécifique du foreground pour le slide 01 (Popcorn)
