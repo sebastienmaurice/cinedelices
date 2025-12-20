@@ -202,10 +202,10 @@
  * Le PNG sort du cadre en douceur
  */
 .hero-slider__foreground.slide-out {
-  animation: foregroundSlideOut 0.5s ease-out forwards;
+  animation: foregroundSlideOutDefault 0.5s ease-out forwards;
 }
 
-@keyframes foregroundSlideOut {
+@keyframes foregroundSlideOutDefault {
   0% {
     opacity: 1;
     transform: translateX(-50%) scale(1);
@@ -213,6 +213,24 @@
   100% {
     opacity: 0;
     transform: translateX(-50%) scale(0.95);
+  }
+}
+
+/**
+ * Animation de sortie spécifique pour le slide 01
+ */
+.hero-slider__slide[data-slide="1"] .hero-slider__foreground.slide-out {
+  animation: foregroundSlideOut01 0.5s ease-out forwards;
+}
+
+@keyframes foregroundSlideOut01 {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0%) scale(0.95);
   }
 }
 
