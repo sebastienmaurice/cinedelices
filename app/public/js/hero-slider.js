@@ -65,8 +65,18 @@
         activeSlide.classList.contains("hero-slider__slide--active") &&
         !foreground.classList.contains("slide-in") // Ne pas appliquer pendant l'animation d'entrée
       ) {
-        const baseTransform = `translateX(calc(-50% + ${currentParallaxX}px)) translateY(${currentParallaxY}px)`;
-        foreground.style.transform = baseTransform;
+        // Vérifier si c'est le slide 01 avec positionnement décalé
+        const isSlide01 = activeSlide.getAttribute("data-slide") === "1";
+        
+        if (isSlide01) {
+          // Pour le slide 01, le transform de base est translate(-50%, 0%)
+          const baseTransform = `translate(calc(-50% + ${currentParallaxX}px), ${currentParallaxY}px)`;
+          foreground.style.transform = baseTransform;
+        } else {
+          // Pour les autres slides, positionnement centré classique
+          const baseTransform = `translateX(calc(-50% + ${currentParallaxX}px)) translateY(${currentParallaxY}px)`;
+          foreground.style.transform = baseTransform;
+        }
       }
 
       // Continuer l'animation si nécessaire
@@ -180,9 +190,9 @@
         ".hero-slider__foreground"
       );
       if (activeForeground) {
-        // Réinitialiser les classes et le transform
+        // Réinitialiser les classes et le transform selon le slide
         activeForeground.classList.remove("slide-out");
-        activeForeground.style.transform = "translateX(-50%)";
+        resetForegroundTransform(activeForeground, activeSlide);
 
         // Appliquer slide-in après un petit délai pour transition fluide
         setTimeout(() => {
@@ -296,7 +306,8 @@
         ".hero-slider__foreground"
       );
       if (activeForeground) {
-        activeForeground.style.transform = "translateX(-50%)";
+        // Réinitialiser le transform selon le slide
+        resetForegroundTransform(activeForeground, activeSlide);
         // Appliquer animation d'entrée après un court délai
         setTimeout(() => {
           activeForeground.classList.add("slide-in");

@@ -118,6 +118,7 @@
  * Overlay sombre pour améliorer la lisibilité du texte
  * -----------------------------------------------------
  * Dégradé du bas vers le haut pour assombrir progressivement
+ * Overlay plus subtil pour le slide 01 afin de préserver le rendu cinéma
  */
 .hero-slider__overlay {
   position: absolute;
@@ -133,6 +134,20 @@
     rgba(13, 27, 42, 0) 100%
   );
   z-index: 1;
+}
+
+/**
+ * Overlay plus subtil pour le slide 01 (Ciné Délices)
+ * Pour préserver la visibilité du background cinématographique
+ */
+.hero-slider__slide[data-slide="1"] .hero-slider__overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(13, 27, 42, 0.7) 0%,
+    rgba(13, 27, 42, 0.4) 35%,
+    rgba(13, 27, 42, 0.1) 60%,
+    rgba(13, 27, 42, 0) 85%
+  );
 }
 
 /**
@@ -203,6 +218,38 @@
 
 .hero-slider__slide--active .hero-slider__foreground {
   opacity: 1;
+}
+
+/**
+ * Positionnement spécifique du foreground pour le slide 01
+ * --------------------------------------------------------
+ * Décalage volontaire vers la droite (+20%) et vers le bas (+10%)
+ * pour libérer l'espace à gauche pour le texte et créer une dynamique visuelle
+ */
+.hero-slider__slide[data-slide="1"] .hero-slider__foreground {
+  left: calc(50% + 20%);
+  top: calc(0% + 10%);
+  transform: translate(-50%, 0%);
+  transform-origin: center center;
+}
+
+/**
+ * Animation d'entrée spécifique pour le slide 01 avec positionnement décalé
+ */
+.hero-slider__slide[data-slide="1"].hero-slider__slide--active
+  .hero-slider__foreground.slide-in {
+  animation: foregroundSlideIn01 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes foregroundSlideIn01 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0%) scale(1);
+  }
 }
 
 /**
