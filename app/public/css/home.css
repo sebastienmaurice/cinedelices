@@ -261,13 +261,6 @@
 }
 
 /**
- * Autoriser le débordement du foreground du slide 01 à droite
- * Effet "affiche de film" + profondeur
- * Le parent .hero-slider a overflow: hidden, mais on permet le débordement
- * visuel via le positionnement et un léger dépassement accepté
- */
-
-/**
  * Positionnement spécifique du foreground pour le slide 01 (Popcorn)
  * -------------------------------------------------------------------
  * Décalage volontaire vers la droite (+30 à +35%) et vers le bas (+15%)
@@ -281,6 +274,13 @@
   transform-origin: center center;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
   position: relative;
+}
+
+/**
+ * Assurer la visibilité du foreground sur le slide 01 actif
+ */
+.hero-slider__slide[data-slide="1"].hero-slider__slide--active .hero-slider__foreground {
+  opacity: 1;
 }
 
 /**
@@ -359,7 +359,7 @@
   100% {
     opacity: 1;
     transform: translate(-50%, 0%) scale(0.83);
-    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4)) blur(0);
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
   }
 }
 
