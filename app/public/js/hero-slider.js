@@ -69,8 +69,9 @@
         const isSlide01 = activeSlide.getAttribute("data-slide") === "1";
         
         if (isSlide01) {
-          // Pour le slide 01, le transform de base est translate(-50%, 0%)
-          const baseTransform = `translate(calc(-50% + ${currentParallaxX}px), ${currentParallaxY}px)`;
+          // Pour le slide 01, le transform de base est translate(-50%, 0%) scale(0.83)
+          // Le parallaxe s'applique sur le translate, le scale reste fixe
+          const baseTransform = `translate(calc(-50% + ${currentParallaxX}px), ${currentParallaxY}px) scale(0.83)`;
           foreground.style.transform = baseTransform;
         } else {
           // Pour les autres slides, positionnement centré classique
@@ -120,8 +121,8 @@
       
       const isSlide01 = slideElement.getAttribute("data-slide") === "1";
       if (isSlide01) {
-        // Pour le slide 01, positionnement décalé vers la droite et bas
-        foreground.style.transform = "translate(-50%, 0%)";
+        // Pour le slide 01, positionnement décalé vers la droite et bas + scale réduit
+        foreground.style.transform = "translate(-50%, 0%) scale(0.83)";
       } else {
         // Pour les autres slides, positionnement centré
         foreground.style.transform = "translateX(-50%)";
