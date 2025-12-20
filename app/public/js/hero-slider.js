@@ -113,6 +113,22 @@
     }
 
     /**
+     * Réinitialise le transform du foreground selon le slide actif
+     */
+    function resetForegroundTransform(foreground, slideElement) {
+      if (!foreground || !slideElement) return;
+      
+      const isSlide01 = slideElement.getAttribute("data-slide") === "1";
+      if (isSlide01) {
+        // Pour le slide 01, positionnement décalé vers la droite et bas
+        foreground.style.transform = "translate(-50%, 0%)";
+      } else {
+        // Pour les autres slides, positionnement centré
+        foreground.style.transform = "translateX(-50%)";
+      }
+    }
+
+    /**
      * Réinitialise la parallaxe au centre
      */
     function resetParallax() {
@@ -122,6 +138,13 @@
       // L'inertie va progressivement ramener le PNG au centre
       if (!parallaxAnimationFrame && isParallaxEnabled) {
         parallaxAnimationFrame = requestAnimationFrame(updateParallax);
+      }
+      
+      // Réinitialiser le transform de base si nécessaire
+      const activeSlide = slides[currentSlide];
+      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
+      if (foreground) {
+        resetForegroundTransform(foreground, activeSlide);
       }
     }
 
