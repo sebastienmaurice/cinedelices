@@ -587,6 +587,29 @@ a:hover {
   transform: none !important;
 }
 
+/* Bouton compact */
+.btn--sm {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+}
+
+/* Bouton ghost (contour léger) */
+.btn--ghost {
+  background-color: transparent;
+  color: var(--dore-popcorn);
+  border: 1px solid rgba(198, 166, 100, 0.65);
+}
+
+.btn--ghost::before {
+  display: none;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--dore-popcorn);
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+}
+
 /* 1️⃣ Bouton Or */
 .btn--gold {
   background-color: var(--dore-popcorn);
@@ -1215,6 +1238,129 @@ a:hover {
 .modal-content button {
   display: block;
   width: 100%;
+}
+
+/* ====================================================== */
+/* =================== CONFIRM MODAL ==================== */
+/* ====================================================== */
+.confirm-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 13, 26, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.confirm-modal.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirm-modal__backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.confirm-modal__dialog {
+  position: relative;
+  background: var(--bleu-intermediaire);
+  border: 1px solid rgba(198, 166, 100, 0.35);
+  border-radius: 14px;
+  padding: 1.2rem 1.4rem;
+  max-width: min(420px, 90vw);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  color: var(--argent-ecran);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.confirm-modal__title {
+  margin: 0;
+  font-family: var(--font-h2-h6);
+  color: var(--dore-popcorn);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm-modal__icon {
+  display: none;
+  color: var(--rouge-projecteur);
+  font-size: 1.1rem;
+}
+
+.confirm-modal--danger .confirm-modal__icon {
+  display: inline-flex;
+}
+
+.confirm-modal--warning .confirm-modal__icon {
+  display: inline-flex;
+  color: #f0b429;
+}
+
+.confirm-modal__message {
+  margin: 0;
+  color: rgba(236, 239, 241, 0.8);
+  line-height: 1.5;
+}
+
+.confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.confirm-modal__actions .btn {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+}
+
+.confirm-modal--danger .confirm-modal__dialog {
+  animation: confirmShake 0.35s ease;
+  border-color: rgba(215, 38, 56, 0.6);
+  box-shadow: 0 20px 60px rgba(215, 38, 56, 0.2);
+}
+
+.confirm-modal--warning .confirm-modal__dialog {
+  animation: confirmShake 0.35s ease;
+  border-color: rgba(240, 180, 41, 0.6);
+  box-shadow: 0 20px 60px rgba(240, 180, 41, 0.2);
+}
+
+.btn--warning {
+  background-color: #f0b429;
+  color: #1b263b;
+  border-color: #f0b429;
+}
+
+.btn--warning:hover:not(:disabled) {
+  background-color: #d99a21;
+  border-color: #d99a21;
+}
+
+.btn--warning {
+  background-color: #f0b429;
+  color: var(--bleu-nuit);
+  border-color: #f0b429;
+}
+
+.btn--warning:hover:not(:disabled) {
+  background-color: #dca117;
+  border-color: #dca117;
+}
+
+@keyframes confirmShake {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-4px); }
+  50% { transform: translateY(2px); }
+  75% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
 }
 
 .switch-form {

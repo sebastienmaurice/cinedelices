@@ -24,9 +24,8 @@ function validateUserRegister(req, res, next) {
       .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
       .pattern(/^[a-zA-Z0-9_]+$/) // Autorise uniquement lettres, chiffres et underscores
       .lowercase()
-      .required()
+      .optional()
       .messages({
-        "string.empty": "Le pseudo est obligatoire.",
         "string.pattern.base":
           "Le pseudo ne peut contenir que des lettres, des chiffres et des underscores.",
       }),
@@ -36,27 +35,29 @@ function validateUserRegister(req, res, next) {
       .lowercase()
       .email()
       .max(255)
-      .required()
+      .optional()
       .messages({
-        "string.empty": "L'email est obligatoire.",
         "string.email": "L'email doit être valide.",
         "string.max": "L'email ne peut pas dépasser 255 caractères.",
       }),
 
     password: Joi.string()
+      .allow("")
       .min(8)
       .max(255)
       .pattern(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
-      ) // (ex: exigence de majuscules, chiffres, caractères spéciaux)
-      .required()
+      )
+      .optional()
       .messages({
-        "string.empty": "Le mot de passe est obligatoire.",
         "string.min": "Le mot de passe doit contenir au moins 8 caractères.",
         "string.max": "Le mot de passe ne peut pas dépasser 255 caractères.",
         "string.pattern.base":
           "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
       }),
+
+    notify_recipes: Joi.boolean().optional(),
+    notify_cinema: Joi.boolean().optional(),
 
     picture: Joi.string().max(255).allow(null, "").optional(),
 
@@ -92,9 +93,8 @@ function validateUserUpdate(req, res, next) {
       .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
       .pattern(/^[a-zA-Z0-9_]+$/) // Autorise uniquement lettres, chiffres et underscores
       .lowercase()
-      .required()
+      .optional()
       .messages({
-        "string.empty": "Le pseudo est obligatoire.",
         "string.pattern.base":
           "Le pseudo ne peut contenir que des lettres, des chiffres et des underscores.",
       }),
@@ -104,43 +104,43 @@ function validateUserUpdate(req, res, next) {
       .lowercase()
       .email()
       .max(255)
-      .required()
+      .optional()
       .messages({
-        "string.empty": "L'email est obligatoire.",
         "string.email": "L'email doit être valide.",
         "string.max": "L'email ne peut pas dépasser 255 caractères.",
       }),
 
     password: Joi.string()
+      .allow("")
       .min(8)
       .max(255)
       .pattern(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
       ) // (ex: exigence de majuscules, chiffres, caractères spéciaux)
-      .required()
+      .optional()
       .messages({
-        "string.empty": "Le mot de passe est obligatoire.",
         "string.min": "Le mot de passe doit contenir au moins 8 caractères.",
         "string.max": "Le mot de passe ne peut pas dépasser 255 caractères.",
         "string.pattern.base":
           "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
       }),
 
-    picture: Joi.string()
-    .max(255).allow(null, "")
-    .optional(),
+    picture: Joi.string().max(255).allow(null, "").optional(),
 
-    role: Joi.string()
-    .valid("user", "admin")
-    .optional(),
-  }).min(1); // Au moins un champ doit être fourni
+    notify_recipes: Joi.boolean().truthy("true").falsy("false").optional(),
+    notify_cinema: Joi.boolean().truthy("true").falsy("false").optional(),
+    remove_avatar: Joi.string().valid("true").optional(),
+
+    role: Joi.string().valid("user", "admin").optional(),
+  })
+    .unknown(true)
+    .min(1); // Au moins un champ doit être fourni
 
   const { error } = updateSchema.validate(req.body);
   if (error) {
-    return res.status(400).render("error", {
-      error: "400",
-      message: `${error.details[0].message}`,
-      role: req.userRole,
+    return res.status(400).json({
+      success: false,
+      message: error.details[0].message,
     });
   }
   next();

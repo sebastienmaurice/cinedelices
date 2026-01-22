@@ -19,6 +19,31 @@ import "dotenv/config";
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_API_URL = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
 
+const getRecipeCountsByMovieIds = async (movieIds) => {
+  if (!movieIds || movieIds.length === 0) return {};
+
+  const recipeCounts = await Recipe.findAll({
+    attributes: [
+      "id_movie",
+      [Recipe.sequelize.fn("COUNT", Recipe.sequelize.col("id")), "count"],
+    ],
+    where: {
+      id_movie: {
+        [Op.in]: movieIds,
+      },
+      status: true,
+    },
+    group: ["id_movie"],
+  });
+
+  return recipeCounts.reduce((acc, row) => {
+    const movieId = row.get("id_movie");
+    const count = parseInt(row.get("count"), 10) || 0;
+    acc[movieId] = count;
+    return acc;
+  }, {});
+};
+
 const moviesController = {
   // Recherche avancée de films (API)
   async searchMovies(req, res) {
@@ -115,11 +140,22 @@ const moviesController = {
       // Si genre est "all", "tous" ou non défini → charger tous les films
       const movies =
         !genre || genre === "all" || genre === "tous"
-          ? await Movie.findAll()
-          : await Movie.findAll({ where: { genre: genre } });
+          ? await Movie.findAll({ where: { status: true } })
+          : await Movie.findAll({ where: { genre: genre, status: true } });
+
+      const recipeCountsByMovieId = await getRecipeCountsByMovieIds(
+        movies.map((movie) => movie.id)
+      );
+      const moviesWithCounts = movies.map((movie) => {
+        const plainMovie = movie.toJSON ? movie.toJSON() : movie;
+        return {
+          ...plainMovie,
+          recipeCount: recipeCountsByMovieId[plainMovie.id] || 0,
+        };
+      });
 
       // Enrichir les films avec les chemins d'images (banner/card)
-      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+      const enrichedMovies = enrichMoviesWithImagePaths(moviesWithCounts);
 
       // Rendre la vue avec les films filtrés
       res.render("movies", {
@@ -707,7 +743,7 @@ const moviesController = {
   // Affichage de la liste des films sur la page des films
   async moviesList(req, res) {
     try {
-      const movies = await Movie.findAll();
+      const movies = await Movie.findAll({ where: { status: true } });
       const selectedGenre = req.query.genre || "tous";
 
       // Si un genre est passé en query, filtrer les films
@@ -718,8 +754,19 @@ const moviesController = {
         );
       }
 
+      const recipeCountsByMovieId = await getRecipeCountsByMovieIds(
+        filteredMovies.map((movie) => movie.id)
+      );
+      const moviesWithCounts = filteredMovies.map((movie) => {
+        const plainMovie = movie.toJSON ? movie.toJSON() : movie;
+        return {
+          ...plainMovie,
+          recipeCount: recipeCountsByMovieId[plainMovie.id] || 0,
+        };
+      });
+
       // Enrichir les movies avec les chemins d'images (banner/card)
-      const enrichedMovies = enrichMoviesWithImagePaths(filteredMovies);
+      const enrichedMovies = enrichMoviesWithImagePaths(moviesWithCounts);
 
       res.render("movies", {
         movies: enrichedMovies,

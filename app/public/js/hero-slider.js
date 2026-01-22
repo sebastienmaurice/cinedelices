@@ -21,9 +21,9 @@
     const totalSlides = slides.length;
     let autoPlayInterval = null;
     const AUTO_PLAY_INTERVAL = 7000; // 7 secondes
-    const PARALLAX_MAX_X = 15; // Maximum 15px sur X
-    const PARALLAX_MAX_Y = 10; // Maximum 10px sur Y
-    const PARALLAX_EASE = 0.15; // Facteur d'inertie (0.1 = plus lent, 0.3 = plus rapide)
+    const PARALLAX_MAX_X = 20; // Maximum 20px sur X (augmenté pour slide 01)
+    const PARALLAX_MAX_Y = 15; // Maximum 15px sur Y (augmenté pour slide 01)
+    const PARALLAX_EASE = 0.12; // Facteur d'inertie (légèrement réduit pour plus de fluidité)
 
     // Variables pour parallaxe avec inertie
     let targetParallaxX = 0;
@@ -33,6 +33,9 @@
     let parallaxAnimationFrame = null;
     let isParallaxEnabled = true;
 
+    // Variables pour zoom progressif (slide 01)
+    // Le zoom progressif est calculé dynamiquement dans calculateProgressiveZoom()
+
     // Détecter si on est sur mobile ou si reduced-motion est actif
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const prefersReducedMotion = window.matchMedia(
@@ -40,6 +43,33 @@
     ).matches;
     if (isMobile || prefersReducedMotion) {
       isParallaxEnabled = false;
+    }
+
+    /**
+     * Calcule le zoom progressif pour les slides 01 et 02
+     * Zoom accentué de 1 → 1.08 et déplacement Y de 0 → 25px sur 7 secondes
+     * Effet cinématographique plus prononcé
+     */
+    function calculateProgressiveZoom() {
+      const activeSlide = slides[currentSlide];
+      const slideNumber = activeSlide?.getAttribute("data-slide");
+      if (!activeSlide || (slideNumber !== "1" && slideNumber !== "2")) {
+        return { scale: 1, translateY: 0 };
+      }
+
+      // Calculer le temps écoulé depuis l'activation du slide
+      const slideActivationTime = activeSlide.dataset.activationTime
+        ? Date.now() - parseInt(activeSlide.dataset.activationTime)
+        : 0;
+
+      const zoomDuration = 7000; // 7 secondes
+      const progress = Math.min(slideActivationTime / zoomDuration, 1);
+
+      // Interpolation linéaire avec zoom accentué
+      const scale = 1 + 0.08 * progress; // 1 → 1.08 (zoom plus prononcé)
+      const translateY = 25 * progress; // 0 → 25px (déplacement plus marqué)
+
+      return { scale, translateY };
     }
 
     /**
@@ -65,14 +95,23 @@
         activeSlide.classList.contains("hero-slider__slide--active") &&
         !foreground.classList.contains("slide-in") // Ne pas appliquer pendant l'animation d'entrée
       ) {
-        // Vérifier si c'est le slide 01 avec positionnement décalé
-        const isSlide01 = activeSlide.getAttribute("data-slide") === "1";
-        
-        if (isSlide01) {
-          // Pour le slide 01, le transform de base est translate(-50%, 0%) scale(0.83)
-          // Le parallaxe s'applique sur le translate, le scale reste fixe
-          const baseTransform = `translate(calc(-50% + ${currentParallaxX}px), ${currentParallaxY}px) scale(0.83)`;
-          foreground.style.transform = baseTransform;
+        // Vérifier si c'est le slide 01 ou 02 avec positionnement décalé et zoom progressif
+        const slideNumber = activeSlide.getAttribute("data-slide");
+        const isSlide01Or02 = slideNumber === "1" || slideNumber === "2";
+
+        if (isSlide01Or02) {
+          // Pour les slides 01 et 02, combiner :
+          // 1. Zoom progressif (scale + translateY) - accentué
+          // 2. Parallaxe intelligente (réaction à la souris)
+
+          const zoom = calculateProgressiveZoom();
+
+          // Combiner zoom progressif et parallaxe intelligente
+          const finalX = currentParallaxX;
+          const finalY = zoom.translateY + currentParallaxY;
+
+          const transform = `translate(calc(-50% + ${finalX}px), ${finalY}px) scale(${zoom.scale})`;
+          foreground.style.transform = transform;
         } else {
           // Pour les autres slides, positionnement centré classique
           const baseTransform = `translateX(calc(-50% + ${currentParallaxX}px)) translateY(${currentParallaxY}px)`;
@@ -81,7 +120,15 @@
       }
 
       // Continuer l'animation si nécessaire
-      if (Math.abs(diffX) > 0.1 || Math.abs(diffY) > 0.1) {
+      const slideNumber = activeSlide?.getAttribute("data-slide");
+      const isSlide01Or02Active = slideNumber === "1" || slideNumber === "2";
+
+      // Pour les slides 01 et 02, continuer l'animation en continu pour le zoom progressif
+      // Pour les autres slides, continuer seulement si la parallaxe est active
+      if (isSlide01Or02Active) {
+        // Toujours continuer pour les slides 01 et 02 (zoom progressif + parallaxe intelligente)
+        parallaxAnimationFrame = requestAnimationFrame(updateParallax);
+      } else if (Math.abs(diffX) > 0.1 || Math.abs(diffY) > 0.1) {
         parallaxAnimationFrame = requestAnimationFrame(updateParallax);
       } else {
         parallaxAnimationFrame = null;
@@ -118,11 +165,11 @@
      */
     function resetForegroundTransform(foreground, slideElement) {
       if (!foreground || !slideElement) return;
-      
-      const isSlide01 = slideElement.getAttribute("data-slide") === "1";
-      if (isSlide01) {
-        // Pour le slide 01, positionnement décalé vers la droite et bas + scale réduit
-        foreground.style.transform = "translate(-50%, 0%) scale(0.83)";
+
+      const slideNumber = slideElement.getAttribute("data-slide");
+      if (slideNumber === "1" || slideNumber === "2") {
+        // Pour les slides 01 et 02, positionnement décalé vers la droite et bas (identique)
+        foreground.style.transform = "translate(-50%, 0%)";
       } else {
         // Pour les autres slides, positionnement centré
         foreground.style.transform = "translateX(-50%)";
@@ -130,22 +177,32 @@
     }
 
     /**
-     * Réinitialise la parallaxe au centre
+     * Réinitialise la parallaxe intelligente au centre (souris)
+     * Note: Pour les slides 01 et 02, le zoom progressif continue indépendamment
      */
     function resetParallax() {
       targetParallaxX = 0;
       targetParallaxY = 0;
 
-      // L'inertie va progressivement ramener le PNG au centre
+      // L'inertie va progressivement ramener la parallaxe intelligente au centre
+      // Pour les slides 01 et 02, le zoom progressif continue indépendamment
+      const activeSlide = slides[currentSlide];
+      const slideNumber = activeSlide?.getAttribute("data-slide");
+      const isSlide01Or02 = slideNumber === "1" || slideNumber === "2";
+
       if (!parallaxAnimationFrame && isParallaxEnabled) {
         parallaxAnimationFrame = requestAnimationFrame(updateParallax);
       }
-      
-      // Réinitialiser le transform de base si nécessaire
-      const activeSlide = slides[currentSlide];
-      const foreground = activeSlide?.querySelector(".hero-slider__foreground");
-      if (foreground) {
-        resetForegroundTransform(foreground, activeSlide);
+
+      // Ne pas réinitialiser le transform pour les slides 01 et 02
+      // car ils ont leur propre système (zoom progressif + parallaxe intelligente)
+      if (!isSlide01Or02) {
+        const foreground = activeSlide?.querySelector(
+          ".hero-slider__foreground"
+        );
+        if (foreground) {
+          resetForegroundTransform(foreground, activeSlide);
+        }
       }
     }
 
@@ -191,6 +248,12 @@
       const activeSlide = slides[index];
       activeSlide.classList.add("hero-slider__slide--active");
 
+      // Enregistrer le temps d'activation pour le zoom progressif (slides 01 et 02)
+      const slideNumber = activeSlide.getAttribute("data-slide");
+      if (slideNumber === "1" || slideNumber === "2") {
+        activeSlide.dataset.activationTime = Date.now().toString();
+      }
+
       // Réinitialiser parallaxe pour le nouveau slide
       currentParallaxX = 0;
       currentParallaxY = 0;
@@ -218,15 +281,29 @@
         activeForeground.classList.remove("slide-out");
         resetForegroundTransform(activeForeground, activeSlide);
 
+        // Pour les slides 01 et 02, ne pas gérer le transform via JS après slide-in
+        // car l'animation CSS doit continuer
+        const slideNumber = activeSlide.getAttribute("data-slide");
+        const isSlide01Or02 = slideNumber === "1" || slideNumber === "2";
+
         // Appliquer slide-in après un petit délai pour transition fluide
         setTimeout(() => {
           activeForeground.classList.add("slide-in");
 
-          // Écouter la fin de l'animation slide-in pour activer la parallaxe
+          // Écouter la fin de l'animation slide-in
           const handleAnimationEnd = () => {
-            // Retirer la classe slide-in pour laisser JS gérer le transform
+            // Retirer la classe slide-in
             activeForeground.classList.remove("slide-in");
-            // Maintenant le transform peut être géré par la parallaxe JS
+
+            // Pour les slides 01 et 02, démarrer la parallaxe combinée (autonome + intelligente)
+            if (isSlide01Or02) {
+              // Démarrer la parallaxe combinée (autonome + intelligente)
+              // updateParallax() va continuer en boucle pour les slides 01 et 02
+              if (!parallaxAnimationFrame) {
+                parallaxAnimationFrame = requestAnimationFrame(updateParallax);
+              }
+            }
+
             activeForeground.removeEventListener(
               "animationend",
               handleAnimationEnd
@@ -326,6 +403,12 @@
     // Initialiser le slide actif au chargement
     const activeSlide = slides[0];
     if (activeSlide) {
+      // Enregistrer le temps d'activation pour le zoom progressif (slides 01 et 02)
+      const slideNumber = activeSlide.getAttribute("data-slide");
+      if (slideNumber === "1" || slideNumber === "2") {
+        activeSlide.dataset.activationTime = Date.now().toString();
+      }
+
       const activeForeground = activeSlide.querySelector(
         ".hero-slider__foreground"
       );
@@ -343,6 +426,14 @@
               "animationend",
               handleAnimationEnd
             );
+            // Démarrer la parallaxe après l'animation d'entrée
+            if (slideNumber === "1" || slideNumber === "2") {
+              // Démarrer la parallaxe combinée (autonome + intelligente)
+              // updateParallax() va continuer en boucle pour les slides 01 et 02
+              if (!parallaxAnimationFrame) {
+                parallaxAnimationFrame = requestAnimationFrame(updateParallax);
+              }
+            }
           };
           activeForeground.addEventListener("animationend", handleAnimationEnd);
         }, 100);

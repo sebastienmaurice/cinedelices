@@ -27,62 +27,93 @@
 
     <!-- MAIN -->
     <main>
+      <% const bannerImage = movie ? (movie.bannerPath || movie.picture) : "/images/image-default-film.jpg"; %>
+      <% const hasAuthorFilter = typeof isAuthorFiltered !== "undefined" ? isAuthorFiltered : false; %>
       <section class="banner__image__film" aria-hidden="true">
         <div class="banner__image__film__overlay"></div>
         <img
-          src="<%= movie.bannerPath || movie.picture %>"
-          alt="Image du film <%= movie.title %>"
+          src="<%= bannerImage %>"
+          alt="<%= movie ? `Image du film ${movie.title}` : 'Image de présentation des recettes' %>"
           width="1440"
           height="350"
           decoding="async"
         />
       </section>
 
-      <section class="banner" aria-labelledby="movie-title">
-        <div class="banner__title" id="movie" data-id="<%= movie.id %>">
-          <p class="banner__meta">Film ou série culte</p>
-          <h2 id="movie-title"><%= movie.title %></h2>
-          <p class="banner__subtitle">
-            <span class="film-year"><%= movie.year %></span>
-            <span class="film-separator">•</span>
-            <span class="film-genre"><%= movie.genre %></span>
-          </p>
+      <section class="banner <%= movie ? '' : 'banner--recipes' %>" aria-labelledby="movie-title">
+        <div class="banner__title" id="movie" data-id="<%= movie ? movie.id : '' %>">
+          <% if (movie) { %>
+            <p class="banner__meta">Film ou série culte</p>
+            <h2 id="movie-title"><%= movie.title %></h2>
+            <p class="banner__subtitle">
+              <span class="film-year"><%= movie.year %></span>
+              <span class="film-separator">•</span>
+              <span class="film-genre"><%= movie.genre %></span>
+            </p>
+          <% } else { %>
+            <p class="banner__meta">Recettes Ciné Délices</p>
+            <h2 id="movie-title">
+              <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : "Toutes les recettes" %>
+            </h2>
+            <p class="banner__subtitle">
+              Découvrez toutes les recettes inspirées du cinéma et partagez vos créations.
+            </p>
+            <% if (hasAuthorFilter) { %>
+              <a class="banner__reset-link" href="/recipes-movie">
+                Voir toutes les recettes
+              </a>
+            <% } %>
+          <% } %>
         </div>
 
-        <div class="banner__search__films">
-          <label for="search" class="search__label">
-            Rechercher une recette par catégorie :
-          </label>
+        <% if (movie) { %>
+          <div class="banner__search__films">
+            <label for="search" class="search__label">
+              Rechercher une recette par catégorie :
+            </label>
 
-          <select name="recipes" id="search" class="search__select__film">
-            <option value="" selected>Catégories</option>
-            <option value="all">Toutes les recettes</option>
-            <option value="entrée">Entrée</option>
-            <option value="plat">Plat</option>
-            <option value="dessert">Dessert</option>
-          </select>
-        </div>
+            <select name="recipes" id="search" class="search__select__film">
+              <option value="" selected>Catégories</option>
+              <option value="all">Toutes les recettes</option>
+              <option value="entrée">Entrée</option>
+              <option value="plat">Plat</option>
+              <option value="dessert">Dessert</option>
+            </select>
+          </div>
+        <% } %>
       </section>
 
       <!-- SECTION RECETTES -->
       <section id="recipes">
         <div class="presentation__recipes">
           <div class="presentation__text__recipes">
-            <h3>Nos recettes cultes</h3>
-            <p>
-              Découvrez les recettes inspirées de ce film ou de cette série et
-              revivez les saveurs du grand écran
-            </p>
+            <% if (movie) { %>
+              <h3>Nos recettes cultes</h3>
+              <p>
+                Découvrez les recettes inspirées de ce film ou de cette série et
+                revivez les saveurs du grand écran
+              </p>
+            <% } else { %>
+              <h3>
+                <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : "Nos recettes cultes" %>
+              </h3>
+              <p>
+                Explorez les recettes inspirées du cinéma et trouvez votre prochaine inspiration.
+              </p>
+            <% } %>
           </div>
 
           <div class="presentation__button__recipes">
-            <a class="btn btn--gold" href="/add-recipes-movies/<%= movie.id %>"
-              >Ajouter ma recette</a
+            <a
+              class="btn btn--gold"
+              href="<%= movie ? `/add-recipes-movies/${movie.id}` : '/add-recipes-movies/' %>"
             >
+              Ajouter ma recette
+            </a>
           </div>
         </div>
 
-        <div id="recipes__list" class="articles only__display__3__recipes">
+        <div id="recipes__list" class="articles only__display__9__recipes">
           <% if (!recipes || recipes.length === 0) { %>
           <p class="no-recipes">
             Aucune recette n'est disponible pour ce film.
@@ -103,12 +134,15 @@
             <div class="recipe-card-info">
               <h4 class="recipe-title"><%= recipe.name %></h4>
               <div class="recipe-meta">
-                <span class="recipe-category"><%= recipe.category %></span>
-                <span class="recipe-separator">•</span>
-                <span class="recipe-duration"><%= recipe.duration %> min</span>
-                <span class="recipe-separator">•</span>
-                <span class="recipe-difficulty"><%= recipe.difficulty %></span>
-                <!-- note retirée de la méta, affichée désormais avec les étoiles -->
+                <span class="recipe-meta-tag recipe-meta-tag--category">
+                  <%= recipe.category %>
+                </span>
+                <span class="recipe-meta-tag recipe-meta-tag--duration">
+                  <%= recipe.duration %> min
+                </span>
+                <span class="recipe-meta-tag recipe-meta-tag--difficulty">
+                  <%= recipe.difficulty %>
+                </span>
               </div>
 
               <div class="recipe-card-actions">
@@ -144,15 +178,17 @@
           <% }) %> <% } %>
         </div>
 
+        <% if (recipes && recipes.length > 9) { %>
         <div class="center-button">
           <button
             id="see__all__recipes__button"
             class="btn btn--gold-special"
-            aria-label="Voir toutes les recettes"
+            aria-label="Voir plus de recettes"
           >
-            Voir moins
+            Voir plus
           </button>
         </div>
+        <% } %>
       </section>
     </main>
 

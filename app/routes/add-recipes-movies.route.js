@@ -32,4 +32,11 @@ addRecipesMoviesRouter.post(
   addRecipesMoviesController.addRecipe
 );
 
+// Route unifiée film + recette
+addRecipesMoviesRouter.post(
+  "/movie-and-recipe",
+  upload.single("recipeImage"),
+  addRecipesMoviesController.addMovieAndRecipe
+);
+
 export default addRecipesMoviesRouter;

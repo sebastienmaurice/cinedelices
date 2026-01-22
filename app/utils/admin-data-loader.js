@@ -30,6 +30,7 @@ export async function loadAdminData() {
   // Récupérer les recettes en attente de validation (status: false)
   const recipes = await Recipe.findAll({
     where: { status: false },
+    include: [{ model: Movie, attributes: ["title", "picture", "year", "genre"] }],
   });
 
   // Récupérer les films en attente de validation (status: false)
@@ -37,8 +38,83 @@ export async function loadAdminData() {
     where: { status: false },
   });
 
+  const pendingMovieDeleteRequests = await Movie.findAll({
+    where: { delete_request_status: "pending" },
+    include: [{ model: User, attributes: ["id", "pseudo", "email"] }],
+    order: [["delete_request_at", "DESC"]],
+  });
+
+  const pendingMovieEdits = await Movie.findAll({
+    where: { edit_status: "pending" },
+    include: [{ model: User, attributes: ["id", "pseudo", "email"] }],
+    order: [["edit_requested_at", "DESC"]],
+  });
+
+  const pendingRecipeEdits = await Recipe.findAll({
+    where: { edit_status: "pending" },
+    include: [
+      { model: Movie, attributes: ["title", "year", "genre"] },
+      { model: User, attributes: ["id", "pseudo", "email"] },
+    ],
+    order: [["edit_requested_at", "DESC"]],
+  });
+
+  const pendingNoticeEdits = await Notice.findAll({
+    where: { edit_status: "pending" },
+    include: [
+      {
+        model: Recipe,
+        attributes: ["id", "name"],
+        include: [{ model: Movie, attributes: ["id", "title"] }],
+      },
+      { model: User, attributes: ["id", "pseudo", "email"] },
+    ],
+    order: [["edit_requested_at", "DESC"]],
+  });
+
+  const pendingNoticeDeleteRequests = await Notice.findAll({
+    where: { delete_request_status: "pending" },
+    include: [
+      {
+        model: Recipe,
+        attributes: ["id", "name"],
+        include: [{ model: Movie, attributes: ["id", "title"] }],
+      },
+      { model: User, attributes: ["id", "pseudo", "email"] },
+    ],
+    order: [["delete_request_at", "DESC"]],
+  });
+
+  const validatedMovies = await Movie.findAll({
+    where: { status: true },
+    order: [["id", "DESC"]],
+  });
+
+  const validatedRecipes = await Recipe.findAll({
+    where: { status: true },
+    include: [{ model: Movie, attributes: ["id", "title"] }],
+    order: [["id", "DESC"]],
+  });
+
+  const validatedNotices = await Notice.findAll({
+    where: { status: true },
+    include: [
+      {
+        model: Recipe,
+        attributes: ["id", "name"],
+        include: [{ model: Movie, attributes: ["id", "title"] }],
+      },
+    ],
+    order: [["id", "DESC"]],
+  });
+
   // Récupérer tous les avis (notices)
-  const avis = await Notice.findAll();
+  const avis = await Notice.findAll({
+    order: [
+      ["status", "ASC"],
+      ["id", "DESC"],
+    ],
+  });
 
   // Récupérer tous les utilisateurs
   const users = await User.findAll();
@@ -46,11 +122,23 @@ export async function loadAdminData() {
   // Enrichir les movies avec les chemins d'images (bannerPath, cardPath, originalPath)
   // Refactoring : l'enrichissement est fait ici pour éviter de le répéter dans chaque fonction
   const enrichedMovies = enrichMoviesWithImagePaths(movies);
+  const enrichedDeleteRequests = enrichMoviesWithImagePaths(
+    pendingMovieDeleteRequests
+  );
+  const enrichedPendingMovieEdits = enrichMoviesWithImagePaths(pendingMovieEdits);
 
   return {
     recipes,
     movies: enrichedMovies,
     avis,
     users,
+    pendingMovieDeleteRequests: enrichedDeleteRequests,
+    pendingMovieEdits: enrichedPendingMovieEdits,
+    pendingRecipeEdits,
+    pendingNoticeEdits,
+    pendingNoticeDeleteRequests,
+    validatedMovies: enrichMoviesWithImagePaths(validatedMovies),
+    validatedRecipes,
+    validatedNotices,
   };
 }

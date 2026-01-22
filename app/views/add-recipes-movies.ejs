@@ -261,6 +261,16 @@
               />
               <input
                 type="number"
+                name="servings"
+                id="recipe-servings"
+                class="form-input"
+                min="1"
+                step="1"
+                placeholder="Pour combien de personnes"
+                value=""
+              />
+              <input
+                type="number"
                 name="time"
                 id="recipe-time"
                 class="form-input"
@@ -271,9 +281,12 @@
               />
               <select name="category" id="category" class="form-select">
                 <option value="">catégorie</option>
+                <option value="apéritif">apéritif</option>
                 <option value="entrée">entrée</option>
                 <option value="plat">plat</option>
                 <option value="dessert">dessert</option>
+                <option value="boisson">boisson</option>
+                <option value="autres">autres</option>
               </select>
               <select name="difficulty" id="difficulty" class="form-select">
                 <option value="">Difficulté</option>
@@ -323,6 +336,7 @@
                 placeholder="Décrivez la scène du film où cette recette apparaît ou qui vous a inspiré..."
                 spellcheck="true"
                 lang="fr"
+                maxlength="500"
               ></textarea>
             </div>
           </div>
@@ -335,11 +349,14 @@
             <div class="ingredients-column">
               <div class="overlay"></div>
               <h3>Ingrédients</h3>
+              <p class="recipe-field-hint">
+                Astuce : un retour à la ligne = un ingrédient.
+              </p>
               <textarea
                 name="ingredients"
                 id="ingredients"
                 class="recipe-textarea"
-                placeholder="Ex: 200g de farine, 3 œufs, 100g de sucre..."
+                placeholder="Ex :&#10;200g de farine&#10;3 œufs&#10;100g de sucre"
                 spellcheck="true"
                 lang="fr"
               ></textarea>
@@ -347,11 +364,14 @@
             <div class="preparation-column">
               <div class="overlay"></div>
               <h3>Préparation</h3>
+              <p class="recipe-field-hint">
+                Astuce : un retour à la ligne = une étape.
+              </p>
               <textarea
                 name="preparation"
                 id="preparation"
                 class="recipe-textarea"
-                placeholder="Étape 1 : Préchauffer le four à 180°C...&#10;Étape 2 : Mélanger les ingrédients..."
+                placeholder="Ex :&#10;Préchauffer le four à 180°C&#10;Mélanger les ingrédients"
                 spellcheck="true"
                 lang="fr"
               ></textarea>
@@ -401,5 +421,7 @@
     <script src="/js/tmdb-form-prefill.js" defer></script>
     <!-- chargement de l'image pour les films existants -->
     <script src="/js/load-existing-movie-image.js" defer></script>
+    <!-- auto-resize des textareas -->
+    <script src="/js/add-recipes-movies-textarea.js" defer></script>
   </body>
 </html>

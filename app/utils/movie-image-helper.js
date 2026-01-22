@@ -107,6 +107,9 @@ function extractSlugFromPath(originalPath) {
  * @returns {string} - Chemin vers l'image banner (ex: "/images/movies/banners/banner-harry-potter.jpg")
  */
 export function getMovieBannerPath(originalPath, title = null) {
+  if (originalPath && originalPath.includes("/originals/")) {
+    return originalPath;
+  }
   // Priorité au titre si disponible pour garantir la correspondance avec les fichiers
   if (title && title.trim() !== "") {
     const titleSlug = slugifyTitle(title);
@@ -145,6 +148,9 @@ export function getMovieBannerPath(originalPath, title = null) {
  * @returns {string} - Chemin vers l'image card (ex: "/images/movies/cards/card-harry-potter.jpg")
  */
 export function getMovieCardPath(originalPath, title = null) {
+  if (originalPath && originalPath.includes("/originals/")) {
+    return originalPath;
+  }
   // Priorité au titre si disponible pour garantir la correspondance avec les fichiers
   if (title && title.trim() !== "") {
     const titleSlug = slugifyTitle(title);

@@ -1,12 +1,49 @@
+import { Op } from "sequelize";
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 const recipesController = {
+  // Afficher toutes les recettes (filtre optionnel par auteur)
+  async allRecipes(req, res) {
+    try {
+      const rawAuthor = (req.query.author || "").trim();
+      let authorUser = null;
+      let authorDisplayName = "";
+
+      if (rawAuthor) {
+        authorUser = await User.findOne({
+          where: { pseudo: { [Op.iLike]: rawAuthor } },
+          attributes: ["id", "pseudo"],
+        });
+
+        authorDisplayName = authorUser ? authorUser.pseudo : rawAuthor;
+      }
+
+      const recipes = await Recipe.findAll({
+        where: {
+          status: true,
+          ...(authorUser ? { id_user: authorUser.id } : {}),
+        },
+      });
+
+      res.render("recipes-movie", {
+        movie: null,
+        recipes,
+        role: req.userRole,
+        authorDisplayName,
+        isAuthorFiltered: Boolean(rawAuthor),
+      });
+    } catch (error) {
+      return renderServerError(res, error, req.userRole);
+    }
+  },
   // Afficher le film et ses recettes
   async movieRecipes(req, res) {
     try {
-      const movie = await Movie.findByPk(req.params.id);
+    const movie = await Movie.findOne({
+      where: { id: req.params.id, status: true },
+    });
 
       // Utilisation du helper centralisé pour les erreurs 404
       // Refactoring : remplace le bloc dupliqué par un appel à renderNotFound()
@@ -15,7 +52,9 @@ const recipesController = {
       }
 
       // Toutes les recettes du film
-      const recipes = await Recipe.findAll({ where: { id_movie: movie.id } });
+      const recipes = await Recipe.findAll({
+        where: { id_movie: movie.id, status: true },
+      });
 
       // Enrichir le movie avec les chemins d'images
       const enrichedMovie = enrichMovieWithImagePaths(movie);
@@ -24,6 +63,8 @@ const recipesController = {
         movie: enrichedMovie,
         recipes,
         role: req.userRole,
+        authorDisplayName: "",
+        isAuthorFiltered: false,
       });
     } catch (error) {
       // Utilisation du helper centralisé pour les erreurs 500
@@ -45,7 +86,9 @@ const recipesController = {
       // Refactoring : suppression du console.log de debug
       const { id, category } = req.params;
 
-      const movie = await Movie.findByPk(id);
+      const movie = await Movie.findOne({
+        where: { id, status: true },
+      });
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!movie) {
         return renderNotFound(res, "Film", req.userRole);
@@ -53,12 +96,15 @@ const recipesController = {
 
       let recipes;
       if (!category || category === "all") {
-        recipes = await Recipe.findAll({ where: { id_movie: movie.id } });
+        recipes = await Recipe.findAll({
+          where: { id_movie: movie.id, status: true },
+        });
       } else {
         recipes = await Recipe.findAll({
           where: {
             id_movie: movie.id,
             category: category,
+            status: true,
           },
         });
       }
@@ -72,6 +118,8 @@ const recipesController = {
         movie: enrichedMovie,
         recipes,
         role: req.userRole,
+        authorDisplayName: "",
+        isAuthorFiltered: false,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -91,7 +139,9 @@ const recipesController = {
   // Afficher le détail d'une recette spécifique ajouté par SEB le 14 Nov à 18h30
   async detailRecipes(req, res) {
     try {
-      const recipe = await Recipe.findByPk(req.params.id);
+      const recipe = await Recipe.findOne({
+        where: { id: req.params.id, status: true },
+      });
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!recipe) {
@@ -99,6 +149,53 @@ const recipesController = {
       }
 
       const plainRecipe = recipe.get({ plain: true });
+
+      const movie = await Movie.findOne({
+        where: { id: plainRecipe.id_movie, status: true },
+      });
+      const enrichedMovie = movie ? enrichMovieWithImagePaths(movie) : null;
+
+      let contributor = plainRecipe.id_user
+        ? await User.findByPk(plainRecipe.id_user, {
+            attributes: [
+              "id",
+              "pseudo",
+              "picture",
+              "first_name",
+              "last_name",
+              "role",
+            ],
+          })
+        : null;
+
+      if (!contributor && enrichedMovie?.title) {
+        const movieTitle = enrichedMovie.title
+          .toLowerCase()
+          .replace(/[’']/g, "'")
+          .replace(/\u00A0/g, " ");
+        const fallbackByMovie = [
+          {
+            match: "indiana jones et les aventuriers de l'arche perdue",
+            pseudo: "Semauri",
+          },
+          { match: "harry potter", pseudo: "Semauri" },
+          { match: "american pie", pseudo: "Richard" },
+          { match: "le silence des agneaux", pseudo: "Richard" },
+          { match: "bienvenue chez les ch'tis", pseudo: "Ludo" },
+        ];
+
+        const fallback = fallbackByMovie.find((item) =>
+          movieTitle.includes(item.match)
+        );
+
+        if (fallback) {
+          contributor = {
+            pseudo: fallback.pseudo,
+            role: "admin",
+            picture: null,
+          };
+        }
+      }
 
       // Formatage du texte pour l'affichage
       // Ces fonctions extraient les blocs de texte pour faciliter l'affichage dans la vue
@@ -138,11 +235,23 @@ const recipesController = {
       res.render("recipe-detail", {
         role: req.userRole,
         recipe: plainRecipe,
+        movie: enrichedMovie,
         descriptionBlocks,
         ingredientsBlocks,
         preparationBlocks,
         averageQuote, // Note moyenne à passer à la vue
         notices: plainNotices,
+        contributor: contributor
+          ? {
+              ...(contributor.get ? contributor.get({ plain: true }) : contributor),
+              pseudo:
+                contributor.pseudo ||
+                [contributor.first_name, contributor.last_name]
+                  .filter(Boolean)
+                  .join(" ") ||
+                "Contributeur",
+            }
+          : null,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

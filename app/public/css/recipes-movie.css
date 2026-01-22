@@ -96,6 +96,14 @@
   margin: -110px auto 2.5rem auto;
 }
 
+.banner--recipes {
+  align-items: flex-start;
+}
+
+.banner--recipes .banner__title {
+  max-width: 700px;
+}
+
 .banner__title {
   flex: 0 0 auto;
   z-index: 1;
@@ -125,6 +133,23 @@
   margin: 0;
   opacity: 0.9;
   font-weight: 500;
+}
+
+.banner__reset-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.6rem;
+  color: var(--dore-popcorn);
+  font-weight: 600;
+  text-decoration: none;
+  gap: 0.4rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.banner__reset-link:hover,
+.banner__reset-link:focus-visible {
+  color: var(--or-200);
+  transform: translateX(2px);
 }
 
 .banner__search__films {
@@ -306,7 +331,7 @@
 }
 
 .recipe-title {
-  margin-bottom: -0.2rem;
+  margin-bottom: 0.45rem;
   font-size: 1.3rem;
   color: var(--dore-popcorn);
   font-weight: 700;
@@ -320,27 +345,45 @@
 }
 
 .recipe-meta {
-  color: var(--argent-ecran);
-  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
   margin-bottom: 0.8rem;
-  font-weight: 500;
-  opacity: 0.9;
 }
 
-.recipe-category,
-.recipe-separator,
-.recipe-duration,
-.recipe-difficulty,
-.recipe-quote {
-  display: inline;
+.recipe-meta-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipe-meta-tag--category {
+  background-color: var(--bleu-clair);
   color: var(--argent-ecran);
-  font-size: 0.85rem;
-  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.recipe-separator {
-  opacity: 0.6;
-  margin: 0 0.25rem;
+.recipe-meta-tag--duration {
+  background-color: rgba(236, 239, 241, 0.15);
+  color: var(--argent-ecran);
+}
+
+.recipe-meta-tag--difficulty {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+}
+
+#recipes article:hover .recipe-meta-tag {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .recipe-card-info .btn {
@@ -430,9 +473,15 @@
   text-align: center;
 }
 
-/* Afficher seulement 3 recettes quand la classe est présente */
-#recipes .only__display__3__recipes article:nth-child(n + 4) {
+/* Afficher seulement 9 recettes quand la classe est présente (desktop) */
+#recipes .only__display__9__recipes article:nth-child(n + 10) {
   display: none;
+}
+@media (max-width: 900px) {
+  /* Afficher seulement 6 recettes sur mobile/tablette */
+  #recipes .only__display__9__recipes article:nth-child(n + 7) {
+    display: none;
+  }
 }
 /* ====================================================== */
 /* ====================== ANIMATIONS ==================== */

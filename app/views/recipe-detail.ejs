@@ -21,33 +21,67 @@
     <main class="recipe-detail-main">
       <% const recipeImage = recipe.picture ||
       "/images/image-default-recipe-1.jpg"; %>
+      <% const movieImage = movie ? (movie.bannerPath || movie.cardPath || movie.picture || "/images/image-default-film.jpg") : "/images/image-default-film.jpg"; %>
+      <% const contributorName = contributor && contributor.pseudo ? contributor.pseudo : "Contributeur"; %>
+      <% const contributorImage = contributor && contributor.picture ? contributor.picture : "/images/image-default-profile.jpg"; %>
+      <% const contributorQuery = contributorName ? encodeURIComponent(contributorName.toLowerCase()) : ""; %>
+      <% const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.length : 0; %>
+      <% const preparationCount = preparationBlocks ? preparationBlocks.length : 0; %>
 
       <section class="banner__image__recipes" aria-hidden="true">
         <div class="banner__image__recipes__overlay"></div>
+        <span class="banner__image__recipes__badge">
+          Film associé
+        </span>
+        <div class="banner__image__recipes__film-meta">
+          <div class="film-meta__badges">
+            <span class="film-meta__badge">
+              <%= movie ? movie.title : "Film associé" %>
+            </span>
+            <% if (movie && movie.year) { %>
+            <span class="film-meta__badge"><%= movie.year %></span>
+            <% } %>
+            <% if (movie && movie.genre) { %>
+            <span class="film-meta__badge"><%= movie.genre %></span>
+            <% } %>
+          </div>
+        </div>
         <img
-          src="/images/image-default-recipe-2.jpg"
-          alt="Visuel de la recette <%= recipe.name %>"
+          src="<%= movieImage %>"
+          alt="Visuel du film associé à <%= recipe.name %>"
           loading="lazy"
         />
       </section>
 
       <section class="banner__recipes" aria-labelledby="recipe-title">
         <div class="banner__recipes__content">
+          <p class="recipe-hero__eyebrow">Détails recette</p>
           <h1 id="recipe-title"><%= recipe.name %></h1>
-
-          <div class="banner__recipes__meta">
-            <span class="meta-pill meta-pill--category">
-              <i class="fa-solid fa-utensils" aria-hidden="true"></i>
-              <%= recipe.category %>
-            </span>
-            <span class="meta-pill">
-              <i class="fa-regular fa-clock" aria-hidden="true"></i>
-              <%= recipe.time %> min
-            </span>
-            <span class="meta-pill">
-              <i class="fa-solid fa-fire" aria-hidden="true"></i>
-              Difficulté : <%= recipe.difficulty %>
-            </span>
+          <p class="recipe-hero__subtitle">
+            Recette inspirée du cinéma, ingrédients, préparation et avis des
+            visiteurs.
+          </p>
+          <div class="recipe-meta-bar">
+            <div class="banner__recipes__meta">
+              <span class="meta-pill meta-pill--category">
+                <i class="fa-solid fa-utensils" aria-hidden="true"></i>
+                <%= recipe.category %>
+              </span>
+              <% if (recipe.servings) { %>
+              <span class="meta-pill">
+                <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                <%= recipe.servings %> personnes
+              </span>
+              <% } %>
+              <span class="meta-pill">
+                <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                <%= recipe.time %> min
+              </span>
+              <span class="meta-pill">
+                <i class="fa-solid fa-fire" aria-hidden="true"></i>
+                Difficulté : <%= recipe.difficulty %>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -61,96 +95,133 @@
               ><%= averageQuote %>/5</span
             >
           </p>
-          <div
-            class="rating-stars rating-stars--lifted"
-            role="group"
-            aria-label="Note générale (lecture seule)"
-            data-current-rating="<%= averageQuote %>"
-            data-output="#banner-rating-output"
-            data-readonly="true"
-          >
-            <% for (let i = 1; i <= 5; i++) { %>
-            <button
-              type="button"
-              class="rating-star"
-              data-value="<%= i %>"
-              aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
+          <div class="banner__recipes__actions">
+            <div
+              class="rating-stars rating-stars--lifted"
+              role="group"
+              aria-label="Note générale (lecture seule)"
+              data-current-rating="<%= averageQuote %>"
+              data-output="#banner-rating-output"
+              data-readonly="true"
             >
-              ★
-            </button>
-            <% } %>
+              <% for (let i = 1; i <= 5; i++) { %>
+              <button
+                type="button"
+                class="rating-star"
+                data-value="<%= i %>"
+                aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
+              >
+                ★
+              </button>
+              <% } %>
+            </div>
           </div>
           <a
-            href="#review-banner"
-            class="rating-hint__cta rating-hint__cta--primary"
-            aria-label="Aller à la bannière d'avis"
+            class="recipe-meta-bar__author"
+            href="/recipes-movie?author=<%= contributorQuery %>"
+            aria-label="Voir les recettes de <%= contributorName %>"
+            data-author="<%= contributorName %>"
           >
-            Je donne mon avis
+            <div class="profile-photo">
+              <img
+                src="<%= contributorImage %>"
+                alt="Profil de <%= contributorName %>"
+                loading="lazy"
+              />
+            </div>
+            <div class="recipe-meta-bar__author-text">
+              <span class="author-name">
+                <%= contributorName %>
+                <% if (contributor && contributor.role === "admin") { %>
+                  <span class="author-badge">Par Ciné Délices</span>
+                <% } %>
+              </span>
+              <span class="author-subtitle">Auteur de la recette</span>
+            </div>
           </a>
         </div>
       </section>
 
       <section
-        class="recipe-details-group"
+        class="recipe-section recipe-section--details"
         aria-label="Détails complets de la recette"
       >
-        <div class="recipe-overview" aria-labelledby="overview-title">
-          <div class="overview-card">
-            <div class="overview-card__description">
-              <div class="overview-card__header">
+        <div class="recipe-section__header">
+          <div class="recipe-section__header-content">
+          </div>
+        </div>
+        <div class="recipe-details-group">
+          <div class="recipe-info-grid">
+            <div class="recipe-main-column">
+              <div class="overview-card">
+                <div class="overview-card__actions">
+                  <a class="btn btn--gold btn--sm" href="/recipes-movie/<%= recipe.id_movie %>">
+                    Revenir aux recettes du film
+                  </a>
+                  <a class="btn btn--red btn--sm" href="/add-recipes-movies/">
+                    Je crée ma recette
+                  </a>
+                </div>
                 <h3 class="overview-card__title">
+                  <i class="fa-solid fa-film" aria-hidden="true"></i>
                   Le contexte cinématographique
                 </h3>
                 <p class="overview-card__subtitle">
                   Découvrez la scène du film qui a inspiré cette recette
                 </p>
+                <% if (descriptionBlocks && descriptionBlocks.length) { %>
+                <% descriptionBlocks.forEach((paragraph, index) => { %>
+                <p class="overview-card__text <%= index === 0 ? 'overview-card__text--lead' : '' %>">
+                  <%= paragraph %>
+                </p>
+                <% }) %>
+                <% } else { %>
+                <p class="overview-card__text overview-card__text--lead">
+                  Aucune description détaillée n'a encore été partagée pour cette
+                  recette.
+                </p>
+                <% } %>
               </div>
-              <% if (descriptionBlocks && descriptionBlocks.length) { %> <%
-              descriptionBlocks.forEach((paragraph, index) => { %>
-              <label class="sr-only" for="desc-<%= index %>"
-                >Description paragraphe <%= index + 1 %></label
-              >
-              <textarea readonly id="desc-<%= index %>" class="recipe-textarea">
-<%= paragraph %></textarea
-              >
-              <% }) %> <% } else { %>
-              <textarea readonly class="recipe-textarea">
-Aucune description détaillée n'a encore été partagée pour cette
-                recette.</textarea
-              >
-              <% } %>
             </div>
-          </div>
 
-          <div class="overview-image">
-            <button
-              type="button"
-              class="overview-image-button"
-              data-lightbox-trigger
-              data-lightbox-image="<%= recipeImage %>"
-              data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
-              aria-label="Voir l'image de <%= recipe.name %> en plein écran"
-            >
-              <img
-                src="<%= recipeImage %>"
-                alt="Présentation de la recette <%= recipe.name %>"
-                loading="lazy"
-              />
-              <span class="overview-image-hint">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </span>
-            </button>
-          </div>
-        </div>
+            <aside class="recipe-aside">
+              <div class="recipe-aside__media">
+                <button
+                  type="button"
+                  class="overview-image-button"
+                  data-lightbox-trigger
+                  data-lightbox-image="<%= recipeImage %>"
+                  data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
+                  aria-label="Voir l'image de <%= recipe.name %> en plein écran"
+                >
+                  <img
+                    src="<%= recipeImage %>"
+                    alt="Présentation de la recette <%= recipe.name %>"
+                    loading="lazy"
+                  />
+                  <span class="overview-image-hint">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                  </span>
+                </button>
+              </div>
 
-        <div class="recipe-columns">
-          <div class="recipe-column column-ingredients">
-            <div class="column-overlay" aria-hidden="true"></div>
-            <div class="column-header">
-              <h3>Les Ingrédients</h3>
-              <p>Liste complète pour réussir cette recette</p>
-            </div>
-            <div class="ingredients-list">
+            </aside>
+          </div>
+          <div class="recipe-columns">
+            <div class="recipe-column column-ingredients">
+              <div class="column-overlay" aria-hidden="true"></div>
+              <div class="column-header">
+                <div class="column-header__row">
+                  <h3>
+                    <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+                    Les Ingrédients
+                  </h3>
+                  <span class="column-count">
+                    <%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %>
+                  </span>
+                </div>
+                <p>Liste complète pour réussir cette recette</p>
+              </div>
               <% if (ingredientsBlocks && ingredientsBlocks.length) { %> <%
               ingredientsBlocks.forEach((ingredient, index) => { %>
               <div class="ingredient-item">
@@ -167,25 +238,28 @@ Aucune description détaillée n'a encore été partagée pour cette
               </div>
               <% } %>
             </div>
-          </div>
 
-          <div class="recipe-column column-preparation">
-            <div class="column-overlay" aria-hidden="true"></div>
-            <div class="column-header">
-              <h3>La Préparation</h3>
-              <p>Suivez les étapes pour créer cette recette du grand écran</p>
-            </div>
-            <div class="preparation-list">
+            <div class="recipe-column column-preparation">
+              <div class="column-overlay" aria-hidden="true"></div>
+              <div class="column-header">
+                <div class="column-header__row">
+                  <h3>
+                    <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                    La Préparation
+                  </h3>
+                  <span class="column-count">
+                    <%= preparationCount %> étape<%= preparationCount > 1 ? 's' : '' %>
+                  </span>
+                </div>
+                <p>Suivez les étapes pour créer cette recette du grand écran</p>
+              </div>
               <% if (preparationBlocks && preparationBlocks.length) { %> <%
               preparationBlocks.forEach((step, index) => { %>
               <div class="preparation-step">
-                <div class="step-number-wrapper">
-                  <span class="step-number"><%= index + 1 %></span>
-                  <% if (index < preparationBlocks.length - 1) { %>
-                  <div class="step-line"></div>
-                  <% } %>
-                </div>
                 <div class="step-content">
+                  <span class="admin-badge preparation-badge">
+                    Etape <%= index + 1 %>
+                  </span>
                   <p class="step-text"><%= step %></p>
                 </div>
               </div>
@@ -198,28 +272,29 @@ Aucune description détaillée n'a encore été partagée pour cette
                 </div>
               </div>
               <% } %>
+              <div class="column-cta">
+                <a
+                  href="#review-banner"
+                  class="btn btn--gold btn--sm recipe-hero__cta"
+                  aria-label="Aller à la bannière d'avis"
+                >
+                  <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                  Je donne mon avis
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <!-- RECIPE CTA BUTTONS -->
-        <section class="recipe-cta">
-          <a class="btn btn--gold" href="/recipes-movie/<%= recipe.id_movie %>">
-            Revenir aux recettes du film
-          </a>
-          <a class="btn btn--red" href="/add-recipes-movies/">
-            Je veux créer ma recette
-          </a>
-        </section>
-
-        <!-- SECTION TITLE FOR REVIEWS -->
-        <div class="review-section-header">
-          <h2 class="review-section-title">Partage ton expérience</h2>
-          <p class="review-section-description">
-            Partagez votre expérience culinaire et aidez la communauté à
-            découvrir les meilleures recettes inspirées du cinéma.
-          </p>
-        </div>
+      <!-- SECTION TITLE FOR REVIEWS -->
+      <div class="review-section-header">
+        <h2 class="review-section-title">Partage ton expérience</h2>
+        <p class="review-section-description">
+          Partagez votre expérience culinaire et aidez la communauté à
+          découvrir les meilleures recettes inspirées du cinéma.
+        </p>
+      </div>
 
         <!-- RECIPE REVIEW BANNER -->
         <section
@@ -415,6 +490,33 @@ Aucune description détaillée n'a encore été partagée pour cette
             <% } %>
           </div>
         </section>
+
+        <% } %>
+
+      <section class="recipe-section recipe-section--movie" aria-label="Film associé">
+        <div class="recipe-section__header">
+          <h2>Film associé</h2>
+          <p>Le film qui a inspiré cette recette</p>
+        </div>
+        <% if (movie) { %>
+          <div class="recipe-movie-card">
+            <div class="recipe-movie-card__media">
+              <img src="<%= movieImage %>" alt="Affiche du film <%= movie.title %>" loading="lazy" />
+            </div>
+            <div class="recipe-movie-card__content">
+              <p class="recipe-movie-card__title"><%= movie.title %></p>
+              <p class="recipe-movie-card__meta">
+                <%= movie.year %> • <%= movie.genre %>
+              </p>
+              <div class="recipe-movie-card__actions">
+                <a class="btn btn--gold btn--sm" href="/recipes-movie/<%= movie.id %>">
+                  Voir les recettes du film
+                </a>
+              </div>
+            </div>
+          </div>
+        <% } else { %>
+          <p class="recipe-empty">Aucun film associé disponible.</p>
         <% } %>
       </section>
 

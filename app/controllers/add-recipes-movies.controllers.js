@@ -60,6 +60,7 @@ const addRecipesMoviesController = {
         title: title,
         year: year,
         genre: genre,
+        id_user: req.userId,
       });
 
       // Enrichir le film avec les chemins d'images (banner/card)
@@ -89,6 +90,7 @@ const addRecipesMoviesController = {
         ingredients,
         preparation,
         time,
+        servings,
         difficulty,
         id_movie,
       } = req.body;
@@ -109,8 +111,10 @@ const addRecipesMoviesController = {
         ingredients: ingredients,
         preparation: preparation,
         time: time,
+        servings: servings || null,
         difficulty: difficulty,
         id_movie: id_movie,
+        id_user: req.userId,
         picture: imagePath, // Chemin de l'image (null si aucune image)
       });
 
@@ -121,6 +125,87 @@ const addRecipesMoviesController = {
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
+      return renderServerError(res, error, req.userRole);
+    }
+  },
+
+  // POST - Ajout film + recette via formulaire unifié
+  async addMovieAndRecipe(req, res) {
+    try {
+      const {
+        filmId,
+        title,
+        year,
+        genre,
+        name,
+        description,
+        category,
+        ingredients,
+        preparation,
+        time,
+        servings,
+        difficulty,
+      } = req.body;
+
+      if (!name || !description || !category || !ingredients || !preparation || !time || !difficulty) {
+        return res.status(400).render("add-recipes-movies", {
+          error: true,
+          errorMessage: "Merci de compléter tous les champs de la recette.",
+          role: req.userRole,
+        });
+      }
+
+      let movie = null;
+      if (filmId) {
+        movie = await Movie.findByPk(filmId);
+      }
+
+      if (!movie) {
+        if (!title || !year || !genre) {
+          return res.status(400).render("add-recipes-movies", {
+            error: true,
+            errorMessage: "Merci de compléter les informations du film.",
+            role: req.userRole,
+          });
+        }
+
+        movie = await Movie.create({
+          title,
+          year,
+          genre,
+          id_user: req.userId,
+        });
+      }
+
+      let imagePath = null;
+      if (req.file) {
+        imagePath = `/images/recipes/${req.file.filename}`;
+      }
+
+      const newRecipe = await Recipe.create({
+        name,
+        description,
+        category,
+        ingredients,
+        preparation,
+        time,
+        servings: servings || null,
+        difficulty,
+        id_movie: movie.id,
+        id_user: req.userId,
+        picture: imagePath,
+      });
+
+      const enrichedMovie = enrichMovieWithImagePaths(movie);
+
+      return res.status(201).render("add-recipes-movies", {
+        success: true,
+        successMessage: "Film et recette envoyés pour validation.",
+        newMovie: enrichedMovie,
+        newRecipe,
+        role: req.userRole,
+      });
+    } catch (error) {
       return renderServerError(res, error, req.userRole);
     }
   },

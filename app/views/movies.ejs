@@ -99,7 +99,7 @@
           </div>
         </div>
 
-        <div id="movies__list" class="articles only__display__3__films">
+        <div id="movies__list" class="articles only__display__9__films">
           <% if (!movies || movies.length === 0) { %>
           <p>Aucun film trouvé pour ce genre.</p>
           <% } else { %> <% movies.forEach(movie => { %>
@@ -113,9 +113,20 @@
             <div class="film-card-info">
               <h4 class="film-title"><%= movie.title %></h4>
               <div class="film-meta">
-                <span class="film-year"><%= movie.year %></span>
-                <span class="film-separator">•</span>
-                <span class="film-genre"><%= movie.genre %></span>
+                <% const recipesCount = typeof movie.recipeCount === "number" ? movie.recipeCount : 0; %>
+                <span class="film-meta-tag film-meta-tag--year">
+                  <%= movie.year %>
+                </span>
+                <span class="film-meta-tag film-meta-tag--genre">
+                  <%= movie.genre %>
+                </span>
+                <span
+                  class="film-meta-tag film-meta-tag--recipes"
+                  title="Nombre de recettes disponibles"
+                >
+                  <%= recipesCount %>
+                  <%= recipesCount > 1 ? "recettes" : "recette" %>
+                </span>
               </div>
               <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
                 Voir les recettes
@@ -125,15 +136,17 @@
           <% }) %> <% } %>
         </div>
 
+        <% if (movies && movies.length > 9) { %>
         <div class="center-button">
           <button
             id="see__all__movies__button"
             class="btn btn--gold-special"
-            aria-label="Voir tous les films"
+            aria-label="Voir plus de films"
           >
-            Voir moins
+            Voir plus
           </button>
         </div>
+        <% } %>
       </section>
     </main>
 

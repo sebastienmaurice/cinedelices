@@ -20,237 +20,871 @@
     <%- include("partials/header") %>
 
     <!-- Bannière Administrateur -->
-    <div class="admin-header-banner">Espace Administrateur</div>
+    <div class="admin-header-banner">
+      <div class="admin-header-banner__content">
+        <p class="admin-header-banner__eyebrow">Administration</p>
+        <h1 class="admin-header-banner__title">Espace Administrateur</h1>
+        <p class="admin-header-banner__subtitle">
+          Validation des contenus et suivi de la communauté Ciné Délices.
+        </p>
+      </div>
+    </div>
 
     <!-- CONTAINER PRINCIPAL -->
     <div class="admin-container">
       <!-- SIDEBAR -->
       <aside class="admin-sidebar">
-        <button class="dropdown-btn" data-target="recettes">
-          <i class="fa-solid fa-utensils"></i> Validation des recettes
-          <i class="fa-solid fa-chevron-down toggle-icon"></i>
+        <div class="admin-tabs">
+          <button class="admin-tab" data-section="published">
+            <i class="fa-solid fa-clapperboard"></i>
+            <span class="admin-tab__label">
+              <span data-global-title>Contenus validés</span>
+              <small>
+                Films • Recettes • Avis
+                <span class="admin-tab__badge" data-global-zero-badge>0 résultat</span>
+              </small>
+            </span>
+          </button>
+          <button class="admin-tab is-active" data-section="validations">
+            <i class="fa-solid fa-hourglass-half"></i>
+            <span class="admin-tab__label">
+              <span>Validations / Suppressions</span>
+              <small>Film - Recette - Image film</small>
+            </span>
+          </button>
+          <button class="admin-tab" data-section="photos">
+            <i class="fa-solid fa-camera"></i> Photos profil
+          </button>
+          <button class="admin-tab" data-section="avis">
+            <i class="fa-solid fa-comment"></i> Avis
+          </button>
+          <button class="admin-tab" data-section="users">
+            <i class="fa-solid fa-user"></i> Utilisateurs
         </button>
-        <div class="dropdown-container" id="recettes">
-          <% recipes.forEach(recipe => { %>
-          <button class="list-item"><a href="/admin/recipe/<%= recipe.id %>"><%= recipe.id %> - <%= recipe.name %></a></button>
-          <% }) %>
         </div>
 
-        <button class="dropdown-btn" data-target="films">
-          <i class="fa-solid fa-film"></i> Validation des films
-          <i class="fa-solid fa-chevron-down toggle-icon"></i>
+        <div class="admin-tab-panels">
+          <div class="admin-tab-panel" data-panel="published">
+            <div class="admin-sidebar-group">
+              <p class="admin-sidebar-title">Contenus publiés</p>
+              <p class="admin-sidebar-hint">
+                Gestion éditoriale directe (édition / suppression).
+              </p>
+            </div>
+          </div>
+
+          <div class="admin-tab-panel is-open" data-panel="validations">
+            <div class="admin-sidebar-group">
+              <p class="admin-sidebar-title">Films</p>
+              <% if (movies.length > 0) { %>
+                <% movies.forEach(movie => { %>
+                  <button
+                    type="button"
+                    class="admin-sidebar-item"
+                    data-detail-target="movie-<%= movie.id %>"
+                  >
+                    <span><%= movie.title %></span>
+                    <small><%= movie.year %> • <%= movie.genre %></small>
         </button>
-        <div class="dropdown-container" id="films">
-          <% movies.forEach(movie => { %>
-          <button class="list-item"><a href="/admin/movie/<%= movie.id %>"><%= movie.id %> - <%= movie.title %></a></button>
           <% }) %>
+              <% } else { %>
+                <p class="admin-sidebar-empty">Aucun film en attente.</p>
+              <% } %>
         </div>
 
-        <button class="dropdown-btn" data-target="avis">
-          <i class="fa-solid fa-comment"></i> Avis à valider
-          <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            <div class="admin-sidebar-group">
+              <p class="admin-sidebar-title">Recettes</p>
+              <% if (recipes.length > 0) { %>
+                <% recipes.forEach(recipe => { %>
+                  <button
+                    type="button"
+                    class="admin-sidebar-item"
+                    data-detail-target="recipe-<%= recipe.id %>"
+                  >
+                    <span><%= recipe.name %></span>
+                    <small><%= recipe.category %> • <%= recipe.time %> min</small>
         </button>
-         <div class="dropdown-container" id="avis">
-          <% avis.forEach(note => { %>
-          <button class="list-item"><%= note.id %> - <%= note.content %></button>
           <% }) %>
+              <% } else { %>
+                <p class="admin-sidebar-empty">Aucune recette en attente.</p>
+              <% } %>
+            </div>
+
+            <div class="admin-sidebar-group">
+              <p class="admin-sidebar-title">Photo film (admin)</p>
+              <p class="admin-sidebar-hint">
+                Upload uniquement via la fiche film sélectionnée.
+              </p>
         </div>
 
-        <button class="dropdown-btn" data-target="users">
-          <i class="fa-solid fa-user"></i> Utilisateurs
-          <i class="fa-solid fa-chevron-down toggle-icon"></i>
-        </button>
-        <div class="dropdown-container" id="users">
-          <% users.forEach(user => { %>
-            <form method="POST" action="/admin/deleteUser/<%= user.id %>" >
-              <button type="submit" class="list-item dropdown-btn" title="Supprimer <%= user.first_name %>">
-                <%= user.id %> - <%= user.first_name %>
+            <div class="admin-sidebar-group">
+              <p class="admin-sidebar-title">Suppression films</p>
+              <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %>
+                <% pendingMovieDeleteRequests.forEach(movie => { %>
+                  <button
+                    type="button"
+                    class="admin-sidebar-item"
+                    data-detail-target="delete-movie-<%= movie.id %>"
+                  >
+                    <span><%= movie.title %></span>
+                    <small>Demande suppression</small>
               </button>
-            </form>
-          <!-- <button class="list-item"><%= user.id %> - <%= user.first_name %></button> -->
           <% }) %>
-        </div>
+              <% } else { %>
+                <p class="admin-sidebar-empty">Aucune demande en attente.</p>
+              <% } %>
+            </div>
+          </div>
 
+          <div class="admin-tab-panel" data-panel="photos"></div>
+          <div class="admin-tab-panel" data-panel="avis"></div>
+          <div class="admin-tab-panel" data-panel="users"></div>
+        </div>
       </aside>
 
       <!-- CONTENU PRINCIPAL -->
       <main class="admin-main">
-        <!-- FILM -->
-        <h2 class="admin-section-title">Film</h2>
-        <section class="admin-section film-section">
-          <div class="film-section-container">
-            <div class="film-section-content">
-              <h3 class="film-title">
-                <% if (typeof upMovie === "undefined") { %>
-                  le film
-                <% } else { %>
-                  <%= upMovie.title %>
-                <% } %>
-              </h3>
-              <div class="film-meta-badges">
-                <span class="film-badge film-badge-year">
-                  <i class="fa-solid fa-calendar"></i>
-                  <span class="film-badge-value">
-                    <% if (typeof upMovie === "undefined") { %>
-                      l'année
-                    <% } else { %>
-                      <%= upMovie.year %>
-                    <% } %>
-                  </span>
-                </span>
-                <span class="film-badge film-badge-genre">
-                  <i class="fa-solid fa-film"></i>
-                  <span class="film-badge-value">
-                    <% if (typeof upMovie === "undefined") { %>
-                      le genre
-                    <% } else { %>
-                      <%= upMovie.genre %>
-                    <% } %>
-                  </span>
-                </span>
-              </div>
-            </div>
-            <div class="film-section-upload">
-              <div class="film-upload-zone">
-                <div class="film-upload-controls">
-                  <input 
-                    type="file" 
-                    name="filmImage" 
-                    id="filmImageInput" 
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    style="display: none;"
-                  />
-                  <button type="button" class="btn btn--red btn-upload-film" id="uploadFilmButton">
-                    <i class="fa-solid fa-upload"></i>
-                  </button>
-                </div>
-                <div class="overview-image">
-                  <button
-                    type="button"
-                    class="overview-image-button"
-                    data-lightbox-trigger
-                    <% if (typeof upMovie !== "undefined" && upMovie && (upMovie.cardPath || upMovie.picture)) { %>
-                    data-lightbox-image="<%= upMovie.cardPath || upMovie.picture %>"
-                    data-lightbox-alt="Affiche du film <%= upMovie.title %>"
-                    <% } else { %>
-                    data-lightbox-image="/images/image-default-movie.jpg"
-                    data-lightbox-alt="Image du film"
-                    <% } %>
-                    aria-label="Voir l'image du film en plein écran"
-                  >
-                    <img
-                      id="filmImagePreview"
-                      <% if (typeof upMovie !== "undefined" && upMovie && (upMovie.cardPath || upMovie.picture)) { %>
-                      src="<%= upMovie.cardPath || upMovie.picture %>"
-                      alt="Affiche du film <%= upMovie.title %>"
-                      <% } else { %>
-                      src="/images/image-default-movie.jpg"
-                      alt="Image du film"
-                      <% } %>
-                    />
-                    <span class="overview-image-hint">
-                      <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
+        <section class="admin-overview" data-admin-section="validations">
+          <div class="admin-overview-card <%= recipes.length > 0 ? 'is-pending' : '' %>">
+            <span>Recettes en attente</span>
+            <strong><%= recipes.length %></strong>
+          </div>
+          <div class="admin-overview-card <%= movies.length > 0 ? 'is-pending' : '' %>">
+            <span>Films en attente</span>
+            <strong><%= movies.length %></strong>
+          </div>
+          <div class="admin-overview-card <%= pendingProfilePhotos && pendingProfilePhotos.length > 0 ? 'is-pending' : '' %>">
+            <span>Photos en attente</span>
+            <strong><%= pendingProfilePhotos ? pendingProfilePhotos.length : 0 %></strong>
+          </div>
+          <div class="admin-overview-card <%= avis.length > 0 ? 'is-pending' : '' %>">
+            <span>Avis</span>
+            <strong><%= avis.length %></strong>
+          </div>
+          <div class="admin-overview-card <%= users.length > 0 ? 'is-pending' : '' %>">
+            <span>Utilisateurs</span>
+            <strong><%= users.length %></strong>
           </div>
         </section>
 
-        <!-- BOUTONS DE VALIDATION -->
-        <div class="admin-validation">
-          <% if (typeof upMovie !== "undefined") { %>
-            <form method="POST" action="/admin/validateMovie/<%= upMovie.id %>" enctype="multipart/form-data" id="validateMovieForm">
-              <button type="submit" class="btn btn-valid">Valider le film</button>
-            </form>
-            <form method="POST" action="/admin/rejectMovie/<%= upMovie.id %>">
-              <button type="submit" class="btn btn-refus">Refuser le film</button>
-            </form>
-          <% } else { %>
-            <button class="btn btn-valid" disabled>Valider le film</button>
-            <button class="btn btn-refus" disabled>Refuser le film</button>
-          <% } %>
-        </div>
+        <% const formatList = (value) => {
+             if (!value) return [];
+             return value
+               .split(/\r?\n/)
+               .map(line => line.trim())
+               .filter(Boolean);
+           }; %>
 
-        <!-- RECETTE -->
-        <h2 class="admin-section-title">Recette</h2>
-        <section class="admin-section recette-section">
-          <div class="recette-details">
-            <div class="recette-photo">
-              <button
-                type="button"
-                class="recette-photo-button"
-                data-lightbox-trigger
-                <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
-                data-lightbox-image="<%= upRecipe.picture %>"
-                data-lightbox-alt="Photo de la recette <%= upRecipe.name %>"
-                <% } else { %>
-                data-lightbox-image="/images/image-default-recipe.jpg"
-                data-lightbox-alt="Photo de la recette"
-                <% } %>
-                aria-label="Voir l'image de la recette en plein écran"
-              >
-                <img
-                  <% if (typeof upRecipe !== "undefined" && upRecipe && upRecipe.picture) { %>
-                  src="<%= upRecipe.picture %>"
-                  alt="Photo de la recette <%= upRecipe.name %>"
-                  <% } else { %>
-                  src="/images/image-default-recipe.jpg"
-                  alt="Photo de la recette"
-                  <% } %>
-                />
-                <span class="overview-image-hint">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
+        <section class="admin-section admin-section--panel" data-admin-section="published">
+          <div class="admin-section__header">
+            <h2>Gestion des contenus publiés</h2>
+            <span class="admin-status-badge is-approved">Publié</span>
+          </div>
+          <p class="admin-empty">
+            Édition et suppression immédiates (pas de mini-validation).
+          </p>
+          <div class="admin-published-toolbar">
+            <div class="admin-search-group">
+              <div class="admin-search admin-search--global">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" placeholder="Recherche globale (films, recettes, avis)..." data-search-global />
+                <div class="admin-search__actions">
+                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn btn--ghost btn--sm admin-search__reset" data-search-reset>
+                Reset global
               </button>
             </div>
-
-            <div class="recette-texte">
-              <h3>Contexte de la recette dans le film</h3>
-              <% if (typeof upRecipe === "undefined") { %>
-                <textarea readonly>Contexte de la recette dans le film
-                </textarea>
-              <% } else { %>
-                <textarea readonly><%= upRecipe.description %></textarea>
-              <% } %>
-
-            </div>
+            <p class="admin-filter-total" data-search-total-global></p>
           </div>
+          <p class="admin-empty admin-no-results-global" data-no-results-global>
+            <i class="fa-solid fa-magnifying-glass-minus"></i>
+            Aucun résultat trouvé pour tous les contenus validés.
+          </p>
 
-          <div class="recette-ingredients">
-            <h3>Ingrédients</h3>
-            <% if (typeof upRecipe === "undefined") { %>
-              <textarea readonly>ingredients de la recette </textarea>
+          <div class="admin-edit-requests admin-published-section" data-page-size="6">
+            <div class="admin-section__header">
+              <h3 data-search-title>Films validés</h3>
+              <div class="admin-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" placeholder="Rechercher un film..." data-search-input />
+                <div class="admin-search__actions">
+                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="admin-filter-total" data-search-total></p>
+            <% if (validatedMovies && validatedMovies.length > 0) { %>
+              <div class="admin-list">
+                <% validatedMovies.forEach(movie => { %>
+                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${movie.title} ${movie.year} ${movie.genre}`.toLowerCase() %>">
+                    <span>#<%= movie.id %></span>
+                    <p><%= movie.title %> • <%= movie.year %> • <%= movie.genre %></p>
+                    <span class="admin-status-badge is-approved">Validé</span>
+                    <div class="admin-list-actions">
+                      <details class="admin-edit-panel">
+                        <summary>Éditer (admin)</summary>
+                        <form
+                          method="POST"
+                          action="/admin/movies/<%= movie.id %>/edit/direct"
+                          class="admin-edit-form"
+                        >
+                          <label>
+                            Titre
+                            <input type="text" name="title" value="<%= movie.title %>" />
+                          </label>
+                          <label>
+                            Année
+                            <input type="number" name="year" value="<%= movie.year %>" />
+                          </label>
+                          <label>
+                            Genre
+                            <input type="text" name="genre" value="<%= movie.genre %>" />
+                          </label>
+                          <button class="btn btn--gold btn--sm" type="submit">
+                            Éditer (admin)
+                          </button>
+                        </form>
+                      </details>
+                      <form method="POST" action="/admin/movies/<%= movie.id %>/delete/direct">
+                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      </form>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+              <p class="admin-empty admin-no-results" data-no-results>
+                Aucun résultat pour les films.
+              </p>
+              <div class="admin-pagination">
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                <span class="admin-pagination__info"></span>
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
+              </div>
             <% } else { %>
-              <textarea readonly><%= upRecipe.ingredients %></textarea>
+              <p class="admin-empty">Aucun film validé.</p>
             <% } %>
           </div>
 
-          <div class="recette-preparation">
-            <h3>Préparation</h3>
-            <% if (typeof upRecipe === "undefined") { %>
-              <textarea readonly>preparation de la recette </textarea>
+          <div class="admin-edit-requests admin-published-section" data-page-size="6">
+            <div class="admin-section__header">
+              <h3 data-search-title>Recettes validées</h3>
+              <div class="admin-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" placeholder="Rechercher une recette..." data-search-input />
+                <div class="admin-search__actions">
+                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="admin-filter-total" data-search-total></p>
+            <% if (validatedRecipes && validatedRecipes.length > 0) { %>
+              <div class="admin-list">
+                <% validatedRecipes.forEach(recipe => { %>
+                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${recipe.name} ${recipe.category} ${recipe.Movie ? recipe.Movie.title : ''}`.toLowerCase() %>">
+                    <span>#<%= recipe.id %></span>
+                    <p>
+                      <%= recipe.name %>
+                      <% if (recipe.Movie) { %> • <%= recipe.Movie.title %><% } %>
+                    </p>
+                    <span class="admin-status-badge is-approved">Validé</span>
+                    <div class="admin-list-actions">
+                      <details class="admin-edit-panel">
+                        <summary>Éditer (admin)</summary>
+                        <form
+                          method="POST"
+                          action="/admin/recipes/<%= recipe.id %>/edit/direct"
+                          class="admin-edit-form"
+                        >
+                          <label>
+                            Titre
+                            <input type="text" name="name" value="<%= recipe.name %>" />
+                          </label>
+                          <label>
+                            Description
+                            <textarea name="description" rows="3"><%= recipe.description %></textarea>
+                          </label>
+                          <label>
+                            Catégorie
+                            <input type="text" name="category" value="<%= recipe.category %>" />
+                          </label>
+                          <label>
+                            Temps (min)
+                            <input type="number" name="time" value="<%= recipe.time %>" />
+                          </label>
+                          <label>
+                            Difficulté
+                            <input type="text" name="difficulty" value="<%= recipe.difficulty %>" />
+                          </label>
+                          <label>
+                            Ingrédients
+                            <textarea name="ingredients" rows="3"><%= recipe.ingredients %></textarea>
+                          </label>
+                          <label>
+                            Préparation
+                            <textarea name="preparation" rows="4"><%= recipe.preparation %></textarea>
+                          </label>
+                          <button class="btn btn--gold btn--sm" type="submit">
+                            Éditer (admin)
+                          </button>
+                        </form>
+                      </details>
+                      <form method="POST" action="/admin/recipes/<%= recipe.id %>/delete/direct">
+                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      </form>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+              <p class="admin-empty admin-no-results" data-no-results>
+                Aucun résultat pour les recettes.
+              </p>
+              <div class="admin-pagination">
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                <span class="admin-pagination__info"></span>
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
+              </div>
             <% } else { %>
-              <textarea readonly><%= upRecipe.preparation %></textarea>
+              <p class="admin-empty">Aucune recette validée.</p>
+            <% } %>
+          </div>
+
+          <div class="admin-edit-requests admin-published-section" data-page-size="6">
+            <div class="admin-section__header">
+              <h3 data-search-title>Avis validés</h3>
+              <div class="admin-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" placeholder="Rechercher un avis..." data-search-input />
+                <div class="admin-search__actions">
+                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="admin-filter-total" data-search-total></p>
+            <% if (validatedNotices && validatedNotices.length > 0) { %>
+              <div class="admin-list">
+                <% validatedNotices.forEach(note => { %>
+                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${note.content} ${note.Recipe ? note.Recipe.name : ''} ${note.Recipe && note.Recipe.Movie ? note.Recipe.Movie.title : ''}`.toLowerCase() %>">
+                    <span>#<%= note.id %></span>
+                    <p>
+                      <%= note.content %>
+                      <% if (note.Recipe) { %>
+                        • <%= note.Recipe.name %>
+                        <% if (note.Recipe.Movie) { %>
+                          (<%= note.Recipe.Movie.title %>)
+                        <% } %>
+                      <% } %>
+                    </p>
+                    <span class="admin-status-badge is-approved">Validé</span>
+                    <div class="admin-list-actions">
+                      <details class="admin-edit-panel">
+                        <summary>Éditer (admin)</summary>
+                        <form
+                          method="POST"
+                          action="/admin/notices/<%= note.id %>/edit/direct"
+                          class="admin-edit-form"
+                        >
+                          <label>
+                            Avis
+                            <textarea name="content" rows="3"><%= note.content %></textarea>
+                          </label>
+                          <label>
+                            Note
+                            <input type="number" name="quote" min="1" max="5" value="<%= note.quote %>" />
+                          </label>
+                          <button class="btn btn--gold btn--sm" type="submit">
+                            Éditer (admin)
+                          </button>
+                        </form>
+                      </details>
+                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/direct">
+                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      </form>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+              <p class="admin-empty admin-no-results" data-no-results>
+                Aucun résultat pour les avis.
+              </p>
+              <div class="admin-pagination">
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                <span class="admin-pagination__info"></span>
+                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
+              </div>
+            <% } else { %>
+              <p class="admin-empty">Aucun avis validé.</p>
             <% } %>
           </div>
         </section>
 
-        <!-- BOUTONS DE VALIDATION RECETTE-->
-        <div class="admin-validation">
-          <% if (typeof upRecipe !== "undefined") { %>
-            <form method="POST" action="/admin/validateRecipe/<%= upRecipe.id %>">
-              <button type="submit" class="btn btn-valid">Valider la recette</button>
-            </form>
-            <form method="POST" action="/admin/rejectRecipe/<%= upRecipe.id %>">
-              <button type="submit" class="btn btn-refus">Refuser la recette</button>
-            </form>
-          <% } else { %>
-            <button class="btn btn-valid" disabled>Valider la recette</button>
-            <button class="btn btn-refus" disabled>Refuser la recette</button>
-          <% } %>
+        <section class="admin-section admin-section--panel" data-admin-section="validations">
+          <div class="admin-section__header">
+            <h2>Validations en attente</h2>
+            <span class="admin-status-badge is-pending">En attente</span>
+          </div>
+          <div class="admin-validation-detail">
+            <div class="admin-detail-empty is-active">
+              Sélectionnez un film ou une recette dans la sidebar pour afficher la fiche.
+            </div>
+
+            <% if (movies.length > 0) { %>
+              <% movies.forEach(movie => { %>
+                <article class="admin-detail-card admin-detail-card--film" data-detail-id="movie-<%= movie.id %>">
+                  <div class="admin-detail-film-layout">
+                    <div class="admin-detail-film-info">
+                      <p class="admin-detail-eyebrow">Film à valider</p>
+                      <h3><%= movie.title %></h3>
+                      <p class="admin-detail-meta"><%= movie.year %> • <%= movie.genre %></p>
+                    </div>
+                    <div class="admin-detail-film-media">
+                      <form
+                        method="POST"
+                        action="/admin/validateMovie/<%= movie.id %>"
+                        enctype="multipart/form-data"
+                        class="admin-detail-form admin-detail-form--movie"
+                      >
+                        <div class="admin-upload-block">
+                          <p><strong>Photo du film</strong></p>
+                          <button
+                            type="button"
+                            class="admin-upload-thumb"
+                            data-upload-preview
+                            data-lightbox-trigger
+                            data-lightbox-image=""
+                            data-lightbox-alt="Prévisualisation de la photo du film"
+                            aria-label="Voir l'affiche en grand"
+                          >
+                            <img src="" alt="Prévisualisation de la photo du film" />
+                            <span class="admin-film-thumb__hint">
+                              <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                          </button>
+                          <label class="btn btn--gold btn--sm admin-upload-btn">
+                            Choisir une photo
+                            <input
+                              type="file"
+                              name="filmImage"
+                              accept="image/*"
+                              class="admin-upload-input"
+                            />
+                          </label>
+                        </div>
+                        <div class="admin-detail-actions admin-detail-actions--right admin-detail-actions--film">
+                          <button class="btn btn--gold btn--sm" type="submit">Valider le film</button>
+                          <button
+                            class="btn btn--red btn--sm"
+                            type="submit"
+                            formaction="/admin/rejectMovie/<%= movie.id %>"
+                          >
+                            Refuser le film
+                  </button>
+                </div>
+                      </form>
+                    </div>
+                  </div>
+                </article>
+              <% }) %>
+                    <% } %>
+
+            <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %>
+              <% pendingMovieDeleteRequests.forEach(movie => { %>
+                <article class="admin-detail-card" data-detail-id="delete-movie-<%= movie.id %>">
+                  <div class="admin-detail-card__header">
+                    <div>
+                      <p class="admin-detail-eyebrow">Demande de suppression</p>
+                      <h3><%= movie.title %></h3>
+                      <p class="admin-detail-meta"><%= movie.year %> • <%= movie.genre %></p>
+                      <% if (movie.User) { %>
+                        <p class="admin-detail-meta">
+                          Demandé par : <%= movie.User.pseudo %> • <%= movie.User.email %>
+                        </p>
+                      <% } %>
+                    </div>
+                    <span class="admin-status-badge is-pending">En attente</span>
+                  </div>
+                  <div class="admin-detail-card__body">
+                    <div class="admin-detail-media">
+                      <img
+                        src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>"
+                        alt="Affiche <%= movie.title %>"
+                      />
+                    </div>
+                    <div class="admin-detail-content">
+                      <p class="admin-detail-text">
+                        <strong>Action :</strong> suppression du film demandée par l’auteur.
+                      </p>
+                      <div class="admin-detail-actions">
+                        <form method="POST" action="/admin/movies/<%= movie.id %>/delete/approve">
+                          <button class="btn btn--gold btn--sm" type="submit">Approuver</button>
+                        </form>
+                        <form method="POST" action="/admin/movies/<%= movie.id %>/delete/reject">
+                          <button class="btn btn--red btn--sm" type="submit">Refuser</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              <% }) %>
+            <% } %>
+
+            <% if (recipes.length > 0) { %>
+              <% recipes.forEach(recipe => { %>
+                <article class="admin-detail-card" data-detail-id="recipe-<%= recipe.id %>">
+                  <div class="admin-detail-card__header">
+                    <div>
+                      <p class="admin-detail-eyebrow">Recette à valider</p>
+                      <h3><%= recipe.name %></h3>
+                      <div class="admin-detail-tags">
+                        <span class="admin-detail-tag is-category"><%= recipe.category %></span>
+                        <span class="admin-detail-tag is-time"><%= recipe.time %> min</span>
+                        <span class="admin-detail-tag is-difficulty"><%= recipe.difficulty %></span>
+                      </div>
+                    </div>
+                    <span class="admin-status-badge is-pending">En attente</span>
+                  </div>
+                  <div class="admin-detail-card__body">
+                    <div class="admin-detail-media">
+                      <img
+                        src="<%= recipe.picture || '/images/image-default-recipe.jpg' %>"
+                        alt="Recette <%= recipe.name %>"
+                      />
+                    </div>
+                    <div class="admin-detail-content">
+                      <p class="admin-detail-text">
+                        <span class="admin-label-gold">Film associé :</span>
+                        <%= recipe.Movie ? `${recipe.Movie.title} (${recipe.Movie.year || '—'}) • ${recipe.Movie.genre || '—'}` : "Non renseigné" %>
+                      </p>
+
+                      <div class="admin-detail-block">
+                        <p class="admin-detail-text">
+                          <span class="admin-label-gold">Ingrédients :</span>
+                        </p>
+                        <% const ingredientsLines = formatList(recipe.ingredients); %>
+                        <% if (ingredientsLines.length > 0) { %>
+                          <ul class="admin-detail-list">
+                            <% ingredientsLines.forEach(line => { %>
+                              <li><%= line %></li>
+                            <% }) %>
+                          </ul>
+                        <% } else { %>
+                          <p class="admin-detail-text">Non renseigné.</p>
+                        <% } %>
+                      </div>
+
+                      <div class="admin-detail-block">
+                        <p class="admin-detail-text">
+                          <span class="admin-label-gold">Préparation :</span>
+                        </p>
+                        <% const prepLines = formatList(recipe.preparation); %>
+                        <% if (prepLines.length > 0) { %>
+                          <ol class="admin-detail-list admin-detail-list--ordered">
+                            <% prepLines.forEach(line => { %>
+                              <li><%= line %></li>
+                            <% }) %>
+                          </ol>
+                        <% } else { %>
+                          <p class="admin-detail-text">Non renseigné.</p>
+                        <% } %>
+                      </div>
+
+                      <details class="admin-edit-panel">
+                        <summary>Éditer la recette (avant validation)</summary>
+                        <form
+                          method="POST"
+                          action="/admin/recipes/<%= recipe.id %>/update"
+                          class="admin-edit-form"
+                        >
+                          <label>
+                            Titre
+                            <input type="text" name="name" value="<%= recipe.name %>" />
+                          </label>
+                          <label>
+                            Catégorie
+                            <input type="text" name="category" value="<%= recipe.category %>" />
+                          </label>
+                          <label>
+                            Temps (min)
+                            <input type="number" name="time" value="<%= recipe.time %>" />
+                          </label>
+                          <label>
+                            Difficulté
+                            <input type="text" name="difficulty" value="<%= recipe.difficulty %>" />
+                          </label>
+                          <label>
+                            Contexte / Description
+                            <textarea name="description" rows="3"><%= recipe.description %></textarea>
+                          </label>
+                          <label>
+                            Ingrédients (1 ligne = 1 item)
+                            <textarea name="ingredients" rows="4"><%= recipe.ingredients || "" %></textarea>
+                          </label>
+                          <label>
+                            Préparation (1 ligne = 1 étape)
+                            <textarea name="preparation" rows="5"><%= recipe.preparation || "" %></textarea>
+                          </label>
+                          <button class="btn btn--gold btn--sm" type="submit">
+                            Enregistrer modifications
+                  </button>
+                        </form>
+                      </details>
+
+                      <div class="admin-detail-actions admin-detail-actions--right">
+                        <form method="POST" action="/admin/validateRecipe/<%= recipe.id %>">
+                          <button class="btn btn--gold btn--sm" type="submit">Valider la recette</button>
+                        </form>
+                        <form method="POST" action="/admin/rejectRecipe/<%= recipe.id %>">
+                          <button class="btn btn--red btn--sm" type="submit">Refuser la recette</button>
+                        </form>
+                </div>
+              </div>
+            </div>
+                </article>
+              <% }) %>
+            <% } %>
+          </div>
+
+          <div class="admin-edit-requests">
+            <h3>Modifications en attente</h3>
+            <% const hasEditRequests =
+              (pendingMovieEdits && pendingMovieEdits.length > 0) ||
+              (pendingRecipeEdits && pendingRecipeEdits.length > 0) ||
+              (pendingNoticeEdits && pendingNoticeEdits.length > 0); %>
+
+            <% if (hasEditRequests) { %>
+              <% if (pendingMovieEdits && pendingMovieEdits.length > 0) { %>
+                <p class="admin-subtitle">Films</p>
+                <div class="admin-list">
+                  <% pendingMovieEdits.forEach(movie => { %>
+                    <% const nextTitle = movie.pending_title || movie.title; %>
+                    <% const nextYear = movie.pending_year || movie.year; %>
+                    <% const nextGenre = movie.pending_genre || movie.genre; %>
+                    <div class="admin-list-item admin-list-item--action">
+                      <span>#<%= movie.id %></span>
+                      <p>
+                        Modification film :
+                        <strong><%= movie.title %></strong>
+                        (<%= movie.year %> • <%= movie.genre %>)
+                        → <strong><%= nextTitle %></strong>
+                        (<%= nextYear %> • <%= nextGenre %>)
+                      </p>
+                      <span class="admin-status-badge is-pending">Modif</span>
+                      <div class="admin-list-actions">
+                        <form method="POST" action="/admin/movies/<%= movie.id %>/edit/approve">
+                          <button type="submit" class="btn btn--gold btn--sm">Valider</button>
+                        </form>
+                        <form method="POST" action="/admin/movies/<%= movie.id %>/edit/reject">
+                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
+                        </form>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <% if (pendingRecipeEdits && pendingRecipeEdits.length > 0) { %>
+                <p class="admin-subtitle">Recettes</p>
+                <div class="admin-list">
+                  <% pendingRecipeEdits.forEach(recipe => { %>
+                    <% const nextName = recipe.pending_name || recipe.name; %>
+                    <div class="admin-list-item admin-list-item--action">
+                      <span>#<%= recipe.id %></span>
+                      <p>
+                        Modification recette :
+                        <strong><%= recipe.name %></strong>
+                        → <strong><%= nextName %></strong>
+                        <% if (recipe.Movie) { %>
+                          • Film associé : <%= recipe.Movie.title %>
+                        <% } %>
+                      </p>
+                      <span class="admin-status-badge is-pending">Modif</span>
+                      <div class="admin-list-actions">
+                        <form method="POST" action="/admin/recipes/<%= recipe.id %>/edit/approve">
+                          <button type="submit" class="btn btn--gold btn--sm">Valider</button>
+                        </form>
+                        <form method="POST" action="/admin/recipes/<%= recipe.id %>/edit/reject">
+                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
+                        </form>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <% if (pendingNoticeEdits && pendingNoticeEdits.length > 0) { %>
+                <p class="admin-subtitle">Avis</p>
+                <div class="admin-list">
+                  <% pendingNoticeEdits.forEach(note => { %>
+                    <div class="admin-list-item admin-list-item--action">
+                      <span>#<%= note.id %></span>
+                      <p>
+                        Modification avis :
+                        <strong><%= note.content %></strong>
+                        → <strong><%= note.pending_content || note.content %></strong>
+                        <% if (note.Recipe) { %>
+                          • Recette : <%= note.Recipe.name %>
+                          <% if (note.Recipe.Movie) { %>
+                            (<%= note.Recipe.Movie.title %>)
+                          <% } %>
+                        <% } %>
+                      </p>
+                      <span class="admin-status-badge is-pending">Modif</span>
+                      <div class="admin-list-actions">
+                        <form method="POST" action="/admin/notices/<%= note.id %>/edit/approve">
+                          <button type="submit" class="btn btn--gold btn--sm">Valider</button>
+                        </form>
+                        <form method="POST" action="/admin/notices/<%= note.id %>/edit/reject">
+                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
+                        </form>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+            <% } else { %>
+              <p class="admin-empty">Aucune modification en attente.</p>
+            <% } %>
+          </div>
+
+          <div class="admin-edit-requests">
+            <h3>Demandes de suppression d'avis</h3>
+            <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %>
+              <div class="admin-list">
+                <% pendingNoticeDeleteRequests.forEach(note => { %>
+                  <div class="admin-list-item admin-list-item--action">
+                    <span>#<%= note.id %></span>
+                    <p>
+                      Suppression avis demandée
+                      <% if (note.Recipe) { %>
+                        • Recette : <%= note.Recipe.name %>
+                        <% if (note.Recipe.Movie) { %>
+                          (<%= note.Recipe.Movie.title %>)
+                        <% } %>
+                      <% } %>
+                    </p>
+                    <span class="admin-status-badge is-pending">Suppression</span>
+                    <div class="admin-list-actions">
+                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/approve">
+                        <button type="submit" class="btn btn--gold btn--sm">Approuver</button>
+                      </form>
+                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/reject">
+                        <button type="submit" class="btn btn--red btn--sm">Refuser</button>
+                      </form>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="admin-empty">Aucune demande en attente.</p>
+            <% } %>
+          </div>
+
+        </section>
+
+        <section class="admin-section admin-section--panel" data-admin-section="photos">
+          <div class="admin-section__header">
+            <h2>Photos de profil en attente</h2>
+            <span class="admin-badge admin-badge--pending">
+              <%= pendingProfilePhotos ? pendingProfilePhotos.length : 0 %> en attente
+            </span>
         </div>
+          <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %>
+          <div class="profile-approval-grid">
+            <% pendingProfilePhotos.forEach(profile => { %>
+            <div class="profile-approval-card">
+              <img
+                src="<%= profile.picture %>"
+                alt="Photo de profil de <%= profile.first_name %>"
+              />
+              <div class="profile-approval-content">
+                <h3><%= profile.first_name %> <%= profile.last_name %></h3>
+                <p><%= profile.pseudo %> • <%= profile.email %></p>
+                <span class="admin-status-badge is-pending">En attente</span>
+              </div>
+              <div class="profile-approval-actions">
+                <form
+                  method="POST"
+                  action="/admin/users/<%= profile.id %>/photo/approve"
+                >
+                  <button class="btn btn--gold" type="submit">Valider</button>
+                </form>
+                <form
+                  method="POST"
+                  action="/admin/users/<%= profile.id %>/photo/reject"
+                >
+                  <button class="btn btn--red" type="submit">Refuser</button>
+                </form>
+            </div>
+            </div>
+            <% }) %>
+          </div>
+            <% } else { %>
+            <p class="admin-empty">Aucune photo en attente.</p>
+            <% } %>
+        </section>
+
+        <section class="admin-section admin-section--panel" data-admin-section="avis">
+          <div class="admin-section__header">
+            <h2>Avis & critiques</h2>
+            <span class="admin-badge"><%= avis.length %> éléments</span>
+          </div>
+          <div class="admin-list">
+            <% if (avis.length > 0) { %>
+              <% avis.forEach(note => { %>
+                <div class="admin-list-item admin-list-item--action">
+                  <span>#<%= note.id %></span>
+                  <p><%= note.content %></p>
+                  <span class="admin-status-badge <%= note.status ? 'is-approved' : 'is-pending' %>">
+                    <%= note.status ? 'Validé' : 'En attente' %>
+                  </span>
+                  <div class="admin-list-actions">
+                    <% if (!note.status) { %>
+                      <form method="POST" action="/admin/validateNotice/<%= note.id %>">
+                        <button type="submit" class="btn btn--gold btn--sm">Valider</button>
+                      </form>
+                    <% } %>
+                    <form method="POST" action="/admin/rejectNotice/<%= note.id %>">
+                      <button type="submit" class="btn btn--red btn--sm">Refuser</button>
+                    </form>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <p class="admin-empty">Aucun avis enregistré.</p>
+            <% } %>
+          </div>
+        </section>
+
+        <section class="admin-section admin-section--panel" data-admin-section="users">
+          <div class="admin-section__header">
+            <h2>Utilisateurs</h2>
+            <span class="admin-badge"><%= users.length %> comptes</span>
+          </div>
+          <div class="admin-list">
+            <% users.forEach(user => { %>
+              <div class="admin-list-item admin-list-item--action">
+                <span>#<%= user.id %></span>
+                <p><%= user.first_name %> <%= user.last_name %> • <%= user.email %></p>
+                <span class="admin-status-badge <%= user.role === 'admin' ? 'is-approved' : 'is-pending' %>">
+                  <%= user.role === 'admin' ? 'Admin' : 'Utilisateur' %>
+                </span>
+                <form method="POST" action="/admin/deleteUser/<%= user.id %>">
+                  <button type="submit" class="btn btn--red btn--sm">Supprimer</button>
+            </form>
+              </div>
+            <% }) %>
+        </div>
+        </section>
+
 
     <!-- Lightbox pour zoom image -->
     <div id="recipe-lightbox" class="recipe-lightbox">
@@ -280,14 +914,11 @@
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
+    <div class="admin-toast" role="status" aria-live="polite"></div>
+
     <!-- JS Admin -->
     <script src="/js/admin-dashboard.js" defer></script>
     <script src="/js/recipe-detail.js" defer></script>
-
-    //si pas de film, pas besoin de charger le upload d'images
-    <% if (typeof upMovie !== "undefined") { %>
-     <script src="/js/admin-picture-upload.js" defer></script>
-    <% } %>
     
   </body>
 </html>

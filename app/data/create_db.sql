@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS "users" (
     "email" VARCHAR(255) NOT NULL UNIQUE,
     "password" VARCHAR(255) NOT NULL,
     "picture" VARCHAR(255),
+    "picture_status" VARCHAR(20) DEFAULT 'approved',
+    "notify_recipes" BOOLEAN DEFAULT TRUE,
+    "notify_cinema" BOOLEAN DEFAULT TRUE,
     "role"  VARCHAR(50) DEFAULT 'user'
 );
 
@@ -26,7 +29,7 @@ INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role
     ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
     ('admin2', 'test2', 'admin2_2025', 'admin2@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$z/u9bVWrzHucKTXQYsxXFQ$/pW7Z7KlCrsC1W/xW/NJ1bdeo+Ci5oFsHd+rtO8Fi5I', null, 'admin'),
     ('pi', 'pou', 'pipou', 'pi@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$4E0hz9IgK5N70B3BlijyFQ$envgJnqFUewcMi7Zda10T85NXUpo6pUoBq9s2EURUQE', null, 'admin'),
-    ('Seb', 'Mauri', 'Semauri', 'semauri@cinedelices.com', '$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU', null, 'admin');
+    ('Seb', 'Mauri', 'Semauri', 'overseb75@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU', null, 'admin');
     
 
 
@@ -40,7 +43,16 @@ CREATE TABLE IF NOT EXISTS "movies" (
     "genre" VARCHAR(100) NOT NULL,
     "picture" VARCHAR(255),
     "status" BOOLEAN DEFAULT FALSE,
+    "edit_status" VARCHAR(20) DEFAULT 'none',
+    "pending_title" TEXT,
+    "pending_year" INT,
+    "pending_genre" VARCHAR(100),
+    "edit_requested_at" TIMESTAMP,
+    "delete_request_status" VARCHAR(20) DEFAULT 'none',
+    "delete_request_by" INT REFERENCES "users" ("id"),
+    "delete_request_at" TIMESTAMP,
     "tmdb_id" INTEGER UNIQUE,
+    "id_user" INT REFERENCES "users" ("id"),
     "type" VARCHAR(10) DEFAULT 'film'
 );
 
@@ -72,7 +84,18 @@ CREATE TABLE IF NOT EXISTS "recipes" (
     "time" INT NOT NULL,
     "difficulty" VARCHAR(50) NOT NULL,
     "status" BOOLEAN DEFAULT FALSE,
-    "id_movie" INT REFERENCES "movies" ("id")
+    "edit_status" VARCHAR(20) DEFAULT 'none',
+    "pending_name" TEXT,
+    "pending_description" TEXT,
+    "pending_picture" VARCHAR(255),
+    "pending_category" VARCHAR(100),
+    "pending_ingredients" TEXT,
+    "pending_preparation" TEXT,
+    "pending_time" INT,
+    "pending_difficulty" VARCHAR(50),
+    "edit_requested_at" TIMESTAMP,
+    "id_movie" INT REFERENCES "movies" ("id"),
+    "id_user" INT REFERENCES "users" ("id")
 );
 
 -- =====================================================
@@ -83,6 +106,12 @@ CREATE TABLE IF NOT EXISTS "notices" (
     "quote" INT NOT NULL,
     "content" TEXT NOT NULL,
     "status" BOOLEAN DEFAULT FALSE,
+    "edit_status" VARCHAR(20) DEFAULT 'none',
+    "pending_content" TEXT,
+    "pending_quote" INT,
+    "edit_requested_at" TIMESTAMP,
+    "delete_request_status" VARCHAR(20) DEFAULT 'none',
+    "delete_request_at" TIMESTAMP,
     "id_user" INT REFERENCES "users" ("id"),
     "id_recipe" INT REFERENCES "recipes" ("id")
 );

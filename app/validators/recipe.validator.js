@@ -27,11 +27,12 @@ function validateRecipeCreate(req, res, next) {
     .optional(),
 
     category: Joi.string()
-      .valid("entrée", "plat", "dessert")
+      .valid("apéritif", "entrée", "plat", "dessert", "boisson", "autres")
       .required()
       .messages({
         "string.empty": "La catégorie est obligatoire.",
-        "any.only": 'La catégorie doit être "entrée", "plat" ou "dessert".',
+        "any.only":
+          'La catégorie doit être "apéritif", "entrée", "plat", "dessert", "boisson" ou "autres".',
       }),
 
     quote: Joi.number()
@@ -79,6 +80,8 @@ function validateRecipeCreate(req, res, next) {
     .default(false)
     .optional(),
 
+    servings: Joi.number().integer().min(1).optional(),
+
     id_movie: Joi.number()
       .integer()
       .positive()
@@ -114,7 +117,9 @@ function validateRecipeUpdate(req, res, next) {
 
     picture: Joi.string().max(255).allow(null, "").optional(),
 
-    category: Joi.string().valid("entrée", "plat", "dessert").optional(),
+    category: Joi.string()
+      .valid("apéritif", "entrée", "plat", "dessert", "boisson", "autres")
+      .optional(),
 
     quote: Joi.number().integer().min(0).max(5).optional(),
 
@@ -125,6 +130,8 @@ function validateRecipeUpdate(req, res, next) {
     time: Joi.number().integer().min(1).optional(),
 
     difficulty: Joi.string().valid("Facile", "Moyenne", "Difficile").optional(),
+
+    servings: Joi.number().integer().min(1).optional(),
 
     status: Joi.boolean().optional(),
 

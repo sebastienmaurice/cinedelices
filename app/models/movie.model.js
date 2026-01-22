@@ -10,7 +10,19 @@ Movie.init(
     genre: { type: DataTypes.STRING(100), allowNull: false },
     picture: { type: DataTypes.STRING(255) },
     status: { type: DataTypes.BOOLEAN, defaultValue: false },
+    edit_status: { type: DataTypes.STRING(20), defaultValue: "none" },
+    pending_title: { type: DataTypes.TEXT, allowNull: true },
+    pending_year: { type: DataTypes.INTEGER, allowNull: true },
+    pending_genre: { type: DataTypes.STRING(100), allowNull: true },
+    edit_requested_at: { type: DataTypes.DATE, allowNull: true },
+    delete_request_status: {
+      type: DataTypes.STRING(20),
+      defaultValue: "none",
+    },
+    delete_request_by: { type: DataTypes.INTEGER, allowNull: true },
+    delete_request_at: { type: DataTypes.DATE, allowNull: true },
     tmdb_id: { type: DataTypes.INTEGER, allowNull: true, unique: true },
+    id_user: { type: DataTypes.INTEGER, allowNull: true },
     type: {
       // <== Décommenté et activé
       type: DataTypes.STRING(10),

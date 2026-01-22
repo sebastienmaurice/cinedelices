@@ -21,13 +21,38 @@ const adminController = {
     try {
       // Refactoring : utilisation du helper centralisé loadAdminData()
       // Remplace 4 requêtes BDD répétitives + enrichissement par un seul appel
-      const { recipes, movies, avis, users } = await loadAdminData();
+      const {
+        recipes,
+        movies,
+        avis,
+        users,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
+      } = await loadAdminData();
+      const pendingProfilePhotos = users.filter(
+        (user) => user.picture && user.picture_status === "pending"
+      );
 
       res.render("admin-dashboard", {
         recipes,
         movies,
         avis,
         users,
+        pendingProfilePhotos,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
         success: req.query.success,
         role: req.userRole,
       });
@@ -42,7 +67,23 @@ const adminController = {
   async editRecipe(req, res) {
     try {
       // Refactoring : utilisation du helper centralisé loadAdminData()
-      const { recipes, movies, avis, users } = await loadAdminData();
+      const {
+        recipes,
+        movies,
+        avis,
+        users,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
+      } = await loadAdminData();
+      const pendingProfilePhotos = users.filter(
+        (user) => user.picture && user.picture_status === "pending"
+      );
 
       const recipeId = req.params.id;
       const upRecipe = await Recipe.findByPk(recipeId);
@@ -52,6 +93,15 @@ const adminController = {
         movies,
         avis,
         users,
+        pendingProfilePhotos,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
         upRecipe,
         success: req.query.success,
         role: req.userRole,
@@ -66,14 +116,23 @@ const adminController = {
 
   async editMovie(req, res) {
     try {
-      const recipes = await Recipe.findAll({
-        where: { status: false },
-      });
-      const movies = await Movie.findAll({
-        where: { status: false },
-      });
-      const avis = await Notice.findAll();
-      const users = await User.findAll();
+      const {
+        recipes,
+        movies,
+        avis,
+        users,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
+      } = await loadAdminData();
+      const pendingProfilePhotos = users.filter(
+        (user) => user.picture && user.picture_status === "pending"
+      );
       const movieId = req.params.id;
       const upMovie = await Movie.findByPk(movieId);
 
@@ -81,13 +140,22 @@ const adminController = {
       const enrichedUpMovie = upMovie
         ? enrichMovieWithImagePaths(upMovie)
         : null;
-      const enrichedMovies = enrichMoviesWithImagePaths(movies);
+      const enrichedMovies = movies;
 
       res.render("admin-dashboard", {
         recipes,
         movies: enrichedMovies,
         avis,
         users,
+        pendingProfilePhotos,
+        pendingMovieDeleteRequests,
+        pendingMovieEdits,
+        pendingRecipeEdits,
+        pendingNoticeEdits,
+        pendingNoticeDeleteRequests,
+        validatedMovies,
+        validatedRecipes,
+        validatedNotices,
         upMovie: enrichedUpMovie,
         success: req.query.success,
         role: req.userRole,
@@ -166,6 +234,330 @@ const adminController = {
     }
   },
 
+  async approveMovieDeletion(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=movie_delete_rejected");
+      }
+
+      const movie = await Movie.findByPk(movieId);
+      if (!movie) {
+        return renderNotFound(res, "Film", req.userRole);
+      }
+
+      if (movie.delete_request_status !== "pending") {
+        return res.redirect("/admin?success=movie_delete_rejected");
+      }
+
+      const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
+      const recipeIds = recipes.map((recipe) => recipe.id);
+      if (recipeIds.length > 0) {
+        await Notice.destroy({ where: { id_recipe: recipeIds } });
+        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
+        await Recipe.destroy({ where: { id_movie: movieId } });
+      }
+
+      await Movie.destroy({ where: { id: movieId } });
+      return res.redirect("/admin?success=movie_delete_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la suppression du film."
+      );
+    }
+  },
+
+  async rejectMovieDeletion(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=movie_delete_rejected");
+      }
+
+      await Movie.update(
+        {
+          delete_request_status: "rejected",
+          delete_request_by: null,
+          delete_request_at: null,
+        },
+        { where: { id: movieId } }
+      );
+
+      return res.redirect("/admin?success=movie_delete_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de suppression."
+      );
+    }
+  },
+
+  async approveMovieEdit(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=movie_edit_rejected");
+      }
+
+      const movie = await Movie.findByPk(movieId);
+      if (!movie || movie.edit_status !== "pending") {
+        return res.redirect("/admin?success=movie_edit_rejected");
+      }
+
+      const updateData = {
+        edit_status: "none",
+        pending_title: null,
+        pending_year: null,
+        pending_genre: null,
+        edit_requested_at: null,
+      };
+
+      if (movie.pending_title) updateData.title = movie.pending_title;
+      if (movie.pending_year) updateData.year = movie.pending_year;
+      if (movie.pending_genre) updateData.genre = movie.pending_genre;
+
+      await Movie.update(updateData, { where: { id: movieId } });
+      return res.redirect("/admin?success=movie_edit_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de modification du film."
+      );
+    }
+  },
+
+  async rejectMovieEdit(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=movie_edit_rejected");
+      }
+
+      await Movie.update(
+        {
+          edit_status: "rejected",
+          pending_title: null,
+          pending_year: null,
+          pending_genre: null,
+          edit_requested_at: null,
+        },
+        { where: { id: movieId } }
+      );
+
+      return res.redirect("/admin?success=movie_edit_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de modification du film."
+      );
+    }
+  },
+
+  async approveRecipeEdit(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=recipe_edit_rejected");
+      }
+
+      const recipe = await Recipe.findByPk(recipeId);
+      if (!recipe || recipe.edit_status !== "pending") {
+        return res.redirect("/admin?success=recipe_edit_rejected");
+      }
+
+      const updateData = {
+        edit_status: "none",
+        pending_name: null,
+        pending_description: null,
+        pending_picture: null,
+        pending_category: null,
+        pending_ingredients: null,
+        pending_preparation: null,
+        pending_time: null,
+        pending_difficulty: null,
+        edit_requested_at: null,
+      };
+
+      if (recipe.pending_name) updateData.name = recipe.pending_name;
+      if (recipe.pending_description)
+        updateData.description = recipe.pending_description;
+      if (recipe.pending_picture) updateData.picture = recipe.pending_picture;
+      if (recipe.pending_category) updateData.category = recipe.pending_category;
+      if (recipe.pending_ingredients)
+        updateData.ingredients = recipe.pending_ingredients;
+      if (recipe.pending_preparation)
+        updateData.preparation = recipe.pending_preparation;
+      if (recipe.pending_time) updateData.time = recipe.pending_time;
+      if (recipe.pending_difficulty)
+        updateData.difficulty = recipe.pending_difficulty;
+
+      await Recipe.update(updateData, { where: { id: recipeId } });
+      return res.redirect("/admin?success=recipe_edit_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de modification de la recette."
+      );
+    }
+  },
+
+  async rejectRecipeEdit(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=recipe_edit_rejected");
+      }
+
+      await Recipe.update(
+        {
+          edit_status: "rejected",
+          pending_name: null,
+          pending_description: null,
+          pending_picture: null,
+          pending_category: null,
+          pending_ingredients: null,
+          pending_preparation: null,
+          pending_time: null,
+          pending_difficulty: null,
+          edit_requested_at: null,
+        },
+        { where: { id: recipeId } }
+      );
+
+      return res.redirect("/admin?success=recipe_edit_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de modification de la recette."
+      );
+    }
+  },
+
+  async approveNoticeEdit(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=notice_edit_rejected");
+      }
+
+      const notice = await Notice.findByPk(noticeId);
+      if (!notice || notice.edit_status !== "pending") {
+        return res.redirect("/admin?success=notice_edit_rejected");
+      }
+
+      const updateData = {
+        edit_status: "none",
+        pending_content: null,
+        pending_quote: null,
+        edit_requested_at: null,
+      };
+
+      if (notice.pending_content) updateData.content = notice.pending_content;
+      if (notice.pending_quote) updateData.quote = notice.pending_quote;
+
+      await Notice.update(updateData, { where: { id: noticeId } });
+      return res.redirect("/admin?success=notice_edit_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de modification de l'avis."
+      );
+    }
+  },
+
+  async rejectNoticeEdit(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=notice_edit_rejected");
+      }
+
+      await Notice.update(
+        {
+          edit_status: "rejected",
+          pending_content: null,
+          pending_quote: null,
+          edit_requested_at: null,
+        },
+        { where: { id: noticeId } }
+      );
+
+      return res.redirect("/admin?success=notice_edit_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de modification de l'avis."
+      );
+    }
+  },
+
+  async approveNoticeDeletion(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=notice_delete_rejected");
+      }
+
+      const notice = await Notice.findByPk(noticeId);
+      if (!notice || notice.delete_request_status !== "pending") {
+        return res.redirect("/admin?success=notice_delete_rejected");
+      }
+
+      await Notice.destroy({ where: { id: noticeId } });
+      return res.redirect("/admin?success=notice_delete_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la suppression de l'avis."
+      );
+    }
+  },
+
+  async rejectNoticeDeletion(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=notice_delete_rejected");
+      }
+
+      await Notice.update(
+        {
+          delete_request_status: "rejected",
+          delete_request_at: null,
+        },
+        { where: { id: noticeId } }
+      );
+
+      return res.redirect("/admin?success=notice_delete_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de suppression de l'avis."
+      );
+    }
+  },
+
   /**
    * Valide une recette (passe status à true)
    * POST /admin/validateRecipe/:id
@@ -179,9 +571,19 @@ const adminController = {
     try {
       const recipeId = parseInt(req.params.id);
 
+      const { ingredients, preparation } = req.body;
+      const updateData = { status: true };
+
+      if (typeof ingredients === "string" && ingredients.trim() !== "") {
+        updateData.ingredients = ingredients.trim();
+      }
+      if (typeof preparation === "string" && preparation.trim() !== "") {
+        updateData.preparation = preparation.trim();
+      }
+
       // Mise à jour en BDD : passe le status à true (validé)
       // Équivalent SQL : UPDATE recipes SET status = true WHERE id = ?
-      await Recipe.update({ status: true }, { where: { id: recipeId } });
+      await Recipe.update(updateData, { where: { id: recipeId } });
 
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
@@ -191,6 +593,88 @@ const adminController = {
         error,
         req.userRole,
         "Erreur lors de la validation de la recette"
+      );
+    }
+  },
+
+  async updateRecipeAdmin(req, res) {
+    try {
+      if (req.userRole !== "admin") {
+        return res.status(403).render("error", {
+          error: "403",
+          message: "Accès interdit.",
+          role: req.userRole,
+        });
+      }
+
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=recipe_update_error");
+      }
+
+      const recipe = await Recipe.findByPk(recipeId);
+      if (!recipe) {
+        return renderNotFound(res, "Recette", req.userRole);
+      }
+
+      const {
+        name,
+        category,
+        time,
+        difficulty,
+        description,
+        ingredients,
+        preparation,
+      } = req.body;
+
+      const updateData = {};
+      if (name && name.trim()) updateData.name = name.trim();
+      if (description && description.trim()) {
+        updateData.description = description.trim();
+      }
+      if (ingredients && ingredients.trim()) {
+        updateData.ingredients = ingredients.trim();
+      }
+      if (preparation && preparation.trim()) {
+        updateData.preparation = preparation.trim();
+      }
+
+      if (category) {
+        const allowedCategories = ["entrée", "plat", "dessert"];
+        if (!allowedCategories.includes(category)) {
+          return res.redirect("/admin?success=recipe_update_error");
+        }
+        updateData.category = category;
+      }
+
+      if (time) {
+        const timeValue = parseInt(time, 10);
+        if (Number.isNaN(timeValue) || timeValue < 1) {
+          return res.redirect("/admin?success=recipe_update_error");
+        }
+        updateData.time = timeValue;
+      }
+
+      if (difficulty) {
+        const allowedDifficulties = ["Facile", "Moyenne", "Difficile"];
+        if (!allowedDifficulties.includes(difficulty)) {
+          return res.redirect("/admin?success=recipe_update_error");
+        }
+        updateData.difficulty = difficulty;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return res.redirect("/admin?success=recipe_update_empty");
+      }
+
+      await Recipe.update(updateData, { where: { id: recipeId } });
+      return res.redirect("/admin?success=recipe_updated");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la mise à jour de la recette."
       );
     }
   },
@@ -252,6 +736,264 @@ const adminController = {
         req.userRole,
         "Erreur lors de la suppression de l'utilisateur."
       );
+    }
+  },
+
+  async validateUserPhoto(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      await User.update(
+        { picture_status: "approved" },
+        { where: { id: userId } }
+      );
+      res.redirect("/admin?success=user_photo_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de la photo."
+      );
+    }
+  },
+
+  async rejectUserPhoto(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      await User.update(
+        { picture: null, picture_status: "rejected" },
+        { where: { id: userId } }
+      );
+      res.redirect("/admin?success=user_photo_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de la photo."
+      );
+    }
+  },
+
+  async validateNotice(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      await Notice.update({ status: true }, { where: { id: noticeId } });
+      res.redirect("/admin?success=notice_validated");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de l'avis."
+      );
+    }
+  },
+
+  async rejectNotice(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      await Notice.destroy({ where: { id: noticeId } });
+      res.redirect("/admin?success=notice_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de l'avis."
+      );
+    }
+  },
+
+  async deleteMovieDirect(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=admin_movie_delete_error");
+      }
+
+      const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
+      const recipeIds = recipes.map((recipe) => recipe.id);
+      if (recipeIds.length > 0) {
+        await Notice.destroy({ where: { id_recipe: recipeIds } });
+        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
+        await Recipe.destroy({ where: { id_movie: movieId } });
+      }
+
+      await Movie.destroy({ where: { id: movieId } });
+      return res.redirect("/admin?success=admin_movie_deleted");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_movie_delete_error");
+    }
+  },
+
+  async deleteRecipeDirect(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=admin_recipe_delete_error");
+      }
+
+      await Notice.destroy({ where: { id_recipe: recipeId } });
+      await UsersRecipes.destroy({ where: { id_recipe: recipeId } });
+      await Recipe.destroy({ where: { id: recipeId } });
+
+      return res.redirect("/admin?success=admin_recipe_deleted");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_recipe_delete_error");
+    }
+  },
+
+  async deleteNoticeDirect(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=admin_notice_delete_error");
+      }
+
+      await Notice.destroy({ where: { id: noticeId } });
+      return res.redirect("/admin?success=admin_notice_deleted");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_notice_delete_error");
+    }
+  },
+
+  async updateMovieDirect(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=admin_movie_update_error");
+      }
+
+      const movie = await Movie.findByPk(movieId);
+      if (!movie) {
+        return res.redirect("/admin?success=admin_movie_update_error");
+      }
+
+      const { title, year, genre } = req.body;
+      const updateData = {};
+
+      if (title) updateData.title = title.trim();
+      if (year) {
+        const yearValue = parseInt(year, 10);
+        const maxYear = new Date().getFullYear() + 5;
+        if (Number.isNaN(yearValue) || yearValue < 1888 || yearValue > maxYear) {
+          return res.redirect("/admin?success=admin_movie_update_error");
+        }
+        updateData.year = yearValue;
+      }
+
+      if (genre) {
+        const allowedGenres = [
+          "action",
+          "animé",
+          "aventure",
+          "comédie",
+          "drame",
+          "fantastique",
+          "horreur",
+          "romantique",
+          "science-fiction",
+          "thriller",
+        ];
+        const normalizedGenre = genre.trim().toLowerCase();
+        if (!allowedGenres.includes(normalizedGenre)) {
+          return res.redirect("/admin?success=admin_movie_update_error");
+        }
+        updateData.genre = normalizedGenre;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return res.redirect("/admin?success=admin_movie_update_error");
+      }
+
+      await Movie.update(updateData, { where: { id: movieId } });
+      return res.redirect("/admin?success=admin_movie_updated");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_movie_update_error");
+    }
+  },
+
+  async updateRecipeDirect(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=admin_recipe_update_error");
+      }
+
+      const recipe = await Recipe.findByPk(recipeId);
+      if (!recipe) {
+        return res.redirect("/admin?success=admin_recipe_update_error");
+      }
+
+      const {
+        name,
+        description,
+        category,
+        time,
+        difficulty,
+        ingredients,
+        preparation,
+      } = req.body;
+      const updateData = {};
+
+      if (name) updateData.name = name.trim();
+      if (description) updateData.description = description.trim();
+      if (category) updateData.category = category.trim();
+      if (time) {
+        const timeValue = parseInt(time, 10);
+        if (Number.isNaN(timeValue) || timeValue < 1) {
+          return res.redirect("/admin?success=admin_recipe_update_error");
+        }
+        updateData.time = timeValue;
+      }
+      if (difficulty) updateData.difficulty = difficulty.trim();
+      if (ingredients) updateData.ingredients = ingredients.trim();
+      if (preparation) updateData.preparation = preparation.trim();
+
+      if (Object.keys(updateData).length === 0) {
+        return res.redirect("/admin?success=admin_recipe_update_error");
+      }
+
+      await Recipe.update(updateData, { where: { id: recipeId } });
+      return res.redirect("/admin?success=admin_recipe_updated");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_recipe_update_error");
+    }
+  },
+
+  async updateNoticeDirect(req, res) {
+    try {
+      const noticeId = parseInt(req.params.id, 10);
+      if (!noticeId || Number.isNaN(noticeId)) {
+        return res.redirect("/admin?success=admin_notice_update_error");
+      }
+
+      const notice = await Notice.findByPk(noticeId);
+      if (!notice) {
+        return res.redirect("/admin?success=admin_notice_update_error");
+      }
+
+      const { content, quote } = req.body;
+      const updateData = {};
+
+      if (content) updateData.content = content.trim();
+      if (quote) {
+        const quoteValue = parseInt(quote, 10);
+        if (Number.isNaN(quoteValue) || quoteValue < 1 || quoteValue > 5) {
+          return res.redirect("/admin?success=admin_notice_update_error");
+        }
+        updateData.quote = quoteValue;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return res.redirect("/admin?success=admin_notice_update_error");
+      }
+
+      await Notice.update(updateData, { where: { id: noticeId } });
+      return res.redirect("/admin?success=admin_notice_updated");
+    } catch (error) {
+      return res.redirect("/admin?success=admin_notice_update_error");
     }
   },
 };

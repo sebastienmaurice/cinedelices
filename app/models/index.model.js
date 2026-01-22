@@ -19,11 +19,19 @@ Movie.hasMany(Recipe, { foreignKey: 'id_movie' });
 // Un utilisateur peut publier plusieurs avis (notices)
 User.hasMany(Notice, { foreignKey: 'id_user' });
 
+// Un utilisateur peut créer plusieurs recettes et films
+User.hasMany(Recipe, { foreignKey: "id_user" });
+User.hasMany(Movie, { foreignKey: "id_user" });
+
 // Une recette peut recevoir plusieurs avis
 Recipe.hasMany(Notice, { foreignKey: 'id_recipe' });
 
 // Un avis appartient à un utilisateur
 Notice.belongsTo(User, { foreignKey: 'id_user' });
+
+// Une recette / un film appartient à un utilisateur
+Recipe.belongsTo(User, { foreignKey: "id_user" });
+Movie.belongsTo(User, { foreignKey: "id_user" });
 
 // Un avis appartient à une recette
 Notice.belongsTo(Recipe, { foreignKey: 'id_recipe' });

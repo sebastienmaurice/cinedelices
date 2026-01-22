@@ -1,31 +1,72 @@
-// fonction portant sur le bouton pour afficher plus ou moins de films et de recettes
+// fonction portant sur le bouton pour afficher plus de films et plus ou moins de recettes
 
 function initButtonHidden() {
-    // pour voir tous les films ou seulement 3 dans la page des films
+    // pour voir plus de films dans la page des films (sans retour arrière)
     const moviesButton = document.getElementById('see__all__movies__button');
     const moviesList = document.getElementById('movies__list');
     
     // si les éléments existent
     if (moviesButton && moviesList) {
-        moviesButton.textContent = "Voir tous les films";
+        const moviesCount = moviesList.querySelectorAll('article').length;
+
+        const desktopMediaQuery = window.matchMedia("(min-width: 901px)");
+        const getInitialLimit = () => (desktopMediaQuery.matches ? 9 : 6);
+
+        const updateMoviesButtonVisibility = () => {
+            if (moviesButton.style.display === "none" && !moviesList.classList.contains('only__display__9__films')) {
+                return;
+            }
+
+            const limit = getInitialLimit();
+            moviesButton.style.display = moviesCount > limit ? "" : "none";
+        };
+
+        updateMoviesButtonVisibility();
+        moviesButton.textContent = "Voir plus";
         // au clic sur le bouton
         moviesButton.addEventListener('click', () => {
-            const isLimited = moviesList.classList.toggle('only__display__3__films');
-            moviesButton.textContent = isLimited ? "Voir tous les films" : "Voir moins";
+            moviesList.classList.remove('only__display__9__films');
+            moviesButton.style.display = "none";
         });
+
+        if (desktopMediaQuery.addEventListener) {
+            desktopMediaQuery.addEventListener("change", updateMoviesButtonVisibility);
+        } else if (desktopMediaQuery.addListener) {
+            desktopMediaQuery.addListener(updateMoviesButtonVisibility);
+        }
     }
 
-    // pour voir toutes les recettes ou seulement 3 dans la page des recettes
+    // pour voir plus de recettes dans la page des recettes (sans retour arrière)
     const recipesButton = document.getElementById('see__all__recipes__button');
     const recipesList = document.getElementById('recipes__list');
     // si les éléments existent
     if (recipesButton && recipesList) {
-        recipesButton.textContent = "Voir toutes les recettes";
+        const recipesCount = recipesList.querySelectorAll('article').length;
+        const desktopMediaQuery = window.matchMedia("(min-width: 901px)");
+        const getInitialLimit = () => (desktopMediaQuery.matches ? 9 : 6);
+
+        const updateRecipesButtonVisibility = () => {
+            if (recipesButton.style.display === "none" && !recipesList.classList.contains('only__display__9__recipes')) {
+                return;
+            }
+
+            const limit = getInitialLimit();
+            recipesButton.style.display = recipesCount > limit ? "" : "none";
+        };
+
+        updateRecipesButtonVisibility();
+        recipesButton.textContent = "Voir plus";
         // au clic sur le bouton
         recipesButton.addEventListener('click', () => {
-            const isLimited = recipesList.classList.toggle('only__display__3__recipes');
-            recipesButton.textContent = isLimited ? "Voir toutes les recettes" : "Voir moins";
+            recipesList.classList.remove('only__display__9__recipes');
+            recipesButton.style.display = "none";
         });
+
+        if (desktopMediaQuery.addEventListener) {
+            desktopMediaQuery.addEventListener("change", updateRecipesButtonVisibility);
+        } else if (desktopMediaQuery.addListener) {
+            desktopMediaQuery.addListener(updateRecipesButtonVisibility);
+        }
     }
 }
 

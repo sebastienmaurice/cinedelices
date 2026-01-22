@@ -22,116 +22,421 @@
     <%- include("partials/header") %>
 
     <!-- MAIN -->
-    <main>
-      <h1 class="profile-title">Mon compte</h1>
-
-      <!-- BANNER -->
-      <section class="banner-title">
-        <div class="banner-content">
-          <p>
-            Gérez vos informations personnelles, votre pseudo et votre photo de
-            profil.
+    <main
+      class="profile-page <%= user.picture_status === 'pending' ? 'profile-page--pending' : '' %>"
+      data-user-id="<%= user.id %>"
+      data-picture-status="<%= user.picture_status || 'approved' %>"
+    >
+      <header class="profile-hero">
+        <div class="profile-hero__content">
+          <p class="profile-hero__eyebrow">Mon compte</p>
+          <h1 class="profile-title">Profil Ciné Délices</h1>
+          <p class="profile-hero__subtitle">
+            Gérez vos informations, vos préférences et votre photo de profil en
+            toute sécurité.
           </p>
         </div>
-      </section>
+      </header>
 
-      <!-- CONTAINER PRINCIPAL -->
-      <section class="profile-container">
-        <!-- Colonne 1 : Civilités -->
-        <div class="profile-column">
-          <form class="profile-form">
+      <% if (user.picture_status === 'pending') { %>
+      <div class="profile-status-banner" role="status" aria-live="polite">
+        Votre photo de profil est en attente de validation par Ciné Délices.
+      </div>
+      <% } %>
+
+      <section class="profile-grid">
+        <!-- Profil / Photo -->
+        <article class="profile-card profile-card--profile">
+          <div class="profile-card__header">
+            <h2>Profil</h2>
+            <p class="profile-card__subtitle">Photo et pseudo public</p>
+          </div>
+          <form class="profile-form" id="profileAvatarForm">
+            <div class="profile-avatar-layout">
+              <div class="profile-avatar">
+                <img
+                  src="<%= user.picture || '/images/image-default-profile.jpg' %>"
+                  alt="Avatar"
+                  class="profile-photo <%= user.picture_status === 'pending' ? 'profile-photo--pending' : '' %>"
+                />
+                <span class="profile-avatar__badge <%= user.picture_status === 'pending' ? 'is-pending' : 'is-approved' %>">
+                  <%= user.picture_status === 'pending' ? "En attente" : "Vérifié" %>
+                </span>
+              </div>
+              <div class="profile-avatar-actions">
+                <span class="profile-avatar__note">
+                  <%= user.picture_status === 'pending'
+                    ? "Validation en cours par Ciné Délices"
+                    : "Photo validée par Ciné Délices" %>
+                </span>
+                <label for="avatar" class="upload-btn upload-btn--compact">
+                  <span>Choisir une photo</span>
+                  <i class="fas fa-upload"></i>
+                </label>
+                <input type="file" id="avatar" name="avatar" accept="image/*" hidden />
+                <button type="button" class="btn btn--red btn--sm" id="removeAvatarBtn">
+                  Supprimer la photo
+                </button>
+              </div>
+            </div>
+            <div class="input-container">
+              <input
+                type="text"
+                id="username"
+                name="pseudo"
+                placeholder=""
+                value="<%= user.pseudo %>"
+                disabled
+              />
+              <label for="username">Votre pseudo</label>
+            </div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <span class="profile-stat__value"><%= userRecipes.length %></span>
+                <span class="profile-stat__label">Recettes</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat__value"><%= userMovies.length %></span>
+                <span class="profile-stat__label">Films</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat__value"><%= userNoticesCount %></span>
+                <span class="profile-stat__label">Avis</span>
+              </div>
+            </div>
+          </form>
+        </article>
+
+        <!-- Mes informations -->
+        <article class="profile-card profile-card--info">
+          <div class="profile-card__header">
+            <h2>Mes informations</h2>
+            <p class="profile-card__subtitle">
+              Données personnelles et connexion
+            </p>
+          </div>
+          <form class="profile-form" id="profileInfoForm">
             <div class="inputs-group">
               <div class="input-container">
                 <input
                   type="text"
                   id="firstname"
+                  name="first_name"
                   placeholder=""
                   value="<%= user.first_name %>"
+                  disabled
                 />
-                <label for="firstname">Votre prénom</label>
+                <label for="firstname">Prénom</label>
               </div>
               <div class="input-container">
                 <input
                   type="text"
                   id="lastname"
+                  name="last_name"
                   placeholder=""
                   value="<%= user.last_name %>"
+                  disabled
                 />
-                <label for="lastname">Votre nom</label>
+                <label for="lastname">Nom</label>
               </div>
               <div class="input-container">
                 <input
                   type="email"
                   id="email"
+                  name="email"
                   placeholder=""
                   value="<%= user.email %>"
+                  disabled
                 />
-                <label for="email">Votre email</label>
+                <label for="email">Email</label>
               </div>
-              <div class="input-container">
-                <input type="password" id="password" placeholder="" />
-                <label for="password">Votre mot de passe</label>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <!-- Colonne 2 : Photo / pseudo -->
-        <div class="profile-column">
-          <form class="profile-form">
-            <div class="inputs-group">
-              <label for="avatar" class="upload-btn">
-                <span>Choisir une photo</span>
-                <i class="fas fa-upload"></i>
-              </label>
-              <input type="file" id="avatar" accept="image/*" hidden />
               <div class="input-container">
                 <input
-                  type="text"
-                  id="username"
+                  type="password"
+                  id="password"
+                  name="password"
                   placeholder=""
-                  value="<%= user.pseudo %>"
+                  disabled
                 />
-                <label for="username">Votre pseudo</label>
+                <label for="password">Nouveau mot de passe</label>
+                <a href="/auth/forgot-password" class="profile-forgot-link">
+                  Mot de passe oublié ?
+                </a>
               </div>
             </div>
-
-            <div class="btn-bottom-group">
-              <button type="submit" class="btn btn--red">Valider</button>
-              <button type="button" class="btn btn--red btn--sm">
-                Supprimer ma photo
-              </button>
-            </div>
           </form>
-        </div>
+        </article>
 
-        <!-- Colonne 3 : Photo actuelle -->
-        <div class="profile-column">
-          <img
-            src="/images/image-default-profile.jpg"
-            alt="Avatar"
-            class="profile-photo"
-          />
-          <p class="small-text">*sous réserve de validation par Ciné Délices</p>
-        </div>
+        <!-- Mes préférences -->
+        <article class="profile-card profile-card--prefs">
+          <div class="profile-card__header">
+            <h2>Mes préférences</h2>
+            <p class="profile-card__subtitle">
+              Notifications et confort d'affichage
+            </p>
+          </div>
+          <form class="profile-form" id="profilePrefsForm">
+            <label class="toggle-row">
+              <span>Notifications recettes</span>
+              <span class="toggle">
+                <input
+                  type="checkbox"
+                  name="notify_recipes"
+                  <%= user.notify_recipes ? "checked" : "" %>
+                  disabled
+                />
+                <span class="toggle-slider"></span>
+              </span>
+            </label>
+            <label class="toggle-row">
+              <span>Alertes nouveautés cinéma</span>
+              <span class="toggle">
+                <input
+                  type="checkbox"
+                  name="notify_cinema"
+                  <%= user.notify_cinema ? "checked" : "" %>
+                  disabled
+                />
+                <span class="toggle-slider"></span>
+              </span>
+            </label>
+            <p class="profile-helper">
+              Ces préférences seront prises en compte lors de votre prochaine
+              connexion.
+            </p>
+          </form>
+          <div class="profile-card__actions">
+            <button type="button" class="btn btn--gold" id="editProfileBtn">
+              Éditer
+            </button>
+            <button type="button" class="btn btn--red" id="saveProfileBtn">
+              Enregistrer
+            </button>
+          </div>
+          <div class="profile-card__danger">
+            <p>
+              Votre compte Ciné Délices vous permet de partager vos recettes et
+              critiques de films. Vous pouvez le supprimer à tout moment.
+              Attention : cette action est irréversible.
+            </p>
+            <button class="btn btn--red" id="deleteAccountBtn">
+              Supprimer mon compte
+            </button>
+          </div>
+        </article>
       </section>
 
-      <!-- BAS DE PAGE -->
-      <section class="profile-bottom">
-        <div class="bottom-text">
-          <p>
-            Votre compte Ciné Délices vous permet de partager vos recettes et
-            critiques de films. Vous pouvez le supprimer à tout moment.
-          </p>
-          <p>Attention : cette action est irréversible.</p>
+      <section class="profile-collections">
+        <header class="profile-collections__header">
+          <h2>Mes recettes, films &amp; avis</h2>
+          <p>Retrouvez et gérez vos contributions.</p>
+        </header>
+        <div class="profile-collections__grid">
+          <div class="profile-collections__column">
+            <h3>Mes recettes</h3>
+            <% if (userRecipes && userRecipes.length > 0) { %>
+              <% userRecipes.forEach(recipe => { %>
+                <article
+                  class="account-item"
+                  data-type="recipe"
+                  data-id="<%= recipe.id %>"
+                  data-name="<%= recipe.name %>"
+                  data-category="<%= recipe.category %>"
+                  data-time="<%= recipe.time %>"
+                  data-difficulty="<%= recipe.difficulty %>"
+                  data-edit-status="<%= recipe.edit_status || 'none' %>"
+                >
+                  <img
+                    src="<%= recipe.picture || '/images/image-default-profile.jpg' %>"
+                    alt="Recette <%= recipe.name %>"
+                  />
+                  <div class="account-item__content">
+                    <div class="account-item__header">
+                      <h4 class="account-item__title"><%= recipe.name %></h4>
+                      <span class="account-item__status <%= recipe.status ? 'is-approved' : 'is-pending' %>">
+                        <%= recipe.status ? 'Validé' : 'Validation en attente' %>
+                      </span>
+                    </div>
+                    <p class="account-item__meta">
+                      <%= recipe.category %> • <%= recipe.time %> min •
+                      <%= recipe.difficulty %>
+                    </p>
+                    <% if (recipe.Movie) { %>
+                    <p class="account-item__hint">Film associé : <%= recipe.Movie.title %></p>
+                    <% } %>
+                    <% if (recipe.edit_status === 'pending') { %>
+                      <p class="account-item__hint">Modification en attente de validation admin.</p>
+                    <% } %>
+                    <div class="account-item__actions">
+                      <button
+                        class="btn btn--gold btn--sm account-edit-btn"
+                        <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>
+                      >
+                        Éditer
+                      </button>
+                      <button class="btn btn--red btn--sm account-delete-btn">
+                        Supprimer
+                      </button>
+                    </div>
+                    <div class="account-item__edit">
+                      <label>
+                        Titre
+                        <input type="text" name="name" value="<%= recipe.name %>" />
+                      </label>
+                      <label>
+                        Description
+                        <textarea name="description" rows="2"><%= recipe.description %></textarea>
+                      </label>
+                      <label>
+                        Catégorie
+                        <input type="text" name="category" value="<%= recipe.category %>" />
+                      </label>
+                      <label>
+                        Temps (min)
+                        <input type="number" name="time" value="<%= recipe.time %>" />
+                      </label>
+                      <label>
+                        Difficulté
+                        <input type="text" name="difficulty" value="<%= recipe.difficulty %>" />
+                      </label>
+                      <label>
+                        Ingrédients
+                        <textarea name="ingredients" rows="3"><%= recipe.ingredients %></textarea>
+                      </label>
+                      <label>
+                        Préparation
+                        <textarea name="preparation" rows="4"><%= recipe.preparation %></textarea>
+                      </label>
+                      <label class="account-item__file">
+                        Photo de la recette
+                        <input type="file" name="recipeImage" accept="image/*" />
+                      </label>
+                      <p class="account-item__preview">Aperçu : <span></span></p>
+                      <div class="account-item__edit-actions">
+                        <button class="btn btn--gold btn--sm account-save-btn">Enregistrer</button>
+                        <button class="btn btn--ghost btn--sm account-cancel-btn">Annuler</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              <% }) %>
+            <% } else { %>
+              <p class="account-empty">Aucune recette enregistrée pour le moment.</p>
+            <% } %>
+          </div>
+
+          <div class="profile-collections__column">
+            <h3>Mes films</h3>
+            <% if (userMovies && userMovies.length > 0) { %>
+              <% userMovies.forEach(movie => { %>
+                <article
+                  class="account-item"
+                  data-type="movie"
+                  data-id="<%= movie.id %>"
+                  data-title="<%= movie.title %>"
+                  data-year="<%= movie.year %>"
+                  data-genre="<%= movie.genre %>"
+                  data-status="<%= movie.status ? 'validated' : 'draft' %>"
+                >
+                  <img
+                    src="<%= movie.picture || '/images/image-default-profile.jpg' %>"
+                    alt="Film <%= movie.title %>"
+                  />
+                  <div class="account-item__content">
+                    <div class="account-item__header">
+                      <h4 class="account-item__title"><%= movie.title %></h4>
+                      <span class="account-item__status <%= movie.status ? 'is-approved' : 'is-pending' %>">
+                        <%= movie.status ? 'Validé' : 'Validation en attente' %>
+                      </span>
+                    </div>
+                    <p class="account-item__meta">
+                      <%= movie.year %> • <%= movie.genre %>
+                    </p>
+                  </div>
+                </article>
+              <% }) %>
+            <% } else { %>
+              <p class="account-empty">Aucun film enregistré pour le moment.</p>
+            <% } %>
+          </div>
+
+          <div class="profile-collections__column">
+            <div class="profile-collections__column-header">
+              <h3>Mes avis</h3>
+              <span class="profile-collections__count">
+                <%= userNoticesCount %>
+              </span>
+            </div>
+            <% if (userNotices && userNotices.length > 0) { %>
+              <div class="profile-notice-list">
+                <% userNotices.forEach(notice => { %>
+                  <article
+                    class="account-item account-item--notice"
+                    data-type="notice"
+                    data-id="<%= notice.id %>"
+                    data-delete-request="<%= notice.delete_request_status || 'none' %>"
+                  >
+                    <div class="account-item__content">
+                      <div class="account-item__header">
+                        <h4 class="account-item__title">Avis #<%= notice.id %></h4>
+                        <span class="account-item__status <%= notice.status ? 'is-approved' : 'is-pending' %>">
+                          <%= notice.status ? 'Validé' : 'Validation en attente' %>
+                        </span>
+                      </div>
+                      <p class="account-item__meta">
+                        <%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %>
+                        • <%= notice.quote %>/5
+                      </p>
+                      <% if (notice.Recipe) { %>
+                        <p class="account-item__hint">
+                          Recette :
+                          <a
+                            class="account-item__link"
+                            href="/recipes-movie/details/<%= notice.Recipe.id %>"
+                          >
+                            <%= notice.Recipe.name %>
+                          </a>
+                          <% if (notice.Recipe.Movie) { %>
+                            • Film :
+                            <a
+                              class="account-item__link"
+                              href="/recipes-movie/<%= notice.Recipe.Movie.id %>"
+                            >
+                              <%= notice.Recipe.Movie.title %>
+                            </a>
+                          <% } %>
+                        </p>
+                      <% } %>
+                      <p class="account-item__text"><%= notice.content %></p>
+                      <% if (notice.delete_request_status === 'pending') { %>
+                        <p class="account-item__hint">Suppression en attente de validation admin.</p>
+                      <% } %>
+                      <div class="account-item__actions">
+                        <button
+                          class="btn btn--red btn--sm account-delete-btn"
+                          <%= notice.delete_request_status === 'pending' ? 'disabled' : '' %>
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="account-empty">Aucun avis enregistré pour le moment.</p>
+            <% } %>
+          </div>
         </div>
-        <button class="btn btn--red btn-delete-account">
-          Supprimer mon compte
-        </button>
       </section>
     </main>
 
     <!-- FOOTER -->
     <%- include("partials/footer") %>
+
+    <div class="profile-toast" role="status" aria-live="polite"></div>
+
+    <!-- Scripts JS spécifiques -->
+    <script src="/js/account.js" defer></script>
   </body>
 </html>

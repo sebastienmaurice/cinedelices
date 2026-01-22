@@ -195,6 +195,33 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Align recipe image height with the context card on wide screens
+document.addEventListener("DOMContentLoaded", () => {
+  const overviewCard = document.querySelector(".overview-card");
+  const recipeMedia = document.querySelector(".recipe-aside__media");
+
+  if (!overviewCard || !recipeMedia) return;
+
+  const shouldSync = () => window.innerWidth >= 901;
+
+  const syncHeight = () => {
+    if (!shouldSync()) {
+      recipeMedia.style.height = "";
+      return;
+    }
+    const cardHeight = overviewCard.getBoundingClientRect().height;
+    if (cardHeight > 0) {
+      recipeMedia.style.height = `${cardHeight}px`;
+    }
+  };
+
+  syncHeight();
+
+  const resizeObserver = new ResizeObserver(syncHeight);
+  resizeObserver.observe(overviewCard);
+  window.addEventListener("resize", syncHeight);
+});
+
 // Gestion du bouton "Voir Plus" pour afficher les avis supplémentaires
 document.addEventListener("DOMContentLoaded", () => {
   const seeMoreButton = document.getElementById("seeMoreReviews");

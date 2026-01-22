@@ -241,12 +241,16 @@
   padding: 0.5rem;
 }
 
-#films .only__display__3__films article:nth-child(n + 4) {
+#films .only__display__9__films article:nth-child(n + 10) {
   display: none;
 }
 
 /* ====================================================== */
 @media (max-width: 900px) {
+  #films .only__display__9__films article:nth-child(n + 7) {
+    display: none;
+  }
+
   .banner {
     flex-direction: column;
     align-items: flex-start;
@@ -419,7 +423,7 @@
 }
 
 .film-title {
-  margin-bottom: 0;
+  margin-bottom: 0.45rem;
   font-size: 1.3rem;
   color: var(--dore-popcorn);
   font-weight: 700;
@@ -428,29 +432,46 @@
 }
 
 .film-meta {
-  color: var(--argent-ecran);
-  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
   margin-bottom: 0.8rem;
-  font-weight: 500;
-  opacity: 0.9;
 }
 
-.film-year,
-.film-separator,
-.film-genre {
-  display: inline;
+.film-meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.film-meta-tag--year {
+  background-color: rgba(236, 239, 241, 0.15);
   color: var(--argent-ecran);
-  font-size: 0.85rem;
-  font-weight: 500;
 }
 
-.film-separator {
-  opacity: 0.6;
-  margin: 0 0.25rem;
-}
-
-.film-genre {
+.film-meta-tag--genre {
+  background-color: var(--bleu-clair);
+  color: var(--argent-ecran);
   text-transform: capitalize;
+}
+
+.film-meta-tag--recipes {
+  background-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+}
+
+#films article:hover .film-meta-tag {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .film-card-info .btn {
@@ -1210,6 +1231,11 @@
 
 .search-result-card.is-local .search-result-card-title {
   color: var(--bleu-nuit);
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-result-card.is-local .search-result-card-meta,
@@ -1325,6 +1351,14 @@
   min-width: 0;
 }
 
+.search-result-card-title-text {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Badge "Ciné Délices" pour films locaux - Rouge projecteur */
 .search-result-card-badge {
   display: inline-block;
@@ -1382,11 +1416,18 @@
 
 /* Highlight des mots correspondants */
 .search-result-highlight {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
+  background-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
   padding: 0.1em 0.2em;
   border-radius: 3px;
   font-weight: 700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: inherit;
+}
+
+.search-result-card.is-local .search-result-highlight {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
 }
 
 .search-result-card-meta {

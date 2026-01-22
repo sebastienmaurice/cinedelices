@@ -352,7 +352,9 @@
         <div class="search-result-card-content">
           <div class="search-result-card-header">
             <h4 class="search-result-card-title">
-              ${highlightedTitle}
+              <span class="search-result-card-title-text">
+                ${highlightedTitle}
+              </span>
               ${localBadge}
             </h4>
             ${typeBadge}
@@ -400,14 +402,19 @@
       .filter((word) => word.length > 1);
 
     let highlighted = escapeHtml(text);
+    let hasHighlighted = false;
 
     keywords.forEach((keyword) => {
+      if (hasHighlighted) return;
       // Rechercher le mot dans le texte (insensible à la casse)
-      const regex = new RegExp(`(${escapeRegex(keyword)})`, "gi");
-      highlighted = highlighted.replace(
-        regex,
-        '<mark class="search-result-highlight">$1</mark>'
-      );
+      const regex = new RegExp(`(${escapeRegex(keyword)})`, "i");
+      if (regex.test(highlighted)) {
+        highlighted = highlighted.replace(
+          regex,
+          '<mark class="search-result-highlight">$1</mark>'
+        );
+        hasHighlighted = true;
+      }
     });
 
     return highlighted;
