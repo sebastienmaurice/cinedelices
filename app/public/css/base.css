@@ -391,6 +391,263 @@ a:hover {
   gap: 1rem;
 }
 
+/* ====================================================== */
+/* ICÔNES HEADER (Favoris ❤️ et Mon compte 👤)
+====================================================== */
+/**
+ * Icônes interactives du header
+ * - Favoris (cœur) : Accès rapide aux favoris
+ * - Mon compte (utilisateur) : Accès au profil
+ */
+.header-icon {
+  /* Reset complet pour les boutons */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  /* Styles visuels */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  border: 2px solid var(--dore-popcorn);
+  color: var(--dore-popcorn);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+}
+
+.header-icon:hover {
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(198, 166, 100, 0.5);
+}
+
+/* Icône Favoris (cœur) - État actif/hover rouge */
+.header-icon:not(.header-icon--disabled):not(.header-icon--account):hover {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: white;
+  box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+}
+
+/* Icône Mon compte (utilisateur) - Style spécifique */
+.header-icon--account {
+  background: linear-gradient(135deg, rgba(215, 38, 56, 0.15), rgba(215, 38, 56, 0.05));
+  border-color: var(--rouge-projecteur);
+  color: var(--rouge-projecteur);
+}
+
+.header-icon--account:hover {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: white;
+  box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+}
+
+/* Icône Connexion (clé/login) - Style doré */
+.header-icon--login {
+  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  border-color: var(--dore-popcorn);
+  color: var(--dore-popcorn);
+}
+
+.header-icon--login:hover {
+  background: var(--dore-popcorn);
+  border-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  box-shadow: 0 0 15px rgba(198, 166, 100, 0.5);
+}
+
+/* Icône Inscription - Style rouge */
+.header-icon--register {
+  background: linear-gradient(135deg, rgba(215, 38, 56, 0.15), rgba(215, 38, 56, 0.05));
+  border-color: var(--rouge-projecteur);
+  color: var(--rouge-projecteur);
+}
+
+.header-icon--register:hover {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: white;
+  box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+}
+
+/* Icône désactivée (non connecté) */
+.header-icon--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.header-icon--disabled:hover {
+  transform: none;
+  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  color: var(--dore-popcorn);
+  box-shadow: none;
+}
+
+/* Label pour mobile (dans le menu burger) */
+.header-icon__label {
+  display: none;
+}
+
+/* Style des icônes dans le menu mobile */
+@media (max-width: 800px) {
+  .navigationheader-auth .header-icon {
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    gap: 0.5rem;
+  }
+
+  .navigationheader-auth .header-icon__label {
+    display: inline;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .navigationheader-auth .header-icon i {
+    font-size: 1rem;
+  }
+}
+
+/* ====================================================== */
+/* DROPDOWN UTILISATEUR
+====================================================== */
+/**
+ * Dropdown pour le menu utilisateur connecté
+ * Contient : Mon compte, Se déconnecter
+ */
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.user-dropdown__trigger {
+  /* Hérite des styles de .header-icon - pas de reset ici */
+  font: inherit;
+}
+
+.user-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  background: linear-gradient(135deg, var(--bleu-intermediaire), var(--bleu-nuit));
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(198, 166, 100, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.user-dropdown__menu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  background: var(--bleu-intermediaire);
+  border-left: 1px solid rgba(198, 166, 100, 0.3);
+  border-top: 1px solid rgba(198, 166, 100, 0.3);
+  transform: rotate(45deg);
+}
+
+.user-dropdown.is-open .user-dropdown__menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  color: var(--argent-ecran);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  /* Reset pour les boutons */
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.user-dropdown__item:last-child {
+  border-bottom: none;
+}
+
+.user-dropdown__item i {
+  font-size: 1rem;
+  color: var(--dore-popcorn);
+  width: 20px;
+  text-align: center;
+}
+
+.user-dropdown__item:hover {
+  background: rgba(198, 166, 100, 0.1);
+  color: var(--dore-popcorn);
+}
+
+.user-dropdown__item--logout:hover {
+  background: rgba(215, 38, 56, 0.15);
+  color: var(--rouge-projecteur);
+}
+
+.user-dropdown__item--logout:hover i {
+  color: var(--rouge-projecteur);
+}
+
+/* Style inscription dans dropdown */
+.user-dropdown__item--register:hover {
+  background: rgba(215, 38, 56, 0.15);
+  color: var(--rouge-projecteur);
+}
+
+.user-dropdown__item--register:hover i {
+  color: var(--rouge-projecteur);
+}
+
+/* Animation de l'icône trigger quand ouvert */
+.user-dropdown.is-open .user-dropdown__trigger {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: white;
+  box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+}
+
+/* Variante dorée pour le dropdown connexion */
+.user-dropdown.is-open .user-dropdown__trigger.header-icon--login {
+  background: var(--dore-popcorn);
+  border-color: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  box-shadow: 0 0 15px rgba(198, 166, 100, 0.5);
+}
+
 /**
  * Menu burger (icône hamburger pour mobile)
  * ------------------------------------------

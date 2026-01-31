@@ -28,6 +28,9 @@ const openModal = (form) => {
   }
 };
 
+// Exposer openModal globalement pour les autres scripts
+window.openModal = openModal;
+
 const closeModal = () => {
   if (!modal.classList.contains("active")) return;
 

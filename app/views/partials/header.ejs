@@ -9,14 +9,10 @@
     <span class="title-delices">Délices</span>
   </a>
 
-
-</div>
-
-  <nav class="navigationheader">
+  <nav class="navigationheader" id="site-nav" aria-hidden="true">
     <a href="/" class="navigationheader-link">Accueil</a>
     <!-- admin visible uniquement avec role admin -->
-    <!-- typeof est utilisé pour le type de la variable ("string", "undefined") et sans c'est la valeur de la variable (admin) -->
-    <% if ( role === "admin") { %>
+    <% if (role === "admin") { %>
     <a href="/admin/" class="navigationheader-link">Admin</a>
     <% } %>
     <a href="/movies" class="navigationheader-link">Films</a>
@@ -25,37 +21,79 @@
     <% if (typeof role === "undefined") { %>
     <!-- Boutons auth en version mobile (affichés dans le menu burger) -->
     <div class="navigationheader-auth">
-      <a href="#" class="btn btn--gold btn--sm js-login">Connexion</a>
-      <a href="#" class="btn btn--red btn--sm js-register">Inscription</a>
+      <button type="button" class="header-icon header-icon--login js-open-login" title="Se connecter">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span class="header-icon__label">Connexion</span>
+      </button>
+      <button type="button" class="header-icon header-icon--register js-open-register" title="Créer un compte">
+        <i class="fa-solid fa-user-plus"></i>
+        <span class="header-icon__label">Inscription</span>
+      </button>
     </div>
     <% } %>
-    
+
     <% if (typeof role !== "undefined") { %>
     <!-- Boutons déconnexion et compte en version mobile (affichés dans le menu burger) -->
     <div class="navigationheader-auth">
-      <a href="/auth/logout" class="btn btn--gold btn--sm">Déconnexion</a>
-      <a href="/auth/profil/<%= userId %>" class="btn btn--red btn--sm">Mon compte</a>
+      <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" title="Mes favoris">
+        <i class="fa-solid fa-heart"></i>
+        <span class="header-icon__label">Favoris</span>
+      </a>
+      <a href="/auth/logout" class="btn btn--gold btn--sm">
+        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+      </a>
+      <a href="/auth/profil/<%= userId %>" class="header-icon header-icon--account" title="Mon compte">
+        <i class="fa-solid fa-user"></i>
+        <span class="header-icon__label">Mon compte</span>
+      </a>
     </div>
     <% } %>
   </nav>
- 
 
+  <!-- Boutons header desktop (non connecté) -->
   <% if (typeof role === "undefined") { %>
   <div class="buttons__header">
-    <a href="#" id="btnLogin" class="btn btn--gold btn--sm">Connexion</a>
-    <a href="#" id="btnRegister" class="btn btn--red btn--sm">Inscription</a>
+    <!-- Dropdown connexion -->
+    <div class="user-dropdown" id="authDropdown">
+      <button class="header-icon header-icon--login user-dropdown__trigger" id="authDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Connexion">
+        <i class="fa-solid fa-right-to-bracket"></i>
+      </button>
+      <div class="user-dropdown__menu" id="authDropdownMenu" aria-hidden="true">
+        <button type="button" class="user-dropdown__item js-open-login">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Se connecter</span>
+        </button>
+        <button type="button" class="user-dropdown__item user-dropdown__item--register js-open-register">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Créer un compte</span>
+        </button>
+      </div>
+    </div>
   </div>
   <% } %>
 
-  <!-- alternative mon profil visible uniquement si logger -->
+  <!-- Boutons header desktop (connecté) -->
   <% if (typeof role !== "undefined") { %>
   <div class="buttons__header">
-    <a href="/auth/logout" id="btnLogout" class="btn btn--gold btn--sm"
-      >Déconnexion</a
-    >
-    <a href="/auth/profil/<%= userId %>" id="btnProfil" class="btn btn--red btn--sm"
-      >Mon compte</a
-    >
+    <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" id="btnFavorites" title="Mes favoris">
+      <i class="fa-solid fa-heart"></i>
+    </a>
+    <!-- Dropdown utilisateur -->
+    <div class="user-dropdown" id="userDropdown">
+      <button class="header-icon header-icon--account user-dropdown__trigger" id="userDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Mon compte">
+        <i class="fa-solid fa-user"></i>
+      </button>
+      <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
+        <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
+          <i class="fa-solid fa-user"></i>
+          <span>Mon compte</span>
+        </a>
+        <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Se déconnecter</span>
+        </a>
+      </div>
+    </div>
   </div>
   <% } %>
 
@@ -183,3 +221,108 @@
 
 <script src="/js/popup-connexion.js"></script>
 <script src="/js/register-form.js"></script>
+
+<!-- Dropdowns et boutons auth -->
+<script>
+(function() {
+  // ===== Gestion des dropdowns =====
+  function initDropdown(dropdownId, triggerId, menuId) {
+    const dropdown = document.getElementById(dropdownId);
+    const trigger = document.getElementById(triggerId);
+    const menu = document.getElementById(menuId);
+
+    if (!dropdown || !trigger || !menu) return null;
+
+    function openDropdown() {
+      // Fermer tous les autres dropdowns
+      document.querySelectorAll('.user-dropdown.is-open').forEach(d => {
+        if (d !== dropdown) d.classList.remove('is-open');
+      });
+      dropdown.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDropdown() {
+      dropdown.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    }
+
+    // Toggle dropdown
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (dropdown.classList.contains('is-open')) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+        items[nextIndex].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+        items[prevIndex].focus();
+      }
+    });
+
+    return { dropdown, trigger, menu, closeDropdown };
+  }
+
+  // Initialiser les deux dropdowns
+  const userDropdown = initDropdown('userDropdown', 'userDropdownTrigger', 'userDropdownMenu');
+  const authDropdown = initDropdown('authDropdown', 'authDropdownTrigger', 'authDropdownMenu');
+
+  // Fermer au clic extérieur
+  document.addEventListener('click', (e) => {
+    if (userDropdown && !userDropdown.dropdown.contains(e.target)) {
+      userDropdown.closeDropdown();
+    }
+    if (authDropdown && !authDropdown.dropdown.contains(e.target)) {
+      authDropdown.closeDropdown();
+    }
+  });
+
+  // Fermer avec Échap
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (userDropdown && userDropdown.dropdown.classList.contains('is-open')) {
+        userDropdown.closeDropdown();
+        userDropdown.trigger.focus();
+      }
+      if (authDropdown && authDropdown.dropdown.classList.contains('is-open')) {
+        authDropdown.closeDropdown();
+        authDropdown.trigger.focus();
+      }
+    }
+  });
+
+  // ===== Boutons pour ouvrir le popup auth =====
+  // Utilise openModal() de popup-connexion.js
+  document.querySelectorAll('.js-open-login').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Fermer le dropdown si ouvert
+      if (authDropdown) authDropdown.closeDropdown();
+      // Ouvrir le modal en mode connexion
+      if (typeof openModal === 'function') {
+        openModal('login');
+      }
+    });
+  });
+
+  document.querySelectorAll('.js-open-register').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Fermer le dropdown si ouvert
+      if (authDropdown) authDropdown.closeDropdown();
+      // Ouvrir le modal en mode inscription
+      if (typeof openModal === 'function') {
+        openModal('register');
+      }
+    });
+  });
+})();
+</script>
