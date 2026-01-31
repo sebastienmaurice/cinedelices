@@ -5,6 +5,8 @@ import Recipe from './recipe.model.js';
 import Movie from './movie.model.js';
 import Notice from './notice.model.js';
 import UsersRecipes from './users_recipes.model.js';
+import Favorite from './favorite.model.js';
+import Rating from './rating.model.js';
 
 
 
@@ -42,8 +44,22 @@ User.belongsToMany(Recipe, { through : UsersRecipes, timestamps: false,});
 // une recette peut appartenir à plusieurs utilisateurs
 Recipe.belongsToMany(User, { through : UsersRecipes, timestamps: false,});
 
+// Relations pour les favoris (polymorphique)
+// Un utilisateur peut avoir plusieurs favoris
+User.hasMany(Favorite, { foreignKey: 'id_user' });
+Favorite.belongsTo(User, { foreignKey: 'id_user' });
+// Note : Pas d'association directe avec Movie/Recipe car structure polymorphique
+// Les requêtes utilisent entity_type + entity_id pour le filtrage
+
+// Relations pour les notes (polymorphique)
+// Un utilisateur peut avoir plusieurs notes
+User.hasMany(Rating, { foreignKey: 'id_user' });
+Rating.belongsTo(User, { foreignKey: 'id_user' });
+// Note : Pas d'association directe avec Movie/Recipe car structure polymorphique
+// Les requêtes utilisent entity_type + entity_id pour le filtrage
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes};
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating };
 
 
 

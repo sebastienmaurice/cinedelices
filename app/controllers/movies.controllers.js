@@ -1,5 +1,5 @@
-import { Recipe, Movie, Notice, User } from "../models/index.model.js";
-import { Op } from "sequelize";
+import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
+import { Op, fn, col } from "sequelize";
 import {
   calculateRelevanceScore,
   sortByRelevance,
@@ -746,6 +746,9 @@ const moviesController = {
       const movies = await Movie.findAll({ where: { status: true } });
       const selectedGenre = req.query.genre || "tous";
 
+      // Récupérer les genres uniques depuis les films (pour les chips de filtrage)
+      const uniqueGenres = [...new Set(movies.map((m) => m.genre).filter(Boolean))].sort();
+
       // Si un genre est passé en query, filtrer les films
       let filteredMovies = movies;
       if (selectedGenre && selectedGenre !== "tous") {
@@ -754,14 +757,84 @@ const moviesController = {
         );
       }
 
+      // Récupérer les favoris films de l'utilisateur connecté
+      let favoriteIds = [];
+      let userRatingsMap = {};
+      if (req.userId) {
+        const userFavorites = await Favorite.findAll({
+          where: { id_user: req.userId, entity_type: "movie" },
+          attributes: ["entity_id"],
+        });
+        favoriteIds = userFavorites.map((f) => f.entity_id);
+
+        // Récupérer les notes de l'utilisateur pour les films
+        const userRatings = await Rating.findAll({
+          where: { id_user: req.userId, entity_type: "movie" },
+          attributes: ["entity_id", "score"],
+        });
+        userRatingsMap = userRatings.reduce((acc, r) => {
+          acc[r.entity_id] = r.score;
+          return acc;
+        }, {});
+      }
+
+      // Récupérer les moyennes des notes pour tous les films
+      const movieIds = filteredMovies.map((m) => m.id);
+      const avgRatings = await Rating.findAll({
+        where: { entity_type: "movie", entity_id: { [Op.in]: movieIds } },
+        attributes: [
+          "entity_id",
+          [fn("AVG", col("score")), "average"],
+          [fn("COUNT", col("id")), "count"],
+        ],
+        group: ["entity_id"],
+        raw: true,
+      });
+      const avgRatingsMap = avgRatings.reduce((acc, r) => {
+        acc[r.entity_id] = {
+          average: parseFloat(r.average).toFixed(1),
+          count: parseInt(r.count),
+        };
+        return acc;
+      }, {});
+
       const recipeCountsByMovieId = await getRecipeCountsByMovieIds(
         filteredMovies.map((movie) => movie.id)
       );
+
+      // Date de référence pour calculer "Nouveau" (films ajoutés < 7 jours)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
       const moviesWithCounts = filteredMovies.map((movie) => {
         const plainMovie = movie.toJSON ? movie.toJSON() : movie;
+        const recipeCount = recipeCountsByMovieId[plainMovie.id] || 0;
+
+        // Calcul isNew : basé sur createdAt si disponible
+        const createdAt = plainMovie.createdAt ? new Date(plainMovie.createdAt) : null;
+        const isNew = createdAt ? createdAt >= sevenDaysAgo : false;
+
+        // Calcul isPopular : plus de 3 recettes associées
+        const isPopular = recipeCount > 3;
+
+        // Note moyenne des utilisateurs (priorité) ou TMDB rating ou valeur par défaut
+        const userAvgData = avgRatingsMap[plainMovie.id];
+        const avgRating = userAvgData ? userAvgData.average : null;
+        const ratingCount = userAvgData ? userAvgData.count : 0;
+        const rating = avgRating || plainMovie.tmdb_rating || (3.5 + ((plainMovie.id * 7) % 15) / 10).toFixed(1);
+
+        // Note de l'utilisateur connecté (si existante)
+        const userRating = userRatingsMap[plainMovie.id] || null;
+
         return {
           ...plainMovie,
-          recipeCount: recipeCountsByMovieId[plainMovie.id] || 0,
+          recipeCount,
+          isNew,
+          isPopular,
+          isFavorite: favoriteIds.includes(plainMovie.id),
+          rating,
+          userRating,
+          ratingCount,
         };
       });
 
@@ -771,7 +844,9 @@ const moviesController = {
       res.render("movies", {
         movies: enrichedMovies,
         selectedGenre,
+        genres: uniqueGenres,
         role: req.userRole,
+        userId: req.userId || null,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

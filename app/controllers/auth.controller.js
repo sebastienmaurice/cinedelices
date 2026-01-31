@@ -1,9 +1,10 @@
-import { Recipe, Movie, Notice, User, UsersRecipes } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating } from "../models/index.model.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 
 const authController = {
   // pour se connecter
@@ -129,10 +130,12 @@ const authController = {
         order: [["id", "DESC"]],
       });
 
-      const userMovies = await Movie.findAll({
+      const userMoviesRaw = await Movie.findAll({
         where: { id_user: user.id },
         order: [["id", "DESC"]],
       });
+      // Enrichir les films avec les chemins d'images (cardPath, bannerPath)
+      const userMovies = enrichMoviesWithImagePaths(userMoviesRaw);
 
       const userNotices = await Notice.findAll({
         where: { id_user: user.id },
@@ -151,15 +154,94 @@ const authController = {
         where: { id_user: user.id },
       });
 
+      // Récupérer les favoris de l'utilisateur (films et recettes)
+      const userFavoriteMovies = await Favorite.findAll({
+        where: { id_user: user.id, entity_type: "movie" },
+        attributes: ["entity_id", "created_at"],
+        order: [["created_at", "DESC"]],
+      });
+      const favoriteMovieIds = userFavoriteMovies.map((f) => f.entity_id);
+      const favoriteMoviesRaw = favoriteMovieIds.length > 0
+        ? await Movie.findAll({ where: { id: favoriteMovieIds } })
+        : [];
+      // Enrichir les films favoris avec les chemins d'images
+      const favoriteMovies = enrichMoviesWithImagePaths(favoriteMoviesRaw);
+
+      const userFavoriteRecipes = await Favorite.findAll({
+        where: { id_user: user.id, entity_type: "recipe" },
+        attributes: ["entity_id", "created_at"],
+        order: [["created_at", "DESC"]],
+      });
+      const favoriteRecipeIds = userFavoriteRecipes.map((f) => f.entity_id);
+      const favoriteRecipes = favoriteRecipeIds.length > 0
+        ? await Recipe.findAll({
+            where: { id: favoriteRecipeIds },
+            include: [{ model: Movie, attributes: ["id", "title"] }],
+          })
+        : [];
+
+      // Récupérer les notes de l'utilisateur (films et recettes)
+      const userMovieRatings = await Rating.findAll({
+        where: { id_user: user.id, entity_type: "movie" },
+        attributes: ["entity_id", "score", "created_at"],
+        order: [["created_at", "DESC"]],
+      });
+      const ratedMovieIds = userMovieRatings.map((r) => r.entity_id);
+      const ratedMoviesRaw = ratedMovieIds.length > 0
+        ? await Movie.findAll({ where: { id: ratedMovieIds } })
+        : [];
+      // Enrichir les films notés avec les chemins d'images
+      const ratedMoviesEnriched = enrichMoviesWithImagePaths(ratedMoviesRaw);
+      // Associer les scores aux films enrichis
+      const ratedMoviesWithScores = ratedMoviesEnriched.map((movie) => {
+        const rating = userMovieRatings.find((r) => r.entity_id === movie.id);
+        return { ...movie, userScore: rating ? rating.score : null };
+      });
+
+      const userRecipeRatings = await Rating.findAll({
+        where: { id_user: user.id, entity_type: "recipe" },
+        attributes: ["entity_id", "score", "created_at"],
+        order: [["created_at", "DESC"]],
+      });
+      const ratedRecipeIds = userRecipeRatings.map((r) => r.entity_id);
+      const ratedRecipes = ratedRecipeIds.length > 0
+        ? await Recipe.findAll({
+            where: { id: ratedRecipeIds },
+            include: [{ model: Movie, attributes: ["id", "title"] }],
+          })
+        : [];
+      // Associer les scores aux recettes
+      const ratedRecipesWithScores = ratedRecipes.map((recipe) => {
+        const rating = userRecipeRatings.find((r) => r.entity_id === recipe.id);
+        return { ...recipe.toJSON(), userScore: rating ? rating.score : null };
+      });
+
+      // Calculer les statistiques
+      const allRatings = [...userMovieRatings, ...userRecipeRatings];
+      const avgUserRating = allRatings.length > 0
+        ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
+        : "0.0";
+
       // Rendu de la vue avec les données utilisateur
-      // ajout de la gestion de role
       res.render("user-profile", {
         user,
         role: req.userRole,
+        userId: req.userId,
         userRecipes,
         userMovies,
         userNotices,
         userNoticesCount,
+        // Favoris
+        favoriteMovies,
+        favoriteRecipes,
+        favoriteMoviesCount: favoriteMovies.length,
+        favoriteRecipesCount: favoriteRecipes.length,
+        // Notes
+        ratedMovies: ratedMoviesWithScores,
+        ratedRecipes: ratedRecipesWithScores,
+        ratedMoviesCount: ratedMoviesWithScores.length,
+        ratedRecipesCount: ratedRecipesWithScores.length,
+        avgUserRating,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

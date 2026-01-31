@@ -1,7 +1,104 @@
-import { Op } from "sequelize";
-import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { Op, fn, col } from "sequelize";
+import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+
+/**
+ * Récupère les IDs des recettes favorites de l'utilisateur
+ * @param {number|undefined} userId - ID de l'utilisateur connecté
+ * @returns {Promise<number[]>} - Liste des IDs de recettes favorites
+ */
+async function getUserFavoriteRecipeIds(userId) {
+  if (!userId) return [];
+
+  const favorites = await Favorite.findAll({
+    where: { id_user: userId, entity_type: "recipe" },
+    attributes: ["entity_id"],
+  });
+
+  return favorites.map((f) => f.entity_id);
+}
+
+/**
+ * Récupère les notes de l'utilisateur pour les recettes
+ * @param {number|undefined} userId - ID de l'utilisateur connecté
+ * @returns {Promise<Object>} - Map entityId -> score
+ */
+async function getUserRecipeRatings(userId) {
+  if (!userId) return {};
+
+  const ratings = await Rating.findAll({
+    where: { id_user: userId, entity_type: "recipe" },
+    attributes: ["entity_id", "score"],
+  });
+
+  return ratings.reduce((acc, r) => {
+    acc[r.entity_id] = r.score;
+    return acc;
+  }, {});
+}
+
+/**
+ * Récupère les moyennes des notes pour les recettes
+ * @param {number[]} recipeIds - IDs des recettes
+ * @returns {Promise<Object>} - Map entityId -> { average, count }
+ */
+async function getRecipeAverageRatings(recipeIds) {
+  if (!recipeIds || recipeIds.length === 0) return {};
+
+  const avgRatings = await Rating.findAll({
+    where: { entity_type: "recipe", entity_id: { [Op.in]: recipeIds } },
+    attributes: [
+      "entity_id",
+      [fn("AVG", col("score")), "average"],
+      [fn("COUNT", col("id")), "count"],
+    ],
+    group: ["entity_id"],
+    raw: true,
+  });
+
+  return avgRatings.reduce((acc, r) => {
+    acc[r.entity_id] = {
+      average: parseFloat(r.average).toFixed(1),
+      count: parseInt(r.count),
+    };
+    return acc;
+  }, {});
+}
+
+/**
+ * Enrichit les recettes avec favoris et notes
+ * @param {Array} recipes - Liste des recettes
+ * @param {number[]} favoriteIds - IDs des recettes favorites
+ * @param {Object} userRatingsMap - Notes de l'utilisateur
+ * @param {Object} avgRatingsMap - Moyennes des notes
+ * @returns {Array} - Recettes enrichies
+ */
+function enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap) {
+  return recipes.map((recipe) => {
+    const plain = recipe.toJSON ? recipe.toJSON() : recipe;
+    const avgData = avgRatingsMap[plain.id];
+
+    return {
+      ...plain,
+      isFavorite: favoriteIds.includes(plain.id),
+      userRating: userRatingsMap[plain.id] || null,
+      avgRating: avgData ? avgData.average : null,
+      ratingCount: avgData ? avgData.count : 0,
+    };
+  });
+}
+
+// Garder l'ancienne fonction pour compatibilité (utilisée dans certains endroits)
+function enrichRecipesWithFavorites(recipes, favoriteIds) {
+  return recipes.map((recipe) => {
+    const plain = recipe.toJSON ? recipe.toJSON() : recipe;
+    return {
+      ...plain,
+      isFavorite: favoriteIds.includes(plain.id),
+    };
+  });
+}
 
 const recipesController = {
   // Afficher toutes les recettes (filtre optionnel par auteur)
@@ -27,10 +124,18 @@ const recipesController = {
         },
       });
 
+      // Récupérer les favoris et notes de l'utilisateur connecté
+      const recipeIds = recipes.map((r) => r.id);
+      const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
+      const userRatingsMap = await getUserRecipeRatings(req.userId);
+      const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
+      const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+
       res.render("recipes-movie", {
         movie: null,
-        recipes,
+        recipes: enrichedRecipes,
         role: req.userRole,
+        userId: req.userId,
         authorDisplayName,
         isAuthorFiltered: Boolean(rawAuthor),
       });
@@ -41,12 +146,11 @@ const recipesController = {
   // Afficher le film et ses recettes
   async movieRecipes(req, res) {
     try {
-    const movie = await Movie.findOne({
-      where: { id: req.params.id, status: true },
-    });
+      const movie = await Movie.findOne({
+        where: { id: req.params.id, status: true },
+      });
 
       // Utilisation du helper centralisé pour les erreurs 404
-      // Refactoring : remplace le bloc dupliqué par un appel à renderNotFound()
       if (!movie) {
         return renderNotFound(res, "Film", req.userRole);
       }
@@ -59,16 +163,22 @@ const recipesController = {
       // Enrichir le movie avec les chemins d'images
       const enrichedMovie = enrichMovieWithImagePaths(movie);
 
+      // Récupérer les favoris et notes de l'utilisateur connecté
+      const recipeIds = recipes.map((r) => r.id);
+      const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
+      const userRatingsMap = await getUserRecipeRatings(req.userId);
+      const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
+      const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+
       res.render("recipes-movie", {
         movie: enrichedMovie,
-        recipes,
+        recipes: enrichedRecipes,
         role: req.userRole,
+        userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
       });
     } catch (error) {
-      // Utilisation du helper centralisé pour les erreurs 500
-      // Refactoring : remplace le bloc dupliqué par un appel à renderServerError()
       return renderServerError(res, error, req.userRole);
     }
   },
@@ -83,13 +193,12 @@ const recipesController = {
   // Filtrage des recettes du film par catégorie
   async filtredRecipes(req, res) {
     try {
-      // Refactoring : suppression du console.log de debug
       const { id, category } = req.params;
 
       const movie = await Movie.findOne({
         where: { id, status: true },
       });
-      // Refactoring : utilisation du helper centralisé renderNotFound()
+
       if (!movie) {
         return renderNotFound(res, "Film", req.userRole);
       }
@@ -112,17 +221,22 @@ const recipesController = {
       // Enrichir le movie avec les chemins d'images
       const enrichedMovie = enrichMovieWithImagePaths(movie);
 
-      // Rendu de la vue avec les recettes filtrées
-      // Refactoring : suppression du console.log de debug
+      // Récupérer les favoris et notes de l'utilisateur connecté
+      const recipeIds = recipes.map((r) => r.id);
+      const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
+      const userRatingsMap = await getUserRecipeRatings(req.userId);
+      const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
+      const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+
       res.render("recipes-movie", {
         movie: enrichedMovie,
-        recipes,
+        recipes: enrichedRecipes,
         role: req.userRole,
+        userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
       });
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
       return renderServerError(res, error, req.userRole);
     }
   },
@@ -232,14 +346,29 @@ const recipesController = {
       }
       // Refactoring : suppression du console.log de debug
 
+      // Vérifier si cette recette est en favori et récupérer les notes
+      const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
+      const isFavorite = favoriteIds.includes(plainRecipe.id);
+      const userRatingsMap = await getUserRecipeRatings(req.userId);
+      const avgRatingsMap = await getRecipeAverageRatings([plainRecipe.id]);
+      const userRating = userRatingsMap[plainRecipe.id] || null;
+      const avgData = avgRatingsMap[plainRecipe.id];
+
       res.render("recipe-detail", {
         role: req.userRole,
-        recipe: plainRecipe,
+        userId: req.userId,
+        recipe: {
+          ...plainRecipe,
+          isFavorite,
+          userRating,
+          avgRating: avgData ? avgData.average : null,
+          ratingCount: avgData ? avgData.count : 0,
+        },
         movie: enrichedMovie,
         descriptionBlocks,
         ingredientsBlocks,
         preparationBlocks,
-        averageQuote, // Note moyenne à passer à la vue
+        averageQuote,
         notices: plainNotices,
         contributor: contributor
           ? {

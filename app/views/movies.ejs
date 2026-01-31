@@ -82,6 +82,26 @@
         </div>
       </section>
 
+      <!-- CHIPS FILTRAGE PAR GENRE -->
+      <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+      <section class="genre-chips-container" aria-label="Filtrer par genre">
+        <div class="genre-chips">
+          <a href="/movies"
+             class="genre-chip <%= selectedGenre === 'tous' ? 'genre-chip--active' : '' %>"
+             data-genre="tous">
+            <i class="fa-solid fa-film"></i> Tous
+          </a>
+          <% genres.forEach(genre => { %>
+          <a href="/movies?genre=<%= genre %>"
+             class="genre-chip <%= selectedGenre === genre ? 'genre-chip--active' : '' %>"
+             data-genre="<%= genre %>">
+            <%= genre.charAt(0).toUpperCase() + genre.slice(1) %>
+          </a>
+          <% }) %>
+        </div>
+      </section>
+      <% } %>
+
       <!-- SECTION FILMS -->
       <section id="films">
         <div class="presentation__film">
@@ -103,8 +123,52 @@
           <% if (!movies || movies.length === 0) { %>
           <p>Aucun film trouvé pour ce genre.</p>
           <% } else { %> <% movies.forEach(movie => { %>
-          <article id="film-<%= movie.id %>">
+          <article id="film-<%= movie.id %>" class="film-card">
             <div class="film-card-image">
+              <!-- Overlay gradient pour améliorer la lisibilité -->
+              <div class="film-card-overlay"></div>
+
+              <!-- Badges Nouveau / Populaire -->
+              <% if (movie.isNew || movie.isPopular) { %>
+              <div class="film-card-badges">
+                <% if (movie.isNew) { %>
+                <span class="badge badge--new">
+                  <i class="fa-solid fa-sparkles"></i> Nouveau
+                </span>
+                <% } %>
+                <% if (movie.isPopular) { %>
+                <span class="badge badge--popular">
+                  <i class="fa-solid fa-fire"></i> Populaire
+                </span>
+                <% } %>
+              </div>
+              <% } %>
+
+              <!-- Bouton Favori (cœur) -->
+              <button
+                class="btn-favorite"
+                data-movie-id="<%= movie.id %>"
+                data-is-favorite="<%= movie.isFavorite || false %>"
+                aria-label="<%= movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+              >
+                <i class="<%= movie.isFavorite ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+              </button>
+
+              <!-- Note du film (interactive) -->
+              <div
+                class="film-card-rating rating-interactive"
+                data-entity-id="<%= movie.id %>"
+                data-entity-type="movie"
+                data-average="<%= movie.rating || '4.0' %>"
+                data-user-rating="<%= movie.userRating || '' %>"
+                data-count="<%= movie.ratingCount || 0 %>"
+                title="<%= movie.userRating ? 'Votre note : ' + movie.userRating + '/5' : 'Cliquez pour noter' %>"
+              >
+                <i class="fa-solid fa-star"></i>
+                <span class="rating-value"><%= movie.rating || '4.0' %></span>
+              </div>
+
               <img
                 src="<%= movie.cardPath || movie.picture %>"
                 alt="Affiche du film <%= movie.title %>"
@@ -156,7 +220,13 @@
     <!-- Scripts JS globaux -->
     <script src="/js/burger-menu.js" defer></script>
 
-    <!-- Scripts JS spécifiques à la page -->
-    <script src="/js/films.js" defer></script>
+    <!-- Configuration pour les favoris -->
+    <script>
+      window.CINEDELICES = {
+        isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
+        userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
+      };
+    </script>
+    <script src="/js/favorites.js" defer></script>
   </body>
 </html>

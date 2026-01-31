@@ -109,4 +109,28 @@ function isLogged(req, res, next) {
   }
 }
 
-export { verifyToken, injectId, isLogged };
+/**
+ * Middleware pour les routes API uniquement
+ * Retourne du JSON au lieu de HTML en cas d'erreur
+ *
+ * POURQUOI CE MIDDLEWARE SÉPARÉ ?
+ * - Les pages web attendent du HTML (render)
+ * - Les APIs attendent du JSON
+ * - C'est une bonne pratique REST
+ */
+function isLoggedApi(req, res, next) {
+  const userRole = req.userRole;
+
+  if (userRole === "user" || userRole === "admin") {
+    next();
+  } else {
+    // Pour les API, on retourne TOUJOURS du JSON
+    res.status(401).json({
+      success: false,
+      message: "Vous devez être connecté pour effectuer cette action",
+      code: "AUTH_REQUIRED"
+    });
+  }
+}
+
+export { verifyToken, injectId, isLogged, isLoggedApi };

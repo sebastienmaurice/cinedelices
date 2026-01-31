@@ -50,7 +50,7 @@ adminRouter.get("/movie/:id", adminController.editMovie);
 adminRouter.post(
   "/validateMovie/:id",
   uploadMovie.single("filmImage"),
-  adminController.validateMovie
+  adminController.validateMovie,
 );
 
 // Refuser un film
@@ -59,11 +59,11 @@ adminRouter.post("/rejectMovie/:id", adminController.rejectMovie);
 // Demandes de suppression de films
 adminRouter.post(
   "/movies/:id/delete/approve",
-  adminController.approveMovieDeletion
+  adminController.approveMovieDeletion,
 );
 adminRouter.post(
   "/movies/:id/delete/reject",
-  adminController.rejectMovieDeletion
+  adminController.rejectMovieDeletion,
 );
 
 // Modifications films
@@ -71,49 +71,52 @@ adminRouter.post("/movies/:id/edit/approve", adminController.approveMovieEdit);
 adminRouter.post("/movies/:id/edit/reject", adminController.rejectMovieEdit);
 
 // Modifications recettes
-adminRouter.post("/recipes/:id/edit/approve", adminController.approveRecipeEdit);
+adminRouter.post(
+  "/recipes/:id/edit/approve",
+  adminController.approveRecipeEdit,
+);
 adminRouter.post("/recipes/:id/edit/reject", adminController.rejectRecipeEdit);
 
 // Modifications avis
-adminRouter.post("/notices/:id/edit/approve", adminController.approveNoticeEdit);
+adminRouter.post(
+  "/notices/:id/edit/approve",
+  adminController.approveNoticeEdit,
+);
 adminRouter.post("/notices/:id/edit/reject", adminController.rejectNoticeEdit);
 
 // Suppression avis
 adminRouter.post(
   "/notices/:id/delete/approve",
-  adminController.approveNoticeDeletion
+  adminController.approveNoticeDeletion,
 );
 adminRouter.post(
   "/notices/:id/delete/reject",
-  adminController.rejectNoticeDeletion
+  adminController.rejectNoticeDeletion,
 );
 
 // Suppression directe admin (contenus validés ou non)
 adminRouter.post(
   "/movies/:id/delete/direct",
-  adminController.deleteMovieDirect
+  adminController.deleteMovieDirect,
 );
 adminRouter.post(
   "/recipes/:id/delete/direct",
-  adminController.deleteRecipeDirect
+  adminController.deleteRecipeDirect,
 );
 adminRouter.post(
   "/notices/:id/delete/direct",
-  adminController.deleteNoticeDirect
+  adminController.deleteNoticeDirect,
 );
 
 // Édition directe admin (contenus validés ou non)
-adminRouter.post(
-  "/movies/:id/edit/direct",
-  adminController.updateMovieDirect
-);
+adminRouter.post("/movies/:id/edit/direct", adminController.updateMovieDirect);
 adminRouter.post(
   "/recipes/:id/edit/direct",
-  adminController.updateRecipeDirect
+  adminController.updateRecipeDirect,
 );
 adminRouter.post(
   "/notices/:id/edit/direct",
-  adminController.updateNoticeDirect
+  adminController.updateNoticeDirect,
 );
 
 export default adminRouter;

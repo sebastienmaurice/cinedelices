@@ -1561,3 +1561,312 @@
     text-align: center;
   }
 }
+
+/* ====================================================== */
+/* ============= OVERLAY GRADIENT SUR IMAGE ============= */
+/* ====================================================== */
+/**
+ * Overlay dégradé sur les images de films
+ * Améliore la lisibilité des éléments superposés (badges, note, favori)
+ */
+.film-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(13, 27, 42, 0.7) 0%,
+    rgba(13, 27, 42, 0.3) 30%,
+    transparent 60%
+  );
+  border-radius: 12px;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.film-card:hover .film-card-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(13, 27, 42, 0.85) 0%,
+    rgba(13, 27, 42, 0.4) 40%,
+    transparent 70%
+  );
+}
+
+/* ====================================================== */
+/* ============= BADGES (NOUVEAU / POPULAIRE) =========== */
+/* ====================================================== */
+/**
+ * Badges positionnés en haut à gauche de l'image
+ * - Nouveau : bleu cyan pour les films ajoutés récemment
+ * - Populaire : rouge pour les films avec beaucoup de recettes
+ */
+.film-card-badges {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 10;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  backdrop-filter: blur(4px);
+}
+
+.badge--new {
+  background: linear-gradient(135deg, #00d4ff, #0099cc);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.4);
+}
+
+.badge--popular {
+  background: linear-gradient(135deg, var(--rouge-projecteur), #ff6b6b);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(215, 38, 56, 0.4);
+}
+
+/* ====================================================== */
+/* ============= BOUTON FAVORI (COEUR) ================== */
+/* ====================================================== */
+/**
+ * Bouton cœur positionné en haut à droite
+ * Toggle entre état vide et rempli
+ */
+.btn-favorite {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(13, 27, 42, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.btn-favorite:hover {
+  background: rgba(215, 38, 56, 0.9);
+  border-color: var(--rouge-projecteur);
+  transform: scale(1.1);
+}
+
+.btn-favorite[data-is-favorite="true"] {
+  color: var(--rouge-projecteur);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.btn-favorite[data-is-favorite="true"]:hover {
+  background: rgba(215, 38, 56, 0.15);
+  color: var(--rouge-projecteur);
+}
+
+.btn-favorite i {
+  transition: transform 0.3s ease;
+}
+
+.btn-favorite:active i {
+  transform: scale(0.8);
+}
+
+/* Animation cœur lors du toggle */
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.btn-favorite.animating i {
+  animation: heartPulse 0.4s ease;
+}
+
+/* ====================================================== */
+/* ============= NOTE DU FILM (ETOILE) ================== */
+/* ====================================================== */
+/**
+ * Note positionnée en bas à droite de l'image
+ * Affiche une étoile dorée + la note
+ */
+.film-card-rating {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(13, 27, 42, 0.85);
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(198, 166, 100, 0.3);
+}
+
+.film-card-rating i {
+  color: var(--dore-popcorn);
+  font-size: 0.85rem;
+}
+
+.film-card-rating span {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ====================================================== */
+/* ============= CHIPS GENRES =========================== */
+/* ====================================================== */
+/**
+ * Chips de filtrage par genre
+ * Affichés horizontalement avec scroll si nécessaire
+ */
+.genre-chips-container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 2rem auto;
+  padding: 0 2rem;
+}
+
+.genre-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.genre-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(27, 38, 59, 0.6);
+  border: 1px solid rgba(198, 166, 100, 0.2);
+  border-radius: 999px;
+  color: var(--argent-ecran);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.genre-chip:hover {
+  background: rgba(198, 166, 100, 0.2);
+  border-color: var(--dore-popcorn);
+  color: var(--dore-popcorn);
+  transform: translateY(-2px);
+}
+
+.genre-chip--active {
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+  font-weight: 600;
+}
+
+.genre-chip--active:hover {
+  background: #b8984a;
+  color: var(--bleu-nuit);
+  transform: translateY(-2px);
+}
+
+/* ====================================================== */
+/* ============= RESPONSIVE NOUVEAUX COMPOSANTS ========= */
+/* ====================================================== */
+@media (max-width: 800px) {
+  .genre-chips-container {
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .genre-chips {
+    gap: 0.5rem;
+  }
+
+  .genre-chip {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .film-card-badges {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .btn-favorite {
+    top: 1rem;
+    right: 1rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1rem;
+  }
+
+  .film-card-rating {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .film-card-rating i,
+  .film-card-rating span {
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .genre-chips-container {
+    padding: 0 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .genre-chip {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .film-card-badges {
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .btn-favorite {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .film-card-rating {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.4rem;
+  }
+}

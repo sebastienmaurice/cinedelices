@@ -115,6 +115,21 @@
               </button>
               <% } %>
             </div>
+
+            <!-- Bouton Favori -->
+            <button
+              class="btn-favorite btn-favorite--detail"
+              data-entity-id="<%= recipe.id %>"
+              data-entity-type="recipe"
+              data-is-favorite="<%= recipe.isFavorite || false %>"
+              aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+              title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+            >
+              <i class="<%= recipe.isFavorite ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+              <span class="btn-favorite__text">
+                <%= recipe.isFavorite ? 'Dans mes favoris' : 'Ajouter aux favoris' %>
+              </span>
+            </button>
           </div>
           <a
             class="recipe-meta-bar__author"
@@ -549,5 +564,14 @@
 
     <script src="/js/burger-menu.js" defer></script>
     <script src="/js/recipe-detail.js" defer></script>
+
+    <!-- Configuration pour les favoris -->
+    <script>
+      window.CINEDELICES = {
+        isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
+        userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
+      };
+    </script>
+    <script src="/js/favorites.js" defer></script>
   </body>
 </html>

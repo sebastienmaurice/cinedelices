@@ -103,6 +103,18 @@
                 <span class="profile-stat__value"><%= userNoticesCount %></span>
                 <span class="profile-stat__label">Avis</span>
               </div>
+              <div class="profile-stat profile-stat--highlight">
+                <span class="profile-stat__value"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></span>
+                <span class="profile-stat__label">Favoris</span>
+              </div>
+              <div class="profile-stat profile-stat--highlight">
+                <span class="profile-stat__value"><%= (ratedMoviesCount || 0) + (ratedRecipesCount || 0) %></span>
+                <span class="profile-stat__label">Notes</span>
+              </div>
+              <div class="profile-stat profile-stat--gold">
+                <span class="profile-stat__value"><%= avgUserRating || '0.0' %></span>
+                <span class="profile-stat__label">Moyenne</span>
+              </div>
             </div>
           </form>
         </article>
@@ -226,6 +238,124 @@
         </article>
       </section>
 
+      <!-- Section Favoris et Notes -->
+      <section class="profile-favorites">
+        <header class="profile-collections__header">
+          <h2>Mes favoris &amp; notes</h2>
+          <p>Films et recettes que vous avez sauvegardés ou notés.</p>
+        </header>
+
+        <div class="profile-favorites__grid">
+          <!-- Favoris Films -->
+          <div class="profile-favorites__column">
+            <div class="profile-favorites__column-header">
+              <h3><i class="fa-solid fa-heart"></i> Films favoris</h3>
+              <span class="profile-collections__count"><%= favoriteMoviesCount || 0 %></span>
+            </div>
+            <% if (favoriteMovies && favoriteMovies.length > 0) { %>
+              <div class="profile-favorites__list">
+                <% favoriteMovies.slice(0, 6).forEach(movie => { %>
+                  <a href="/recipes-movie/<%= movie.id %>" class="profile-favorite-item">
+                    <img src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>" alt="<%= movie.title %>" loading="lazy" />
+                    <div class="profile-favorite-item__content">
+                      <h4 title="<%= movie.title %>"><%= movie.title %></h4>
+                      <p><%= movie.year %> • <%= movie.genre %></p>
+                    </div>
+                    <i class="fa-solid fa-heart profile-favorite-item__icon"></i>
+                  </a>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="account-empty">Aucun film en favoris.</p>
+            <% } %>
+          </div>
+
+          <!-- Favoris Recettes -->
+          <div class="profile-favorites__column">
+            <div class="profile-favorites__column-header">
+              <h3><i class="fa-solid fa-heart"></i> Recettes favorites</h3>
+              <span class="profile-collections__count"><%= favoriteRecipesCount || 0 %></span>
+            </div>
+            <% if (favoriteRecipes && favoriteRecipes.length > 0) { %>
+              <div class="profile-favorites__list">
+                <% favoriteRecipes.slice(0, 6).forEach(recipe => { %>
+                  <a href="/recipes-movie/details/<%= recipe.id %>" class="profile-favorite-item">
+                    <img src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>" alt="<%= recipe.name %>" loading="lazy" />
+                    <div class="profile-favorite-item__content">
+                      <h4 title="<%= recipe.name %>"><%= recipe.name %></h4>
+                      <p><%= recipe.category %> • <%= recipe.time %> min</p>
+                      <% if (recipe.Movie) { %>
+                        <span class="profile-favorite-item__movie"><%= recipe.Movie.title %></span>
+                      <% } %>
+                    </div>
+                    <i class="fa-solid fa-heart profile-favorite-item__icon"></i>
+                  </a>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="account-empty">Aucune recette en favoris.</p>
+            <% } %>
+          </div>
+
+          <!-- Notes Films -->
+          <div class="profile-favorites__column">
+            <div class="profile-favorites__column-header">
+              <h3><i class="fa-solid fa-star"></i> Films notés</h3>
+              <span class="profile-collections__count"><%= ratedMoviesCount || 0 %></span>
+            </div>
+            <% if (ratedMovies && ratedMovies.length > 0) { %>
+              <div class="profile-favorites__list">
+                <% ratedMovies.slice(0, 6).forEach(movie => { %>
+                  <a href="/recipes-movie/<%= movie.id %>" class="profile-favorite-item">
+                    <img src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>" alt="<%= movie.title %>" loading="lazy" />
+                    <div class="profile-favorite-item__content">
+                      <h4 title="<%= movie.title %>"><%= movie.title %></h4>
+                      <p><%= movie.year %> • <%= movie.genre %></p>
+                    </div>
+                    <div class="profile-favorite-item__rating">
+                      <i class="fa-solid fa-star"></i>
+                      <span><%= movie.userScore %>/5</span>
+                    </div>
+                  </a>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="account-empty">Aucun film noté.</p>
+            <% } %>
+          </div>
+
+          <!-- Notes Recettes -->
+          <div class="profile-favorites__column">
+            <div class="profile-favorites__column-header">
+              <h3><i class="fa-solid fa-star"></i> Recettes notées</h3>
+              <span class="profile-collections__count"><%= ratedRecipesCount || 0 %></span>
+            </div>
+            <% if (ratedRecipes && ratedRecipes.length > 0) { %>
+              <div class="profile-favorites__list">
+                <% ratedRecipes.slice(0, 6).forEach(recipe => { %>
+                  <a href="/recipes-movie/details/<%= recipe.id %>" class="profile-favorite-item">
+                    <img src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>" alt="<%= recipe.name %>" loading="lazy" />
+                    <div class="profile-favorite-item__content">
+                      <h4 title="<%= recipe.name %>"><%= recipe.name %></h4>
+                      <p><%= recipe.category %> • <%= recipe.time %> min</p>
+                      <% if (recipe.Movie) { %>
+                        <span class="profile-favorite-item__movie"><%= recipe.Movie.title %></span>
+                      <% } %>
+                    </div>
+                    <div class="profile-favorite-item__rating">
+                      <i class="fa-solid fa-star"></i>
+                      <span><%= recipe.userScore %>/5</span>
+                    </div>
+                  </a>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <p class="account-empty">Aucune recette notée.</p>
+            <% } %>
+          </div>
+        </div>
+      </section>
+
       <section class="profile-collections">
         <header class="profile-collections__header">
           <h2>Mes recettes, films &amp; avis</h2>
@@ -247,12 +377,13 @@
                   data-edit-status="<%= recipe.edit_status || 'none' %>"
                 >
                   <img
-                    src="<%= recipe.picture || '/images/image-default-profile.jpg' %>"
+                    src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
                     alt="Recette <%= recipe.name %>"
+                    loading="lazy"
                   />
                   <div class="account-item__content">
                     <div class="account-item__header">
-                      <h4 class="account-item__title"><%= recipe.name %></h4>
+                      <h4 class="account-item__title" title="<%= recipe.name %>"><%= recipe.name %></h4>
                       <span class="account-item__status <%= recipe.status ? 'is-approved' : 'is-pending' %>">
                         <%= recipe.status ? 'Validé' : 'Validation en attente' %>
                       </span>
@@ -339,12 +470,13 @@
                   data-status="<%= movie.status ? 'validated' : 'draft' %>"
                 >
                   <img
-                    src="<%= movie.picture || '/images/image-default-profile.jpg' %>"
+                    src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>"
                     alt="Film <%= movie.title %>"
+                    loading="lazy"
                   />
                   <div class="account-item__content">
                     <div class="account-item__header">
-                      <h4 class="account-item__title"><%= movie.title %></h4>
+                      <h4 class="account-item__title" title="<%= movie.title %>"><%= movie.title %></h4>
                       <span class="account-item__status <%= movie.status ? 'is-approved' : 'is-pending' %>">
                         <%= movie.status ? 'Validé' : 'Validation en attente' %>
                       </span>
