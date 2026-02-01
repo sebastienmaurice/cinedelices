@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const newState = data.isFavorite;
             btn.dataset.isFavorite = newState;
 
-            const icon = btn.querySelector("i");
-            if (icon) {
-              icon.className = newState ? "fa-solid fa-heart" : "fa-regular fa-heart";
+            // Remplacer l'icône SVG
+            if (window.LucideIcons) {
+              window.LucideIcons.replace(btn, 'heart', { filled: newState });
             }
 
             const textSpan = btn.querySelector(".btn-favorite__text");
@@ -231,10 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const notification = document.createElement("div");
     notification.className = `favorites-notification favorites-notification--${type}`;
+
+    const iconName = type === "success" ? "check-circle" : type === "error" ? "alert-circle" : "info";
+    const iconSVG = window.LucideIcons ? window.LucideIcons.create(iconName) : '';
     notification.innerHTML = `
-      <i class="fa-solid ${
-        type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle"
-      }"></i>
+      ${iconSVG}
       <span>${message}</span>
     `;
 

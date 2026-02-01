@@ -392,6 +392,23 @@ a:hover {
 }
 
 /* ====================================================== */
+/* ICÔNES LUCIDE (SVG inline)
+====================================================== */
+/**
+ * Styles globaux pour les icônes Lucide SVG
+ * - Utilisées pour toutes les icônes fonctionnelles du site
+ * - Héritent de la couleur du texte via currentColor
+ */
+.lucide-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-block;
+  vertical-align: middle;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+/* ====================================================== */
 /* ICÔNES HEADER (Favoris ❤️ et Mon compte 👤)
 ====================================================== */
 /**
@@ -455,7 +472,7 @@ a:hover {
   box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
 }
 
-/* Icône Connexion (clé/login) - Style doré */
+/* Icône Connexion (mobile uniquement) - Style doré */
 .header-icon--login {
   background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
   border-color: var(--dore-popcorn);
@@ -502,29 +519,140 @@ a:hover {
   display: none;
 }
 
-/* Style des icônes dans le menu mobile */
+/* Style des icônes dans le menu mobile (icône-only, sans texte) */
 @media (max-width: 800px) {
   .navigationheader-auth .header-icon {
-    width: auto;
-    height: auto;
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
-    gap: 0.5rem;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    gap: 0;
   }
 
   .navigationheader-auth .header-icon__label {
-    display: inline;
-    font-weight: 600;
-    font-size: 0.95rem;
+    display: none; /* Masqué : icônes uniquement dans le menu burger */
   }
 
-  .navigationheader-auth .header-icon i {
-    font-size: 1rem;
+  .navigationheader-auth .header-icon .lucide-icon {
+    width: 1.1rem;
+    height: 1.1rem;
   }
 }
 
 /* ====================================================== */
-/* DROPDOWN UTILISATEUR
+/* DROPDOWN MON COMPTE (MOBILE - Menu Burger)
+====================================================== */
+.mobile-account-dropdown {
+  width: 100%;
+  display: none; /* Caché sur desktop */
+}
+
+@media (max-width: 800px) {
+  .mobile-account-dropdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .mobile-account-dropdown__trigger {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-account-dropdown__trigger .header-icon__label {
+    display: none; /* Masqué : icône uniquement */
+  }
+
+  .mobile-account-dropdown__arrow {
+    display: none; /* Masqué : pas de flèche en mode icône-only */
+  }
+
+  .mobile-account-dropdown.is-open .mobile-account-dropdown__arrow {
+    display: none;
+  }
+
+  /* Menu dropdown (style similaire au desktop) */
+  .mobile-account-dropdown__menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 180px;
+    background: linear-gradient(135deg, var(--bleu-intermediaire), var(--bleu-nuit));
+    border: 1px solid rgba(198, 166, 100, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(198, 166, 100, 0.1);
+    overflow: hidden;
+    z-index: 1000;
+    padding: 0;
+  }
+
+  .mobile-account-dropdown.is-open .mobile-account-dropdown__menu {
+    display: flex;
+  }
+
+  .mobile-account-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    color: var(--argent-ecran);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: transparent;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+
+  .mobile-account-dropdown__item:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-account-dropdown__item span {
+    display: inline; /* Afficher le texte */
+  }
+
+  .mobile-account-dropdown__item .lucide-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--dore-popcorn);
+  }
+
+  .mobile-account-dropdown__item:hover,
+  .mobile-account-dropdown__item:active {
+    background: rgba(198, 166, 100, 0.1);
+    color: var(--dore-popcorn);
+  }
+
+  .mobile-account-dropdown__item--logout:hover,
+  .mobile-account-dropdown__item--logout:active {
+    background: rgba(215, 38, 56, 0.15);
+    color: var(--rouge-projecteur);
+  }
+
+  .mobile-account-dropdown__item--logout:hover .lucide-icon,
+  .mobile-account-dropdown__item--logout:active .lucide-icon {
+    color: var(--rouge-projecteur);
+  }
+}
+
+/* ====================================================== */
+/* DROPDOWN UTILISATEUR (DESKTOP)
 ====================================================== */
 /**
  * Dropdown pour le menu utilisateur connecté
@@ -601,11 +729,10 @@ a:hover {
   border-bottom: none;
 }
 
-.user-dropdown__item i {
-  font-size: 1rem;
+.user-dropdown__item .lucide-icon {
+  width: 1rem;
+  height: 1rem;
   color: var(--dore-popcorn);
-  width: 20px;
-  text-align: center;
 }
 
 .user-dropdown__item:hover {
@@ -618,7 +745,7 @@ a:hover {
   color: var(--rouge-projecteur);
 }
 
-.user-dropdown__item--logout:hover i {
+.user-dropdown__item--logout:hover .lucide-icon {
   color: var(--rouge-projecteur);
 }
 
@@ -628,11 +755,11 @@ a:hover {
   color: var(--rouge-projecteur);
 }
 
-.user-dropdown__item--register:hover i {
+.user-dropdown__item--register:hover .lucide-icon {
   color: var(--rouge-projecteur);
 }
 
-/* Animation de l'icône trigger quand ouvert */
+/* Animation de l'icône trigger quand ouvert (style rouge par défaut) */
 .user-dropdown.is-open .user-dropdown__trigger {
   background: var(--rouge-projecteur);
   border-color: var(--rouge-projecteur);
@@ -640,7 +767,7 @@ a:hover {
   box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
 }
 
-/* Variante dorée pour le dropdown connexion */
+/* Variante dorée (legacy - utilisée uniquement si header-icon--login appliqué) */
 .user-dropdown.is-open .user-dropdown__trigger.header-icon--login {
   background: var(--dore-popcorn);
   border-color: var(--dore-popcorn);

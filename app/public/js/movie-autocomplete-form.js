@@ -316,7 +316,7 @@
       <div class="film-search-result-empty">
         <div class="film-result-content">
           <span class="film-result-message">
-            <i class="fa-solid fa-circle-exclamation"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
             Aucun film trouvé pour "${escapeHtml(query)}"
           </span>
           <p class="film-result-help">
@@ -344,7 +344,7 @@
     searchResultsDropdown.innerHTML = `
       <div class="film-search-result-loading">
         <div class="film-result-content">
-          <i class="fa-solid fa-spinner fa-spin"></i>
+          <i class="lucide-icon lucide-spin"></i>
           <span>Recherche en cours...</span>
         </div>
       </div>
@@ -368,7 +368,7 @@
     searchResultsDropdown.innerHTML = `
       <div class="film-search-result-error">
         <div class="film-result-content">
-          <i class="fa-solid fa-triangle-exclamation"></i>
+          <i class="lucide-icon"></i>
           <span>${escapeHtml(message)}</span>
         </div>
       </div>

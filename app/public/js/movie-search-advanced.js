@@ -255,13 +255,13 @@
         <div class="search-result-empty">
           <div class="search-result-empty-content">
             <p class="search-result-empty-message">
-              <i class="fa-solid fa-film"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
               Aucun film trouvé pour "${escapeHtml(query)}"
             </p>
             <a href="/add-recipes-movies/?query=${encodeURIComponent(
               query
             )}" class="btn btn--gold btn-sm">
-              <i class="fa-solid fa-plus"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
               Créer une fiche film
             </a>
           </div>
@@ -310,7 +310,7 @@
     // Note (si disponible)
     const noteHtml = movie.note
       ? `<span class="search-result-note">
-           <i class="fa-solid fa-star"></i>
+           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
            ${movie.note.toFixed(1)}
          </span>`
       : "";
@@ -381,7 +381,7 @@
           }
         </div>
         <div class="search-result-card-arrow">
-          <i class="fa-solid fa-chevron-right"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m9 18 6-6-6-6"/></svg>
         </div>
       </a>
     `;
@@ -455,7 +455,7 @@
     searchResults.innerHTML = `
       <div class="search-result-loading">
         <div class="search-result-loading-content">
-          <i class="fa-solid fa-spinner fa-spin"></i>
+          <i class="lucide-icon lucide-spin"></i>
           <span>Recherche en cours...</span>
         </div>
       </div>
@@ -477,7 +477,7 @@
     searchResults.innerHTML = `
       <div class="search-result-error">
         <div class="search-result-error-content">
-          <i class="fa-solid fa-exclamation-triangle"></i>
+          <i class="lucide-icon"></i>
           <span>${escapeHtml(message)}</span>
         </div>
       </div>

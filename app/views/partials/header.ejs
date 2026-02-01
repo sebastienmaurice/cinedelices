@@ -19,33 +19,42 @@
     <a href="/contact-about/" class="navigationheader-link">Contact</a>
 
     <% if (typeof role === "undefined") { %>
-    <!-- Boutons auth en version mobile (affichés dans le menu burger) -->
+    <!-- Bouton Mon compte pour utilisateur non connecté (menu burger) -->
     <div class="navigationheader-auth">
-      <button type="button" class="header-icon header-icon--login js-open-login" title="Se connecter">
-        <i class="fa-solid fa-right-to-bracket"></i>
-        <span class="header-icon__label">Connexion</span>
-      </button>
-      <button type="button" class="header-icon header-icon--register js-open-register" title="Créer un compte">
-        <i class="fa-solid fa-user-plus"></i>
-        <span class="header-icon__label">Inscription</span>
+      <button type="button" class="header-icon header-icon--account js-open-login" title="Mon compte">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="header-icon__label">Mon compte</span>
       </button>
     </div>
     <% } %>
 
     <% if (typeof role !== "undefined") { %>
-    <!-- Boutons déconnexion et compte en version mobile (affichés dans le menu burger) -->
+    <!-- Boutons utilisateur connecté (menu burger) -->
     <div class="navigationheader-auth">
+      <!-- Favoris -->
       <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" title="Mes favoris">
-        <i class="fa-solid fa-heart"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         <span class="header-icon__label">Favoris</span>
       </a>
-      <a href="/auth/logout" class="btn btn--gold btn--sm">
-        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
-      </a>
-      <a href="/auth/profil/<%= userId %>" class="header-icon header-icon--account" title="Mon compte">
-        <i class="fa-solid fa-user"></i>
-        <span class="header-icon__label">Mon compte</span>
-      </a>
+
+      <!-- Dropdown Mon compte (mobile) -->
+      <div class="mobile-account-dropdown">
+        <button type="button" class="header-icon header-icon--account mobile-account-dropdown__trigger" id="mobileAccountTrigger" aria-expanded="false" aria-haspopup="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="header-icon__label">Mon compte</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon mobile-account-dropdown__arrow"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="mobile-account-dropdown__menu" id="mobileAccountMenu" aria-hidden="true">
+          <a href="/auth/profil/<%= userId %>" class="mobile-account-dropdown__item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Mon profil</span>
+          </a>
+          <a href="/auth/logout" class="mobile-account-dropdown__item mobile-account-dropdown__item--logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span>Se déconnecter</span>
+          </a>
+        </div>
+      </div>
     </div>
     <% } %>
   </nav>
@@ -55,16 +64,16 @@
   <div class="buttons__header">
     <!-- Dropdown connexion -->
     <div class="user-dropdown" id="authDropdown">
-      <button class="header-icon header-icon--login user-dropdown__trigger" id="authDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Connexion">
-        <i class="fa-solid fa-right-to-bracket"></i>
+      <button class="header-icon header-icon--account user-dropdown__trigger" id="authDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Mon compte">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
       <div class="user-dropdown__menu" id="authDropdownMenu" aria-hidden="true">
         <button type="button" class="user-dropdown__item js-open-login">
-          <i class="fa-solid fa-right-to-bracket"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span>Se connecter</span>
         </button>
         <button type="button" class="user-dropdown__item user-dropdown__item--register js-open-register">
-          <i class="fa-solid fa-user-plus"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
           <span>Créer un compte</span>
         </button>
       </div>
@@ -76,20 +85,20 @@
   <% if (typeof role !== "undefined") { %>
   <div class="buttons__header">
     <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" id="btnFavorites" title="Mes favoris">
-      <i class="fa-solid fa-heart"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
     </a>
     <!-- Dropdown utilisateur -->
     <div class="user-dropdown" id="userDropdown">
       <button class="header-icon header-icon--account user-dropdown__trigger" id="userDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Mon compte">
-        <i class="fa-solid fa-user"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
       <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
         <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
-          <i class="fa-solid fa-user"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span>Mon compte</span>
         </a>
         <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
-          <i class="fa-solid fa-right-from-bracket"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
           <span>Se déconnecter</span>
         </a>
       </div>
@@ -324,5 +333,32 @@
       }
     });
   });
+
+  // ===== Gestion du dropdown Mon compte (mobile) =====
+  const mobileAccountDropdown = document.querySelector('.mobile-account-dropdown');
+  const mobileAccountTrigger = document.getElementById('mobileAccountTrigger');
+
+  if (mobileAccountDropdown && mobileAccountTrigger) {
+    mobileAccountTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileAccountDropdown.classList.toggle('is-open');
+      const isOpen = mobileAccountDropdown.classList.contains('is-open');
+      mobileAccountTrigger.setAttribute('aria-expanded', isOpen);
+      const menu = document.getElementById('mobileAccountMenu');
+      if (menu) {
+        menu.setAttribute('aria-hidden', !isOpen);
+      }
+    });
+
+    // Fermer au clic extérieur (mobile)
+    document.addEventListener('click', (e) => {
+      if (!mobileAccountDropdown.contains(e.target)) {
+        mobileAccountDropdown.classList.remove('is-open');
+        mobileAccountTrigger.setAttribute('aria-expanded', 'false');
+        const menu = document.getElementById('mobileAccountMenu');
+        if (menu) menu.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
 })();
 </script>

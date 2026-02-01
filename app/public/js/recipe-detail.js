@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const countMatch = currentText.match(/\((\d+)\)/);
       if (countMatch) {
         seeMoreButton.innerHTML = `
-          <i class="fa-solid fa-chevron-up"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m18 15-6-6-6 6"/></svg>
           Voir Moins
         `;
       }
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
       seeMoreButton.classList.remove("expanded");
       const totalHidden = hiddenReviews.length;
       seeMoreButton.innerHTML = `
-        <i class="fa-solid fa-chevron-down"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m6 9 6 6 6-6"/></svg>
         Voir Plus (${totalHidden})
       `;
 
