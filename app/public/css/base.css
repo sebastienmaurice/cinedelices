@@ -123,70 +123,126 @@
   --tag-shadow-highlight-hover: 0 4px 12px rgba(198, 166, 100, 0.5);
 
   /* ====================================================== */
-  /* BOUTONS - Système Premium Ciné Délices
+  /* BOUTONS - Système Premium Cinéma Luxe
   ====================================================== */
-  /* Bouton Primaire (CTA) - Sombre avec accent doré */
-  --btn-primary-bg: var(--bleu-nuit);
-  --btn-primary-bg-hover: #162538;
-  --btn-primary-text: var(--or-100);
-  --btn-primary-text-hover: var(--jaune-blond);
-  --btn-primary-border: rgba(198, 166, 100, 0.4);
-  --btn-primary-border-hover: var(--or-100);
-  --btn-primary-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --btn-primary-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(198, 166, 100, 0.15);
+  /**
+   * Inspiré du style cinéma premium avec effets de glow sur les bordures
+   * Hiérarchie : Primary (doré plein) > Accent (rouge plein) > Outline (sombre + glow)
+   */
 
-  /* Bouton Secondaire - Bleu intermédiaire élégant */
-  --btn-secondary-bg: var(--bleu-intermediaire);
-  --btn-secondary-bg-hover: var(--bleu-clair);
-  --btn-secondary-text: var(--argent-ecran);
-  --btn-secondary-text-hover: #fff;
-  --btn-secondary-border: rgba(255, 255, 255, 0.15);
-  --btn-secondary-border-hover: rgba(255, 255, 255, 0.3);
-  --btn-secondary-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-  --btn-secondary-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.35);
+  /* Bouton Primaire (CTA Principal) - Fond DORÉ PLEIN avec glow */
+  --btn-primary-bg: linear-gradient(
+    135deg,
+    var(--or-100) 0%,
+    var(--or-200) 100%
+  );
+  --btn-primary-bg-hover: linear-gradient(
+    135deg,
+    var(--jaune-blond) 0%,
+    var(--or-100) 100%
+  );
+  --btn-primary-text: var(--bleu-nuit);
+  --btn-primary-text-hover: var(--bleu-nuit);
+  --btn-primary-border: var(--or-100);
+  --btn-primary-border-hover: var(--jaune-blond);
+  --btn-primary-shadow:
+    0 0 8px rgba(198, 166, 100, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --btn-primary-shadow-hover:
+    0 0 15px rgba(198, 166, 100, 0.6), 0 0 30px rgba(198, 166, 100, 0.3),
+    0 6px 20px rgba(0, 0, 0, 0.3);
 
-  /* Bouton Outline/Tertiaire - Transparent avec bordure */
+  /* Bouton Secondaire - Sombre avec bordure dorée (style outline premium) */
+  --btn-secondary-bg: rgba(13, 27, 42, 0.8);
+  --btn-secondary-bg-hover: rgba(27, 38, 59, 0.9);
+  --btn-secondary-text: var(--or-100);
+  --btn-secondary-text-hover: var(--jaune-blond);
+  --btn-secondary-border: rgba(198, 166, 100, 0.5);
+  --btn-secondary-border-hover: var(--or-100);
+  --btn-secondary-shadow:
+    0 0 6px rgba(198, 166, 100, 0.2), 0 3px 10px rgba(0, 0, 0, 0.25);
+  --btn-secondary-shadow-hover:
+    0 0 12px rgba(198, 166, 100, 0.4), 0 5px 15px rgba(0, 0, 0, 0.35);
+
+  /* Bouton Outline - Transparent avec bordure dorée lumineuse */
   --btn-outline-bg: transparent;
   --btn-outline-bg-hover: rgba(198, 166, 100, 0.1);
   --btn-outline-text: var(--or-100);
   --btn-outline-text-hover: var(--jaune-blond);
-  --btn-outline-border: rgba(198, 166, 100, 0.5);
+  --btn-outline-border: rgba(198, 166, 100, 0.6);
   --btn-outline-border-hover: var(--or-100);
+  --btn-outline-shadow: 0 0 4px rgba(198, 166, 100, 0.2);
+  --btn-outline-shadow-hover: 0 0 10px rgba(198, 166, 100, 0.4);
 
-  /* Bouton Accent - Doré subtil (pour CTA secondaires) */
-  --btn-accent-bg: rgba(198, 166, 100, 0.15);
-  --btn-accent-bg-hover: var(--or-100);
-  --btn-accent-text: var(--or-100);
-  --btn-accent-text-hover: var(--bleu-nuit);
-  --btn-accent-border: var(--or-100);
-  --btn-accent-shadow-hover: 0 4px 15px rgba(198, 166, 100, 0.3);
+  /* Bouton Accent (CTA Secondaire) - Fond ROUGE PLEIN avec glow */
+  --btn-accent-bg: linear-gradient(
+    135deg,
+    #c41e30 0%,
+    var(--rouge-projecteur) 100%
+  );
+  --btn-accent-bg-hover: linear-gradient(
+    135deg,
+    var(--rouge-projecteur) 0%,
+    #e8344a 100%
+  );
+  --btn-accent-text: var(--argent-ecran);
+  --btn-accent-text-hover: #fff;
+  --btn-accent-border: var(--rouge-projecteur);
+  --btn-accent-border-hover: #e8344a;
+  --btn-accent-shadow:
+    0 0 8px rgba(215, 38, 56, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --btn-accent-shadow-hover:
+    0 0 15px rgba(215, 38, 56, 0.6), 0 0 30px rgba(215, 38, 56, 0.3),
+    0 6px 20px rgba(0, 0, 0, 0.3);
 
-  /* Bouton Danger - Rouge maîtrisé */
+  /* Bouton Danger - Rouge outline (pour actions destructives) */
   --btn-danger-bg: rgba(215, 38, 56, 0.15);
   --btn-danger-bg-hover: var(--rouge-projecteur);
   --btn-danger-text: var(--rouge-projecteur);
   --btn-danger-text-hover: #fff;
   --btn-danger-border: var(--rouge-projecteur);
-  --btn-danger-shadow-hover: 0 4px 15px rgba(215, 38, 56, 0.3);
+  --btn-danger-shadow: 0 0 4px rgba(215, 38, 56, 0.2);
+  --btn-danger-shadow-hover:
+    0 0 12px rgba(215, 38, 56, 0.5), 0 4px 15px rgba(215, 38, 56, 0.3);
 
-  /* Bouton Hero Cinema - Effet néon premium */
-  --btn-hero-bg: var(--rouge-projecteur);
-  --btn-hero-bg-hover: var(--dore-popcorn);
+  /* Bouton Success - Vert validation */
+  --btn-success-bg: rgba(40, 167, 69, 0.15);
+  --btn-success-bg-hover: var(--vert-valid);
+  --btn-success-text: var(--vert-valid);
+  --btn-success-text-hover: #fff;
+  --btn-success-border: var(--vert-valid);
+  --btn-success-shadow: 0 0 4px rgba(40, 167, 69, 0.2);
+  --btn-success-shadow-hover:
+    0 0 12px rgba(40, 167, 69, 0.5), 0 4px 15px rgba(40, 167, 69, 0.3);
+
+  /* Bouton Hero Cinema - Effet néon premium (pour hero slider) */
+  --btn-hero-bg: linear-gradient(
+    135deg,
+    #c41e30 0%,
+    var(--rouge-projecteur) 100%
+  );
+  --btn-hero-bg-hover: linear-gradient(
+    135deg,
+    var(--or-100) 0%,
+    var(--or-200) 100%
+  );
   --btn-hero-text: var(--argent-ecran);
   --btn-hero-text-hover: var(--bleu-nuit);
   --btn-hero-border: var(--rouge-projecteur);
-  --btn-hero-border-hover: var(--bleu-nuit);
-  --btn-hero-glow: 0 0 12px var(--rouge-projecteur),
-                   0 0 24px rgba(215, 38, 56, 0.5),
-                   0 0 36px rgba(215, 38, 56, 0.3);
-  --btn-hero-glow-hover: 0 0 12px var(--dore-popcorn),
-                         0 0 24px rgba(198, 166, 100, 0.5),
-                         0 0 36px rgba(198, 166, 100, 0.3);
+  --btn-hero-border-hover: var(--or-100);
+  --btn-hero-glow:
+    0 0 10px var(--rouge-projecteur), 0 0 20px rgba(215, 38, 56, 0.5),
+    0 0 40px rgba(215, 38, 56, 0.25);
+  --btn-hero-glow-hover:
+    0 0 10px var(--dore-popcorn), 0 0 20px rgba(198, 166, 100, 0.5),
+    0 0 40px rgba(198, 166, 100, 0.25);
 
   /* Effets Premium - Micro-interactions */
   --btn-transition-premium: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --btn-transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --btn-scale-hover: 1.03;
   --btn-lift-hover: -3px;
+  --btn-border-radius: 25px; /* Coins très arrondis style cinéma */
+  --btn-border-radius-sm: 20px;
 
   /* ====================================================== */
   /* COULEURS UTILITAIRES
@@ -522,7 +578,11 @@ a:hover {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(198, 166, 100, 0.15),
+    rgba(198, 166, 100, 0.05)
+  );
   border: 2px solid var(--dore-popcorn);
   color: var(--dore-popcorn);
   font-size: 1.1rem;
@@ -549,7 +609,11 @@ a:hover {
 
 /* Icône Mon compte (utilisateur) - Style spécifique */
 .header-icon--account {
-  background: linear-gradient(135deg, rgba(215, 38, 56, 0.15), rgba(215, 38, 56, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(215, 38, 56, 0.15),
+    rgba(215, 38, 56, 0.05)
+  );
   border-color: var(--rouge-projecteur);
   color: var(--rouge-projecteur);
 }
@@ -563,7 +627,11 @@ a:hover {
 
 /* Icône Connexion (mobile uniquement) - Style doré */
 .header-icon--login {
-  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(198, 166, 100, 0.15),
+    rgba(198, 166, 100, 0.05)
+  );
   border-color: var(--dore-popcorn);
   color: var(--dore-popcorn);
 }
@@ -577,7 +645,11 @@ a:hover {
 
 /* Icône Inscription - Style rouge */
 .header-icon--register {
-  background: linear-gradient(135deg, rgba(215, 38, 56, 0.15), rgba(215, 38, 56, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(215, 38, 56, 0.15),
+    rgba(215, 38, 56, 0.05)
+  );
   border-color: var(--rouge-projecteur);
   color: var(--rouge-projecteur);
 }
@@ -598,7 +670,11 @@ a:hover {
 
 .header-icon--disabled:hover {
   transform: none;
-  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15), rgba(198, 166, 100, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(198, 166, 100, 0.15),
+    rgba(198, 166, 100, 0.05)
+  );
   color: var(--dore-popcorn);
   box-shadow: none;
 }
@@ -677,10 +753,16 @@ a:hover {
     left: 50%;
     transform: translateX(-50%);
     min-width: 180px;
-    background: linear-gradient(135deg, var(--bleu-intermediaire), var(--bleu-nuit));
+    background: linear-gradient(
+      135deg,
+      var(--bleu-intermediaire),
+      var(--bleu-nuit)
+    );
     border: 1px solid rgba(198, 166, 100, 0.3);
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(198, 166, 100, 0.1);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.4),
+      0 0 15px rgba(198, 166, 100, 0.1);
     overflow: hidden;
     z-index: 1000;
     padding: 0;
@@ -762,10 +844,16 @@ a:hover {
   top: calc(100% + 10px);
   right: 0;
   min-width: 180px;
-  background: linear-gradient(135deg, var(--bleu-intermediaire), var(--bleu-nuit));
+  background: linear-gradient(
+    135deg,
+    var(--bleu-intermediaire),
+    var(--bleu-nuit)
+  );
   border: 1px solid rgba(198, 166, 100, 0.3);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(198, 166, 100, 0.1);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(198, 166, 100, 0.1);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
@@ -996,57 +1084,59 @@ a:hover {
  */
 /**
  * ====================================================
- * SYSTÈME DE BOUTONS PREMIUM - CINÉ DÉLICES
+ * SYSTÈME DE BOUTONS PREMIUM - CINÉMA LUXE
  * ====================================================
- * Nomenclature sémantique :
- * - .btn : Base commune (obligatoire)
- * - .btn-primary : CTA principal (sombre + accent doré)
- * - .btn-secondary : Actions secondaires (bleu élégant)
- * - .btn-accent : CTA secondaire (doré subtil)
- * - .btn-outline : Actions tertiaires (transparent + bordure)
- * - .btn-danger : Actions destructives (rouge maîtrisé)
- * - .btn-sm : Taille compacte
- * - .btn-lg : Taille large
+ * Style inspiré du cinéma premium avec effets de glow
  *
- * Classes legacy conservées pour compatibilité :
- * .btn--gold, .btn--red, .btn--ghost, .btn--blue-night
+ * Hiérarchie visuelle :
+ * - .btn-primary : CTA principal (fond DORÉ plein + glow)
+ * - .btn-accent : CTA secondaire (fond ROUGE plein + glow)
+ * - .btn-secondary : Actions secondaires (sombre + bordure dorée)
+ * - .btn-outline : Actions tertiaires (transparent + bordure glow)
+ * - .btn-danger : Actions destructives (rouge outline)
+ * - .btn-success : Validation (vert outline)
+ *
+ * Classes legacy : .btn--gold, .btn--red, .btn--ghost, .btn--blue-night
  */
 
-/* Base commune - Élégance cinéma */
+/* Base commune - Élégance cinéma luxe */
 .btn {
   font-weight: 600;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  padding: 0.6rem 1.25rem;
-  border-radius: 8px;
-  border: 1.5px solid transparent;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--btn-border-radius);
+  border: 2px solid transparent;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
+  transition: var(--btn-transition-smooth);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
   user-select: none;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
+  text-transform: none;
 }
 
-/* Suppression du pseudo-élément par défaut */
-.btn::before {
-  display: none;
+/* Icône Lucide dans boutons */
+.btn .lucide-icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
 }
 
 /* États communs */
 .btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(var(--btn-lift-hover));
 }
 
 .btn:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.98);
   transition-duration: 0.1s;
 }
 
@@ -1059,17 +1149,23 @@ a:hover {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
+  filter: grayscale(30%);
 }
 
 /* ====================================================== */
-/* BOUTON PRIMAIRE - CTA Principal (Sombre + Accent Doré)
+/* BOUTON PRIMAIRE - Fond DORÉ Plein avec Glow
 ====================================================== */
+/**
+ * CTA Principal : "Voir les recettes", "Découvrir"
+ * Fond doré gradient, texte sombre, effet glow doré
+ */
 .btn-primary,
 .btn--gold-special {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   border-color: var(--btn-primary-border);
   box-shadow: var(--btn-primary-shadow);
+  font-weight: 700;
 }
 
 .btn-primary:hover:not(:disabled),
@@ -1078,11 +1174,16 @@ a:hover {
   color: var(--btn-primary-text-hover);
   border-color: var(--btn-primary-border-hover);
   box-shadow: var(--btn-primary-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* ====================================================== */
-/* BOUTON SECONDAIRE - Actions Secondaires (Bleu Élégant)
+/* BOUTON SECONDAIRE - Sombre avec Bordure Dorée
 ====================================================== */
+/**
+ * Actions secondaires : "Revenir", navigation
+ * Fond sombre translucide, bordure dorée avec glow subtil
+ */
 .btn-secondary,
 .btn--blue-night {
   background: var(--btn-secondary-bg);
@@ -1097,36 +1198,47 @@ a:hover {
   color: var(--btn-secondary-text-hover);
   border-color: var(--btn-secondary-border-hover);
   box-shadow: var(--btn-secondary-shadow-hover);
+  transform: translateY(var(--btn-lift-hover));
 }
 
 /* ====================================================== */
-/* BOUTON ACCENT - CTA Secondaire (Doré Subtil)
+/* BOUTON ACCENT - Fond ROUGE Plein avec Glow
 ====================================================== */
+/**
+ * CTA Secondaire : "Je crée ma recette", "Ajouter"
+ * Fond rouge gradient, texte clair, effet glow rouge
+ */
 .btn-accent,
 .btn--gold {
   background: var(--btn-accent-bg);
   color: var(--btn-accent-text);
   border-color: var(--btn-accent-border);
-  box-shadow: none;
+  box-shadow: var(--btn-accent-shadow);
+  font-weight: 700;
 }
 
 .btn-accent:hover:not(:disabled),
 .btn--gold:hover:not(:disabled) {
   background: var(--btn-accent-bg-hover);
   color: var(--btn-accent-text-hover);
-  border-color: var(--btn-accent-border);
+  border-color: var(--btn-accent-border-hover);
   box-shadow: var(--btn-accent-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* ====================================================== */
-/* BOUTON OUTLINE - Actions Tertiaires (Transparent)
+/* BOUTON OUTLINE - Transparent avec Bordure Glow
 ====================================================== */
+/**
+ * Actions tertiaires : liens, retour
+ * Fond transparent, bordure dorée lumineuse
+ */
 .btn-outline,
 .btn--ghost {
   background: var(--btn-outline-bg);
   color: var(--btn-outline-text);
   border-color: var(--btn-outline-border);
-  box-shadow: none;
+  box-shadow: var(--btn-outline-shadow);
 }
 
 .btn-outline:hover:not(:disabled),
@@ -1134,18 +1246,23 @@ a:hover {
   background: var(--btn-outline-bg-hover);
   color: var(--btn-outline-text-hover);
   border-color: var(--btn-outline-border-hover);
+  box-shadow: var(--btn-outline-shadow-hover);
 }
 
 /* ====================================================== */
-/* BOUTON DANGER - Actions Destructives (Rouge Maîtrisé)
+/* BOUTON DANGER / RED - Actions Destructives
 ====================================================== */
+/**
+ * Actions destructives : "Refuser", "Supprimer"
+ * Style outline rouge avec glow au hover
+ */
 .btn-danger,
 .btn--red,
 .btn--red-special {
   background: var(--btn-danger-bg);
   color: var(--btn-danger-text);
   border-color: var(--btn-danger-border);
-  box-shadow: none;
+  box-shadow: var(--btn-danger-shadow);
 }
 
 .btn-danger:hover:not(:disabled),
@@ -1155,6 +1272,31 @@ a:hover {
   color: var(--btn-danger-text-hover);
   border-color: var(--btn-danger-border);
   box-shadow: var(--btn-danger-shadow-hover);
+  transform: translateY(var(--btn-lift-hover));
+}
+
+/* ====================================================== */
+/* BOUTON SUCCESS - Validation
+====================================================== */
+/**
+ * Actions de validation : "Valider", "Approuver"
+ * Style outline vert avec glow au hover
+ */
+.btn-success,
+.btn--success {
+  background: var(--btn-success-bg);
+  color: var(--btn-success-text);
+  border-color: var(--btn-success-border);
+  box-shadow: var(--btn-success-shadow);
+}
+
+.btn-success:hover:not(:disabled),
+.btn--success:hover:not(:disabled) {
+  background: var(--btn-success-bg-hover);
+  color: var(--btn-success-text-hover);
+  border-color: var(--btn-success-border);
+  box-shadow: var(--btn-success-shadow-hover);
+  transform: translateY(var(--btn-lift-hover));
 }
 
 /* ====================================================== */
@@ -1163,14 +1305,15 @@ a:hover {
 .btn-sm,
 .btn--sm {
   font-size: 0.8rem;
-  padding: 0.4rem 0.9rem;
-  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  border-radius: var(--btn-border-radius-sm);
 }
 
 .btn-lg {
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  font-size: 1.05rem;
+  padding: 0.8rem 1.75rem;
+  border-radius: var(--btn-border-radius);
+  font-weight: 700;
 }
 
 /* ====================================================== */
@@ -1233,13 +1376,15 @@ a:hover {
 
 /* Animation de pulsation subtile au repos */
 @keyframes hero-glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: var(--btn-hero-glow);
   }
   50% {
-    box-shadow: 0 0 15px var(--rouge-projecteur),
-                0 0 30px rgba(215, 38, 56, 0.6),
-                0 0 45px rgba(215, 38, 56, 0.4);
+    box-shadow:
+      0 0 15px var(--rouge-projecteur),
+      0 0 30px rgba(215, 38, 56, 0.6),
+      0 0 45px rgba(215, 38, 56, 0.4);
   }
 }
 
@@ -1429,7 +1574,8 @@ a:hover {
   font-family: var(--font-body);
   margin-top: 4rem;
   position: relative;
-  box-shadow: 0 -4px 20px rgba(13, 27, 42, 0.6),
+  box-shadow:
+    0 -4px 20px rgba(13, 27, 42, 0.6),
     inset 0 1px 0 rgba(198, 166, 100, 0.1);
 }
 
@@ -1600,7 +1746,8 @@ a:hover {
   color: var(--rouge-projecteur);
   border-color: var(--rouge-projecteur);
   background: rgba(215, 38, 56, 0.15);
-  box-shadow: 0 0 15px rgba(215, 38, 56, 0.4),
+  box-shadow:
+    0 0 15px rgba(215, 38, 56, 0.4),
     inset 0 0 10px rgba(215, 38, 56, 0.1);
   transform: translateY(-2px);
 }
@@ -1760,7 +1907,9 @@ a:hover {
   border: none;
   color: var(--argent-ecran);
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
   z-index: 10;
 }
 .modal-close:hover {
@@ -1795,7 +1944,9 @@ a:hover {
   background: var(--bleu-nuit);
   color: var(--argent-ecran);
   font-family: var(--font-body);
-  transition: border-color 0.3s, background 0.3s;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
 }
 .modal-content input:focus {
   border-color: var(--dore-popcorn);
@@ -1924,11 +2075,21 @@ a:hover {
 }
 
 @keyframes confirmShake {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-4px); }
-  50% { transform: translateY(2px); }
-  75% { transform: translateY(-2px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .switch-form {
@@ -1942,7 +2103,9 @@ a:hover {
   color: var(--dore-popcorn);
   font-weight: 600;
   cursor: pointer;
-  transition: color 0.3s, transform 0.2s;
+  transition:
+    color 0.3s,
+    transform 0.2s;
 }
 .btn-link:hover {
   color: var(--dore-fonce);
