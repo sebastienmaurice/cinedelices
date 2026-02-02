@@ -123,14 +123,96 @@
   --tag-shadow-highlight-hover: 0 4px 12px rgba(198, 166, 100, 0.5);
 
   /* ====================================================== */
-  /* BOUTONS - Système Premium Cinéma Luxe
+  /* BOUTONS - Design System Cinéma Premium 2026
   ====================================================== */
   /**
-   * Inspiré du style cinéma premium avec effets de glow sur les bordures
-   * Hiérarchie : Primary (doré plein) > Accent (rouge plein) > Outline (sombre + glow)
+   * NOUVELLE HIÉRARCHIE selon le ticket (fidèle à btn 2026-1.png) :
+   *
+   * 1. BOUTONS PRINCIPAUX (Rouge → Hover Doré)
+   *    Actions sur cards : "Voir le film", "Voir les recettes", "Je passe à la recette"
+   *    Classes : .btn-cinema-primary, .btn--red
+   *
+   * 2. BOUTONS SECONDAIRES (Doré → Hover Rouge)
+   *    CTAs globaux : "Voir tous les films", "J'ajoute mon film", "Enregistrer"
+   *    Classes : .btn-cinema-secondary, .btn--gold-special
+   *
+   * Effets obligatoires :
+   *    - Coins premium arrondis (25px)
+   *    - Soft glow lumineux
+   *    - Ombres légères (effet bouton physique)
+   *    - Hover : changement couleur + glow + scale
+   *    - Focus visible (accessibilité)
    */
 
-  /* Bouton Primaire (CTA Principal) - Fond DORÉ PLEIN avec glow */
+  /* ====================================================== */
+  /* BOUTON PRINCIPAL CINÉMA - Rouge → Hover Doré
+  ====================================================== */
+  /**
+   * Actions principales sur les cards
+   * Style : Rouge luxe avec glow rouge → transition vers doré lumineux
+   */
+  --btn-cinema-primary-bg: linear-gradient(
+    145deg,
+    #e63946 0%,
+    var(--rouge-projecteur) 50%,
+    #c41e30 100%
+  );
+  --btn-cinema-primary-bg-hover: linear-gradient(
+    145deg,
+    var(--jaune-blond) 0%,
+    var(--or-100) 50%,
+    var(--or-200) 100%
+  );
+  --btn-cinema-primary-text: #fff;
+  --btn-cinema-primary-text-hover: var(--bleu-nuit);
+  --btn-cinema-primary-border: rgba(255, 255, 255, 0.2);
+  --btn-cinema-primary-border-hover: var(--or-100);
+  --btn-cinema-primary-shadow:
+    0 4px 15px rgba(215, 38, 56, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --btn-cinema-primary-shadow-hover:
+    0 6px 25px rgba(198, 166, 100, 0.5),
+    0 0 20px rgba(198, 166, 100, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  /* ====================================================== */
+  /* BOUTON SECONDAIRE CINÉMA - Doré → Hover Rouge
+  ====================================================== */
+  /**
+   * CTAs secondaires / navigation
+   * Style : Doré luxe avec glow doré → transition vers rouge cinéma
+   */
+  --btn-cinema-secondary-bg: linear-gradient(
+    145deg,
+    var(--jaune-blond) 0%,
+    var(--or-100) 50%,
+    var(--or-200) 100%
+  );
+  --btn-cinema-secondary-bg-hover: linear-gradient(
+    145deg,
+    #e63946 0%,
+    var(--rouge-projecteur) 50%,
+    #c41e30 100%
+  );
+  --btn-cinema-secondary-text: var(--bleu-nuit);
+  --btn-cinema-secondary-text-hover: #fff;
+  --btn-cinema-secondary-border: rgba(198, 166, 100, 0.3);
+  --btn-cinema-secondary-border-hover: rgba(255, 255, 255, 0.2);
+  --btn-cinema-secondary-shadow:
+    0 4px 15px rgba(198, 166, 100, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --btn-cinema-secondary-shadow-hover:
+    0 6px 25px rgba(215, 38, 56, 0.5),
+    0 0 20px rgba(215, 38, 56, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  /* ====================================================== */
+  /* BOUTONS LEGACY (compatibilité arrière)
+  ====================================================== */
+
+  /* Bouton Primary Gold (pour legacy code) */
   --btn-primary-bg: linear-gradient(
     135deg,
     var(--or-100) 0%,
@@ -173,7 +255,7 @@
   --btn-outline-shadow: 0 0 4px rgba(198, 166, 100, 0.2);
   --btn-outline-shadow-hover: 0 0 10px rgba(198, 166, 100, 0.4);
 
-  /* Bouton Accent (CTA Secondaire) - Fond ROUGE PLEIN avec glow */
+  /* Bouton Accent - Fond ROUGE PLEIN avec glow (legacy) */
   --btn-accent-bg: linear-gradient(
     135deg,
     #c41e30 0%,
@@ -235,6 +317,45 @@
   --btn-hero-glow-hover:
     0 0 10px var(--dore-popcorn), 0 0 20px rgba(198, 166, 100, 0.5),
     0 0 40px rgba(198, 166, 100, 0.25);
+
+  /* ====================================================== */
+  /* CHIPS / FILTRES - Système Genres Films
+  ====================================================== */
+  --chip-bg: rgba(27, 38, 59, 0.6);
+  --chip-bg-hover: rgba(27, 38, 59, 0.8);
+  --chip-bg-active: var(--or-100);
+  --chip-text: var(--argent-ecran);
+  --chip-text-hover: var(--or-100);
+  --chip-text-active: var(--bleu-nuit);
+  --chip-border: rgba(198, 166, 100, 0.3);
+  --chip-border-hover: rgba(198, 166, 100, 0.6);
+  --chip-border-active: var(--or-100);
+  --chip-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --chip-shadow-hover: 0 4px 12px rgba(198, 166, 100, 0.2);
+  --chip-shadow-active: 0 4px 15px rgba(198, 166, 100, 0.4);
+
+  /* ====================================================== */
+  /* BADGES ADMIN - Système Statuts
+  ====================================================== */
+  --badge-pending-bg: rgba(255, 193, 7, 0.15);
+  --badge-pending-text: #ffc107;
+  --badge-pending-border: rgba(255, 193, 7, 0.4);
+
+  --badge-valid-bg: rgba(40, 167, 69, 0.15);
+  --badge-valid-text: var(--vert-valid);
+  --badge-valid-border: rgba(40, 167, 69, 0.4);
+
+  --badge-danger-bg: rgba(215, 38, 56, 0.15);
+  --badge-danger-text: var(--rouge-projecteur);
+  --badge-danger-border: rgba(215, 38, 56, 0.4);
+
+  --badge-admin-bg: rgba(138, 43, 226, 0.15);
+  --badge-admin-text: #9b59b6;
+  --badge-admin-border: rgba(138, 43, 226, 0.4);
+
+  --badge-info-bg: rgba(52, 152, 219, 0.15);
+  --badge-info-text: #3498db;
+  --badge-info-border: rgba(52, 152, 219, 0.4);
 
   /* Effets Premium - Micro-interactions */
   --btn-transition-premium: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1153,14 +1274,79 @@ a:hover {
 }
 
 /* ====================================================== */
-/* BOUTON PRIMAIRE - Fond DORÉ Plein avec Glow
+/* BOUTON PRINCIPAL CINÉMA - Rouge → Hover Doré
 ====================================================== */
 /**
- * CTA Principal : "Voir les recettes", "Découvrir"
- * Fond doré gradient, texte sombre, effet glow doré
+ * NOUVEAU : Actions sur les cards films/recettes
+ * "Voir le film", "Voir les recettes", "Je passe à la recette"
+ * Style rouge luxe → transition vers doré lumineux au hover
  */
-.btn-primary,
+.btn-cinema-primary,
+.btn--red {
+  background: var(--btn-cinema-primary-bg);
+  color: var(--btn-cinema-primary-text);
+  border-color: var(--btn-cinema-primary-border);
+  box-shadow: var(--btn-cinema-primary-shadow);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.btn-cinema-primary:hover:not(:disabled),
+.btn--red:hover:not(:disabled) {
+  background: var(--btn-cinema-primary-bg-hover);
+  color: var(--btn-cinema-primary-text-hover);
+  border-color: var(--btn-cinema-primary-border-hover);
+  box-shadow: var(--btn-cinema-primary-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+.btn-cinema-primary:active:not(:disabled),
+.btn--red:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
+  transition-duration: 0.1s;
+}
+
+/* ====================================================== */
+/* BOUTON SECONDAIRE CINÉMA - Doré → Hover Rouge
+====================================================== */
+/**
+ * NOUVEAU : CTAs globaux de navigation
+ * "Voir tous les films", "J'ajoute mon film", "Enregistrer"
+ * Style doré luxe → transition vers rouge cinéma au hover
+ */
+.btn-cinema-secondary,
 .btn--gold-special {
+  background: var(--btn-cinema-secondary-bg);
+  color: var(--btn-cinema-secondary-text);
+  border-color: var(--btn-cinema-secondary-border);
+  box-shadow: var(--btn-cinema-secondary-shadow);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.btn-cinema-secondary:hover:not(:disabled),
+.btn--gold-special:hover:not(:disabled) {
+  background: var(--btn-cinema-secondary-bg-hover);
+  color: var(--btn-cinema-secondary-text-hover);
+  border-color: var(--btn-cinema-secondary-border-hover);
+  box-shadow: var(--btn-cinema-secondary-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+.btn-cinema-secondary:active:not(:disabled),
+.btn--gold-special:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
+  transition-duration: 0.1s;
+}
+
+/* ====================================================== */
+/* BOUTON LEGACY PRIMAIRE - Fond DORÉ Plein (compatibilité)
+====================================================== */
+/**
+ * Legacy : Conservé pour compatibilité
+ * Utiliser .btn-cinema-secondary pour les nouveaux développements
+ */
+.btn-primary {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   border-color: var(--btn-primary-border);
@@ -1168,8 +1354,7 @@ a:hover {
   font-weight: 700;
 }
 
-.btn-primary:hover:not(:disabled),
-.btn--gold-special:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled) {
   background: var(--btn-primary-bg-hover);
   color: var(--btn-primary-text-hover);
   border-color: var(--btn-primary-border-hover);
@@ -1250,29 +1435,65 @@ a:hover {
 }
 
 /* ====================================================== */
-/* BOUTON DANGER / RED - Actions Destructives
+/* BOUTON DANGER - Actions Destructives (Outline Rouge)
 ====================================================== */
 /**
- * Actions destructives : "Refuser", "Supprimer"
- * Style outline rouge avec glow au hover
+ * Actions destructives réversibles : "Refuser", "Annuler"
+ * Style outline rouge avec fill au hover
+ * Note: .btn--red est maintenant mappé vers btn-cinema-primary
  */
-.btn-danger,
-.btn--red,
-.btn--red-special {
+.btn-danger {
   background: var(--btn-danger-bg);
   color: var(--btn-danger-text);
   border-color: var(--btn-danger-border);
   box-shadow: var(--btn-danger-shadow);
 }
 
-.btn-danger:hover:not(:disabled),
-.btn--red:hover:not(:disabled),
-.btn--red-special:hover:not(:disabled) {
+.btn-danger:hover:not(:disabled) {
   background: var(--btn-danger-bg-hover);
   color: var(--btn-danger-text-hover);
   border-color: var(--btn-danger-border);
   box-shadow: var(--btn-danger-shadow-hover);
   transform: translateY(var(--btn-lift-hover));
+}
+
+/* ====================================================== */
+/* BOUTON DANGER DESTRUCTIF - Suppression définitive
+====================================================== */
+/**
+ * Actions destructives irréversibles : "Supprimer définitivement"
+ * Style rouge plein avec glow intense
+ */
+.btn-danger-destructive,
+.btn--red-special {
+  background: linear-gradient(
+    145deg,
+    #dc3545 0%,
+    var(--rouge-projecteur) 50%,
+    #c82333 100%
+  );
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 15px rgba(220, 53, 69, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+}
+
+.btn-danger-destructive:hover:not(:disabled),
+.btn--red-special:hover:not(:disabled) {
+  background: linear-gradient(
+    145deg,
+    #e74c5c 0%,
+    #dc3545 50%,
+    #c82333 100%
+  );
+  box-shadow:
+    0 6px 25px rgba(220, 53, 69, 0.6),
+    0 0 20px rgba(220, 53, 69, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* ====================================================== */
@@ -1416,68 +1637,437 @@ a:hover {
 }
 
 /* ====================================================== */
-/* 6. TAGS / BADGES
+/* 6. TAGS / BADGES / CHIPS - Design System Cinéma 2026
 ====================================================== */
+
+/**
+ * ============================================
+ * 6.1 TAGS INFORMATIFS - Style Glassmorphism
+ * ============================================
+ * Tags pour afficher des infos : genre, année, compteur recettes
+ * Style verre dépoli avec bordure subtile
+ */
 .tag,
 .badge {
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: 1px solid transparent;
-  transition: all var(--transition);
+  border: 1px solid var(--tag-border-light);
+  background: var(--tag-bg-neutral);
+  color: var(--argent-ecran);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: var(--btn-transition-smooth);
   white-space: nowrap;
+  box-shadow: var(--tag-shadow);
 }
 
-/* Tag Rouge */
+.tag:hover,
+.badge:hover {
+  background: var(--tag-bg-neutral-hover);
+  border-color: var(--tag-border-light-hover);
+  box-shadow: var(--tag-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Icône Lucide dans tags */
+.tag .lucide-icon,
+.badge .lucide-icon {
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
+}
+
+/* ============================================
+ * 6.2 TAG GENRE - Style cinéma premium
+ * ============================================ */
+.tag-genre,
+.tag--blue {
+  background: var(--tag-bg-accent);
+  color: var(--argent-ecran);
+  border-color: var(--tag-border-light);
+}
+
+.tag-genre:hover,
+.tag--blue:hover {
+  background: var(--tag-bg-accent-hover);
+  border-color: var(--tag-border-accent);
+  color: var(--or-100);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+ * 6.3 TAG ANNÉE - Style doré
+ * ============================================ */
+.tag-year {
+  background: rgba(198, 166, 100, 0.2);
+  color: var(--or-100);
+  border-color: var(--tag-border-accent);
+}
+
+.tag-year:hover {
+  background: rgba(198, 166, 100, 0.35);
+  border-color: var(--or-100);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+ * 6.4 TAG COMPTEUR RECETTES - "8 Recettes"
+ * ============================================ */
+.tag-recipe-count,
+.tag--gold {
+  background: var(--tag-bg-highlight);
+  color: var(--bleu-nuit);
+  border-color: var(--or-100);
+  font-weight: 700;
+  box-shadow: var(--tag-shadow-highlight);
+}
+
+.tag-recipe-count:hover,
+.tag--gold:hover {
+  background: var(--tag-bg-highlight-hover);
+  border-color: var(--jaune-blond);
+  box-shadow: var(--tag-shadow-highlight-hover);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ============================================
+ * 6.5 TAG ROUGE - Alerte / Important
+ * ============================================ */
 .tag--red,
 .badge--red {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
+  background: rgba(215, 38, 56, 0.85);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(215, 38, 56, 0.3);
 }
 
 .tag--red:hover,
 .badge--red:hover {
-  background-color: var(--dore-popcorn);
+  background: var(--or-100);
   color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
+  border-color: var(--or-100);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
   transform: translateY(-2px);
 }
 
-/* Tag Or */
-.tag--gold,
-.badge--gold {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
+/* ============================================
+ * 6.6 RATING / NOTE - Étoiles avec note
+ * ============================================ */
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--jaune-blond);
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: var(--btn-transition-smooth);
 }
 
-.tag--gold:hover,
-.badge--gold:hover {
-  background-color: var(--rouge-projecteur);
+.rating-badge .lucide-icon {
+  width: 0.9em;
+  height: 0.9em;
+  color: var(--jaune-blond);
+  fill: var(--jaune-blond);
+}
+
+.rating-badge:hover {
+  background: rgba(0, 0, 0, 0.75);
+  border-color: var(--or-100);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+ * 6.7 BOUTON FAVORI - Cœur interactif
+ * ============================================ */
+.btn-favorite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   color: var(--argent-ecran);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: var(--btn-transition-premium);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-favorite .lucide-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+  background: rgba(215, 38, 56, 0.2);
   border-color: var(--rouge-projecteur);
+  color: var(--rouge-projecteur);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(215, 38, 56, 0.3);
+}
+
+.btn-favorite:hover .lucide-icon {
+  transform: scale(1.1);
+}
+
+/* État favori actif */
+.btn-favorite.is-favorite,
+.btn-favorite--active {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: #fff;
+  box-shadow:
+    0 4px 15px rgba(215, 38, 56, 0.4),
+    0 0 10px rgba(215, 38, 56, 0.3);
+}
+
+.btn-favorite.is-favorite .lucide-icon,
+.btn-favorite--active .lucide-icon {
+  fill: currentColor;
+}
+
+.btn-favorite.is-favorite:hover,
+.btn-favorite--active:hover {
+  background: rgba(215, 38, 56, 0.8);
+  transform: scale(1.1);
+}
+
+/* Animation battement au clic */
+@keyframes heart-beat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.btn-favorite.is-animating {
+  animation: heart-beat 0.4s ease-in-out;
+}
+
+/* ============================================
+ * 6.8 CHIPS GENRES - Filtres page movies
+ * ============================================
+ * Style : Tous, Aventure, Comédie, Fantastique...
+ * État actif avec fond doré
+ */
+.chip,
+.chip-genre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  border: 1px solid var(--chip-border);
+  cursor: pointer;
+  transition: var(--btn-transition-smooth);
+  box-shadow: var(--chip-shadow);
+  white-space: nowrap;
+}
+
+.chip:hover,
+.chip-genre:hover {
+  background: var(--chip-bg-hover);
+  color: var(--chip-text-hover);
+  border-color: var(--chip-border-hover);
+  box-shadow: var(--chip-shadow-hover);
   transform: translateY(-2px);
 }
 
-/* Tag Bleu */
-.tag--blue,
-.badge--blue {
-  background-color: var(--bleu-intermediaire);
-  color: var(--argent-ecran);
-  border-color: var(--bleu-intermediaire);
+/* État actif / sélectionné */
+.chip.is-active,
+.chip-genre.is-active,
+.chip--active {
+  background: var(--chip-bg-active);
+  color: var(--chip-text-active);
+  border-color: var(--chip-border-active);
+  box-shadow: var(--chip-shadow-active);
+  font-weight: 700;
 }
 
-.tag--blue:hover,
-.badge--blue:hover {
-  background-color: var(--dore-popcorn);
+.chip.is-active:hover,
+.chip-genre.is-active:hover,
+.chip--active:hover {
+  background: var(--jaune-blond);
+  transform: translateY(-2px);
+}
+
+/* Icône dans chips */
+.chip .lucide-icon,
+.chip-genre .lucide-icon {
+  width: 1em;
+  height: 1em;
+}
+
+/* Conteneur pour grouper les chips */
+.chips-container,
+.genre-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+/* ============================================
+ * 6.9 BADGES ADMIN - Statuts de modération
+ * ============================================
+ * En Attente, Validé, Supprimer, Admin, etc.
+ */
+.badge-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  transition: var(--btn-transition-smooth);
+}
+
+.badge-admin .lucide-icon {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+/* Badge En Attente - Jaune/Orange */
+.badge-admin--pending {
+  background: var(--badge-pending-bg);
+  color: var(--badge-pending-text);
+  border-color: var(--badge-pending-border);
+}
+
+.badge-admin--pending:hover {
+  background: rgba(255, 193, 7, 0.25);
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+/* Badge Validé - Vert */
+.badge-admin--valid,
+.badge-admin--success {
+  background: var(--badge-valid-bg);
+  color: var(--badge-valid-text);
+  border-color: var(--badge-valid-border);
+}
+
+.badge-admin--valid:hover,
+.badge-admin--success:hover {
+  background: rgba(40, 167, 69, 0.25);
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+/* Badge Danger / Supprimer - Rouge */
+.badge-admin--danger,
+.badge-admin--delete {
+  background: var(--badge-danger-bg);
+  color: var(--badge-danger-text);
+  border-color: var(--badge-danger-border);
+}
+
+.badge-admin--danger:hover,
+.badge-admin--delete:hover {
+  background: rgba(215, 38, 56, 0.25);
+  box-shadow: 0 0 10px rgba(215, 38, 56, 0.3);
+}
+
+/* Badge Admin - Violet */
+.badge-admin--admin {
+  background: var(--badge-admin-bg);
+  color: var(--badge-admin-text);
+  border-color: var(--badge-admin-border);
+}
+
+.badge-admin--admin:hover {
+  background: rgba(138, 43, 226, 0.25);
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+}
+
+/* Badge Info - Bleu */
+.badge-admin--info,
+.badge-admin--clear {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+  border-color: var(--badge-info-border);
+}
+
+.badge-admin--info:hover,
+.badge-admin--clear:hover {
+  background: rgba(52, 152, 219, 0.25);
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+/* Badge Reset - Gris neutre */
+.badge-admin--reset {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border-color: rgba(108, 117, 125, 0.4);
+}
+
+.badge-admin--reset:hover {
+  background: rgba(108, 117, 125, 0.25);
+  box-shadow: 0 0 10px rgba(108, 117, 125, 0.3);
+}
+
+/* ============================================
+ * 6.10 BADGES CARD - Nouveau / Populaire
+ * ============================================
+ * Positionnés sur les cards films/recettes
+ */
+.badge-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Badge Nouveau - Bleu vif */
+.badge-card--new {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: #fff;
+}
+
+/* Badge Populaire - Rouge cinéma */
+.badge-card--popular {
+  background: linear-gradient(135deg, var(--rouge-projecteur) 0%, #c41e30 100%);
+  color: #fff;
+}
+
+/* Badge Premium - Doré */
+.badge-card--premium {
+  background: linear-gradient(135deg, var(--or-100) 0%, var(--or-200) 100%);
   color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  transform: translateY(-2px);
 }
 
 /* ====================================================== */
