@@ -591,10 +591,10 @@
 /**
  * Bouton CTA dans le slider
  * --------------------------
- * Le bouton .btn--gold-special est défini dans base.css
+ * Utilise le système .btn-hero de base.css
  * Animation cinématographique : apparition avec scale et glow
- * 
- * VARIANTE INVERSÉE : Rouge lumineux par défaut, doré au hover
+ *
+ * Style néon premium : Rouge lumineux par défaut, doré au hover
  */
 .hero-slider__content .btn {
   opacity: 0;
@@ -602,7 +602,7 @@
   filter: blur(3px);
   position: relative;
   animation: none;
-  box-shadow: 0 0 0 rgba(198, 166, 100, 0);
+  box-shadow: var(--btn-hero-glow);
 }
 
 .hero-slider__slide--active .hero-slider__content .btn {
@@ -611,24 +611,34 @@
 }
 
 /**
- * Inversion des couleurs pour les boutons du hero slider
- * Rouge lumineux par défaut, doré au hover
+ * Style Hero Cinema pour les boutons du slider
+ * Utilise les variables --btn-hero-* de base.css
+ * Effet néon lumineux avec pulsation subtile
  */
 .hero-slider__content .btn--gold-special {
-  background-color: var(--rouge-projecteur); /* fond rouge par défaut */
-  color: var(--argent-ecran); /* texte blanc argent */
-  border-color: var(--rouge-projecteur); /* liseré rouge */
-  box-shadow: 0 0 12px var(--rouge-projecteur), 0 0 24px rgba(215, 38, 56, 0.6),
-    0 0 36px rgba(215, 38, 56, 0.4), 0 0 60px rgba(215, 38, 56, 0.2); /* halo rouge lumineux */
+  background: var(--btn-hero-bg);
+  color: var(--btn-hero-text);
+  border-color: var(--btn-hero-border);
+  box-shadow: var(--btn-hero-glow);
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: var(--btn-transition-premium);
 }
 
 .hero-slider__content .btn--gold-special:hover:not(:disabled) {
-  background-color: var(--dore-popcorn); /* fond doré au hover */
-  color: var(--bleu-nuit); /* texte bleu nuit */
-  border-color: var(--bleu-nuit); /* liseré bleu nuit */
-  transform: scale(1.05); /* léger agrandissement */
-  box-shadow: 0 0 12px var(--dore-popcorn), 0 0 24px rgba(198, 166, 100, 0.6),
-    0 0 36px rgba(198, 166, 100, 0.4), 0 0 60px rgba(198, 166, 100, 0.2); /* halo doré */
+  background: var(--btn-hero-bg-hover);
+  color: var(--btn-hero-text-hover);
+  border-color: var(--btn-hero-border-hover);
+  box-shadow: var(--btn-hero-glow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+.hero-slider__content .btn--gold-special:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
+  transition-duration: 0.1s;
 }
 
 /**
@@ -967,12 +977,11 @@
 }
 
 .recipe-card--left:hover .recipe-info .btn {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 4px 15px rgba(198, 166, 100, 0.4),
-    0 0 10px rgba(198, 166, 100, 0.2);
-  transform: translateY(-2px);
+  background: var(--btn-accent-bg-hover);
+  color: var(--btn-accent-text-hover);
+  border-color: var(--btn-accent-border);
+  box-shadow: var(--btn-accent-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* Carte droite (film) */
@@ -1138,19 +1147,19 @@
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, -50%);
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  box-shadow: 0 4px 15px rgba(215, 38, 56, 0.4), 0 0 10px rgba(215, 38, 56, 0.2);
+  background: var(--btn-hero-bg);
+  color: var(--btn-hero-text);
+  border-color: var(--btn-hero-border);
+  box-shadow: var(--btn-hero-glow);
 }
 
 .films-container .recipe-card--right:hover .film-info .btn:hover,
 .films-container .recipe-card--right:hover .film-info span.btn:hover {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  transform: translate(-50%, -50%) translateY(-2px);
-  box-shadow: 0 6px 20px rgba(215, 38, 56, 0.5), 0 0 15px rgba(215, 38, 56, 0.3);
+  background: var(--btn-hero-bg-hover);
+  color: var(--btn-hero-text-hover);
+  border-color: var(--btn-hero-border-hover);
+  transform: translate(-50%, -50%) translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+  box-shadow: var(--btn-hero-glow-hover);
 }
 
 .films-container .recipe-card--right .film-info .btn:focus,
@@ -1284,12 +1293,11 @@
 }
 
 .recette-card:hover .recette-content .btn {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 4px 15px rgba(198, 166, 100, 0.4),
-    0 0 10px rgba(198, 166, 100, 0.2);
-  transform: translateY(-2px);
+  background: var(--btn-accent-bg-hover);
+  color: var(--btn-accent-text-hover);
+  border-color: var(--btn-accent-border);
+  box-shadow: var(--btn-accent-shadow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 .center-button {

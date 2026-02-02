@@ -169,6 +169,25 @@
   --btn-danger-border: var(--rouge-projecteur);
   --btn-danger-shadow-hover: 0 4px 15px rgba(215, 38, 56, 0.3);
 
+  /* Bouton Hero Cinema - Effet néon premium */
+  --btn-hero-bg: var(--rouge-projecteur);
+  --btn-hero-bg-hover: var(--dore-popcorn);
+  --btn-hero-text: var(--argent-ecran);
+  --btn-hero-text-hover: var(--bleu-nuit);
+  --btn-hero-border: var(--rouge-projecteur);
+  --btn-hero-border-hover: var(--bleu-nuit);
+  --btn-hero-glow: 0 0 12px var(--rouge-projecteur),
+                   0 0 24px rgba(215, 38, 56, 0.5),
+                   0 0 36px rgba(215, 38, 56, 0.3);
+  --btn-hero-glow-hover: 0 0 12px var(--dore-popcorn),
+                         0 0 24px rgba(198, 166, 100, 0.5),
+                         0 0 36px rgba(198, 166, 100, 0.3);
+
+  /* Effets Premium - Micro-interactions */
+  --btn-transition-premium: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --btn-scale-hover: 1.03;
+  --btn-lift-hover: -3px;
+
   /* ====================================================== */
   /* COULEURS UTILITAIRES
   ====================================================== */
@@ -1175,6 +1194,80 @@ a:hover {
 ====================================================== */
 .btn-block {
   width: 100%;
+}
+
+/* ====================================================== */
+/* BOUTON HERO CINEMA - Effet Néon Premium
+====================================================== */
+/**
+ * Style spécial pour les CTA du hero slider
+ * Effet néon lumineux avec glow animé
+ * Rouge par défaut → Doré au hover (inversion cinéma)
+ */
+.btn-hero {
+  background: var(--btn-hero-bg);
+  color: var(--btn-hero-text);
+  border-color: var(--btn-hero-border);
+  box-shadow: var(--btn-hero-glow);
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  transition: var(--btn-transition-premium);
+}
+
+.btn-hero:hover:not(:disabled) {
+  background: var(--btn-hero-bg-hover);
+  color: var(--btn-hero-text-hover);
+  border-color: var(--btn-hero-border-hover);
+  box-shadow: var(--btn-hero-glow-hover);
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+.btn-hero:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
+  transition-duration: 0.1s;
+}
+
+/* Animation de pulsation subtile au repos */
+@keyframes hero-glow-pulse {
+  0%, 100% {
+    box-shadow: var(--btn-hero-glow);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--rouge-projecteur),
+                0 0 30px rgba(215, 38, 56, 0.6),
+                0 0 45px rgba(215, 38, 56, 0.4);
+  }
+}
+
+.btn-hero.btn-hero--pulse {
+  animation: hero-glow-pulse 2.5s ease-in-out infinite;
+}
+
+.btn-hero.btn-hero--pulse:hover {
+  animation: none;
+}
+
+/* ====================================================== */
+/* BOUTON PREMIUM - Micro-interactions améliorées
+====================================================== */
+/**
+ * Classe modificateur pour ajouter des effets premium
+ * à n'importe quel bouton existant
+ */
+.btn--premium {
+  transition: var(--btn-transition-premium);
+}
+
+.btn--premium:hover:not(:disabled) {
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+.btn--premium:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.01);
 }
 
 /* ====================================================== */
