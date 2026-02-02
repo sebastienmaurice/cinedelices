@@ -409,12 +409,14 @@
   object-position: center top;
   display: block;
   border-radius: 12px;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s ease;
+  transition: transform 0.4s ease, filter 0.4s ease, opacity 0.3s ease;
+  opacity: 0.95;
 }
 
 #films article:hover .film-card-image img {
   transform: none; /* supprime le zoom */
-  filter: none; /* supprime le boost contrast/brightness */
+  filter: brightness(1.02); /* léger boost subtil */
+  opacity: 1;
 }
 
 /* Informations de la carte - Style harmonisé avec home */
@@ -430,6 +432,12 @@
   font-weight: 700;
   font-family: var(--font-h2-h6);
   letter-spacing: 0.5px;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+#films article:hover .film-title {
+  color: var(--or-100);
+  text-shadow: 0 0 8px rgba(198, 166, 100, 0.3);
 }
 
 .film-meta {
@@ -1591,28 +1599,30 @@
 /**
  * Overlay dégradé sur les images de films
  * Améliore la lisibilité des éléments superposés (badges, note, favori)
+ * IMPORTANT: inset correspond au padding du container pour rester dans l'image
  */
 .film-card-overlay {
   position: absolute;
-  inset: 0;
+  /* Correspond au padding du container .film-card-image (1rem 1.5rem) */
+  inset: 1rem 1.5rem;
   background: linear-gradient(
     to top,
-    rgba(13, 27, 42, 0.7) 0%,
-    rgba(13, 27, 42, 0.3) 30%,
-    transparent 60%
+    rgba(13, 27, 42, 0.6) 0%,
+    rgba(13, 27, 42, 0.25) 35%,
+    transparent 65%
   );
   border-radius: 12px;
   z-index: 1;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: background 0.3s ease;
 }
 
-.film-card:hover .film-card-overlay {
+#films article:hover .film-card-overlay {
   background: linear-gradient(
     to top,
-    rgba(13, 27, 42, 0.85) 0%,
-    rgba(13, 27, 42, 0.4) 40%,
-    transparent 70%
+    rgba(13, 27, 42, 0.75) 0%,
+    rgba(13, 27, 42, 0.35) 40%,
+    transparent 75%
   );
 }
 
@@ -1857,6 +1867,11 @@
     font-size: 0.65rem;
     padding: 0.25rem 0.5rem;
   }
+
+  /* Overlay adapté au padding réduit du container */
+  .film-card-overlay {
+    inset: 0.75rem 1rem;
+  }
 }
 
 @media (max-width: 500px) {
@@ -1891,5 +1906,10 @@
   .badge {
     font-size: 0.6rem;
     padding: 0.2rem 0.4rem;
+  }
+
+  /* Overlay adapté au padding réduit du container */
+  .film-card-overlay {
+    inset: 0.5rem 0.75rem;
   }
 }
