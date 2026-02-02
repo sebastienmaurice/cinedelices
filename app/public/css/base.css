@@ -168,12 +168,10 @@
   --btn-cinema-primary-border: rgba(255, 255, 255, 0.2);
   --btn-cinema-primary-border-hover: var(--or-100);
   --btn-cinema-primary-shadow:
-    0 4px 15px rgba(215, 38, 56, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.2),
+    0 4px 15px rgba(215, 38, 56, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   --btn-cinema-primary-shadow-hover:
-    0 6px 25px rgba(198, 166, 100, 0.5),
-    0 0 20px rgba(198, 166, 100, 0.3),
+    0 6px 25px rgba(198, 166, 100, 0.5), 0 0 20px rgba(198, 166, 100, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   /* ====================================================== */
@@ -200,12 +198,10 @@
   --btn-cinema-secondary-border: rgba(198, 166, 100, 0.3);
   --btn-cinema-secondary-border-hover: rgba(255, 255, 255, 0.2);
   --btn-cinema-secondary-shadow:
-    0 4px 15px rgba(198, 166, 100, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.2),
+    0 4px 15px rgba(198, 166, 100, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   --btn-cinema-secondary-shadow-hover:
-    0 6px 25px rgba(215, 38, 56, 0.5),
-    0 0 20px rgba(215, 38, 56, 0.3),
+    0 6px 25px rgba(215, 38, 56, 0.5), 0 0 20px rgba(215, 38, 56, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
   /* ====================================================== */
@@ -359,11 +355,16 @@
 
   /* Effets Premium - Micro-interactions */
   --btn-transition-premium: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --btn-transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --btn-scale-hover: 1.03;
+  --btn-transition-smooth: all 0.35s ease;
+  --btn-scale-hover: 1.05;
   --btn-lift-hover: -3px;
-  --btn-border-radius: 25px; /* Coins très arrondis style cinéma */
-  --btn-border-radius-sm: 20px;
+  --btn-border-radius: 12px; /* Coins arrondis modernes */
+  --btn-border-radius-sm: 10px;
+
+  /* Double liseré - Effet relief premium */
+  --btn-border-outer: rgba(255, 255, 255, 0.12);
+  --btn-border-inner-dark: rgba(0, 0, 0, 0.5);
+  --btn-border-inner-gold: var(--or-100);
 
   /* ====================================================== */
   /* COULEURS UTILITAIRES
@@ -1224,14 +1225,14 @@ a:hover {
 .btn {
   font-weight: 600;
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  padding: 0.65rem 1.4rem;
+  font-size: 1rem;
+  padding: 0.8rem 1.6rem;
   border-radius: var(--btn-border-radius);
-  border: 2px solid transparent;
+  border: none;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
-  transition: var(--btn-transition-smooth);
+  overflow: visible; /* Permet le double liseré */
+  transition: all var(--btn-transition-smooth);
   background: var(--btn-secondary-bg);
   color: var(--btn-secondary-text);
   user-select: none;
@@ -1244,16 +1245,65 @@ a:hover {
   text-transform: none;
 }
 
-/* Icône Lucide dans boutons */
-.btn .lucide-icon {
-  width: 1em;
-  height: 1em;
-  flex-shrink: 0;
+/* ====================================================== */
+/* DOUBLE LISERÉ - Effet relief premium
+====================================================== */
+/**
+ * ::before = Bordure externe (lueur blanche subtile)
+ * ::after = Bordure interne (profondeur sombre)
+ * Crée un effet de bouton physique 3D
+ */
+.btn::before,
+.btn::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: all var(--btn-transition-smooth);
 }
 
-/* États communs */
+/* Liseré externe - Lueur blanche subtile */
+.btn::before {
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 2px solid var(--btn-border-outer);
+}
+
+/* Liseré interne - Profondeur sombre */
+.btn::after {
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 2px solid var(--btn-border-inner-dark);
+}
+
+/* ====================================================== */
+/* ICÔNES SVG / LUCIDE - Animation au hover
+====================================================== */
+.btn svg,
+.btn .lucide-icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex-shrink: 0;
+  vertical-align: middle;
+  stroke-width: 2;
+  transition: transform var(--btn-transition-smooth);
+}
+
+/* Animation icône au hover */
+.btn:hover:not(:disabled) svg,
+.btn:hover:not(:disabled) .lucide-icon {
+  transform: scale(1.2) rotate(-5deg);
+}
+
+/* ====================================================== */
+/* ÉTATS COMMUNS
+====================================================== */
 .btn:hover:not(:disabled) {
-  transform: translateY(var(--btn-lift-hover));
+  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 .btn:active:not(:disabled) {
@@ -1263,7 +1313,7 @@ a:hover {
 
 .btn:focus-visible {
   outline: 2px solid var(--or-100);
-  outline-offset: 3px;
+  outline-offset: 5px;
 }
 
 .btn:disabled {
@@ -1277,27 +1327,37 @@ a:hover {
 /* BOUTON PRINCIPAL CINÉMA - Rouge → Hover Doré
 ====================================================== */
 /**
- * NOUVEAU : Actions sur les cards films/recettes
+ * Actions sur les cards films/recettes
  * "Voir le film", "Voir les recettes", "Je passe à la recette"
  * Style rouge luxe → transition vers doré lumineux au hover
+ * Liseré interne sombre pour contraste
  */
 .btn-cinema-primary,
 .btn--red {
   background: var(--btn-cinema-primary-bg);
   color: var(--btn-cinema-primary-text);
-  border-color: var(--btn-cinema-primary-border);
   box-shadow: var(--btn-cinema-primary-shadow);
   font-weight: 700;
   letter-spacing: 0.5px;
+}
+
+/* Liseré interne sombre (contraste sur fond rouge) */
+.btn-cinema-primary::after,
+.btn--red::after {
+  border-color: var(--bleu-nuit);
 }
 
 .btn-cinema-primary:hover:not(:disabled),
 .btn--red:hover:not(:disabled) {
   background: var(--btn-cinema-primary-bg-hover);
   color: var(--btn-cinema-primary-text-hover);
-  border-color: var(--btn-cinema-primary-border-hover);
   box-shadow: var(--btn-cinema-primary-shadow-hover);
-  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+/* Liseré interne sombre reste sur hover (transition doré) */
+.btn-cinema-primary:hover:not(:disabled)::after,
+.btn--red:hover:not(:disabled)::after {
+  border-color: var(--bleu-nuit);
 }
 
 .btn-cinema-primary:active:not(:disabled),
@@ -1310,27 +1370,37 @@ a:hover {
 /* BOUTON SECONDAIRE CINÉMA - Doré → Hover Rouge
 ====================================================== */
 /**
- * NOUVEAU : CTAs globaux de navigation
+ * CTAs globaux de navigation
  * "Voir tous les films", "J'ajoute mon film", "Enregistrer"
  * Style doré luxe → transition vers rouge cinéma au hover
+ * Liseré interne sombre pour contraste
  */
 .btn-cinema-secondary,
 .btn--gold-special {
   background: var(--btn-cinema-secondary-bg);
   color: var(--btn-cinema-secondary-text);
-  border-color: var(--btn-cinema-secondary-border);
   box-shadow: var(--btn-cinema-secondary-shadow);
   font-weight: 700;
   letter-spacing: 0.5px;
+}
+
+/* Liseré interne sombre (contraste sur fond doré) */
+.btn-cinema-secondary::after,
+.btn--gold-special::after {
+  border-color: var(--bleu-nuit);
 }
 
 .btn-cinema-secondary:hover:not(:disabled),
 .btn--gold-special:hover:not(:disabled) {
   background: var(--btn-cinema-secondary-bg-hover);
   color: var(--btn-cinema-secondary-text-hover);
-  border-color: var(--btn-cinema-secondary-border-hover);
   box-shadow: var(--btn-cinema-secondary-shadow-hover);
-  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
+}
+
+/* Liseré interne sombre reste sur hover (transition rouge) */
+.btn-cinema-secondary:hover:not(:disabled)::after,
+.btn--gold-special:hover:not(:disabled)::after {
+  border-color: var(--bleu-nuit);
 }
 
 .btn-cinema-secondary:active:not(:disabled),
@@ -1363,27 +1433,35 @@ a:hover {
 }
 
 /* ====================================================== */
-/* BOUTON SECONDAIRE - Sombre avec Bordure Dorée
+/* BOUTON SECONDAIRE SOMBRE - Dark avec Liseré Doré
 ====================================================== */
 /**
  * Actions secondaires : "Revenir", navigation
- * Fond sombre translucide, bordure dorée avec glow subtil
+ * Fond sombre translucide, liseré interne doré (accent)
+ * Référence : .btn-dark du code de référence
  */
 .btn-secondary,
-.btn--blue-night {
-  background: var(--btn-secondary-bg);
-  color: var(--btn-secondary-text);
-  border-color: var(--btn-secondary-border);
+.btn--blue-night,
+.btn-dark {
+  background: rgba(10, 27, 43, 0.85);
+  color: var(--or-100);
   box-shadow: var(--btn-secondary-shadow);
+  font-weight: 600;
+}
+
+/* Liseré interne DORÉ (contraste sur fond sombre) */
+.btn-secondary::after,
+.btn--blue-night::after,
+.btn-dark::after {
+  border: 2px solid var(--or-100);
 }
 
 .btn-secondary:hover:not(:disabled),
-.btn--blue-night:hover:not(:disabled) {
-  background: var(--btn-secondary-bg-hover);
-  color: var(--btn-secondary-text-hover);
-  border-color: var(--btn-secondary-border-hover);
+.btn--blue-night:hover:not(:disabled),
+.btn-dark:hover:not(:disabled) {
+  background: rgba(27, 38, 59, 0.95);
+  color: var(--jaune-blond);
   box-shadow: var(--btn-secondary-shadow-hover);
-  transform: translateY(var(--btn-lift-hover));
 }
 
 /* ====================================================== */
@@ -1483,12 +1561,7 @@ a:hover {
 
 .btn-danger-destructive:hover:not(:disabled),
 .btn--red-special:hover:not(:disabled) {
-  background: linear-gradient(
-    145deg,
-    #e74c5c 0%,
-    #dc3545 50%,
-    #c82333 100%
-  );
+  background: linear-gradient(145deg, #e74c5c 0%, #dc3545 50%, #c82333 100%);
   box-shadow:
     0 6px 25px rgba(220, 53, 69, 0.6),
     0 0 20px rgba(220, 53, 69, 0.4),
@@ -1852,11 +1925,21 @@ a:hover {
 
 /* Animation battement au clic */
 @keyframes heart-beat {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.2); }
-  50% { transform: scale(0.95); }
-  75% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .btn-favorite.is-animating {
