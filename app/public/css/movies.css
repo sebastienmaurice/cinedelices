@@ -1769,56 +1769,148 @@
 /* ====================================================== */
 /**
  * Chips de filtrage par genre
- * Affichés horizontalement avec scroll si nécessaire
+ * Scroll horizontal fluide avec dégradés indicateurs
  */
 .genre-chips-container {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto 2rem auto;
   padding: 0 2rem;
+  position: relative;
 }
 
+/* Wrapper avec dégradés indicateurs de scroll */
+.genre-chips-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dégradé gauche - indique qu'il y a du contenu à gauche */
+.genre-chips-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, var(--bleu-nuit) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Dégradé droite - indique qu'il y a du contenu à droite */
+.genre-chips-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to left, var(--bleu-nuit) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Classes JS pour activer les dégradés */
+.genre-chips-wrapper.scroll-left::before {
+  opacity: 1;
+}
+
+.genre-chips-wrapper.scroll-right::after {
+  opacity: 1;
+}
+
+/* Container scrollable des chips */
 .genre-chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(198, 166, 100, 0.4) transparent;
 }
 
+/* Scrollbar webkit (Chrome, Safari) */
+.genre-chips::-webkit-scrollbar {
+  height: 4px;
+}
+
+.genre-chips::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.genre-chips::-webkit-scrollbar-thumb {
+  background: rgba(198, 166, 100, 0.3);
+  border-radius: 4px;
+}
+
+.genre-chips::-webkit-scrollbar-thumb:hover {
+  background: rgba(198, 166, 100, 0.5);
+}
+
+/* Chip individuel - cohérent avec les autres badges du site */
 .genre-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  background: rgba(27, 38, 59, 0.6);
-  border: 1px solid rgba(198, 166, 100, 0.2);
-  border-radius: 999px;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(27, 38, 59, 0.7);
+  border: 1px solid rgba(198, 166, 100, 0.25);
+  border-radius: 8px;
   color: var(--argent-ecran);
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .genre-chip:hover {
-  background: rgba(198, 166, 100, 0.2);
+  background: rgba(198, 166, 100, 0.25);
   border-color: var(--dore-popcorn);
   color: var(--dore-popcorn);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.2);
 }
 
 .genre-chip--active {
   background: var(--dore-popcorn);
   color: var(--bleu-nuit);
   border-color: var(--dore-popcorn);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .genre-chip--active:hover {
-  background: #b8984a;
+  background: var(--dore-fonce);
   color: var(--bleu-nuit);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
+}
+
+/* Chip "Tous" en premier - style distinct */
+.genre-chip--all {
+  background: var(--bleu-intermediaire);
+  border-color: rgba(198, 166, 100, 0.4);
+}
+
+.genre-chip--all.genre-chip--active {
+  background: var(--rouge-projecteur);
+  border-color: var(--rouge-projecteur);
+  color: var(--argent-ecran);
+}
+
+.genre-chip--all.genre-chip--active:hover {
+  background: #c42030;
+  border-color: #c42030;
 }
 
 /* ====================================================== */
@@ -1830,13 +1922,20 @@
     margin-bottom: 1.5rem;
   }
 
+  .genre-chips-wrapper::before,
+  .genre-chips-wrapper::after {
+    width: 30px;
+  }
+
   .genre-chips {
-    gap: 0.5rem;
+    gap: 0.4rem;
+    padding: 0.4rem 0;
   }
 
   .genre-chip {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 6px;
   }
 
   .film-card-badges {
@@ -1876,13 +1975,24 @@
 
 @media (max-width: 500px) {
   .genre-chips-container {
-    padding: 0 0.75rem;
-    margin-bottom: 1.25rem;
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .genre-chips-wrapper::before,
+  .genre-chips-wrapper::after {
+    width: 25px;
+  }
+
+  .genre-chips {
+    gap: 0.35rem;
+    padding: 0.35rem 0;
   }
 
   .genre-chip {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    border-radius: 6px;
   }
 
   .film-card-badges {
