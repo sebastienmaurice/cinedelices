@@ -82,26 +82,6 @@
         </div>
       </section>
 
-      <!-- CHIPS FILTRAGE PAR GENRE -->
-      <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
-      <section class="genre-chips-container" aria-label="Filtrer par genre">
-        <div class="genre-chips">
-          <a href="/movies"
-             class="genre-chip <%= selectedGenre === 'tous' ? 'genre-chip--active' : '' %>"
-             data-genre="tous">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg> Tous
-          </a>
-          <% genres.forEach(genre => { %>
-          <a href="/movies?genre=<%= genre %>"
-             class="genre-chip <%= selectedGenre === genre ? 'genre-chip--active' : '' %>"
-             data-genre="<%= genre %>">
-            <%= genre.charAt(0).toUpperCase() + genre.slice(1) %>
-          </a>
-          <% }) %>
-        </div>
-      </section>
-      <% } %>
-
       <!-- SECTION FILMS -->
       <section id="films">
         <div class="presentation__film">
@@ -112,10 +92,25 @@
               écran
             </p>
           </div>
-          <div class="presentation__button__film">
-            <a class="btn btn--gold" href="/add-recipes-movies/"
-              >J'ajoute mon film</a
-            >
+          <div class="presentation__actions__film">
+            <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+            <div class="genre-filter">
+              <label for="genre-select" class="genre-filter__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              </label>
+              <select id="genre-select" class="genre-filter__select" onchange="window.location.href=this.value">
+                <option value="/movies" <%= (typeof selectedGenre === 'undefined' || selectedGenre === 'tous') ? 'selected' : '' %>>Tous les genres</option>
+                <% genres.forEach(genre => { %>
+                <option value="/movies?genre=<%= genre %>" <%= selectedGenre === genre ? 'selected' : '' %>><%= genre.charAt(0).toUpperCase() + genre.slice(1) %></option>
+                <% }) %>
+              </select>
+            </div>
+            <% } %>
+            <a class="btn btn--velvet" href="/add-recipes-movies/">
+              <span class="btn__shimmer"></span>
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              <span class="btn__text">J'ajoute mon film</span>
+            </a>
           </div>
         </div>
 
@@ -192,8 +187,10 @@
                   <%= recipesCount > 1 ? "recettes" : "recette" %>
                 </span>
               </div>
-              <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
-                Voir les recettes
+              <a class="btn btn--gold" href="/recipes-movie/<%= movie.id %>">
+                <span class="btn__shimmer"></span>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+                <span class="btn__text">Voir les recettes</span>
               </a>
             </div>
           </article>
@@ -204,10 +201,12 @@
         <div class="center-button">
           <button
             id="see__all__movies__button"
-            class="btn btn--gold-special"
+            class="btn btn--red"
             aria-label="Voir plus de films"
           >
-            Voir plus
+            <span class="btn__shimmer"></span>
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            <span class="btn__text">Voir plus</span>
           </button>
         </div>
         <% } %>

@@ -75,6 +75,49 @@
   --beige-icecream: #f5ead1;
 
   /* ====================================================== */
+  /* PALETTE PREMIUM CINÉMA - Design System Ultra Premium
+  ====================================================== */
+  /* Or Popcorn - Luxe & Cinéma */
+  --gold: #c6a664;
+  --gold-light: #e8d5a3;
+  --gold-dark: #9a7b3c;
+  --gold-glow: rgba(198, 166, 100, 0.6);
+
+  /* Rouge Projecteur - Passion & Énergie */
+  --red: #d72638;
+  --red-light: #ef4444;
+  --red-dark: #a11d2b;
+  --red-glow: rgba(215, 38, 56, 0.6);
+
+  /* Vert Velours - Succès & Élégance Cinéma */
+  --velvet: #065f46;
+  --velvet-light: #059669;
+  --velvet-dark: #064e3b;
+  --velvet-glow: rgba(6, 95, 70, 0.6);
+
+  /* Bleu Saphir - Premium & Profondeur */
+  --sapphire: #0369a1;
+  --sapphire-light: #0ea5e9;
+  --sapphire-dark: #075985;
+  --sapphire-glow: rgba(3, 105, 161, 0.6);
+
+  /* Cuivre Vintage - Chaleur & Nostalgie */
+  --copper: #d97706;
+  --copper-light: #f59e0b;
+  --copper-dark: #966026;
+  --copper-glow: rgba(217, 119, 6, 0.6);
+
+  /* Argent Écran - Élégance & Sobriété */
+  --silver: #64748b;
+  --silver-light: #94a3b8;
+  --silver-dark: #455566;
+  --silver-glow: rgba(100, 116, 139, 0.5);
+
+  /* Texte */
+  --text-light: #f1f5f9;
+  --text-dark: #0f172a;
+
+  /* ====================================================== */
   /* OMBRES ET EFFETS
   ====================================================== */
   --ombre-bleue: rgba(28, 37, 65, 0.4);
@@ -971,79 +1014,131 @@ a:hover {
 }
 
 /* ====================================================== */
-/* 5. BOUTONS
+/* 5. BOUTONS - Design System Ultra Premium
 ====================================================== */
 /**
- * Style de base pour tous les boutons
- * ------------------------------------
- * position: relative : Permet de positionner le ::before par rapport au bouton
- * overflow: hidden : Cache tout ce qui dépasse (important pour les animations)
- * user-select: none : Empêche la sélection du texte au clic (meilleure UX)
- * cursor: pointer : Change le curseur en main (indique que c'est cliquable)
- *
- * PSEUDO-ÉLÉMENT ::before :
- *   Crée un liseré intérieur animé
- *   - position: absolute : Positionné par rapport au bouton (parent avec position: relative)
- *   - pointer-events: none : Ne bloque pas les clics (le clic passe au bouton)
- *   - currentColor : Utilise la couleur du texte actuelle (s'adapte automatiquement)
+ * Boutons Premium Ciné Délices
+ * ----------------------------
+ * Design system avec effets WOW : shimmer, glow, liseré pointillé
+ * Palette : Gold, Red, Velvet, Sapphire, Copper, Silver
  */
+
+/* ========== BASE BUTTON ========== */
 .btn {
-  font-weight: bold;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  cursor: pointer;
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
   overflow: hidden;
-  transition: all var(--transition);
-  background: none;
+  isolation: isolate;
   user-select: none;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.3s ease,
+    color 0.3s ease;
 }
 
+.btn__text {
+  position: relative;
+  z-index: 3;
+}
+
+.btn svg,
+.btn .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 3;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.3s ease;
+}
+
+/* Shimmer effect */
+.btn__shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  z-index: 2;
+  transition: left 0.6s ease;
+}
+
+/* Liseré pointillé intérieur - Style Ticket Premium */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 5px;
+  border: 1.5px dashed currentColor;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 1;
+  transition:
+    opacity 0.3s ease,
+    inset 0.3s ease;
+}
+
+/* Border glow extérieur */
 .btn::before {
   content: "";
   position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  right: 2px;
-  border: 1px solid currentColor; /* liseré extérieur dynamique */
-  border-radius: 8px;
-  pointer-events: none;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(135deg, transparent, transparent);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
 }
 
-/**
- * États du bouton
- * ---------------
- * :hover : Au survol de la souris
- *   - transform: translateY(-2px) : Lève légèrement le bouton (effet 3D)
- *
- * :active : Pendant le clic
- *   - transform: translateY(0) : Remet à la position initiale
- *   - transition-duration: 0.1s : Animation rapide pour un retour immédiat
- *
- * :focus-visible : Quand le bouton est focus au clavier (accessibilité)
- *   - outline : Contour visible pour les utilisateurs au clavier
- *   - outline-offset : Espacement entre le contour et le bouton
- *
- * :disabled : Bouton désactivé
- *   - opacity: 0.5 : Rendu semi-transparent (visuel "grisé")
- *   - cursor: not-allowed : Curseur "interdit"
- *   - !important : Force cette règle (annule le transform du hover)
- */
-.btn:hover {
-  transform: translateY(-2px);
+/* ========== HOVER EFFECTS COMMUNS ========== */
+.btn:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.02);
 }
 
-.btn:active {
-  transform: translateY(0);
+.btn:hover:not(:disabled) .btn__shimmer {
+  left: 100%;
+}
+
+.btn:hover:not(:disabled)::after {
+  opacity: 0.7;
+  inset: 4px;
+}
+
+.btn:hover:not(:disabled) svg,
+.btn:hover:not(:disabled) .icon {
+  transform: rotate(15deg) scale(1.2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
   transition-duration: 0.1s;
 }
 
 .btn:focus-visible {
-  outline: 3px solid var(--dore-popcorn);
+  outline: 3px solid var(--gold);
   outline-offset: 3px;
 }
 
@@ -1053,17 +1148,272 @@ a:hover {
   transform: none !important;
 }
 
-/* Bouton compact */
+/* ========== BOUTON COMPACT ========== */
 .btn--sm {
   font-size: 0.78rem;
-  padding: 0.3rem 0.75rem;
+  padding: 0.4rem 0.85rem;
+  gap: 0.35rem;
 }
 
-/* Bouton ghost (contour léger) */
+.btn--sm svg,
+.btn--sm .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.btn--sm::after {
+  inset: 3px;
+  border-radius: 6px;
+}
+
+/* ========== BOUTON GOLD - Or Popcorn ========== */
+.btn--gold {
+  background: linear-gradient(
+    135deg,
+    var(--gold-dark) 0%,
+    var(--gold) 50%,
+    var(--gold-light) 100%
+  );
+  color: var(--text-dark);
+}
+
+.btn--gold::before {
+  background: linear-gradient(
+    135deg,
+    var(--gold-light),
+    var(--gold),
+    var(--gold-light)
+  );
+}
+
+.btn--gold:hover:not(:disabled) {
+  color: var(--text-dark);
+  filter: brightness(0.92);
+}
+
+.btn--gold:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--gold:hover:not(:disabled) svg,
+.btn--gold:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 8px var(--gold-dark));
+}
+
+/* ========== BOUTON RED - Rouge Projecteur ========== */
+.btn--red {
+  background: linear-gradient(
+    135deg,
+    var(--red-dark) 0%,
+    var(--red) 50%,
+    var(--red-light) 100%
+  );
+  color: var(--text-light);
+}
+
+.btn--red::before {
+  background: linear-gradient(
+    135deg,
+    var(--red-light),
+    var(--red),
+    var(--red-light)
+  );
+}
+
+.btn--red:hover:not(:disabled) {
+  filter: brightness(0.88);
+}
+
+.btn--red:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--red:hover:not(:disabled) svg,
+.btn--red:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+/* ========== BOUTON VELVET - Vert Velours ========== */
+.btn--velvet,
+.btn--green {
+  background: linear-gradient(
+    135deg,
+    var(--velvet-dark) 0%,
+    var(--velvet) 50%,
+    var(--velvet-light) 100%
+  );
+  color: var(--gold-light);
+}
+
+.btn--velvet::before,
+.btn--green::before {
+  background: linear-gradient(
+    135deg,
+    var(--velvet-light),
+    var(--velvet),
+    var(--velvet-light)
+  );
+}
+
+.btn--velvet::after,
+.btn--green::after {
+  border-color: var(--gold-light);
+}
+
+.btn--velvet:hover:not(:disabled),
+.btn--green:hover:not(:disabled) {
+  color: var(--gold-dark);
+  filter: brightness(0.9);
+}
+
+.btn--velvet:hover:not(:disabled)::before,
+.btn--green:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--velvet:hover:not(:disabled) svg,
+.btn--velvet:hover:not(:disabled) .icon,
+.btn--green:hover:not(:disabled) svg,
+.btn--green:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 8px var(--gold));
+  transform: rotate(90deg) scale(1.2);
+}
+
+/* ========== BOUTON SAPPHIRE - Bleu Saphir ========== */
+.btn--sapphire,
+.btn--blue-night {
+  background: linear-gradient(
+    135deg,
+    var(--sapphire-dark) 0%,
+    var(--sapphire) 50%,
+    var(--sapphire-light) 100%
+  );
+  color: var(--text-light);
+}
+
+.btn--sapphire::before,
+.btn--blue-night::before {
+  background: linear-gradient(
+    135deg,
+    var(--sapphire-light),
+    var(--sapphire),
+    var(--sapphire-light)
+  );
+}
+
+.btn--sapphire:hover:not(:disabled),
+.btn--blue-night:hover:not(:disabled) {
+  filter: brightness(0.88);
+}
+
+.btn--sapphire:hover:not(:disabled)::before,
+.btn--blue-night:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--sapphire:hover:not(:disabled) svg,
+.btn--sapphire:hover:not(:disabled) .icon,
+.btn--blue-night:hover:not(:disabled) svg,
+.btn--blue-night:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+/* ========== BOUTON COPPER - Cuivre Vintage ========== */
+.btn--copper {
+  background: linear-gradient(
+    135deg,
+    var(--copper-dark) 0%,
+    var(--copper) 50%,
+    var(--copper-light) 100%
+  );
+  color: var(--text-dark);
+}
+
+.btn--copper::before {
+  background: linear-gradient(
+    135deg,
+    var(--copper-light),
+    var(--copper),
+    var(--copper-light)
+  );
+}
+
+.btn--copper:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+
+.btn--copper:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--copper:hover:not(:disabled) svg,
+.btn--copper:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 6px var(--text-dark));
+  animation: btn-heartbeat 0.6s ease infinite;
+}
+
+@keyframes btn-heartbeat {
+  0%,
+  100% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+}
+
+/* ========== BOUTON SILVER - Argent Écran ========== */
+.btn--silver {
+  background: linear-gradient(
+    135deg,
+    var(--silver-dark) 0%,
+    var(--silver) 50%,
+    var(--silver-light) 100%
+  );
+  color: var(--text-light);
+}
+
+.btn--silver::before {
+  background: linear-gradient(
+    135deg,
+    var(--silver-light),
+    var(--silver),
+    var(--silver-light)
+  );
+}
+
+.btn--silver:hover:not(:disabled) {
+  filter: brightness(0.88);
+}
+
+.btn--silver:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn--silver:hover:not(:disabled) svg,
+.btn--silver:hover:not(:disabled) .icon {
+  filter: drop-shadow(0 0 4px var(--text-light));
+  animation: btn-spin 0.8s ease;
+}
+
+@keyframes btn-spin {
+  from {
+    transform: rotate(0deg) scale(1.2);
+  }
+  to {
+    transform: rotate(180deg) scale(1.2);
+  }
+}
+
+/* ========== BOUTON GHOST - Contour transparent ========== */
 .btn--ghost {
-  background-color: transparent;
-  color: var(--dore-popcorn);
-  border: 1px solid rgba(198, 166, 100, 0.65);
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+}
+
+.btn--ghost::after {
+  display: none;
 }
 
 .btn--ghost::before {
@@ -1071,166 +1421,281 @@ a:hover {
 }
 
 .btn--ghost:hover:not(:disabled) {
-  border-color: var(--dore-popcorn);
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
+  background: rgba(198, 166, 100, 0.15);
+  color: var(--gold-light);
+  border-color: var(--gold-light);
 }
 
-/* 1️⃣ Bouton Or */
-.btn--gold {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn); /* border suit le bg */
-}
-
-.btn--gold:hover:not(:disabled) {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur); /* border suit le bg */
-}
-
-/* 2️⃣ Bouton Rouge */
-.btn--red {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-}
-
-.btn--red:hover:not(:disabled) {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-}
-
-/* 3️⃣ Bouton Bleu intermediaire vers Bleu Nuit */
-.btn--blue-night {
-  background-color: var(--bleu-intermediaire);
-  color: var(--jaune-blond);
-  border-color: var(--bleu-intermediaire);
-}
-
-.btn--blue-night:hover:not(:disabled) {
-  background-color: var(--bleu-nuit);
-  color: var(--dore-popcorn);
-  border-color: var(--bleu-nuit);
-}
-
-/* 4️⃣ Bouton Spécial Or avec glow Rouge Projecteur optimisé */
+/* ========== BOUTONS SPÉCIAUX (rétrocompatibilité) ========== */
 .btn--gold-special {
-  background-color: var(--dore-popcorn); /* fond or */
-  color: var(--bleu-nuit); /* texte bleu nuit */
-  border: 2px solid var(--bleu-nuit); /* liseré bleu nuit */
-  border-radius: 10px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none; /* pas de shadow en normal */
+  background: linear-gradient(
+    135deg,
+    var(--gold-dark) 0%,
+    var(--gold) 50%,
+    var(--gold-light) 100%
+  );
+  color: var(--text-dark);
+  box-shadow:
+    0 4px 15px rgba(198, 166, 100, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .btn--gold-special:hover:not(:disabled) {
-  background-color: var(--rouge-projecteur); /* fond rouge */
-  color: var(--argent-ecran); /* texte blanc argent */
-  border-color: var(--rouge-projecteur); /* liseré rouge */
-  transform: scale(1.05); /* léger agrandissement */
   box-shadow:
-    0 0 12px var(--rouge-projecteur),
-    0 0 24px rgba(215, 38, 56, 0.6),
-    0 0 36px rgba(215, 38, 56, 0.4),
-    0 0 60px rgba(215, 38, 56, 0.2); /* halo plus doux mais visible */
+    0 8px 30px var(--gold-glow),
+    0 0 60px rgba(198, 166, 100, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-/* 5️⃣ Bouton Spécial Rouge avec glow Or optimisé */
 .btn--red-special {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border: 2px solid var(--rouge-projecteur);
-  border-radius: 10px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none; /* pas de shadow en normal */
+  background: linear-gradient(
+    135deg,
+    var(--red-dark) 0%,
+    var(--red) 50%,
+    var(--red-light) 100%
+  );
+  color: var(--text-light);
+  box-shadow:
+    0 4px 15px rgba(215, 38, 56, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .btn--red-special:hover:not(:disabled) {
-  background-color: var(--dore-popcorn); /* fond or */
-  color: var(--bleu-nuit); /* texte bleu nuit */
-  border-color: var(--dore-popcorn); /* liseré or */
-  transform: scale(1.05); /* léger agrandissement */
   box-shadow:
-    0 0 8px var(--dore-popcorn),
-    0 0 16px rgba(198, 166, 100, 0.8),
-    0 0 32px rgba(198, 166, 100, 0.6),
-    0 0 48px rgba(198, 166, 100, 0.4),
-    0 0 80px rgba(198, 166, 100, 0.2); /* glow cinéma doré plus profond */
+    0 8px 30px var(--red-glow),
+    0 0 60px rgba(215, 38, 56, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 /* ====================================================== */
-/* 6. TAGS / BADGES
+/* 6. TAGS / BADGES - Design System Ultra Premium
 ====================================================== */
-.tag,
+/**
+ * Tags et Badges Premium Ciné Délices
+ * ------------------------------------
+ * Style ticket premium avec liseré pointillé intérieur
+ * Palette complète : Gold, Red, Velvet, Sapphire, Copper, Silver
+ */
+
+/* ========== BASE BADGE (Outline Style - CodePen v2) ========== */
 .badge {
-  display: inline-block;
-  padding: 0.35rem 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.6rem;
+  font-weight: 700;
   border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: 1px solid transparent;
-  transition: all var(--transition);
+  position: relative;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  color: currentColor;
+  border: 1.5px dashed currentColor;
+}
+
+.badge svg {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+}
+
+/* Badge Gold - Outline */
+.badge--gold {
+  color: var(--gold);
+  background-color: rgba(198, 166, 100, 0.15);
+}
+
+/* Badge Red - Outline */
+.badge--red {
+  color: var(--red);
+  background-color: rgba(215, 38, 56, 0.15);
+}
+
+/* Badge Velvet (Vert) - Outline */
+.badge--velvet,
+.badge--green {
+  color: var(--velvet-light);
+  background-color: rgba(6, 95, 70, 0.15);
+}
+
+/* Badge Sapphire (Bleu) - Outline */
+.badge--sapphire,
+.badge--blue {
+  color: var(--sapphire-light);
+  background-color: rgba(3, 105, 161, 0.15);
+}
+
+/* Badge Copper - Outline */
+.badge--copper {
+  color: var(--copper);
+  background-color: rgba(217, 119, 6, 0.15);
+}
+
+/* Badge Silver - Outline */
+.badge--silver {
+  color: var(--silver);
+  background-color: rgba(100, 116, 139, 0.15);
+}
+
+/* Badge Small */
+.badge--sm {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.55rem;
+  border-radius: 4px;
+}
+
+.badge--sm svg {
+  width: 8px;
+  height: 8px;
+}
+
+/* ========== BADGES FILLED (Variantes spéciales) ========== */
+/* Badge Nouveau - Style Saphir Premium (Filled) */
+.badge--new {
+  background: linear-gradient(135deg, var(--sapphire-dark), var(--sapphire), var(--sapphire-light));
+  color: var(--text-light);
+  border: none;
+}
+
+/* Badge Populaire - Style Rouge Projecteur Premium (Filled) */
+.badge--popular {
+  background: linear-gradient(135deg, var(--red-dark), var(--red), var(--red-light));
+  color: var(--text-light);
+  border: none;
+}
+
+/* Liseré intérieur pour badges filled */
+.badge--new::after,
+.badge--popular::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 4px;
+  border: 1px dashed currentColor;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* ========== BASE TAG ========== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  position: relative;
+  transition: transform 0.25s ease;
   white-space: nowrap;
 }
 
-/* Tag Rouge */
-.tag--red,
-.badge--red {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
+.tag svg {
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
 }
 
-.tag--red:hover,
-.badge--red:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  transform: translateY(-2px);
+/* Liseré intérieur pointillé */
+.tag::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 4px;
+  border: 1px dashed currentColor;
+  opacity: 0.2;
+  pointer-events: none;
 }
 
-/* Tag Or */
-.tag--gold,
-.badge--gold {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
+/* Tag Gold */
+.tag--gold {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--text-dark);
 }
 
-.tag--gold:hover,
-.badge--gold:hover {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-color: var(--rouge-projecteur);
-  transform: translateY(-2px);
+/* Tag Red */
+.tag--red {
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  color: var(--text-light);
 }
 
-/* Tag Bleu */
-.tag--blue,
-.badge--blue {
-  background-color: var(--bleu-intermediaire);
-  color: var(--argent-ecran);
-  border-color: var(--bleu-intermediaire);
+/* Tag Velvet (Vert) */
+.tag--velvet,
+.tag--green {
+  background: linear-gradient(135deg, var(--velvet-dark), var(--velvet));
+  color: var(--gold-light);
 }
 
-.tag--blue:hover,
-.badge--blue:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border-color: var(--dore-popcorn);
-  transform: translateY(-2px);
+.tag--velvet::after,
+.tag--green::after {
+  border-color: var(--gold-light);
+}
+
+/* Tag Sapphire (Bleu) */
+.tag--sapphire,
+.tag--blue {
+  background: linear-gradient(135deg, var(--sapphire-dark), var(--sapphire));
+  color: var(--text-light);
+}
+
+/* Tag Copper */
+.tag--copper {
+  background: linear-gradient(135deg, var(--copper-dark), var(--copper));
+  color: var(--text-dark);
+}
+
+/* Tag Silver */
+.tag--silver {
+  background: linear-gradient(135deg, var(--silver-dark), var(--silver));
+  color: var(--text-light);
+}
+
+/* ========== TAGS OUTLINE ========== */
+.tag--gold-outline {
+  background: rgba(198, 166, 100, 0.1);
+  color: var(--gold);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+.tag--gold-outline::after {
+  display: none;
+}
+
+.tag--red-outline {
+  background: rgba(215, 38, 56, 0.1);
+  color: var(--red);
+  box-shadow: inset 0 0 0 1.5px var(--red);
+}
+
+.tag--red-outline::after {
+  display: none;
+}
+
+.tag--velvet-outline,
+.tag--green-outline {
+  background: rgba(6, 95, 70, 0.15);
+  color: var(--velvet-light);
+  box-shadow: inset 0 0 0 1.5px var(--velvet);
+}
+
+.tag--velvet-outline::after,
+.tag--green-outline::after {
+  display: none;
+}
+
+.tag--sapphire-outline,
+.tag--blue-outline {
+  background: rgba(3, 105, 161, 0.1);
+  color: var(--sapphire-light);
+  box-shadow: inset 0 0 0 1.5px var(--sapphire);
+}
+
+.tag--sapphire-outline::after,
+.tag--blue-outline::after {
+  display: none;
 }
 
 /* ====================================================== */

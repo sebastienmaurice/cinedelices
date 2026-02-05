@@ -178,7 +178,7 @@
         <section class="admin-section admin-section--panel" data-admin-section="published">
           <div class="admin-section__header">
             <h2>Gestion des contenus publiés</h2>
-            <span class="admin-status-badge is-approved">Publié</span>
+            <span class="badge badge--velvet">Publié</span>
           </div>
           <p class="admin-empty">
             Édition et suppression immédiates (pas de mini-validation).
@@ -225,7 +225,7 @@
                   <div class="admin-list-item admin-list-item--action" data-search="<%= `${movie.title} ${movie.year} ${movie.genre}`.toLowerCase() %>">
                     <span>#<%= movie.id %></span>
                     <p><%= movie.title %> • <%= movie.year %> • <%= movie.genre %></p>
-                    <span class="admin-status-badge is-approved">Validé</span>
+                    <span class="badge badge--velvet">Validé</span>
                     <div class="admin-list-actions">
                       <details class="admin-edit-panel">
                         <summary>Éditer (admin)</summary>
@@ -294,7 +294,7 @@
                       <%= recipe.name %>
                       <% if (recipe.Movie) { %> • <%= recipe.Movie.title %><% } %>
                     </p>
-                    <span class="admin-status-badge is-approved">Validé</span>
+                    <span class="badge badge--velvet">Validé</span>
                     <div class="admin-list-actions">
                       <details class="admin-edit-panel">
                         <summary>Éditer (admin)</summary>
@@ -384,7 +384,7 @@
                         <% } %>
                       <% } %>
                     </p>
-                    <span class="admin-status-badge is-approved">Validé</span>
+                    <span class="badge badge--velvet">Validé</span>
                     <div class="admin-list-actions">
                       <details class="admin-edit-panel">
                         <summary>Éditer (admin)</summary>
@@ -430,7 +430,7 @@
         <section class="admin-section admin-section--panel" data-admin-section="validations">
           <div class="admin-section__header">
             <h2>Validations en attente</h2>
-            <span class="admin-status-badge is-pending">En attente</span>
+            <span class="badge badge--copper">En attente</span>
           </div>
           <div class="admin-validation-detail">
             <div class="admin-detail-empty is-active">
@@ -510,7 +510,7 @@
                         </p>
                       <% } %>
                     </div>
-                    <span class="admin-status-badge is-pending">En attente</span>
+                    <span class="badge badge--copper">En attente</span>
                   </div>
                   <div class="admin-detail-card__body">
                     <div class="admin-detail-media">
@@ -545,12 +545,12 @@
                       <p class="admin-detail-eyebrow">Recette à valider</p>
                       <h3><%= recipe.name %></h3>
                       <div class="admin-detail-tags">
-                        <span class="admin-detail-tag is-category"><%= recipe.category %></span>
-                        <span class="admin-detail-tag is-time"><%= recipe.time %> min</span>
-                        <span class="admin-detail-tag is-difficulty"><%= recipe.difficulty %></span>
+                        <span class="tag tag--sapphire"><%= recipe.category %></span>
+                        <span class="tag tag--silver"><%= recipe.time %> min</span>
+                        <span class="tag tag--gold"><%= recipe.difficulty %></span>
                       </div>
                     </div>
-                    <span class="admin-status-badge is-pending">En attente</span>
+                    <span class="badge badge--copper">En attente</span>
                   </div>
                   <div class="admin-detail-card__body">
                     <div class="admin-detail-media">
@@ -677,7 +677,7 @@
                         → <strong><%= nextTitle %></strong>
                         (<%= nextYear %> • <%= nextGenre %>)
                       </p>
-                      <span class="admin-status-badge is-pending">Modif</span>
+                      <span class="badge badge--copper">Modif</span>
                       <div class="admin-list-actions">
                         <form method="POST" action="/admin/movies/<%= movie.id %>/edit/approve">
                           <button type="submit" class="btn btn--gold btn--sm">Valider</button>
@@ -706,7 +706,7 @@
                           • Film associé : <%= recipe.Movie.title %>
                         <% } %>
                       </p>
-                      <span class="admin-status-badge is-pending">Modif</span>
+                      <span class="badge badge--copper">Modif</span>
                       <div class="admin-list-actions">
                         <form method="POST" action="/admin/recipes/<%= recipe.id %>/edit/approve">
                           <button type="submit" class="btn btn--gold btn--sm">Valider</button>
@@ -737,7 +737,7 @@
                           <% } %>
                         <% } %>
                       </p>
-                      <span class="admin-status-badge is-pending">Modif</span>
+                      <span class="badge badge--copper">Modif</span>
                       <div class="admin-list-actions">
                         <form method="POST" action="/admin/notices/<%= note.id %>/edit/approve">
                           <button type="submit" class="btn btn--gold btn--sm">Valider</button>
@@ -771,7 +771,7 @@
                         <% } %>
                       <% } %>
                     </p>
-                    <span class="admin-status-badge is-pending">Suppression</span>
+                    <span class="badge badge--copper">Suppression</span>
                     <div class="admin-list-actions">
                       <form method="POST" action="/admin/notices/<%= note.id %>/delete/approve">
                         <button type="submit" class="btn btn--gold btn--sm">Approuver</button>
@@ -793,7 +793,7 @@
         <section class="admin-section admin-section--panel" data-admin-section="photos">
           <div class="admin-section__header">
             <h2>Photos de profil en attente</h2>
-            <span class="admin-badge admin-badge--pending">
+            <span class="badge badge--copper">
               <%= pendingProfilePhotos ? pendingProfilePhotos.length : 0 %> en attente
             </span>
         </div>
@@ -808,7 +808,7 @@
               <div class="profile-approval-content">
                 <h3><%= profile.first_name %> <%= profile.last_name %></h3>
                 <p><%= profile.pseudo %> • <%= profile.email %></p>
-                <span class="admin-status-badge is-pending">En attente</span>
+                <span class="badge badge--copper">En attente</span>
               </div>
               <div class="profile-approval-actions">
                 <form
@@ -835,7 +835,7 @@
         <section class="admin-section admin-section--panel" data-admin-section="avis">
           <div class="admin-section__header">
             <h2>Avis & critiques</h2>
-            <span class="admin-badge"><%= avis.length %> éléments</span>
+            <span class="badge badge--silver"><%= avis.length %> éléments</span>
           </div>
           <div class="admin-list">
             <% if (avis.length > 0) { %>
@@ -843,7 +843,7 @@
                 <div class="admin-list-item admin-list-item--action">
                   <span>#<%= note.id %></span>
                   <p><%= note.content %></p>
-                  <span class="admin-status-badge <%= note.status ? 'is-approved' : 'is-pending' %>">
+                  <span class="badge <%= note.status ? 'badge--velvet' : 'badge--copper' %>">
                     <%= note.status ? 'Validé' : 'En attente' %>
                   </span>
                   <div class="admin-list-actions">
@@ -867,14 +867,14 @@
         <section class="admin-section admin-section--panel" data-admin-section="users">
           <div class="admin-section__header">
             <h2>Utilisateurs</h2>
-            <span class="admin-badge"><%= users.length %> comptes</span>
+            <span class="badge badge--silver"><%= users.length %> comptes</span>
           </div>
           <div class="admin-list">
             <% users.forEach(user => { %>
               <div class="admin-list-item admin-list-item--action">
                 <span>#<%= user.id %></span>
                 <p><%= user.first_name %> <%= user.last_name %> • <%= user.email %></p>
-                <span class="admin-status-badge <%= user.role === 'admin' ? 'is-approved' : 'is-pending' %>">
+                <span class="badge <%= user.role === 'admin' ? 'badge--velvet' : 'badge--copper' %>">
                   <%= user.role === 'admin' ? 'Admin' : 'Utilisateur' %>
                 </span>
                 <form method="POST" action="/admin/deleteUser/<%= user.id %>">

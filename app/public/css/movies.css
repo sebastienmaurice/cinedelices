@@ -322,6 +322,67 @@
   opacity: 0.9;
 }
 
+/* Container des actions (filtre + bouton) */
+.presentation__actions__film {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Filtre par genre - Dropdown */
+.genre-filter {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.genre-filter__label {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--dore-popcorn);
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.genre-filter__select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: linear-gradient(135deg, rgba(27, 38, 59, 0.9) 0%, rgba(13, 27, 42, 0.95) 100%);
+  border: 1px solid rgba(198, 166, 100, 0.35);
+  border-radius: 10px;
+  color: var(--argent-ecran);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.6rem 2.5rem 0.6rem 2.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c6a664' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 14px;
+}
+
+.genre-filter__select:hover {
+  border-color: var(--dore-popcorn);
+  background: linear-gradient(135deg, rgba(198, 166, 100, 0.15) 0%, rgba(27, 38, 59, 0.95) 100%);
+}
+
+.genre-filter__select:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 0 0 3px rgba(198, 166, 100, 0.15);
+}
+
+.genre-filter__select option {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  padding: 0.5rem;
+}
+
 /* ====================================================== */
 /* ========== SECTION DES FICHES DE FILMS ============== */
 /* ====================================================== */
@@ -448,77 +509,56 @@
   margin-bottom: 0.6rem;
 }
 
+/* Tags des cartes films - Style Premium Ticket (CodePen v2) - Version compacte */
 .film-meta-tag {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  padding: 0.25rem 0.55rem;
-  border-radius: 8px;
-  font-size: 0.7rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.2px;
   white-space: nowrap;
-  transition: all 0.25s ease;
-  box-shadow: var(--tag-shadow);
-  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease;
+  position: relative;
 }
 
+/* Liseré pointillé intérieur - Style Ticket Premium */
+.film-meta-tag::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 3px;
+  border: 1px dashed currentColor;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Tag Année - Style Silver */
 .film-meta-tag--year {
-  background-color: var(--tag-bg-neutral);
-  color: var(--argent-ecran);
-  border: 1.5px solid var(--tag-border-light);
+  background: linear-gradient(135deg, var(--silver-dark), var(--silver));
+  color: var(--text-light);
 }
 
+/* Tag Genre - Style Sapphire */
 .film-meta-tag--genre {
-  background-color: var(--tag-bg-accent);
-  color: var(--argent-ecran);
-  border: 1.5px solid var(--tag-border-light);
+  background: linear-gradient(135deg, var(--sapphire-dark), var(--sapphire));
+  color: var(--text-light);
   text-transform: capitalize;
 }
 
+/* Tag Recettes - Style Gold */
 .film-meta-tag--recipes {
-  background-color: var(--tag-bg-highlight);
-  color: var(--bleu-nuit);
-  border: 1.5px solid var(--tag-border-accent);
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--text-dark);
   font-weight: 700;
 }
 
-#films article:hover .film-meta-tag {
-  transform: translateY(-2px);
-  box-shadow: var(--tag-shadow-hover);
-}
-
-#films article:hover .film-meta-tag--year {
-  background-color: var(--tag-bg-neutral-hover);
-  border-color: var(--tag-border-light-hover);
-}
-
-#films article:hover .film-meta-tag--genre {
-  background-color: var(--tag-bg-accent-hover);
-  border-color: var(--tag-border-light-hover);
-}
-
-#films article:hover .film-meta-tag--recipes {
-  background-color: var(--tag-bg-highlight-hover);
-  border-color: var(--tag-border-accent-hover);
-  box-shadow: var(--tag-shadow-highlight-hover);
-}
 
 .film-card-info .btn {
-  display: inline-block;
+  display: inline-flex;
   margin-top: 1rem;
   width: auto;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Bouton s'illumine en doré au hover de la card */
-#films article:hover .film-card-info .btn {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border-color: var(--btn-primary-border);
-  box-shadow: var(--btn-primary-shadow-hover);
-  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* ====================================================== */
@@ -634,16 +674,16 @@
   }
 
   .film-meta {
-    font-size: 0.7rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.6rem;
+    margin-bottom: 0.45rem;
   }
 
   .presentation__film {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
+    gap: 1.25rem;
     padding: 0 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .presentation__text__film h3 {
@@ -655,12 +695,20 @@
     font-size: 0.9rem;
   }
 
-  .presentation__button__film {
+  .presentation__actions__film {
     width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
-  .presentation__button__film .btn {
-    width: 100%;
+  .genre-filter__select {
+    min-width: 150px;
+    font-size: 0.85rem;
+    padding: 0.55rem 2.25rem 0.55rem 2.5rem;
+  }
+
+  .presentation__actions__film .btn {
+    flex-shrink: 0;
   }
 
   .center-button {
@@ -733,8 +781,8 @@
   }
 
   .film-meta {
-    font-size: 0.65rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.55rem;
+    margin-bottom: 0.4rem;
   }
 
   .film-card-info .btn {
@@ -745,8 +793,8 @@
 
   .presentation__film {
     padding: 0 0.75rem;
-    margin-bottom: 1.5rem;
-    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
   }
 
   .presentation__text__film h3 {
@@ -756,6 +804,17 @@
 
   .presentation__text__film p {
     font-size: 0.85rem;
+  }
+
+  .genre-filter__select {
+    min-width: 140px;
+    font-size: 0.8rem;
+    padding: 0.5rem 2rem 0.5rem 2.25rem;
+  }
+
+  .genre-filter__label svg {
+    width: 16px;
+    height: 16px;
   }
 
   .center-button {
@@ -821,8 +880,8 @@
   }
 
   .film-meta {
-    font-size: 0.6rem;
-    margin-bottom: 0.45rem;
+    font-size: 0.5rem;
+    margin-bottom: 0.35rem;
   }
 
   .film-card-info .btn {
@@ -833,8 +892,8 @@
 
   .presentation__film {
     padding: 0 0.5rem;
-    margin-bottom: 1.25rem;
-    gap: 1rem;
+    margin-bottom: 1rem;
+    gap: 0.75rem;
   }
 
   .presentation__text__film h3 {
@@ -844,6 +903,29 @@
 
   .presentation__text__film p {
     font-size: 0.8rem;
+  }
+
+  .presentation__actions__film {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .genre-filter {
+    width: 100%;
+  }
+
+  .genre-filter__select {
+    width: 100%;
+    min-width: unset;
+    font-size: 0.8rem;
+    padding: 0.5rem 2rem 0.5rem 2.25rem;
+  }
+
+  .presentation__actions__film .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
   }
 
   .center-button {
@@ -1644,30 +1726,12 @@
   z-index: 10;
 }
 
-.badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+/* Surcharge pour badges des cartes films (avec backdrop-filter) */
+.film-card .badge {
   backdrop-filter: blur(4px);
 }
 
-.badge--new {
-  background: linear-gradient(135deg, #00d4ff, #0099cc);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.4);
-}
-
-.badge--popular {
-  background: linear-gradient(135deg, var(--rouge-projecteur), #ff6b6b);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(215, 38, 56, 0.4);
-}
+/* Badges .badge--new et .badge--popular : styles dans base.css */
 
 /* ====================================================== */
 /* ============= BOUTON FAVORI (COEUR) ================== */
@@ -1774,7 +1838,7 @@
 .genre-chips-container {
   width: 100%;
   max-width: var(--max-width);
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 1rem auto;
   padding: 0 2rem;
   position: relative;
 }
@@ -1828,6 +1892,7 @@
 .genre-chips {
   display: flex;
   flex-wrap: nowrap;
+  justify-content: center;
   gap: 0.5rem;
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -1879,7 +1944,6 @@
   border-color: var(--dore-popcorn);
   color: var(--dore-popcorn);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.2);
 }
 
 .genre-chip--active {
@@ -1893,7 +1957,6 @@
   background: var(--dore-fonce);
   color: var(--bleu-nuit);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
 }
 
 /* Chip "Tous" en premier - style distinct */
@@ -1919,7 +1982,7 @@
 @media (max-width: 800px) {
   .genre-chips-container {
     padding: 0 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .genre-chips-wrapper::before,
@@ -1976,7 +2039,7 @@
 @media (max-width: 500px) {
   .genre-chips-container {
     padding: 0 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   .genre-chips-wrapper::before,

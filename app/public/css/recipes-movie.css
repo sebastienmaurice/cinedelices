@@ -424,76 +424,56 @@
   margin-bottom: 0.8rem;
 }
 
+/* Tags des cartes recettes - Style Premium Ticket (CodePen v2) - Version compacte */
 .recipe-meta-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.55rem;
-  border-radius: 8px;
-  font-size: 0.7rem;
+  gap: 0.2rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.2px;
   white-space: nowrap;
-  transition: all 0.25s ease;
-  box-shadow: var(--tag-shadow);
-  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease;
+  position: relative;
 }
 
+/* Liseré pointillé intérieur - Style Ticket Premium */
+.recipe-meta-tag::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 3px;
+  border: 1px dashed currentColor;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Tag Catégorie - Style Red */
 .recipe-meta-tag--category {
-  background-color: var(--tag-bg-accent);
-  color: var(--argent-ecran);
-  border: 1.5px solid var(--tag-border-light);
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  color: var(--text-light);
   text-transform: capitalize;
 }
 
+/* Tag Durée - Style Silver */
 .recipe-meta-tag--duration {
-  background-color: var(--tag-bg-neutral);
-  color: var(--argent-ecran);
-  border: 1.5px solid var(--tag-border-light);
+  background: linear-gradient(135deg, var(--silver-dark), var(--silver));
+  color: var(--text-light);
 }
 
+/* Tag Difficulté - Style Gold */
 .recipe-meta-tag--difficulty {
-  background-color: var(--tag-bg-highlight);
-  color: var(--bleu-nuit);
-  border: 1.5px solid var(--tag-border-accent);
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--text-dark);
   font-weight: 700;
 }
 
-#recipes article:hover .recipe-meta-tag {
-  transform: translateY(-2px);
-  box-shadow: var(--tag-shadow-hover);
-}
-
-#recipes article:hover .recipe-meta-tag--category {
-  background-color: var(--tag-bg-accent-hover);
-  border-color: var(--tag-border-light-hover);
-}
-
-#recipes article:hover .recipe-meta-tag--duration {
-  background-color: var(--tag-bg-neutral-hover);
-  border-color: var(--tag-border-light-hover);
-}
-
-#recipes article:hover .recipe-meta-tag--difficulty {
-  background-color: var(--tag-bg-highlight-hover);
-  border-color: var(--tag-border-accent-hover);
-  box-shadow: var(--tag-shadow-highlight-hover);
-}
 
 .recipe-card-info .btn {
-  display: inline-block;
+  display: inline-flex;
   margin-top: 1rem;
   width: auto;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Bouton s'illumine en doré au hover de la card */
-#recipes article:hover .recipe-card-info .btn {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border-color: var(--btn-primary-border);
-  box-shadow: var(--btn-primary-shadow-hover);
-  transform: translateY(var(--btn-lift-hover)) scale(var(--btn-scale-hover));
 }
 
 /* Note générale au survol: placée à droite du bouton */
