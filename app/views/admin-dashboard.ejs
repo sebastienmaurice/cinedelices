@@ -178,7 +178,7 @@
         <section class="admin-section admin-section--panel" data-admin-section="published">
           <div class="admin-section__header">
             <h2>Gestion des contenus publiés</h2>
-            <span class="badge badge--velvet">Publié</span>
+            <span class="badge badge--gold">Publié</span>
           </div>
           <p class="admin-empty">
             Édition et suppression immédiates (pas de mini-validation).
@@ -225,32 +225,22 @@
                   <div class="admin-list-item admin-list-item--action" data-search="<%= `${movie.title} ${movie.year} ${movie.genre}`.toLowerCase() %>">
                     <span>#<%= movie.id %></span>
                     <p><%= movie.title %> • <%= movie.year %> • <%= movie.genre %></p>
-                    <span class="badge badge--velvet">Validé</span>
+                    <span class="badge badge--gold">Validé</span>
                     <div class="admin-list-actions">
-                      <details class="admin-edit-panel">
-                        <summary>Éditer (admin)</summary>
-                        <form
-                          method="POST"
-                          action="/admin/movies/<%= movie.id %>/edit/direct"
-                          class="admin-edit-form"
-                        >
-                          <label>
-                            Titre
-                            <input type="text" name="title" value="<%= movie.title %>" />
-                          </label>
-                          <label>
-                            Année
-                            <input type="number" name="year" value="<%= movie.year %>" />
-                          </label>
-                          <label>
-                            Genre
-                            <input type="text" name="genre" value="<%= movie.genre %>" />
-                          </label>
-                          <button class="btn btn--gold btn--sm" type="submit">
-                            Éditer (admin)
-                          </button>
-                        </form>
-                      </details>
+                      <button
+                        type="button"
+                        class="btn btn--gold btn--sm"
+                        data-edit-btn
+                        data-edit-type="movie"
+                        data-edit-id="<%= movie.id %>"
+                        data-edit-title="<%= movie.title %>"
+                        data-edit-year="<%= movie.year %>"
+                        data-edit-genre="<%= movie.genre %>"
+                        data-edit-synopsis="<%= movie.synopsis || '' %>"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        Éditer
+                      </button>
                       <form method="POST" action="/admin/movies/<%= movie.id %>/delete/direct">
                         <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
                       </form>
@@ -294,48 +284,25 @@
                       <%= recipe.name %>
                       <% if (recipe.Movie) { %> • <%= recipe.Movie.title %><% } %>
                     </p>
-                    <span class="badge badge--velvet">Validé</span>
+                    <span class="badge badge--gold">Validé</span>
                     <div class="admin-list-actions">
-                      <details class="admin-edit-panel">
-                        <summary>Éditer (admin)</summary>
-                        <form
-                          method="POST"
-                          action="/admin/recipes/<%= recipe.id %>/edit/direct"
-                          class="admin-edit-form"
-                        >
-                          <label>
-                            Titre
-                            <input type="text" name="name" value="<%= recipe.name %>" />
-                          </label>
-                          <label>
-                            Description
-                            <textarea name="description" rows="3"><%= recipe.description %></textarea>
-                          </label>
-                          <label>
-                            Catégorie
-                            <input type="text" name="category" value="<%= recipe.category %>" />
-                          </label>
-                          <label>
-                            Temps (min)
-                            <input type="number" name="time" value="<%= recipe.time %>" />
-                          </label>
-                          <label>
-                            Difficulté
-                            <input type="text" name="difficulty" value="<%= recipe.difficulty %>" />
-                          </label>
-                          <label>
-                            Ingrédients
-                            <textarea name="ingredients" rows="3"><%= recipe.ingredients %></textarea>
-                          </label>
-                          <label>
-                            Préparation
-                            <textarea name="preparation" rows="4"><%= recipe.preparation %></textarea>
-                          </label>
-                          <button class="btn btn--gold btn--sm" type="submit">
-                            Éditer (admin)
-                          </button>
-                        </form>
-                      </details>
+                      <button
+                        type="button"
+                        class="btn btn--gold btn--sm"
+                        data-edit-btn
+                        data-edit-type="recipe"
+                        data-edit-id="<%= recipe.id %>"
+                        data-edit-name="<%= recipe.name %>"
+                        data-edit-description="<%= recipe.description || '' %>"
+                        data-edit-category="<%= recipe.category %>"
+                        data-edit-time="<%= recipe.time %>"
+                        data-edit-difficulty="<%= recipe.difficulty %>"
+                        data-edit-ingredients="<%= recipe.ingredients || '' %>"
+                        data-edit-preparation="<%= recipe.preparation || '' %>"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        Éditer
+                      </button>
                       <form method="POST" action="/admin/recipes/<%= recipe.id %>/delete/direct">
                         <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
                       </form>
@@ -384,28 +351,22 @@
                         <% } %>
                       <% } %>
                     </p>
-                    <span class="badge badge--velvet">Validé</span>
+                    <span class="badge badge--gold">Validé</span>
                     <div class="admin-list-actions">
-                      <details class="admin-edit-panel">
-                        <summary>Éditer (admin)</summary>
-                        <form
-                          method="POST"
-                          action="/admin/notices/<%= note.id %>/edit/direct"
-                          class="admin-edit-form"
-                        >
-                          <label>
-                            Avis
-                            <textarea name="content" rows="3"><%= note.content %></textarea>
-                          </label>
-                          <label>
-                            Note
-                            <input type="number" name="quote" min="1" max="5" value="<%= note.quote %>" />
-                          </label>
-                          <button class="btn btn--gold btn--sm" type="submit">
-                            Éditer (admin)
-                          </button>
-                        </form>
-                      </details>
+                      <button
+                        type="button"
+                        class="btn btn--gold btn--sm"
+                        data-edit-btn
+                        data-edit-type="notice"
+                        data-edit-id="<%= note.id %>"
+                        data-edit-content="<%= note.content %>"
+                        data-edit-quote="<%= note.quote %>"
+                        data-edit-author="<%= note.User ? note.User.pseudo : 'Anonyme' %>"
+                        data-edit-recipe="<%= note.Recipe ? note.Recipe.name : '' %>"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        Éditer
+                      </button>
                       <form method="POST" action="/admin/notices/<%= note.id %>/delete/direct">
                         <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
                       </form>
@@ -885,6 +846,215 @@
         </div>
         </section>
 
+
+    <!-- ================================================== -->
+    <!-- MODAL ÉDITION UNIFIÉ (Films, Recettes, Avis) -->
+    <!-- ================================================== -->
+    <div id="admin-edit-modal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-edit-modal-title">
+      <!-- Backdrop (ferme le modal au clic) -->
+      <div class="admin-modal__backdrop" data-modal-close aria-hidden="true"></div>
+
+      <!-- Dialog -->
+      <div class="admin-modal__dialog">
+        <!-- Header avec bouton fermer -->
+        <div class="admin-modal__header">
+          <h2 id="admin-edit-modal-title" class="admin-modal__title">
+            <!-- Icône dynamique selon le type -->
+            <span class="admin-modal__icon" data-modal-icon="movie">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            </span>
+            <span class="admin-modal__icon" data-modal-icon="recipe" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+            </span>
+            <span class="admin-modal__icon" data-modal-icon="notice" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <span data-modal-title-text>Éditer le film</span>
+          </h2>
+          <button type="button" class="admin-modal__close" data-modal-close aria-label="Fermer le modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Formulaire d'édition unifié -->
+        <form id="admin-edit-form" method="POST" action="" class="admin-modal__form">
+
+          <!-- ========== SECTION FILM ========== -->
+          <div class="admin-modal__section" data-modal-section="movie">
+            <!-- Ligne 1 : Titre, Année, Genre -->
+            <div class="admin-modal__row admin-modal__row--3cols">
+              <div class="admin-modal__field admin-modal__field--title">
+                <label for="edit-movie-title" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
+                  Titre
+                </label>
+                <input type="text" id="edit-movie-title" name="title" class="admin-modal__input" required placeholder="Titre du film"/>
+              </div>
+              <div class="admin-modal__field admin-modal__field--year">
+                <label for="edit-movie-year" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                  Année
+                </label>
+                <input type="number" id="edit-movie-year" name="year" class="admin-modal__input" min="1888" max="2030" required placeholder="Ex: 1985"/>
+              </div>
+              <div class="admin-modal__field admin-modal__field--genre">
+                <label for="edit-movie-genre" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+                  Genre
+                </label>
+                <select id="edit-movie-genre" name="genre" class="admin-modal__select" required>
+                  <option value="">Sélectionner un genre</option>
+                  <option value="action">Action</option>
+                  <option value="animation">Animation</option>
+                  <option value="aventure">Aventure</option>
+                  <option value="comédie">Comédie</option>
+                  <option value="documentaire">Documentaire</option>
+                  <option value="drame">Drame</option>
+                  <option value="famille">Famille</option>
+                  <option value="fantastique">Fantastique</option>
+                  <option value="guerre">Guerre</option>
+                  <option value="historique">Historique</option>
+                  <option value="horreur">Horreur</option>
+                  <option value="musical">Musical</option>
+                  <option value="policier">Policier</option>
+                  <option value="romance">Romance</option>
+                  <option value="science-fiction">Science-Fiction</option>
+                  <option value="thriller">Thriller</option>
+                  <option value="téléfilm">Téléfilm</option>
+                  <option value="western">Western</option>
+                </select>
+              </div>
+            </div>
+            <!-- Synopsis -->
+            <div class="admin-modal__field admin-modal__field--full">
+              <label for="edit-movie-synopsis" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                Synopsis
+              </label>
+              <textarea id="edit-movie-synopsis" name="synopsis" class="admin-modal__textarea admin-modal__textarea--autosize" rows="3" placeholder="Résumé court du film ou de la série..." maxlength="1000"></textarea>
+              <span class="admin-modal__hint">Optionnel - Maximum 1000 caractères</span>
+            </div>
+          </div>
+
+          <!-- ========== SECTION RECETTE ========== -->
+          <div class="admin-modal__section" data-modal-section="recipe" style="display:none;">
+            <!-- Ligne 1 : Titre + Catégorie -->
+            <div class="admin-modal__row admin-modal__row--2cols">
+              <div class="admin-modal__field admin-modal__field--title">
+                <label for="edit-recipe-name" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
+                  Titre
+                </label>
+                <input type="text" id="edit-recipe-name" name="name" class="admin-modal__input" required placeholder="Nom de la recette"/>
+              </div>
+              <div class="admin-modal__field">
+                <label for="edit-recipe-category" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/></svg>
+                  Catégorie
+                </label>
+                <select id="edit-recipe-category" name="category" class="admin-modal__select" required>
+                  <option value="">Sélectionner</option>
+                  <option value="Entrée">Entrée</option>
+                  <option value="Plat">Plat</option>
+                  <option value="Dessert">Dessert</option>
+                  <option value="Boisson">Boisson</option>
+                  <option value="Snack">Snack</option>
+                </select>
+              </div>
+            </div>
+            <!-- Ligne 2 : Temps + Difficulté -->
+            <div class="admin-modal__row admin-modal__row--2cols">
+              <div class="admin-modal__field">
+                <label for="edit-recipe-time" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Temps (min)
+                </label>
+                <input type="number" id="edit-recipe-time" name="time" class="admin-modal__input" min="1" placeholder="Ex: 30"/>
+              </div>
+              <div class="admin-modal__field">
+                <label for="edit-recipe-difficulty" class="admin-modal__label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  Difficulté
+                </label>
+                <select id="edit-recipe-difficulty" name="difficulty" class="admin-modal__select">
+                  <option value="">Sélectionner</option>
+                  <option value="Facile">Facile</option>
+                  <option value="Moyen">Moyen</option>
+                  <option value="Difficile">Difficile</option>
+                </select>
+              </div>
+            </div>
+            <!-- Description -->
+            <div class="admin-modal__field admin-modal__field--full">
+              <label for="edit-recipe-description" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Description / Contexte
+              </label>
+              <textarea id="edit-recipe-description" name="description" class="admin-modal__textarea admin-modal__textarea--autosize" rows="2" placeholder="Contexte de la recette..." maxlength="1000"></textarea>
+            </div>
+            <!-- Ingrédients -->
+            <div class="admin-modal__field admin-modal__field--full">
+              <label for="edit-recipe-ingredients" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/><path d="M11 17v.01"/><path d="M7 14v.01"/></svg>
+                Ingrédients
+              </label>
+              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" placeholder="1 ligne = 1 ingrédient"></textarea>
+              <span class="admin-modal__hint">1 ingrédient par ligne</span>
+            </div>
+            <!-- Préparation -->
+            <div class="admin-modal__field admin-modal__field--full">
+              <label for="edit-recipe-preparation" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                Préparation
+              </label>
+              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5" placeholder="1 ligne = 1 étape"></textarea>
+              <span class="admin-modal__hint">1 étape par ligne</span>
+            </div>
+          </div>
+
+          <!-- ========== SECTION AVIS ========== -->
+          <div class="admin-modal__section" data-modal-section="notice" style="display:none;">
+            <!-- Info auteur (lecture seule) -->
+            <div class="admin-modal__info-box">
+              <span class="admin-modal__info-label">Auteur :</span>
+              <span id="edit-notice-author-display">-</span>
+              <span class="admin-modal__info-separator">•</span>
+              <span class="admin-modal__info-label">Recette :</span>
+              <span id="edit-notice-recipe-display">-</span>
+            </div>
+            <!-- Note (1-5) -->
+            <div class="admin-modal__field">
+              <label for="edit-notice-quote" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Note (1-5)
+              </label>
+              <input type="number" id="edit-notice-quote" name="quote" class="admin-modal__input admin-modal__input--short" min="1" max="5" required placeholder="1-5"/>
+            </div>
+            <!-- Commentaire -->
+            <div class="admin-modal__field admin-modal__field--full">
+              <label for="edit-notice-content" class="admin-modal__label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Commentaire
+              </label>
+              <textarea id="edit-notice-content" name="content" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" placeholder="Contenu de l'avis..." required maxlength="1000"></textarea>
+              <span class="admin-modal__hint">Maximum 1000 caractères</span>
+            </div>
+          </div>
+
+          <!-- Actions (commun à tous) -->
+          <div class="admin-modal__actions">
+            <button type="button" class="btn btn--ghost" data-modal-close>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              Annuler
+            </button>
+            <button type="submit" class="btn btn--gold">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Enregistrer les modifications
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Lightbox pour zoom image -->
     <div id="recipe-lightbox" class="recipe-lightbox">

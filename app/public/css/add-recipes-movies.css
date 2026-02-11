@@ -182,6 +182,12 @@
   overflow: visible; /* Permettre au dropdown de dépasser du row */
 }
 
+/* z-index élevé pour que le dropdown d'autocomplétion s'affiche AU-DESSUS du champ Synopsis.
+   Spécificité 0-2-0 nécessaire pour écraser le z-index:2 de .film-form-container > *:not(.overlay) */
+.film-form-container > .film-inputs-row {
+  z-index: 100;
+}
+
 /* Groupe d'input avec label */
 .film-input-group {
   flex: 1;
@@ -189,6 +195,66 @@
   flex-direction: column;
   gap: 0.5rem;
   position: relative;
+}
+
+/* Largeurs spécifiques des champs film */
+.film-input-group--title {
+  flex: 2; /* Le titre prend plus de place */
+}
+
+.film-input-group--year {
+  flex: 0 0 120px; /* Largeur fixe réduite pour l'année */
+}
+
+.film-input-group--genre {
+  flex: 0 0 160px; /* Largeur fixe réduite pour le genre */
+}
+
+/* Row pour le synopsis */
+.film-synopsis-row {
+  margin-top: 1rem;
+  position: relative;
+}
+
+.film-input-group--synopsis {
+  width: 100%;
+}
+
+/* Textarea synopsis */
+.film-form-container .form-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 0.98) 0%,
+    var(--beige-icecream) 100%
+  ) !important;
+  border: 2px solid rgba(198, 166, 100, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  color: var(--bleu-nuit);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  resize: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.film-form-container .form-textarea:hover {
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
+    0 0 0 2px rgba(198, 166, 100, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+}
+
+.film-form-container .form-textarea:focus {
+  outline: none;
+  border-color: var(--dore-popcorn) !important;
+  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
+    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
+    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Label avec icône pour chaque champ */
@@ -758,6 +824,23 @@
   font-weight: bold;
 }
 
+/* Synopsis dans film-info-box */
+.film-info-synopsis {
+  color: var(--bleu-nuit);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0.5rem 0 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(198, 166, 100, 0.3);
+  font-style: italic;
+  opacity: 0.9;
+  /* Limitation à 2 lignes */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Colonne centrale: Ma recette */
 .recipe-column-center {
   position: relative;
@@ -1241,6 +1324,17 @@
 
   .film-input-group {
     width: 100%;
+  }
+
+  /* Reset des largeurs fixes en mobile */
+  .film-input-group--title,
+  .film-input-group--year,
+  .film-input-group--genre {
+    flex: 1 1 100%;
+  }
+
+  .film-synopsis-row {
+    margin-top: 0.75rem;
   }
 
   .film-input-label {

@@ -27,8 +27,9 @@
 
     <!-- MAIN -->
     <main>
-      <% const bannerImage = movie ? (movie.bannerPath || movie.picture) : "/images/image-default-film.jpg"; %>
       <% const hasAuthorFilter = typeof isAuthorFiltered !== "undefined" ? isAuthorFiltered : false; %>
+      <% const authorImg = typeof authorBannerImage !== "undefined" ? authorBannerImage : null; %>
+      <% const bannerImage = movie ? (movie.bannerPath || movie.picture) : "/images/image-banner-movies.jpg"; %>
       <section class="banner__image__film" aria-hidden="true">
         <div class="banner__image__film__overlay"></div>
         <img
@@ -50,6 +51,14 @@
               <span class="film-separator">•</span>
               <span class="film-genre"><%= movie.genre %></span>
             </p>
+            <% if (movie.synopsis) { %>
+            <div class="banner__synopsis">
+              <p class="banner__synopsis-text" id="synopsis-text"><%= movie.synopsis %></p>
+              <button class="banner__synopsis-toggle" id="synopsis-toggle" type="button" aria-expanded="false">
+                Lire le synopsis
+              </button>
+            </div>
+            <% } %>
           <% } else { %>
             <p class="banner__meta">Recettes Ciné Délices</p>
             <h2 id="movie-title">
@@ -65,6 +74,21 @@
             <% } %>
           <% } %>
         </div>
+
+        <% if (!movie && hasAuthorFilter && authorImg) { %>
+          <div class="banner__author-badge">
+            <div class="banner__author-badge__avatar">
+              <img
+                src="<%= authorImg %>"
+                alt="Photo de <%= authorDisplayName %>"
+                width="48"
+                height="48"
+                loading="lazy"
+              />
+            </div>
+            <span class="banner__author-badge__name"><%= authorDisplayName %></span>
+          </div>
+        <% } %>
 
         <% if (movie) { %>
           <div class="banner__search__films">
@@ -105,7 +129,7 @@
 
           <div class="presentation__button__recipes">
             <a
-              class="btn btn--velvet"
+              class="btn btn--gold"
               href="<%= movie ? `/add-recipes-movies/${movie.id}` : '/add-recipes-movies/' %>"
             >
               <span class="btn__shimmer"></span>
@@ -121,81 +145,93 @@
             Aucune recette n'est disponible pour ce film.
           </p>
           <% } else { %> <% recipes.forEach(recipe => { %>
+          <%
+            const displayRating = recipe.avgRating || recipe.quote || '0';
+            // L'auteur est toujours présent (id_user NOT NULL + jointure User côté backend)
+            const authorName = recipe.contributor.pseudo;
+            const authorAvatar = recipe.contributor.picture || null;
+            const isValidated = recipe.status === 'approved' || recipe.isValidated;
+            const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
+            const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
+          %>
           <article class="recipe-card">
-            <div class="recipe-card-image">
-              <!-- Bouton Favori (cœur) -->
-              <button
-                class="btn-favorite btn-favorite--recipe"
-                data-entity-id="<%= recipe.id %>"
-                data-entity-type="recipe"
-                data-is-favorite="<%= recipe.isFavorite || false %>"
-                aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-                title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-              </button>
-
+            <!-- Image avec overlay -->
+            <div class="recipe-card__image">
               <img
-                src="<%= recipe.picture %>"
+                src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
                 alt="<%= recipe.name %>"
                 loading="lazy"
                 width="640"
                 height="360"
                 decoding="async"
               />
-            </div>
-
-            <div class="recipe-card-info">
-              <h4 class="recipe-title"><%= recipe.name %></h4>
-              <div class="recipe-meta">
-                <span class="recipe-meta-tag recipe-meta-tag--category">
-                  <%= recipe.category %>
+              <div class="recipe-card__image-overlay">
+                <% if (isValidated) { %>
+                <span class="badge badge--velvet">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  Validée
                 </span>
-                <span class="recipe-meta-tag recipe-meta-tag--duration">
-                  <%= recipe.duration %> min
+                <% } else { %>
+                <span class="badge badge--silver">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  En attente
                 </span>
-                <span class="recipe-meta-tag recipe-meta-tag--difficulty">
-                  <%= recipe.difficulty %>
-                </span>
-              </div>
-
-              <div class="recipe-card-actions">
-                <a
-                  class="btn btn--gold"
-                  href="/recipes-movie/details/<%= recipe.id %>"
-                >
-                  <span class="btn__shimmer"></span>
-                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                  <span class="btn__text">Voir la recette</span>
-                </a>
-                <% const displayRating = recipe.avgRating || recipe.quote || '0'; %>
-                <div
-                  class="recipe-card-rating rating-interactive"
+                <% } %>
+                <button
+                  class="btn-favorite"
                   data-entity-id="<%= recipe.id %>"
                   data-entity-type="recipe"
-                  data-average="<%= displayRating %>"
-                  data-user-rating="<%= recipe.userRating || '' %>"
-                  data-count="<%= recipe.ratingCount || 0 %>"
-                  aria-label="Note générale de la recette : <%= displayRating %>/5"
-                  title="<%= recipe.userRating ? 'Votre note : ' + recipe.userRating + '/5' : 'Cliquez pour noter' %>"
+                  data-is-favorite="<%= recipe.isFavorite || false %>"
+                  aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                  title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
                 >
-                  <div class="stars-caption">
-                    Note&nbsp;: <strong class="rating-value"><%= displayRating %>/5</strong>
-                  </div>
-                  <div
-                    class="stars stars--interactive"
-                    data-rating="<%= displayRating %>"
-                  >
-                    <% for (let i = 1; i <= 5; i++) { %>
-                    <span
-                      class="star <%= i <= Math.round(parseFloat(displayRating)) ? 'is-active' : '' %>"
-                      data-value="<%= i %>"
-                      >★</span
-                    >
-                    <% } %>
-                  </div>
-                </div>
+                  <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </button>
               </div>
+            </div>
+
+            <!-- Titre -->
+            <h3 class="recipe-card__title"><%= recipe.name %></h3>
+
+            <!-- Tags meta -->
+            <div class="recipe-card__meta">
+              <span class="tag tag--red"><%= recipe.category %></span>
+              <span class="tag tag--silver">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <%= recipe.duration || recipe.time %> min
+              </span>
+              <span class="tag tag--velvet"><%= recipe.difficulty %></span>
+            </div>
+
+            <!-- Notation -->
+            <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
+              <% for (let i = 1; i <= 5; i++) { %>
+              <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <% } %>
+              <span class="rating__value"><%= displayRating %></span>
+            </div>
+
+            <!-- Description (2 lignes) -->
+            <p class="recipe-card__description"><%= truncatedDescription %></p>
+
+            <!-- Footer : Auteur + Bouton Voir -->
+            <div class="recipe-card__footer">
+              <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author">
+                <span class="author__avatar">
+                  <% if (authorAvatar) { %>
+                  <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
+                  <% } else { %>
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+                  <% } %>
+                </span>
+                <span class="author__name"><%= authorName %></span>
+              </a>
+              <a class="btn btn--primary btn--sm" href="/recipes-movie/details/<%= recipe.id %>">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                Voir
+              </a>
             </div>
           </article>
           <% }) %> <% } %>
@@ -222,6 +258,21 @@
 
     <!-- Scripts JS globaux -->
     <script src="/js/burger-menu.js" defer></script>
+
+    <!-- Toggle synopsis "Lire plus / Lire moins" -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("synopsis-toggle");
+        const text = document.getElementById("synopsis-text");
+        if (!toggle || !text) return;
+
+        toggle.addEventListener("click", function () {
+          const isExpanded = text.classList.toggle("banner__synopsis-text--expanded");
+          toggle.textContent = isExpanded ? "Lire moins" : "Lire le synopsis";
+          toggle.setAttribute("aria-expanded", isExpanded);
+        });
+      });
+    </script>
 
     <!-- Configuration pour les favoris -->
     <script>

@@ -870,7 +870,7 @@ const adminController = {
         return res.redirect("/admin?success=admin_movie_update_error");
       }
 
-      const { title, year, genre } = req.body;
+      const { title, year, genre, synopsis } = req.body;
       const updateData = {};
 
       if (title) updateData.title = title.trim();
@@ -886,21 +886,35 @@ const adminController = {
       if (genre) {
         const allowedGenres = [
           "action",
-          "animé",
+          "animation",
           "aventure",
           "comédie",
+          "documentaire",
           "drame",
+          "famille",
           "fantastique",
+          "guerre",
+          "historique",
           "horreur",
-          "romantique",
+          "musical",
+          "policier",
+          "romance",
           "science-fiction",
           "thriller",
+          "téléfilm",
+          "western",
         ];
         const normalizedGenre = genre.trim().toLowerCase();
         if (!allowedGenres.includes(normalizedGenre)) {
           return res.redirect("/admin?success=admin_movie_update_error");
         }
         updateData.genre = normalizedGenre;
+      }
+
+      // Synopsis : accepter aussi une chaîne vide (suppression du synopsis)
+      if (synopsis !== undefined) {
+        const trimmedSynopsis = synopsis.trim();
+        updateData.synopsis = trimmedSynopsis.length > 0 ? trimmedSynopsis.substring(0, 1000) : null;
       }
 
       if (Object.keys(updateData).length === 0) {

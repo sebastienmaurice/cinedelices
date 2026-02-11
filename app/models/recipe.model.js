@@ -30,7 +30,8 @@ Recipe.init({
   pending_time: { type: DataTypes.INTEGER, allowNull: true },
   pending_difficulty: { type: DataTypes.STRING(50), allowNull: true },
   edit_requested_at: { type: DataTypes.DATE, allowNull: true },
-  id_user: { type: DataTypes.INTEGER, allowNull: true },
+  // Auteur obligatoire : chaque recette est créée par un utilisateur connecté
+  id_user: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
   sequelize, // instance sequelize pour lui donner le nom de la table où aller chercher les données

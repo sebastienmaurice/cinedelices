@@ -26,11 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const filmNameInput = document.getElementById("film-name");
   const filmYearInput = document.getElementById("film-year");
   const filmGenreSelect = document.getElementById("film-genre");
+  const filmSynopsisInput = document.getElementById("film-synopsis");
 
   // Éléments d'affichage dans la colonne gauche
   const displayFilmName = document.getElementById("display-film-name");
   const displayFilmGenre = document.getElementById("display-film-genre");
   const displayFilmYear = document.getElementById("display-film-year");
+  const displayFilmSynopsis = document.getElementById("display-film-synopsis");
 
   if (
     !filmNameInput ||
@@ -94,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = filmNameInput.value.trim();
     const year = filmYearInput.value.trim();
     const genre = filmGenreSelect.value.trim();
+    const synopsis = filmSynopsisInput ? filmSynopsisInput.value.trim() : "";
 
     // Mettre à jour les éléments d'affichage
     if (displayFilmName) {
@@ -104,6 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (displayFilmYear) {
       displayFilmYear.textContent = year || "année";
+    }
+    if (displayFilmSynopsis) {
+      displayFilmSynopsis.textContent = synopsis || "synopsis";
     }
   }
 
@@ -129,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filmTitleHidden = document.getElementById("film-title-hidden");
     const filmYearHidden = document.getElementById("film-year-hidden");
     const filmGenreHidden = document.getElementById("film-genre-hidden");
+    const filmSynopsisHidden = document.getElementById("film-synopsis-hidden");
 
     if (
       !filmIdHidden ||
@@ -144,6 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
     filmTitleHidden.value = filmNameInput.value.trim();
     filmYearHidden.value = filmYearInput.value.trim();
     filmGenreHidden.value = filmGenreSelect.value.trim();
+    if (filmSynopsisHidden && filmSynopsisInput) {
+      filmSynopsisHidden.value = filmSynopsisInput.value.trim();
+    }
 
     // Si l'utilisateur a modifié les champs d'un film existant, on peut vider le filmId
     // pour indiquer que c'est maintenant un nouveau film ou un film modifié
@@ -224,6 +234,19 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFilmDisplay();
     syncToUnifiedForm();
   });
+
+  // Écouteurs pour le synopsis
+  if (filmSynopsisInput) {
+    filmSynopsisInput.addEventListener("input", () => {
+      updateFilmDisplay();
+      syncToUnifiedForm();
+    });
+
+    filmSynopsisInput.addEventListener("blur", () => {
+      updateFilmDisplay();
+      syncToUnifiedForm();
+    });
+  }
 
   console.log("✅ Gestionnaire bouton 'Je passe à la recette' initialisé");
 });

@@ -22,27 +22,29 @@
       <% const recipeImage = recipe.picture ||
       "/images/image-default-recipe-1.jpg"; %>
       <% const movieImage = movie ? (movie.bannerPath || movie.cardPath || movie.picture || "/images/image-default-film.jpg") : "/images/image-default-film.jpg"; %>
-      <% const contributorName = contributor && contributor.pseudo ? contributor.pseudo : "Contributeur"; %>
-      <% const contributorImage = contributor && contributor.picture ? contributor.picture : "/images/image-default-profile.jpg"; %>
+      <%/* L'auteur est toujours présent (id_user NOT NULL côté backend) */ %>
+      <% const contributorName = contributor.pseudo; %>
+      <% const contributorImage = contributor.picture || "/images/image-default-profile.jpg"; %>
       <% const contributorQuery = contributorName ? encodeURIComponent(contributorName.toLowerCase()) : ""; %>
       <% const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.length : 0; %>
       <% const preparationCount = preparationBlocks ? preparationBlocks.length : 0; %>
 
       <section class="banner__image__recipes" aria-hidden="true">
         <div class="banner__image__recipes__overlay"></div>
-        <span class="banner__image__recipes__badge">
+        <span class="banner__image__recipes__badge badge--red">
+          <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"/></svg>
           Film associé
         </span>
         <div class="banner__image__recipes__film-meta">
           <div class="film-meta__badges">
-            <span class="film-meta__badge">
+            <span class="film-meta__badge badge--gold">
               <%= movie ? movie.title : "Film associé" %>
             </span>
             <% if (movie && movie.year) { %>
-            <span class="film-meta__badge"><%= movie.year %></span>
+            <span class="film-meta__badge badge--gold"><%= movie.year %></span>
             <% } %>
             <% if (movie && movie.genre) { %>
-            <span class="film-meta__badge"><%= movie.genre %></span>
+            <span class="film-meta__badge badge--gold"><%= movie.genre %></span>
             <% } %>
           </div>
         </div>
@@ -53,106 +55,59 @@
         />
       </section>
 
-      <section class="banner__recipes" aria-labelledby="recipe-title">
-        <div class="banner__recipes__content">
-          <p class="recipe-hero__eyebrow">Détails recette</p>
-          <h1 id="recipe-title"><%= recipe.name %></h1>
-          <p class="recipe-hero__subtitle">
-            Recette inspirée du cinéma, ingrédients, préparation et avis des
-            visiteurs.
-          </p>
-          <div class="recipe-meta-bar">
-            <div class="banner__recipes__meta">
-              <span class="meta-pill meta-pill--category">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                <%= recipe.category %>
-              </span>
-              <% if (recipe.servings) { %>
-              <span class="meta-pill">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <%= recipe.servings %> personnes
-              </span>
-              <% } %>
-              <span class="meta-pill">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <%= recipe.time %> min
-              </span>
-              <span class="meta-pill">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                Difficulté : <%= recipe.difficulty %>
-              </span>
-            </div>
+      <section class="banner__recipes" aria-labelledby="recipe-title" data-rating-container>
+        <!-- Gauche : Eyebrow + Rating -->
+        <div class="banner__recipes__left">
+          <p class="banner__recipes__eyebrow">Détails recette</p>
+          <div class="banner__recipes__rating">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong id="banner-rating-output" data-rating-output><%= averageQuote %></strong>
+            <span>/5</span>
           </div>
         </div>
 
-        <div class="banner__recipes__rating" data-rating-container>
-          <p class="rating-label">
-            Note générale de la recette :
-            <span
-              class="current-rating"
-              id="banner-rating-output"
-              data-rating-output
-              ><%= averageQuote %>/5</span
-            >
-          </p>
-          <div class="banner__recipes__actions">
-            <div
-              class="rating-stars rating-stars--lifted"
-              role="group"
-              aria-label="Note générale (lecture seule)"
-              data-current-rating="<%= averageQuote %>"
-              data-output="#banner-rating-output"
-              data-readonly="true"
-            >
-              <% for (let i = 1; i <= 5; i++) { %>
-              <button
-                type="button"
-                class="rating-star"
-                data-value="<%= i %>"
-                aria-label="<%= i %> étoile<%= i > 1 ? 's' : '' %>"
-              >
-                ★
-              </button>
-              <% } %>
-            </div>
-
-            <!-- Bouton Favori -->
-            <button
-              class="btn-favorite btn-favorite--detail"
-              data-entity-id="<%= recipe.id %>"
-              data-entity-type="recipe"
-              data-is-favorite="<%= recipe.isFavorite || false %>"
-              aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-              title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-              <span class="btn-favorite__text">
-                <%= recipe.isFavorite ? 'Dans mes favoris' : 'Ajouter aux favoris' %>
-              </span>
-            </button>
+        <!-- Centre : Titre + Tags (inline) -->
+        <div class="banner__recipes__center">
+          <h1 id="recipe-title"><%= recipe.name %></h1>
+          <div class="banner__recipes__meta">
+            <span class="tag tag--gold"><%= recipe.category %></span>
+            <span class="tag tag--silver"><%= recipe.time %> min</span>
+            <span class="tag tag--sapphire"><%= recipe.difficulty %></span>
+            <% if (recipe.servings) { %>
+            <span class="tag tag--velvet"><%= recipe.servings %> pers.</span>
+            <% } %>
           </div>
-          <a
-            class="recipe-meta-bar__author"
-            href="/recipes-movie?author=<%= contributorQuery %>"
-            aria-label="Voir les recettes de <%= contributorName %>"
-            data-author="<%= contributorName %>"
-          >
-            <div class="profile-photo">
-              <img
-                src="<%= contributorImage %>"
-                alt="Profil de <%= contributorName %>"
-                loading="lazy"
-              />
-            </div>
-            <div class="recipe-meta-bar__author-text">
-              <span class="author-name">
+        </div>
+
+        <!-- Droite : Favori -->
+        <button
+          class="btn-favorite btn-favorite--banner"
+          data-entity-id="<%= recipe.id %>"
+          data-entity-type="recipe"
+          data-is-favorite="<%= recipe.isFavorite || false %>"
+          aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+          title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+
+        <!-- Footer : Auteur -->
+        <div class="banner__recipes__footer">
+          <a class="banner__recipes__author" href="/recipes-movie?author=<%= contributorQuery %>" aria-label="Voir les recettes de <%= contributorName %>" data-author="<%= contributorName %>">
+            <img class="banner__recipes__author-avatar" src="<%= contributorImage %>" alt="<%= contributorName %>" loading="lazy" />
+            <div class="banner__recipes__author-info">
+              <span class="banner__recipes__author-label">Recette proposée par</span>
+              <span class="banner__recipes__author-name">
                 <%= contributorName %>
                 <% if (contributor && contributor.role === "admin") { %>
-                  <span class="author-badge">Par Ciné Délices</span>
+                <span class="banner__recipes__author-badge">Officiel</span>
                 <% } %>
               </span>
-              <span class="author-subtitle">Auteur de la recette</span>
             </div>
+          </a>
+          <a href="#review-banner" class="btn btn--gold btn--sm banner__recipes__cta">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
+            Donner mon avis
           </a>
         </div>
       </section>
@@ -169,14 +124,6 @@
           <div class="recipe-info-grid">
             <div class="recipe-main-column">
               <div class="overview-card">
-                <div class="overview-card__actions">
-                  <a class="btn btn--gold btn--sm" href="/recipes-movie/<%= recipe.id_movie %>">
-                    Revenir aux recettes du film
-                  </a>
-                  <a class="btn btn--red btn--sm" href="/add-recipes-movies/">
-                    Je crée ma recette
-                  </a>
-                </div>
                 <h3 class="overview-card__title">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
                   Le contexte cinématographique
@@ -299,19 +246,20 @@
               </div>
             </div>
           </div>
+
+          <!-- Actions centrées sous les colonnes -->
+          <div class="recipe-columns-actions">
+            <a class="btn btn--gold" href="/recipes-movie/<%= recipe.id_movie %>">
+              Revenir aux recettes du film
+            </a>
+            <a class="btn btn--red" href="/add-recipes-movies/">
+              Je crée ma recette
+            </a>
+          </div>
         </div>
       </section>
 
-      <!-- SECTION TITLE FOR REVIEWS -->
-      <div class="review-section-header">
-        <h2 class="review-section-title">Partage ton expérience</h2>
-        <p class="review-section-description">
-          Partagez votre expérience culinaire et aidez la communauté à
-          découvrir les meilleures recettes inspirées du cinéma.
-        </p>
-      </div>
-
-        <!-- RECIPE REVIEW BANNER -->
+      <!-- RECIPE REVIEW BANNER -->
         <section
           id="review-banner"
           class="recipe-review-banner"

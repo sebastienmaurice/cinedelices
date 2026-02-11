@@ -54,7 +54,7 @@ export async function loadAdminData() {
     where: { edit_status: "pending" },
     include: [
       { model: Movie, attributes: ["title", "year", "genre"] },
-      { model: User, attributes: ["id", "pseudo", "email"] },
+      { model: User, as: "contributor", attributes: ["id", "pseudo", "email"] },
     ],
     order: [["edit_requested_at", "DESC"]],
   });

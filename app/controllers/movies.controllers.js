@@ -544,8 +544,9 @@ const moviesController = {
           title_en: enrichedMovie.title,
           year: enrichedMovie.year,
           genre: enrichedMovie.genre,
+          synopsis: enrichedMovie.synopsis || null,
           note: null,
-          overview: null,
+          overview: enrichedMovie.synopsis || null,
           poster: enrichedMovie.cardPath || null, // Utiliser cardPath pour les miniatures
           score: movie.score,
           tmdb_enriched: false,
@@ -888,6 +889,7 @@ const moviesController = {
           title: enrichedMovie.title,
           year: enrichedMovie.year,
           genre: enrichedMovie.genre,
+          synopsis: enrichedMovie.synopsis || null,
           picture: enrichedMovie.cardPath, // Utiliser cardPath pour la prévisualisation
           originalPath: enrichedMovie.originalPath,
           bannerPath: enrichedMovie.bannerPath,

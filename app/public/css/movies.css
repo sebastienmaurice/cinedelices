@@ -394,171 +394,148 @@
 }
 
 #films .articles {
-  display: flex;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   width: 100%;
   max-width: 100%;
   margin: 0 auto 4rem auto;
-  flex-wrap: wrap;
-  justify-content: flex-start;
 }
 
-/* Carte des films */
-#films article {
-  width: calc((100% - 4rem) / 3);
-  max-width: none;
-  height: auto;
-  min-height: 350px;
-  flex: 0 0 calc((100% - 4rem) / 3);
+/* ====================================================== */
+/* ============= CARD FILM V2 - Style card-demo ========= */
+/* ====================================================== */
+
+/**
+ * Cards films identiques aux .card-demo de la planche V2
+ * Structure : Image + Overlay + Titre + Tags + Rating + Synopsis + Bouton
+ */
+.film-card {
   background: linear-gradient(
     0deg,
     var(--bleu-nuit) 0%,
     var(--bleu-intermediaire) 100%
   );
-  border-radius: 12px;
   border: 2px solid var(--bleu-intermediaire);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: all var(--transition);
-  box-shadow: 0 10px 20px rgba(0, 2, 12, 0.35);
-}
-
-/* Carte des films sans effet glowy */
-/*
-#films article {
-  width: calc((100% - 4rem) / 3);
-  max-width: none;
-  height: auto;
-  min-height: 350px;
-  flex: 0 0 calc((100% - 4rem) / 3);
-  background-color: var(--bleu-nuit);
   border-radius: 12px;
-  border: 1px solid var(--bleu-intermediaire);
-  overflow: hidden;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  /* Flex column : ancre le bouton en bas quelle que soit la hauteur du contenu */
   display: flex;
   flex-direction: column;
-  transition: all var(--transition);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-*/
-
-#films article:hover {
-  border: 2px solid var(--dore-popcorn);
-  box-shadow: 0 10px 20px rgba(198, 166, 100, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
-  transform: translateY(-3px) scale(1.02);
-  animation: cinema-glow 0.2s linear;
 }
 
-/* Container image - Style harmonisé avec home */
-.film-card-image {
-  width: 100%;
-  height: 280px;
-  border-radius: 12px 12px 0 0;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.film-card:hover {
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 10px 30px rgba(198, 166, 100, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Image container */
+.film-card__image {
   position: relative;
-  padding: 1rem 1.5rem;
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--bleu-clair) 0%,
+    var(--bleu-intermediaire) 100%
+  );
 }
 
-.film-card-image img {
+.film-card__image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
-  display: block;
-  border-radius: 12px;
-  transition: transform 0.4s ease, filter 0.4s ease, opacity 0.3s ease;
-  opacity: 0.95;
+  transition: transform 0.4s ease;
 }
 
-#films article:hover .film-card-image img {
-  transform: none; /* supprime le zoom */
-  filter: brightness(1.02); /* léger boost subtil */
-  opacity: 1;
+.film-card:hover .film-card__image img {
+  transform: scale(1.05);
 }
 
-/* Informations de la carte - Style harmonisé avec home */
-.film-card-info {
-  padding: 0 1.5rem 2rem 1.5rem;
-  background-color: transparent;
+/* Image overlay avec badges et favori */
+.film-card__image-overlay {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 2;
 }
 
-.film-title {
-  margin-bottom: 0.45rem;
-  font-size: 1.3rem;
-  color: var(--dore-popcorn);
-  font-weight: 700;
+/* Badges container (gauche) */
+.film-card__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Bouton favori dans l'overlay */
+.film-card__image-overlay .btn-favorite {
+  position: static;
+}
+
+/* Titre du film */
+.film-card__title {
   font-family: var(--font-h2-h6);
-  letter-spacing: 0.5px;
-  transition: color 0.25s ease, text-shadow 0.25s ease;
+  font-size: 1.2rem;
+  color: var(--dore-popcorn);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-#films article:hover .film-title {
-  color: var(--or-100);
-  text-shadow: 0 0 8px rgba(198, 166, 100, 0.3);
-}
-
-.film-meta {
+/* Tags meta */
+.film-card__meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  align-items: center;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Tags des cartes films - Style Premium Ticket (CodePen v2) - Version compacte */
-.film-meta-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  padding: 0.2rem 0.45rem;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: transform 0.25s ease;
-  position: relative;
+/* Rating avec étoiles */
+.film-card .rating {
+  margin-bottom: 0.75rem;
 }
 
-/* Liseré pointillé intérieur - Style Ticket Premium */
-.film-meta-tag::after {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  border-radius: 3px;
-  border: 1px dashed currentColor;
-  opacity: 0.15;
-  pointer-events: none;
+/* Synopsis / Description (2 lignes max) */
+.film-card__description {
+  font-size: 0.9rem;
+  color: var(--argent-ecran);
+  opacity: 0.8;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* Tag Année - Style Silver */
-.film-meta-tag--year {
-  background: linear-gradient(135deg, var(--silver-dark), var(--silver));
-  color: var(--text-light);
+/* Bouton Voir les recettes — compact (inline-flex), ancré en bas de la card */
+/* margin-top: auto pousse le bouton vers le bas via flexbox column */
+/* align-self: flex-start empêche l'étirement en pleine largeur */
+.film-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
 }
 
-/* Tag Genre - Style Sapphire */
-.film-meta-tag--genre {
-  background: linear-gradient(135deg, var(--sapphire-dark), var(--sapphire));
-  color: var(--text-light);
-  text-transform: capitalize;
-}
-
-/* Tag Recettes - Style Gold */
-.film-meta-tag--recipes {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: var(--text-dark);
-  font-weight: 700;
-}
-
-
-.film-card-info .btn {
-  display: inline-flex;
-  margin-top: 1rem;
-  width: auto;
+/* Message aucun film */
+.no-movies {
+  text-align: center;
+  color: var(--argent-ecran);
+  font-size: 1.1rem;
+  padding: 2rem;
+  opacity: 0.8;
+  grid-column: 1 / -1;
 }
 
 /* ====================================================== */
@@ -579,10 +556,91 @@
 /* ====================================================== */
 /* ====================== RESPONSIVE =================== */
 /* ====================================================== */
+
+/* Responsive film cards V2 */
 @media (max-width: 1200px) {
-  #films article {
-    width: calc((100% - 2rem) / 2);
-    flex: 0 0 calc((100% - 2rem) / 2);
+  #films .articles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  #films .articles {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .film-card {
+    padding: 1.25rem;
+  }
+
+  .film-card__image {
+    height: 160px;
+  }
+
+  .film-card__title {
+    font-size: 1.1rem;
+  }
+
+  .film-card__description {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 700px) {
+  #films .articles {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .film-card {
+    padding: 1rem;
+  }
+
+  .film-card__image {
+    height: 180px;
+  }
+
+  .film-card__title {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 540px) {
+  #films .articles {
+    gap: 1rem;
+  }
+
+  .film-card {
+    padding: 1rem;
+  }
+
+  .film-card__image {
+    height: 160px;
+    margin-bottom: 0.75rem;
+  }
+
+  .film-card__title {
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .film-card__meta {
+    margin-bottom: 0.5rem;
+  }
+
+  .film-card .rating {
+    margin-bottom: 0.5rem;
+  }
+
+  .film-card__description {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .film-card .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -651,31 +709,6 @@
 
   #films {
     padding: 0 1rem;
-  }
-
-  #films article {
-    width: 100%;
-    flex: 0 0 100%;
-    min-height: 320px;
-  }
-
-  .film-card-image {
-    height: auto;
-    aspect-ratio: 16/9;
-    padding: 0.75rem 1rem;
-  }
-
-  .film-card-info {
-    padding: 0 1rem 1.5rem 1rem;
-  }
-
-  .film-title {
-    font-size: 1.2rem;
-  }
-
-  .film-meta {
-    font-size: 0.6rem;
-    margin-bottom: 0.45rem;
   }
 
   .presentation__film {
@@ -757,38 +790,7 @@
   }
 
   #films .articles {
-    gap: 1.5rem;
     margin-bottom: 3rem;
-  }
-
-  #films article {
-    min-height: 300px;
-    border-radius: 12px;
-  }
-
-  .film-card-image {
-    padding: 0.5rem 0.75rem;
-    border-radius: 12px 12px 0 0;
-  }
-
-  .film-card-info {
-    padding: 0 0.75rem 1.25rem 0.75rem;
-  }
-
-  .film-title {
-    font-size: 1.1rem;
-    margin-bottom: 0;
-  }
-
-  .film-meta {
-    font-size: 0.55rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .film-card-info .btn {
-    font-size: 0.85rem;
-    padding: 0.45rem 0.9rem;
-    margin-top: 0.75rem;
   }
 
   .presentation__film {
@@ -858,36 +860,7 @@
   }
 
   #films .articles {
-    gap: 1.25rem;
     margin-bottom: 2.5rem;
-  }
-
-  #films article {
-    min-height: 280px;
-    border-radius: 12px;
-  }
-
-  .film-card-image {
-    padding: 0.5rem;
-  }
-
-  .film-card-info {
-    padding: 0 0.5rem 1rem 0.5rem;
-  }
-
-  .film-title {
-    font-size: 1rem;
-  }
-
-  .film-meta {
-    font-size: 0.5rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .film-card-info .btn {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-    margin-top: 0.65rem;
   }
 
   .presentation__film {
@@ -1676,156 +1649,12 @@
 }
 
 /* ====================================================== */
-/* ============= OVERLAY GRADIENT SUR IMAGE ============= */
+/* ============= FILM CARD V2 - COMPOSANTS ============== */
 /* ====================================================== */
-/**
- * Overlay dégradé sur les images de films
- * Améliore la lisibilité des éléments superposés (badges, note, favori)
- * IMPORTANT: inset correspond au padding du container pour rester dans l'image
- */
-.film-card-overlay {
-  position: absolute;
-  /* Correspond au padding du container .film-card-image (1rem 1.5rem) */
-  inset: 1rem 1.5rem;
-  background: linear-gradient(
-    to top,
-    rgba(13, 27, 42, 0.6) 0%,
-    rgba(13, 27, 42, 0.25) 35%,
-    transparent 65%
-  );
-  border-radius: 12px;
-  z-index: 1;
-  pointer-events: none;
-  transition: background 0.3s ease;
-}
-
-#films article:hover .film-card-overlay {
-  background: linear-gradient(
-    to top,
-    rgba(13, 27, 42, 0.75) 0%,
-    rgba(13, 27, 42, 0.35) 40%,
-    transparent 75%
-  );
-}
-
-/* ====================================================== */
-/* ============= BADGES (NOUVEAU / POPULAIRE) =========== */
-/* ====================================================== */
-/**
- * Badges positionnés en haut à gauche de l'image
- * - Nouveau : bleu cyan pour les films ajoutés récemment
- * - Populaire : rouge pour les films avec beaucoup de recettes
- */
-.film-card-badges {
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  z-index: 10;
-}
 
 /* Surcharge pour badges des cartes films (avec backdrop-filter) */
 .film-card .badge {
   backdrop-filter: blur(4px);
-}
-
-/* Badges .badge--new et .badge--popular : styles dans base.css */
-
-/* ====================================================== */
-/* ============= BOUTON FAVORI (COEUR) ================== */
-/* ====================================================== */
-/**
- * Bouton cœur positionné en haut à droite
- * Toggle entre état vide et rempli
- */
-.btn-favorite {
-  position: absolute;
-  top: 1.85rem;
-  right: 2.35rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: rgba(13, 27, 42, 0.7);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-}
-
-.btn-favorite:hover {
-  background: rgba(215, 38, 56, 0.9);
-  border-color: var(--rouge-projecteur);
-  transform: scale(1.1);
-}
-
-.btn-favorite[data-is-favorite="true"] {
-  color: var(--rouge-projecteur);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.btn-favorite[data-is-favorite="true"]:hover {
-  background: rgba(215, 38, 56, 0.15);
-  color: var(--rouge-projecteur);
-}
-
-.btn-favorite i {
-  transition: transform 0.3s ease;
-}
-
-.btn-favorite:active i {
-  transform: scale(0.8);
-}
-
-/* Animation cœur lors du toggle */
-@keyframes heartPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
-}
-
-.btn-favorite.animating i {
-  animation: heartPulse 0.4s ease;
-}
-
-/* ====================================================== */
-/* ============= NOTE DU FILM (ETOILE) ================== */
-/* ====================================================== */
-/**
- * Note positionnée en bas à droite de l'image
- * Affiche une étoile dorée + la note
- */
-.film-card-rating {
-  position: absolute;
-  bottom: 1.85rem;
-  right: 2.35rem;
-  background: rgba(13, 27, 42, 0.85);
-  padding: 0.35rem 0.6rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  z-index: 10;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(198, 166, 100, 0.3);
-}
-
-.film-card-rating i {
-  color: var(--dore-popcorn);
-  font-size: 0.85rem;
-}
-
-.film-card-rating span {
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 /* ====================================================== */
@@ -1977,7 +1806,7 @@
 }
 
 /* ====================================================== */
-/* ============= RESPONSIVE NOUVEAUX COMPOSANTS ========= */
+/* ============= RESPONSIVE CHIPS GENRES ================ */
 /* ====================================================== */
 @media (max-width: 800px) {
   .genre-chips-container {
@@ -1999,40 +1828,6 @@
     padding: 0.3rem 0.6rem;
     font-size: 0.7rem;
     border-radius: 6px;
-  }
-
-  .film-card-badges {
-    top: 1rem;
-    left: 1rem;
-  }
-
-  .btn-favorite {
-    top: 1.5rem;
-    right: 1.75rem;
-    width: 2.2rem;
-    height: 2.2rem;
-    font-size: 1rem;
-  }
-
-  .film-card-rating {
-    bottom: 1.5rem;
-    right: 1.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  .film-card-rating i,
-  .film-card-rating span {
-    font-size: 0.8rem;
-  }
-
-  .badge {
-    font-size: 0.65rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  /* Overlay adapté au padding réduit du container */
-  .film-card-overlay {
-    inset: 0.75rem 1rem;
   }
 }
 
@@ -2056,33 +1851,5 @@
     padding: 0.25rem 0.5rem;
     font-size: 0.65rem;
     border-radius: 6px;
-  }
-
-  .film-card-badges {
-    top: 0.75rem;
-    left: 0.75rem;
-  }
-
-  .btn-favorite {
-    top: 1.15rem;
-    right: 1.35rem;
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.9rem;
-  }
-
-  .film-card-rating {
-    bottom: 1.15rem;
-    right: 1.35rem;
-  }
-
-  .badge {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.4rem;
-  }
-
-  /* Overlay adapté au padding réduit du container */
-  .film-card-overlay {
-    inset: 0.5rem 0.75rem;
   }
 }

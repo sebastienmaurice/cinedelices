@@ -539,4 +539,284 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateAllGlobal();
+
+  // ====================================================== //
+  // ======= MODAL ÉDITION UNIFIÉ (Films, Recettes, Avis) = //
+  // ====================================================== //
+
+  /**
+   * Modal générique réutilisable pour l'édition de :
+   * - Films validés (titre, année, genre, synopsis)
+   * - Recettes validées (titre, catégorie, temps, difficulté, description, ingrédients, préparation)
+   * - Avis validés (note, commentaire)
+   *
+   * Fonctionnalités :
+   * - openEditModal(type, data) : fonction unique qui adapte le modal selon le type
+   * - Auto-resize textarea (CSS field-sizing + JS fallback)
+   * - Fermeture via backdrop, bouton ×, bouton Annuler ou touche Échap
+   * - Pré-remplissage automatique des champs
+   */
+
+  const editModal = document.getElementById("admin-edit-modal");
+  const editForm = document.getElementById("admin-edit-form");
+  const modalCloseButtons = editModal?.querySelectorAll("[data-modal-close]");
+  const modalSections = editModal?.querySelectorAll("[data-modal-section]");
+  const modalIcons = editModal?.querySelectorAll("[data-modal-icon]");
+  const modalTitleText = editModal?.querySelector("[data-modal-title-text]");
+
+  // Titres du modal par type
+  const modalTitles = {
+    movie: "Éditer le film",
+    recipe: "Éditer la recette",
+    notice: "Éditer l'avis",
+  };
+
+  // Routes du formulaire par type
+  const modalRoutes = {
+    movie: (id) => `/admin/movies/${id}/edit/direct`,
+    recipe: (id) => `/admin/recipes/${id}/edit/direct`,
+    notice: (id) => `/admin/notices/${id}/edit/direct`,
+  };
+
+  /**
+   * Auto-resize du textarea
+   * Fallback pour les navigateurs sans support de field-sizing
+   * @param {HTMLTextAreaElement} textarea
+   */
+  const autoResizeTextarea = (textarea) => {
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    const minHeight = 80;
+    const maxHeight = 200;
+    const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+    textarea.style.height = newHeight + "px";
+  };
+
+  /**
+   * Auto-resize sur tous les textareas visibles du modal
+   */
+  const autoResizeAllTextareas = () => {
+    editModal?.querySelectorAll(".admin-modal__textarea--autosize").forEach((ta) => {
+      if (ta.offsetParent !== null) {
+        autoResizeTextarea(ta);
+      }
+    });
+  };
+
+  /**
+   * Afficher la section correspondant au type et masquer les autres
+   * @param {string} type - "movie" | "recipe" | "notice"
+   */
+  const showModalSection = (type) => {
+    // Sections conditionnelles
+    modalSections?.forEach((section) => {
+      section.style.display = section.dataset.modalSection === type ? "flex" : "none";
+    });
+    // Icônes dynamiques
+    modalIcons?.forEach((icon) => {
+      icon.style.display = icon.dataset.modalIcon === type ? "inline-flex" : "none";
+    });
+    // Titre dynamique
+    if (modalTitleText) {
+      modalTitleText.textContent = modalTitles[type] || "Éditer";
+    }
+
+    // Désactiver les champs des sections masquées (évite la validation HTML)
+    modalSections?.forEach((section) => {
+      const isActive = section.dataset.modalSection === type;
+      section.querySelectorAll("input, select, textarea").forEach((field) => {
+        field.disabled = !isActive;
+      });
+    });
+  };
+
+  /**
+   * Pré-remplir les champs selon le type
+   * @param {string} type - "movie" | "recipe" | "notice"
+   * @param {Object} data - Données à injecter
+   */
+  const prefillModal = (type, data) => {
+    if (type === "movie") {
+      const titleInput = document.getElementById("edit-movie-title");
+      const yearInput = document.getElementById("edit-movie-year");
+      const genreSelect = document.getElementById("edit-movie-genre");
+      const synopsisTextarea = document.getElementById("edit-movie-synopsis");
+
+      if (titleInput) titleInput.value = data.title || "";
+      if (yearInput) yearInput.value = data.year || "";
+      if (genreSelect) {
+        // Match insensible à la casse
+        const genreLower = (data.genre || "").toLowerCase();
+        const match = Array.from(genreSelect.options).find(
+          (opt) => opt.value.toLowerCase() === genreLower
+        );
+        genreSelect.value = match ? match.value : (data.genre || "");
+      }
+      if (synopsisTextarea) {
+        synopsisTextarea.value = data.synopsis || "";
+      }
+    }
+
+    if (type === "recipe") {
+      const nameInput = document.getElementById("edit-recipe-name");
+      const categorySelect = document.getElementById("edit-recipe-category");
+      const timeInput = document.getElementById("edit-recipe-time");
+      const difficultySelect = document.getElementById("edit-recipe-difficulty");
+      const descTextarea = document.getElementById("edit-recipe-description");
+      const ingredientsTextarea = document.getElementById("edit-recipe-ingredients");
+      const prepTextarea = document.getElementById("edit-recipe-preparation");
+
+      if (nameInput) nameInput.value = data.name || "";
+      if (categorySelect) {
+        const catMatch = Array.from(categorySelect.options).find(
+          (opt) => opt.value.toLowerCase() === (data.category || "").toLowerCase()
+        );
+        categorySelect.value = catMatch ? catMatch.value : (data.category || "");
+      }
+      if (timeInput) timeInput.value = data.time || "";
+      if (difficultySelect) {
+        const diffMatch = Array.from(difficultySelect.options).find(
+          (opt) => opt.value.toLowerCase() === (data.difficulty || "").toLowerCase()
+        );
+        difficultySelect.value = diffMatch ? diffMatch.value : (data.difficulty || "");
+      }
+      if (descTextarea) descTextarea.value = data.description || "";
+      if (ingredientsTextarea) ingredientsTextarea.value = data.ingredients || "";
+      if (prepTextarea) prepTextarea.value = data.preparation || "";
+    }
+
+    if (type === "notice") {
+      const quoteInput = document.getElementById("edit-notice-quote");
+      const contentTextarea = document.getElementById("edit-notice-content");
+      const authorDisplay = document.getElementById("edit-notice-author-display");
+      const recipeDisplay = document.getElementById("edit-notice-recipe-display");
+
+      if (quoteInput) quoteInput.value = data.quote || "";
+      if (contentTextarea) contentTextarea.value = data.content || "";
+      if (authorDisplay) authorDisplay.textContent = data.author || "-";
+      if (recipeDisplay) recipeDisplay.textContent = data.recipe || "-";
+    }
+  };
+
+  /**
+   * Ouvrir le modal unifié
+   * @param {string} type - "movie" | "recipe" | "notice"
+   * @param {Object} data - Données de l'item à éditer (doit contenir .id)
+   */
+  const openEditModal = (type, data) => {
+    if (!editModal || !editForm) return;
+
+    // 1. Afficher la bonne section
+    showModalSection(type);
+
+    // 2. Définir l'action du formulaire
+    if (modalRoutes[type]) {
+      editForm.action = modalRoutes[type](data.id);
+    }
+
+    // 3. Pré-remplir les champs
+    prefillModal(type, data);
+
+    // 4. Ouvrir le modal
+    editModal.classList.add("is-open");
+    document.body.classList.add("modal-open");
+
+    // 5. Auto-resize des textareas après affichage
+    setTimeout(() => {
+      autoResizeAllTextareas();
+      // Focus sur le premier input visible
+      const firstInput = editModal.querySelector(
+        `[data-modal-section="${type}"] input:not([disabled]), [data-modal-section="${type}"] select:not([disabled]), [data-modal-section="${type}"] textarea:not([disabled])`
+      );
+      firstInput?.focus();
+    }, 100);
+
+    // 6. Gestionnaire Échap
+    document.addEventListener("keydown", handleEscapeKey);
+  };
+
+  /**
+   * Fermer le modal
+   */
+  const closeEditModal = () => {
+    if (!editModal) return;
+
+    editModal.classList.remove("is-open");
+    document.body.classList.remove("modal-open");
+    document.removeEventListener("keydown", handleEscapeKey);
+
+    // Réinitialiser le formulaire après la transition
+    setTimeout(() => {
+      editForm?.reset();
+    }, 300);
+  };
+
+  /**
+   * Gérer la touche Échap pour fermer le modal
+   * @param {KeyboardEvent} e
+   */
+  const handleEscapeKey = (e) => {
+    if (e.key === "Escape") {
+      closeEditModal();
+    }
+  };
+
+  // Initialiser l'auto-resize sur tous les textareas du modal
+  editModal?.querySelectorAll(".admin-modal__textarea--autosize").forEach((ta) => {
+    ta.addEventListener("input", () => autoResizeTextarea(ta));
+  });
+
+  // Attacher les événements d'ouverture (délégation sur les boutons data-edit-btn)
+  document.querySelectorAll("[data-edit-btn]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const type = btn.dataset.editType;
+      // Construire l'objet data depuis les data-attributes
+      const data = { id: btn.dataset.editId };
+
+      if (type === "movie") {
+        data.title = btn.dataset.editTitle;
+        data.year = btn.dataset.editYear;
+        data.genre = btn.dataset.editGenre;
+        data.synopsis = btn.dataset.editSynopsis;
+      }
+
+      if (type === "recipe") {
+        data.name = btn.dataset.editName;
+        data.category = btn.dataset.editCategory;
+        data.time = btn.dataset.editTime;
+        data.difficulty = btn.dataset.editDifficulty;
+        data.description = btn.dataset.editDescription;
+        data.ingredients = btn.dataset.editIngredients;
+        data.preparation = btn.dataset.editPreparation;
+      }
+
+      if (type === "notice") {
+        data.content = btn.dataset.editContent;
+        data.quote = btn.dataset.editQuote;
+        data.author = btn.dataset.editAuthor;
+        data.recipe = btn.dataset.editRecipe;
+      }
+
+      openEditModal(type, data);
+    });
+  });
+
+  // Attacher les événements de fermeture
+  modalCloseButtons?.forEach((btn) => {
+    btn.addEventListener("click", closeEditModal);
+  });
+
+  // Fermer au clic sur le backdrop
+  editModal
+    ?.querySelector(".admin-modal__backdrop")
+    ?.addEventListener("click", closeEditModal);
+
+  // Empêcher la propagation du clic dans le dialog
+  editModal
+    ?.querySelector(".admin-modal__dialog")
+    ?.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+  console.log("✅ Module modal édition unifié initialisé (films, recettes, avis)");
 });

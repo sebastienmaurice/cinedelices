@@ -17,12 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const filmNameInput = document.getElementById("film-name");
   const filmYearInput = document.getElementById("film-year");
   const filmGenreSelect = document.getElementById("film-genre");
+  const filmSynopsisInput = document.getElementById("film-synopsis");
 
   // Champs hidden du formulaire unifié
   const filmIdHidden = document.getElementById("filmId-hidden");
   const filmTitleHidden = document.getElementById("film-title-hidden");
   const filmYearHidden = document.getElementById("film-year-hidden");
   const filmGenreHidden = document.getElementById("film-genre-hidden");
+  const filmSynopsisHidden = document.getElementById("film-synopsis-hidden");
 
   if (!filmNameInput || !filmYearInput || !filmGenreSelect) {
     console.warn("Champs du formulaire film non trouvés");
@@ -67,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
       filmTitleHidden.value = "";
       filmYearHidden.value = "";
       filmGenreHidden.value = "";
+      if (filmSynopsisHidden) filmSynopsisHidden.value = "";
 
       // Vérifier si un tmdbId est présent (film sélectionné via TMDB)
       const tmdbIdHidden = document.getElementById("tmdbId-hidden");
@@ -104,6 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
       filmTitleHidden.value = filmNameInput.value.trim();
       filmYearHidden.value = filmYearInput.value.trim();
       filmGenreHidden.value = filmGenreSelect.value.trim();
+    }
+
+    // Toujours synchroniser le synopsis (saisi manuellement)
+    if (filmSynopsisHidden && filmSynopsisInput) {
+      filmSynopsisHidden.value = filmSynopsisInput.value.trim();
     }
   }
 
@@ -236,6 +244,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (filmGenreSelect) {
     filmGenreSelect.addEventListener("change", syncFilmDataToUnifiedForm);
+  }
+  if (filmSynopsisInput) {
+    filmSynopsisInput.addEventListener("blur", syncFilmDataToUnifiedForm);
   }
 
   console.log("✅ Gestionnaire formulaire unifié initialisé");

@@ -727,23 +727,58 @@
 }
 
 .admin-edit-panel {
-  border: 1px solid rgba(198, 166, 100, 0.2);
-  border-radius: 12px;
-  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  border-radius: 8px;
   background-color: rgba(15, 21, 36, 0.55);
+  min-width: 160px;
 }
 
 .admin-edit-panel summary {
   cursor: pointer;
   color: var(--dore-popcorn);
   font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  list-style: none;
+}
+
+.admin-edit-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-edit-panel summary::before {
+  content: "▸";
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.admin-edit-panel[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.admin-edit-panel summary:hover {
+  background-color: rgba(198, 166, 100, 0.1);
+  border-radius: 8px 8px 0 0;
+}
+
+.admin-edit-panel[open] {
+  border-color: var(--dore-popcorn);
+}
+
+.admin-edit-panel[open] summary {
+  border-bottom: 1px solid rgba(198, 166, 100, 0.2);
 }
 
 .admin-edit-form {
-  margin-top: 0.6rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  max-width: 280px;
 }
 
 .admin-edit-form input,
@@ -1610,4 +1645,464 @@ textarea:focus {
     width: 35px;
     height: 35px;
   }
+}
+
+/* ====================================================== */
+/* ============ MODAL ÉDITION UNIFIÉ ==================== */
+/* ====================================================== */
+
+/**
+ * Modal centré réutilisable pour l'édition de :
+ * - Films validés (titre, année, genre, synopsis)
+ * - Recettes validées (titre, catégorie, temps, difficulté, description, ingrédients, préparation)
+ * - Avis validés (auteur, note, commentaire)
+ *
+ * Features :
+ * - Backdrop semi-transparent avec blur
+ * - Dialog responsive avec scroll interne
+ * - Sections conditionnelles selon le type d'item
+ * - Textarea auto-resize (CSS field-sizing + JS fallback)
+ * - Animations fluides d'entrée/sortie
+ * - Accessibilité (ARIA, focus trap, Escape)
+ */
+
+/* Container du modal (overlay plein écran) */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* État ouvert */
+.admin-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Backdrop (fond semi-transparent) */
+.admin-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 13, 26, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+/* Dialog (fenêtre centrale) */
+.admin-modal__dialog {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--bleu-intermediaire);
+  border-radius: 16px;
+  border: 1px solid rgba(198, 166, 100, 0.4);
+  box-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(198, 166, 100, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animation d'entrée du dialog */
+.admin-modal.is-open .admin-modal__dialog {
+  transform: translateY(0) scale(1);
+}
+
+/* Header du modal */
+.admin-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(198, 166, 100, 0.25);
+  background: linear-gradient(180deg, rgba(198, 166, 100, 0.1) 0%, transparent 100%);
+}
+
+/* Titre du modal */
+.admin-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-family: var(--font-h2-h6);
+  color: var(--dore-popcorn);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-modal__title svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* Bouton fermer (X) */
+.admin-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  border-radius: 50%;
+  background: rgba(13, 27, 42, 0.6);
+  color: var(--argent-ecran);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.admin-modal__close:hover,
+.admin-modal__close:focus-visible {
+  background: var(--dore-popcorn);
+  color: var(--bleu-nuit);
+  border-color: var(--dore-popcorn);
+  transform: rotate(90deg);
+}
+
+.admin-modal__close:focus-visible {
+  outline: 2px solid var(--dore-popcorn);
+  outline-offset: 2px;
+}
+
+/* Formulaire */
+.admin-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+/* Ligne de champs (grille responsive) */
+.admin-modal__row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Grille 3 colonnes pour titre/année/genre (films) */
+.admin-modal__row--3cols {
+  display: grid;
+  grid-template-columns: 1fr 120px 160px;
+  gap: 1rem;
+}
+
+/* Grille 2 colonnes pour titre/catégorie (recettes, avis) */
+.admin-modal__row--2cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Champ individuel */
+.admin-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Champ pleine largeur (synopsis) */
+.admin-modal__field--full {
+  width: 100%;
+}
+
+/* Labels */
+.admin-modal__label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dore-popcorn);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-modal__label svg {
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Inputs et Select */
+.admin-modal__input,
+.admin-modal__select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  background: var(--bleu-fond);
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  transition: all 0.25s ease;
+}
+
+.admin-modal__input::placeholder {
+  color: rgba(236, 239, 241, 0.4);
+}
+
+.admin-modal__input:hover,
+.admin-modal__select:hover {
+  border-color: rgba(198, 166, 100, 0.5);
+}
+
+.admin-modal__input:focus,
+.admin-modal__select:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow:
+    0 0 0 3px rgba(198, 166, 100, 0.2),
+    0 4px 12px rgba(198, 166, 100, 0.15);
+}
+
+/* Select custom */
+.admin-modal__select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c6a664' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+.admin-modal__select option {
+  background: var(--bleu-nuit);
+  color: var(--argent-ecran);
+}
+
+/* Textarea avec auto-resize */
+.admin-modal__textarea {
+  width: 100%;
+  min-height: 80px;
+  max-height: 200px;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(198, 166, 100, 0.3);
+  background: var(--bleu-fond);
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  line-height: 1.5;
+  resize: none;
+  overflow-y: auto;
+  transition: all 0.25s ease;
+}
+
+.admin-modal__textarea::placeholder {
+  color: rgba(236, 239, 241, 0.4);
+}
+
+.admin-modal__textarea:hover {
+  border-color: rgba(198, 166, 100, 0.5);
+}
+
+.admin-modal__textarea:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow:
+    0 0 0 3px rgba(198, 166, 100, 0.2),
+    0 4px 12px rgba(198, 166, 100, 0.15);
+}
+
+/* Auto-resize: field-sizing pour navigateurs modernes (Chrome 123+) */
+@supports (field-sizing: content) {
+  .admin-modal__textarea--autosize {
+    field-sizing: content;
+    min-height: 80px;
+    max-height: 200px;
+  }
+}
+
+/* Hint sous le textarea */
+.admin-modal__hint {
+  font-size: 0.75rem;
+  color: rgba(236, 239, 241, 0.5);
+  font-style: italic;
+}
+
+/* Sections conditionnelles (une seule visible à la fois) */
+.admin-modal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Icônes dynamiques dans le header */
+.admin-modal__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.admin-modal__icon svg {
+  opacity: 0.85;
+}
+
+/* Input court (note 1-5) */
+.admin-modal__input--short {
+  max-width: 120px;
+}
+
+/* Box d'information en lecture seule (auteur/recette pour avis) */
+.admin-modal__info-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(198, 166, 100, 0.08);
+  border: 1px solid rgba(198, 166, 100, 0.2);
+  color: var(--argent-ecran);
+  font-size: 0.9rem;
+}
+
+.admin-modal__info-label {
+  color: var(--dore-popcorn);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-modal__info-separator {
+  color: rgba(236, 239, 241, 0.4);
+}
+
+/* Zone d'actions (boutons) */
+.admin-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 166, 100, 0.15);
+  margin-top: 0.5rem;
+}
+
+.admin-modal__actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-modal__actions .btn svg {
+  flex-shrink: 0;
+}
+
+/* ====================================================== */
+/* ============ MODAL - RESPONSIVE ====================== */
+/* ====================================================== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+  .admin-modal__dialog {
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+
+  .admin-modal__row--3cols {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-modal__field--title {
+    grid-column: 1 / -1;
+  }
+
+  .admin-modal__header {
+    padding: 1rem 1.25rem;
+  }
+
+  .admin-modal__form {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .admin-modal__title {
+    font-size: 1.1rem;
+  }
+
+  .admin-modal__actions {
+    flex-direction: column;
+  }
+
+  .admin-modal__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-modal__info-box {
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+  .admin-modal {
+    padding: 0.5rem;
+  }
+
+  .admin-modal__dialog {
+    max-height: 95vh;
+    border-radius: 12px;
+  }
+
+  .admin-modal__row--3cols,
+  .admin-modal__row--2cols {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-modal__field--year,
+  .admin-modal__field--genre {
+    grid-column: 1 / -1;
+  }
+
+  .admin-modal__header {
+    padding: 0.85rem 1rem;
+  }
+
+  .admin-modal__form {
+    padding: 1rem;
+    gap: 0.85rem;
+  }
+
+  .admin-modal__title {
+    font-size: 1rem;
+  }
+
+  .admin-modal__close {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .admin-modal__input,
+  .admin-modal__select,
+  .admin-modal__textarea {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .admin-modal__info-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .admin-modal__info-separator {
+    display: none;
+  }
+}
+
+/* Empêcher le scroll du body quand le modal est ouvert */
+body.modal-open {
+  overflow: hidden;
 }

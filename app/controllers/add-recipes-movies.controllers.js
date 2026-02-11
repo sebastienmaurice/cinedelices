@@ -46,20 +46,21 @@ const addRecipesMoviesController = {
    * POST /add-recipes-movies/movie
    *
    * Processus :
-   * 1. Récupère les données du formulaire (title, year, genre)
+   * 1. Récupère les données du formulaire (title, year, genre, synopsis)
    * 2. Crée le film en BDD
    * 3. Enrichit le film avec les chemins d'images (pour affichage)
    * 4. Rend la page avec le film créé pour permettre l'ajout de la recette
    */
   async addMovie(req, res) {
     try {
-      const { title, year, genre } = req.body;
+      const { title, year, genre, synopsis } = req.body;
 
       // Création du film en base de données
       const newMovie = await Movie.create({
         title: title,
         year: year,
         genre: genre,
+        synopsis: synopsis || null,
         id_user: req.userId,
       });
 
@@ -137,6 +138,7 @@ const addRecipesMoviesController = {
         title,
         year,
         genre,
+        synopsis,
         name,
         description,
         category,
@@ -173,6 +175,7 @@ const addRecipesMoviesController = {
           title,
           year,
           genre,
+          synopsis: synopsis || null,
           id_user: req.userId,
         });
       }

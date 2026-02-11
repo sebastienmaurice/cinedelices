@@ -81,21 +81,11 @@ function enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsM
 
     return {
       ...plain,
+      // plain.contributor est déjà peuplé par Sequelize grâce à l'alias "contributor"
       isFavorite: favoriteIds.includes(plain.id),
       userRating: userRatingsMap[plain.id] || null,
       avgRating: avgData ? avgData.average : null,
       ratingCount: avgData ? avgData.count : 0,
-    };
-  });
-}
-
-// Garder l'ancienne fonction pour compatibilité (utilisée dans certains endroits)
-function enrichRecipesWithFavorites(recipes, favoriteIds) {
-  return recipes.map((recipe) => {
-    const plain = recipe.toJSON ? recipe.toJSON() : recipe;
-    return {
-      ...plain,
-      isFavorite: favoriteIds.includes(plain.id),
     };
   });
 }
@@ -111,17 +101,25 @@ const recipesController = {
       if (rawAuthor) {
         authorUser = await User.findOne({
           where: { pseudo: { [Op.iLike]: rawAuthor } },
-          attributes: ["id", "pseudo"],
+          attributes: ["id", "pseudo", "picture"],
         });
 
         authorDisplayName = authorUser ? authorUser.pseudo : rawAuthor;
       }
 
+      // Jointure User via alias "contributor" : récupère pseudo + avatar de l'auteur
       const recipes = await Recipe.findAll({
         where: {
           status: true,
           ...(authorUser ? { id_user: authorUser.id } : {}),
         },
+        include: [
+          {
+            model: User,
+            as: "contributor",
+            attributes: ["id", "pseudo", "picture"],
+          },
+        ],
       });
 
       // Récupérer les favoris et notes de l'utilisateur connecté
@@ -131,6 +129,9 @@ const recipesController = {
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
       const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
 
+      // Image de profil de l'auteur pour la bannière
+      const authorBannerImage = authorUser?.picture || null;
+
       res.render("recipes-movie", {
         movie: null,
         recipes: enrichedRecipes,
@@ -138,6 +139,7 @@ const recipesController = {
         userId: req.userId,
         authorDisplayName,
         isAuthorFiltered: Boolean(rawAuthor),
+        authorBannerImage,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);
@@ -155,9 +157,16 @@ const recipesController = {
         return renderNotFound(res, "Film", req.userRole);
       }
 
-      // Toutes les recettes du film
+      // Toutes les recettes du film — jointure User via alias "contributor"
       const recipes = await Recipe.findAll({
         where: { id_movie: movie.id, status: true },
+        include: [
+          {
+            model: User,
+            as: "contributor",
+            attributes: ["id", "pseudo", "picture"],
+          },
+        ],
       });
 
       // Enrichir le movie avec les chemins d'images
@@ -203,10 +212,14 @@ const recipesController = {
         return renderNotFound(res, "Film", req.userRole);
       }
 
+      // Jointure User via alias "contributor" — même include dans les 2 cas
+      const userInclude = [{ model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] }];
+
       let recipes;
       if (!category || category === "all") {
         recipes = await Recipe.findAll({
           where: { id_movie: movie.id, status: true },
+          include: userInclude,
         });
       } else {
         recipes = await Recipe.findAll({
@@ -215,6 +228,7 @@ const recipesController = {
             category: category,
             status: true,
           },
+          include: userInclude,
         });
       }
 
@@ -269,47 +283,10 @@ const recipesController = {
       });
       const enrichedMovie = movie ? enrichMovieWithImagePaths(movie) : null;
 
-      let contributor = plainRecipe.id_user
-        ? await User.findByPk(plainRecipe.id_user, {
-            attributes: [
-              "id",
-              "pseudo",
-              "picture",
-              "first_name",
-              "last_name",
-              "role",
-            ],
-          })
-        : null;
-
-      if (!contributor && enrichedMovie?.title) {
-        const movieTitle = enrichedMovie.title
-          .toLowerCase()
-          .replace(/[’']/g, "'")
-          .replace(/\u00A0/g, " ");
-        const fallbackByMovie = [
-          {
-            match: "indiana jones et les aventuriers de l'arche perdue",
-            pseudo: "Semauri",
-          },
-          { match: "harry potter", pseudo: "Semauri" },
-          { match: "american pie", pseudo: "Richard" },
-          { match: "le silence des agneaux", pseudo: "Richard" },
-          { match: "bienvenue chez les ch'tis", pseudo: "Ludo" },
-        ];
-
-        const fallback = fallbackByMovie.find((item) =>
-          movieTitle.includes(item.match)
-        );
-
-        if (fallback) {
-          contributor = {
-            pseudo: fallback.pseudo,
-            role: "admin",
-            picture: null,
-          };
-        }
-      }
+      // Auteur obligatoire (id_user NOT NULL) — récupération directe sans fallback
+      const contributor = await User.findByPk(plainRecipe.id_user, {
+        attributes: ["id", "pseudo", "picture", "first_name", "last_name", "role"],
+      });
 
       // Formatage du texte pour l'affichage
       // Ces fonctions extraient les blocs de texte pour faciliter l'affichage dans la vue
@@ -370,17 +347,13 @@ const recipesController = {
         preparationBlocks,
         averageQuote,
         notices: plainNotices,
-        contributor: contributor
-          ? {
-              ...(contributor.get ? contributor.get({ plain: true }) : contributor),
-              pseudo:
-                contributor.pseudo ||
-                [contributor.first_name, contributor.last_name]
-                  .filter(Boolean)
-                  .join(" ") ||
-                "Contributeur",
-            }
-          : null,
+        // Auteur toujours présent (id_user NOT NULL)
+        contributor: {
+          ...(contributor.get ? contributor.get({ plain: true }) : contributor),
+          pseudo:
+            contributor.pseudo ||
+            [contributor.first_name, contributor.last_name].filter(Boolean).join(" "),
+        },
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

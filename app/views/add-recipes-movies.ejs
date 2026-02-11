@@ -64,7 +64,7 @@
             <div class="overlay"></div>
             <div class="film-inputs-row">
               <!-- Wrapper pour l'autocomplétion avec position relative -->
-              <div class="film-input-group">
+              <div class="film-input-group film-input-group--title">
                 <label for="film-name" class="film-input-label">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
                   <span>Nom du film ou de la série</span>
@@ -86,20 +86,20 @@
                 </div>
               </div>
 
-              <div class="film-input-group">
+              <div class="film-input-group film-input-group--year">
                 <label for="film-year" class="film-input-label">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                  <span>Année de sortie</span>
+                  <span>Année</span>
                 </label>
                 <input type="number" name="year" id="film-year"
                 class="form-input film-input-enhanced" min="1888" max="<%= new
                 Date().getFullYear() + 5 %>" <% if (typeof newMovie ===
                 "undefined" || !newMovie || newMovie.length === 0) { %>
-                placeholder="Ex: 1985, 2008..." <% } else { %> placeholder="<%=
+                placeholder="Ex: 1985" <% } else { %> placeholder="<%=
                 newMovie.year %>" <% } %> value="" />
               </div>
 
-              <div class="film-input-group">
+              <div class="film-input-group film-input-group--genre">
                 <label for="film-genre" class="film-input-label">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
                   <span>Genre</span>
@@ -111,7 +111,7 @@
                 >
                   <% if (typeof newMovie === "undefined" || !newMovie ||
                   newMovie.length === 0) { %>
-                  <option value="">Sélectionner un genre</option>
+                  <option value="">Genre</option>
                   <% } else { %>
                   <option value=""><%= newMovie.genre %></option>
                   <% } %>
@@ -136,6 +136,26 @@
                   <option value="téléfilm">Téléfilm</option>
                   <option value="western">Western</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Synopsis du film -->
+            <div class="film-synopsis-row">
+              <div class="film-input-group film-input-group--synopsis">
+                <label for="film-synopsis" class="film-input-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                  <span>Synopsis</span>
+                </label>
+                <textarea
+                  name="synopsis"
+                  id="film-synopsis"
+                  class="form-textarea film-input-enhanced"
+                  rows="2"
+                  spellcheck="true"
+                  lang="fr"
+                  maxlength="500"
+                  placeholder="Résumé court du film ou de la série..."
+                ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
               </div>
             </div>
           </div>
@@ -178,6 +198,7 @@
           <input type="hidden" name="title" id="film-title-hidden" value="" />
           <input type="hidden" name="year" id="film-year-hidden" value="" />
           <input type="hidden" name="genre" id="film-genre-hidden" value="" />
+          <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="" />
 
           <!-- Champs TMDB pour validation intelligente -->
           <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
@@ -230,12 +251,14 @@
                   <li id="display-film-genre">genre</li>
                   <li id="display-film-year">année</li>
                 </ul>
+                <p id="display-film-synopsis" class="film-info-synopsis">synopsis</p>
                 <% } else { %>
                 <ul>
                   <li id="display-film-name"><%= newMovie.title %></li>
                   <li id="display-film-genre"><%= newMovie.genre %></li>
                   <li id="display-film-year"><%= newMovie.year %></li>
                 </ul>
+                <p id="display-film-synopsis" class="film-info-synopsis"><%= newMovie.synopsis || 'synopsis' %></p>
                 <% } %>
               </div>
             </div>

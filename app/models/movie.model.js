@@ -9,6 +9,7 @@ Movie.init(
     year: { type: DataTypes.INTEGER, allowNull: false },
     genre: { type: DataTypes.STRING(100), allowNull: false },
     picture: { type: DataTypes.STRING(255) },
+    synopsis: { type: DataTypes.TEXT, allowNull: true },
     status: { type: DataTypes.BOOLEAN, defaultValue: false },
     edit_status: { type: DataTypes.STRING(20), defaultValue: "none" },
     pending_title: { type: DataTypes.TEXT, allowNull: true },

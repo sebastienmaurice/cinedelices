@@ -516,10 +516,14 @@
     const articles = moviesList.querySelectorAll("article");
 
     articles.forEach((article) => {
-      const titleElement = article.querySelector(".film-title");
-      const genreElement = article.querySelector(".film-genre");
+      // Sélecteurs corrigés pour correspondre au HTML de movies.ejs
+      const titleElement = article.querySelector(".film-card__title");
+      const genreElement = article.querySelector(".tag--sapphire");
 
-      if (!titleElement) return;
+      if (!titleElement) {
+        article.style.display = "none";
+        return;
+      }
 
       const title = titleElement.textContent || "";
       const genre = genreElement ? genreElement.textContent || "" : "";
@@ -528,7 +532,7 @@
       const normalizedTitle = normalizeTextFn(title);
       const normalizedGenre = normalizeTextFn(genre);
 
-      // Vérifier si le film correspond aux résultats de recherche
+      // Vérifier si le film correspond aux résultats de recherche (par ID ou titre)
       const isInSearchResults = searchResults.some((result) => {
         const resultTitle = normalizeTextFn(
           result.title_fr || result.title || ""
@@ -565,8 +569,9 @@
     const articles = moviesList.querySelectorAll("article");
 
     articles.forEach((article) => {
-      const titleElement = article.querySelector(".film-title");
-      const genreElement = article.querySelector(".film-genre");
+      // Sélecteurs corrigés pour correspondre au HTML de movies.ejs
+      const titleElement = article.querySelector(".film-card__title");
+      const genreElement = article.querySelector(".tag--sapphire");
 
       if (!titleElement) {
         article.style.display = "none";

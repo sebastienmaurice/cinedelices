@@ -28,21 +28,12 @@
     // S'assurer que l'image par défaut est affichée au démarrage
     resetFilmImage();
 
-    if (!tmdbId) {
-      // Pas de tmdb_id, on ne fait rien
-      return;
+    // DÉSACTIVÉ : pré-remplissage automatique depuis TMDB
+    // Le synopsis doit rester une donnée maîtrisée, saisie manuellement
+    // Les fonctions TMDB restent disponibles pour un déclenchement manuel futur
+    if (tmdbId) {
+      console.log("ℹ️ tmdb_id détecté mais pré-remplissage automatique désactivé");
     }
-
-    // Pré-remplir le titre si fourni (feedback immédiat)
-    if (title) {
-      const filmNameInput = document.getElementById("film-name");
-      if (filmNameInput) {
-        filmNameInput.value = decodeURIComponent(title);
-      }
-    }
-
-    // Récupérer les infos complètes du film/série depuis TMDB
-    loadTmdbInfo(tmdbId, type);
   }
 
   /**
@@ -197,6 +188,12 @@
       }
     }
 
+    // Pré-remplir le synopsis (overview de TMDB)
+    const filmSynopsisInput = document.getElementById("film-synopsis");
+    if (filmSynopsisInput && movie.overview) {
+      filmSynopsisInput.value = movie.overview;
+    }
+
     // 2. Pré-remplir les champs cachés du formulaire unifié
     const tmdbIdHidden = document.getElementById("tmdbId-hidden");
     if (tmdbIdHidden) {
@@ -276,6 +273,11 @@
     if (displayFilmYear && movie.year) {
       displayFilmYear.textContent = movie.year;
     }
+
+    const displayFilmSynopsis = document.getElementById("display-film-synopsis");
+    if (displayFilmSynopsis && movie.overview) {
+      displayFilmSynopsis.textContent = movie.overview;
+    }
   }
 
   /**
@@ -339,6 +341,7 @@
     const filmNameInput = document.getElementById("film-name");
     const filmYearInput = document.getElementById("film-year");
     const filmGenreSelect = document.getElementById("film-genre");
+    const filmSynopsisInput = document.getElementById("film-synopsis");
 
     // Synchroniser les champs cachés standards
     if (filmNameInput) {
@@ -359,6 +362,13 @@
       const filmGenreHidden = document.getElementById("film-genre-hidden");
       if (filmGenreHidden) {
         filmGenreHidden.value = filmGenreSelect.value || "";
+      }
+    }
+
+    if (filmSynopsisInput) {
+      const filmSynopsisHidden = document.getElementById("film-synopsis-hidden");
+      if (filmSynopsisHidden) {
+        filmSynopsisHidden.value = filmSynopsisInput.value || "";
       }
     }
   }

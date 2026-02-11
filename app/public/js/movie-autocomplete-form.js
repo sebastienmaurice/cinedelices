@@ -240,6 +240,12 @@
     filmYearInput.value = movie.year;
     filmGenreSelect.value = movie.genre;
 
+    // Pré-remplir le synopsis (si disponible en BDD)
+    const filmSynopsisInput = document.getElementById("film-synopsis");
+    if (filmSynopsisInput && movie.synopsis) {
+      filmSynopsisInput.value = movie.synopsis;
+    }
+
     // Ajouter un champ hidden pour l'ID du film dans le formulaire unifié
     setHiddenInput("filmId", movie.id);
 
@@ -287,6 +293,7 @@
     const displayFilmName = document.getElementById("display-film-name");
     const displayFilmGenre = document.getElementById("display-film-genre");
     const displayFilmYear = document.getElementById("display-film-year");
+    const displayFilmSynopsis = document.getElementById("display-film-synopsis");
 
     if (displayFilmName) {
       displayFilmName.textContent = movie.title || "titre";
@@ -296,6 +303,9 @@
     }
     if (displayFilmYear) {
       displayFilmYear.textContent = movie.year || "année";
+    }
+    if (displayFilmSynopsis) {
+      displayFilmSynopsis.textContent = movie.synopsis || "synopsis";
     }
   }
 
