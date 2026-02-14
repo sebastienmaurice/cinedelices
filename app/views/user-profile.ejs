@@ -42,6 +42,10 @@
       <div class="profile-status-banner" role="status" aria-live="polite">
         Votre photo de profil est en attente de validation par Ciné Délices.
       </div>
+      <% } else if (user.picture_status === 'rejected') { %>
+      <div class="profile-status-banner profile-status-banner--rejected" role="status" aria-live="polite">
+        Votre photo de profil a été refusée. Vous pouvez en téléverser une nouvelle.
+      </div>
       <% } %>
 
       <section class="profile-grid">
@@ -59,15 +63,20 @@
                   alt="Avatar"
                   class="profile-photo <%= user.picture_status === 'pending' ? 'profile-photo--pending' : '' %>"
                 />
-                <span class="profile-avatar__badge <%= user.picture_status === 'pending' ? 'is-pending' : 'is-approved' %>">
-                  <%= user.picture_status === 'pending' ? "En attente" : "Vérifié" %>
-                </span>
+                <% if (user.picture || user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
+                <span class="profile-avatar__badge <%= user.picture_status === 'pending' ? 'is-pending' : user.picture_status === 'rejected' ? 'is-rejected' : 'is-approved' %>"
+                ><%= user.picture_status === 'pending' ? "En attente" : user.picture_status === 'rejected' ? "Refusée" : "Vérifié" %></span>
+                <% } %>
               </div>
               <div class="profile-avatar-actions">
                 <span class="profile-avatar__note">
                   <%= user.picture_status === 'pending'
                     ? "Validation en cours par Ciné Délices"
-                    : "Photo validée par Ciné Délices" %>
+                    : user.picture_status === 'rejected'
+                      ? "Photo refusée — vous pouvez en téléverser une nouvelle"
+                      : user.picture
+                        ? "Photo validée par Ciné Délices"
+                        : "" %>
                 </span>
                 <label for="avatar" class="upload-btn upload-btn--compact">
                   <span>Choisir une photo</span>

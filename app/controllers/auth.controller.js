@@ -5,14 +5,26 @@ import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const authController = {
-  // pour se connecter
+  // pour se connecter (accepte pseudo ou email)
   async login(req, res) {
     const { pseudo, password } = req.body;
 
     try {
-      const user = await User.findOne({ where: { pseudo: pseudo } });
+      // Recherche par pseudo (lowercase) ou par email (lowercase)
+      const identifier = pseudo.trim().toLowerCase();
+      const user = await User.findOne({
+        where: {
+          [Op.or]: [
+            { pseudo: identifier },
+            { email: identifier },
+          ],
+        },
+      });
 
       if (!user) {
         return res.status(StatusCodes.UNAUTHORIZED).render("error", {
@@ -87,7 +99,21 @@ const authController = {
         password: hash,
         role: "user",
       });
-      // const user = await User.create({ toutes les données });
+
+      // Login automatique après inscription :
+      // Création d'un JWT token identique à celui du login
+      // pour que l'utilisateur soit connecté immédiatement
+      const token = jwt.sign(
+        { user_id: user.id, pseudo: user.pseudo, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "2h" }
+      );
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 2, // 2 heures
+      });
 
       res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
@@ -349,6 +375,69 @@ const authController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: "Erreur lors de la mise à jour du profil.",
+        error: error.message,
+      });
+    }
+  },
+
+  async uploadProfilePhoto(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "ID utilisateur invalide",
+        });
+      }
+
+      if (req.userRole !== "admin" && req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          success: false,
+          message: "Accès interdit",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Aucun fichier sélectionné",
+        });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: "Utilisateur non trouvé",
+        });
+      }
+
+      // Supprimer l'ancien fichier physique si existe
+      if (user.picture) {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+        const oldPath = path.join(__dirname, "../public", user.picture);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      const newPicture = `/images/profiles/${req.file.filename}`;
+      await User.update(
+        { picture: newPicture, picture_status: "pending" },
+        { where: { id: userId } }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Photo envoyée. En attente de validation.",
+        picture: newPicture,
+        picture_status: "pending",
+      });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Erreur lors de l'upload de la photo.",
         error: error.message,
       });
     }

@@ -139,7 +139,8 @@
               </div>
             </div>
 
-            <!-- Synopsis du film -->
+            <!-- Synopsis du film : visible uniquement pour les admins -->
+            <% if (typeof role !== "undefined" && role === "admin") { %>
             <div class="film-synopsis-row">
               <div class="film-input-group film-input-group--synopsis">
                 <label for="film-synopsis" class="film-input-label">
@@ -158,6 +159,7 @@
                 ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
               </div>
             </div>
+            <% } %>
           </div>
 
           <div class="form-footer">

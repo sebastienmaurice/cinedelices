@@ -318,14 +318,18 @@
     // Déterminer le lien : film local ou film TMDB à créer
     // Si film existant : rediriger vers add-recipes-movies avec l'ID pour pré-remplir et afficher l'image
     // Si nouveau film : rediriger vers add-recipes-movies avec les paramètres TMDB
+    // Lien vers la page d'ajout :
+    // - Film existant (isLocal) → /add-recipes-movies/:id (pré-remplissage côté serveur)
+    // - Film TMDB (nouveau) → /add-recipes-movies/?tmdb_id=...&title=...&year=...&genre=...&type=...
+    //   Les query params permettent un pré-remplissage instantané du formulaire côté client
     const movieLink =
       isLocal && movie.id
         ? `/add-recipes-movies/${movie.id}`
-        : `/add-recipes-movies/?tmdb_id=${
-            movie.tmdb_id || ""
-          }&title=${encodeURIComponent(movie.title_fr || movie.title || "")}${
-            movie.type ? `&type=${encodeURIComponent(movie.type)}` : ""
-          }`;
+        : `/add-recipes-movies/?tmdb_id=${movie.tmdb_id || ""}` +
+          `&title=${encodeURIComponent(movie.title_fr || movie.title || "")}` +
+          `${movie.year ? `&year=${movie.year}` : ""}` +
+          `${movie.genre ? `&genre=${encodeURIComponent(movie.genre)}` : ""}` +
+          `${movie.type ? `&type=${encodeURIComponent(movie.type)}` : ""}`;
 
     // Badge pour films locaux
     const localBadge = isLocal

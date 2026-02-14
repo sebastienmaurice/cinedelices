@@ -15,24 +15,33 @@
       return;
     }
 
-    // Récupérer le tmdb_id et le type depuis l'URL
+    // Récupérer les données du film depuis les query params de l'URL
+    // Ces params sont transmis par le dropdown de recherche sur /movies
+    // quand l'utilisateur sélectionne un film inexistant (résultat TMDB)
     const urlParams = new URLSearchParams(window.location.search);
     const tmdbId = urlParams.get("tmdb_id");
-    const title = urlParams.get("title"); // Optionnel, pour pré-remplir le titre en attendant
-    const type = urlParams.get("type"); // Optionnel : 'film' ou 'serie'
+    const title = urlParams.get("title");
+    const year = urlParams.get("year");
+    const genre = urlParams.get("genre");
+    const type = urlParams.get("type"); // 'film' ou 'serie'
 
     // Écouter les modifications du film pour réinitialiser l'image et mettre à jour l'URL
-    // Doit être fait AVANT de charger les infos TMDB
+    // Doit être fait AVANT le pré-remplissage
     setupFilmChangeListeners();
 
     // S'assurer que l'image par défaut est affichée au démarrage
     resetFilmImage();
 
-    // DÉSACTIVÉ : pré-remplissage automatique depuis TMDB
-    // Le synopsis doit rester une donnée maîtrisée, saisie manuellement
-    // Les fonctions TMDB restent disponibles pour un déclenchement manuel futur
-    if (tmdbId) {
-      console.log("ℹ️ tmdb_id détecté mais pré-remplissage automatique désactivé");
+    // Pré-remplissage direct depuis les query params (sans appel API)
+    // Le synopsis n'est pas pré-rempli : il est géré exclusivement en admin
+    if (tmdbId && title) {
+      prefillForm({
+        tmdb_id: tmdbId,
+        title_fr: title,
+        year: year ? parseInt(year, 10) : null,
+        genre: genre || null,
+        overview: null,
+      });
     }
   }
 

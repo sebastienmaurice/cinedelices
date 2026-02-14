@@ -9,11 +9,18 @@
  *   - Cards   : /images/movies/cards/card-{title-slug}.{ext}
  *   - Originals : /images/movies/originals/original-{title-slug}.{ext}
  *
- * SÉCURITÉ :
- * Ce module ne manipule que des chaînes de caractères pour générer des chemins.
- * Aucune opération filesystem n'est effectuée, donc aucun risque d'injection de chemin.
- * Les caractères spéciaux sont nettoyés par slugifyTitle() avant utilisation.
+ * FALLBACK :
+ * Si les images traitées (card, banner) n'existent pas sur disque,
+ * le chemin original stocké en BDD est utilisé en remplacement.
  */
+
+import { existsSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PUBLIC_DIR = join(__dirname, "../public");
 
 // =============================================================================
 // CONFIGURATION DES CAS SPÉCIAUX
@@ -476,12 +483,20 @@ export function enrichMovieWithImagePaths(movie) {
   }
 
   // ÉTAPE 3 : Génération des chemins via la fonction centralisée
-  const bannerPath = getMovieBannerPath(originalPath, title);
-  const cardPath = getMovieCardPath(originalPath, title);
+  let bannerPath = getMovieBannerPath(originalPath, title);
+  let cardPath = getMovieCardPath(originalPath, title);
   const originalPathEnriched = getMovieOriginalPath(originalPath, title);
 
+  // ÉTAPE 3b : Fallback vers l'image originale si card/banner n'existe pas sur disque
+  // Les images uploadées via l'admin n'ont pas forcément de version card/banner générée
+  if (cardPath && !existsSync(join(PUBLIC_DIR, cardPath))) {
+    cardPath = originalPath || DEFAULT_MOVIE_IMAGE;
+  }
+  if (bannerPath && !existsSync(join(PUBLIC_DIR, bannerPath))) {
+    bannerPath = originalPath || DEFAULT_MOVIE_IMAGE;
+  }
+
   // ÉTAPE 4 : Création de l'objet enrichi
-  // Object.assign() garantit que toutes les propriétés originales sont préservées
   return Object.assign({}, moviePlain, {
     bannerPath,
     cardPath,

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
 import uploadMovie from "../middlewares/upload-movie.middleware.js";
+import uploadRecipe from "../middlewares/upload.middleware.js";
 
 const adminRouter = Router();
 
@@ -108,10 +109,11 @@ adminRouter.post(
   adminController.deleteNoticeDirect,
 );
 
-// Édition directe admin (contenus validés ou non)
-adminRouter.post("/movies/:id/edit/direct", adminController.updateMovieDirect);
+// Édition directe admin (contenus validés ou non, avec upload photo optionnel)
+adminRouter.post("/movies/:id/edit/direct", uploadMovie.single("filmImage"), adminController.updateMovieDirect);
 adminRouter.post(
   "/recipes/:id/edit/direct",
+  uploadRecipe.single("recipeImage"),
   adminController.updateRecipeDirect,
 );
 adminRouter.post(

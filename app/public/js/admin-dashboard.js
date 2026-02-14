@@ -219,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       form.addEventListener("submit", async (event) => {
         if (!window.confirmAction) return;
         event.preventDefault();
+        const submitter = event.submitter;
         const actionConfig =
           (window.getConfirmConfig && window.getConfirmConfig(actionKey)) || {};
         const accepted = await window.confirmAction({
@@ -228,6 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
           title: actionConfig.title || options.title,
         });
         if (accepted) {
+          // Respecter le formaction du bouton cliqué (ex: Refuser vs Valider)
+          if (submitter && submitter.hasAttribute("formaction")) {
+            form.action = submitter.getAttribute("formaction");
+          }
           form.submit();
         }
       });

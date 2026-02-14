@@ -17,6 +17,13 @@ authRouter.post(
   authController.updateProfile
 );
 authRouter.post(
+  "/profil/:id/photo",
+  isLogged,
+  injectId,
+  uploadAvatar.single("avatar"),
+  authController.uploadProfilePhoto
+);
+authRouter.post(
   "/profil/:id/delete",
   isLogged,
   injectId,

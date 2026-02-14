@@ -12,7 +12,7 @@
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
   const editableInputs = profilePage.querySelectorAll(
-    "#profileInfoForm input, #profileAvatarForm input[type='text'], #profilePrefsForm input, #avatar"
+    "#profileInfoForm input, #profileAvatarForm input[type='text'], #profilePrefsForm input"
   );
 
   let removeAvatar = false;
@@ -55,11 +55,64 @@
 
   setEditingState(false);
 
-  const pictureStatus = profilePage.dataset.pictureStatus;
+  let pictureStatus = profilePage.dataset.pictureStatus;
+  const avatarBadge = profilePage.querySelector(".profile-avatar__badge");
+  const avatarNote = profilePage.querySelector(".profile-avatar__note");
+  const statusBanner = profilePage.querySelector(".profile-status-banner");
+
+  const updatePhotoUI = (status) => {
+    pictureStatus = status;
+    profilePage.dataset.pictureStatus = status;
+
+    if (status === "pending") {
+      if (avatarInput) avatarInput.disabled = true;
+      if (removeAvatarBtn) removeAvatarBtn.disabled = true;
+      if (avatarImage) {
+        avatarImage.classList.add("profile-photo--pending");
+      }
+      if (avatarBadge) {
+        avatarBadge.className = "profile-avatar__badge is-pending";
+        avatarBadge.textContent = "En attente";
+        avatarBadge.style.display = "";
+      }
+      if (avatarNote) {
+        avatarNote.textContent = "Validation en cours par Ciné Délices";
+      }
+      if (statusBanner) {
+        statusBanner.textContent = "Votre photo de profil est en attente de validation par Ciné Délices.";
+        statusBanner.className = "profile-status-banner";
+        statusBanner.style.display = "";
+      }
+    } else if (status === "rejected") {
+      if (avatarInput) avatarInput.disabled = false;
+      if (removeAvatarBtn) removeAvatarBtn.disabled = false;
+      if (avatarImage) {
+        avatarImage.classList.remove("profile-photo--pending");
+      }
+      if (avatarBadge) {
+        avatarBadge.className = "profile-avatar__badge is-rejected";
+        avatarBadge.textContent = "Refusée";
+        avatarBadge.style.display = "";
+      }
+      if (avatarNote) {
+        avatarNote.textContent = "Photo refusée — vous pouvez en téléverser une nouvelle";
+      }
+    } else {
+      if (avatarInput) avatarInput.disabled = false;
+      if (removeAvatarBtn) removeAvatarBtn.disabled = false;
+      if (avatarImage) {
+        avatarImage.classList.remove("profile-photo--pending");
+      }
+    }
+  };
+
+  // Appliquer l'état initial
   if (pictureStatus === "pending") {
-    if (avatarInput) avatarInput.disabled = true;
-    if (removeAvatarBtn) removeAvatarBtn.disabled = true;
+    updatePhotoUI("pending");
     showToast("Photo en attente de validation.", "warning");
+  } else if (pictureStatus === "rejected") {
+    updatePhotoUI("rejected");
+    showToast("Photo refusée. Vous pouvez en téléverser une nouvelle.", "warning");
   }
 
   if (editButton) {
@@ -86,8 +139,8 @@
   }
 
   if (avatarInput) {
-    avatarInput.addEventListener("change", () => {
-      if (!isEditing || !avatarInput.files || !avatarInput.files[0]) return;
+    avatarInput.addEventListener("change", async () => {
+      if (!avatarInput.files || !avatarInput.files[0]) return;
 
       const file = avatarInput.files[0];
       if (!file.type.startsWith("image/")) {
@@ -95,6 +148,7 @@
         return;
       }
 
+      // Prévisualisation immédiate
       const reader = new FileReader();
       reader.onload = (event) => {
         if (avatarImage && event.target?.result) {
@@ -103,7 +157,35 @@
       };
       reader.readAsDataURL(file);
       removeAvatar = false;
-      showToast("Prévisualisation de la photo mise à jour.", "success");
+
+      // Upload indépendant immédiat
+      showToast("Envoi de la photo en cours...");
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      try {
+        const response = await fetch(`/auth/profil/${userId}/photo`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+        const data = contentType.includes("application/json")
+          ? await response.json()
+          : null;
+
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.message || "Erreur lors de l'envoi de la photo.");
+        }
+
+        updatePhotoUI("pending");
+        showToast("Photo envoyée. En attente de validation.", "success");
+      } catch (error) {
+        showToast(error.message, "error");
+      }
+
+      // Reset l'input pour permettre de re-sélectionner le même fichier
+      avatarInput.value = "";
     });
   }
 
@@ -141,10 +223,6 @@
 
       if (removeAvatar) {
         formData.append("remove_avatar", "true");
-      }
-
-      if (avatarInput && avatarInput.files && avatarInput.files[0]) {
-        formData.append("avatar", avatarInput.files[0]);
       }
 
       try {

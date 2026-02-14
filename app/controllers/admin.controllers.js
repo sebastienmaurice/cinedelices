@@ -11,6 +11,7 @@ import {
 } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
+import searchCache from "../utils/search-cache.js";
 
 const adminController = {
   // Page principale admin
@@ -196,7 +197,7 @@ const adminController = {
       // Mise à jour en BDD : passe le status à true (et l'image si fournie)
       // Équivalent SQL : UPDATE movies SET status = true, picture = ? WHERE id = ?
       await Movie.update(updateData, { where: { id: movieId } });
-
+      searchCache.clear();
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
@@ -226,7 +227,7 @@ const adminController = {
       // Suppression du film en BDD
       // Équivalent SQL : DELETE FROM movies WHERE id = ?
       await Movie.destroy({ where: { id: movieId } });
-
+      searchCache.clear();
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
       console.error("Erreur lors du refus du film:", error);
@@ -259,6 +260,7 @@ const adminController = {
       }
 
       await Movie.destroy({ where: { id: movieId } });
+      searchCache.clear();
       return res.redirect("/admin?success=movie_delete_approved");
     } catch (error) {
       return renderServerError(
@@ -322,6 +324,7 @@ const adminController = {
       if (movie.pending_genre) updateData.genre = movie.pending_genre;
 
       await Movie.update(updateData, { where: { id: movieId } });
+      searchCache.clear();
       return res.redirect("/admin?success=movie_edit_approved");
     } catch (error) {
       return renderServerError(
@@ -821,6 +824,7 @@ const adminController = {
       }
 
       await Movie.destroy({ where: { id: movieId } });
+      searchCache.clear();
       return res.redirect("/admin?success=admin_movie_deleted");
     } catch (error) {
       return res.redirect("/admin?success=admin_movie_delete_error");
@@ -917,11 +921,17 @@ const adminController = {
         updateData.synopsis = trimmedSynopsis.length > 0 ? trimmedSynopsis.substring(0, 1000) : null;
       }
 
+      // Photo uploadée par l'admin
+      if (req.file) {
+        updateData.picture = `/images/movies/originals/${req.file.filename}`;
+      }
+
       if (Object.keys(updateData).length === 0) {
         return res.redirect("/admin?success=admin_movie_update_error");
       }
 
       await Movie.update(updateData, { where: { id: movieId } });
+      searchCache.clear();
       return res.redirect("/admin?success=admin_movie_updated");
     } catch (error) {
       return res.redirect("/admin?success=admin_movie_update_error");
@@ -964,6 +974,11 @@ const adminController = {
       if (difficulty) updateData.difficulty = difficulty.trim();
       if (ingredients) updateData.ingredients = ingredients.trim();
       if (preparation) updateData.preparation = preparation.trim();
+
+      // Photo uploadée par l'admin
+      if (req.file) {
+        updateData.picture = `/images/recipes/${req.file.filename}`;
+      }
 
       if (Object.keys(updateData).length === 0) {
         return res.redirect("/admin?success=admin_recipe_update_error");

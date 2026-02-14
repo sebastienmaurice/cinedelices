@@ -46,7 +46,7 @@ function validateUserRegister(req, res, next) {
       .min(8)
       .max(255)
       .pattern(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/
       )
       .optional()
       .messages({
@@ -115,7 +115,7 @@ function validateUserUpdate(req, res, next) {
       .min(8)
       .max(255)
       .pattern(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/
       ) // (ex: exigence de majuscules, chiffres, caractères spéciaux)
       .optional()
       .messages({
@@ -154,32 +154,26 @@ function validateUserUpdate(req, res, next) {
  */
 
 function validateUserLogin(req, res, next) {
+  // Le champ "pseudo" accepte un pseudo OU un email
+  // La validation stricte du format se fait dans le contrôleur
   const loginSchema = Joi.object({
     pseudo: Joi.string()
       .trim()
-      .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
-      .pattern(/^[a-zA-Z0-9_]+$/) // Autorise uniquement lettres, chiffres et underscores
-      .lowercase()
+      .max(255)
       .required()
       .messages({
-        "string.empty": "Le pseudo est obligatoire.",
-        "string.pattern.base":
-          "Le pseudo ne peut contenir que des lettres, des chiffres et des underscores.",
+        "string.empty": "L'identifiant est obligatoire.",
+        "string.max": "L'identifiant ne peut pas dépasser 255 caractères.",
       }),
 
     password: Joi.string()
       .min(8)
       .max(255)
-      .pattern(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
-      ) // (ex: exigence de majuscules, chiffres, caractères spéciaux)
       .required()
       .messages({
         "string.empty": "Le mot de passe est obligatoire.",
         "string.min": "Le mot de passe doit contenir au moins 8 caractères.",
         "string.max": "Le mot de passe ne peut pas dépasser 255 caractères.",
-        "string.pattern.base":
-          "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
       }),
   });
 
