@@ -16,6 +16,8 @@ User.init({
   password: { type: DataTypes.STRING(255), allowNull: false },
   picture: { type: DataTypes.STRING(255) },
   picture_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
+  banner_image: { type: DataTypes.STRING(255) },
+  banner_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
   notify_recipes: { type: DataTypes.BOOLEAN, defaultValue: true },
   notify_cinema: { type: DataTypes.BOOLEAN, defaultValue: true },
   role: { type: DataTypes.STRING(50), defaultValue: 'user' },

@@ -101,7 +101,7 @@ const recipesController = {
       if (rawAuthor) {
         authorUser = await User.findOne({
           where: { pseudo: { [Op.iLike]: rawAuthor } },
-          attributes: ["id", "pseudo", "picture"],
+          attributes: ["id", "pseudo", "picture", "banner_image", "banner_status"],
         });
 
         authorDisplayName = authorUser ? authorUser.pseudo : rawAuthor;
@@ -129,8 +129,12 @@ const recipesController = {
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
       const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
 
-      // Image de profil de l'auteur pour la bannière
-      const authorBannerImage = authorUser?.picture || null;
+      // Image de profil de l'auteur pour le badge
+      const authorProfileImage = authorUser?.picture || null;
+      // Bannière custom de l'auteur (uniquement si validée)
+      const authorBannerImage = (authorUser?.banner_image && authorUser?.banner_status === "approved")
+        ? authorUser.banner_image
+        : null;
 
       res.render("recipes-movie", {
         movie: null,
@@ -140,6 +144,8 @@ const recipesController = {
         authorDisplayName,
         isAuthorFiltered: Boolean(rawAuthor),
         authorBannerImage,
+        authorProfileImage,
+        authorId: authorUser?.id || null,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);

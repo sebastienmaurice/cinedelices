@@ -8,6 +8,7 @@ import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import sharp from "sharp";
 
 const authController = {
   // pour se connecter (accepte pseudo ou email)
@@ -248,6 +249,11 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
+      // Compter les recettes validées (pour indication UX bannière auteur)
+      const validatedRecipeCount = await Recipe.count({
+        where: { id_user: user.id, status: true },
+      });
+
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
@@ -268,6 +274,7 @@ const authController = {
         ratedMoviesCount: ratedMoviesWithScores.length,
         ratedRecipesCount: ratedRecipesWithScores.length,
         avgUserRating,
+        validatedRecipeCount,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -438,6 +445,178 @@ const authController = {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: "Erreur lors de l'upload de la photo.",
+        error: error.message,
+      });
+    }
+  },
+
+  /**
+   * Upload de bannière auteur avec traitement Sharp
+   *
+   * Workflow :
+   * 1. Multer réceptionne le fichier dans un dossier temporaire (/tmp)
+   * 2. On supprime l'ancienne bannière si elle existe (fs.unlink)
+   * 3. Sharp redimensionne en 1408×350 (fit: cover) et convertit en WebP
+   * 4. Le fichier final est sauvegardé dans /images/banner-auteur/user-{id}.webp
+   * 5. Le fichier temporaire Multer est supprimé
+   * 6. Le chemin relatif est enregistré en base de données
+   *
+   * RÔLE DE SHARP :
+   * Sharp est une bibliothèque de traitement d'images ultra-rapide (basée sur libvips).
+   * Elle garantit que la bannière finale fait exactement 1408×350 pixels en WebP,
+   * quelle que soit l'image envoyée par le frontend.
+   *
+   * POURQUOI ON NE STOCKE PAS L'IMAGE EN BASE (BLOB) :
+   * - Les fichiers binaires en DB ralentissent les requêtes et les backups
+   * - Le système de fichiers est optimisé pour servir des images statiques
+   * - On stocke uniquement le chemin relatif (ex: /images/banner-auteur/user-42.webp)
+   */
+  async uploadBanner(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "ID utilisateur invalide",
+        });
+      }
+
+      if (req.userRole !== "admin" && req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          success: false,
+          message: "Accès interdit",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Aucun fichier sélectionné",
+        });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: "Utilisateur non trouvé",
+        });
+      }
+
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+      // --- SUPPRESSION de l'ancienne bannière si elle existe ---
+      // fs.unlink supprime le fichier physique du disque
+      if (user.banner_image) {
+        const oldPath = path.join(__dirname, "../public", user.banner_image);
+        fs.unlink(oldPath, () => {});
+      }
+
+      // --- TRAITEMENT avec Sharp ---
+      // Dossier de destination des bannières finales
+      const outputDir = path.join(__dirname, "../public/images/banner-auteur");
+      fs.mkdirSync(outputDir, { recursive: true });
+
+      // Nom du fichier final : user-{id}.webp (un seul fichier par utilisateur)
+      const outputFilename = `user-${userId}.webp`;
+      const outputPath = path.join(outputDir, outputFilename);
+
+      // Sharp : redimensionnement exact 1408×350, conversion WebP qualité 80
+      // fit: "cover" = l'image remplit le cadre sans bandes noires (comme object-fit: cover en CSS)
+      await sharp(req.file.path)
+        .resize(1408, 350, { fit: "cover" })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
+
+      // --- SUPPRESSION du fichier temporaire Multer ---
+      // Le fichier original n'est plus nécessaire, on le supprime pour économiser l'espace disque
+      fs.unlink(req.file.path, () => {});
+
+      // --- MISE À JOUR en base de données ---
+      // On stocke uniquement le chemin relatif (pas le chemin absolu du serveur)
+      const bannerPath = `/images/banner-auteur/${outputFilename}`;
+      await User.update(
+        { banner_image: bannerPath, banner_status: "pending" },
+        { where: { id: userId } }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Bannière envoyée. En attente de validation.",
+        banner_image: bannerPath,
+        banner_status: "pending",
+      });
+    } catch (error) {
+      // Nettoyer le fichier temporaire en cas d'erreur
+      if (req.file && req.file.path) {
+        fs.unlink(req.file.path, () => {});
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Erreur lors de l'upload de la bannière.",
+        error: error.message,
+      });
+    }
+  },
+
+  /**
+   * Suppression de la bannière auteur (retour à la bannière par défaut)
+   *
+   * 1. Supprime le fichier physique WebP avec fs.unlink
+   * 2. Remet banner_image à null et banner_status à "approved" en base
+   *
+   * RÔLE DE fs.unlink :
+   * Supprime un fichier du disque de manière asynchrone.
+   * On passe un callback vide car si le fichier n'existe pas, ce n'est pas grave.
+   */
+  async deleteBanner(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "ID utilisateur invalide",
+        });
+      }
+
+      if (req.userRole !== "admin" && req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          success: false,
+          message: "Accès interdit",
+        });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: "Utilisateur non trouvé",
+        });
+      }
+
+      // Supprimer le fichier physique avec fs.unlink (asynchrone)
+      if (user.banner_image) {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+        const oldPath = path.join(__dirname, "../public", user.banner_image);
+        fs.unlink(oldPath, () => {});
+      }
+
+      // Remettre les valeurs par défaut en base
+      await User.update(
+        { banner_image: null, banner_status: "approved" },
+        { where: { id: userId } }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Bannière supprimée.",
+      });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Erreur lors de la suppression de la bannière.",
         error: error.message,
       });
     }

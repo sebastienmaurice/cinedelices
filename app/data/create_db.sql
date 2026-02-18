@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS "users" (
     "password" VARCHAR(255) NOT NULL,
     "picture" VARCHAR(255),
     "picture_status" VARCHAR(20) DEFAULT 'approved',
+    "banner_image" VARCHAR(255),
+    "banner_status" VARCHAR(20) DEFAULT 'approved',
     "notify_recipes" BOOLEAN DEFAULT TRUE,
     "notify_cinema" BOOLEAN DEFAULT TRUE,
     "role"  VARCHAR(50) DEFAULT 'user'

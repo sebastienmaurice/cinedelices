@@ -22,13 +22,31 @@
     <%- include("partials/header") %>
 
     <!-- MAIN -->
-    <main class="add-recipe-main">
-      <!-- Message de confirmation/erreur -->
+    <main class="add-recipe-page">
+      <!-- HERO -->
+      <header class="add-recipe-hero">
+        <div class="add-recipe-hero__content">
+          <p class="add-recipe-hero__eyebrow">Contribution</p>
+          <h1 class="add-recipe-hero__title">Ajouter un film & une recette</h1>
+          <p class="add-recipe-hero__subtitle">
+            Partagez votre passion du cinéma et de la cuisine avec la communauté
+            Ciné Délices.
+          </p>
+        </div>
+      </header>
+
+      <!-- ALERTES -->
       <% if (typeof success !== "undefined" && success && typeof successMessage
       !== "undefined" && successMessage) { %>
-      <div class="alert alert-success">
+      <div class="alert alert-success alert-success--with-actions">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-        <p><%= successMessage %></p>
+        <div class="alert__content">
+          <p><%= successMessage %></p>
+          <div class="alert__actions">
+            <a href="/movies" class="btn btn--gold btn--sm">Voir les films</a>
+            <a href="/auth/profil/<%= typeof userId !== 'undefined' && userId ? userId : '' %>" class="btn btn--secondary btn--sm">Mon compte</a>
+          </div>
+        </div>
       </div>
       <% } %> <% if (typeof error !== "undefined" && error && typeof
       errorMessage !== "undefined" && errorMessage) { %>
@@ -47,129 +65,123 @@
       </div>
       <% } %>
 
-      <!-- BANNIÈRE HERO -->
-      <section class="hero-banner">
-        <div class="hero-content"></div>
-      </section>
-
-      <!-- SECTION 1: AJOUT DU FILM -->
-      <section class="add-film-section">
-        <div class="section-header-film">
-          <h2>1. J'ajoute mon film ou ma série</h2>
+      <!-- CARD 1 : Film -->
+      <section class="add-recipe-card">
+        <div class="add-recipe-card__header">
+          <h2>1. Mon film ou ma série</h2>
+          <p class="add-recipe-card__subtitle">
+            Renseignez le film ou la série qui inspire votre recette.
+          </p>
         </div>
 
-        <!-- Formulaire d'ajout de film (pour prévisualisation seulement) -->
         <form id="film-preview-form" method="post" onsubmit="return false;">
-          <div class="film-form-container">
-            <div class="overlay"></div>
-            <div class="film-inputs-row">
-              <!-- Wrapper pour l'autocomplétion avec position relative -->
-              <div class="film-input-group film-input-group--title">
-                <label for="film-name" class="film-input-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                  <span>Nom du film ou de la série</span>
-                </label>
-                <div class="film-name-input-wrapper">
-                  <input type="text" name="title" id="film-name"
-                  class="form-input film-input-enhanced" spellcheck="true"
-                  lang="fr en" autocomplete="off" <% if (typeof newMovie ===
-                  "undefined" || !newMovie || newMovie.length === 0) { %>
-                  placeholder="Ex: Retour vers le futur, Breaking Bad..." <% }
-                  else { %> placeholder="<%= newMovie.title %>" <% } %> value=""
-                  />
-                  <!-- Dropdown pour les résultats de recherche -->
-                  <div
-                    id="film-search-results"
-                    class="film-search-results"
-                    aria-live="polite"
-                  ></div>
-                </div>
-              </div>
-
-              <div class="film-input-group film-input-group--year">
-                <label for="film-year" class="film-input-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                  <span>Année</span>
-                </label>
-                <input type="number" name="year" id="film-year"
-                class="form-input film-input-enhanced" min="1888" max="<%= new
-                Date().getFullYear() + 5 %>" <% if (typeof newMovie ===
+          <div class="add-recipe-form-row">
+            <!-- Titre -->
+            <div class="add-recipe-field add-recipe-field--title">
+              <label for="film-name" class="add-recipe-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                <span>Nom du film ou de la série</span>
+              </label>
+              <div class="film-name-input-wrapper">
+                <input type="text" name="title" id="film-name"
+                class="add-recipe-input" spellcheck="true"
+                lang="fr en" autocomplete="off" <% if (typeof newMovie ===
                 "undefined" || !newMovie || newMovie.length === 0) { %>
-                placeholder="Ex: 1985" <% } else { %> placeholder="<%=
-                newMovie.year %>" <% } %> value="" />
-              </div>
-
-              <div class="film-input-group film-input-group--genre">
-                <label for="film-genre" class="film-input-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
-                  <span>Genre</span>
-                </label>
-                <select
-                  name="genre"
-                  id="film-genre"
-                  class="form-select film-input-enhanced"
-                >
-                  <% if (typeof newMovie === "undefined" || !newMovie ||
-                  newMovie.length === 0) { %>
-                  <option value="">Genre</option>
-                  <% } else { %>
-                  <option value=""><%= newMovie.genre %></option>
-                  <% } %>
-
-                  <option value="action">Action</option>
-                  <option value="animation">Animation</option>
-                  <option value="aventure">Aventure</option>
-                  <option value="comédie">Comédie</option>
-                  <option value="crime">Crime</option>
-                  <option value="documentaire">Documentaire</option>
-                  <option value="drame">Drame</option>
-                  <option value="familial">Familial</option>
-                  <option value="fantastique">Fantastique</option>
-                  <option value="guerre">Guerre</option>
-                  <option value="histoire">Histoire</option>
-                  <option value="horreur">Horreur</option>
-                  <option value="musique">Musique</option>
-                  <option value="mystère">Mystère</option>
-                  <option value="romance">Romance</option>
-                  <option value="science-fiction">Science-Fiction</option>
-                  <option value="thriller">Thriller</option>
-                  <option value="téléfilm">Téléfilm</option>
-                  <option value="western">Western</option>
-                </select>
+                placeholder="Ex: Retour vers le futur, Breaking Bad..." <% }
+                else { %> placeholder="<%= newMovie.title %>" <% } %> value=""
+                />
+                <!-- Dropdown pour les résultats de recherche -->
+                <div
+                  id="film-search-results"
+                  class="film-search-results"
+                  aria-live="polite"
+                ></div>
               </div>
             </div>
 
-            <!-- Synopsis du film : visible uniquement pour les admins -->
-            <% if (typeof role !== "undefined" && role === "admin") { %>
-            <div class="film-synopsis-row">
-              <div class="film-input-group film-input-group--synopsis">
-                <label for="film-synopsis" class="film-input-label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-                  <span>Synopsis</span>
-                </label>
-                <textarea
-                  name="synopsis"
-                  id="film-synopsis"
-                  class="form-textarea film-input-enhanced"
-                  rows="2"
-                  spellcheck="true"
-                  lang="fr"
-                  maxlength="500"
-                  placeholder="Résumé court du film ou de la série..."
-                ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
-              </div>
+            <!-- Année -->
+            <div class="add-recipe-field add-recipe-field--year">
+              <label for="film-year" class="add-recipe-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                <span>Année</span>
+              </label>
+              <input type="number" name="year" id="film-year"
+              class="add-recipe-input" min="1888" max="<%= new
+              Date().getFullYear() + 5 %>" <% if (typeof newMovie ===
+              "undefined" || !newMovie || newMovie.length === 0) { %>
+              placeholder="Ex: 1985" <% } else { %> placeholder="<%=
+              newMovie.year %>" <% } %> value="" />
             </div>
-            <% } %>
+
+            <!-- Genre -->
+            <div class="add-recipe-field add-recipe-field--genre">
+              <label for="film-genre" class="add-recipe-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+                <span>Genre</span>
+              </label>
+              <select
+                name="genre"
+                id="film-genre"
+                class="add-recipe-select"
+              >
+                <% if (typeof newMovie === "undefined" || !newMovie ||
+                newMovie.length === 0) { %>
+                <option value="">Genre</option>
+                <% } else { %>
+                <option value=""><%= newMovie.genre %></option>
+                <% } %>
+
+                <option value="action">Action</option>
+                <option value="animation">Animation</option>
+                <option value="aventure">Aventure</option>
+                <option value="comédie">Comédie</option>
+                <option value="crime">Crime</option>
+                <option value="documentaire">Documentaire</option>
+                <option value="drame">Drame</option>
+                <option value="familial">Familial</option>
+                <option value="fantastique">Fantastique</option>
+                <option value="guerre">Guerre</option>
+                <option value="histoire">Histoire</option>
+                <option value="horreur">Horreur</option>
+                <option value="musique">Musique</option>
+                <option value="mystère">Mystère</option>
+                <option value="romance">Romance</option>
+                <option value="science-fiction">Science-Fiction</option>
+                <option value="thriller">Thriller</option>
+                <option value="téléfilm">Téléfilm</option>
+                <option value="western">Western</option>
+              </select>
+            </div>
           </div>
 
-          <div class="form-footer">
+          <!-- Synopsis du film : visible uniquement pour les admins -->
+          <% if (typeof role !== "undefined" && role === "admin") { %>
+          <div class="add-recipe-field add-recipe-field--synopsis">
+            <label for="film-synopsis" class="add-recipe-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+              <span>Synopsis</span>
+            </label>
+            <textarea
+              name="synopsis"
+              id="film-synopsis"
+              class="add-recipe-textarea"
+              rows="2"
+              spellcheck="true"
+              lang="fr"
+              maxlength="500"
+              placeholder="Résumé court du film ou de la série..."
+            ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
+          </div>
+          <% } %>
+
+          <div class="add-recipe-card__footer">
             <p>
               Une fois votre film ou série renseigné, vous pourrez passer à
               l'ajout de votre recette inspirée du grand écran.
             </p>
             <% if (typeof newMovie === "undefined" || !newMovie ||
             newMovie.length === 0) { %>
-            <button class="btn btn--red form-footer-btn">
+            <button class="btn btn--hero add-recipe-card__btn">
               Je passe à la recette
             </button>
             <% } %>
@@ -177,48 +189,40 @@
         </form>
       </section>
 
-      <!-- SECTION 2: AJOUT DE LA RECETTE -->
-      <section class="add-recipe-section">
-        <div class="section-header-recipe">
-          <h2>2. Je veux ajouter une recette</h2>
+      <!-- CARD 2 : Recette -->
+      <section class="add-recipe-card">
+        <div class="add-recipe-card__header">
+          <h2>2. Ma recette</h2>
+          <p class="add-recipe-card__subtitle">
+            Décrivez votre recette inspirée du film pour la partager avec la
+            communauté.
+          </p>
         </div>
 
-        <!-- FORMULAIRE UNIFIÉ FILM + RECETTE-->
-        <!-- AJOUT enctype="multipart/form-data"-->
         <form
           id="unified-form"
           action="/add-recipes-movies/movie-and-recipe"
           method="post"
           enctype="multipart/form-data"
         >
-          <!-- STOCKAGE ID DU FILM (sera rempli par l'autocomplétion ou laisser vide pour nouveau film) -->
+          <!-- CHAMPS CACHÉS -->
           <input type="hidden" name="filmId" id="filmId-hidden" value="<% if
           (typeof newMovie !== "undefined" && newMovie && newMovie.id) { %><%=
           newMovie.id %><% } %>" />
-
-          <!-- Champs film (utilisés si filmId vide, pour créer un nouveau film) -->
           <input type="hidden" name="title" id="film-title-hidden" value="" />
           <input type="hidden" name="year" id="film-year-hidden" value="" />
           <input type="hidden" name="genre" id="film-genre-hidden" value="" />
           <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="" />
-
-          <!-- Champs TMDB pour validation intelligente -->
           <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
           <input type="hidden" name="titleFR" id="titleFR-hidden" value="" />
           <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="" />
-          <input
-            type="hidden"
-            name="tmdbGenre"
-            id="tmdbGenre-hidden"
-            value=""
-          />
+          <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="" />
 
-          <!-- Container 3 colonnes -->
-          <div class="recipe-form-container">
-            <!-- Colonne gauche: Film sélectionné -->
-            <div class="recipe-column recipe-column-left">
-              <div class="overlay"></div>
-              <h3>Mon film sélectionné</h3>
+          <!-- Grille 3 colonnes -->
+          <div class="add-recipe-grid">
+            <!-- Film sélectionné -->
+            <div class="add-recipe-subcard">
+              <h3>Film sélectionné</h3>
               <div class="film-selected-image">
                 <% let hasMovieWithImage = false; if (typeof newMovie !==
                 "undefined" && newMovie && (newMovie.cardPath ||
@@ -238,14 +242,13 @@
                 <% } %>
               </div>
               <% if (!hasMovieWithImage) { %>
-              <p class="film-image-note">
+              <p class="add-recipe-hint">
                 * L'image de votre film sera intégrée prochainement par Ciné
                 Délices
               </p>
               <% } %>
               <div class="film-info-box">
                 <h4>Les infos du film</h4>
-
                 <% if (typeof newMovie === "undefined" || !newMovie ||
                 newMovie.length === 0) { %>
                 <ul>
@@ -265,73 +268,86 @@
               </div>
             </div>
 
-            <!-- Colonne centrale: Ma recette -->
-            <div class="recipe-column recipe-column-center">
-              <div class="overlay"></div>
-              <h3>Ma recette</h3>
-              <p class="recipe-description">
+            <!-- Détails recette -->
+            <div class="add-recipe-subcard">
+              <h3>Détails de la recette</h3>
+              <p class="add-recipe-subcard__desc">
                 Partagez votre recette inspirée du film ou de la série que vous
-                avez sélectionné. Décrivez-la clairement pour que la communauté
-                Ciné Délices puisse la cuisiner à son tour.
+                avez sélectionné.
               </p>
-              <input
-                type="text"
-                name="name"
-                id="recipe-name"
-                class="form-input"
-                placeholder="Le nom de la recette"
-                value=""
-                spellcheck="true"
-                lang="fr"
-              />
-              <input
-                type="number"
-                name="servings"
-                id="recipe-servings"
-                class="form-input"
-                min="1"
-                step="1"
-                placeholder="Pour combien de personnes"
-                value=""
-              />
-              <input
-                type="number"
-                name="time"
-                id="recipe-time"
-                class="form-input"
-                min="1"
-                step="1"
-                placeholder="Temps de préparation en minutes (ex: 70)"
-                value=""
-              />
-              <select name="category" id="category" class="form-select">
-                <option value="">catégorie</option>
-                <option value="apéritif">apéritif</option>
-                <option value="entrée">entrée</option>
-                <option value="plat">plat</option>
-                <option value="dessert">dessert</option>
-                <option value="boisson">boisson</option>
-                <option value="autres">autres</option>
-              </select>
-              <select name="difficulty" id="difficulty" class="form-select">
-                <option value="">Difficulté</option>
-                <option value="Facile">Facile</option>
-                <option value="Moyenne">Moyenne</option>
-                <option value="Difficile">Difficile</option>
-              </select>
+              <div class="add-recipe-subcard__fields">
+                <div class="add-recipe-field">
+                  <label for="recipe-name" class="add-recipe-label">Nom de la recette</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="recipe-name"
+                    class="add-recipe-input"
+                    placeholder="Le nom de la recette"
+                    value=""
+                    spellcheck="true"
+                    lang="fr"
+                  />
+                </div>
+                <div class="add-recipe-field">
+                  <label for="recipe-servings" class="add-recipe-label">Portions</label>
+                  <input
+                    type="number"
+                    name="servings"
+                    id="recipe-servings"
+                    class="add-recipe-input"
+                    min="1"
+                    step="1"
+                    placeholder="Pour combien de personnes"
+                    value=""
+                  />
+                </div>
+                <div class="add-recipe-field">
+                  <label for="recipe-time" class="add-recipe-label">Temps (min)</label>
+                  <input
+                    type="number"
+                    name="time"
+                    id="recipe-time"
+                    class="add-recipe-input"
+                    min="1"
+                    step="1"
+                    placeholder="Temps de préparation en minutes"
+                    value=""
+                  />
+                </div>
+                <div class="add-recipe-field">
+                  <label for="category" class="add-recipe-label">Catégorie</label>
+                  <select name="category" id="category" class="add-recipe-select">
+                    <option value="">Catégorie</option>
+                    <option value="apéritif">Apéritif</option>
+                    <option value="entrée">Entrée</option>
+                    <option value="plat">Plat</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="boisson">Boisson</option>
+                    <option value="autres">Autres</option>
+                  </select>
+                </div>
+                <div class="add-recipe-field">
+                  <label for="difficulty" class="add-recipe-label">Difficulté</label>
+                  <select name="difficulty" id="difficulty" class="add-recipe-select">
+                    <option value="">Difficulté</option>
+                    <option value="Facile">Facile</option>
+                    <option value="Moyenne">Moyenne</option>
+                    <option value="Difficile">Difficile</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <!-- Colonne droite: Image recette et contexte -->
-            <div class="recipe-column recipe-column-right">
-              <div class="overlay"></div>
-              <h3>Image de la recette</h3>
+            <!-- Image & contexte -->
+            <div class="add-recipe-subcard">
+              <h3>Image & contexte</h3>
               <div class="recipe-image-upload">
                 <img
                   id="recipeImagePreview"
                   src="/images/image-default-movie.jpg"
                   alt="Image par défaut Ciné Délices"
                 />
-                <!-- Input file caché pour l'upload d'image -->
                 <input
                   type="file"
                   name="recipeImage"
@@ -339,63 +355,66 @@
                   accept="image/jpeg,image/jpg,image/png,image/webp"
                   style="display: none"
                 />
-                <!-- Bouton pour déclencher l'upload -->
                 <button
                   type="button"
-                  class="btn btn--red btn-upload"
+                  class="btn btn--secondary btn-upload"
                   id="uploadButton"
                 >
                   Je télécharge mon image
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon btn-upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon btn-upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                 </button>
-                <p class="image-copyright">
+                <p class="add-recipe-hint">
                   * Votre image sera validée par Ciné Délices avant publication
                   (respect des droits d'auteur requis).
                 </p>
               </div>
-              <h3 class="recipe-context-title">Contexte de la recette</h3>
-              <textarea
-                name="description"
-                id="recipe-context"
-                class="recipe-context-textarea"
-                placeholder="Décrivez la scène du film où cette recette apparaît ou qui vous a inspiré..."
-                spellcheck="true"
-                lang="fr"
-                maxlength="500"
-              ></textarea>
+              <div class="add-recipe-field" style="margin-top: 1rem">
+                <label for="recipe-context" class="add-recipe-label">Contexte de la recette</label>
+                <textarea
+                  name="description"
+                  id="recipe-context"
+                  class="add-recipe-textarea"
+                  placeholder="Décrivez la scène du film où cette recette apparaît ou qui vous a inspiré..."
+                  spellcheck="true"
+                  lang="fr"
+                  maxlength="500"
+                ></textarea>
+              </div>
             </div>
           </div>
 
-          <!-- Section Ingrédients et Préparation -->
-          <h4 class="ingredients-preparation-subtitle">
-            3. J'ajoute ma liste d'ingrédients et ma préparation étape par étape
-          </h4>
-          <div class="ingredients-preparation-container">
-            <div class="ingredients-column">
-              <div class="overlay"></div>
+          <!-- Grille 2 colonnes : ingrédients + préparation -->
+          <div class="add-recipe-card__header add-recipe-card__header--sub">
+            <h2>3. Ingrédients & préparation</h2>
+            <p class="add-recipe-card__subtitle">
+              Détaillez les ingrédients et les étapes de votre recette.
+            </p>
+          </div>
+
+          <div class="add-recipe-grid add-recipe-grid--2cols">
+            <div class="add-recipe-subcard">
               <h3>Ingrédients</h3>
-              <p class="recipe-field-hint">
+              <p class="add-recipe-hint">
                 Astuce : un retour à la ligne = un ingrédient.
               </p>
               <textarea
                 name="ingredients"
                 id="ingredients"
-                class="recipe-textarea"
+                class="add-recipe-textarea add-recipe-textarea--tall"
                 placeholder="Ex :&#10;200g de farine&#10;3 œufs&#10;100g de sucre"
                 spellcheck="true"
                 lang="fr"
               ></textarea>
             </div>
-            <div class="preparation-column">
-              <div class="overlay"></div>
+            <div class="add-recipe-subcard">
               <h3>Préparation</h3>
-              <p class="recipe-field-hint">
+              <p class="add-recipe-hint">
                 Astuce : un retour à la ligne = une étape.
               </p>
               <textarea
                 name="preparation"
                 id="preparation"
-                class="recipe-textarea"
+                class="add-recipe-textarea add-recipe-textarea--tall"
                 placeholder="Ex :&#10;Préchauffer le four à 180°C&#10;Mélanger les ingrédients"
                 spellcheck="true"
                 lang="fr"
@@ -403,15 +422,15 @@
             </div>
           </div>
 
-          <!-- Footer du formulaire -->
-          <div class="form-validation-footer">
-            <p class="validation-note">
+          <!-- Footer formulaire -->
+          <div class="add-recipe-card__footer">
+            <p class="add-recipe-hint">
               * Votre recette sera soumise à validation par l'équipe Ciné
               Délices avant publication.
             </p>
             <button
               type="submit"
-              class="btn btn--red form-validation-btn"
+              class="btn btn--hero add-recipe-card__btn"
               id="submit-unified-form"
             >
               Je valide ma recette

@@ -72,6 +72,48 @@
   transform: none; /* supprime le zoom pour éviter flou */
 }
 
+/* Bouton edit bannière auteur (overlay) */
+.banner__edit-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--dore-popcorn);
+  background: rgba(13, 27, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(198, 166, 100, 0.5);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 10px rgba(198, 166, 100, 0.15);
+  animation: bannerBtnPulse 2.5s ease-in-out infinite;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.banner__edit-btn:hover {
+  background: rgba(198, 166, 100, 0.25);
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(198, 166, 100, 0.3);
+  animation: none;
+}
+
+@keyframes bannerBtnPulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 10px rgba(198, 166, 100, 0.15);
+    border-color: rgba(198, 166, 100, 0.5);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(198, 166, 100, 0.35);
+    border-color: var(--dore-popcorn);
+  }
+}
+
 /* Badge auteur pill (à droite de la bannière filtrée) */
 .banner__author-badge {
   display: flex;
@@ -763,4 +805,271 @@
   .recipe-card .author__name {
     max-width: 100px;
   }
+
+  .banner__edit-btn {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.85rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* ====================================================== */
+/* ================ MODALE BANNIÈRE ===================== */
+/* ====================================================== */
+.banner-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.banner-modal.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.banner-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 13, 26, 0.75);
+  backdrop-filter: blur(3px);
+}
+
+.banner-modal__dialog {
+  position: relative;
+  background: var(--bleu-intermediaire);
+  border: 1px solid rgba(198, 166, 100, 0.35);
+  border-radius: 14px;
+  padding: 1.5rem;
+  max-width: min(600px, 92vw);
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: bannerModalIn 0.3s ease-out;
+}
+
+.banner-modal.is-visible .banner-modal__dialog {
+  animation: bannerModalIn 0.3s ease-out;
+}
+
+@keyframes bannerModalIn {
+  from {
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.banner-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: rgba(236, 239, 241, 0.5);
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.banner-modal__close:hover {
+  color: var(--argent-ecran);
+}
+
+.banner-modal__title {
+  font-family: var(--font-h2-h6);
+  font-size: 1.1rem;
+  color: var(--dore-popcorn);
+  margin: 0 0 0.25rem 0;
+}
+
+.banner-modal__hint {
+  font-size: 0.75rem;
+  color: rgba(236, 239, 241, 0.55);
+  margin: 0 0 1rem 0;
+}
+
+/* ─── Zone de recadrage (cropper) ─── */
+/* Conteneur du canvas avec ratio fixe 1408:350 ≈ 4:1 */
+.banner-cropper {
+  width: 100%;
+  aspect-ratio: 1408 / 350;
+  background: rgba(13, 27, 42, 0.6);
+  border: 1px dashed rgba(198, 166, 100, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+/* Canvas de recadrage : remplit tout le conteneur */
+/* Curseur main ouverte au repos, main fermée pendant le glissement */
+.banner-cropper__canvas {
+  width: 100%;
+  height: 100%;
+  display: none; /* masqué tant qu'aucune image n'est chargée */
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.banner-cropper__canvas:active,
+.banner-cropper__canvas.is-dragging {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+/* Placeholder (visible quand pas d'image) */
+.banner-cropper__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  color: rgba(198, 166, 100, 0.4);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  inset: 0;
+}
+
+.banner-cropper__placeholder:hover {
+  color: var(--dore-popcorn);
+}
+
+.banner-cropper__placeholder span {
+  font-size: 0.8rem;
+}
+
+/* ─── Contrôle de zoom ─── */
+/* Barre avec icône loupe − / slider / icône loupe + */
+.banner-cropper__zoom {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.banner-cropper__zoom.is-visible {
+  opacity: 1;
+  max-height: 3rem;
+}
+
+.banner-cropper__zoom svg {
+  color: rgba(198, 166, 100, 0.6);
+  flex-shrink: 0;
+}
+
+/* Style custom du slider range (doré sur fond bleu) */
+.banner-cropper__zoom input[type="range"] {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(198, 166, 100, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+.banner-cropper__zoom input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dore-popcorn);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.banner-cropper__zoom input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.banner-cropper__zoom input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dore-popcorn);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.banner-modal__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.banner-modal__footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(236, 239, 241, 0.1);
+}
+
+.btn--outline {
+  background: transparent;
+  border: 1px solid rgba(236, 239, 241, 0.25);
+  color: var(--argent-ecran);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn--outline:hover {
+  border-color: rgba(236, 239, 241, 0.5);
+  background: rgba(236, 239, 241, 0.05);
+}
+
+/* Toast notification */
+.banner-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.banner-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.banner-toast--success {
+  background: rgba(5, 150, 105, 0.9);
+  color: white;
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+}
+
+.banner-toast--error {
+  background: rgba(215, 38, 56, 0.9);
+  color: white;
+  box-shadow: 0 4px 20px rgba(215, 38, 56, 0.3);
 }

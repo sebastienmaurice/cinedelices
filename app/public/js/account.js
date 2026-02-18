@@ -516,4 +516,95 @@
       }
     });
   });
+
+  // ====================================================
+  // COLLECTIONS: TOGGLE COLLAPSE/EXPAND
+  // ====================================================
+  const toggleHeaders = profilePage.querySelectorAll(
+    ".collections-section__toggle"
+  );
+
+  toggleHeaders.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const section = toggle.closest(".collections-section");
+      if (!section) return;
+
+      const isCollapsed = section.classList.toggle("is-collapsed");
+      toggle.setAttribute("aria-expanded", String(!isCollapsed));
+    });
+  });
+
+  // ====================================================
+  // COLLECTIONS: SEARCH FILTER PER SECTION
+  // ====================================================
+  const searchInputs = profilePage.querySelectorAll(
+    ".collections-section__search-input"
+  );
+
+  searchInputs.forEach((input) => {
+    const section = input.closest(".collections-section");
+    if (!section) return;
+
+    const clearBtn = section.querySelector(".collections-section__search-clear");
+    const noResultsMsg = section.querySelector(
+      ".collections-section__no-results"
+    );
+    const listContainer = section.querySelector(".collections-section__list");
+
+    const filterItems = () => {
+      const query = input.value.trim().toLowerCase();
+      const sectionItems = listContainer.querySelectorAll(".account-item");
+      let visibleCount = 0;
+
+      sectionItems.forEach((item) => {
+        const searchable = [
+          item.dataset.name || "",
+          item.dataset.title || "",
+          item.dataset.category || "",
+          item.dataset.year || "",
+          item.dataset.genre || "",
+          item.dataset.difficulty || "",
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        const textContent =
+          item.querySelector(".account-item__text")?.textContent || "";
+        const hintContent =
+          item.querySelector(".account-item__hint")?.textContent || "";
+        const fullHaystack =
+          searchable +
+          " " +
+          textContent.toLowerCase() +
+          " " +
+          hintContent.toLowerCase();
+
+        if (!query || fullHaystack.includes(query)) {
+          item.classList.remove("is-filtered-out");
+          visibleCount++;
+        } else {
+          item.classList.add("is-filtered-out");
+        }
+      });
+
+      if (noResultsMsg) {
+        noResultsMsg.style.display =
+          query && visibleCount === 0 ? "" : "none";
+      }
+
+      if (clearBtn) {
+        clearBtn.classList.toggle("is-visible", query.length > 0);
+      }
+    };
+
+    input.addEventListener("input", filterItems);
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        input.value = "";
+        filterItems();
+        input.focus();
+      });
+    }
+  });
 })();

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const textareas = document.querySelectorAll(
-    ".recipe-textarea, .recipe-context-textarea"
+    ".add-recipe-textarea"
   );
 
   if (!textareas.length) return;
@@ -11,10 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   textareas.forEach((textarea) => {
-    if (textarea.classList.contains("recipe-context-textarea")) {
-      textarea.setAttribute("maxlength", "500");
-    }
-
     adjustHeight(textarea);
     textarea.addEventListener("input", () => adjustHeight(textarea));
   });

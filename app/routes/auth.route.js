@@ -3,6 +3,7 @@ import authController from "../controllers/auth.controller.js";
 import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
 import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../validators/user.validator.js";
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
+import uploadBanner from "../middlewares/upload-banner.middleware.js";
 import uploadRecipe from "../middlewares/upload.middleware.js";
 
 const authRouter = Router();
@@ -22,6 +23,19 @@ authRouter.post(
   injectId,
   uploadAvatar.single("avatar"),
   authController.uploadProfilePhoto
+);
+authRouter.post(
+  "/profil/:id/banner",
+  isLogged,
+  injectId,
+  uploadBanner.single("banner"),
+  authController.uploadBanner
+);
+authRouter.post(
+  "/profil/:id/banner/delete",
+  isLogged,
+  injectId,
+  authController.deleteBanner
 );
 authRouter.post(
   "/profil/:id/delete",

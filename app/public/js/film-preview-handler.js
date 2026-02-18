@@ -5,14 +5,14 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const filmPreviewForm = document.getElementById("film-preview-form");
-  let goToRecipeButton = filmPreviewForm?.querySelector(".form-footer-btn");
+  let goToRecipeButton = filmPreviewForm?.querySelector(".add-recipe-card__btn");
 
   // Si le bouton n'existe pas (film pré-sélectionné), le créer dynamiquement
   if (!goToRecipeButton && filmPreviewForm) {
-    const formFooter = filmPreviewForm.querySelector(".form-footer");
+    const formFooter = filmPreviewForm.querySelector(".add-recipe-card__footer");
     if (formFooter) {
       goToRecipeButton = document.createElement("button");
-      goToRecipeButton.className = "btn btn--red form-footer-btn";
+      goToRecipeButton.className = "btn btn--hero add-recipe-card__btn";
       goToRecipeButton.textContent = "Je passe à la recette";
       formFooter.appendChild(goToRecipeButton);
     }
@@ -178,7 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Faire défiler vers la section recette
    */
   function scrollToRecipe() {
-    const recipeSection = document.querySelector(".add-recipe-section");
+    // Cibler la deuxième carte (section recette)
+    const recipeCards = document.querySelectorAll(".add-recipe-card");
+    const recipeSection = recipeCards.length > 1 ? recipeCards[1] : null;
     if (recipeSection) {
       recipeSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }

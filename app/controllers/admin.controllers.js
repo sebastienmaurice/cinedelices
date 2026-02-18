@@ -12,6 +12,9 @@ import {
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import searchCache from "../utils/search-cache.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const adminController = {
   // Page principale admin
@@ -39,6 +42,9 @@ const adminController = {
       const pendingProfilePhotos = users.filter(
         (user) => user.picture && user.picture_status === "pending"
       );
+      const pendingBanners = users.filter(
+        (user) => user.banner_image && user.banner_status === "pending"
+      );
 
       res.render("admin-dashboard", {
         recipes,
@@ -46,6 +52,7 @@ const adminController = {
         avis,
         users,
         pendingProfilePhotos,
+        pendingBanners,
         pendingMovieDeleteRequests,
         pendingMovieEdits,
         pendingRecipeEdits,
@@ -222,16 +229,28 @@ const adminController = {
    */
   async rejectMovie(req, res) {
     try {
-      const movieId = parseInt(req.params.id);
+      const movieId = parseInt(req.params.id, 10);
 
-      // Suppression du film en BDD
-      // Équivalent SQL : DELETE FROM movies WHERE id = ?
+      // Supprimer les enregistrements liés avant le film (contraintes FK)
+      const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
+      const recipeIds = recipes.map((recipe) => recipe.id);
+      if (recipeIds.length > 0) {
+        await Notice.destroy({ where: { id_recipe: recipeIds } });
+        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
+        await Recipe.destroy({ where: { id_movie: movieId } });
+      }
+
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
       console.error("Erreur lors du refus du film:", error);
-      res.status(500).send("Erreur lors du refus du film");
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus du film."
+      );
     }
   },
 
@@ -774,6 +793,49 @@ const adminController = {
         error,
         req.userRole,
         "Erreur lors du refus de la photo."
+      );
+    }
+  },
+
+  async validateUserBanner(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      await User.update(
+        { banner_status: "approved" },
+        { where: { id: userId } }
+      );
+      res.redirect("/admin?success=user_banner_approved");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors de la validation de la bannière."
+      );
+    }
+  },
+
+  async rejectUserBanner(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      // Supprimer le fichier physique WebP avant de reset la base
+      const user = await User.findByPk(userId);
+      if (user && user.banner_image) {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+        const oldPath = path.join(__dirname, "../public", user.banner_image);
+        fs.unlink(oldPath, () => {});
+      }
+      await User.update(
+        { banner_image: null, banner_status: "rejected" },
+        { where: { id: userId } }
+      );
+      res.redirect("/admin?success=user_banner_rejected");
+    } catch (error) {
+      return renderServerError(
+        res,
+        error,
+        req.userRole,
+        "Erreur lors du refus de la bannière."
       );
     }
   },

@@ -4,383 +4,497 @@
  * ======================================================
  *
  * Rôle : Styles spécifiques à la page de création/ajout d'un film et d'une recette.
- *        Gère les formulaires, la prévisualisation, l'upload d'images, etc.
+ *        Design System cohérent avec /auth/profil/, /admin/, /movies.
  *
  * Pages concernées : /add-recipes-movies (page d'ajout de film et recette)
  *
  * Ordre de chargement : Chargé APRÈS base.css
- *                       Les styles communs (reset, typo, header, footer, boutons)
- *                       sont définis dans base.css
  */
 
 /* ====================================================== */
-/* ================ BANNIÈRE HERO ====================== */
+/* ====================== PAGE LAYOUT ================== */
 /* ====================================================== */
-.hero-banner {
-  width: 100%;
-  height: 300px;
-  background: linear-gradient(
-    135deg,
-    var(--bleu-nuit) 0%,
-    var(--bleu-intermediaire) 100%
-  );
+.add-recipe-page {
+  background-color: var(--bleu-nuit);
+  color: var(--argent-ecran);
+  padding: 1rem 1.5rem 4rem;
+  max-width: calc(var(--max-width) - 4rem);
+  margin: 0 auto;
+}
+
+/* ====================================================== */
+/* ====================== HERO ========================= */
+/* ====================================================== */
+.add-recipe-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.add-recipe-hero__content {
+  display: block;
+}
+
+.add-recipe-hero__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  color: rgba(236, 239, 241, 0.7);
+  margin-bottom: 0.35rem;
+}
+
+.add-recipe-hero__title {
+  font-size: 2.6rem;
+  font-family: var(--font-h1);
+  color: var(--dore-popcorn);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.add-recipe-hero__subtitle {
+  font-size: 1rem;
+  color: rgba(236, 239, 241, 0.85);
+  max-width: 560px;
+  margin: 0;
+  text-align: left;
+}
+
+/* ====================================================== */
+/* ====================== ALERTES ====================== */
+/* ====================================================== */
+.alert {
+  margin: 0 0 1.5rem 0;
+  padding: 1.25rem 1.5rem;
   border-radius: 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 0;
-  padding-bottom: 4rem;
+  gap: 1rem;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert svg {
+  flex-shrink: 0;
+}
+
+.alert-success {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.alert-info {
+  background: rgba(33, 150, 243, 0.15);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  color: #2196f3;
+}
+
+.alert-error {
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #f44336;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.alert-success--with-actions {
+  align-items: flex-start;
+}
+
+.alert__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alert__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ====================================================== */
+/* ====================== CARDS ======================== */
+/* ====================================================== */
+.add-recipe-card {
+  background-color: var(--bleu-intermediaire);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(198, 166, 100, 0.15);
+  margin-bottom: 1.5rem;
+}
+
+.add-recipe-card__header {
+  margin-bottom: 1.5rem;
+}
+
+.add-recipe-card__header--sub {
+  margin-top: 1.5rem;
+}
+
+.add-recipe-card__header h2 {
+  font-family: var(--font-h1);
+  color: var(--dore-popcorn);
+  font-size: 1.6rem;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.add-recipe-card__subtitle {
+  color: rgba(236, 239, 241, 0.7);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.add-recipe-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(198, 166, 100, 0.1);
+}
+
+.add-recipe-card__footer p {
+  color: rgba(236, 239, 241, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.add-recipe-card__btn {
+  flex-shrink: 0;
+}
+
+/* ====================================================== */
+/* ====================== GRIDS ======================== */
+/* ====================================================== */
+.add-recipe-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1fr;
+  gap: 1.5rem;
+}
+
+.add-recipe-grid--2cols {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ====================================================== */
+/* ===================== SUBCARDS ====================== */
+/* ====================================================== */
+.add-recipe-subcard {
+  background-color: var(--bleu-fond);
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid rgba(198, 166, 100, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.add-recipe-subcard h3 {
+  font-family: var(--font-h2-h6);
+  color: var(--dore-popcorn);
+  font-size: 1.15rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.add-recipe-subcard__desc {
+  color: rgba(236, 239, 241, 0.7);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.add-recipe-subcard__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ====================================================== */
+/* =============== FORM ROW (Section Film) ============= */
+/* ====================================================== */
+.add-recipe-form-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
   position: relative;
   overflow: visible;
 }
 
-.hero-banner::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("/images/background-page.jpg") center/cover;
-  opacity: 0.3;
-  z-index: 0;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  color: var(--argent-ecran);
-}
-
-.hero-content h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: var(--argent-ecran);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
 /* ====================================================== */
-/* ============== EN-TÊTE DE SECTION =================== */
+/* ===================== FIELDS ======================== */
 /* ====================================================== */
-.add-film-section {
-  position: relative;
-}
-
-/* Titre de la section film - Positionné sur l'image hero */
-.hero-banner + .add-film-section .section-header-film {
-  position: absolute;
-  top: -70px;
-  left: 2rem;
-  right: 2rem;
-  z-index: 10;
-  margin: 0;
-  pointer-events: none;
-  text-align: center;
-}
-
-.section-header-film h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--dore-popcorn);
-  font-family: var(--font-h1);
-  margin: 0;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 0 8px rgba(13, 27, 42, 0.6);
-}
-
-/* Titre de la section recette - Positionnement standard */
-.section-header-recipe {
-  margin: 0 2rem 1rem 4rem;
-  text-align: center;
-}
-
-.section-header-recipe h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--dore-popcorn);
-  font-family: var(--font-h1);
-  margin: 0;
-}
-
-/* ====================================================== */
-/* ============= SECTION 1: AJOUT DU FILM =============== */
-/* ====================================================== */
-.add-film-section {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-radius: 0;
-  padding: 0;
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 5;
-}
-
-.film-form-container {
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    rgba(214, 191, 120, 0.95) 50%,
-    var(--dore-popcorn) 100%
-  );
-  border: 2px solid rgba(198, 166, 100, 0.4);
-  border-radius: 15px;
-  padding: 2rem;
-  margin: -60px 2rem 1.5rem 2rem;
-  color: #eceff1;
-  overflow: visible; /* Permettre au dropdown de s'afficher au-dessus */
-  isolation: isolate;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(198, 166, 100, 0.3),
-    0 6px 24px rgba(198, 166, 100, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  z-index: 10;
-  transition: all 0.3s ease;
-}
-
-.film-form-container:hover {
-  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.55),
-    0 0 0 2px rgba(198, 166, 100, 0.4), 0 8px 28px rgba(198, 166, 100, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-/* Overlay pour effet glassmorphism sur .film-form-container */
-.film-form-container .overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  user-select: none;
-  opacity: var(--opacity, 0);
-  -webkit-mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  transition: 400ms mask ease;
-  will-change: mask;
-  z-index: 1;
-  border-radius: 15px;
-}
-
-/* S'assurer que les éléments intérieurs ne sont pas affectés par l'overlay */
-.film-form-container > *:not(.overlay) {
-  position: relative;
-  z-index: 2;
-}
-
-.film-inputs-row {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  margin: 0;
-  position: relative;
-  overflow: visible; /* Permettre au dropdown de dépasser du row */
-}
-
-/* z-index élevé pour que le dropdown d'autocomplétion s'affiche AU-DESSUS du champ Synopsis.
-   Spécificité 0-2-0 nécessaire pour écraser le z-index:2 de .film-form-container > *:not(.overlay) */
-.film-form-container > .film-inputs-row {
-  z-index: 100;
-}
-
-/* Groupe d'input avec label */
-.film-input-group {
-  flex: 1;
+.add-recipe-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  flex: 1;
   position: relative;
 }
 
-/* Largeurs spécifiques des champs film */
-.film-input-group--title {
-  flex: 2; /* Le titre prend plus de place */
+.add-recipe-field--title {
+  flex: 2;
 }
 
-.film-input-group--year {
-  flex: 0 0 120px; /* Largeur fixe réduite pour l'année */
+.add-recipe-field--year {
+  flex: 0 0 130px;
 }
 
-.film-input-group--genre {
-  flex: 0 0 160px; /* Largeur fixe réduite pour le genre */
+.add-recipe-field--genre {
+  flex: 0 0 170px;
 }
 
-/* Row pour le synopsis */
-.film-synopsis-row {
+.add-recipe-field--synopsis {
   margin-top: 1rem;
-  position: relative;
-}
-
-.film-input-group--synopsis {
   width: 100%;
 }
 
-/* Textarea synopsis */
-.film-form-container .form-textarea {
-  width: 100%;
-  min-height: 60px;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 248, 235, 0.98) 0%,
-    var(--beige-icecream) 100%
-  ) !important;
-  border: 2px solid rgba(198, 166, 100, 0.3) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
-  color: var(--bleu-nuit);
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  resize: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.film-form-container .form-textarea:hover {
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
-    0 0 0 2px rgba(198, 166, 100, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
-  transform: translateY(-2px) !important;
-}
-
-.film-form-container .form-textarea:focus {
-  outline: none;
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
-    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
-    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Label avec icône pour chaque champ */
-.film-input-label {
+/* ====================================================== */
+/* ==================== LABELS ========================= */
+/* ====================================================== */
+.add-recipe-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--bleu-nuit);
-  font-size: 0.9rem;
+  gap: 0.4rem;
+  color: var(--dore-popcorn);
+  font-size: 0.88rem;
   font-weight: 600;
   font-family: var(--font-body);
   margin: 0;
-  opacity: 0.95;
-  transition: all 0.3s ease;
 }
 
-.film-input-label i {
+.add-recipe-label svg {
+  color: var(--dore-popcorn);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ====================================================== */
+/* ============== INPUTS / SELECTS / TEXTAREAS ========= */
+/* ====================================================== */
+.add-recipe-input,
+.add-recipe-select,
+.add-recipe-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(198, 166, 100, 0.2);
+  background-color: var(--bleu-fond);
+  color: var(--argent-ecran);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.add-recipe-input::placeholder,
+.add-recipe-textarea::placeholder {
+  color: rgba(236, 239, 241, 0.4);
+}
+
+.add-recipe-input:hover,
+.add-recipe-select:hover,
+.add-recipe-textarea:hover {
+  border-color: rgba(198, 166, 100, 0.4);
+  box-shadow: 0 2px 8px rgba(198, 166, 100, 0.15);
+}
+
+.add-recipe-input:focus,
+.add-recipe-select:focus,
+.add-recipe-textarea:focus {
+  outline: none;
+  border-color: var(--dore-popcorn);
+  box-shadow: 0 0 0 3px rgba(198, 166, 100, 0.15),
+    0 4px 12px rgba(198, 166, 100, 0.2);
+}
+
+.add-recipe-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.add-recipe-textarea {
+  resize: none;
+  overflow: hidden;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.add-recipe-textarea--tall {
+  min-height: 200px;
+}
+
+/* ====================================================== */
+/* =================== HINTS ========================== */
+/* ====================================================== */
+.add-recipe-hint {
+  font-size: 0.8rem;
+  color: rgba(236, 239, 241, 0.55);
+  margin: 0;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ====================================================== */
+/* ============= FILM SELECTED (subcard) =============== */
+/* ====================================================== */
+.film-selected-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: var(--bleu-intermediaire);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(198, 166, 100, 0.15);
+}
+
+.film-selected-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 20px rgba(0, 24, 60, 0.5);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 12px;
+}
+
+.film-selected-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.film-info-box {
+  background-color: var(--bleu-intermediaire);
+  border: 1px solid rgba(198, 166, 100, 0.15);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.film-info-box h4 {
   color: var(--dore-popcorn);
   font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-h2-h6);
+  margin: 0 0 0.5rem 0;
+}
+
+.film-info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.film-info-box li {
+  color: var(--argent-ecran);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  padding-left: 1.25rem;
+  position: relative;
+  font-weight: 500;
+}
+
+.film-info-box li::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: var(--dore-popcorn);
+  font-weight: bold;
+}
+
+.film-info-synopsis {
+  color: var(--argent-ecran);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0.5rem 0 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(198, 166, 100, 0.15);
+  font-style: italic;
+  opacity: 0.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ====================================================== */
+/* ============== IMAGE UPLOAD (subcard) =============== */
+/* ====================================================== */
+.recipe-image-upload {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px dashed rgba(198, 166, 100, 0.25);
+  border-radius: 12px;
+  background-color: rgba(198, 166, 100, 0.03);
   transition: all 0.3s ease;
 }
 
-.film-input-group:hover .film-input-label,
-.film-input-group:focus-within .film-input-label {
-  opacity: 1;
-  color: var(--bleu-nuit);
+.recipe-image-upload:hover {
+  border-color: rgba(198, 166, 100, 0.4);
+  background-color: rgba(198, 166, 100, 0.06);
 }
 
-.film-input-group:hover .film-input-label i,
-.film-input-group:focus-within .film-input-label i {
-  color: var(--dore-fonce);
-  transform: scale(1.1);
-}
-
-.film-inputs-row .form-input,
-.film-inputs-row .form-select {
-  flex: 1;
+.recipe-image-upload img {
   width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  background-color: var(--bleu-intermediaire);
+  border: 1px solid rgba(198, 166, 100, 0.15);
+  display: block;
+  margin-bottom: 0.75rem;
 }
 
-/* Wrapper pour l'input de recherche avec autocomplétion */
+.btn-upload {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-upload-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.btn-upload:hover .btn-upload-icon {
+  transform: translateY(-2px);
+}
+
+/* ====================================================== */
+/* ========== AUTOCOMPLÉTION FILM ====================== */
+/* ====================================================== */
+/* Wrapper pour l'input titre avec autocomplétion */
 .film-name-input-wrapper {
   position: relative;
   flex: 1;
   width: 100%;
-  z-index: 1001; /* Plus élevé que le container pour que le dropdown apparaisse au-dessus */
-  overflow: visible; /* Permettre au dropdown de dépasser */
+  z-index: 1001;
+  overflow: visible;
 }
 
-/* ====================================================== */
-/* ========== AMÉLIORATIONS VISUELLES INPUTS =========== */
-/* ====================================================== */
-/* Styles améliorés pour les inputs de la section film */
-.film-form-container .form-input,
-.film-form-container .form-select {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 248, 235, 0.98) 0%,
-    var(--beige-icecream) 100%
-  ) !important;
-  border: 2px solid rgba(198, 166, 100, 0.3) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
-}
-
-.film-form-container .form-input:hover,
-.film-form-container .form-select:hover {
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
-    0 0 0 2px rgba(198, 166, 100, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
-  transform: translateY(-2px) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 248, 235, 1) 0%,
-    rgba(255, 255, 255, 0.98) 100%
-  ) !important;
-}
-
-.film-form-container .form-input:focus,
-.film-form-container .form-select:focus {
-  outline: none;
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
-    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
-    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
-  transform: translateY(-2px) scale(1.01) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 248, 235, 1) 100%
-  ) !important;
-}
-
-/* Inputs améliorés avec effets visuels */
-.film-input-enhanced {
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.film-input-enhanced::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  padding: 1px;
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    var(--dore-fonce) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.film-input-enhanced:focus::before {
-  opacity: 1;
-}
-
-/* ====================================================== */
-/* ========== AUTOCOMPLÉTION FILM DANS FORMULAIRE ======== */
-/* ====================================================== */
 .film-search-results {
   position: absolute;
   top: calc(100% + 0.5rem);
@@ -393,7 +507,7 @@
   border-radius: 12px;
   max-height: 300px;
   overflow-y: auto;
-  z-index: 1002; /* Augmenté pour être au-dessus du wrapper (1001) */
+  z-index: 1002;
   display: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   animation: slideDown 0.2s ease-out;
@@ -401,17 +515,6 @@
 
 .film-search-results.active {
   display: block;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .film-search-result-item {
@@ -531,1223 +634,6 @@
 }
 
 /* ====================================================== */
-/* ========== MESSAGES DE CONFIRMATION/ERREUR =========== */
-/* ====================================================== */
-.alert {
-  margin: 1.5rem 2rem;
-  padding: 1.25rem 1.5rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  animation: slideDown 0.3s ease-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.alert-success {
-  background: rgba(76, 175, 80, 0.15);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-  color: #4caf50;
-}
-
-.alert-success i {
-  color: #4caf50;
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.alert-success p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-.alert-info {
-  background: rgba(33, 150, 243, 0.15);
-  border: 1px solid rgba(33, 150, 243, 0.3);
-  color: #2196f3;
-}
-
-.alert-info i {
-  color: #2196f3;
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.alert-info p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-.alert-error {
-  background: rgba(244, 67, 54, 0.15);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  color: #f44336;
-}
-
-.alert-error i {
-  color: #f44336;
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.alert-error p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-.form-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0;
-  margin: 0 2rem;
-}
-
-.form-footer p {
-  color: var(--argent-ecran);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0 0.75rem 0 0;
-  opacity: 0.9;
-}
-
-.form-footer-btn {
-  margin: 0;
-}
-
-/* ====================================================== */
-/* =========== SECTION 2: AJOUT DE LA RECETTE =========== */
-/* ====================================================== */
-.add-recipe-section {
-  background: rgba(13, 27, 42, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 2rem 0;
-}
-
-.recipe-form-container {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 0.8fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-/* Overlay pour effet glassmorphism */
-.recipe-column .overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  user-select: none;
-  opacity: var(--opacity, 0);
-  -webkit-mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  transition: 400ms mask ease;
-  will-change: mask;
-  z-index: 1;
-  border-radius: 15px;
-}
-
-.recipe-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: relative;
-}
-
-/* Pour que les éléments intérieurs ne soient pas affectés par l'overlay */
-.recipe-column > *:not(.overlay) {
-  position: relative;
-  z-index: 2;
-}
-
-/* Les boutons doivent rester interactifs */
-.recipe-column .btn {
-  position: relative;
-  z-index: 3;
-}
-
-/* Les textareas ne sont pas affectés par l'overlay glowy */
-.recipe-textarea {
-  position: relative;
-  z-index: 10;
-  background-color: var(--beige-icecream) !important;
-  border: 1px solid rgba(236, 239, 241, 0.2) !important;
-  isolation: isolate;
-  /* Masquer l'overlay en créant un contexte de stacking */
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.recipe-context-textarea {
-  position: relative;
-  z-index: 10;
-  background-color: var(--beige-icecream) !important;
-  border: 1px solid rgba(236, 239, 241, 0.2) !important;
-  isolation: isolate;
-  /* Masquer l'overlay en créant un contexte de stacking */
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.recipe-column-left h3,
-.recipe-column-center h3,
-.recipe-column-right h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--bleu-nuit);
-  margin: 0 0 0 0;
-  font-family: var(--font-h2-h6);
-  line-height: 1.1;
-}
-
-.recipe-context-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--bleu-nuit);
-  margin: 0 0 0 0;
-  font-family: var(--font-h2-h6);
-  line-height: 1.1;
-}
-
-/* Colonne gauche: Film sélectionné */
-.recipe-column-left {
-  position: relative;
-  background-color: var(--dore-popcorn);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem;
-  color: var(--bleu-nuit);
-  overflow: hidden;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.film-selected-image {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  background-color: var(--bleu-intermediaire);
-  border-radius: 15px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.25rem;
-  border: 2px solid rgba(13, 27, 42, 0.12);
-}
-
-.film-selected-image::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 15px;
-  box-shadow: inset 0 0 25px rgba(0, 24, 60, 0.6);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.film-selected-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 15px;
-  border: 2px solid var(--or-200);
-  display: block;
-}
-
-.film-image-note {
-  font-size: 0.75rem;
-  color: var(--bleu-nuit);
-  margin: 0 0 1rem 0;
-  padding-top: 0;
-  opacity: 0.9;
-  font-style: italic;
-  text-align: center;
-  line-height: 1.4;
-}
-
-.film-info-box {
-  background: var(--beige-icecream);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.film-info-box h4 {
-  color: var(--bleu-nuit);
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 0.75rem 0;
-}
-
-.film-info-box ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.film-info-box li {
-  color: var(--bleu-nuit);
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-  padding-left: 1.5rem;
-  position: relative;
-  font-weight: 600;
-}
-
-.film-info-box li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--dore-popcorn);
-  font-weight: bold;
-}
-
-/* Synopsis dans film-info-box */
-.film-info-synopsis {
-  color: var(--bleu-nuit);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  margin: 0.5rem 0 0 0;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(198, 166, 100, 0.3);
-  font-style: italic;
-  opacity: 0.9;
-  /* Limitation à 2 lignes */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Colonne centrale: Ma recette */
-.recipe-column-center {
-  position: relative;
-  background-color: var(--dore-popcorn);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem;
-  color: var(--bleu-nuit);
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.recipe-column-center .form-input,
-.recipe-column-center .form-select {
-  width: 100%;
-  margin-bottom: 0;
-}
-
-.btn-upload {
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--bleu-intermediaire);
-  color: var(--jaune-blond);
-  border-color: var(--bleu-intermediaire);
-}
-
-.btn-upload:hover:not(:disabled) {
-  background-color: var(--bleu-nuit);
-  color: var(--dore-popcorn);
-  border-color: var(--bleu-nuit);
-}
-
-/* Colonne droite: Image et contexte */
-.recipe-column-right {
-  position: relative;
-  background-color: var(--dore-popcorn);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem;
-  color: var(--bleu-nuit);
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.recipe-image-upload {
-  position: relative;
-  width: 100%;
-  padding: 1rem;
-  border: 2px dashed var(--dore-popcorn);
-  border-radius: 15px;
-  background-color: rgba(198, 166, 100, 0.05);
-  transition: all 0.3s ease;
-}
-
-.recipe-image-upload:hover {
-  border-color: var(--or-200);
-  background-color: rgba(198, 166, 100, 0.08);
-  box-shadow: 0 0 0 2px rgba(198, 166, 100, 0.1);
-}
-
-.recipe-image-upload img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  background-color: #142436;
-  border: 2px solid var(--or-200);
-  display: block;
-  margin-bottom: 0.75rem;
-}
-
-.recipe-image-upload .btn-upload {
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  padding: 0.875rem 1.25rem;
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    var(--dore-fonce) 100%
-  );
-  color: var(--bleu-nuit);
-  border: 2px dashed var(--or-200);
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.25),
-    0 0 0 1px rgba(198, 166, 100, 0.1) inset;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.recipe-image-upload .btn-upload::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-.recipe-image-upload .btn-upload:hover::before {
-  left: 100%;
-}
-
-.recipe-image-upload .btn-upload:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--dore-fonce) 0%, var(--or-300) 100%);
-  border-color: var(--dore-popcorn);
-  border-style: solid;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(198, 166, 100, 0.4),
-    0 0 0 2px rgba(198, 166, 100, 0.2) inset, 0 0 15px rgba(198, 166, 100, 0.3);
-}
-
-.recipe-image-upload .btn-upload:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(198, 166, 100, 0.3),
-    0 0 0 1px rgba(198, 166, 100, 0.1) inset;
-}
-
-.recipe-image-upload .btn-upload .btn-upload-icon {
-  font-size: 1.1rem;
-  margin-left: 0.25rem;
-  transition: transform 0.3s ease;
-}
-
-.recipe-image-upload .btn-upload:hover .btn-upload-icon {
-  transform: translateY(-2px) scale(1.1);
-}
-
-.image-copyright {
-  font-size: 0.75rem;
-  color: var(--bleu-nuit);
-  margin: 0;
-  opacity: 0.8;
-  text-align: center;
-}
-
-.recipe-context-textarea {
-  width: 100%;
-  min-height: 150px;
-  padding: 0.8rem 1rem;
-  border-radius: 1rem;
-  background-color: var(--beige-icecream);
-  color: var(--bleu-nuit);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  resize: none;
-  overflow: hidden;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  transition: all var(--transition);
-  font-family: var(--font-body);
-}
-
-.recipe-context-textarea:focus {
-  outline: none;
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 0 12px rgba(198, 166, 100, 0.5);
-}
-
-/* ====================================================== */
-/* ========== INGRÉDIENTS ET PRÉPARATION ================ */
-/* ====================================================== */
-.ingredients-preparation-subtitle {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--dore-popcorn);
-  margin: 0 0 1.5rem 0;
-  font-family: var(--font-h2-h6);
-  text-align: center;
-}
-
-.ingredients-preparation-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.ingredients-column,
-.preparation-column {
-  position: relative;
-  background-color: var(--dore-popcorn);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem;
-  color: #eceff1;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.ingredients-column .overlay,
-.preparation-column .overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  user-select: none;
-  opacity: var(--opacity, 0);
-  -webkit-mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  mask: radial-gradient(
-    25rem 25rem at var(--x) var(--y),
-    #000 1%,
-    transparent 50%
-  );
-  transition: 400ms mask ease;
-  will-change: mask;
-  z-index: 1;
-  border-radius: 15px;
-}
-
-.ingredients-column h3,
-.preparation-column h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--bleu-nuit);
-  margin: 0 0 1rem 0;
-  font-family: var(--font-h2-h6);
-}
-
-.recipe-field-hint {
-  margin: -0.5rem 0 0.9rem 0;
-  color: rgba(13, 27, 42, 0.75);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.recipe-textarea {
-  width: 100%;
-  min-height: 200px;
-  padding: 0.8rem 1rem;
-  border-radius: 1rem;
-  background-color: var(--beige-icecream);
-  color: var(--bleu-nuit);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  resize: none;
-  overflow: hidden;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  transition: all var(--transition);
-  font-family: var(--font-body);
-}
-
-.recipe-textarea:focus {
-  outline: none;
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 0 12px rgba(198, 166, 100, 0.5);
-}
-
-/* ====================================================== */
-/* ============= FOOTER DE VALIDATION ================== */
-/* ====================================================== */
-.form-validation-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0;
-  margin-top: 2rem;
-}
-
-.validation-note {
-  font-size: 0.85rem;
-  color: var(--argent-ecran);
-  opacity: 0.7;
-  margin: 0 0.75rem 0 0;
-}
-
-.form-validation-btn {
-  margin: 0;
-}
-
-/* ====================================================== */
-/* ====================== FORMULAIRES =================== */
-/* ====================================================== */
-.add-recipe-main .form-input,
-.add-recipe-main .form-select,
-.film-form-container .form-input,
-.film-form-container .form-select,
-.recipe-column-center .form-input,
-.recipe-column-center .form-select {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(236, 239, 241, 0.3);
-  background-color: var(--beige-icecream);
-  color: var(--bleu-nuit);
-  font-size: 1rem;
-  font-family: var(--font-body);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Styles améliorés spécifiques pour les inputs de la section film */
-.film-form-container .form-input,
-.film-form-container .form-select {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 248, 235, 0.98) 0%,
-    var(--beige-icecream) 100%
-  ) !important;
-  border: 2px solid rgba(198, 166, 100, 0.3) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Hover amélioré pour les inputs de la section film */
-.film-form-container .form-input:hover,
-.film-form-container .form-select:hover {
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.3),
-    0 0 0 2px rgba(198, 166, 100, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
-  transform: translateY(-2px) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 248, 235, 1) 0%,
-    rgba(255, 255, 255, 0.98) 100%
-  ) !important;
-}
-
-/* Focus amélioré pour les inputs de la section film */
-.film-form-container .form-input:focus,
-.film-form-container .form-select:focus {
-  outline: none;
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 0 0 4px rgba(198, 166, 100, 0.2),
-    0 6px 16px rgba(198, 166, 100, 0.35), 0 0 0 2px var(--dore-popcorn),
-    inset 0 1px 2px rgba(255, 255, 255, 0.7) !important;
-  transform: translateY(-2px) scale(1.01) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 248, 235, 1) 100%
-  ) !important;
-}
-
-.add-recipe-main .form-input:hover,
-.add-recipe-main .form-select:hover,
-.film-form-container .form-input:hover,
-.film-form-container .form-select:hover,
-.recipe-column-center .form-input:hover,
-.recipe-column-center .form-select:hover {
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 2px 8px rgba(198, 166, 100, 0.2),
-    0 0 0 1px rgba(198, 166, 100, 0.1) !important;
-  transform: translateY(-1px) !important;
-}
-
-.add-recipe-main .form-input:focus,
-.add-recipe-main .form-select:focus,
-.film-form-container .form-input:focus,
-.film-form-container .form-select:focus,
-.recipe-column-center .form-input:focus,
-.recipe-column-center .form-select:focus {
-  outline: none;
-  border-color: var(--dore-popcorn) !important;
-  box-shadow: 0 0 0 3px rgba(198, 166, 100, 0.15),
-    0 4px 12px rgba(198, 166, 100, 0.25), 0 0 0 1px var(--dore-popcorn) !important;
-  transform: translateY(-1px) !important;
-}
-
-.add-recipe-main .form-select,
-.film-form-container .form-select,
-.recipe-column-center .form-select {
-  appearance: none;
-  /* Suppression de l'icône SVG personnalisée - design épuré */
-  background-image: none;
-  padding-right: 1rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ====================================================== */
-/* ====================== RESPONSIVE =================== */
-/* ====================================================== */
-@media (max-width: 1000px) {
-  .recipe-form-container {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .ingredients-preparation-container {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .film-inputs-row {
-    gap: 1.25rem;
-  }
-
-  .film-input-label {
-    font-size: 0.85rem;
-  }
-
-  .film-input-label i {
-    font-size: 0.9rem;
-  }
-
-  .film-form-container .form-input,
-  .film-form-container .form-select {
-    padding: 0.8rem 1rem;
-    font-size: 0.98rem;
-  }
-
-  .form-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-footer p {
-    margin: 0 0 0.75rem 0;
-  }
-
-  .form-validation-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .validation-note {
-    margin: 0 0 0.75rem 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .add-recipe-main {
-    padding: 1.5rem 1rem;
-  }
-
-  .hero-banner {
-    height: 250px;
-    padding-bottom: 3rem;
-    border-radius: 8px;
-  }
-
-  .hero-banner + .add-film-section .section-header-film {
-    top: -120px;
-    left: 1rem;
-    right: 1rem;
-  }
-
-  .section-header-film h2 {
-    font-size: 1.8rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .section-header-recipe {
-    margin: 0 1rem 1.5rem 1rem;
-  }
-
-  .section-header-recipe h2 {
-    font-size: 1.8rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .film-form-container {
-    margin: -50px 1rem 1.5rem 1rem;
-    padding: 1.25rem;
-    border-radius: 12px;
-  }
-
-  .film-inputs-row {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .film-input-group {
-    width: 100%;
-  }
-
-  /* Reset des largeurs fixes en mobile */
-  .film-input-group--title,
-  .film-input-group--year,
-  .film-input-group--genre {
-    flex: 1 1 100%;
-  }
-
-  .film-synopsis-row {
-    margin-top: 0.75rem;
-  }
-
-  .film-input-label {
-    font-size: 0.85rem;
-  }
-
-  .film-input-label i {
-    font-size: 0.9rem;
-  }
-
-  .film-inputs-row .form-input,
-  .film-inputs-row .form-select {
-    width: 100%;
-    flex: none;
-  }
-
-  .film-form-container .form-input,
-  .film-form-container .form-select {
-    padding: 0.75rem 0.95rem;
-    font-size: 0.95rem;
-  }
-
-  .film-form-container .form-select {
-    padding-right: 1rem;
-  }
-
-  .form-footer {
-    margin: 0 1rem;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .form-footer p {
-    font-size: 0.9rem;
-    margin: 0 0 1rem 0;
-  }
-
-  .form-footer-btn {
-    width: 100%;
-  }
-
-  .recipe-column-left,
-  .recipe-column-center,
-  .recipe-column-right {
-    padding: 1.25rem;
-  }
-
-  .recipe-column-left h3,
-  .recipe-column-center h3,
-  .recipe-column-right h3,
-  .recipe-context-title {
-    font-size: 1.1rem;
-  }
-
-  .ingredients-preparation-subtitle {
-    font-size: 1.5rem;
-    margin: 0 1rem 1.5rem 1rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .ingredients-column,
-  .preparation-column {
-    padding: 1.25rem;
-  }
-
-  .ingredients-column h3,
-  .preparation-column h3 {
-    font-size: 1.1rem;
-  }
-
-  .form-validation-footer {
-    margin: 0 1rem;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .form-validation-btn {
-    width: 100%;
-    margin-top: 0.75rem;
-  }
-
-  .validation-note {
-    font-size: 0.8rem;
-    margin: 0;
-  }
-}
-
-@media (max-width: 600px) {
-  .add-recipe-main {
-    padding: 1rem 0.5rem;
-  }
-
-  .hero-banner {
-    height: 200px;
-    padding-bottom: 2.5rem;
-    border-radius: 8px;
-  }
-
-  .hero-banner + .add-film-section .section-header-film {
-    top: -100px;
-    left: 0.5rem;
-    right: 0.5rem;
-  }
-
-  .section-header-film h2 {
-    font-size: 1.6rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .section-header-recipe {
-    margin: 0 0.5rem 1.5rem 0.5rem;
-  }
-
-  .section-header-recipe h2 {
-    font-size: 1.6rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .film-form-container {
-    margin: -40px 0.5rem 1.5rem 0.5rem;
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .film-inputs-row {
-    flex-direction: column;
-    gap: 0.875rem;
-    align-items: stretch;
-  }
-
-  .film-input-group {
-    width: 100%;
-  }
-
-  .film-input-label {
-    font-size: 0.8rem;
-  }
-
-  .film-input-label i {
-    font-size: 0.85rem;
-  }
-
-  .film-inputs-row .form-input,
-  .film-inputs-row .form-select {
-    width: 100%;
-    flex: none;
-  }
-
-  .form-footer {
-    margin: 0 0.5rem;
-    padding: 1rem 0;
-  }
-
-  .form-footer p {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin: 0 0 1rem 0;
-  }
-
-  .form-footer-btn {
-    width: 100%;
-    padding: 0.875rem 1.5rem;
-    font-size: 0.95rem;
-  }
-
-  .recipe-form-container {
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .recipe-column-left,
-  .recipe-column-center,
-  .recipe-column-right {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .recipe-column-left h3,
-  .recipe-column-center h3,
-  .recipe-column-right h3,
-  .recipe-context-title {
-    font-size: 1rem;
-    margin-bottom: 0;
-    line-height: 1.1;
-  }
-
-  .film-selected-image {
-    height: 180px;
-    margin-bottom: 0.5rem;
-  }
-
-  .film-info-box {
-    padding: 0.75rem;
-  }
-
-  .film-info-box h4 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .film-info-box li {
-    font-size: 0.85rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .film-image-note {
-    font-size: 0.7rem;
-    margin: 0 0 0.75rem 0;
-  }
-
-  .recipe-image-upload img {
-    height: 180px;
-  }
-
-  .image-copyright {
-    font-size: 0.7rem;
-    margin: 0.5rem 0 0 0;
-  }
-
-  .btn-upload {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    font-size: 0.9rem;
-    margin-top: 0.75rem;
-  }
-
-  .ingredients-preparation-subtitle {
-    font-size: 1.4rem;
-    margin: 0 0.5rem 1.25rem 0.5rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .ingredients-preparation-container {
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .ingredients-column,
-  .preparation-column {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .ingredients-column h3,
-  .preparation-column h3 {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .recipe-textarea,
-  .recipe-context-textarea {
-    min-height: 150px;
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
-    border-radius: 0.75rem;
-  }
-
-  .form-validation-footer {
-    margin: 0 0.5rem;
-    padding: 1rem 0;
-  }
-
-  .form-validation-btn {
-    width: 100%;
-    padding: 0.875rem 1.5rem;
-    font-size: 0.95rem;
-  }
-
-  .validation-note {
-    font-size: 0.75rem;
-    margin: 0 0 0.75rem 0;
-  }
-
-  /* Inputs et selects responsive */
-  .add-recipe-main .form-input,
-  .add-recipe-main .form-select,
-  .recipe-column-center .form-input,
-  .recipe-column-center .form-select {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
-    border-radius: 6px;
-  }
-
-  .film-form-container .form-input,
-  .film-form-container .form-select {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    width: 100%;
-  }
-
-  .film-form-container .form-select {
-    padding-right: 1rem;
-  }
-
-  .recipe-column-center .form-select {
-    padding-right: 1rem;
-  }
-
-  .recipe-description {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-  }
-
-  .film-image-note,
-  .image-copyright {
-    font-size: 0.65rem;
-  }
-
-  .add-recipe-section {
-    padding: 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .add-recipe-main {
-    padding: 0.75rem 0.25rem;
-  }
-
-  .hero-banner {
-    height: 180px;
-    padding-bottom: 2rem;
-  }
-
-  .hero-banner + .add-film-section .section-header-film {
-    top: -90px;
-    left: 0.25rem;
-    right: 0.25rem;
-  }
-
-  .section-header-film h2 {
-    font-size: 1.4rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .section-header-recipe {
-    margin: 0 0.25rem 1.25rem 0.25rem;
-  }
-
-  .section-header-recipe h2 {
-    font-size: 1.4rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .film-form-container {
-    margin: -35px 0.25rem 1.25rem 0.25rem;
-    padding: 0.875rem;
-  }
-
-  .film-inputs-row {
-    gap: 0.65rem;
-  }
-
-  .film-form-container .form-input,
-  .film-form-container .form-select {
-    padding: 0.65rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  .film-form-container .form-select {
-    padding-right: 1rem;
-  }
-
-  .form-footer,
-  .form-validation-footer {
-    margin: 0 0.25rem;
-    padding: 0.875rem 0;
-  }
-
-  .recipe-form-container {
-    gap: 0.75rem;
-  }
-
-  .recipe-column-left,
-  .recipe-column-center,
-  .recipe-column-right {
-    padding: 0.875rem;
-  }
-
-  .ingredients-preparation-subtitle {
-    font-size: 1.2rem;
-    margin: 0 0.25rem 1rem 0.25rem;
-    line-height: 1.3;
-    white-space: normal;
-  }
-
-  .ingredients-column,
-  .preparation-column {
-    padding: 0.875rem;
-  }
-
-  .recipe-textarea,
-  .recipe-context-textarea {
-    min-height: 120px;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  .form-input,
-  .form-select {
-    padding: 0.65rem 0.8rem;
-    font-size: 0.85rem;
-  }
-}
-
-/* ====================================================== */
 /* ========== VALIDATION TMDB - SUGGESTIONS ============ */
 /* ====================================================== */
 .tmdb-suggestions {
@@ -1762,7 +648,7 @@
   border-radius: 12px;
   max-height: 300px;
   overflow-y: auto;
-  z-index: 1003; /* Au-dessus du dropdown d'autocomplétion locale */
+  z-index: 1003;
   display: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   animation: slideDown 0.2s ease-out;
@@ -1782,7 +668,6 @@
   gap: 0.25rem;
 }
 
-/* Style pour les films existants dans la BDD locale - Background doré-popcorn */
 .tmdb-suggestion-item.suggestion-local {
   background-color: var(--dore-popcorn);
   border-left: 3px solid var(--rouge-projecteur);
@@ -1853,7 +738,6 @@
   box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
 }
 
-/* Highlight sur la suggestion la plus probable (première) */
 .tmdb-suggestion-item.tmdb-suggestion-highlighted {
   background-color: rgba(198, 166, 100, 0.1);
   border-left: 3px solid var(--dore-popcorn);
@@ -1882,7 +766,6 @@
   opacity: 0.8;
 }
 
-/* Badge type Film/Série pour suggestions */
 .tmdb-suggestion-type {
   display: inline-block;
   font-size: 0.7rem;
@@ -1910,7 +793,6 @@
   box-shadow: 0 2px 4px rgba(13, 27, 42, 0.3);
 }
 
-/* Badges contrastés sur fond doré-popcorn pour films existants */
 .tmdb-suggestion-item.suggestion-local .tmdb-suggestion-type--film {
   background-color: var(--rouge-projecteur);
   color: var(--argent-ecran);
@@ -1932,6 +814,9 @@
   font-size: 0.9rem;
 }
 
+/* ====================================================== */
+/* ====================== ANIMATIONS =================== */
+/* ====================================================== */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -1940,5 +825,121 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ====================================================== */
+/* ====================== RESPONSIVE =================== */
+/* ====================================================== */
+@media (max-width: 1000px) {
+  .add-recipe-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .add-recipe-grid--2cols {
+    grid-template-columns: 1fr;
+  }
+
+  .add-recipe-form-row {
+    gap: 1rem;
+  }
+
+  .add-recipe-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .add-recipe-card__footer p {
+    margin: 0;
+  }
+
+  .add-recipe-card__btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-recipe-page {
+    padding: 1rem 1rem 3rem;
+  }
+
+  .add-recipe-hero__title {
+    font-size: 2rem;
+  }
+
+  .add-recipe-form-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .add-recipe-field--title,
+  .add-recipe-field--year,
+  .add-recipe-field--genre {
+    flex: 1 1 100%;
+  }
+
+  .add-recipe-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .add-recipe-subcard {
+    padding: 1rem;
+  }
+
+  .add-recipe-card__header h2 {
+    font-size: 1.4rem;
+  }
+
+  .add-recipe-subcard h3 {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-recipe-page {
+    padding: 0.75rem 0.5rem 2.5rem;
+  }
+
+  .add-recipe-hero__title {
+    font-size: 1.6rem;
+  }
+
+  .add-recipe-hero__subtitle {
+    font-size: 0.9rem;
+  }
+
+  .add-recipe-card {
+    padding: 1rem;
+  }
+
+  .add-recipe-subcard {
+    padding: 0.875rem;
+  }
+
+  .add-recipe-input,
+  .add-recipe-select,
+  .add-recipe-textarea {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.88rem;
+    border-radius: 8px;
+  }
+
+  .add-recipe-textarea--tall {
+    min-height: 150px;
+  }
+
+  .add-recipe-label {
+    font-size: 0.82rem;
+  }
+
+  .film-selected-image {
+    height: 160px;
+  }
+
+  .recipe-image-upload img {
+    height: 150px;
   }
 }

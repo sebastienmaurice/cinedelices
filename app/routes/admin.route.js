@@ -23,6 +23,8 @@ adminRouter.post("/validateNotice/:id", adminController.validateNotice);
 adminRouter.post("/rejectNotice/:id", adminController.rejectNotice);
 adminRouter.post("/users/:id/photo/approve", adminController.validateUserPhoto);
 adminRouter.post("/users/:id/photo/reject", adminController.rejectUserPhoto);
+adminRouter.post("/users/:id/banner/approve", adminController.validateUserBanner);
+adminRouter.post("/users/:id/banner/reject", adminController.rejectUserBanner);
 
 /* ===============================================
    action recettes
