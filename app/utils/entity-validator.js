@@ -33,7 +33,7 @@ export async function validateEntity(
   successParam,
   entityType = "entité"
 ) {
-  await Model.update({ status: true }, { where: { id: entityId } });
+  await Model.update({ status: "approved", validated_at: new Date() }, { where: { id: entityId } });
 }
 
 /**
@@ -54,7 +54,5 @@ export async function rejectEntity(
   successParam,
   entityType = "entité"
 ) {
-  return await Model.destroy({
-    where: { id: entityId },
-  });
+  return await Model.update({ status: "rejected" }, { where: { id: entityId } });
 }

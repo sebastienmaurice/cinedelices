@@ -193,7 +193,7 @@ const adminController = {
       const movieId = parseInt(req.params.id);
 
       // Préparer les données à mettre à jour
-      const updateData = { status: true };
+      const updateData = { status: "approved", validated_at: new Date() };
 
       // Si un fichier a été uploadé lors de la validation, l'ajouter aux données
       // Les images admin sont stockées dans movies/originals/
@@ -201,8 +201,7 @@ const adminController = {
         updateData.picture = `/images/movies/originals/${req.file.filename}`;
       }
 
-      // Mise à jour en BDD : passe le status à true (et l'image si fournie)
-      // Équivalent SQL : UPDATE movies SET status = true, picture = ? WHERE id = ?
+      // Mise à jour en BDD : status → 'approved' + horodatage validated_at
       await Movie.update(updateData, { where: { id: movieId } });
       searchCache.clear();
       res.redirect("/admin?success=movie_validated");
@@ -231,16 +230,9 @@ const adminController = {
     try {
       const movieId = parseInt(req.params.id, 10);
 
-      // Supprimer les enregistrements liés avant le film (contraintes FK)
-      const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
-      const recipeIds = recipes.map((recipe) => recipe.id);
-      if (recipeIds.length > 0) {
-        await Notice.destroy({ where: { id_recipe: recipeIds } });
-        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
-        await Recipe.destroy({ where: { id_movie: movieId } });
-      }
-
-      await Movie.destroy({ where: { id: movieId } });
+      // Marquer le film comme refusé (status: 'rejected') sans le supprimer
+      // L'auteur peut voir son film refusé et soumettre une correction
+      await Movie.update({ status: "rejected" }, { where: { id: movieId } });
       searchCache.clear();
       res.redirect("/admin?success=movie_rejected");
     } catch (error) {
@@ -594,7 +586,7 @@ const adminController = {
       const recipeId = parseInt(req.params.id);
 
       const { ingredients, preparation } = req.body;
-      const updateData = { status: true };
+      const updateData = { status: "approved", validated_at: new Date() };
 
       if (typeof ingredients === "string" && ingredients.trim() !== "") {
         updateData.ingredients = ingredients.trim();
@@ -603,8 +595,7 @@ const adminController = {
         updateData.preparation = preparation.trim();
       }
 
-      // Mise à jour en BDD : passe le status à true (validé)
-      // Équivalent SQL : UPDATE recipes SET status = true WHERE id = ?
+      // Mise à jour en BDD : status → 'approved' + horodatage validated_at
       await Recipe.update(updateData, { where: { id: recipeId } });
 
       res.redirect("/admin?success=recipe_validated");
@@ -714,9 +705,8 @@ const adminController = {
     try {
       const recipeId = parseInt(req.params.id);
 
-      // Suppression de la recette en BDD
-      // Équivalent SQL : DELETE FROM recipes WHERE id = ?
-      await Recipe.destroy({ where: { id: recipeId } });
+      // Marquer la recette comme refusée (status: 'rejected') sans la supprimer
+      await Recipe.update({ status: "rejected" }, { where: { id: recipeId } });
 
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {
@@ -843,7 +833,7 @@ const adminController = {
   async validateNotice(req, res) {
     try {
       const noticeId = parseInt(req.params.id, 10);
-      await Notice.update({ status: true }, { where: { id: noticeId } });
+      await Notice.update({ status: "approved", validated_at: new Date() }, { where: { id: noticeId } });
       res.redirect("/admin?success=notice_validated");
     } catch (error) {
       return renderServerError(
@@ -858,7 +848,8 @@ const adminController = {
   async rejectNotice(req, res) {
     try {
       const noticeId = parseInt(req.params.id, 10);
-      await Notice.destroy({ where: { id: noticeId } });
+      // Marquer l'avis comme refusé (status: 'rejected') sans le supprimer
+      await Notice.update({ status: "rejected" }, { where: { id: noticeId } });
       res.redirect("/admin?success=notice_rejected");
     } catch (error) {
       return renderServerError(

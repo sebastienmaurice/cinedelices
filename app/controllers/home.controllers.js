@@ -15,12 +15,12 @@ const homeController = {
     // les 3 recettes les mieux notées
     try {
       const recipes = await Recipe.findAll({
-        where: { status: true },
+        where: { status: "approved" },
         include: [
           {
             model: Movie,
             attributes: ["title"], // on récupère uniquement le nom du film
-            where: { status: true },
+            where: { status: "approved" },
           },
         ],
         order: [["quote", "DESC"]], // tri par note décroissante
@@ -37,8 +37,8 @@ const homeController = {
 
       // recette du jour en aléatoire
       const topRecipe = await Recipe.findOne({
-        where: { status: true },
-        include: [{ model: Movie, where: { status: true } }],
+        where: { status: "approved" },
+        include: [{ model: Movie, where: { status: "approved" } }],
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
 
@@ -49,7 +49,7 @@ const homeController = {
 
       // afficher 4 films aléatoirement sur la page d'accueil
       const topMovies = await Movie.findAll({
-        where: { status: true },
+        where: { status: "approved" },
         order: [Sequelize.literal("RANDOM()")],
         limit: 4,
       });

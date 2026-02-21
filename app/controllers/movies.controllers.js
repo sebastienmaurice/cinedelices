@@ -31,7 +31,7 @@ const getRecipeCountsByMovieIds = async (movieIds) => {
       id_movie: {
         [Op.in]: movieIds,
       },
-      status: true,
+      status: "approved",
     },
     group: ["id_movie"],
   });
@@ -53,7 +53,7 @@ const moviesController = {
       // Si pas de query ou query vide, retourner tous les films
       if (!query || query.trim() === "") {
         const allMovies = await Movie.findAll({
-          where: { status: true }, // Uniquement les films validés
+          where: { status: "approved" }, // Uniquement les films validés
           limit: 20, // Limiter les résultats
           order: [["title", "ASC"]],
         });
@@ -96,7 +96,7 @@ const moviesController = {
       // Recherche avancée : titre, année, genre
       const movies = await Movie.findAll({
         where: {
-          status: true, // Uniquement les films validés
+          status: "approved", // Uniquement les films validés
           [Op.or]: searchConditions,
         },
         limit: 20, // Limiter les résultats
@@ -140,8 +140,8 @@ const moviesController = {
       // Si genre est "all", "tous" ou non défini → charger tous les films
       const movies =
         !genre || genre === "all" || genre === "tous"
-          ? await Movie.findAll({ where: { status: true } })
-          : await Movie.findAll({ where: { genre: genre, status: true } });
+          ? await Movie.findAll({ where: { status: "approved" } })
+          : await Movie.findAll({ where: { genre: genre, status: "approved" } });
 
       const recipeCountsByMovieId = await getRecipeCountsByMovieIds(
         movies.map((movie) => movie.id)
@@ -208,7 +208,7 @@ const moviesController = {
 
       // Récupérer tous les films validés
       const allMovies = await Movie.findAll({
-        where: { status: true },
+        where: { status: "approved" },
       });
 
       // Filtrer par genre si fourni
@@ -744,7 +744,7 @@ const moviesController = {
   // Affichage de la liste des films sur la page des films
   async moviesList(req, res) {
     try {
-      const movies = await Movie.findAll({ where: { status: true } });
+      const movies = await Movie.findAll({ where: { status: "approved" } });
       const selectedGenre = req.query.genre || "tous";
 
       // Récupérer les genres uniques depuis les films (pour les chips de filtrage)
@@ -803,17 +803,16 @@ const moviesController = {
         filteredMovies.map((movie) => movie.id)
       );
 
-      // Date de référence pour calculer "Nouveau" (films ajoutés < 7 jours)
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      // Date de référence pour calculer "Nouveau" (films ajoutés < 15 jours, NEW ne doit pas être stocké)
+      const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
 
       const moviesWithCounts = filteredMovies.map((movie) => {
         const plainMovie = movie.toJSON ? movie.toJSON() : movie;
         const recipeCount = recipeCountsByMovieId[plainMovie.id] || 0;
 
-        // Calcul isNew : basé sur createdAt si disponible
+        // Calcul isNew : état dérivé (status approved + créé < 15 jours) — jamais stocké en base
         const createdAt = plainMovie.createdAt ? new Date(plainMovie.createdAt) : null;
-        const isNew = createdAt ? createdAt >= sevenDaysAgo : false;
+        const isNew = createdAt ? createdAt >= fifteenDaysAgo : false;
 
         // Calcul isPopular : plus de 3 recettes associées
         const isPopular = recipeCount > 3;

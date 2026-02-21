@@ -10,7 +10,9 @@ Movie.init(
     genre: { type: DataTypes.STRING(100), allowNull: false },
     picture: { type: DataTypes.STRING(255) },
     synopsis: { type: DataTypes.TEXT, allowNull: true },
-    status: { type: DataTypes.BOOLEAN, defaultValue: false },
+    // ENUM string : pending | approved | rejected (supérieur au BOOLEAN — cf. migration-status-enum.sql)
+    status: { type: DataTypes.STRING(20), defaultValue: "pending" },
+    validated_at: { type: DataTypes.DATE, allowNull: true },
     edit_status: { type: DataTypes.STRING(20), defaultValue: "none" },
     pending_title: { type: DataTypes.TEXT, allowNull: true },
     pending_year: { type: DataTypes.INTEGER, allowNull: true },

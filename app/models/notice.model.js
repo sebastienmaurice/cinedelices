@@ -10,7 +10,9 @@ class Notice extends Model {}
 Notice.init({
   quote: { type: DataTypes.INTEGER, allowNull: false },
   content: { type: DataTypes.TEXT, allowNull: false },
-  status: { type: DataTypes.BOOLEAN, defaultValue: false },
+  // ENUM string : pending | approved | rejected (supérieur au BOOLEAN — cf. migration-status-enum.sql)
+  status: { type: DataTypes.STRING(20), defaultValue: "pending" },
+  validated_at: { type: DataTypes.DATE, allowNull: true },
   edit_status: { type: DataTypes.STRING(20), defaultValue: "none" },
   pending_content: { type: DataTypes.TEXT, allowNull: true },
   pending_quote: { type: DataTypes.INTEGER, allowNull: true },

@@ -19,7 +19,9 @@ Recipe.init({
   time: { type: DataTypes.INTEGER, allowNull: false },
   servings: { type: DataTypes.INTEGER, allowNull: true },
   difficulty: { type: DataTypes.STRING(50), allowNull: false },
-  status: { type: DataTypes.BOOLEAN, defaultValue: false },
+  // ENUM string : pending | approved | rejected (supérieur au BOOLEAN — cf. migration-status-enum.sql)
+  status: { type: DataTypes.STRING(20), defaultValue: "pending" },
+  validated_at: { type: DataTypes.DATE, allowNull: true },
   edit_status: { type: DataTypes.STRING(20), defaultValue: "none" },
   pending_name: { type: DataTypes.TEXT, allowNull: true },
   pending_description: { type: DataTypes.TEXT, allowNull: true },

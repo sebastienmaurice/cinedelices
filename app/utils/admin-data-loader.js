@@ -27,15 +27,15 @@ import { enrichMoviesWithImagePaths } from "./movie-image-helper.js";
  * res.render("admin-dashboard", { recipes, movies, avis, users, ... });
  */
 export async function loadAdminData() {
-  // Récupérer les recettes en attente de validation (status: false)
+  // Récupérer les recettes en attente de validation (status: 'pending')
   const recipes = await Recipe.findAll({
-    where: { status: false },
+    where: { status: "pending" },
     include: [{ model: Movie, attributes: ["title", "picture", "year", "genre"] }],
   });
 
-  // Récupérer les films en attente de validation (status: false)
+  // Récupérer les films en attente de validation (status: 'pending')
   const movies = await Movie.findAll({
-    where: { status: false },
+    where: { status: "pending" },
   });
 
   const pendingMovieDeleteRequests = await Movie.findAll({
@@ -86,18 +86,18 @@ export async function loadAdminData() {
   });
 
   const validatedMovies = await Movie.findAll({
-    where: { status: true },
+    where: { status: "approved" },
     order: [["id", "DESC"]],
   });
 
   const validatedRecipes = await Recipe.findAll({
-    where: { status: true },
+    where: { status: "approved" },
     include: [{ model: Movie, attributes: ["id", "title"] }],
     order: [["id", "DESC"]],
   });
 
   const validatedNotices = await Notice.findAll({
-    where: { status: true },
+    where: { status: "approved" },
     include: [
       {
         model: Recipe,

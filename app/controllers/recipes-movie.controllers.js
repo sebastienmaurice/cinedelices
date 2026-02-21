@@ -1,6 +1,7 @@
 import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
+import { getContributionBadge, buildContributorBadgesMap } from "../utils/contribution-badge.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 /**
@@ -74,10 +75,20 @@ async function getRecipeAverageRatings(recipeIds) {
  * @param {Object} avgRatingsMap - Moyennes des notes
  * @returns {Array} - Recettes enrichies
  */
+// isNew = état dérivé, jamais stocké : status approved + validated_at (ou createdAt) < 3 jours
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+
 function enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap) {
+  const threeDaysAgo = new Date(Date.now() - THREE_DAYS_MS);
   return recipes.map((recipe) => {
     const plain = recipe.toJSON ? recipe.toJSON() : recipe;
     const avgData = avgRatingsMap[plain.id];
+    // validated_at en priorité (date réelle de validation admin), sinon createdAt en fallback
+    const refDate = plain.validated_at
+      ? new Date(plain.validated_at)
+      : plain.createdAt
+        ? new Date(plain.createdAt)
+        : null;
 
     return {
       ...plain,
@@ -86,6 +97,8 @@ function enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsM
       userRating: userRatingsMap[plain.id] || null,
       avgRating: avgData ? avgData.average : null,
       ratingCount: avgData ? avgData.count : 0,
+      // isNew : calculé dynamiquement, non persisté en base
+      isNew: plain.status === "approved" && refDate ? refDate >= threeDaysAgo : false,
     };
   });
 }
@@ -110,7 +123,7 @@ const recipesController = {
       // Jointure User via alias "contributor" : récupère pseudo + avatar de l'auteur
       const recipes = await Recipe.findAll({
         where: {
-          status: true,
+          status: "approved",
           ...(authorUser ? { id_user: authorUser.id } : {}),
         },
         include: [
@@ -131,9 +144,19 @@ const recipesController = {
 
       // Image de profil de l'auteur pour le badge
       const authorProfileImage = authorUser?.picture || null;
-      // Bannière custom de l'auteur (uniquement si validée)
+      // Bannière custom de l'auteur (uniquement si validée pour l'affichage public)
       const authorBannerImage = (authorUser?.banner_image && authorUser?.banner_status === "approved")
         ? authorUser.banner_image
+        : null;
+      // Statut de la bannière (pour badge visible par l'auteur uniquement)
+      const authorBannerStatus = authorUser?.banner_status || null;
+
+      // Badges de contribution
+      // buildContributorBadgesMap compte les recettes status:true déjà chargées → zéro requête extra
+      const contributorBadgesMap = buildContributorBadgesMap(enrichedRecipes);
+      // Badge de l'auteur filtré (total des recettes de sa page)
+      const authorBadge = authorUser
+        ? getContributionBadge(enrichedRecipes.length)
         : null;
 
       res.render("recipes-movie", {
@@ -144,8 +167,11 @@ const recipesController = {
         authorDisplayName,
         isAuthorFiltered: Boolean(rawAuthor),
         authorBannerImage,
+        authorBannerStatus,
         authorProfileImage,
         authorId: authorUser?.id || null,
+        authorBadge,
+        contributorBadgesMap,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);
@@ -155,7 +181,7 @@ const recipesController = {
   async movieRecipes(req, res) {
     try {
       const movie = await Movie.findOne({
-        where: { id: req.params.id, status: true },
+        where: { id: req.params.id, status: "approved" },
       });
 
       // Utilisation du helper centralisé pour les erreurs 404
@@ -165,7 +191,7 @@ const recipesController = {
 
       // Toutes les recettes du film — jointure User via alias "contributor"
       const recipes = await Recipe.findAll({
-        where: { id_movie: movie.id, status: true },
+        where: { id_movie: movie.id, status: "approved" },
         include: [
           {
             model: User,
@@ -184,6 +210,7 @@ const recipesController = {
       const userRatingsMap = await getUserRecipeRatings(req.userId);
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
       const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+      const contributorBadgesMap = buildContributorBadgesMap(enrichedRecipes);
 
       res.render("recipes-movie", {
         movie: enrichedMovie,
@@ -192,6 +219,8 @@ const recipesController = {
         userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
+        authorBadge: null,
+        contributorBadgesMap,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);
@@ -211,7 +240,7 @@ const recipesController = {
       const { id, category } = req.params;
 
       const movie = await Movie.findOne({
-        where: { id, status: true },
+        where: { id, status: "approved" },
       });
 
       if (!movie) {
@@ -224,7 +253,7 @@ const recipesController = {
       let recipes;
       if (!category || category === "all") {
         recipes = await Recipe.findAll({
-          where: { id_movie: movie.id, status: true },
+          where: { id_movie: movie.id, status: "approved" },
           include: userInclude,
         });
       } else {
@@ -232,7 +261,7 @@ const recipesController = {
           where: {
             id_movie: movie.id,
             category: category,
-            status: true,
+            status: "approved",
           },
           include: userInclude,
         });
@@ -274,7 +303,7 @@ const recipesController = {
   async detailRecipes(req, res) {
     try {
       const recipe = await Recipe.findOne({
-        where: { id: req.params.id, status: true },
+        where: { id: req.params.id, status: "approved" },
       });
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
@@ -285,7 +314,7 @@ const recipesController = {
       const plainRecipe = recipe.get({ plain: true });
 
       const movie = await Movie.findOne({
-        where: { id: plainRecipe.id_movie, status: true },
+        where: { id: plainRecipe.id_movie, status: "approved" },
       });
       const enrichedMovie = movie ? enrichMovieWithImagePaths(movie) : null;
 

@@ -31,6 +31,8 @@
       <% const authorImg = typeof authorProfileImage !== "undefined" ? authorProfileImage : null; %>
       <% const authorBanner = typeof authorBannerImage !== "undefined" ? authorBannerImage : null; %>
       <% const currentAuthorId = typeof authorId !== "undefined" ? authorId : null; %>
+      <% const bannerStatus = typeof authorBannerStatus !== "undefined" ? authorBannerStatus : null; %>
+      <% const isOwner = hasAuthorFilter && userId && currentAuthorId && String(userId) === String(currentAuthorId); %>
       <% const bannerImage = (hasAuthorFilter && authorBanner) ? authorBanner : (movie ? (movie.bannerPath || movie.picture) : "/images/image-banner-movies.jpg"); %>
       <section class="banner__image__film" aria-hidden="true">
         <div class="banner__image__film__overlay"></div>
@@ -41,11 +43,18 @@
           height="350"
           decoding="async"
         />
-        <% if (hasAuthorFilter && userId && currentAuthorId && String(userId) === String(currentAuthorId)) { %>
+        <% if (isOwner) { %>
           <button class="banner__edit-btn" id="editBannerBtn" type="button" data-user-id="<%= userId %>">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
             Modifier ma bannière
           </button>
+          <% if (bannerStatus && bannerStatus !== 'approved') { %>
+            <span class="banner__status-badge media-status-badge media-status-badge--<%= bannerStatus === 'pending' ? 'pending' : 'rejected' %>">
+              <%= bannerStatus === 'pending' ? 'En attente' : 'Refusée' %>
+            </span>
+          <% } else if (bannerStatus === 'approved' && authorBanner) { %>
+            <span class="banner__status-badge media-status-badge media-status-badge--approved">Validée</span>
+          <% } %>
         <% } %>
       </section>
 
@@ -83,18 +92,56 @@
           <% } %>
         </div>
 
+        <% const authBadge = typeof authorBadge !== 'undefined' ? authorBadge : null; %>
         <% if (!movie && hasAuthorFilter && authorImg) { %>
-          <div class="banner__author-badge">
-            <div class="banner__author-badge__avatar">
+          <div class="auteur-card<%= authBadge ? ' has-badge ' + authBadge.cssClass : '' %>">
+
+            <!-- Décoration pellicule gauche -->
+            <div class="auteur-card__strip" aria-hidden="true"></div>
+
+            <!-- Photo cinéma -->
+            <div class="auteur-card__frame">
               <img
                 src="<%= authorImg %>"
                 alt="Photo de <%= authorDisplayName %>"
-                width="48"
-                height="48"
+                class="auteur-card__photo"
+                width="66"
+                height="66"
                 loading="lazy"
               />
+              <% if (authBadge) { %>
+              <img src="<%= authBadge.frame %>" alt="" class="auteur-card__photo-frame" aria-hidden="true" />
+              <% } %>
             </div>
-            <span class="banner__author-badge__name"><%= authorDisplayName %></span>
+
+            <!-- Corps textuel -->
+            <div class="auteur-card__body">
+              <span class="auteur-card__eyebrow">✦ Une création de ✦</span>
+              <h3 class="auteur-card__name"><%= authorDisplayName %></h3>
+              <% if (authBadge) { %>
+              <div class="auteur-card__badge-row">
+                <span class="auteur-card__stars" aria-label="Niveau <%= authBadge.level %> sur 5"><%- '★'.repeat(authBadge.stars) %><span class="auteur-card__stars-empty"><%= '★'.repeat(5 - authBadge.stars) %></span></span>
+                <span class="auteur-card__badge-tag"><%= authBadge.label %></span>
+              </div>
+              <% } %>
+              <p class="auteur-card__count">
+                <span class="auteur-card__count-num"><%= recipes.length %></span>
+                recette<%= recipes.length > 1 ? 's' : '' %> publiée<%= recipes.length > 1 ? 's' : '' %>
+              </p>
+            </div>
+
+            <!-- Trophée avec spotlight -->
+            <% if (authBadge) { %>
+            <div class="auteur-card__trophy-wrap">
+              <div class="auteur-card__spotlight" aria-hidden="true"></div>
+              <img
+                src="<%= authBadge.image %>"
+                alt="<%= authBadge.label %>"
+                class="auteur-card__trophy"
+              />
+            </div>
+            <% } %>
+
           </div>
         <% } %>
 
@@ -158,9 +205,11 @@
             // L'auteur est toujours présent (id_user NOT NULL + jointure User côté backend)
             const authorName = recipe.contributor.pseudo;
             const authorAvatar = recipe.contributor.picture || null;
-            const isValidated = recipe.status === true;
+            const isValidated = recipe.status === "approved";
             const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
             const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
+            const badgesMap = typeof contributorBadgesMap !== 'undefined' ? contributorBadgesMap : {};
+            const cardBadge = badgesMap[recipe.contributor.id] || null;
           %>
           <article class="recipe-card">
             <!-- Image avec overlay -->
@@ -174,16 +223,8 @@
                 decoding="async"
               />
               <div class="recipe-card__image-overlay">
-                <% if (isValidated) { %>
-                <span class="badge badge--velvet">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  Validée
-                </span>
-                <% } else { %>
-                <span class="badge badge--silver">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  En attente
-                </span>
+                <% if (recipe.isNew) { %>
+                <span class="badge badge--new">Nouveau</span>
                 <% } %>
                 <button
                   class="btn-favorite"
@@ -226,7 +267,7 @@
 
             <!-- Footer : Auteur + Bouton Voir -->
             <div class="recipe-card__footer">
-              <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author">
+              <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
                 <span class="author__avatar">
                   <% if (authorAvatar) { %>
                   <img src="<%= authorAvatar %>" alt="<%= authorName %>" />

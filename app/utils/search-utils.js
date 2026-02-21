@@ -158,7 +158,7 @@ export function calculateRelevanceScore(movie, query) {
   }
   
   // 5. Bonus pour films validés (poids: 5)
-  if (movie.status === true) {
+  if (movie.status === "approved") {
     score += 5;
   }
   

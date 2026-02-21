@@ -5,6 +5,7 @@ import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
+import { getContributionBadge } from "../utils/contribution-badge.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -249,10 +250,11 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
-      // Compter les recettes validées (pour indication UX bannière auteur)
+      // Compter les recettes validées (pour indication UX bannière auteur + badge)
       const validatedRecipeCount = await Recipe.count({
-        where: { id_user: user.id, status: true },
+        where: { id_user: user.id, status: "approved" },
       });
+      const contributionBadge = getContributionBadge(validatedRecipeCount);
 
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
@@ -275,6 +277,7 @@ const authController = {
         ratedRecipesCount: ratedRecipesWithScores.length,
         avgUserRating,
         validatedRecipeCount,
+        contributionBadge,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -755,7 +758,7 @@ const authController = {
         });
       }
 
-      if (recipe.status === true) {
+      if (recipe.status === "approved") {
         if (recipe.edit_status === "pending") {
           return res.status(StatusCodes.CONFLICT).json({
             success: false,
@@ -926,7 +929,7 @@ const authController = {
         });
       }
 
-      if (movie.status === true) {
+      if (movie.status === "approved") {
         if (movie.edit_status === "pending") {
           return res.status(StatusCodes.CONFLICT).json({
             success: false,
@@ -1021,7 +1024,7 @@ const authController = {
         });
       }
 
-      if (notice.status === true) {
+      if (notice.status === "approved") {
         if (notice.edit_status === "pending") {
           return res.status(StatusCodes.CONFLICT).json({
             success: false,
@@ -1086,7 +1089,7 @@ const authController = {
         });
       }
 
-      if (notice.status === true) {
+      if (notice.status === "approved") {
         if (notice.delete_request_status === "pending") {
           return res.status(StatusCodes.OK).json({
             success: true,
@@ -1151,7 +1154,7 @@ const authController = {
         });
       }
 
-      if (movie.status === true) {
+      if (movie.status === "approved") {
         if (movie.delete_request_status === "pending") {
           return res.status(StatusCodes.OK).json({
             success: true,

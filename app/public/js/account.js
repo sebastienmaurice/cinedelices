@@ -71,7 +71,7 @@
         avatarImage.classList.add("profile-photo--pending");
       }
       if (avatarBadge) {
-        avatarBadge.className = "profile-avatar__badge is-pending";
+        avatarBadge.className = "profile-avatar__badge media-status-badge media-status-badge--pending";
         avatarBadge.textContent = "En attente";
         avatarBadge.style.display = "";
       }
@@ -90,7 +90,7 @@
         avatarImage.classList.remove("profile-photo--pending");
       }
       if (avatarBadge) {
-        avatarBadge.className = "profile-avatar__badge is-rejected";
+        avatarBadge.className = "profile-avatar__badge media-status-badge media-status-badge--rejected";
         avatarBadge.textContent = "Refusée";
         avatarBadge.style.display = "";
       }
