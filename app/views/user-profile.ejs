@@ -174,6 +174,54 @@
 
 
       <!-- ===================================================== -->
+      <!-- NAVIGATION ONGLETS PREMIUM                             -->
+      <!-- ===================================================== -->
+      <nav class="profile-tabs" role="tablist" aria-label="Navigation du compte">
+        <a href="#overview"  class="profile-tabs__link" data-tab="overview"  role="tab" aria-selected="false">Vue d'ensemble</a>
+        <a href="#profil"    class="profile-tabs__link" data-tab="profil"    role="tab" aria-selected="false">Profil</a>
+        <a href="#palmares"  class="profile-tabs__link" data-tab="palmares"  role="tab" aria-selected="false">Palmarès</a>
+        <a href="#favoris"   class="profile-tabs__link" data-tab="favoris"   role="tab" aria-selected="false">Favoris</a>
+        <a href="#creations" class="profile-tabs__link" data-tab="creations" role="tab" aria-selected="false">Créations</a>
+      </nav>
+
+
+      <!-- ===================================================== -->
+      <!-- TAB : VUE D'ENSEMBLE                                   -->
+      <!-- ===================================================== -->
+      <div class="profile-tab-panel" id="overview" role="tabpanel" aria-labelledby="tab-overview">
+        <div class="profile-overview">
+          <div class="profile-overview__stats">
+            <div class="profile-overview__stat">
+              <span class="profile-overview__val"><%= userRecipes.length %></span>
+              <span class="profile-overview__lbl">Recettes publiées</span>
+            </div>
+            <div class="profile-overview__stat">
+              <span class="profile-overview__val"><%= userMovies.length %></span>
+              <span class="profile-overview__lbl">Films ajoutés</span>
+            </div>
+            <div class="profile-overview__stat">
+              <span class="profile-overview__val"><%= userNoticesCount %></span>
+              <span class="profile-overview__lbl">Avis rédigés</span>
+            </div>
+            <div class="profile-overview__stat">
+              <span class="profile-overview__val"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></span>
+              <span class="profile-overview__lbl">Favoris</span>
+            </div>
+            <div class="profile-overview__stat profile-overview__stat--gold">
+              <span class="profile-overview__val"><%= avgUserRating || '—' %></span>
+              <span class="profile-overview__lbl">Note moyenne</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tab-panel#overview -->
+
+
+      <!-- ===================================================== -->
+      <!-- TAB : PROFIL                                           -->
+      <!-- ===================================================== -->
+      <div class="profile-tab-panel" id="profil" role="tabpanel" aria-labelledby="tab-profil">
+
+      <!-- ===================================================== -->
       <!-- PROFIL PRINCIPAL (formulaire + stats + danger)         -->
       <!-- ===================================================== -->
       <section class="profile-card profile-card--main">
@@ -284,6 +332,13 @@
 
       </section>
 
+      </div><!-- /tab-panel#profil -->
+
+
+      <!-- ===================================================== -->
+      <!-- TAB : PALMARÈS                                         -->
+      <!-- ===================================================== -->
+      <div class="profile-tab-panel" id="palmares" role="tabpanel" aria-labelledby="tab-palmares">
 
       <!-- ===================================================== -->
       <!-- PALMARÈS CINÉ DÉLICES                                  -->
@@ -339,11 +394,18 @@
 
       </section>
 
+      </div><!-- /tab-panel#palmares -->
+
+
+      <!-- ===================================================== -->
+      <!-- TAB : FAVORIS & NOTES                                  -->
+      <!-- ===================================================== -->
+      <div class="profile-tab-panel" id="favoris" role="tabpanel" aria-labelledby="tab-favoris">
 
       <!-- ===================================================== -->
       <!-- FAVORIS & NOTES                                        -->
       <!-- ===================================================== -->
-      <section class="profile-favorites" id="favoris">
+      <section class="profile-favorites">
         <header class="profile-collections__header">
           <h2>Mes favoris &amp; notes</h2>
           <p>Films et recettes que vous avez sauvegardés ou notés.</p>
@@ -460,6 +522,13 @@
         </div>
       </section>
 
+      </div><!-- /tab-panel#favoris -->
+
+
+      <!-- ===================================================== -->
+      <!-- TAB : MES CRÉATIONS                                    -->
+      <!-- ===================================================== -->
+      <div class="profile-tab-panel" id="creations" role="tabpanel" aria-labelledby="tab-creations">
 
       <!-- ===================================================== -->
       <!-- COLLECTIONS : recettes, films, avis                    -->
@@ -718,6 +787,8 @@
         </div>
       </section>
 
+      </div><!-- /tab-panel#creations -->
+
     </main>
 
     <!-- FOOTER -->
@@ -726,6 +797,7 @@
     <div class="profile-toast" role="status" aria-live="polite"></div>
 
     <!-- Scripts JS spécifiques -->
+    <script src="/js/profile-tabs.js" defer></script>
     <script src="/js/account.js" defer></script>
   </body>
 </html>

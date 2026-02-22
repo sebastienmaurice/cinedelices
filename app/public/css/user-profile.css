@@ -63,7 +63,7 @@
 /* .profile-grid supprimée — carte unique */
 
 .profile-card {
-  background-color: var(--bleu-intermediaire);
+  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
@@ -426,6 +426,133 @@
 }
 
 /* ====================================================== */
+/* ===== NAVIGATION ONGLETS PREMIUM ==================== */
+/* ====================================================== */
+
+.profile-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  margin: 0 0 2rem;
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+  background: var(--bleu-nuit, #0d1b2a);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.profile-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.profile-tabs__link {
+  position: relative;
+  padding: 0.9rem 1.2rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(236, 239, 241, 0.42);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.profile-tabs__link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 1.2rem;
+  right: 1.2rem;
+  height: 1.5px;
+  background: var(--gold-gradient);
+  border-radius: 2px 2px 0 0;
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.profile-tabs__link:hover {
+  color: rgba(236, 239, 241, 0.75);
+}
+
+.profile-tabs__link.is-active {
+  color: var(--dore-popcorn);
+}
+
+.profile-tabs__link.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Panels — cachés par défaut, visibles via JS */
+.profile-tab-panel {
+  display: none;
+}
+
+.profile-tab-panel.is-active {
+  display: block;
+  animation: tabPanelIn 0.28s ease both;
+}
+
+@keyframes tabPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====================================================== */
+/* ===== VUE D'ENSEMBLE — STATS RECAP ================== */
+/* ====================================================== */
+
+.profile-overview {
+  padding: 2rem 0 1.5rem;
+}
+
+.profile-overview__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2.5rem;
+}
+
+.profile-overview__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 80px;
+}
+
+.profile-overview__val {
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-family: var(--font-h1);
+  color: var(--argent-ecran);
+  line-height: 1;
+}
+
+.profile-overview__stat--gold .profile-overview__val {
+  color: var(--dore-popcorn);
+}
+
+.profile-overview__lbl {
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(236, 239, 241, 0.48);
+  font-weight: 500;
+}
+
+/* ====================================================== */
 /* ===== ICÔNES SVG DANS LES STATS ====================== */
 /* ====================================================== */
 .profile-stat__icon {
@@ -474,7 +601,7 @@
 }
 
 .profile-collections__column {
-  background-color: var(--bleu-intermediaire);
+  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
   border-radius: 16px;
   padding: 1.5rem;
   border: 1px solid rgba(198, 166, 100, 0.15);
@@ -1828,11 +1955,7 @@ a.profile-status-banner--cta:hover {
 }
 
 .profile-favorites__column {
-  background: linear-gradient(
-    135deg,
-    var(--bleu-nuit) 0%,
-    var(--bleu-intermediaire) 100%
-  );
+  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
   border-radius: 16px;
   padding: 1.25rem;
   border: 1px solid rgba(198, 166, 100, 0.2);
