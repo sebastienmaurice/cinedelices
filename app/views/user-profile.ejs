@@ -86,20 +86,13 @@
 
             <!-- AVATAR : photo + cadre + badge statut -->
             <div class="profile-hero-banner__avatar-wrapper">
-              <div class="profile-banner__photo<%= badge ? ' ' + badge.cssClass : '' %>">
+              <div class="profile-banner__photo<%= badge ? ' ' + badge.cssClass : '' %>" data-level="<%= badge ? badge.level : 0 %>">
                 <img
                   src="<%= user.picture || '/images/image-default-profile.jpg' %>"
                   alt="Avatar"
                   class="profile-photo <%= user.picture_status === 'pending' ? 'profile-photo--pending' : '' %>"
                 />
-                <% if (badge) { %>
-                <img
-                  src="<%= badge.frame %>"
-                  alt=""
-                  class="profile-photo-frame"
-                  aria-hidden="true"
-                />
-                <% } %>
+
                 <% if (user.picture || user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
                 <span
                   class="profile-avatar__badge media-status-badge media-status-badge--<%= user.picture_status === 'pending' ? 'pending' : user.picture_status === 'rejected' ? 'rejected' : 'approved' %>"
@@ -136,11 +129,7 @@
               </div>
               <% if (badge) { %>
               <div class="profile-hero-banner__level">
-                <img
-                  src="<%= badge.image %>"
-                  alt="<%= badge.label %>"
-                  class="profile-hero-banner__badge-img"
-                />
+                <span class="profile-hero-banner__badge-pip profile-hero-banner__badge-pip--level-<%= badge.level %>" aria-hidden="true"></span>
                 <span class="profile-hero-banner__badge-label"><%= badge.label %></span>
               </div>
               <% } else { %>
@@ -177,25 +166,6 @@
               <% } %>
             </div>
 
-            <!-- Mini stats : Recettes / Films / Avis / Moyenne -->
-            <div class="profile-hero-banner__mini-stats">
-              <div class="profile-hero-banner__mini-stat">
-                <span class="profile-hero-banner__mini-val"><%= userRecipes.length %></span>
-                <span class="profile-hero-banner__mini-lbl">Recettes</span>
-              </div>
-              <div class="profile-hero-banner__mini-stat">
-                <span class="profile-hero-banner__mini-val"><%= userMovies.length %></span>
-                <span class="profile-hero-banner__mini-lbl">Films</span>
-              </div>
-              <div class="profile-hero-banner__mini-stat">
-                <span class="profile-hero-banner__mini-val"><%= userNoticesCount %></span>
-                <span class="profile-hero-banner__mini-lbl">Avis</span>
-              </div>
-              <div class="profile-hero-banner__mini-stat profile-hero-banner__mini-stat--gold">
-                <span class="profile-hero-banner__mini-val"><%= avgUserRating || '0.0' %></span>
-                <span class="profile-hero-banner__mini-lbl">Moy. ★</span>
-              </div>
-            </div>
 
           </div><!-- /right -->
 

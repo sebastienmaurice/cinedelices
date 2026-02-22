@@ -270,52 +270,6 @@
   font-weight: 700;
 }
 
-/* Mini stats row */
-.profile-hero-banner__mini-stats {
-  display: flex;
-  flex-direction: row;
-  gap: 0.4rem;
-  width: 100%;
-  justify-content: flex-end;
-}
-
-.profile-hero-banner__mini-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.08rem;
-  background: rgba(13, 27, 42, 0.6);
-  border: 1px solid rgba(198, 166, 100, 0.15);
-  border-radius: 8px;
-  padding: 0.35rem 0.5rem;
-  backdrop-filter: blur(4px);
-  min-width: 46px;
-  transition: border-color 0.2s ease;
-}
-
-.profile-hero-banner__mini-stat:hover {
-  border-color: rgba(198, 166, 100, 0.4);
-}
-
-.profile-hero-banner__mini-val {
-  font-family: var(--font-h2-h6);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--argent-ecran);
-  line-height: 1;
-}
-
-.profile-hero-banner__mini-lbl {
-  font-size: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: rgba(236, 239, 241, 0.5);
-  white-space: nowrap;
-}
-
-.profile-hero-banner__mini-stat--gold .profile-hero-banner__mini-val {
-  color: var(--dore-popcorn);
-}
 
 .profile-hero-banner__eyebrow {
   font-size: 0.68rem;
@@ -356,11 +310,31 @@
   gap: 0.5rem;
 }
 
-.profile-hero-banner__badge-img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+/* Indicateur de niveau (pip coloré remplaçant l'image badge) */
+.profile-hero-banner__badge-pip {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.profile-hero-banner__badge-pip--level-1 { background: #4A5568; }
+.profile-hero-banner__badge-pip--level-2 {
+  background: #B87333;
+  box-shadow: 0 0 4px rgba(184, 115, 51, 0.7);
+}
+.profile-hero-banner__badge-pip--level-3 {
+  background: #B8C8D8;
+  box-shadow: 0 0 4px rgba(184, 200, 216, 0.6);
+}
+.profile-hero-banner__badge-pip--level-4 {
+  background: var(--gold);
+  box-shadow: 0 0 6px rgba(212, 168, 67, 0.9);
+}
+.profile-hero-banner__badge-pip--level-5 {
+  background: var(--gold-gradient);
+  background-size: 200% 200%;
+  animation: legendBorderPulse 2s ease-in-out infinite;
 }
 
 .profile-hero-banner__badge-label {
@@ -402,28 +376,14 @@
   }
 
   .profile-hero-banner .profile-photo {
-    width: 110px;
-    height: 110px;
-  }
-
-  .profile-hero-banner .profile-photo-frame {
-    width: 165px;
-    height: 165px;
+    width: 96px;
+    height: 96px;
   }
 
   /* Panneau droit plus compact sur tablette */
   .profile-hero-banner__right {
     min-width: 160px;
     max-width: 200px;
-  }
-
-  .profile-hero-banner__mini-stat {
-    min-width: 38px;
-    padding: 0.28rem 0.4rem;
-  }
-
-  .profile-hero-banner__mini-val {
-    font-size: 0.9rem;
   }
 }
 
@@ -445,13 +405,8 @@
   }
 
   .profile-hero-banner .profile-photo {
-    width: 80px;
-    height: 80px;
-  }
-
-  .profile-hero-banner .profile-photo-frame {
-    width: 120px;
-    height: 120px;
+    width: 72px;
+    height: 72px;
   }
 
   .profile-hero-banner__pseudo.profile-pseudo-badge input {
@@ -463,14 +418,6 @@
     min-width: 0;
     max-width: 100%;
     align-items: stretch;
-  }
-
-  .profile-hero-banner__mini-stats {
-    justify-content: space-between;
-  }
-
-  .profile-hero-banner__mini-stat {
-    flex: 1;
   }
 
   .profile-hero-banner__xp-hint {
@@ -997,6 +944,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3px;
+  border-radius: 19px; /* photo border-radius (16px) + 3px padding */
+  background: rgba(255, 255, 255, 0.08); /* défaut — aucun badge */
+  flex-shrink: 0;
+}
+
+/* Bordure dynamique selon le niveau de contribution (padding + background) */
+.profile-banner__photo[data-level="1"] {
+  background: #4A5568;
+}
+.profile-banner__photo[data-level="2"] {
+  background: #B87333;
+  box-shadow: 0 0 10px rgba(184, 115, 51, 0.4), 0 0 24px rgba(184, 115, 51, 0.15);
+}
+.profile-banner__photo[data-level="3"] {
+  background: #B8C8D8;
+  box-shadow: 0 0 10px rgba(184, 200, 216, 0.35), 0 0 24px rgba(184, 200, 216, 0.12);
+}
+.profile-banner__photo[data-level="4"] {
+  background: var(--gold-gradient);
+  box-shadow: 0 0 16px rgba(212, 168, 67, 0.5), 0 0 32px rgba(212, 168, 67, 0.2);
+}
+.profile-banner__photo[data-level="5"] {
+  background: var(--gold-gradient);
+  background-size: 200% 200%;
+  animation: legendBorderPulse 3s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(212, 168, 67, 0.55), 0 0 40px rgba(212, 168, 67, 0.25);
+}
+
+@keyframes legendBorderPulse {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
 }
 
 /* Pseudo badge sous la photo (dans profile-avatar-col) */
@@ -1096,10 +1075,11 @@
 }
 
 .profile-photo {
-  width: 170px;
-  height: 170px;
+  width: 120px;
+  height: 120px;
   border-radius: 16px;
   object-fit: cover;
+  display: block;
 }
 
 /* Positionnement du badge statut sur la photo de profil */
@@ -1120,33 +1100,6 @@
   margin: 0.1rem 0;
 }
 
-/* ====================================================== */
-/* =========== CADRE DE CONTRIBUTION (PROFIL) =========== */
-/* ====================================================== */
-
-/* Cadre décoratif superposé à la photo de profil — s'étend au-delà de la photo */
-.profile-photo-frame {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 240px;   /* photo 200px + 20px de chaque côté */
-  height: 240px;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.profile-avatar__note {
-  font-size: 0.65rem;
-  color: var(--rouge-projecteur);
-  font-weight: 600;
-  font-style: italic;
-  text-align: center;
-  line-height: 1.3;
-  width: 100%;
-  margin-top: 35px; /* compense le dépassement bas du cadre : (240 - 170) / 2 = 35px */
-}
 
 /* ====================================================== */
 /* ====================== FORMULAIRES =================== */
