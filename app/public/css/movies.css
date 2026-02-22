@@ -410,59 +410,30 @@
  * Cards films identiques aux .card-demo de la planche V2
  * Structure : Image + Overlay + Titre + Tags + Rating + Synopsis + Bouton
  */
-@keyframes shimmer-gold-border {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
+/* ── CARD FILM — technique background-clip padding-box/border-box
+   Le 1er background (sombre) couvre le padding-box (intérieur de la card).
+   Le 2e background (or) couvre le border-box (bordure uniquement visible).
+   Aucun pseudo-element, aucun z-index. ─────────────────────────────────── */
 .film-card {
-  background: linear-gradient(
-    160deg,
-    var(--surface-card-warm) 0%,
-    var(--bleu-nuit) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    rgba(255, 255, 255, 0.07) border-box;
+  border: 2px solid transparent;
   border-radius: 12px;
   padding: 1.5rem;
   position: relative;
-  /* PAS d'isolation: isolate — sinon ::before z-index:-1 passe AU-DESSUS du fond */
-  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
   display: flex;
   flex-direction: column;
 }
 
-/* Gradient border or scintillant — pseudo-element derrière la card (z-index:-1 sans isolation) */
-.film-card::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 14px;
-  background: linear-gradient(
-    135deg,
-    #7A5A14 0%,
-    #B8882A 20%,
-    #F2C84B 40%,
-    #FFE085 50%,
-    #F2C84B 60%,
-    #B8882A 80%,
-    #7A5A14 100%
-  );
-  background-size: 250% 250%;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
 .film-card:hover {
-  border-color: transparent;
-  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.18), 0 4px 10px rgba(0, 0, 0, 0.5);
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    linear-gradient(135deg, #7A5A14 0%, #B8882A 18%, #F2C84B 38%, #FFE085 50%, #F2C84B 62%, #B8882A 82%, #7A5A14 100%) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.2), 0 4px 10px rgba(0, 0, 0, 0.5);
   transform: translateY(-5px);
-}
-
-.film-card:hover::before {
-  opacity: 1;
   animation: shimmer-gold-border 2s ease infinite;
 }
 

@@ -832,35 +832,18 @@
   color: inherit;
 }
 
-/* ── Animation bordure or scintillante (home cards, overflow:hidden → box-shadow technique) ── */
-@keyframes pulse-gold-border {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px #D4A843,
-      0 0 0 3px rgba(184, 136, 42, 0.22),
-      0 14px 36px rgba(212, 168, 67, 0.18),
-      0 4px 10px rgba(0, 0, 0, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 0 2px #FFE085,
-      0 0 0 5px rgba(242, 200, 75, 0.36),
-      0 18px 44px rgba(242, 200, 75, 0.28),
-      0 4px 10px rgba(0, 0, 0, 0.4);
-  }
-}
+/* ── Technique background-clip pour gradient border scintillant
+   Fonctionne même avec overflow:hidden — pas de pseudo-element ni z-index ── */
 
 /* Carte gauche (recette) */
 .recipe-card--left {
   width: 100%;
   flex: 1;
-  background: linear-gradient(
-    160deg,
-    var(--surface-card-warm) 0%,
-    var(--bleu-nuit) 100%
-  );
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    rgba(255, 255, 255, 0.06) border-box;
+  border: 2px solid transparent;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -869,14 +852,13 @@
 }
 
 .recipe-card--left:hover {
-  border-color: transparent;
-  box-shadow:
-    0 0 0 2px #D4A843,
-    0 0 0 4px rgba(184, 136, 42, 0.28),
-    0 14px 36px rgba(212, 168, 67, 0.22),
-    0 4px 10px rgba(0, 0, 0, 0.45);
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    linear-gradient(135deg, #7A5A14 0%, #B8882A 18%, #F2C84B 38%, #FFE085 50%, #F2C84B 62%, #B8882A 82%, #7A5A14 100%) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.2), 0 4px 10px rgba(0, 0, 0, 0.45);
   transform: translateY(-4px) scale(1.012);
-  animation: pulse-gold-border 1.8s ease infinite;
+  animation: shimmer-gold-border 2s ease infinite;
 }
 
 .recipe-image-placeholder {
@@ -965,13 +947,11 @@
 .recipe-card--right {
   width: 100%;
   min-height: 500px;
-  background: linear-gradient(
-    160deg,
-    var(--surface-card-warm) 0%,
-    var(--bleu-nuit) 100%
-  );
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    rgba(255, 255, 255, 0.06) border-box;
+  border: 2px solid transparent;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -984,14 +964,13 @@
 }
 
 .recipe-card--right:hover {
-  border-color: transparent;
-  box-shadow:
-    0 0 0 2px #D4A843,
-    0 0 0 4px rgba(184, 136, 42, 0.28),
-    0 14px 36px rgba(212, 168, 67, 0.22),
-    0 4px 10px rgba(0, 0, 0, 0.45);
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    linear-gradient(135deg, #7A5A14 0%, #B8882A 18%, #F2C84B 38%, #FFE085 50%, #F2C84B 62%, #B8882A 82%, #7A5A14 100%) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.2), 0 4px 10px rgba(0, 0, 0, 0.45);
   transform: translateY(-4px) scale(1.012);
-  animation: pulse-gold-border 1.8s ease infinite;
+  animation: shimmer-gold-border 2s ease infinite;
 }
 
 .film-image-placeholder {
@@ -1169,13 +1148,11 @@
   height: auto;
   min-height: 380px;
   flex: 1 1 420px;
-  background: linear-gradient(
-    160deg,
-    var(--surface-card-warm) 0%,
-    var(--bleu-nuit) 100%
-  );
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    rgba(255, 255, 255, 0.06) border-box;
+  border: 2px solid transparent;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1185,14 +1162,13 @@
 }
 
 .recette-card:hover {
-  border-color: transparent;
-  box-shadow:
-    0 0 0 2px #D4A843,
-    0 0 0 4px rgba(184, 136, 42, 0.28),
-    0 14px 36px rgba(212, 168, 67, 0.22),
-    0 4px 10px rgba(0, 0, 0, 0.45);
+  background:
+    linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%) padding-box,
+    linear-gradient(135deg, #7A5A14 0%, #B8882A 18%, #F2C84B 38%, #FFE085 50%, #F2C84B 62%, #B8882A 82%, #7A5A14 100%) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.2), 0 4px 10px rgba(0, 0, 0, 0.45);
   transform: translateY(-4px) scale(1.012);
-  animation: pulse-gold-border 1.8s ease infinite;
+  animation: shimmer-gold-border 2s ease infinite;
 }
 
 .recette-image {
