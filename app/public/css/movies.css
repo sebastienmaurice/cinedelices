@@ -412,23 +412,42 @@
  */
 .film-card {
   background: linear-gradient(
-    0deg,
-    var(--bleu-nuit) 0%,
-    var(--bleu-intermediaire) 100%
+    160deg,
+    var(--surface-card-warm) 0%,
+    var(--bleu-nuit) 100%
   );
-  border: 2px solid var(--bleu-intermediaire);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  position: relative;
+  isolation: isolate;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
   /* Flex column : ancre le bouton en bas quelle que soit la hauteur du contenu */
   display: flex;
   flex-direction: column;
 }
 
+/* Gradient border or au hover — pseudo-element derrière la card */
+.film-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 13px;
+  background: var(--gold-gradient);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
 .film-card:hover {
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 10px 30px rgba(198, 166, 100, 0.2);
-  transform: translateY(-3px);
+  border-color: transparent;
+  box-shadow: 0 12px 36px rgba(212, 168, 67, 0.18), 0 4px 10px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+}
+
+.film-card:hover::before {
+  opacity: 1;
 }
 
 /* Image container */
