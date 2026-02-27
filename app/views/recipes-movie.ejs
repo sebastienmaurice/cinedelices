@@ -33,7 +33,7 @@
       <% const currentAuthorId = typeof authorId !== "undefined" ? authorId : null; %>
       <% const bannerStatus = typeof authorBannerStatus !== "undefined" ? authorBannerStatus : null; %>
       <% const isOwner = hasAuthorFilter && userId && currentAuthorId && String(userId) === String(currentAuthorId); %>
-      <% const bannerImage = (hasAuthorFilter && authorBanner) ? authorBanner : (movie ? (movie.bannerPath || movie.picture) : "/images/image-banner-movies.jpg"); %>
+      <% const bannerImage = (hasAuthorFilter && authorBanner) ? authorBanner : (movie ? (movie.bannerPath || movie.picture) : "/images/image-banner-movie-default.jpg"); %>
       <section class="banner__image__film" aria-hidden="true">
         <div class="banner__image__film__overlay"></div>
         <img
@@ -165,26 +165,14 @@
       <!-- SECTION RECETTES -->
       <section id="recipes">
         <div class="presentation__recipes">
-          <div class="presentation__text__recipes">
-            <% if (movie) { %>
-              <h3>Nos recettes cultes</h3>
-              <p>
-                Découvrez les recettes inspirées de ce film ou de cette série et
-                revivez les saveurs du grand écran
-              </p>
-            <% } else { %>
-              <h3>
-                <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : "Nos recettes cultes" %>
-              </h3>
-              <p>
-                Explorez les recettes inspirées du cinéma et trouvez votre prochaine inspiration.
-              </p>
-            <% } %>
-          </div>
+          <h3 class="presentation__title">
+            <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : (movie ? "Nos recettes cultes" : "Nos recettes cultes") %>
+          </h3>
+          <div class="presentation__rule"></div>
 
           <div class="presentation__button__recipes">
             <a
-              class="btn btn--gold"
+              class="btn btn--primary"
               href="<%= movie ? `/add-recipes-movies/${movie.id}` : '/add-recipes-movies/' %>"
             >
               <span class="btn__shimmer"></span>
@@ -212,22 +200,21 @@
             const cardBadge = badgesMap[recipe.contributor.id] || null;
           %>
           <article class="recipe-card">
-            <!-- Image avec overlay -->
-            <div class="recipe-card__image">
+            <!-- Image paysage 3:2 avec overlay et badge film -->
+            <div class="recipe-card__img">
               <img
                 src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
                 alt="<%= recipe.name %>"
                 loading="lazy"
-                width="640"
-                height="360"
+                width="600"
+                height="400"
                 decoding="async"
               />
-              <div class="recipe-card__image-overlay">
-                <% if (recipe.isNew) { %>
-                <span class="badge badge--new">Nouveau</span>
-                <% } %>
+              <!-- Overlay top : badge catégorie + favori -->
+              <div class="recipe-card__ot">
+                <span class="badge badge--type-b"><%= recipe.category %></span>
                 <button
-                  class="btn-favorite"
+                  class="btn-fav"
                   data-entity-id="<%= recipe.id %>"
                   data-entity-type="recipe"
                   data-is-favorite="<%= recipe.isFavorite || false %>"
@@ -237,50 +224,71 @@
                   <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                 </button>
               </div>
-            </div>
-
-            <!-- Titre -->
-            <h3 class="recipe-card__title"><%= recipe.name %></h3>
-
-            <!-- Tags meta -->
-            <div class="recipe-card__meta">
-              <span class="tag tag--red"><%= recipe.category %></span>
-              <span class="tag tag--silver">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <%= recipe.duration || recipe.time %> min
-              </span>
-              <span class="tag tag--velvet"><%= recipe.difficulty %></span>
-            </div>
-
-            <!-- Notation -->
-            <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
-              <% for (let i = 1; i <= 5; i++) { %>
-              <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
-                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </span>
-              <% } %>
-              <span class="rating__value"><%= displayRating %></span>
-            </div>
-
-            <!-- Description (2 lignes) -->
-            <p class="recipe-card__description"><%= truncatedDescription %></p>
-
-            <!-- Footer : Auteur + Bouton Voir -->
-            <div class="recipe-card__footer">
-              <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
-                <span class="author__avatar">
-                  <% if (authorAvatar) { %>
-                  <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
-                  <% } else { %>
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
-                  <% } %>
+              <!-- Badge film en bas à gauche -->
+              <% if (movie) { %>
+              <div class="recipe-card__ob">
+                <span class="badge badge--film">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                  <%= movie.title %>
                 </span>
-                <span class="author__name"><%= authorName %></span>
-              </a>
-              <a class="btn btn--primary btn--sm" href="/recipes-movie/details/<%= recipe.id %>">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                Voir
-              </a>
+              </div>
+              <% } %>
+            </div>
+
+            <!-- Corps de la card -->
+            <div class="recipe-card__body">
+              <!-- Titre — Playfair Display italic -->
+              <h3 class="recipe-ttl"><%= recipe.name %></h3>
+
+              <!-- Tags meta — difficulté : vert=facile, or=moyen, rouge=difficile -->
+              <div class="recipe-card__meta">
+                <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--vert' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--rouge' : 'tag--or' %>"><%= recipe.difficulty || 'N/A' %></span>
+                <% if (recipe.isNew) { %><span class="tag tag--bleu">Nouveau</span><% } %>
+              </div>
+
+              <!-- Ligne notation + infos recette -->
+              <div class="recipe-card__infos-row">
+                <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                  <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
+                    <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </span>
+                  <% } %>
+                  <span class="rating__value"><%= displayRating %></span>
+                </div>
+                <div class="recipe-card__infos">
+                  <span class="recipe-info-item">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <%= recipe.duration || recipe.time %> min
+                  </span>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <p class="recipe-card__desc"><%= truncatedDescription %></p>
+
+              <!-- Footer : Auteur + Bouton Voir -->
+              <div class="recipe-card__foot">
+                <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
+                  <span class="author__av">
+                    <% if (authorAvatar) { %>
+                    <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
+                    <% } else { %>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+                    <% } %>
+                  </span>
+                  <span class="author__info">
+                    <span class="author__name"><%= authorName %></span>
+                    <% if (cardBadge) { %>
+                    <span class="author__lvl"><%= cardBadge.cssClass.includes('lvl1') ? '★' : cardBadge.cssClass.includes('lvl2') ? '★★' : cardBadge.cssClass.includes('lvl3') ? '★★★' : cardBadge.cssClass.includes('lvl4') ? '★★★★' : '★★★★★' %></span>
+                    <% } %>
+                  </span>
+                </a>
+                <a class="btn btn--red" href="/recipes-movie/details/<%= recipe.id %>">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Voir
+                </a>
+              </div>
             </div>
           </article>
           <% }) %> <% } %>
@@ -374,7 +382,7 @@
         <input type="file" id="bannerInput" accept="image/jpeg,image/png,image/webp" hidden />
 
         <div class="banner-modal__actions">
-          <label for="bannerInput" class="btn btn--gold btn--sm">
+          <label for="bannerInput" class="btn btn--primary btn--sm">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
             Choisir une image
           </label>
@@ -384,7 +392,7 @@
           </button>
         </div>
         <div class="banner-modal__footer">
-          <button type="button" class="btn btn--gold" id="saveBannerBtn" disabled>Enregistrer</button>
+          <button type="button" class="btn btn--primary" id="saveBannerBtn" disabled>Enregistrer</button>
           <button type="button" class="btn btn--outline" id="cancelBannerModal">Annuler</button>
         </div>
       </div>

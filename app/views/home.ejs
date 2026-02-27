@@ -48,7 +48,7 @@
               <p class="hero-slider__subtitle">
                 À Paris, même un rat peut devenir un grand chef
               </p>
-              <a href="/movies" class="btn btn--gold-special">
+              <a href="/movies" class="btn btn--hero">
                 <span class="btn__shimmer"></span>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
                 <span class="btn__text">Passer en cuisine</span>
@@ -75,7 +75,7 @@
               <p class="hero-slider__subtitle">
                 Quand la cuisine devient une question de survie
               </p>
-              <a href="/recipes-movie" class="btn btn--gold-special">
+              <a href="/recipes-movie" class="btn btn--hero">
                 <span class="btn__shimmer"></span>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
                 <span class="btn__text">Passer aux fourneaux</span>
@@ -102,7 +102,7 @@
               <p class="hero-slider__subtitle">
                 Explorez les saveurs iconiques du grand écran
               </p>
-              <a href="/recipes-movie" class="btn btn--gold-special">
+              <a href="/recipes-movie" class="btn btn--hero">
                 <span class="btn__shimmer"></span>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
                 <span class="btn__text">Voir les recettes</span>
@@ -130,7 +130,7 @@
               <p class="hero-slider__subtitle">
                 Partagez vos recettes et commentez celles des autres
               </p>
-              <a href="/auth/register" class="btn btn--gold-special">
+              <a href="/auth/register" class="btn btn--hero">
                 <span class="btn__shimmer"></span>
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
                 <span class="btn__text">Rejoindre la communauté</span>
@@ -180,194 +180,244 @@
         </div>
       </section>
 
-      <!-- RECETTE DU JOUR -->
+      <!--
+        RECETTE DU JOUR & QUELQUES FILMS
+        Layout : CSS Grid 2 colonnes (42% / 58%), align-items:stretch
+        → Gauche : recette du jour — overlay cinématographique (image absolute + gradient), ratio 3:2
+        → Droite : grille 3 colonnes — 2 film-cards portrait 2:3 + 1 carte CTA "Participez"
+        → CTA et boutons films visibles uniquement au hover
+        → Les deux colonnes s'étirent à la même hauteur dynamiquement via align-items:stretch.
+      -->
       <section
-        class="recipeofthe__day"
+        class="home-duo"
         id="recettes"
         role="region"
-        aria-labelledby="recette-du-jour-titre"
+        aria-label="Recette du jour et sélection de films"
       >
-        <div class="recipeofthe__day-container">
-          <!-- Colonne gauche : Recette du jour -->
-          <div class="recipe-column-left">
+        <!-- Colonne gauche : Recette du jour — traitement cinématographique -->
+        <div class="home-duo__left">
+          <div class="section-header-block">
             <div class="section-header">
-              <h2 id="recette-du-jour-titre">Recette du jour</h2>
-              <p class="section-subtitle">
-                Le goût du cinéma et le cinéma du goût
-              </p>
+              <h2 id="recette-du-jour-titre" class="section-title">Recette du jour</h2>
+              <div class="section-rule"></div>
             </div>
-            <article class="recipe-card recipe-card--left">
-              <div class="recipe-image-placeholder">
-                <img
-                  src="<%= topRecipe.picture %>"
-                  alt="Recette inspiré du film <%= topRecipe.Movie.title %>"
-                  loading="lazy"
-                  width="600"
-                  height="260"
-                />
-              </div>
-              <div class="recipe-info">
-                <h3><%= topRecipe.name %></h3>
-                <p class="recipe-film"><%= topRecipe.Movie.title %></p>
-                <p class="recipe-description"><%= topRecipe.description %></p>
-                <a
-                  class="btn btn--gold"
-                  href="/recipes-movie/details/<%= topRecipe.id %>"
-                  aria-label="Voir la recette <%= topRecipe.name %> (accéder à la fiche recette)"
-                >
-                  <span class="btn__shimmer"></span>
-                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                  <span class="btn__text">Voir la recette</span>
-                </a>
-              </div>
-            </article>
+            <p class="section-meta">
+              Le goût du cinéma et le cinéma du goût
+            </p>
           </div>
+          <article class="recipe-card recipe-card--featured recipe-card--cinematic">
+            <!-- Image pleine hauteur — le contenu flotte par-dessus via overlay -->
+            <div class="recipe-card__img">
+              <img
+                src="<%= topRecipe.picture %>"
+                alt="Recette inspirée de <%= topRecipe.Movie.title %>"
+                loading="lazy"
+                width="600"
+                height="900"
+              />
+            </div>
+            <!-- Overlay cinématographique : badge + titre + desc + CTA -->
+            <div class="recipe-card__cin-overlay">
+              <div class="recipe-card__ob">
+                <span class="badge badge--film-dk">🎬 <%= topRecipe.Movie.title %></span>
+              </div>
+              <div class="recipe-card__cin-body">
+                <h3 class="recipe-ttl"><%= topRecipe.name %></h3>
+                <!-- Métadonnées : temps · personnes · difficulté -->
+                <div class="recipe-card__cin-meta">
+                  <span class="recipe-card__cin-meta-item">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <%= topRecipe.time %> min
+                  </span>
+                  <% if (topRecipe.servings) { %>
+                  <span class="recipe-card__cin-meta-item">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <%= topRecipe.servings %> pers.
+                  </span>
+                  <% } %>
+                  <span class="recipe-card__cin-meta-item">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                    <%= topRecipe.difficulty %>
+                  </span>
+                </div>
+                <p class="recipe-card__desc"><%= topRecipe.description %></p>
+                <div class="recipe-card__foot">
+                  <a
+                    class="btn btn--primary"
+                    href="/recipes-movie/details/<%= topRecipe.id %>"
+                    aria-label="Voir la recette <%= topRecipe.name %>"
+                  >
+                    <span class="btn__shimmer"></span>
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+                    <span class="btn__text">Voir la recette</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
 
-          <!-- Colonnes droite : Les 4 films du jour -->
-          <div class="films-columns-right">
+        <!-- Colonne droite : Quelques films Ciné Délices -->
+        <div class="home-duo__right">
+          <div class="section-header-block">
             <div class="section-header">
-              <h2>Quelques films Ciné Délices</h2>
-              <p class="section-subtitle">
-                Une sélection de films et séries cultes avec leurs recettes
-                inspirées. Plongez dans l'univers du cinéma et découvrez le goût
-                du grand écran.
-              </p>
+              <h2 class="section-title">Quelques films Ciné Délices</h2>
+              <div class="section-rule"></div>
             </div>
-            <div class="films-container">
-              <% if (topMovies && topMovies.length > 0) { %>
-              <!-- Première carte film -->
-              <% if (topMovies[0]) { %>
-              <a
-                href="/recipes-movie/<%= topMovies[0].id %>"
-                class="recipe-card recipe-card--right"
-                aria-label="Voir le film <%= topMovies[0].title %>"
-              >
-                <div class="film-image-placeholder">
-                  <img
-                    class="img-default"
-                    src="<%= topMovies[0].cardPath || topMovies[0].picture %>"
-                    alt="<%= topMovies[0].title %>"
-                    loading="lazy"
-                    width="800"
-                    height="400"
-                  />
-                </div>
-                <div class="film-info">
-                  <h3><%= topMovies[0].title %></h3>
-                  <p class="film-description">
-                    Explorez les recettes cultes inspirées de <%=
-                    topMovies[0].title %> et revivez les saveurs du grand écran.
-                  </p>
-                  <span class="btn btn--gold" aria-hidden="true">
-                    <span class="btn__shimmer"></span>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                    <span class="btn__text">Voir le film</span>
-                  </span>
-                </div>
-              </a>
-              <% } %>
+            <p class="section-meta">
+              Une sélection de films et séries cultes avec leurs recettes inspirées.
+            </p>
+          </div>
+          <div class="films-grid">
+            <% if (topMovies && topMovies.length > 0) { %>
 
-              <!-- Deuxième carte film -->
-              <% if (topMovies[1]) { %>
-              <a
-                href="/recipes-movie/<%= topMovies[1].id %>"
-                class="recipe-card recipe-card--right"
-                aria-label="Voir le film <%= topMovies[1].title %>"
-              >
-                <div class="film-image-placeholder">
-                  <img
-                    class="img-default"
-                    src="<%= topMovies[1].cardPath || topMovies[1].picture %>"
-                    alt="<%= topMovies[1].title %>"
-                    loading="lazy"
-                    width="800"
-                    height="400"
-                  />
+            <%/* ── 2 cards portrait (topMovies[0] et [1]) ── */%>
+            <% ;[topMovies[0], topMovies[1]].forEach(function(m) { %>
+            <% if (m) { %>
+            <a
+              href="/recipes-movie/<%= m.id %>"
+              class="film-card film-card--portrait"
+              aria-label="Voir les recettes de <%= m.title %>"
+            >
+              <div class="film-card__img">
+                <img
+                  src="<%= m.cardPath || m.picture %>"
+                  alt="Affiche du film <%= m.title %>"
+                  loading="lazy"
+                  width="400"
+                  height="600"
+                />
+                <div class="film-card__ot">
+                  <% if (m.genre) { %>
+                  <span class="badge badge--type-b"><%= m.genre.split(',')[0].trim() %></span>
+                  <% } %>
+                  <% if (m.recipeCount > 0) { %>
+                  <span class="badge film-card__recipe-count"><%= m.recipeCount %> recette<%= m.recipeCount > 1 ? 's' : '' %></span>
+                  <% } %>
                 </div>
-                <div class="film-info">
-                  <h3><%= topMovies[1].title %></h3>
-                  <p class="film-description">
-                    Découvrez toutes les recettes inspirées de ce film ou de
-                    cette série culte et plongez vous dans l'univers de <%=
-                    topMovies[1].title %>.
-                  </p>
-                  <span class="btn btn--gold" aria-hidden="true">
-                    <span class="btn__shimmer"></span>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                    <span class="btn__text">Voir le film</span>
-                  </span>
+                <div class="film-card__tz">
+                  <span class="film-ttl"><%= m.title %></span>
+                  <% if (m.year) { %><span class="film-byl"><%= m.year %></span><% } %>
                 </div>
-              </a>
-              <% } %>
+              </div>
+              <div class="film-card__body">
+                <% if (m.synopsis) { %>
+                <p class="film-card__desc"><%= m.synopsis %></p>
+                <% } %>
+                <div class="film-card__foot">
+                  <span class="btn btn--red">Voir les recettes →</span>
+                </div>
+              </div>
+            </a>
+            <% } %>
+            <% }) %>
 
-              <!-- Troisième carte film -->
-              <% if (topMovies[2]) { %>
-              <a
-                href="/recipes-movie/<%= topMovies[2].id %>"
-                class="recipe-card recipe-card--right"
-                aria-label="Voir le film <%= topMovies[2].title %>"
-              >
-                <div class="film-image-placeholder">
-                  <img
-                    class="img-default"
-                    src="<%= topMovies[2].cardPath || topMovies[2].picture %>"
-                    alt="<%= topMovies[2].title %>"
-                    loading="lazy"
-                    width="800"
-                    height="400"
-                  />
+            <%/* ── Carte CTA "Participez" — 3e colonne ── */%>
+            <a
+              href="/add-recipes-movies/"
+              class="film-card film-card--cta"
+              aria-label="Ajouter un film ou une recette"
+            >
+              <div class="film-card__cta-content">
+                <div class="film-card__cta-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
                 </div>
-                <div class="film-info">
-                  <h3><%= topMovies[2].title %></h3>
-                  <p class="film-description">
-                    Découvrez toutes les recettes inspirées de ce film ou de
-                    cette série culte et plongez vous dans l'univers de <%=
-                    topMovies[2].title %>.
-                  </p>
-                  <span class="btn btn--gold" aria-hidden="true">
+                <h3 class="film-card__cta-title">Participez&nbsp;!</h3>
+                <p class="film-card__cta-desc">
+                  Ajoutez votre film préféré et la recette qu'il vous inspire.
+                </p>
+                <div class="film-card__foot">
+                  <span class="btn btn--primary">
                     <span class="btn__shimmer"></span>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                    <span class="btn__text">Voir le film</span>
+                    <span class="btn__text">Ajouter maintenant</span>
                   </span>
                 </div>
-              </a>
-              <% } %>
+              </div>
+            </a>
 
-              <!-- Quatrième carte film -->
-              <% if (topMovies[3]) { %>
-              <a
-                href="/recipes-movie/<%= topMovies[3].id %>"
-                class="recipe-card recipe-card--right"
-                aria-label="Voir le film <%= topMovies[3].title %>"
-              >
-                <div class="film-image-placeholder">
-                  <img
-                    class="img-default"
-                    src="<%= topMovies[3].cardPath || topMovies[3].picture %>"
-                    alt="<%= topMovies[3].title %>"
-                    loading="lazy"
-                    width="800"
-                    height="400"
-                  />
-                </div>
-                <div class="film-info">
-                  <h3><%= topMovies[3].title %></h3>
-                  <p class="film-description">
-                    Découvrez toutes les recettes inspirées de ce film ou de
-                    cette série culte et plongez vous dans l'univers de <%=
-                    topMovies[3].title %>.
-                  </p>
-                  <span class="btn btn--gold" aria-hidden="true">
-                    <span class="btn__shimmer"></span>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                    <span class="btn__text">Voir le film</span>
-                  </span>
-                </div>
-              </a>
-              <% } %> <% } else { %>
-              <p class="no-movies">Aucun film disponible pour le moment.</p>
-              <% } %>
-            </div>
+            <% } else { %>
+            <p class="no-movies">Aucun film disponible pour le moment.</p>
+            <% } %>
+          </div>
+        </div>
+      </section>
+
+      <!-- CATÉGORIES / GENRES — Badges cinéma interactifs -->
+      <%
+        const GENRE_THEMES = {
+          'Action':          { glow: '#FF6622', accent: '#FF8844', rgb: '255,102,34',  anim: 'bullet'      },
+          'Horreur':         { glow: '#C23018', accent: '#E84020', rgb: '194,48,24',   anim: 'blood'       },
+          'Aventure':        { glow: '#D4A843', accent: '#F2C84B', rgb: '212,168,67',  anim: 'fuse'        },
+          'Comédie':         { glow: '#FFE085', accent: '#F2C84B', rgb: '255,224,133', anim: 'confetti'    },
+          'Animation':       { glow: '#F2C84B', accent: '#FFE085', rgb: '242,200,75',  anim: 'brush'       },
+          'Romance':         { glow: '#FF6B8A', accent: '#FF8FA3', rgb: '255,107,138', anim: 'heart'       },
+          'Science-Fiction': { glow: '#00FF88', accent: '#00FFCC', rgb: '0,255,136',   anim: 'scan'        },
+          'Drame':           { glow: '#C4A052', accent: '#D4A843', rgb: '196,160,82',  anim: 'tear'        },
+          'Thriller':        { glow: '#8899BB', accent: '#AABBDD', rgb: '136,153,187', anim: 'strobe'      },
+          'Fantastique':     { glow: '#C084FC', accent: '#A855F7', rgb: '192,132,252', anim: 'magic'       },
+          'Policier':        { glow: '#A8B8C8', accent: '#C8D8E8', rgb: '168,184,200', anim: 'siren'       },
+          'Documentaire':    { glow: '#7BA7BC', accent: '#A8C8D8', rgb: '123,167,188', anim: 'viewfinder'  },
+          'Biopic':          { glow: '#B8882A', accent: '#C4A052', rgb: '184,136,42',  anim: 'torch'       },
+          'Guerre':          { glow: '#778899', accent: '#99AABB', rgb: '119,136,153', anim: 'radar'       },
+          'Western':         { glow: '#A07840', accent: '#C09858', rgb: '160,120,64',  anim: 'torch'       },
+          'Musical':         { glow: '#C4A052', accent: '#FFE085', rgb: '196,160,82',  anim: 'notes'       },
+        };
+        const DEFAULT_GENRE_THEME = { glow: '#C4A052', accent: '#F2C84B', rgb: '196,160,82', anim: 'fuse' };
+        function genreSlug(name) {
+          return name.toLowerCase()
+            .replace(/[éèêë]/g, 'e').replace(/[àâ]/g, 'a')
+            .replace(/[ôö]/g, 'o').replace(/[îï]/g, 'i')
+            .replace(/[ùûü]/g, 'u').replace(/ç/g, 'c')
+            .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        }
+      %>
+      <canvas id="burst-canvas"></canvas>
+      <section class="category-strip" aria-label="Explorer par genre">
+        <div class="section-header-block">
+          <div class="section-header">
+            <h2 class="section-title">Explorer par genre</h2>
+            <div class="section-rule"></div>
+          </div>
+          <p class="section-meta">Le goût du cinéma se décline en mille saveurs</p>
+        </div>
+        <div class="carousel-outer" id="carouselOuter">
+          <div class="carousel-track" id="track">
+
+            <% if (genreStats && genreStats.length > 0) { %>
+              <% genreStats.forEach(function(stat) { %>
+                <% const theme = GENRE_THEMES[stat.genre] || DEFAULT_GENRE_THEME; %>
+                <% const slug = genreSlug(stat.genre); %>
+                <article class="badge"
+                  style="--glow:<%- theme.glow %>;--accent:<%- theme.accent %>;--glow-rgb:<%- theme.rgb %>;"
+                  data-count="<%- stat.count %>"
+                  data-genre="<%- stat.genre %>"
+                  data-anim="<%- theme.anim %>"
+                  data-films='[]'>
+                  <canvas class="badge__border-canvas"></canvas>
+                  <div class="badge__img-wrap">
+                    <img class="badge__img"
+                         src="/images/categories/<%-slug%>.webp"
+                         alt="<%- stat.genre %>"
+                         onerror="this.src.endsWith('.webp')?(this.src=this.src.slice(0,-5)+'.png'):(this.onerror=null,this.style.display='none')" />
+                    <div class="badge__fade"></div>
+                    <div class="badge__img-tint"></div>
+                  </div>
+                  <div class="badge__text">
+                    <span class="badge__category"><%- stat.genre %></span>
+                    <div class="badge__divider"></div>
+                    <p class="badge__count">
+                      <strong data-target="<%- stat.count %>">0</strong>
+                      <span>Film<%= stat.count > 1 ? 's' : '' %></span>
+                    </p>
+                  </div>
+                  <div class="tooltip"></div>
+                </article>
+              <% }) %>
+            <% } %>
+
           </div>
         </div>
       </section>
@@ -379,9 +429,12 @@
         role="region"
         aria-labelledby="top3-titre"
       >
-        <div class="section-header">
-          <h2 id="top3-titre">Top 3 des recettes</h2>
-          <p class="section-subtitle">
+        <div class="section-header-block">
+          <div class="section-header">
+            <h2 id="top3-titre" class="section-title">Top 3 des recettes</h2>
+            <div class="section-rule"></div>
+          </div>
+          <p class="section-meta">
             Les recettes les plus appréciées par la communauté Ciné Délices,
             inspirées de scènes cultes du cinéma.
           </p>
@@ -390,29 +443,31 @@
         <div class="top-recettes__grid">
           <!-- boucle sur les 3 recettes -->
           <% recipes.forEach(recipe => { %>
-          <article class="recette-card">
-            <div class="recette-image">
+          <article class="recipe-card">
+            <div class="recipe-card__img">
               <img
                 src="<%= recipe.picture %>"
                 alt="<%= recipe.name %> inspiré de <%= recipe.Movie.title %>"
                 loading="lazy"
                 width="420"
-                height="220"
+                height="280"
               />
+              <div class="recipe-card__ob">
+                <span class="badge badge--film-dk">🎬 <%= recipe.Movie.title %></span>
+              </div>
             </div>
-            <div class="recette-content">
-              <h3><%= recipe.name %></h3>
-              <p class="recette-film"><%= recipe.Movie.title %></p>
-              <p class="recette-description"><%= recipe.description %></p>
-              <a
-                class="btn btn--gold"
-                href="/recipes-movie/details/<%= recipe.id %>"
-                aria-label="Voir la recette <%= recipe.name %> (accéder à la fiche recette)"
-              >
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                <span class="btn__text">Voir la recette</span>
-              </a>
+            <div class="recipe-card__body">
+              <h3 class="recipe-ttl"><%= recipe.name %></h3>
+              <p class="recipe-card__desc"><%= recipe.description %></p>
+              <div class="recipe-card__foot">
+                <a
+                  class="btn btn--red btn--sm"
+                  href="/recipes-movie/details/<%= recipe.id %>"
+                  aria-label="Voir la recette <%= recipe.name %>"
+                >
+                  Voir la recette →
+                </a>
+              </div>
             </div>
           </article>
           <% }) %>
@@ -451,5 +506,7 @@
     ></script>
     <!-- Script du hero slider -->
     <script src="/js/hero-slider.js" defer></script>
+    <!-- Script des badges catégorie -->
+    <script src="/js/category-badges.js" defer></script>
   </body>
 </html>

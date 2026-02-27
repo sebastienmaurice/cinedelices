@@ -46,11 +46,11 @@
   /* ====================================================== */
   /* COULEURS PRINCIPALES - Palette Bleue
   ====================================================== */
-  --bleu-nuit: #0d1b2a;
+  --bleu-nuit: #142234; /* +3% L vs #0d1b2a — fond plus lisible sur écrans non calibrés */
   --bleu-intermediaire: #1b263b;
   --bleu-clair: #415a77;
   --bleu-secondaire: #5a7391;
-  --bleu-fond: #0D1C2E;
+  --bleu-fond: #162845; /* +2% L vs #0D1C2E — cards distinguables du fond */
   --bleu-titre-section: #0d1b2a;
 
   /* Surfaces cards */
@@ -64,9 +64,10 @@
   --or-100: #D4A843; /* or ticket cinéma, vibrant */
   --or-200: #B8882A; /* base dorée profonde */
   --or-300: #7A5A14; /* foncé, profond */
+  --or-titre: #C4A052; /* or titres — ambré, moins saturé, luxe cinéma */
 
   /* Variables de compatibilité (mappées vers les nouvelles) */
-  --dore-popcorn: var(--or-100); /* or ticket cinéma */
+  --dore-popcorn: var(--or-titre); /* or cinéma — ambré, luxe */
   --dore-fonce: var(--or-200); /* base dorée profonde */
   --dore-clair: #F2C84B; /* lumineux */
   --jaune-blond: #FFE085; /* éclat maximal */
@@ -150,18 +151,9 @@
   --ombre-intermediaire-strong: rgba(27, 38, 59, 0.45);
 
   /* ====================================================== */
-  /* COULEURS BOUTONS VALIDATION
-  ====================================================== */
-  --vert-valid: #28a745;
-  --vert-valid-hover: #218838;
-  --rouge-refus: #dc3545;
-  --rouge-refus-hover: #c82333;
-
-  /* ====================================================== */
   /* EFFETS GLOBY / GLASSMORPHISM
   ====================================================== */
-  --gold-popcorn: #f7c948;
-  --red-cine: #d72638;
+  --gold-popcorn: #f7c948; /* utilisé dans footer separator gradient */
   /* Refactoring : Variables supprimées (non utilisées) :
      --blond, --silver-screen, --input-bg, --glass-bg, --glass-border, --glass-shadow
   */
@@ -277,9 +269,14 @@
   /* ====================================================== */
   /* TYPOGRAPHIES
   ====================================================== */
-  --font-h1: "Fascinate Inline", cursive;
-  --font-h2-h6: "Limelight", cursive;
+  --font-h1: "Playfair Display", serif;
+  --font-h2-h6: "Playfair Display", serif;
   --font-body: "Lato", sans-serif;
+
+  /* Polices cinéma premium — disponibles sur toutes les pages */
+  --f-display:   'Bebas Neue', 'Impact', cursive;     /* headers cinéma, section-titles */
+  --f-title:     'Cinzel', 'Georgia', serif;           /* titres cards premium */
+  --f-editorial: 'Playfair Display', serif;            /* titres recettes, éditorial culinaire */
 
   /* ====================================================== */
   /* TAILLES ET ESPACEMENTS
@@ -378,27 +375,30 @@ body {
  * Styles des titres (hiérarchie typographique)
  * ---------------------------------------------
  * Les titres utilisent des polices différentes selon leur niveau :
- *   - h1 : Police "Fascinate Inline" (style cinéma)
- *   - h2 à h6 : Police "Limelight" (style vintage)
+ *   - h1 : Police "Playfair Display" (style cinéma éditorial)
+ *   - h2 à h6 : Police "Playfair Display" (hiérarchie par font-weight)
  *
  * margin-bottom: 0 ou négatif : Réduit l'espacement pour un rendu plus serré
  * line-height: 1.1 : Interligne réduit pour les titres (évite trop d'espace)
  */
 h1 {
   font-family: var(--font-h1);
-  color: var(--dore-popcorn);
+  color: var(--or-titre);
   font-size: 2.5rem;
+  font-weight: 900;
 }
 h2 {
   font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
+  color: var(--or-titre);
   font-size: 2rem;
+  font-weight: 800;
   margin-bottom: 0;
 }
 h3 {
   font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
+  color: var(--or-titre);
   font-size: 1.5rem;
+  font-weight: 700;
   margin-bottom: 0;
   line-height: 1.1;
 }
@@ -406,7 +406,8 @@ h4,
 h5,
 h6 {
   font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
+  color: var(--or-titre);
+  font-weight: 600;
   margin-bottom: -0.2rem;
   line-height: 1.1;
 }
@@ -434,7 +435,7 @@ a {
   text-decoration: none;
   transition: color var(--transition);
 }
-a:hover {
+a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
   color: var(--rouge-projecteur);
 }
 
@@ -1119,32 +1120,31 @@ a:hover {
  * Palette : Gold, Red, Velvet, Sapphire, Copper, Silver
  */
 
-/* ========== BASE BUTTON ========== */
+/* ========== BASE BUTTON — Moodboard V2.1 ========== */
 .btn {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
+  padding: 0.6rem 1.25rem;
   border-radius: 8px;
-  cursor: pointer;
-  text-decoration: none;
   border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  position: relative;
   overflow: hidden;
   isolation: isolate;
   user-select: none;
-  transition:
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.3s ease,
-    color 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn__text {
   position: relative;
-  z-index: 3;
+  z-index: 1;
 }
 
 .btn svg,
@@ -1153,10 +1153,8 @@ a:hover {
   height: 16px;
   flex-shrink: 0;
   position: relative;
-  z-index: 3;
-  transition:
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.3s ease;
+  z-index: 1;
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
 /* Shimmer effect */
@@ -1176,60 +1174,22 @@ a:hover {
   transition: left 0.6s ease;
 }
 
-/* Liseré pointillé intérieur - Style Ticket Premium */
-.btn::after {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border-radius: 5px;
-  border: 1.5px dashed currentColor;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 1;
-  transition:
-    opacity 0.3s ease,
-    inset 0.3s ease;
-}
-
-/* Border glow extérieur */
-.btn::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: linear-gradient(135deg, transparent, transparent);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 0;
-}
-
 /* ========== HOVER EFFECTS COMMUNS ========== */
 .btn:hover:not(:disabled) {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-1px);
 }
 
 .btn:hover:not(:disabled) .btn__shimmer {
   left: 100%;
 }
 
-.btn:hover:not(:disabled)::after {
-  opacity: 0.7;
-  inset: 4px;
-}
-
 .btn:hover:not(:disabled) svg,
 .btn:hover:not(:disabled) .icon {
-  transform: rotate(15deg) scale(1.2);
+  transform: scale(1.1);
 }
 
 .btn:active:not(:disabled) {
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(0);
   transition-duration: 0.1s;
 }
 
@@ -1257,277 +1217,47 @@ a:hover {
   height: 14px;
 }
 
-.btn--sm::after {
-  inset: 3px;
-  border-radius: 6px;
+/* ========== BOUTON FULL WIDTH ========== */
+.btn--full {
+  width: 100%;
+  justify-content: center;
 }
 
-/* ========== BOUTON GOLD - Or Ticket Cinéma ========== */
-.btn--gold {
+/* ========== BOUTON PRIMARY — Or Moodboard V2.1 ========== */
+.btn--primary {
   background: var(--gold-gradient);
   color: #1C1404;
   box-shadow: 0 2px 10px rgba(184, 136, 42, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.btn--gold::before {
-  background: var(--gold-gradient-hover);
-}
-
-.btn--gold:hover:not(:disabled) {
+.btn--primary:hover:not(:disabled) {
   background: var(--gold-gradient-hover);
   color: #1C1404;
-  filter: none;
-  box-shadow: 0 6px 24px rgba(212, 168, 67, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 24px rgba(212, 168, 67, 0.38);
 }
 
-.btn--gold:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--gold:hover:not(:disabled) svg,
-.btn--gold:hover:not(:disabled) .icon {
+.btn--primary:hover:not(:disabled) svg,
+.btn--primary:hover:not(:disabled) .icon {
   filter: drop-shadow(0 0 6px rgba(28, 20, 4, 0.5));
 }
 
-/* ========== BOUTON RED - Rouge Velours ========== */
+/* ========== BOUTON RED — Rouge Moodboard V2.1 ========== */
 .btn--red {
-  background: var(--red-gradient);
-  color: #FFF5F0;
-  box-shadow: 0 2px 10px rgba(139, 28, 19, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.btn--red::before {
-  background: var(--red-gradient-hover);
+  background: linear-gradient(135deg, #8C1C13 0%, #C23018 45%, #E84020 75%, #C23018 100%);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(194, 48, 24, 0.28);
 }
 
 .btn--red:hover:not(:disabled) {
-  background: var(--red-gradient-hover);
-  color: #FFF5F0;
-  box-shadow: 0 6px 24px rgba(232, 64, 32, 0.35);
+  box-shadow: 0 6px 20px rgba(194, 48, 24, 0.52);
 }
 
-.btn--red:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--red:hover:not(:disabled) svg,
-.btn--red:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
-}
-
-/* ========== BOUTON VELVET - Vert Velours ========== */
-.btn--velvet,
-.btn--green {
-  background: linear-gradient(
-    135deg,
-    var(--velvet-dark) 0%,
-    var(--velvet) 50%,
-    var(--velvet-light) 100%
-  );
-  color: var(--gold-light);
-}
-
-.btn--velvet::before,
-.btn--green::before {
-  background: linear-gradient(
-    135deg,
-    var(--velvet-light),
-    var(--velvet),
-    var(--velvet-light)
-  );
-}
-
-.btn--velvet::after,
-.btn--green::after {
-  border-color: var(--gold-light);
-}
-
-.btn--velvet:hover:not(:disabled),
-.btn--green:hover:not(:disabled) {
-  color: var(--gold-dark);
-  filter: brightness(0.9);
-}
-
-.btn--velvet:hover:not(:disabled)::before,
-.btn--green:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--velvet:hover:not(:disabled) svg,
-.btn--velvet:hover:not(:disabled) .icon,
-.btn--green:hover:not(:disabled) svg,
-.btn--green:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 8px var(--gold));
-  transform: rotate(90deg) scale(1.2);
-}
-
-/* ========== BOUTON SAPPHIRE - Bleu Saphir ========== */
-.btn--sapphire,
-.btn--blue-night {
-  background: linear-gradient(
-    135deg,
-    var(--sapphire-dark) 0%,
-    var(--sapphire) 50%,
-    var(--sapphire-light) 100%
-  );
-  color: var(--text-light);
-}
-
-.btn--sapphire::before,
-.btn--blue-night::before {
-  background: linear-gradient(
-    135deg,
-    var(--sapphire-light),
-    var(--sapphire),
-    var(--sapphire-light)
-  );
-}
-
-.btn--sapphire:hover:not(:disabled),
-.btn--blue-night:hover:not(:disabled) {
-  filter: brightness(0.88);
-}
-
-.btn--sapphire:hover:not(:disabled)::before,
-.btn--blue-night:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--sapphire:hover:not(:disabled) svg,
-.btn--sapphire:hover:not(:disabled) .icon,
-.btn--blue-night:hover:not(:disabled) svg,
-.btn--blue-night:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-}
-
-/* ========== BOUTON COPPER - Cuivre Vintage ========== */
-.btn--copper {
-  background: linear-gradient(
-    135deg,
-    var(--copper-dark) 0%,
-    var(--copper) 50%,
-    var(--copper-light) 100%
-  );
-  color: var(--text-dark);
-}
-
-.btn--copper::before {
-  background: linear-gradient(
-    135deg,
-    var(--copper-light),
-    var(--copper),
-    var(--copper-light)
-  );
-}
-
-.btn--copper:hover:not(:disabled) {
-  filter: brightness(0.9);
-}
-
-.btn--copper:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--copper:hover:not(:disabled) svg,
-.btn--copper:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 6px var(--text-dark));
-  animation: btn-heartbeat 0.6s ease infinite;
-}
 
 /* ── Shimmer bordure or — utilisé sur film-card et recipe/recette-card ── */
 /* Technique background-clip: le 2e background (border-box = bordure) glisse en boucle */
 @keyframes shimmer-gold-border {
   0%, 100% { background-position: 0 0, 0% 50%;   }
   50%       { background-position: 0 0, 100% 50%; }
-}
-
-@keyframes btn-heartbeat {
-  0%,
-  100% {
-    transform: scale(1.2);
-  }
-  50% {
-    transform: scale(1.4);
-  }
-}
-
-/* ========== BOUTON BURGUNDY - Bordeaux Velours ========== */
-/* Alternative élégante au copper, style cinéma premium */
-.btn--burgundy {
-  background: linear-gradient(
-    135deg,
-    var(--burgundy-dark) 0%,
-    var(--burgundy) 50%,
-    var(--burgundy-light) 100%
-  );
-  color: var(--text-light);
-  box-shadow: 0 4px 15px var(--burgundy-glow);
-}
-
-.btn--burgundy::before {
-  background: linear-gradient(
-    135deg,
-    var(--burgundy-light),
-    var(--burgundy),
-    var(--burgundy-light)
-  );
-}
-
-.btn--burgundy:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 45, 58, 0.6);
-}
-
-.btn--burgundy:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--burgundy:hover:not(:disabled) svg,
-.btn--burgundy:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-}
-
-/* ========== BOUTON SILVER - Argent Écran ========== */
-.btn--silver {
-  background: linear-gradient(
-    135deg,
-    var(--silver-dark) 0%,
-    var(--silver) 50%,
-    var(--silver-light) 100%
-  );
-  color: var(--text-light);
-}
-
-.btn--silver::before {
-  background: linear-gradient(
-    135deg,
-    var(--silver-light),
-    var(--silver),
-    var(--silver-light)
-  );
-}
-
-.btn--silver:hover:not(:disabled) {
-  filter: brightness(0.88);
-}
-
-.btn--silver:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-.btn--silver:hover:not(:disabled) svg,
-.btn--silver:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 4px var(--text-light));
-  animation: btn-spin 0.8s ease;
-}
-
-@keyframes btn-spin {
-  from {
-    transform: rotate(0deg) scale(1.2);
-  }
-  to {
-    transform: rotate(180deg) scale(1.2);
-  }
 }
 
 /* ========== BOUTON GHOST - Contour transparent ========== */
@@ -1537,52 +1267,12 @@ a:hover {
   border: 2px solid var(--gold);
 }
 
-.btn--ghost::after {
-  display: none;
-}
-
-.btn--ghost::before {
-  display: none;
-}
-
 .btn--ghost:hover:not(:disabled) {
   background: rgba(212, 168, 67, 0.12);
   color: var(--gold-light);
   border-color: var(--gold-light);
 }
 
-/* ========== BOUTONS SPÉCIAUX (rétrocompatibilité) ========== */
-.btn--gold-special {
-  background: var(--gold-gradient);
-  color: #1C1404;
-  box-shadow:
-    0 4px 18px rgba(184, 136, 42, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
-}
-
-.btn--gold-special:hover:not(:disabled) {
-  background: var(--gold-gradient-hover);
-  box-shadow:
-    0 8px 32px var(--gold-glow),
-    0 0 60px rgba(212, 168, 67, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.btn--red-special {
-  background: var(--red-gradient);
-  color: #FFF5F0;
-  box-shadow:
-    0 4px 15px rgba(139, 28, 19, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.btn--red-special:hover:not(:disabled) {
-  background: var(--red-gradient-hover);
-  box-shadow:
-    0 8px 30px var(--red-glow),
-    0 0 60px rgba(194, 48, 24, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
 
 /* ====================================================== */
 /* 6. TAGS / BADGES - Design System Ultra Premium
@@ -1836,6 +1526,114 @@ a:hover {
 .tag--sapphire-outline::after,
 .tag--blue-outline::after {
   display: none;
+}
+
+/* ====================================================== */
+/* ====== CINEMA PALETTE TAGS — CodePen style ========== */
+/* ====================================================== */
+/**
+ * Palette semi-transparente pour les tags cinéma premium.
+ * Fond foncé + bordure colorée + texte coloré — esprit ticket de cinéma.
+ * Remplacent les gradients solides sur les pages films & recettes.
+ *
+ * Usage HTML : <span class="tag tag--bleu">Drame</span>
+ */
+
+/* Base override — proportions CodePen (plus petits et plus fins que .tag base) */
+.tag--or,
+.tag--bleu,
+.tag--rouge,
+.tag--vert,
+.tag--gris {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+/* Supprime le liseré pointillé interne hérité du .tag base */
+.tag--or::after,
+.tag--bleu::after,
+.tag--rouge::after,
+.tag--vert::after,
+.tag--gris::after {
+  display: none;
+}
+
+/* Or — Doré cinéma (cuisine dorée, difficulté moyenne, recettes signatures) */
+.tag--or    { background: rgba(58, 42, 12, 0.55);  border-color: rgba(200, 168, 78, 0.28);  color: #cca84e; }
+.tag--or:hover { background: rgba(58, 42, 12, 0.9); border-color: rgba(200, 168, 78, 0.55); }
+
+/* Bleu — Saphir nuit (genres, catégories, infos) */
+.tag--bleu  { background: rgba(14, 22, 48, 0.55);  border-color: rgba(80, 120, 200, 0.28);  color: rgba(140, 175, 235, 0.95); }
+.tag--bleu:hover { background: rgba(14, 22, 48, 0.9); border-color: rgba(80, 120, 200, 0.50); }
+
+/* Rouge — Velours projecteur (difficile, attention, nouveau) */
+.tag--rouge { background: rgba(50, 12, 20, 0.55);  border-color: rgba(160, 32, 60, 0.32);   color: rgba(215, 80, 105, 0.95); }
+.tag--rouge:hover { background: rgba(50, 12, 20, 0.9); border-color: rgba(160, 32, 60, 0.55); }
+
+/* Vert — Pellicule (facile, validé, succès) */
+.tag--vert  { background: rgba(10, 32, 18, 0.55);  border-color: rgba(40, 110, 65, 0.3);    color: rgba(100, 185, 130, 0.95); }
+.tag--vert:hover { background: rgba(10, 32, 18, 0.9); border-color: rgba(40, 110, 65, 0.55); }
+
+/* Gris — Argent (neutre, tags secondaires) */
+.tag--gris  { background: rgba(28, 34, 52, 0.55);  border-color: rgba(80, 95, 130, 0.25);   color: rgba(130, 148, 185, 0.88); }
+.tag--gris:hover { background: rgba(28, 34, 52, 0.9); border-color: rgba(80, 95, 130, 0.50); }
+
+/* ====================================================== */
+/* ====== SECTION-HEADER — Composant global ============= */
+/* ====================================================== */
+/**
+ * En-tête de section : [Titre]──────[Meta]
+ * Utilise Bebas Neue pour l'impact cinématographique.
+ *
+ * Usage HTML :
+ * <div class="section-header">
+ *   <h2 class="section-title">FILMS <span class="highlight">CULTES</span></h2>
+ *   <div class="section-rule"></div>
+ *   <span class="section-meta">42 titres</span>
+ * </div>
+ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.6rem;
+  font-weight: 400; /* Bebas Neue est déjà ultra-condensé */
+  letter-spacing: 3px;
+  color: var(--argent-ecran);
+  white-space: nowrap;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.section-title .highlight {
+  color: var(--dore-popcorn);
+}
+
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 160, 82, 0.35), transparent);
+}
+
+.section-meta {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.65);
+  white-space: nowrap;
 }
 
 /* ====================================================== */
@@ -2510,61 +2308,13 @@ a:hover {
 }
 
 /* ====================================================== */
-/* 11. BOUTONS PLANCHE V2.0 (Primary, Secondary, Hero, etc.)
+/* 11. BOUTONS PLANCHE V2.0 (Secondary, Hero)
 ====================================================== */
 /**
  * Boutons conformes à la planche V2.0
- * Aliases pour compatibilité avec le design system
+ * NOTE : btn--primary = btn--gold | btn--danger = btn--red
+ * Seuls les boutons sans équivalent dans la section 5 sont définis ici.
  */
-
-/* ========== BOUTON PRIMARY (Doré) - Alias de btn--gold ========== */
-/* Même apparence et comportement que btn--gold pour cohérence totale */
-.btn--primary {
-  background: linear-gradient(
-    135deg,
-    var(--gold-dark) 0%,
-    var(--gold) 50%,
-    var(--gold-light) 100%
-  );
-  color: var(--text-dark);
-}
-
-/* Glow doré extérieur — identique à btn--gold */
-.btn--primary::before {
-  background: linear-gradient(
-    135deg,
-    var(--gold-light),
-    var(--gold),
-    var(--gold-light)
-  );
-}
-
-/* Hover : assombrit légèrement + glow doré — identique à btn--gold */
-.btn--primary:hover:not(:disabled) {
-  color: var(--text-dark);
-  filter: brightness(0.92);
-}
-
-.btn--primary:hover:not(:disabled)::before {
-  opacity: 1;
-}
-
-/* SVG/icône au hover : ombre dorée — identique à btn--gold */
-.btn--primary:hover:not(:disabled) svg,
-.btn--primary:hover:not(:disabled) .icon {
-  filter: drop-shadow(0 0 8px var(--gold-dark));
-}
-
-.btn--primary:active:not(:disabled) {
-  transform: translateY(-2px) scale(1.01);
-}
-
-.btn--primary:disabled {
-  background: linear-gradient(135deg, #4a4a4a 0%, #6a6a6a 100%);
-  color: #888;
-  cursor: not-allowed;
-  box-shadow: none;
-}
 
 /* ========== BOUTON SECONDARY (Outline Doré) ========== */
 .btn--secondary {
@@ -2615,46 +2365,6 @@ a:hover {
   box-shadow:
     0 8px 30px var(--gold-glow),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* ========== BOUTON DANGER (Rouge) ========== */
-.btn--danger {
-  background: linear-gradient(
-    135deg,
-    var(--red-dark) 0%,
-    var(--red) 100%
-  );
-  color: var(--text-light);
-  box-shadow: 0 4px 15px rgba(215, 38, 56, 0.3);
-}
-
-.btn--danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c42030 0%, #ef4444 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(215, 38, 56, 0.5);
-}
-
-/* ========== BOUTON SUCCESS (Vert Velours) ========== */
-.btn--success {
-  background: linear-gradient(
-    135deg,
-    var(--velvet-dark) 0%,
-    var(--velvet) 50%,
-    var(--velvet-light) 100%
-  );
-  color: var(--text-light);
-  box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3);
-}
-
-.btn--success:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(6, 95, 70, 0.5);
-}
-
-/* ========== TAILLES BOUTONS ========== */
-.btn--lg {
-  padding: 0.9rem 2rem;
-  font-size: 1.05rem;
 }
 
 /* ====================================================== */
@@ -2734,82 +2444,6 @@ a:hover {
   background: rgba(215, 38, 56, 0.15);
   color: var(--red-light);
   border-color: var(--red);
-}
-
-/* ====================================================== */
-/* 13. BOUTONS FAVORIS (Planche V2.0)
-====================================================== */
-/**
- * Bouton cœur pour les cards et boutons texte pour les pages
- */
-.btn-favorite {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: rgba(13, 27, 42, 0.7);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-}
-
-.btn-favorite svg,
-.btn-favorite .icon {
-  width: 1.2rem;
-  height: 1.2rem;
-  transition: transform 0.3s ease;
-}
-
-.btn-favorite:hover {
-  background: rgba(215, 38, 56, 0.9);
-  border-color: var(--rouge-projecteur);
-  transform: scale(1.1);
-}
-
-.btn-favorite:hover svg,
-.btn-favorite:hover .icon {
-  transform: scale(1.1);
-}
-
-/* État favori actif */
-.btn-favorite--active,
-.btn-favorite[data-is-favorite="true"] {
-  background: rgba(215, 38, 56, 0.15);
-  border-color: var(--rouge-projecteur);
-  color: var(--rouge-projecteur);
-}
-
-.btn-favorite--active svg,
-.btn-favorite[data-is-favorite="true"] svg,
-.btn-favorite--active .icon,
-.btn-favorite[data-is-favorite="true"] .icon {
-  fill: var(--rouge-projecteur);
-}
-
-.btn-favorite--active:hover,
-.btn-favorite[data-is-favorite="true"]:hover {
-  background: rgba(215, 38, 56, 0.25);
-}
-
-/* Variante avec texte */
-.btn-favorite--text {
-  width: auto;
-  height: auto;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.btn-favorite--text svg,
-.btn-favorite--text .icon {
-  width: 1em;
-  height: 1em;
 }
 
 /* ====================================================== */
@@ -3108,11 +2742,7 @@ a:hover {
     max-width: 340px;
   }
 
-  /* Responsive V2.0 Components - Tablettes */
-  .btn--lg {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.95rem;
-  }
+
 
   .social-links {
     gap: 0.6rem;
@@ -3245,3 +2875,206 @@ a:hover {
   50%  { box-shadow: 0 0 6px var(--dore-popcorn); }
   100% { box-shadow: 0 0 8px var(--dore-popcorn); }
 }
+
+/* ====================================================== */
+/* DESIGN SYSTEM MOODBOARD V2.1 — Composants additionnels
+====================================================== */
+
+/* ── Bouton Outline Or (secondaire) ── */
+.btn--outline {
+  background: transparent;
+  border: 1.5px solid rgba(196, 160, 82, 0.45);
+  color: var(--or-titre);
+}
+.btn--outline:hover:not(:disabled) {
+  background: rgba(196, 160, 82, 0.08);
+  border-color: rgba(196, 160, 82, 0.8);
+  color: var(--dore-clair);
+  transform: translateY(-1px);
+}
+
+/* ── Bouton Hero — Rouge → Or au hover ── */
+.btn--hero {
+  background: linear-gradient(135deg, #8B1C13 0%, #C23018 60%, #D43A20 100%);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(194, 48, 24, 0.35);
+}
+.btn--hero:hover:not(:disabled) {
+  background: var(--gold-gradient-hover);
+  color: #1C1404;
+  box-shadow: 0 0 15px rgba(212, 168, 67, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ── Bouton Favori — Cercle verre sombre ── */
+.btn-fav {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: rgba(13, 27, 42, 0.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.btn-fav:hover {
+  background: rgba(194, 48, 24, 0.88);
+  border-color: #C23018;
+  transform: scale(1.1);
+  color: #fff;
+}
+.btn-fav .btn__shimmer { display: none; }
+
+/* ── Badges Overlay Cards — Moodboard V2.1 ── */
+/* Remplacent les anciens badge--sapphire / badge--red / badge--gold sur les cards */
+.badge--genre {
+  background: rgba(13, 27, 42, 0.88);
+  border: 1px solid rgba(196, 160, 82, 0.38);
+  border-style: solid;
+  color: var(--or-titre);
+}
+.badge--type-r {
+  background: rgba(194, 48, 24, 0.18);
+  border: 1px solid rgba(194, 48, 24, 0.48);
+  border-style: solid;
+  color: #e84020;
+}
+.badge--type-b {
+  background: rgba(14, 24, 52, 0.78);
+  border: 1px solid rgba(80, 120, 200, 0.4);
+  border-style: solid;
+  color: rgba(140, 180, 245, 0.95);
+  backdrop-filter: blur(4px);
+}
+.badge--info {
+  background: rgba(65, 90, 119, 0.22);
+  border: 1px solid rgba(65, 90, 119, 0.4);
+  border-style: solid;
+  color: rgba(232, 232, 232, 0.72);
+}
+.badge--film {
+  background: rgba(10, 18, 32, 0.88);
+  border: 1px solid rgba(196, 160, 82, 0.52);
+  border-style: solid;
+  color: var(--dore-clair);
+  backdrop-filter: blur(8px);
+}
+.badge--film-dk {
+  background: rgba(4, 8, 18, 0.75);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-style: solid;
+  color: rgba(200, 215, 235, 0.88);
+  font-size: 0.52rem;
+  letter-spacing: 0.6px;
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+}
+/* Supprimer le liseré pointillé hérité sur les badges overlay */
+.badge--genre::after,
+.badge--type-r::after,
+.badge--type-b::after,
+.badge--info::after,
+.badge--film::after,
+.badge--film-dk::after { display: none; }
+
+/* ── Niveaux Contributeur ── */
+.lvl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background: rgba(13, 27, 42, 0.7);
+}
+.lvl-av {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(196, 160, 82, 0.08);
+  border: 1.5px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lvl-av img { width: 100%; height: 100%; object-fit: cover; }
+.lvl-info { display: flex; flex-direction: column; gap: 1px; }
+.lvl-name { font-family: var(--f-title); font-size: 0.65rem; font-weight: 600; color: var(--argent-ecran); }
+.lvl-title { font-size: 0.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; }
+
+.lvl--1 { border-color: rgba(192, 200, 215, 0.22); }
+.lvl--1 .lvl-av    { border-color: rgba(192, 200, 215, 0.4); }
+.lvl--1 .lvl-title { color: rgba(192, 200, 215, 0.7); }
+
+.lvl--2 { border-color: rgba(205, 127, 50, 0.28); }
+.lvl--2 .lvl-av    { border-color: rgba(205, 127, 50, 0.55); box-shadow: 0 0 8px rgba(205, 127, 50, 0.2); }
+.lvl--2 .lvl-title { color: #cd7f32; }
+
+.lvl--3 { border-color: rgba(192, 210, 225, 0.32); }
+.lvl--3 .lvl-av    { border-color: rgba(192, 210, 225, 0.65); box-shadow: 0 0 10px rgba(192, 210, 225, 0.28); }
+.lvl--3 .lvl-title { color: rgba(192, 210, 225, 0.9); }
+
+.lvl--4 { border-color: rgba(198, 166, 100, 0.35); }
+.lvl--4 .lvl-av    { border-color: var(--or-titre); box-shadow: 0 0 12px rgba(198, 166, 100, 0.32); }
+.lvl--4 .lvl-title { color: var(--or-titre); }
+
+.lvl--legend { border-color: rgba(198, 166, 100, 0.48); box-shadow: 0 4px 28px rgba(198, 166, 100, 0.08); }
+.lvl--legend .lvl-av    { border-color: #F7C948; box-shadow: 0 0 18px rgba(247, 201, 72, 0.38); }
+.lvl--legend .lvl-title { color: #F7C948; }
+
+/* ── Animations Moodboard V2.1 ── */
+@keyframes shimmer-gold {
+  0%   { background-position: center, 0% 50%; }
+  50%  { background-position: center, 100% 50%; }
+  100% { background-position: center, 200% 50%; }
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
+/* ── Scroll Reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Tooltips CSS ── */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(4, 8, 15, 0.95);
+  color: #f0ecdf;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border: 1px solid rgba(200, 168, 78, 0.2);
+  z-index: 100;
+}
+[data-tooltip]:hover::after { opacity: 1; }

@@ -87,6 +87,7 @@
   background-position: center top;
   border-radius: 0 0 20px 20px;
   overflow: hidden;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.30);
 }
 
 /* Gradient : transparent haut → quasi-opaque bas */
@@ -137,60 +138,61 @@
 /* BOTTOM : form avatar + identity + XP right panel (= #profileAvatarForm) */
 .profile-hero-banner__bottom {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0; /* couvre toute la bannière pour occuper la verticalité */
   z-index: 2;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: stretch;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0 2rem 1.5rem;
+  padding: 1.25rem 2rem 2.2rem;
   /* reset <form> styles */
   background: none;
   border: none;
   margin: 0;
 }
 
-/* LEFT GROUP : avatar + identity côte à côte */
+/* LEFT GROUP : avatar en haut, identity en bas — occupe la verticalité */
 .profile-hero-banner__left-group {
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 1.25rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
   flex-shrink: 0;
+  padding-top: 2.5rem; /* descend l'avatar du bord supérieur */
 }
 
-/* Colonne avatar : photo + boutons */
+/* Photo + identity côte à côte */
 .profile-hero-banner__avatar-wrapper {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: 14px;
   flex-shrink: 0;
 }
 
-/* Boutons photo compacts alignés en row */
-.profile-hero-banner__avatar-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 0.4rem;
-}
-
-.profile-hero-banner__avatar-actions .btn {
-  font-size: 0.68rem;
-  padding: 0.28rem 0.6rem;
-  gap: 0.22rem;
-}
-
-/* Bloc identité : eyebrow + pseudo + niveau */
+/* Bloc identité : eyebrow + pseudo — à droite de la photo */
 .profile-hero-banner__identity {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   min-width: 0;
-  padding-bottom: 0.1rem;
+}
+
+/* Boutons Photo/Suppr — en bas du left-group */
+.profile-hero-banner__avatar-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  z-index: 4;
+}
+
+.profile-hero-banner__avatar-actions .btn {
+  font-size: 0.73rem;
+  padding: 0.35rem 0.7rem;
+  gap: 0.25rem;
+  backdrop-filter: blur(4px);
 }
 
 /* ── RIGHT GROUP : XP bar + mini stats ── */
@@ -200,8 +202,8 @@
   align-items: flex-end;
   justify-content: flex-end;
   gap: 0.55rem;
-  min-width: 210px;
-  max-width: 290px;
+  min-width: 230px;
+  max-width: 320px;
   flex-shrink: 0;
 }
 
@@ -209,13 +211,15 @@
 .profile-hero-banner__xp {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
   width: 100%;
-  background: rgba(13, 27, 42, 0.6);
-  border: 1px solid rgba(198, 166, 100, 0.2);
+  background: rgba(13, 27, 42, 0.68);
+  border: 1px solid rgba(198, 166, 100, 0.22);
+  border-top: 1px solid rgba(198, 166, 100, 0.48);
   border-radius: 10px;
-  padding: 0.6rem 0.75rem;
-  backdrop-filter: blur(6px);
+  padding: 0.8rem 1rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(198, 166, 100, 0.1);
 }
 
 .profile-hero-banner__xp-header {
@@ -235,25 +239,55 @@
 }
 
 .profile-hero-banner__xp-bar {
-  height: 5px;
-  background: rgba(255, 255, 255, 0.08);
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 99px;
   overflow: hidden;
   position: relative;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Reflet glossy sur le track */
+.profile-hero-banner__xp-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 55%);
+  border-radius: 99px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .profile-hero-banner__xp-fill {
   height: 100%;
   width: 0;
   border-radius: 99px;
-  background: linear-gradient(90deg, rgba(90, 102, 128, 0.9), var(--argent-ecran, #c8d4e8), var(--dore-popcorn));
-  animation: heroXpFill 1.4s cubic-bezier(0, 0, 0.2, 1) 0.5s both;
+  background: linear-gradient(
+    90deg,
+    #7A5A14 0%,
+    #B8882A 20%,
+    #D4A843 42%,
+    #F2C84B 58%,
+    #FFE085 72%,
+    #D4A843 88%,
+    #B8882A 100%
+  );
+  background-size: 200% 100%;
+  animation:
+    heroXpFill 1.4s cubic-bezier(0, 0, 0.2, 1) 0.5s both,
+    xpShimmer 3.5s ease-in-out 2s infinite;
+  box-shadow: 0 0 7px rgba(212, 168, 67, 0.75), 0 0 18px rgba(212, 168, 67, 0.3);
   transform-origin: left;
 }
 
 @keyframes heroXpFill {
   from { width: 0; }
   to   { width: var(--xp-pct); }
+}
+
+@keyframes xpShimmer {
+  0%, 100% { background-position: 100% 0; }
+  50%       { background-position: -100% 0; }
 }
 
 /* Tip "encore N recettes pour X" */
@@ -272,16 +306,16 @@
 
 
 .profile-hero-banner__eyebrow {
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  color: rgba(198, 166, 100, 0.8);
+  letter-spacing: 2.5px;
+  color: rgba(198, 166, 100, 0.45);
   font-weight: 600;
 }
 
-/* Override pseudo : Fascinate large sur fond transparent dans le hero */
+/* Override pseudo : Playfair Display large sur fond transparent dans le hero */
 .profile-hero-banner__pseudo.profile-pseudo-badge input {
-  font-size: 1.6rem;
+  font-size: 1.85rem;
   font-family: var(--font-h1);
   background: transparent;
   border-color: transparent;
@@ -313,8 +347,8 @@
 /* Indicateur de niveau (pip coloré remplaçant l'image badge) */
 .profile-hero-banner__badge-pip {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -342,6 +376,14 @@
   color: rgba(236, 239, 241, 0.88);
   font-weight: 500;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.profile-hero-banner__badge-stars {
+  font-size: 0.72rem;
+  color: var(--dore-popcorn);
+  letter-spacing: 1.5px;
+  opacity: 0.9;
+  text-shadow: 0 0 6px rgba(198, 166, 100, 0.5);
 }
 
 /* Niveau "0" : message de bienvenue */
@@ -376,8 +418,8 @@
   }
 
   .profile-hero-banner .profile-photo {
-    width: 96px;
-    height: 96px;
+    width: 110px;
+    height: 110px;
   }
 
   /* Panneau droit plus compact sur tablette */
@@ -405,8 +447,8 @@
   }
 
   .profile-hero-banner .profile-photo {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
   }
 
   .profile-hero-banner__pseudo.profile-pseudo-badge input {
@@ -433,13 +475,15 @@
   display: flex;
   gap: 0;
   padding: 0;
-  margin: 0 0 2rem;
+  margin: -44px 0 1.5rem; /* remonte dans la bannière — pattern identique à .banner movies */
   position: sticky;
   top: 64px;
   z-index: 10;
-  background: var(--bleu-nuit, #0d1b2a);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(10, 20, 34, 0.97);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(198, 166, 100, 0.15);
   border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(198, 166, 100, 0.07);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -1072,37 +1116,57 @@
   align-items: center;
   justify-content: center;
   padding: 3px;
-  border-radius: 19px; /* photo border-radius (16px) + 3px padding */
+  border-radius: 22px; /* photo border-radius (19px) + 3px padding */
   background: rgba(255, 255, 255, 0.08); /* défaut — aucun badge */
   flex-shrink: 0;
 }
 
-/* Bordure dynamique selon le niveau de contribution (padding + background) */
-.profile-banner__photo[data-level="1"] {
-  background: #4A5568;
-}
-.profile-banner__photo[data-level="2"] {
-  background: #B87333;
-  box-shadow: 0 0 10px rgba(184, 115, 51, 0.4), 0 0 24px rgba(184, 115, 51, 0.15);
-}
-.profile-banner__photo[data-level="3"] {
-  background: #B8C8D8;
-  box-shadow: 0 0 10px rgba(184, 200, 216, 0.35), 0 0 24px rgba(184, 200, 216, 0.12);
-}
-.profile-banner__photo[data-level="4"] {
-  background: var(--gold-gradient);
-  box-shadow: 0 0 16px rgba(212, 168, 67, 0.5), 0 0 32px rgba(212, 168, 67, 0.2);
-}
-.profile-banner__photo[data-level="5"] {
-  background: var(--gold-gradient);
-  background-size: 200% 200%;
-  animation: legendBorderPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 20px rgba(212, 168, 67, 0.55), 0 0 40px rgba(212, 168, 67, 0.25);
+/* Bordure dynamique + animation shimmer métal selon le niveau */
+/* Le shimmer n'occupe que ~15% du cycle → longue pause, éclat rare */
+@keyframes metalShimmer {
+  0%   { background-position: 200% 50%; }  /* repos */
+  7%   { background-position: 0%   50%; }  /* balayage */
+  14%  { background-position: 200% 50%; }  /* retour */
+  100% { background-position: 200% 50%; }  /* longue veille */
 }
 
-@keyframes legendBorderPulse {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
+/* Niveau 1 — Fer / Acier */
+.profile-banner__photo[data-level="1"] {
+  background: linear-gradient(115deg, #2E3748, #5A6A80, #8A9AB0, #D0DCE8, #8A9AB0, #5A6A80, #2E3748);
+  background-size: 300% 100%;
+  animation: metalShimmer 14s ease-in-out infinite;
+}
+
+/* Niveau 2 — Bronze */
+.profile-banner__photo[data-level="2"] {
+  background: linear-gradient(115deg, #3D1A08, #8B4E1A, #C87941, #F0B87A, #FFD4A8, #F0B87A, #C87941, #8B4E1A, #3D1A08);
+  background-size: 300% 100%;
+  animation: metalShimmer 12s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(184, 115, 51, 0.45), 0 0 24px rgba(184, 115, 51, 0.18);
+}
+
+/* Niveau 3 — Argent */
+.profile-banner__photo[data-level="3"] {
+  background: linear-gradient(115deg, #3A4A5A, #7A90A8, #B8C8D8, #E8F0F8, #FFFFFF, #E8F0F8, #B8C8D8, #7A90A8, #3A4A5A);
+  background-size: 300% 100%;
+  animation: metalShimmer 12s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(184, 200, 216, 0.4), 0 0 24px rgba(184, 200, 216, 0.15);
+}
+
+/* Niveau 4 — Or */
+.profile-banner__photo[data-level="4"] {
+  background: linear-gradient(115deg, #4A3408, #9A7020, #D4A843, #FFE085, #FFF4C0, #FFE085, #D4A843, #9A7020, #4A3408);
+  background-size: 300% 100%;
+  animation: metalShimmer 10s ease-in-out infinite;
+  box-shadow: 0 0 16px rgba(212, 168, 67, 0.55), 0 0 32px rgba(212, 168, 67, 0.22);
+}
+
+/* Niveau 5 — Légende */
+.profile-banner__photo[data-level="5"] {
+  background: linear-gradient(115deg, #4A3408, #9A7020, #D4A843, #FFE085, #FFF4C0, #FFE085, #D4A843, #9A7020, #4A3408);
+  background-size: 300% 100%;
+  animation: metalShimmer 8s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(212, 168, 67, 0.65), 0 0 40px rgba(212, 168, 67, 0.3), 0 0 60px rgba(212, 168, 67, 0.1);
 }
 
 /* Pseudo badge sous la photo (dans profile-avatar-col) */
@@ -1202,21 +1266,75 @@
 }
 
 .profile-photo {
-  width: 120px;
-  height: 120px;
-  border-radius: 16px;
+  width: 155px;
+  height: 155px;
+  border-radius: 19px;
   object-fit: cover;
   display: block;
+}
+
+/* Badge gamification niveau — flottant en haut du cadre (miroir de __badge en bas) */
+.profile-avatar__level-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  white-space: nowrap;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.18rem 0.55rem;
+  border-radius: 6px;
+}
+/* Badges niveau — gradient métal + shimmer */
+.profile-avatar__level-badge--level-1 {
+  background: linear-gradient(90deg, #2E3748, #5A6A80, #8A9AB0, #5A6A80, #2E3748);
+  background-size: 300% 100%;
+  animation: metalShimmer 14s ease-in-out infinite;
+  color: rgba(220, 232, 244, 0.95);
+  border: 1px solid rgba(120, 144, 168, 0.6);
+}
+.profile-avatar__level-badge--level-2 {
+  background: linear-gradient(90deg, #3D1A08, #C87941, #FFD4A8, #C87941, #3D1A08);
+  background-size: 300% 100%;
+  animation: metalShimmer 12s ease-in-out infinite;
+  color: #fff3e0;
+  border: 1px solid rgba(215, 140, 65, 0.7);
+}
+.profile-avatar__level-badge--level-3 {
+  background: linear-gradient(90deg, #3A4A5A, #B8C8D8, #FFFFFF, #B8C8D8, #3A4A5A);
+  background-size: 300% 100%;
+  animation: metalShimmer 12s ease-in-out infinite;
+  color: #0d1b2a;
+  border: 1px solid rgba(184, 200, 216, 0.75);
+}
+.profile-avatar__level-badge--level-4 {
+  background: linear-gradient(90deg, #4A3408, #D4A843, #FFF4C0, #D4A843, #4A3408);
+  background-size: 300% 100%;
+  animation: metalShimmer 10s ease-in-out infinite;
+  color: #0d1b2a;
+  border: 1px solid rgba(212, 185, 120, 0.85);
+}
+.profile-avatar__level-badge--level-5 {
+  background: linear-gradient(90deg, #4A3408, #D4A843, #FFF4C0, #D4A843, #4A3408);
+  background-size: 300% 100%;
+  animation: metalShimmer 8s ease-in-out infinite;
+  color: #0d1b2a;
+  border: 1px solid rgba(212, 185, 120, 0.9);
+  box-shadow: 0 0 6px rgba(212, 168, 67, 0.4);
 }
 
 /* Positionnement du badge statut sur la photo de profil */
 /* Les couleurs d'état viennent de .media-status-badge--* dans base.css */
 .profile-avatar__badge {
   position: absolute;
-  top: 50%;
+  bottom: -11px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3; /* au-dessus du cadre (z-index 2) */
+  transform: translateX(-50%);
+  z-index: 3;
+  white-space: nowrap;
 }
 
 /* Séparateur entre badge statut et boutons photo */
@@ -2156,7 +2274,7 @@ a.profile-status-banner--cta:hover {
 /* ====================================================== */
 
 .profile-palmares {
-  margin-top: 1.5rem;
+  margin-top: 0.25rem;
 }
 
 .profile-palmares__header {
@@ -2196,16 +2314,43 @@ a.profile-status-banner--cta:hover {
 
 .profile-palmares__bar {
   flex: 1;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.07);
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 99px;
   overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Reflet glossy sur le track */
+.profile-palmares__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 55%);
+  border-radius: 99px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .profile-palmares__bar-fill {
   height: 100%;
   border-radius: 99px;
-  background: linear-gradient(90deg, rgba(198, 166, 100, 0.65) 0%, #f7c948 100%);
+  background: linear-gradient(
+    90deg,
+    #7A5A14 0%,
+    #B8882A 20%,
+    #D4A843 42%,
+    #F2C84B 58%,
+    #FFE085 72%,
+    #D4A843 88%,
+    #B8882A 100%
+  );
+  background-size: 200% 100%;
+  box-shadow: 0 0 7px rgba(212, 168, 67, 0.75), 0 0 18px rgba(212, 168, 67, 0.3);
+  animation:
+    palBarFill 1.4s cubic-bezier(0, 0, 0.2, 1) 0.5s both,
+    xpShimmer 3.5s ease-in-out 2s infinite;
   width: 0;
   animation: palBarFill 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.25s forwards;
 }
@@ -2246,8 +2391,8 @@ a.profile-status-banner--cta:hover {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(198, 166, 100, 0.18) 20%,
-    rgba(198, 166, 100, 0.18) 80%,
+    rgba(198, 166, 100, 0.08) 20%,
+    rgba(198, 166, 100, 0.08) 80%,
     transparent
   );
   z-index: 0;
@@ -2284,21 +2429,49 @@ a.profile-status-banner--cta:hover {
   transform: scale(1.08);
 }
 
-/* Niveau actuel — scale + pulse dorée */
+/* Niveau actuel — flottement doux + ombre cinéma */
 .palmares-badge--current .palmares-badge__img {
-  transform: scale(1.15);
-  animation: badgePulse 2.5s ease-in-out infinite;
+  animation: badgeFloat 3.6s ease-in-out infinite;
 }
 
-@keyframes badgePulse {
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(198, 166, 100, 0.28)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(198, 166, 100, 0.72)); }
+@keyframes badgeFloat {
+  0%, 100% {
+    transform: scale(1.12) translateY(0px);
+    filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.55));
+  }
+  50% {
+    transform: scale(1.14) translateY(-7px);
+    filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.65));
+  }
 }
 
-/* Verrouillé */
+/* Verrouillé — quasi invisible, fondu dans le fond */
 .palmares-badge--locked .palmares-badge__img {
-  opacity: 0.2;
-  filter: grayscale(1);
+  filter: blur(5px) brightness(0.22) saturate(0.15);
+  opacity: 0.38;
+}
+
+/* Prochain badge : légèrement plus perceptible, mais discret */
+.palmares-badge--current + .palmares-badge--locked .palmares-badge__img {
+  filter: blur(3px) brightness(0.50) saturate(0.40);
+  opacity: 0.55;
+}
+
+/* Prochain badge à débloquer — halo de tentation */
+.palmares-badge--current + .palmares-badge--locked .palmares-badge__img-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(198, 166, 100, 0.14) 0%, transparent 68%);
+  animation: nextBadgeLure 2.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes nextBadgeLure {
+  0%, 100% { opacity: 0;   transform: scale(0.88); }
+  50%       { opacity: 1;   transform: scale(1.08); }
 }
 
 /* Cadenas */
@@ -2306,9 +2479,27 @@ a.profile-status-banner--cta:hover {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.3rem;
   color: rgba(255, 255, 255, 0.25);
+  z-index: 2;
+}
+
+/* Hint "Plus que N recettes" sous le cadenas */
+.palmares-badge__lock-hint {
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: rgba(198, 166, 100, 0.82);
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.palmares-badge__lock-hint strong {
+  font-weight: 700;
 }
 
 /* Étoiles de niveau */
@@ -2318,7 +2509,12 @@ a.profile-status-banner--cta:hover {
   line-height: 1;
 }
 
-.palmares-badge--unlocked .palmares-badge__stars,
+/* Badge passé : étoiles grisées */
+.palmares-badge--unlocked .palmares-badge__stars {
+  color: rgba(198, 198, 198, 0.42);
+}
+
+/* Badge actuel : étoiles dorées */
 .palmares-badge--current .palmares-badge__stars {
   color: var(--dore-popcorn);
 }
@@ -2339,7 +2535,12 @@ a.profile-status-banner--cta:hover {
   line-height: 1.3;
 }
 
-.palmares-badge--unlocked .palmares-badge__label,
+/* Badge passé : label grisé */
+.palmares-badge--unlocked .palmares-badge__label {
+  color: rgba(198, 198, 198, 0.48);
+}
+
+/* Badge actuel : label doré */
 .palmares-badge--current .palmares-badge__label {
   color: var(--dore-popcorn);
 }
@@ -2364,6 +2565,45 @@ a.profile-status-banner--cta:hover {
   color: rgba(232, 232, 232, 0.38);
 }
 
+/* ---- Cursor pointer sur badge actuel ---- */
+.palmares-badge--current .palmares-badge__img {
+  cursor: zoom-in;
+}
+
+/* ---- Modal zoom badge ---- */
+.badge-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 18, 30, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9990;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.badge-zoom-overlay.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.badge-zoom-overlay__img {
+  max-width: min(380px, 82vw);
+  max-height: 82vh;
+  object-fit: contain;
+  transform: scale(0.75);
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
+}
+
+.badge-zoom-overlay.is-open .badge-zoom-overlay__img {
+  transform: scale(1);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .palmares-badge__img-wrap {
@@ -2375,8 +2615,14 @@ a.profile-status-banner--cta:hover {
     top: 25px;
   }
 
+  /* Float plus doux sur mobile */
   .palmares-badge--current .palmares-badge__img {
-    transform: scale(1.08);
+    animation-name: badgeFloatMobile;
+  }
+
+  @keyframes badgeFloatMobile {
+    0%, 100% { transform: scale(1.05) translateY(0px); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
+    50%       { transform: scale(1.08) translateY(-5px); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6)) drop-shadow(0 3px 10px rgba(198, 166, 100, 0.38)); }
   }
 
   .palmares-badge__label {

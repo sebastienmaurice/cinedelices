@@ -28,13 +28,13 @@
     if (acceptBtn) acceptBtn.textContent = confirmLabel || "Confirmer";
     if (cancelBtn) cancelBtn.textContent = cancelLabel || "Annuler";
     if (acceptBtn) {
-      acceptBtn.classList.remove("btn--red", "btn--gold", "btn--warning");
+      acceptBtn.classList.remove("btn--red", "btn--primary", "btn--warning");
       if (variant === "danger") {
         acceptBtn.classList.add("btn--red");
       } else if (variant === "warning") {
         acceptBtn.classList.add("btn--warning");
       } else {
-        acceptBtn.classList.add("btn--gold");
+        acceptBtn.classList.add("btn--primary");
       }
     }
     modal.classList.toggle("confirm-modal--danger", variant === "danger");

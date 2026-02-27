@@ -36,7 +36,7 @@
       >
         <div class="banner__image__film__overlay"></div>
         <img
-          src="/images/image-banner-movies.jpg"
+          src="/images/image-banner-movie-default.jpg"
           alt="Sélection de films Ciné Délices"
         />
       </section>
@@ -85,13 +85,8 @@
       <!-- SECTION FILMS -->
       <section id="films">
         <div class="presentation__film">
-          <div class="presentation__text__film">
-            <h3>Nos films et séries cultes</h3>
-            <p>
-              Chaque film ou série cultes avec ses recettes inspirées du grand
-              écran
-            </p>
-          </div>
+          <h3 class="presentation__title">Nos films et séries cultes</h3>
+          <div class="presentation__rule"></div>
           <div class="presentation__actions__film">
             <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
             <div class="genre-filter">
@@ -106,7 +101,7 @@
               </select>
             </div>
             <% } %>
-            <a class="btn btn--gold" href="/add-recipes-movies/">
+            <a class="btn btn--primary" href="/add-recipes-movies/">
               <span class="btn__shimmer"></span>
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
               <span class="btn__text">J'ajoute mon film</span>
@@ -125,35 +120,34 @@
             const movieSynopsis = movie.synopsis || 'Synopsis à venir...';
           %>
           <article id="film-<%= movie.id %>" class="film-card">
-            <!-- Image avec overlay -->
-            <div class="film-card__image">
+            <!-- Image portrait 2:3 avec overlay et titre dans le fondu -->
+            <div class="film-card__img">
               <img
                 src="<%= movie.cardPath || movie.picture %>"
                 alt="Affiche du film <%= movie.title %>"
                 loading="lazy"
-                width="640"
-                height="360"
+                width="400"
+                height="600"
                 decoding="async"
               />
-              <div class="film-card__image-overlay">
-                <!-- Badges Nouveau / Populaire -->
-                <div class="film-card__badges">
+              <!-- Overlay top : badges + favori -->
+              <div class="film-card__ot">
+                <div style="display:flex;flex-direction:column;gap:0.4rem;">
                   <% if (movie.isNew) { %>
-                  <span class="badge badge--sapphire">
+                  <span class="badge badge--type-b">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
                     Nouveau
                   </span>
                   <% } %>
                   <% if (movie.isPopular) { %>
-                  <span class="badge badge--red">
+                  <span class="badge badge--type-r">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                     Populaire
                   </span>
                   <% } %>
                 </div>
-                <!-- Bouton Favori -->
                 <button
-                  class="btn-favorite"
+                  class="btn-fav"
                   data-entity-id="<%= movie.id %>"
                   data-entity-type="movie"
                   data-is-favorite="<%= movie.isFavorite || false %>"
@@ -163,36 +157,45 @@
                   <svg class="icon" viewBox="0 0 24 24" fill="<%= movie.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                 </button>
               </div>
+              <!-- Titre dans le fondu bas de l'image -->
+              <div class="film-card__tz">
+                <span class="film-ttl"><%= movie.title %></span>
+                <span class="film-byl"><%= movie.year %></span>
+              </div>
             </div>
 
-            <!-- Titre -->
-            <h3 class="film-card__title"><%= movie.title %></h3>
+            <!-- Corps de la card -->
+            <div class="film-card__body">
+              <!-- Tags meta -->
+              <div class="film-card__meta">
+                <span class="tag tag--bleu"><%= movie.genre %></span>
+              </div>
 
-            <!-- Tags meta -->
-            <div class="film-card__meta">
-              <span class="tag tag--silver"><%= movie.year %></span>
-              <span class="tag tag--sapphire"><%= movie.genre %></span>
-              <span class="tag tag--gold"><%= recipesCount %> <%= recipesCount > 1 ? "recettes" : "recette" %></span>
+              <!-- Notation -->
+              <div class="rating rating--sm" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
+                <% for (let i = 1; i <= 5; i++) { %>
+                <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
+                  <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </span>
+                <% } %>
+                <span class="rating__value"><%= displayRating %></span>
+              </div>
+
+              <!-- Synopsis -->
+              <p class="film-card__desc"><%= movieSynopsis %></p>
+
+              <!-- Footer : compteur recettes + bouton -->
+              <div class="film-card__foot">
+                <span class="film-count">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                  <%= recipesCount %> <%= recipesCount > 1 ? "recettes" : "recette" %>
+                </span>
+                <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  Voir les recettes
+                </a>
+              </div>
             </div>
-
-            <!-- Notation -->
-            <div class="rating rating--sm" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
-              <% for (let i = 1; i <= 5; i++) { %>
-              <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
-                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </span>
-              <% } %>
-              <span class="rating__value"><%= displayRating %></span>
-            </div>
-
-            <!-- Synopsis (2 lignes max via CSS line-clamp) -->
-            <p class="film-card__description"><%= movieSynopsis %></p>
-
-            <!-- Bouton Voir les recettes -->
-            <a class="btn btn--primary btn--sm" href="/recipes-movie/<%= movie.id %>">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-              Voir les recettes
-            </a>
           </article>
           <% }) %> <% } %>
         </div>

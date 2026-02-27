@@ -79,8 +79,31 @@ const homeController = {
         // Si le dossier n'existe pas ou erreur, on continue avec un tableau vide
       }
 
-      // Enrichir les topMovies avec les chemins d'images (cards pour l'affichage)
-      const enrichedTopMovies = enrichMoviesWithImagePaths(topMovies);
+      // Compter les recettes approuvées par film (pour les film-cards)
+      const movieIds = topMovies.map(m => m.id);
+      const recipeCounts = await Recipe.findAll({
+        where: { status: "approved", id_movie: movieIds },
+        attributes: ["id_movie", [Sequelize.fn("COUNT", Sequelize.col("id")), "count"]],
+        group: ["id_movie"],
+        raw: true,
+      });
+      const countMap = {};
+      recipeCounts.forEach(r => { countMap[r.id_movie] = parseInt(r.count, 10); });
+
+      // Enrichir les topMovies avec les chemins d'images + le compteur de recettes
+      const enrichedTopMovies = enrichMoviesWithImagePaths(topMovies).map(m => ({
+        ...m,
+        recipeCount: countMap[m.id] || 0,
+      }));
+
+      // Statistiques par genre (pour la category-strip)
+      const genreStats = await Movie.findAll({
+        where: { status: "approved" },
+        attributes: ["genre", [Sequelize.fn("COUNT", Sequelize.col("id")), "count"]],
+        group: ["genre"],
+        order: [[Sequelize.fn("COUNT", Sequelize.col("id")), "DESC"]],
+        raw: true,
+      });
 
       // Rendre la vue avec les recettes
       res.render("home", {
@@ -88,6 +111,7 @@ const homeController = {
         topRecipe,
         topMovies: enrichedTopMovies,
         recipeImages,
+        genreStats,
         role: req.userRole,
       });
     } catch (error) {

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Initialise les boutons favoris
    */
   function initFavorites() {
-    const favoriteButtons = document.querySelectorAll(".btn-favorite");
+    const favoriteButtons = document.querySelectorAll(".btn-fav");
 
     favoriteButtons.forEach((btn) => {
       btn.addEventListener("click", async (e) => {

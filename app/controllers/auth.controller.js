@@ -11,6 +11,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** Supprime un fichier statique si il existe (chemin relatif à /public) */
+function unlinkIfExists(relativePath) {
+  if (!relativePath) return;
+  const abs = path.join(__dirname, "../public", relativePath);
+  if (fs.existsSync(abs)) fs.unlinkSync(abs);
+}
+
 const authController = {
   // pour se connecter (accepte pseudo ou email)
   async login(req, res) {
@@ -651,6 +660,9 @@ const authController = {
         });
       }
 
+      unlinkIfExists(user.picture);
+      unlinkIfExists(user.banner_image);
+
       await UsersRecipes.destroy({ where: { id_user: userId } });
       await Notice.destroy({ where: { id_user: userId } });
       await User.destroy({ where: { id: userId } });
@@ -792,6 +804,9 @@ const authController = {
         });
       }
 
+      // Recette non encore approuvée : mise à jour directe → supprimer l'ancienne image
+      if (updateData.picture && recipe.picture) unlinkIfExists(recipe.picture);
+
       await Recipe.update(updateData, { where: { id: recipeId } });
       return res.status(StatusCodes.OK).json({
         success: true,
@@ -832,6 +847,9 @@ const authController = {
           message: "Accès interdit.",
         });
       }
+
+      unlinkIfExists(recipe.picture);
+      unlinkIfExists(recipe.pending_picture);
 
       await Notice.destroy({ where: { id_recipe: recipeId } });
       await UsersRecipes.destroy({ where: { id_recipe: recipeId } });

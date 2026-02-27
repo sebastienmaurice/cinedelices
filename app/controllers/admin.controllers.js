@@ -16,6 +16,15 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** Supprime un fichier statique si il existe (chemin relatif à /public) */
+function unlinkIfExists(relativePath) {
+  if (!relativePath) return;
+  const abs = path.join(__dirname, "../public", relativePath);
+  if (fs.existsSync(abs)) fs.unlinkSync(abs);
+}
+
 const adminController = {
   // Page principale admin
 
@@ -265,11 +274,13 @@ const adminController = {
       const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
       const recipeIds = recipes.map((recipe) => recipe.id);
       if (recipeIds.length > 0) {
+        recipes.forEach((r) => { unlinkIfExists(r.picture); unlinkIfExists(r.pending_picture); });
         await Notice.destroy({ where: { id_recipe: recipeIds } });
         await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
         await Recipe.destroy({ where: { id_movie: movieId } });
       }
 
+      unlinkIfExists(movie.picture);
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
       return res.redirect("/admin?success=movie_delete_approved");
@@ -404,7 +415,11 @@ const adminController = {
       if (recipe.pending_name) updateData.name = recipe.pending_name;
       if (recipe.pending_description)
         updateData.description = recipe.pending_description;
-      if (recipe.pending_picture) updateData.picture = recipe.pending_picture;
+      if (recipe.pending_picture) {
+        // Supprimer l'ancienne image active avant de la remplacer
+        if (recipe.picture) unlinkIfExists(recipe.picture);
+        updateData.picture = recipe.pending_picture;
+      }
       if (recipe.pending_category) updateData.category = recipe.pending_category;
       if (recipe.pending_ingredients)
         updateData.ingredients = recipe.pending_ingredients;
@@ -431,6 +446,16 @@ const adminController = {
       const recipeId = parseInt(req.params.id, 10);
       if (!recipeId || Number.isNaN(recipeId)) {
         return res.redirect("/admin?success=recipe_edit_rejected");
+      }
+
+      // Supprimer la pending_picture orpheline si elle existe
+      const recipe = await Recipe.findByPk(recipeId, {
+        attributes: ["id", "pending_picture"],
+      });
+      if (recipe && recipe.pending_picture) {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+        const oldPath = path.join(__dirname, "../public", recipe.pending_picture);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
 
       await Recipe.update(
@@ -868,14 +893,19 @@ const adminController = {
         return res.redirect("/admin?success=admin_movie_delete_error");
       }
 
+      const movie = await Movie.findByPk(movieId);
+      if (!movie) return res.redirect("/admin?success=admin_movie_delete_error");
+
       const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
       const recipeIds = recipes.map((recipe) => recipe.id);
       if (recipeIds.length > 0) {
+        recipes.forEach((r) => { unlinkIfExists(r.picture); unlinkIfExists(r.pending_picture); });
         await Notice.destroy({ where: { id_recipe: recipeIds } });
         await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
         await Recipe.destroy({ where: { id_movie: movieId } });
       }
 
+      unlinkIfExists(movie.picture);
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
       return res.redirect("/admin?success=admin_movie_deleted");
@@ -889,6 +919,12 @@ const adminController = {
       const recipeId = parseInt(req.params.id, 10);
       if (!recipeId || Number.isNaN(recipeId)) {
         return res.redirect("/admin?success=admin_recipe_delete_error");
+      }
+
+      const recipe = await Recipe.findByPk(recipeId, { attributes: ["id", "picture", "pending_picture"] });
+      if (recipe) {
+        unlinkIfExists(recipe.picture);
+        unlinkIfExists(recipe.pending_picture);
       }
 
       await Notice.destroy({ where: { id_recipe: recipeId } });
@@ -974,8 +1010,13 @@ const adminController = {
         updateData.synopsis = trimmedSynopsis.length > 0 ? trimmedSynopsis.substring(0, 1000) : null;
       }
 
-      // Photo uploadée par l'admin
+      // Photo uploadée par l'admin — supprime l'ancienne si elle existe
       if (req.file) {
+        if (movie.picture) {
+          const __dirname = path.dirname(fileURLToPath(import.meta.url));
+          const oldPath = path.join(__dirname, "../public", movie.picture);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
         updateData.picture = `/images/movies/originals/${req.file.filename}`;
       }
 
@@ -1028,8 +1069,13 @@ const adminController = {
       if (ingredients) updateData.ingredients = ingredients.trim();
       if (preparation) updateData.preparation = preparation.trim();
 
-      // Photo uploadée par l'admin
+      // Photo uploadée par l'admin — supprime l'ancienne si elle existe
       if (req.file) {
+        if (recipe.picture) {
+          const __dirname = path.dirname(fileURLToPath(import.meta.url));
+          const oldPath = path.join(__dirname, "../public", recipe.picture);
+          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
         updateData.picture = `/images/recipes/${req.file.filename}`;
       }
 
