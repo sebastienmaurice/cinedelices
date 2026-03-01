@@ -185,8 +185,22 @@
         </div>
       </section>
 
-      <!-- Section divider -->
-      <div class="wrap"><div class="section-divider"></div></div>
+      <!-- ══════════════════════════════════════════════
+           TRANSITION NARRATIVE — maquette HTML lines 1708-1721
+           ══════════════════════════════════════════════ -->
+      <div class="section-bridge">
+        <div class="wrap">
+          <div class="section-bridge__inner" data-reveal="up">
+            <div class="section-bridge__line"></div>
+            <div class="section-bridge__text">
+              <span class="section-bridge__eyebrow">Vous avez trouvé votre genre ?</span>
+              <span class="section-bridge__arrow">↓</span>
+              <span class="section-bridge__tagline">Voici les recettes que nos membres adorent</span>
+            </div>
+            <div class="section-bridge__line"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- ══════════════════════════════════════════════
            DUO DU JOUR — maquette HTML lines 1546-1672
@@ -240,8 +254,14 @@
             </a>
             <% } %>
 
-            <!-- ② CTA DORÉ — Golden Ticket — maquette lines 1586-1624 -->
-            <div class="djc-cta" data-reveal="up">
+            <!-- ② CTA DORÉ — wrapper colonne : eyebrow + Golden Ticket -->
+            <div class="djc-cta-col">
+
+              <!-- Eyebrow dynamique au-dessus de la CTA -->
+              <div class="djc-eyebrow">🎬&nbsp;<%= totalMovies %> FILMS VOUS ATTENDENT</div>
+
+              <!-- Golden Ticket -->
+              <div class="djc-cta" data-reveal="up">
               <div class="djc-cta__shimmer"></div>
               <div>
                 <div class="djc-cta__eyebrow">Rejoignez la communauté</div>
@@ -276,7 +296,8 @@
                   <span class="djc-cta__av-txt">+<%= totalUsers %> membres actifs</span>
                 </div>
               </div>
-            </div>
+            </div><!-- /.djc-cta -->
+            </div><!-- /.djc-cta-col -->
 
             <!-- ③ RECETTE — format 3:2 — topRecipe — maquette lines 1626-1668 -->
             <% if (topRecipe) { %>
@@ -325,93 +346,6 @@
 
           </div>
         </section>
-      </div>
-
-      <!-- ══════════════════════════════════════════════
-           BANNIÈRE PARTICIPEZ — CSS home.css lines 1806-1839
-           ══════════════════════════════════════════════ -->
-      <section class="participe-section">
-        <div class="participe-banner-outer-pad">
-          <div class="wrap">
-            <div class="participe-banner" data-reveal="up">
-              <!-- Perforations pellicule gauche -->
-              <div class="participe-banner__holes participe-banner__holes--left" aria-hidden="true">
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-              </div>
-              <!-- Perforations pellicule droite -->
-              <div class="participe-banner__holes participe-banner__holes--right" aria-hidden="true">
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-                <div class="participe-banner__hole"></div>
-              </div>
-              <div class="participe-banner__inner">
-                <!-- Icône clapperboard -->
-                <div class="participe-banner__icon-col">
-                  <div class="participe-banner__clapperboard">🎬</div>
-                </div>
-                <!-- Texte central -->
-                <div class="participe-banner__content">
-                  <div class="participe-banner__eyebrow">Communauté · Cinéphiles Gourmands</div>
-                  <div class="participe-banner__title">PARTICIPEZ <span>!</span></div>
-                  <p class="participe-banner__desc">Ajoutez votre film préféré et la recette qu'il vous inspire.</p>
-                </div>
-                <!-- Stats + CTA -->
-                <div class="participe-banner__right">
-                  <div class="participe-banner__stats">
-                    <div class="participe-banner__stat">
-                      <span class="participe-banner__stat-val"><%= totalUsers %></span>
-                      <span class="participe-banner__stat-label">Membres</span>
-                    </div>
-                    <div class="participe-banner__stat-sep"></div>
-                    <div class="participe-banner__stat">
-                      <span class="participe-banner__stat-val"><%= totalRecipes %></span>
-                      <span class="participe-banner__stat-label">Recettes</span>
-                    </div>
-                    <div class="participe-banner__stat-sep"></div>
-                    <div class="participe-banner__stat">
-                      <span class="participe-banner__stat-val"><%= totalMovies %></span>
-                      <span class="participe-banner__stat-label">Films</span>
-                    </div>
-                  </div>
-                  <div class="participe-banner__cta-col">
-                    <a href="/add-recipes-movies/" class="participe-banner__btn">✦ Ajouter ma recette</a>
-                    <div class="participe-banner__membres">
-                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=12" alt="">
-                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=25" alt="">
-                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=33" alt="">
-                      <span class="participe-banner__av-label">+<%= totalUsers %> membres actifs</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ══════════════════════════════════════════════
-           TRANSITION NARRATIVE — maquette HTML lines 1708-1721
-           ══════════════════════════════════════════════ -->
-      <div class="section-bridge">
-        <div class="wrap">
-          <div class="section-bridge__inner" data-reveal="up">
-            <div class="section-bridge__line"></div>
-            <div class="section-bridge__text">
-              <span class="section-bridge__eyebrow">Vous avez trouvé votre genre ?</span>
-              <span class="section-bridge__arrow">↓</span>
-              <span class="section-bridge__tagline">Voici les recettes que nos membres adorent</span>
-            </div>
-            <div class="section-bridge__line"></div>
-          </div>
-        </div>
       </div>
 
       <!-- ══════════════════════════════════════════════
@@ -469,11 +403,16 @@
                   <p class="top3-featured__desc"><%= recipes[0].description.slice(0, 120) %>...</p>
                   <% } %>
                   <div class="top3-featured__foot">
-                    <div class="top3-featured__author">
-                      <img class="top3-featured__avatar" src="<%= recipes[0].User && recipes[0].User.avatar ? recipes[0].User.avatar : 'https://i.pravatar.cc/68?img=15' %>" alt="<%= recipes[0].User ? recipes[0].User.username : 'Chef' %>" loading="lazy">
-                      <div>
-                        <div class="top3-featured__author-name"><%= recipes[0].User ? recipes[0].User.username : 'Chef Ciné Délices' %></div>
-                        <div class="top3-featured__author-rank">★★★ Studio Or</div>
+                    <% const c0 = recipes[0].contributor;
+                       const c0cls = c0 && c0.role === 'admin' ? 'lvl--legend' : 'lvl--1';
+                       const c0ttl = c0 && c0.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
+                    <div class="lvl-badge <%= c0cls %>">
+                      <div class="lvl-av">
+                        <img src="<%= c0 && c0.picture ? c0.picture : 'https://i.pravatar.cc/68?img=15' %>" alt="" loading="lazy">
+                      </div>
+                      <div class="lvl-info">
+                        <span class="lvl-name"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="lvl-title"><%= c0ttl %></span>
                       </div>
                     </div>
                     <a href="/recipes-movie/details/<%= recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
@@ -509,8 +448,20 @@
                       <span>★</span><span>★</span><span>★</span><span>★</span><span class="star-e">★</span>
                     </div>
                   </div>
+                  <% if (recipes[1].description) { %><p class="top3-card__desc"><%= recipes[1].description.slice(0, 80) %>...</p><% } %>
                   <div class="top3-card__foot">
-                    <span class="top3-card__author-name"><%= recipes[1].User ? recipes[1].User.username : 'Chef Ciné Délices' %></span>
+                    <% const c1 = recipes[1].contributor;
+                       const c1cls = c1 && c1.role === 'admin' ? 'lvl--legend' : 'lvl--1';
+                       const c1ttl = c1 && c1.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
+                    <div class="lvl-badge lvl-badge--sm <%= c1cls %>">
+                      <div class="lvl-av">
+                        <img src="<%= c1 && c1.picture ? c1.picture : 'https://i.pravatar.cc/68?img=15' %>" alt="" loading="lazy">
+                      </div>
+                      <div class="lvl-info">
+                        <span class="lvl-name"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="lvl-title"><%= c1ttl %></span>
+                      </div>
+                    </div>
                     <a href="/recipes-movie/details/<%= recipes[1].id %>" class="top3-card__btn">Voir</a>
                   </div>
                 </div>
@@ -540,13 +491,56 @@
                       <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                     </div>
                   </div>
+                  <% if (recipes[2].description) { %><p class="top3-card__desc"><%= recipes[2].description.slice(0, 80) %>...</p><% } %>
                   <div class="top3-card__foot">
-                    <span class="top3-card__author-name"><%= recipes[2].User ? recipes[2].User.username : 'Chef Ciné Délices' %></span>
+                    <% const c2 = recipes[2].contributor;
+                       const c2cls = c2 && c2.role === 'admin' ? 'lvl--legend' : 'lvl--1';
+                       const c2ttl = c2 && c2.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
+                    <div class="lvl-badge lvl-badge--sm <%= c2cls %>">
+                      <div class="lvl-av">
+                        <img src="<%= c2 && c2.picture ? c2.picture : 'https://i.pravatar.cc/68?img=15' %>" alt="" loading="lazy">
+                      </div>
+                      <div class="lvl-info">
+                        <span class="lvl-name"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="lvl-title"><%= c2ttl %></span>
+                      </div>
+                    </div>
                     <a href="/recipes-movie/details/<%= recipes[2].id %>" class="top3-card__btn">Voir</a>
                   </div>
                 </div>
               </div>
               <% } %>
+
+              <!-- CTA participe-banner — intégrée comme card du grid -->
+              <div class="top3-card top3-cta">
+                <div class="top3-cta__shimmer"></div>
+                <div class="top3-cta__icon-col">
+                  <div class="top3-cta__icon">🎬</div>
+                </div>
+                <div class="top3-cta__body">
+                  <span class="top3-cta__eyebrow">Contribuez</span>
+                  <h3 class="top3-cta__title">Partagez<br><span>votre recette</span></h3>
+                  <div class="top3-cta__stats">
+                    <div class="top3-cta__stat">
+                      <span class="top3-cta__stat-val"><%= totalUsers %></span>
+                      <span class="top3-cta__stat-lbl">Membres</span>
+                    </div>
+                    <div class="top3-cta__stat-sep"></div>
+                    <div class="top3-cta__stat">
+                      <span class="top3-cta__stat-val"><%= totalRecipes %></span>
+                      <span class="top3-cta__stat-lbl">Recettes</span>
+                    </div>
+                    <div class="top3-cta__stat-sep"></div>
+                    <div class="top3-cta__stat">
+                      <span class="top3-cta__stat-val"><%= totalMovies %></span>
+                      <span class="top3-cta__stat-lbl">Films</span>
+                    </div>
+                  </div>
+                  <div class="top3-cta__foot">
+                    <a href="/add-recipes-movies/" class="top3-cta__btn">✦ Ajouter ma recette</a>
+                  </div>
+                </div>
+              </div>
 
             </div>
           </div>

@@ -22,6 +22,11 @@ const homeController = {
             attributes: ["title"], // on récupère uniquement le nom du film
             where: { status: "approved" },
           },
+          {
+            model: User,
+            as: "contributor",
+            attributes: ["pseudo", "picture", "role"],
+          },
         ],
         order: [["quote", "DESC"]], // tri par note décroissante
         limit: 3, // limite à 3 résultats pour avoir les 3 meilleures recettes
