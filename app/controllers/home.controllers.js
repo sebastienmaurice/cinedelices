@@ -105,6 +105,13 @@ const homeController = {
         raw: true,
       });
 
+      // Statistiques communauté (COUNT)
+      const [totalUsers, totalRecipes, totalMovies] = await Promise.all([
+        User.count(),
+        Recipe.count({ where: { status: "approved" } }),
+        Movie.count({ where: { status: "approved" } }),
+      ]);
+
       // Rendre la vue avec les recettes
       res.render("home", {
         recipes,
@@ -113,6 +120,9 @@ const homeController = {
         recipeImages,
         genreStats,
         role: req.userRole,
+        totalUsers,
+        totalRecipes,
+        totalMovies,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

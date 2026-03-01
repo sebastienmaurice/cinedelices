@@ -48,17 +48,21 @@
 
   /* ═══ TRACK DUPE — infinite scroll ═══
      Les originaux reçoivent data-badge-id.
-     Les clones reçoivent data-clone-of (pas de tooltip). */
+     Les clones reçoivent data-clone-of (pas de tooltip).
+     On clone 3× pour garantir que le track dépasse toujours le viewport,
+     même avec peu de genres. */
   const originals = Array.from(track.children);
   originals.forEach((n, i) => { n.dataset.badgeId = i; });
-  originals.forEach(n => {
-    const c = n.cloneNode(true);
-    c.querySelectorAll('.badge__img').forEach(lazyObserve);
-    c.dataset.cloneOf = n.dataset.badgeId;
-    const tt = c.querySelector('.tooltip');
-    if (tt) tt.remove();
-    track.appendChild(c);
-  });
+  for (let copy = 0; copy < 3; copy++) {
+    originals.forEach(n => {
+      const c = n.cloneNode(true);
+      c.querySelectorAll('.badge__img').forEach(lazyObserve);
+      c.dataset.cloneOf = n.dataset.badgeId;
+      const tt = c.querySelector('.tooltip');
+      if (tt) tt.remove();
+      track.appendChild(c);
+    });
+  }
 
   /* ═══ TOOLTIPS ═══ */
   track.querySelectorAll('.badge:not([data-clone-of])').forEach(badge => {
@@ -75,7 +79,7 @@
           <span class="tooltip__film-note">★ ${f.n}</span>
         </div>`).join('')}
       </div>
-      <p class="tooltip__hint">Cliquer pour explorer →</p>`;
+      <a class="tooltip__hint" href="/movies?genre=${encodeURIComponent(genre)}">Cliquer pour explorer →</a>`;
   });
 
   /* ═══════════════════════════════════════════
@@ -297,6 +301,7 @@
   let openBadge = null;
   track.querySelectorAll('.badge').forEach(b => {
     b.addEventListener('click', e => {
+      if (e.target.closest('.tooltip__hint')) return; // laisser le lien naviguer
       e.stopPropagation();
       const sourceId = b.dataset.cloneOf;
       const target = sourceId != null
@@ -948,23 +953,27 @@
   window.addEventListener('resize', () => states.forEach(s => s.resizeCanvas()));
 
   /* ═══ CAROUSEL AUTO-SCROLL ═══ */
-  const BASE_SPEED = 0.045, SLOW_SPEED = 0.008;
+  const BASE_SPEED = 0.07, SLOW_SPEED = 0.012;
   let txPx = 0, halfW = 0, currentSpeed = BASE_SPEED, targetSpeed = BASE_SPEED;
   let isDragging = false, touchLastX = 0, touchVel = 0, mouseProx = 0;
 
   function measureHalf() {
-    const items = Array.from(track.querySelectorAll('.badge'));
-    if (!items.length) return;
-    const c = Math.floor(items.length / 2);
-    let w = 0;
-    for (let i = 0; i < c; i++) w += items[i].offsetWidth + 28;
+    /* Utilise la position DOM réelle pour éviter les erreurs dues au lazy-load */
+    const firstOriginal = track.querySelector('.badge[data-badge-id="0"]');
+    const firstClone    = track.querySelector('.badge[data-clone-of="0"]');
+    if (!firstOriginal || !firstClone) return;
+    const w = firstClone.offsetLeft - firstOriginal.offsetLeft;
     if (w > 0) halfW = w;
   }
   window.addEventListener('resize', measureHalf);
-  /* Plusieurs tentatives pour s'assurer que le layout est calculé */
+  /* Tentatives initiales */
   setTimeout(measureHalf, 100);
   setTimeout(measureHalf, 400);
   setTimeout(measureHalf, 1200);
+  /* Recalcul automatique quand les images chargent et changent la taille des badges */
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => measureHalf()).observe(track);
+  }
 
   outer.addEventListener('mouseenter', () => { mouseProx = 1; });
   outer.addEventListener('mouseleave', () => { mouseProx = 0; });

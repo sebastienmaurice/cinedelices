@@ -3,349 +3,110 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Le goût du cinéma : découvrez des recettes inspirées des films cultes !"
-    />
+    <meta name="description" content="Ciné Délices — Le goût du cinéma : découvrez des recettes inspirées des films cultes !" />
     <title>Ciné Délices - Le goût du cinéma</title>
-
-    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
-
-    <!-- Styles spécifiques à la page -->
-    <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/home.css" />
   </head>
 
   <body>
-    <!-- HEADER -->
     <%- include("partials/header") %>
 
-    <!-- MAIN -->
     <main>
-      <!-- HERO SLIDER -->
-      <section class="hero-slider" aria-label="Carrousel principal">
-        <div class="hero-slider__container">
-          <!-- Slide 1 : Remy de ratatouillle -->
-          <div
-            class="hero-slider__slide hero-slider__slide--active"
-            data-slide="1"
-          >
-            <div
-              class="hero-slider__bg"
-              style="
-                background-image: url('/images/event/hero-slide-remy-paris-bg.jpg');
-              "
-            ></div>
-            <div class="hero-slider__overlay"></div>
-            <img
-              src="/images/event/hero-slide-remy-foreground.png"
-              alt="Rémy sur la vue de Paris"
-              class="hero-slider__foreground"
-            />
-            <div class="hero-slider__content">
-              <h1 class="hero-slider__h1">Remy : Ratatouille</h1>
-              <p class="hero-slider__subtitle">
-                À Paris, même un rat peut devenir un grand chef
-              </p>
-              <a href="/movies" class="btn btn--hero">
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                <span class="btn__text">Passer en cuisine</span>
-              </a>
-            </div>
-          </div>
 
-          <!-- Slide 2 : Walter de Breaking Bad -->
-          <div class="hero-slider__slide" data-slide="2">
-            <div
-              class="hero-slider__bg"
-              style="
-                background-image: url('/images/event/hero-slide-breaking-bad-bg.jpg');
-              "
-            ></div>
-            <div class="hero-slider__overlay"></div>
-            <img
-              src="/images/event/hero-slide-walter-breaking-bad-foreground.png"
-              alt="Walter desert de Breaking Bad"
-              class="hero-slider__foreground"
-            />
-            <div class="hero-slider__content">
-              <h1 class="hero-slider__h1">Walter : Breaking Bad</h1>
-              <p class="hero-slider__subtitle">
-                Quand la cuisine devient une question de survie
-              </p>
-              <a href="/recipes-movie" class="btn btn--hero">
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                <span class="btn__text">Passer aux fourneaux</span>
-              </a>
-            </div>
-          </div>
+      <!-- ══════════════════════════════════════════════
+           HERO — 2 slides, version maquette V2 (hero__* classes)
+           Images : /images/event/  (locales)
+           ══════════════════════════════════════════════ -->
+      <div class="hero-wrapper">
+      <section class="hero" id="hero">
 
-          <!-- Slide 3 : Recettes cultes -->
-          <div class="hero-slider__slide" data-slide="3">
-            <div
-              class="hero-slider__bg"
-              style="
-                background-image: url('/images/image-default-recipe-1.jpg');
-              "
-            ></div>
-            <div class="hero-slider__overlay"></div>
-            <img
-              src="/images/event/santa-1.png"
-              alt=""
-              class="hero-slider__foreground"
-            />
-            <div class="hero-slider__content">
-              <h1 class="hero-slider__h1">Recettes cultes</h1>
-              <p class="hero-slider__subtitle">
-                Explorez les saveurs iconiques du grand écran
-              </p>
-              <a href="/recipes-movie" class="btn btn--hero">
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                <span class="btn__text">Voir les recettes</span>
-              </a>
+        <!-- SLIDE 0 : Ratatouille -->
+        <div class="hero__slide active" id="slide-0">
+          <div class="hero__bg" id="bg-0" style="background-image:url('/images/event/hero-slide-remy-paris-bg.jpg')"></div>
+          <div class="hero__overlay"></div>
+          <div class="hero__vignette"></div>
+          <div class="hero__fade-left"></div>
+          <div class="hero__fade-right"></div>
+          <img class="hero__fg" id="fg-0" src="/images/event/hero-slide-remy-foreground.png" alt="Rémy — Ratatouille" draggable="false">
+          <span class="hero__slide-badge">🎬 Film du moment</span>
+          <div class="hero__content">
+            <div class="hero__eyebrow-bar">
+              <div class="hero__eyebrow-line"></div>
+              <div class="hero__eyebrow-text">
+                <span class="hero__eyebrow-label">Sélection Ciné Délices</span>
+                <span class="hero__eyebrow-genre">Animation · Comédie</span>
+              </div>
+            </div>
+            <h1 class="hero__title">RATA<em>TOUILLE</em></h1>
+            <p class="hero__sub">Quand la cuisine rencontre l'art</p>
+            <p class="hero__desc">Un rat passionné de gastronomie défie les conventions dans les cuisines parisiennes. Découvrez les recettes inspirées du chef Gusteau.</p>
+            <div class="hero__actions">
+              <a href="/recipes-movie" class="hero__btn-primary">🍴 Voir les recettes</a>
+              <a href="/movies" class="hero__btn-secondary">Fiche Film →</a>
             </div>
           </div>
-
-          <!-- Slide 4 : Communauté / Partage -->
-          <div class="hero-slider__slide" data-slide="4">
-            <div
-              class="hero-slider__bg"
-              style="
-                background-image: url('/images/image-home-marty-doc.png');
-                background-color: var(--bleu-nuit);
-              "
-            ></div>
-            <div class="hero-slider__overlay"></div>
-            <img
-              src="/images/event/santa-1.png"
-              alt=""
-              class="hero-slider__foreground"
-            />
-            <div class="hero-slider__content">
-              <h1 class="hero-slider__h1">Communauté</h1>
-              <p class="hero-slider__subtitle">
-                Partagez vos recettes et commentez celles des autres
-              </p>
-              <a href="/auth/register" class="btn btn--hero">
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
-                <span class="btn__text">Rejoindre la communauté</span>
-              </a>
-            </div>
+          <div class="hero__stats">
+            <div class="hero__stat"><span class="hero__stat-val">4.9</span><span class="hero__stat-label">Note</span></div>
+            <div class="hero__stat-sep"></div>
+            <div class="hero__stat"><span class="hero__stat-val">18</span><span class="hero__stat-label">Recettes</span></div>
+            <div class="hero__stat-sep"></div>
+            <div class="hero__stat"><span class="hero__stat-val">2007</span><span class="hero__stat-label">Année</span></div>
           </div>
+          <div class="hero__watermark">RATATOUILLE</div>
+          <div class="hero__grain"></div>
         </div>
 
-        <!-- Pagination verticale à droite -->
-        <div class="hero-slider__pagination-vertical" role="tablist">
-          <button
-            class="hero-slider__pagination-number hero-slider__pagination-number--active"
-            data-slide="0"
-            aria-label="Aller au slide 1"
-            role="tab"
-            aria-selected="true"
-          >
-            01
-          </button>
-          <button
-            class="hero-slider__pagination-number"
-            data-slide="1"
-            aria-label="Aller au slide 2"
-            role="tab"
-            aria-selected="false"
-          >
-            02
-          </button>
-          <button
-            class="hero-slider__pagination-number"
-            data-slide="2"
-            aria-label="Aller au slide 3"
-            role="tab"
-            aria-selected="false"
-          >
-            03
-          </button>
-          <button
-            class="hero-slider__pagination-number"
-            data-slide="3"
-            aria-label="Aller au slide 4"
-            role="tab"
-            aria-selected="false"
-          >
-            04
-          </button>
+        <!-- SLIDE 1 : Breaking Bad -->
+        <div class="hero__slide" id="slide-1">
+          <div class="hero__bg" id="bg-1" style="background-image:url('/images/event/hero-slide-breaking-bad-bg.jpg')"></div>
+          <div class="hero__overlay"></div>
+          <div class="hero__vignette"></div>
+          <div class="hero__fade-left"></div>
+          <div class="hero__fade-right"></div>
+          <img class="hero__fg" id="fg-1" src="/images/event/hero-slide-walter-breaking-bad-foreground.png" alt="Walter White — Breaking Bad" draggable="false">
+          <span class="hero__slide-badge">📺 Série du moment</span>
+          <div class="hero__content">
+            <div class="hero__eyebrow-bar">
+              <div class="hero__eyebrow-line"></div>
+              <div class="hero__eyebrow-text">
+                <span class="hero__eyebrow-label">Sélection Ciné Délices</span>
+                <span class="hero__eyebrow-genre">Drame · Thriller</span>
+              </div>
+            </div>
+            <h1 class="hero__title">BREAKING<em>BAD</em></h1>
+            <p class="hero__sub">La chimie au service des sens</p>
+            <p class="hero__desc">Walter White transformait le danger en art. Nous, on transforme ses recettes en chef-d'œuvres culinaires. Say my name.</p>
+            <div class="hero__actions">
+              <a href="/recipes-movie" class="hero__btn-primary">🍴 Voir les recettes</a>
+              <a href="/movies" class="hero__btn-secondary">Fiche Série →</a>
+            </div>
+          </div>
+          <div class="hero__stats">
+            <div class="hero__stat"><span class="hero__stat-val">5.0</span><span class="hero__stat-label">Note</span></div>
+            <div class="hero__stat-sep"></div>
+            <div class="hero__stat"><span class="hero__stat-val">11</span><span class="hero__stat-label">Recettes</span></div>
+            <div class="hero__stat-sep"></div>
+            <div class="hero__stat"><span class="hero__stat-val">2008</span><span class="hero__stat-label">Année</span></div>
+          </div>
+          <div class="hero__watermark">BREAKING BAD</div>
+          <div class="hero__grain"></div>
         </div>
+
+        <button class="hero__arrow hero__arrow--prev" id="heroPrev">‹</button>
+        <button class="hero__arrow hero__arrow--next" id="heroNext">›</button>
+        <div class="hero__nav">
+          <button class="hero__dot active" data-slide="0"></button>
+          <button class="hero__dot" data-slide="1"></button>
+        </div>
+
       </section>
+      </div>
 
-      <!--
-        RECETTE DU JOUR & QUELQUES FILMS
-        Layout : CSS Grid 2 colonnes (42% / 58%), align-items:stretch
-        → Gauche : recette du jour — overlay cinématographique (image absolute + gradient), ratio 3:2
-        → Droite : grille 3 colonnes — 2 film-cards portrait 2:3 + 1 carte CTA "Participez"
-        → CTA et boutons films visibles uniquement au hover
-        → Les deux colonnes s'étirent à la même hauteur dynamiquement via align-items:stretch.
-      -->
-      <section
-        class="home-duo"
-        id="recettes"
-        role="region"
-        aria-label="Recette du jour et sélection de films"
-      >
-        <!-- Colonne gauche : Recette du jour — traitement cinématographique -->
-        <div class="home-duo__left">
-          <div class="section-header-block">
-            <div class="section-header">
-              <h2 id="recette-du-jour-titre" class="section-title">Recette du jour</h2>
-              <div class="section-rule"></div>
-            </div>
-            <p class="section-meta">
-              Le goût du cinéma et le cinéma du goût
-            </p>
-          </div>
-          <article class="recipe-card recipe-card--featured recipe-card--cinematic">
-            <!-- Image pleine hauteur — le contenu flotte par-dessus via overlay -->
-            <div class="recipe-card__img">
-              <img
-                src="<%= topRecipe.picture %>"
-                alt="Recette inspirée de <%= topRecipe.Movie.title %>"
-                loading="lazy"
-                width="600"
-                height="900"
-              />
-            </div>
-            <!-- Overlay cinématographique : badge + titre + desc + CTA -->
-            <div class="recipe-card__cin-overlay">
-              <div class="recipe-card__ob">
-                <span class="badge badge--film-dk">🎬 <%= topRecipe.Movie.title %></span>
-              </div>
-              <div class="recipe-card__cin-body">
-                <h3 class="recipe-ttl"><%= topRecipe.name %></h3>
-                <!-- Métadonnées : temps · personnes · difficulté -->
-                <div class="recipe-card__cin-meta">
-                  <span class="recipe-card__cin-meta-item">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <%= topRecipe.time %> min
-                  </span>
-                  <% if (topRecipe.servings) { %>
-                  <span class="recipe-card__cin-meta-item">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    <%= topRecipe.servings %> pers.
-                  </span>
-                  <% } %>
-                  <span class="recipe-card__cin-meta-item">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                    <%= topRecipe.difficulty %>
-                  </span>
-                </div>
-                <p class="recipe-card__desc"><%= topRecipe.description %></p>
-                <div class="recipe-card__foot">
-                  <a
-                    class="btn btn--primary"
-                    href="/recipes-movie/details/<%= topRecipe.id %>"
-                    aria-label="Voir la recette <%= topRecipe.name %>"
-                  >
-                    <span class="btn__shimmer"></span>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-                    <span class="btn__text">Voir la recette</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <!-- Colonne droite : Quelques films Ciné Délices -->
-        <div class="home-duo__right">
-          <div class="section-header-block">
-            <div class="section-header">
-              <h2 class="section-title">Quelques films Ciné Délices</h2>
-              <div class="section-rule"></div>
-            </div>
-            <p class="section-meta">
-              Une sélection de films et séries cultes avec leurs recettes inspirées.
-            </p>
-          </div>
-          <div class="films-grid">
-            <% if (topMovies && topMovies.length > 0) { %>
-
-            <%/* ── 2 cards portrait (topMovies[0] et [1]) ── */%>
-            <% ;[topMovies[0], topMovies[1]].forEach(function(m) { %>
-            <% if (m) { %>
-            <a
-              href="/recipes-movie/<%= m.id %>"
-              class="film-card film-card--portrait"
-              aria-label="Voir les recettes de <%= m.title %>"
-            >
-              <div class="film-card__img">
-                <img
-                  src="<%= m.cardPath || m.picture %>"
-                  alt="Affiche du film <%= m.title %>"
-                  loading="lazy"
-                  width="400"
-                  height="600"
-                />
-                <div class="film-card__ot">
-                  <% if (m.genre) { %>
-                  <span class="badge badge--type-b"><%= m.genre.split(',')[0].trim() %></span>
-                  <% } %>
-                  <% if (m.recipeCount > 0) { %>
-                  <span class="badge film-card__recipe-count"><%= m.recipeCount %> recette<%= m.recipeCount > 1 ? 's' : '' %></span>
-                  <% } %>
-                </div>
-                <div class="film-card__tz">
-                  <span class="film-ttl"><%= m.title %></span>
-                  <% if (m.year) { %><span class="film-byl"><%= m.year %></span><% } %>
-                </div>
-              </div>
-              <div class="film-card__body">
-                <% if (m.synopsis) { %>
-                <p class="film-card__desc"><%= m.synopsis %></p>
-                <% } %>
-                <div class="film-card__foot">
-                  <span class="btn btn--red">Voir les recettes →</span>
-                </div>
-              </div>
-            </a>
-            <% } %>
-            <% }) %>
-
-            <%/* ── Carte CTA "Participez" — 3e colonne ── */%>
-            <a
-              href="/add-recipes-movies/"
-              class="film-card film-card--cta"
-              aria-label="Ajouter un film ou une recette"
-            >
-              <div class="film-card__cta-content">
-                <div class="film-card__cta-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                  </svg>
-                </div>
-                <h3 class="film-card__cta-title">Participez&nbsp;!</h3>
-                <p class="film-card__cta-desc">
-                  Ajoutez votre film préféré et la recette qu'il vous inspire.
-                </p>
-                <div class="film-card__foot">
-                  <span class="btn btn--primary">
-                    <span class="btn__shimmer"></span>
-                    <span class="btn__text">Ajouter maintenant</span>
-                  </span>
-                </div>
-              </div>
-            </a>
-
-            <% } else { %>
-            <p class="no-movies">Aucun film disponible pour le moment.</p>
-            <% } %>
-          </div>
-        </div>
-      </section>
-
-      <!-- CATÉGORIES / GENRES — Badges cinéma interactifs -->
+      <!-- ══════════════════════════════════════════════
+           GENRES — maquette HTML lines 1677-1706
+           Badges carousel dynamiques via genreStats
+           ══════════════════════════════════════════════ -->
       <%
         const GENRE_THEMES = {
           'Action':          { glow: '#FF6622', accent: '#FF8844', rgb: '255,102,34',  anim: 'bullet'      },
@@ -364,6 +125,8 @@
           'Guerre':          { glow: '#778899', accent: '#99AABB', rgb: '119,136,153', anim: 'radar'       },
           'Western':         { glow: '#A07840', accent: '#C09858', rgb: '160,120,64',  anim: 'torch'       },
           'Musical':         { glow: '#C4A052', accent: '#FFE085', rgb: '196,160,82',  anim: 'notes'       },
+          'Sci-Fi':          { glow: '#00FF88', accent: '#00FFCC', rgb: '0,255,136',   anim: 'scan'        },
+          'Historique':      { glow: '#B8882A', accent: '#C4A052', rgb: '184,136,42',  anim: 'torch'       },
         };
         const DEFAULT_GENRE_THEME = { glow: '#C4A052', accent: '#F2C84B', rgb: '196,160,82', anim: 'fuse' };
         function genreSlug(name) {
@@ -375,17 +138,18 @@
         }
       %>
       <canvas id="burst-canvas"></canvas>
-      <section class="category-strip" aria-label="Explorer par genre">
-        <div class="section-header-block">
-          <div class="section-header">
-            <h2 class="section-title">Explorer par genre</h2>
-            <div class="section-rule"></div>
+      <section class="genres-section" aria-label="Explorer par genre">
+        <div class="wrap">
+          <div class="genres-header">
+            <div class="genres-header__left">
+              <div class="section-label" data-reveal="left">Explorer par Genre</div>
+              <h2 class="section-title" data-reveal="left" style="margin-bottom:0;margin-top:0;transition-delay:.10s">Le goût du cinéma</h2>
+            </div>
+            <a href="/movies" class="genres-see-all" data-reveal="right">Tous les films</a>
           </div>
-          <p class="section-meta">Le goût du cinéma se décline en mille saveurs</p>
         </div>
         <div class="carousel-outer" id="carouselOuter">
           <div class="carousel-track" id="track">
-
             <% if (genreStats && genreStats.length > 0) { %>
               <% genreStats.forEach(function(stat) { %>
                 <% const theme = GENRE_THEMES[stat.genre] || DEFAULT_GENRE_THEME; %>
@@ -399,7 +163,7 @@
                   <canvas class="badge__border-canvas"></canvas>
                   <div class="badge__img-wrap">
                     <img class="badge__img"
-                         src="/images/categories/<%-slug%>.webp"
+                         src="/images/categories/<%- slug %>.webp"
                          alt="<%- stat.genre %>"
                          onerror="this.src.endsWith('.webp')?(this.src=this.src.slice(0,-5)+'.png'):(this.onerror=null,this.style.display='none')" />
                     <div class="badge__fade"></div>
@@ -417,96 +181,514 @@
                 </article>
               <% }) %>
             <% } %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section divider -->
+      <div class="wrap"><div class="section-divider"></div></div>
+
+      <!-- ══════════════════════════════════════════════
+           DUO DU JOUR — maquette HTML lines 1546-1672
+           3 colonnes : Film (27fr) | CTA doré (30fr) | Recette (43fr)
+           Film  → topMovies[0]
+           Recette → topRecipe
+           CTA → liens statiques (/auth/register, /add-recipes-movies/)
+           ══════════════════════════════════════════════ -->
+      <div class="wrap">
+        <section class="duo-jour-section">
+          <div class="duo-jour-header" data-reveal="up">
+            <div>
+              <div class="section-label">Sélection du Jour</div>
+              <h2 class="section-title">Le Duo du Jour</h2>
+              <p class="section-sub">Un film, une recette — l'association parfaite</p>
+            </div>
+            <div class="duo-jour-header__live">
+              <span class="duo-jour-header__live-dot"></span>
+              Mis à jour chaque jour
+            </div>
+          </div>
+
+          <div class="duo-jour-grid">
+
+            <!-- ① FILM — affiche 2:3 cadrée — topMovies[0] -->
+            <% if (topMovies && topMovies[0]) { %>
+            <a href="/recipes-movie/<%= topMovies[0].id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= topMovies[0].title %>">
+              <img class="djc-film__img" src="<%= topMovies[0].cardPath || topMovies[0].picture %>" alt="Affiche <%= topMovies[0].title %>" loading="lazy">
+              <div class="djc-film__overlay"></div>
+              <div class="djc-film__top">
+                <span class="djc-film__badge">🎬 Film</span>
+                <button class="djc-film__fav btn-fav" data-id="<%= topMovies[0].id %>" data-type="movie" aria-label="Ajouter aux favoris">♡</button>
+              </div>
+              <div class="djc-film__bottom">
+                <div class="djc-film__tags">
+                  <% if (topMovies[0].genre) { %>
+                  <span class="film-badge film-badge--genre"><%= topMovies[0].genre.split(',')[0].trim() %></span>
+                  <% } %>
+                </div>
+                <span class="djc-film__title"><%= topMovies[0].title %></span>
+                <% if (topMovies[0].year) { %><span class="djc-film__sub"><%= topMovies[0].year %></span><% } %>
+                <div class="djc-film__meta">
+                  <div class="djc-film__stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <% if (topMovies[0].recipeCount) { %>
+                  <span class="djc-film__count">🍴 <%= topMovies[0].recipeCount %> recette<%= topMovies[0].recipeCount > 1 ? 's' : '' %></span>
+                  <% } %>
+                </div>
+              </div>
+            </a>
+            <% } %>
+
+            <!-- ② CTA DORÉ — Golden Ticket — maquette lines 1586-1624 -->
+            <div class="djc-cta" data-reveal="up">
+              <div class="djc-cta__shimmer"></div>
+              <div>
+                <div class="djc-cta__eyebrow">Rejoignez la communauté</div>
+              </div>
+              <div>
+                <h2 class="djc-cta__title">CUISINEZ<em>CE QUE<br>VOUS AIMEZ.</em></h2>
+              </div>
+              <p class="djc-cta__desc">Partagez vos recettes inspirées du grand écran et rejoignez des milliers de cinéphiles gourmands.</p>
+              <div class="djc-cta__stats">
+                <div class="djc-cta__stat">
+                  <span class="djc-cta__stat-val"><%= totalUsers %></span>
+                  <span class="djc-cta__stat-lbl">Membres</span>
+                </div>
+                <div class="djc-cta__stat-sep"></div>
+                <div class="djc-cta__stat">
+                  <span class="djc-cta__stat-val"><%= totalRecipes %></span>
+                  <span class="djc-cta__stat-lbl">Recettes</span>
+                </div>
+                <div class="djc-cta__stat-sep"></div>
+                <div class="djc-cta__stat">
+                  <span class="djc-cta__stat-val"><%= totalMovies %></span>
+                  <span class="djc-cta__stat-lbl">Films liés</span>
+                </div>
+              </div>
+              <div class="djc-cta__btns">
+                <a href="/auth/register" class="djc-cta__btn-primary">✦ Créer un compte</a>
+                <a href="/add-recipes-movies/" class="djc-cta__btn-secondary">🍴 Ajouter ma recette</a>
+                <div class="djc-cta__membres">
+                  <img src="https://i.pravatar.cc/32?img=12" alt="" class="djc-cta__av">
+                  <img src="https://i.pravatar.cc/32?img=25" alt="" class="djc-cta__av">
+                  <img src="https://i.pravatar.cc/32?img=33" alt="" class="djc-cta__av">
+                  <span class="djc-cta__av-txt">+<%= totalUsers %> membres actifs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ③ RECETTE — format 3:2 — topRecipe — maquette lines 1626-1668 -->
+            <% if (topRecipe) { %>
+            <div class="djc-recette" data-reveal="right">
+              <div class="djc-recette__img-wrap">
+                <img class="djc-recette__img" src="<%= topRecipe.picture %>" alt="<%= topRecipe.name %>" loading="lazy">
+                <div class="djc-recette__img-overlay"></div>
+                <div class="djc-recette__img-top">
+                  <span class="djc-recette__type"><%= topRecipe.difficulty || 'Recette' %></span>
+                  <button class="djc-recette__fav btn-fav" data-id="<%= topRecipe.id %>" data-type="recipe" aria-label="Ajouter aux favoris">♡</button>
+                </div>
+                <div class="djc-recette__img-bottom">
+                  <span class="djc-recette__film-badge">🎞 <%= topRecipe.Movie.title %></span>
+                </div>
+              </div>
+              <div class="djc-recette__body">
+                <h3 class="djc-recette__title"><%= topRecipe.name %></h3>
+                <div class="djc-recette__tags">
+                  <span class="djc-recette__tag djc-recette__tag--or"><%= topRecipe.difficulty || 'Moyen' %></span>
+                  <% if (topRecipe.category) { %>
+                  <span class="djc-recette__tag djc-recette__tag--bleu"><%= topRecipe.category %></span>
+                  <% } %>
+                </div>
+                <div class="djc-recette__meta">
+                  <div class="djc-recette__stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <div class="djc-recette__infos">
+                    <% if (topRecipe.time) { %><span>⏱ <%= topRecipe.time %> min</span><% } %>
+                    <% if (topRecipe.servings) { %><span>👥 <%= topRecipe.servings %> pers.</span><% } %>
+                  </div>
+                </div>
+                <div class="djc-recette__foot">
+                  <div class="djc-recette__author">
+                    <img class="djc-recette__avatar" src="<%= topRecipe.User && topRecipe.User.avatar ? topRecipe.User.avatar : 'https://i.pravatar.cc/68?img=47' %>" alt="<%= topRecipe.User ? topRecipe.User.username : 'Chef' %>" loading="lazy">
+                    <div>
+                      <div class="djc-recette__author-name"><%= topRecipe.User ? topRecipe.User.username : 'Chef Ciné Délices' %></div>
+                      <div class="djc-recette__author-rank">★★ Studio Bronze</div>
+                    </div>
+                  </div>
+                  <a href="/recipes-movie/details/<%= topRecipe.id %>" class="djc-recette__btn">Voir la recette →</a>
+                </div>
+              </div>
+            </div>
+            <% } %>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           BANNIÈRE PARTICIPEZ — CSS home.css lines 1806-1839
+           ══════════════════════════════════════════════ -->
+      <section class="participe-section">
+        <div class="participe-banner-outer-pad">
+          <div class="wrap">
+            <div class="participe-banner" data-reveal="up">
+              <!-- Perforations pellicule gauche -->
+              <div class="participe-banner__holes participe-banner__holes--left" aria-hidden="true">
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+              </div>
+              <!-- Perforations pellicule droite -->
+              <div class="participe-banner__holes participe-banner__holes--right" aria-hidden="true">
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+                <div class="participe-banner__hole"></div>
+              </div>
+              <div class="participe-banner__inner">
+                <!-- Icône clapperboard -->
+                <div class="participe-banner__icon-col">
+                  <div class="participe-banner__clapperboard">🎬</div>
+                </div>
+                <!-- Texte central -->
+                <div class="participe-banner__content">
+                  <div class="participe-banner__eyebrow">Communauté · Cinéphiles Gourmands</div>
+                  <div class="participe-banner__title">PARTICIPEZ <span>!</span></div>
+                  <p class="participe-banner__desc">Ajoutez votre film préféré et la recette qu'il vous inspire.</p>
+                </div>
+                <!-- Stats + CTA -->
+                <div class="participe-banner__right">
+                  <div class="participe-banner__stats">
+                    <div class="participe-banner__stat">
+                      <span class="participe-banner__stat-val"><%= totalUsers %></span>
+                      <span class="participe-banner__stat-label">Membres</span>
+                    </div>
+                    <div class="participe-banner__stat-sep"></div>
+                    <div class="participe-banner__stat">
+                      <span class="participe-banner__stat-val"><%= totalRecipes %></span>
+                      <span class="participe-banner__stat-label">Recettes</span>
+                    </div>
+                    <div class="participe-banner__stat-sep"></div>
+                    <div class="participe-banner__stat">
+                      <span class="participe-banner__stat-val"><%= totalMovies %></span>
+                      <span class="participe-banner__stat-label">Films</span>
+                    </div>
+                  </div>
+                  <div class="participe-banner__cta-col">
+                    <a href="/add-recipes-movies/" class="participe-banner__btn">✦ Ajouter ma recette</a>
+                    <div class="participe-banner__membres">
+                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=12" alt="">
+                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=25" alt="">
+                      <img class="participe-banner__av" src="https://i.pravatar.cc/32?img=33" alt="">
+                      <span class="participe-banner__av-label">+<%= totalUsers %> membres actifs</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════
+           TRANSITION NARRATIVE — maquette HTML lines 1708-1721
+           ══════════════════════════════════════════════ -->
+      <div class="section-bridge">
+        <div class="wrap">
+          <div class="section-bridge__inner" data-reveal="up">
+            <div class="section-bridge__line"></div>
+            <div class="section-bridge__text">
+              <span class="section-bridge__eyebrow">Vous avez trouvé votre genre ?</span>
+              <span class="section-bridge__arrow">↓</span>
+              <span class="section-bridge__tagline">Voici les recettes que nos membres adorent</span>
+            </div>
+            <div class="section-bridge__line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════
+           TOP 3 RECETTES — maquette HTML lines 1976-2084
+           recipes[0] → featured #1
+           recipes[1] → card #2
+           recipes[2] → card #3
+           ══════════════════════════════════════════════ -->
+      <section class="top-recettes-section" id="films" role="region" aria-labelledby="top3-titre">
+        <div class="wrap">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px">
+            <div data-reveal="left">
+              <div class="section-label">Les incontournables</div>
+              <h2 id="top3-titre" class="section-title">Top 3 Recettes</h2>
+              <p class="section-sub" style="margin-bottom:0">Les meilleures recettes inspirées du grand écran</p>
+            </div>
+            <a href="/recipes-movie" class="genres-see-all" data-reveal="right">Voir toutes les recettes</a>
+          </div>
+
+          <% if (recipes && recipes.length > 0) { %>
+          <div class="top3-layout" data-reveal-stagger>
+
+            <!-- COLONNE GAUCHE : featured #1 — recipes[0] -->
+            <div class="top3-col-left">
+              <% if (recipes[0]) { %>
+              <div class="top3-featured">
+                <div class="top3-featured__img-wrap">
+                  <img class="top3-featured__img" src="<%= recipes[0].picture %>" alt="<%= recipes[0].name %>" loading="lazy">
+                  <div class="top3-featured__overlay"></div>
+                  <div class="top3-featured__medal">1</div>
+                  <button class="top3-featured__fav btn-fav" data-id="<%= recipes[0].id %>" data-type="recipe" aria-label="Favoris">♡</button>
+                  <span class="top3-featured__film-badge">🎬 <%= recipes[0].Movie.title %></span>
+                </div>
+                <div class="top3-featured__body">
+                  <span class="top3-featured__eyebrow">🏆 Recette n°1 de la communauté</span>
+                  <h3 class="top3-featured__title"><%= recipes[0].name %></h3>
+                  <div class="top3-featured__tags">
+                    <% if (recipes[0].difficulty) { %>
+                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--sm"><%= recipes[0].difficulty %></span>
+                    <% } %>
+                    <% if (recipes[0].category) { %>
+                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--sm"><%= recipes[0].category %></span>
+                    <% } %>
+                  </div>
+                  <div class="top3-featured__meta">
+                    <div class="top3-featured__stars">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <div class="top3-featured__infos">
+                      <% if (recipes[0].time) { %><span>⏱ <%= recipes[0].time %> min</span><% } %>
+                      <% if (recipes[0].servings) { %><span>👥 <%= recipes[0].servings %> pers.</span><% } %>
+                    </div>
+                  </div>
+                  <% if (recipes[0].description) { %>
+                  <p class="top3-featured__desc"><%= recipes[0].description.slice(0, 120) %>...</p>
+                  <% } %>
+                  <div class="top3-featured__foot">
+                    <div class="top3-featured__author">
+                      <img class="top3-featured__avatar" src="<%= recipes[0].User && recipes[0].User.avatar ? recipes[0].User.avatar : 'https://i.pravatar.cc/68?img=15' %>" alt="<%= recipes[0].User ? recipes[0].User.username : 'Chef' %>" loading="lazy">
+                      <div>
+                        <div class="top3-featured__author-name"><%= recipes[0].User ? recipes[0].User.username : 'Chef Ciné Délices' %></div>
+                        <div class="top3-featured__author-rank">★★★ Studio Or</div>
+                      </div>
+                    </div>
+                    <a href="/recipes-movie/details/<%= recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+            </div>
+
+            <!-- COLONNE DROITE : cards #2 & #3 empilées -->
+            <div class="top3-col-right">
+
+              <!-- #2 — recipes[1] -->
+              <% if (recipes[1]) { %>
+              <div class="top3-card">
+                <div class="top3-card__img-wrap">
+                  <img class="top3-card__img" src="<%= recipes[1].picture %>" alt="<%= recipes[1].name %>" loading="lazy">
+                  <div class="top3-card__medal top3-card__medal--2">2</div>
+                </div>
+                <div class="top3-card__body">
+                  <span class="top3-card__film-badge">🎬 <%= recipes[1].Movie.title %></span>
+                  <h3 class="top3-card__title"><%= recipes[1].name %></h3>
+                  <div class="top3-card__tags">
+                    <% if (recipes[1].difficulty) { %>
+                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs"><%= recipes[1].difficulty %></span>
+                    <% } %>
+                    <% if (recipes[1].category) { %>
+                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs"><%= recipes[1].category %></span>
+                    <% } %>
+                  </div>
+                  <div class="top3-card__meta">
+                    <div class="top3-card__stars">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span class="star-e">★</span>
+                    </div>
+                  </div>
+                  <div class="top3-card__foot">
+                    <span class="top3-card__author-name"><%= recipes[1].User ? recipes[1].User.username : 'Chef Ciné Délices' %></span>
+                    <a href="/recipes-movie/details/<%= recipes[1].id %>" class="top3-card__btn">Voir</a>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+
+              <!-- #3 — recipes[2] -->
+              <% if (recipes[2]) { %>
+              <div class="top3-card">
+                <div class="top3-card__img-wrap">
+                  <img class="top3-card__img" src="<%= recipes[2].picture %>" alt="<%= recipes[2].name %>" loading="lazy">
+                  <div class="top3-card__medal top3-card__medal--3">3</div>
+                </div>
+                <div class="top3-card__body">
+                  <span class="top3-card__film-badge">🎬 <%= recipes[2].Movie.title %></span>
+                  <h3 class="top3-card__title"><%= recipes[2].name %></h3>
+                  <div class="top3-card__tags">
+                    <% if (recipes[2].difficulty) { %>
+                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs"><%= recipes[2].difficulty %></span>
+                    <% } %>
+                    <% if (recipes[2].category) { %>
+                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs"><%= recipes[2].category %></span>
+                    <% } %>
+                  </div>
+                  <div class="top3-card__meta">
+                    <div class="top3-card__stars">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                  </div>
+                  <div class="top3-card__foot">
+                    <span class="top3-card__author-name"><%= recipes[2].User ? recipes[2].User.username : 'Chef Ciné Délices' %></span>
+                    <a href="/recipes-movie/details/<%= recipes[2].id %>" class="top3-card__btn">Voir</a>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+
+            </div>
+          </div>
+          <% } %>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════
+           COMMUNAUTÉ BAND — maquette HTML lines 2086-2260
+           Left : texte statique + stats + actions
+           Right : contrib-block (top contributeurs) + mini-gamif
+           ══════════════════════════════════════════════ -->
+      <section class="communaute-band">
+        <div class="communaute-band__bg" aria-hidden="true"></div>
+        <div class="wrap">
+          <div class="communaute-inner">
+
+            <!-- Gauche : texte + stats + boutons -->
+            <div class="communaute-text" data-reveal="left">
+              <div class="communaute-kicker">Rejoignez-nous</div>
+              <h2 class="communaute-title">Cuisinez ce que<br>vous <span>regardez.</span></h2>
+              <p class="communaute-desc">Ciné Délices, c'est un univers où chaque film devient une table dressée. Partagez vos créations culinaires, découvrez celles des autres, et entrez dans une communauté qui vit le cinéma avec tous ses sens.</p>
+              <div class="communaute-stats">
+                <div>
+                  <div class="c-stat-val"><%= totalUsers %></div>
+                  <div class="c-stat-label">Membres</div>
+                </div>
+                <div class="c-stat-sep"></div>
+                <div>
+                  <div class="c-stat-val"><%= totalRecipes %></div>
+                  <div class="c-stat-label">Recettes</div>
+                </div>
+                <div class="c-stat-sep"></div>
+                <div>
+                  <div class="c-stat-val"><%= totalMovies %></div>
+                  <div class="c-stat-label">Films liés</div>
+                </div>
+              </div>
+              <div class="communaute-actions" data-reveal="up" style="transition-delay:.35s">
+                <% if (user) { %>
+                <a href="/add-recipes-movies/" class="btn btn--primary">✦ Ajouter ma recette</a>
+                <% } else { %>
+                <a href="#" class="js-open-login btn btn--primary">✦ Créer un compte</a>
+                <% } %>
+                <a href="/movies" class="btn-ghost-lg">En savoir plus →</a>
+              </div>
+            </div>
+
+            <!-- Droite : top contributeurs + mini gamification -->
+            <div class="communaute-right" data-reveal="right">
+              <div class="contrib-block">
+
+                <!-- Header -->
+                <div>
+                  <div class="contrib-header">
+                    <span class="contrib-header__icon">🏆</span>
+                    <div>
+                      <div class="contrib-header__title">Top Contributeurs</div>
+                      <div class="contrib-header__sub">Ce mois-ci · classement par recettes publiées</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Liste (statique — données réelles à connecter ultérieurement) -->
+                <div class="contrib-list">
+                  <div class="contrib-item">
+                    <span class="contrib-item__rank">1</span>
+                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=15" alt="Top contributeur 1">
+                    <div class="contrib-item__info">
+                      <div class="contrib-item__name">Jean M.</div>
+                      <div class="contrib-item__meta">21 recettes · 🎬 Crocodile Dundee, Joker…</div>
+                    </div>
+                    <span class="contrib-item__badge-emoji">🥇</span>
+                  </div>
+                  <div class="contrib-item">
+                    <span class="contrib-item__rank">2</span>
+                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=47" alt="Top contributeur 2">
+                    <div class="contrib-item__info">
+                      <div class="contrib-item__name">Marie C.</div>
+                      <div class="contrib-item__meta">14 recettes · 🎬 Ratatouille, Silence des Agneaux…</div>
+                    </div>
+                    <span class="contrib-item__badge-emoji">🎞️</span>
+                  </div>
+                  <div class="contrib-item">
+                    <span class="contrib-item__rank">3</span>
+                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=32" alt="Top contributeur 3">
+                    <div class="contrib-item__info">
+                      <div class="contrib-item__name">Sophie L.</div>
+                      <div class="contrib-item__meta">9 recettes · 🎬 Indiana Jones, Breaking Bad…</div>
+                    </div>
+                    <span class="contrib-item__badge-emoji">🎬</span>
+                  </div>
+                </div>
+
+                <div class="contrib-sep"></div>
+
+                <!-- Mini gamification — maquette lines 2225-2253 -->
+                <div class="mini-gamif">
+                  <div class="mini-gamif__title">Votre progression</div>
+                  <div class="mini-gamif__levels">
+                    <div class="mini-gamif__lvl">
+                      <span class="mini-gamif__emoji">🎟️</span>
+                      <span class="mini-gamif__name">Spec&shy;ta&shy;teur</span>
+                    </div>
+                    <span class="mini-gamif__arrow">›</span>
+                    <div class="mini-gamif__lvl">
+                      <span class="mini-gamif__emoji">🍿</span>
+                      <span class="mini-gamif__name">Ciné&shy;phile</span>
+                    </div>
+                    <span class="mini-gamif__arrow">›</span>
+                    <div class="mini-gamif__lvl">
+                      <span class="mini-gamif__emoji">🎬</span>
+                      <span class="mini-gamif__name">Cri&shy;tique</span>
+                    </div>
+                    <span class="mini-gamif__arrow">›</span>
+                    <div class="mini-gamif__lvl">
+                      <span class="mini-gamif__emoji">🎞️</span>
+                      <span class="mini-gamif__name">Collec&shy;teur</span>
+                    </div>
+                    <span class="mini-gamif__arrow">›</span>
+                    <div class="mini-gamif__lvl mini-gamif__lvl--5">
+                      <span class="mini-gamif__emoji">👑</span>
+                      <span class="mini-gamif__name">Maître</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
 
           </div>
         </div>
       </section>
 
-      <!-- TOP 3 RECETTES -->
-      <section
-        class="top-recettes"
-        id="films"
-        role="region"
-        aria-labelledby="top3-titre"
-      >
-        <div class="section-header-block">
-          <div class="section-header">
-            <h2 id="top3-titre" class="section-title">Top 3 des recettes</h2>
-            <div class="section-rule"></div>
-          </div>
-          <p class="section-meta">
-            Les recettes les plus appréciées par la communauté Ciné Délices,
-            inspirées de scènes cultes du cinéma.
-          </p>
-        </div>
-
-        <div class="top-recettes__grid">
-          <!-- boucle sur les 3 recettes -->
-          <% recipes.forEach(recipe => { %>
-          <article class="recipe-card">
-            <div class="recipe-card__img">
-              <img
-                src="<%= recipe.picture %>"
-                alt="<%= recipe.name %> inspiré de <%= recipe.Movie.title %>"
-                loading="lazy"
-                width="420"
-                height="280"
-              />
-              <div class="recipe-card__ob">
-                <span class="badge badge--film-dk">🎬 <%= recipe.Movie.title %></span>
-              </div>
-            </div>
-            <div class="recipe-card__body">
-              <h3 class="recipe-ttl"><%= recipe.name %></h3>
-              <p class="recipe-card__desc"><%= recipe.description %></p>
-              <div class="recipe-card__foot">
-                <a
-                  class="btn btn--red btn--sm"
-                  href="/recipes-movie/details/<%= recipe.id %>"
-                  aria-label="Voir la recette <%= recipe.name %>"
-                >
-                  Voir la recette →
-                </a>
-              </div>
-            </div>
-          </article>
-          <% }) %>
-        </div>
-
-        <div class="center-button">
-          <a
-            class="btn btn--red"
-            href="/movies"
-            aria-label="Voir tous les films"
-          >
-            <span class="btn__shimmer"></span>
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-            <span class="btn__text">Voir tous les films</span>
-          </a>
-        </div>
-      </section>
     </main>
 
-    <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Scripts JS globaux -->
-    <script src="/js/burger-menu.js" defer></script>
-
-    <!-- Scripts JS spécifiques à la page -->
-
-    <!-- Ionicons (icônes) -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
-    ></script>
-    <!-- Script du hero slider -->
-    <script src="/js/hero-slider.js" defer></script>
-    <!-- Script des badges catégorie -->
+    <!-- Scripts JS spécifiques à la page home -->
     <script src="/js/category-badges.js" defer></script>
+    <script src="/js/favorites.js" defer></script>
+    <script src="/js/hero-slider.js" defer></script>
   </body>
 </html>

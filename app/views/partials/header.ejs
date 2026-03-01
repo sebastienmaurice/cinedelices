@@ -1,136 +1,132 @@
-<header class="header">
-  <a href="/" class="title">
-    <img
-      src="/images/logo-cine-delices-2025.png"
-      alt="Logo Ciné Délices"
-      class="logo-header"
-    />
-    <span class="title-cine">Ciné</span>
-    <span class="title-delices">Délices</span>
-  </a>
+<nav class="nav-bar" id="site-header">
+  <div class="site-nav wrap">
+    <!-- Logo -->
+    <a href="/" class="nav-logo" aria-label="Ciné Délices — Accueil">
+      <img
+        src="/images/logo-cine-delices-2025.png"
+        alt="Logo Ciné Délices"
+        class="nav-logo__img"
+      />
+      <span class="nav-logo__name">Ciné Délices</span>
+    </a>
 
-  <nav class="navigationheader" id="site-nav" aria-hidden="true">
-    <a href="/" class="navigationheader-link">Accueil</a>
-    <!-- admin visible uniquement avec role admin -->
-    <% if (role === "admin") { %>
-    <a href="/admin/" class="navigationheader-link">Admin</a>
-    <% } %>
-    <a href="/movies" class="navigationheader-link">Films</a>
-    <a href="/contact-about/" class="navigationheader-link">Contact</a>
+    <!-- Liens desktop -->
+    <nav class="nav-links" aria-label="Navigation principale">
+      <% if (role === "admin") { %>
+      <a href="/admin/" class="nav-link">Admin</a>
+      <% } %>
+      <a href="/" class="nav-link">Accueil</a>
+      <a href="/movies" class="nav-link">Films</a>
+      <a href="/contact-about/" class="nav-link">Contact</a>
+    </nav>
 
-    <% if (typeof role === "undefined") { %>
-    <!-- Bouton Mon compte pour utilisateur non connecté (menu burger) -->
-    <div class="navigationheader-auth">
-      <button type="button" class="header-icon header-icon--account js-open-login" title="Mon compte">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="header-icon__label">Mon compte</span>
+    <!-- Actions desktop -->
+    <div class="nav-actions">
+      <!-- Recherche (placeholder visuel) -->
+      <button class="nav-btn-search" aria-label="Rechercher" title="Rechercher">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       </button>
-    </div>
-    <% } %>
 
-    <% if (typeof role !== "undefined") { %>
-    <!-- Boutons utilisateur connecté (menu burger) -->
-    <div class="navigationheader-auth">
-      <!-- Favoris -->
-      <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" title="Mes favoris">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        <span class="header-icon__label">Favoris</span>
-      </a>
-
-      <!-- Dropdown Mon compte (mobile) -->
-      <div class="mobile-account-dropdown">
-        <button type="button" class="header-icon header-icon--account mobile-account-dropdown__trigger" id="mobileAccountTrigger" aria-expanded="false" aria-haspopup="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span class="header-icon__label">Mon compte</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon mobile-account-dropdown__arrow"><path d="m6 9 6 6 6-6"/></svg>
+      <!-- Non connecté : dropdown auth -->
+      <% if (typeof role === "undefined") { %>
+      <div class="user-dropdown" id="authDropdown">
+        <button
+          class="nav-btn-connect user-dropdown__trigger"
+          id="authDropdownTrigger"
+          aria-expanded="false"
+          aria-haspopup="true"
+          title="Mon compte"
+        >
+          ✦ Connexion
         </button>
-        <div class="mobile-account-dropdown__menu" id="mobileAccountMenu" aria-hidden="true">
-          <a href="/auth/profil/<%= userId %>" class="mobile-account-dropdown__item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Mon profil</span>
+        <div class="user-dropdown__menu" id="authDropdownMenu" aria-hidden="true">
+          <button type="button" class="user-dropdown__item js-open-login">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Se connecter</span>
+          </button>
+          <button type="button" class="user-dropdown__item user-dropdown__item--register js-open-register">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+            <span>Créer un compte</span>
+          </button>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Connecté : favoris + dropdown compte -->
+      <% if (typeof role !== "undefined") { %>
+      <a href="/auth/profil/<%= userId %>#favoris" class="nav-btn-fav" id="btnFavorites" title="Mes favoris" aria-label="Mes favoris">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span class="nav-btn-fav__count" id="navFavCount"></span>
+      </a>
+      <div class="user-dropdown" id="userDropdown">
+        <button
+          class="header-icon header-icon--account user-dropdown__trigger"
+          id="userDropdownTrigger"
+          aria-expanded="false"
+          aria-haspopup="true"
+          title="Mon compte"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+        <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
+          <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Mon compte</span>
           </a>
-          <a href="/auth/logout" class="mobile-account-dropdown__item mobile-account-dropdown__item--logout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
             <span>Se déconnecter</span>
           </a>
         </div>
       </div>
+      <% } %>
     </div>
-    <% } %>
-  </nav>
 
-  <!-- Boutons header desktop (non connecté) -->
-  <% if (typeof role === "undefined") { %>
-  <div class="buttons__header">
-    <!-- Dropdown connexion -->
-    <div class="user-dropdown" id="authDropdown">
-      <button class="header-icon header-icon--account user-dropdown__trigger" id="authDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Mon compte">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </button>
-      <div class="user-dropdown__menu" id="authDropdownMenu" aria-hidden="true">
-        <button type="button" class="user-dropdown__item js-open-login">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Se connecter</span>
-        </button>
-        <button type="button" class="user-dropdown__item user-dropdown__item--register js-open-register">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
-          <span>Créer un compte</span>
-        </button>
-      </div>
+    <!-- Hamburger mobile -->
+    <button
+      class="nav-hamburger"
+      id="navHamburger"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+    >
+      <span class="nav-hamburger__line"></span>
+      <span class="nav-hamburger__line"></span>
+      <span class="nav-hamburger__line"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== MOBILE DRAWER ===================== -->
+<div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+  <div class="mobile-drawer__backdrop" id="drawerBackdrop"></div>
+  <div class="mobile-drawer__panel" role="dialog" aria-label="Menu navigation mobile">
+    <div class="mobile-drawer__header">
+      <span class="mobile-drawer__logo">Ciné Délices</span>
+      <button class="mobile-drawer__close" id="drawerClose" aria-label="Fermer le menu">✕</button>
+    </div>
+
+    <nav class="mobile-drawer__nav" aria-label="Navigation mobile">
+      <% if (role === "admin") { %>
+      <a href="/admin/" class="mobile-drawer__link">Admin</a>
+      <% } %>
+      <a href="/" class="mobile-drawer__link">Accueil</a>
+      <a href="/movies" class="mobile-drawer__link">Films</a>
+      <a href="/contact-about/" class="mobile-drawer__link">Contact</a>
+      <% if (typeof role !== "undefined") { %>
+      <a href="/auth/profil/<%= userId %>#favoris" class="mobile-drawer__link">Mes favoris</a>
+      <% } %>
+    </nav>
+
+    <div class="mobile-drawer__actions">
+      <% if (typeof role === "undefined") { %>
+      <button type="button" class="mobile-drawer__btn-connect js-open-login">✦ Se connecter</button>
+      <% } else { %>
+      <a href="/auth/profil/<%= userId %>" class="mobile-drawer__btn-connect">✦ Mon profil</a>
+      <a href="/auth/logout" class="mobile-drawer__link mobile-drawer__link--logout">Se déconnecter</a>
+      <% } %>
     </div>
   </div>
-  <% } %>
-
-  <!-- Boutons header desktop (connecté) -->
-  <% if (typeof role !== "undefined") { %>
-  <div class="buttons__header">
-    <a href="/auth/profil/<%= userId %>#favoris" class="header-icon" id="btnFavorites" title="Mes favoris">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-    </a>
-    <!-- Dropdown utilisateur -->
-    <div class="user-dropdown" id="userDropdown">
-      <button class="header-icon header-icon--account user-dropdown__trigger" id="userDropdownTrigger" aria-expanded="false" aria-haspopup="true" title="Mon compte">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </button>
-      <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
-        <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Mon compte</span>
-        </a>
-        <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-          <span>Se déconnecter</span>
-        </a>
-      </div>
-    </div>
-  </div>
-  <% } %>
-
-  <!-- Burger menu for mobile -->
-  <button class="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-nav">
-    <span class="burger-line"></span>
-    <span class="burger-line"></span>
-    <span class="burger-line"></span>
-  </button>
-</header>
-<script>
-  (function () {
-    const current = location.pathname;
-    const links = document.querySelectorAll(".navigationheader-link");
-    links.forEach((a) => {
-      const href = a.getAttribute("href");
-      if (href === "/" && current === "/") {
-        a.classList.add("is-active");
-      } else if (href === "/movies" && current.startsWith("/movies")) {
-        a.classList.add("is-active");
-      } else if (href === "/contact" && current.startsWith("/contact")) {
-        a.classList.add("is-active");
-      } else if (href && href !== "/" && current.startsWith(href)) {
-        a.classList.add("is-active");
-      }
-    });
-  })();
-</script>
+</div>
 
 <!-- ===================== MODAL AUTH ===================== -->
 <div id="authModal" class="modal">
@@ -162,29 +158,29 @@
     <!-- ===== Inscription ===== -->
     <div id="registerForm" class="auth-form">
       <h2>Inscription</h2>
-    
+
       <form method="POST" action="/auth/register">
-        
+
         <div class="form-group">
           <input name="first_name" placeholder="Prénom" required />
           <p class="help">Votre prénom ne doit pas dépasser 100 caractères.</p>
         </div>
-    
+
         <div class="form-group">
           <input name="last_name" placeholder="Nom" required />
           <p class="help">Votre nom ne doit pas dépasser 100 caractères.</p>
         </div>
-    
+
         <div class="form-group">
           <input name="pseudo" placeholder="Nom d'utilisateur" required />
           <p class="help">Seulement lettres, chiffres et underscores ( _ ).</p>
         </div>
-    
+
         <div class="form-group">
           <input name="email" type="email" placeholder="Adresse e-mail" required />
           <p class="help">Entrez une adresse e-mail valide (ex : nom@gmail.com).</p>
         </div>
-    
+
         <div class="form-group">
           <input
             id="password"
@@ -197,7 +193,7 @@
             Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.
           </p>
         </div>
-    
+
         <div class="form-group">
           <input
             id="confirmPassword"
@@ -209,17 +205,15 @@
           <p class="help">Doit être identique au mot de passe.</p>
         </div>
 
-        <!-- <input type="hidden" name="role" value="admin"> -->
-        
         <div id="errorMessage" class="error">
           * Les mots de passe ne correspondent pas.
         </div>
-    
+
         <button type="submit" class="btn btn--red btn--full">
           Créer mon compte
         </button>
       </form>
-    
+
       <p class="switch-form">
         Déjà un compte ?
         <button id="goToLogin" class="btn-link">Se connecter</button>
@@ -231,134 +225,112 @@
 <script src="/js/popup-connexion.js"></script>
 <script src="/js/register-form.js"></script>
 
-<!-- Dropdowns et boutons auth -->
 <script>
-(function() {
-  // ===== Gestion des dropdowns =====
+(function () {
+  /* ── Active nav link ── */
+  const current = location.pathname;
+  document.querySelectorAll(".nav-link, .mobile-drawer__link").forEach((a) => {
+    const href = a.getAttribute("href");
+    if (href === "/" && current === "/") {
+      a.classList.add("nav-link--active");
+    } else if (href && href !== "/" && current.startsWith(href)) {
+      a.classList.add("nav-link--active");
+    }
+  });
+
+  /* ── Scroll glassmorphism ── */
+  const navBar = document.getElementById("site-header");
+  if (navBar) {
+    const onScroll = () => navBar.classList.toggle("scrolled", window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* ── Mobile drawer ── */
+  const hamburger     = document.getElementById("navHamburger");
+  const drawer        = document.getElementById("mobileDrawer");
+  const drawerClose   = document.getElementById("drawerClose");
+  const drawerBackdrop = document.getElementById("drawerBackdrop");
+
+  function openDrawer() {
+    drawer.classList.add("is-open");
+    drawer.setAttribute("aria-hidden", "false");
+    hamburger.classList.add("is-open");
+    hamburger.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+  function closeDrawer() {
+    drawer.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden", "true");
+    hamburger.classList.remove("is-open");
+    hamburger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  hamburger?.addEventListener("click", () => {
+    drawer.classList.contains("is-open") ? closeDrawer() : openDrawer();
+  });
+  drawerClose?.addEventListener("click", closeDrawer);
+  drawerBackdrop?.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+
+  /* ── Dropdowns desktop ── */
   function initDropdown(dropdownId, triggerId, menuId) {
     const dropdown = document.getElementById(dropdownId);
-    const trigger = document.getElementById(triggerId);
-    const menu = document.getElementById(menuId);
-
+    const trigger  = document.getElementById(triggerId);
+    const menu     = document.getElementById(menuId);
     if (!dropdown || !trigger || !menu) return null;
 
     function openDropdown() {
-      // Fermer tous les autres dropdowns
-      document.querySelectorAll('.user-dropdown.is-open').forEach(d => {
-        if (d !== dropdown) d.classList.remove('is-open');
+      document.querySelectorAll(".user-dropdown.is-open").forEach((d) => {
+        if (d !== dropdown) d.classList.remove("is-open");
       });
-      dropdown.classList.add('is-open');
-      trigger.setAttribute('aria-expanded', 'true');
-      menu.setAttribute('aria-hidden', 'false');
+      dropdown.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
+      menu.setAttribute("aria-hidden", "false");
     }
-
     function closeDropdown() {
-      dropdown.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-hidden', 'true');
+      dropdown.classList.remove("is-open");
+      trigger.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-hidden", "true");
     }
-
-    // Toggle dropdown
-    trigger.addEventListener('click', (e) => {
+    trigger.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (dropdown.classList.contains('is-open')) {
-        closeDropdown();
-      } else {
-        openDropdown();
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-        items[nextIndex].focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-        items[prevIndex].focus();
-      }
+      dropdown.classList.contains("is-open") ? closeDropdown() : openDropdown();
     });
-
     return { dropdown, trigger, menu, closeDropdown };
   }
 
-  // Initialiser les deux dropdowns
-  const userDropdown = initDropdown('userDropdown', 'userDropdownTrigger', 'userDropdownMenu');
-  const authDropdown = initDropdown('authDropdown', 'authDropdownTrigger', 'authDropdownMenu');
+  const userDropdown = initDropdown("userDropdown", "userDropdownTrigger", "userDropdownMenu");
+  const authDropdown = initDropdown("authDropdown", "authDropdownTrigger", "authDropdownMenu");
 
-  // Fermer au clic extérieur
-  document.addEventListener('click', (e) => {
-    if (userDropdown && !userDropdown.dropdown.contains(e.target)) {
-      userDropdown.closeDropdown();
-    }
-    if (authDropdown && !authDropdown.dropdown.contains(e.target)) {
-      authDropdown.closeDropdown();
+  document.addEventListener("click", (e) => {
+    if (userDropdown && !userDropdown.dropdown.contains(e.target)) userDropdown.closeDropdown();
+    if (authDropdown && !authDropdown.dropdown.contains(e.target)) authDropdown.closeDropdown();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      userDropdown?.closeDropdown();
+      authDropdown?.closeDropdown();
     }
   });
 
-  // Fermer avec Échap
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (userDropdown && userDropdown.dropdown.classList.contains('is-open')) {
-        userDropdown.closeDropdown();
-        userDropdown.trigger.focus();
-      }
-      if (authDropdown && authDropdown.dropdown.classList.contains('is-open')) {
-        authDropdown.closeDropdown();
-        authDropdown.trigger.focus();
-      }
-    }
-  });
-
-  // ===== Boutons pour ouvrir le popup auth =====
-  // Utilise openModal() de popup-connexion.js
-  document.querySelectorAll('.js-open-login').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  /* ── Boutons js-open-login / js-open-register ── */
+  document.querySelectorAll(".js-open-login").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
-      // Fermer le dropdown si ouvert
-      if (authDropdown) authDropdown.closeDropdown();
-      // Ouvrir le modal en mode connexion
-      if (typeof openModal === 'function') {
-        openModal('login');
-      }
+      authDropdown?.closeDropdown();
+      closeDrawer();
+      if (typeof openModal === "function") openModal("login");
     });
   });
-
-  document.querySelectorAll('.js-open-register').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  document.querySelectorAll(".js-open-register").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
-      // Fermer le dropdown si ouvert
-      if (authDropdown) authDropdown.closeDropdown();
-      // Ouvrir le modal en mode inscription
-      if (typeof openModal === 'function') {
-        openModal('register');
-      }
+      authDropdown?.closeDropdown();
+      closeDrawer();
+      if (typeof openModal === "function") openModal("register");
     });
   });
-
-  // ===== Gestion du dropdown Mon compte (mobile) =====
-  const mobileAccountDropdown = document.querySelector('.mobile-account-dropdown');
-  const mobileAccountTrigger = document.getElementById('mobileAccountTrigger');
-
-  if (mobileAccountDropdown && mobileAccountTrigger) {
-    mobileAccountTrigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileAccountDropdown.classList.toggle('is-open');
-      const isOpen = mobileAccountDropdown.classList.contains('is-open');
-      mobileAccountTrigger.setAttribute('aria-expanded', isOpen);
-      const menu = document.getElementById('mobileAccountMenu');
-      if (menu) {
-        menu.setAttribute('aria-hidden', !isOpen);
-      }
-    });
-
-    // Fermer au clic extérieur (mobile)
-    document.addEventListener('click', (e) => {
-      if (!mobileAccountDropdown.contains(e.target)) {
-        mobileAccountDropdown.classList.remove('is-open');
-        mobileAccountTrigger.setAttribute('aria-expanded', 'false');
-        const menu = document.getElementById('mobileAccountMenu');
-        if (menu) menu.setAttribute('aria-hidden', 'true');
-      }
-    });
-  }
 })();
 </script>
