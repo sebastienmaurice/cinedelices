@@ -64,14 +64,20 @@
     });
   }
 
-  /* ═══ TOOLTIPS ═══ */
-  track.querySelectorAll('.badge:not([data-clone-of])').forEach(badge => {
-    const tt = badge.querySelector('.tooltip');
-    if (!tt) return;
+  /* ═══ TOOLTIP PORTAIL — élément unique sur <body>, hors overflow/mask ═══ */
+  const globalTT = document.createElement('div');
+  globalTT.className = 'tooltip';
+  document.body.appendChild(globalTT);
+  /* Empêche les clics dans le tooltip de fermer via le listener document */
+  globalTT.addEventListener('click', e => {
+    if (!e.target.closest('.tooltip__hint')) e.stopPropagation();
+  });
+
+  function showTooltip(badge, clickedBadge) {
     const genre = badge.dataset.genre || '';
     let films = [];
     try { films = JSON.parse(badge.dataset.films || '[]'); } catch (e) {}
-    tt.innerHTML = `
+    globalTT.innerHTML = `
       <div class="tooltip__genre">${genre}</div>
       <div class="tooltip__films">${films.map(f =>
         `<div class="tooltip__film">
@@ -80,7 +86,17 @@
         </div>`).join('')}
       </div>
       <a class="tooltip__hint" href="/movies?genre=${encodeURIComponent(genre)}">Cliquer pour explorer →</a>`;
-  });
+    const rect = (clickedBadge || badge).getBoundingClientRect();
+    const half = 105; /* 210px / 2 */
+    const cx = Math.max(half + 8, Math.min(rect.left + rect.width / 2, window.innerWidth - half - 8));
+    globalTT.style.left   = cx + 'px';
+    globalTT.style.bottom = (window.innerHeight - rect.top + 12) + 'px';
+    globalTT.classList.add('tooltip-open');
+  }
+
+  function hideTooltip() {
+    globalTT.classList.remove('tooltip-open');
+  }
 
   /* ═══════════════════════════════════════════
      BURST SYSTEM — particules au clic
@@ -310,12 +326,18 @@
       const wasOpen = target.classList.contains('tooltip-open');
       if (openBadge && openBadge !== target) openBadge.classList.remove('tooltip-open');
       target.classList.toggle('tooltip-open');
-      openBadge = target.classList.contains('tooltip-open') ? target : null;
+      if (target.classList.contains('tooltip-open')) {
+        showTooltip(target, b); /* b = badge cliqué (position écran), target = badge source (data) */
+        openBadge = target;
+      } else {
+        hideTooltip();
+        openBadge = null;
+      }
       if (!wasOpen) triggerBurst(b);
     });
   });
   document.addEventListener('click', () => {
-    if (openBadge) { openBadge.classList.remove('tooltip-open'); openBadge = null; }
+    if (openBadge) { hideTooltip(); openBadge.classList.remove('tooltip-open'); openBadge = null; }
   });
 
   /* ═══ COUNTER ANIMÉ ═══ */

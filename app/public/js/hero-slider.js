@@ -8,6 +8,9 @@
   const hero   = document.getElementById('hero');
   if (!hero || !slides.length) return;
   let current = 0, timer = null, isTransitioning = false;
+  const counterCur = document.getElementById('heroCounterCur');
+  const counterTot = document.getElementById('heroCounterTot');
+  if (counterTot) counterTot.textContent = String(slides.length).padStart(2, '0');
   function goTo(idx) {
     if (isTransitioning) return; isTransitioning = true;
     const prev = current;
@@ -16,6 +19,7 @@
     const pFg = document.getElementById('fg-' + prev);
     if (pFg) { pFg.style.transition = ''; pFg.style.transform = ''; }
     slides[current].classList.add('active'); dots[current].classList.add('active');
+    if (counterCur) counterCur.textContent = String(current + 1).padStart(2, '0');
     const cSlide = document.getElementById('slide-' + current);
     if (cSlide) { cSlide._entryDone = false; setTimeout(() => { cSlide._entryDone = true; }, 1800); }
     setTimeout(() => isTransitioning = false, 950);
