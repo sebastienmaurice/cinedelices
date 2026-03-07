@@ -185,11 +185,6 @@
           >
             <!-- POSTER -->
             <div class="fcard__poster">
-              <div class="fcard__lbox fcard__lbox-top" aria-hidden="true">
-                <div class="fcard__perf"></div><div class="fcard__perf"></div>
-                <div class="fcard__perf"></div><div class="fcard__perf"></div>
-                <div class="fcard__perf"></div><div class="fcard__perf"></div>
-              </div>
               <img
                 class="fcard__img"
                 src="<%= movie.cardPath || movie.picture %>"
@@ -201,8 +196,9 @@
               />
               <div class="fcard__overlay"></div>
 
-              <!-- Badges (Nouveau / Populaire) -->
+              <!-- Badges haut-gauche : "Film" toujours affiché + Nouveau / Populaire -->
               <div class="fcard__badges">
+                <span class="badge badge--type-r">Film</span>
                 <% if (movie.isNew) { %>
                 <span class="badge badge--type-b">
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
@@ -229,15 +225,24 @@
                 <svg class="icon" viewBox="0 0 24 24" fill="<%= movie.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
               </button>
 
-              <!-- Titre en fondu bas du poster -->
-              <div class="fcard__title-area">
-                <p class="fcard__year"><%= movie.year %></p>
-                <h3 class="fcard__title-main"><%= movie.title %></h3>
-              </div>
+              <!-- Overlay hover → lien "Voir les recettes" -->
+              <a href="/recipes-movie/<%= movie.id %>" class="fcard__hover-overlay" tabindex="-1" aria-label="Voir les recettes de <%= movie.title %>">
+                <div class="fcard__cta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  <span class="fcard__cta-label">Voir les recettes</span>
+                </div>
+              </a>
 
-              <div class="fcard__lbox fcard__lbox-bot" aria-hidden="true">
-                <div class="fcard__perf"></div><div class="fcard__perf"></div>
-                <div class="fcard__perf"></div><div class="fcard__perf"></div>
+              <!-- Compteur recettes bas-droite (disparaît au hover) -->
+              <span class="fcard__count-img" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <%= recipesCount %> <%= recipesCount > 1 ? 'recettes' : 'recette' %>
+              </span>
+
+              <!-- Titre + réalisateur en bas du poster -->
+              <div class="fcard__title-area">
+                <p class="fcard__director"><%= movie.director ? (movie.director + ' · ') : '' %><%= movie.year %></p>
+                <h3 class="fcard__title-main"><%= movie.title %></h3>
               </div>
             </div>
 
@@ -248,24 +253,19 @@
                 <span class="fgt <%= fgtClass %>"><%= movie.genre %></span>
               </div>
 
-              <!-- Stars -->
-              <div class="fcard__stars" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
-                <% for (let i = 1; i <= 5; i++) { %>
-                <span class="<%= i <= starsRounded ? 's' : 'se' %>">★</span>
-                <% } %>
-                <span class="fcard__rating"><%= displayRating %></span>
-              </div>
-
               <!-- Synopsis -->
               <p class="fcard__desc"><%= movieSynopsis %></p>
 
-              <!-- Footer -->
+              <!-- Footer : étoiles + lien visible en vue liste & mobile -->
               <div class="fcard__footer">
-                <p class="fcard__recipes">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                  <%= recipesCount %> <%= recipesCount > 1 ? 'recettes' : 'recette' %>
-                </p>
-                <a class="btn-vr" href="/recipes-movie/<%= movie.id %>">
+                <span class="fcard__foot-label">Note</span>
+                <div class="fcard__stars" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                  <span class="<%= i <= starsRounded ? 's' : 'se' %>">★</span>
+                  <% } %>
+                  <span class="fcard__rating"><%= displayRating %></span>
+                </div>
+                <a class="btn-vr fcard__btn-mobile" href="/recipes-movie/<%= movie.id %>">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                   Voir les recettes
                 </a>
@@ -290,21 +290,40 @@
                   Proposer un film
                 </span>
               </div>
+              <%
+                /* Affiches pour la banner CTA — 2 rangées horizontales scrollantes */
+                const ctaMovies = movies.slice(0, Math.min(12, movies.length));
+                const ctaMoviesRev = ctaMovies.slice().reverse();
+              %>
               <div class="fcard--cta__deco" aria-hidden="true">
-                <!-- Reel animé -->
-                <div class="fcard--cta__reel">
-                  <div class="fcard--cta__reel-inner"></div>
-                  <div class="fcard--cta__reel-hub"></div>
-                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--1"></span>
-                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--2"></span>
-                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--3"></span>
+                <!-- Rangée 1 : glisse vers la gauche -->
+                <div class="fcard--cta__poster-row fcard--cta__poster-row--left">
+                  <div class="fcard--cta__poster-track">
+                    <% ctaMovies.forEach(m => { %>
+                      <div class="fcard--cta__mini">
+                        <img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async">
+                      </div>
+                    <% }) %>
+                    <% ctaMovies.forEach(m => { %>
+                      <div class="fcard--cta__mini">
+                        <img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async">
+                      </div>
+                    <% }) %>
+                  </div>
                 </div>
-                <!-- Cartes-film empilées : "votre film va ici" -->
-                <div class="fcard--cta__cards">
-                  <div class="fcard--cta__card fcard--cta__card--1"></div>
-                  <div class="fcard--cta__card fcard--cta__card--2"></div>
-                  <div class="fcard--cta__card fcard--cta__card--3">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                <!-- Rangée 2 : glisse vers la droite, ordre inversé (effet parallaxe) -->
+                <div class="fcard--cta__poster-row fcard--cta__poster-row--right">
+                  <div class="fcard--cta__poster-track">
+                    <% ctaMoviesRev.forEach(m => { %>
+                      <div class="fcard--cta__mini">
+                        <img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async">
+                      </div>
+                    <% }) %>
+                    <% ctaMoviesRev.forEach(m => { %>
+                      <div class="fcard--cta__mini">
+                        <img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async">
+                      </div>
+                    <% }) %>
                   </div>
                 </div>
               </div>

@@ -528,7 +528,7 @@ body.movies-page main {
 }
 .films-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px; transition: opacity 0.3s ease;
 }
 .films-grid.list-view {
@@ -538,17 +538,46 @@ body.movies-page main {
 /* ── FCARD (vue grille) ── */
 .fcard {
   position: relative; border-radius: 18px; overflow: hidden;
-  background: linear-gradient(165deg, rgba(13,26,42,.98) 0%, rgba(20,38,58,.96) 100%);
-  border: 1px solid rgba(65, 90, 119, 0.22);
-  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  background:
+    linear-gradient(165deg, rgba(13,26,42,.98) 0%, rgba(20,38,58,.96) 100%) padding-box,
+    rgba(65, 90, 119, 0.22) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
   cursor: pointer;
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, border-color 0.45s ease;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, background 0.45s ease;
   display: flex; flex-direction: column;
 }
+
+/* Liseré doré vertical gauche */
+.fcard::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px; z-index: 1;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(196,160,82,.10) 12%,
+    rgba(196,160,82,.55) 35%,
+    rgba(196,160,82,.70) 50%,
+    rgba(196,160,82,.55) 65%,
+    rgba(196,160,82,.10) 88%,
+    transparent 100%);
+  border-radius: 18px 0 0 18px;
+  pointer-events: none;
+}
+
 .fcard:hover {
-  transform: translateY(-10px);
-  border-color: rgba(196, 160, 82, 0.3);
-  box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 50px rgba(196,160,82,.06);
+  transform: translateY(-8px);
+  background:
+    linear-gradient(165deg, rgba(13,26,42,.98) 0%, rgba(20,38,58,.96) 100%) padding-box,
+    linear-gradient(135deg, #7A5A14 0%, #B8882A 18%, #F2C84B 38%, #FFE085 50%, #F2C84B 62%, #B8882A 82%, #7A5A14 100%) border-box;
+  background-size: 100% 100%, 300% 300%;
+  box-shadow: 0 18px 48px rgba(212,168,67,.22), 0 4px 14px rgba(0,0,0,.65);
+  animation: shimmer-gold 2.5s ease infinite;
+}
+
+@keyframes shimmer-gold {
+  0%   { background-position: center, 0% 50%; }
+  50%  { background-position: center, 100% 50%; }
+  100% { background-position: center, 200% 50%; }
 }
 
 /* ── VUE LISTE : fcard devient horizontal ── */
@@ -608,15 +637,15 @@ body.movies-page main {
   background: linear-gradient(to top, rgba(10,18,30,1) 0%, rgba(10,18,30,.65) 35%, rgba(10,18,30,.08) 65%, transparent 100%);
 }
 
-/* Badges (Nouveau / Populaire) */
+/* Badges (Film / Nouveau / Populaire) */
 .fcard__badges {
-  position: absolute; top: 26px; left: 12px; z-index: 6;
+  position: absolute; top: 10px; left: 10px; z-index: 6;
   display: flex; flex-direction: column; gap: 4px;
 }
 
 /* Favori */
 .fcard__fav {
-  position: absolute; top: 26px; right: 12px;
+  position: absolute; top: 10px; right: 10px;
   width: 32px; height: 32px; border-radius: 50%;
   background: rgba(20,34,52,.78); backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.12);
@@ -633,9 +662,9 @@ body.movies-page main {
 .fcard__title-area {
   position: absolute; bottom: 14px; left: 14px; right: 14px; z-index: 5;
 }
-.fcard__year {
-  font-size: 0.6rem; font-weight: 300; letter-spacing: 0.16em;
-  color: rgba(196,160,82,.55); margin-bottom: 4px;
+.fcard__year, .fcard__director {
+  font-size: 0.56rem; font-weight: 400; font-style: italic; letter-spacing: 1px;
+  color: rgba(196,160,82,.68); margin-bottom: 3px;
 }
 .fcard__title-main {
   font-family: var(--f-title); font-size: 1rem; font-weight: 700; letter-spacing: 0.04em;
@@ -663,7 +692,14 @@ body.movies-page main {
 
 /* Stars */
 .fcard__stars {
-  display: flex; align-items: center; gap: 3px; margin-bottom: 8px; font-size: 0.78rem;
+  display: flex; align-items: center; gap: 3px; font-size: 0.78rem;
+}
+
+/* Label "Note" — moodboard film-card__foot-label */
+.fcard__foot-label {
+  font-family: var(--f-title); font-size: 0.42rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.32);
 }
 .fcard__stars .s  { color: var(--dore-clair); }
 .fcard__stars .se { color: rgba(196,160,82,.25); }
@@ -680,8 +716,13 @@ body.movies-page main {
 
 .fcard__footer {
   display: flex; align-items: center; justify-content: space-between; margin-top: auto;
-  padding-top: 12px; border-top: 1px solid rgba(65,90,119,.16);
+  padding-top: 10px; border-top: 1px solid rgba(65,90,119,.16);
 }
+
+/* Bouton "Voir les recettes" : caché sur desktop (overlay poster), visible en liste & mobile */
+/* Spécificité renforcée (0,2,0) pour écraser .btn-vr (0,1,0) qui vient après dans la cascade */
+.fcard .fcard__btn-mobile { display: none; }
+.films-grid.list-view .fcard__btn-mobile { display: inline-flex; }
 .fcard__recipes {
   display: flex; align-items: center; gap: 5px;
   font-size: 0.6rem; font-weight: 300; color: rgba(196,160,82,.5);
@@ -800,7 +841,7 @@ body.movies-page main {
   .page-hero { height: auto; min-height: 420px; }
   .page-hero__search-panel,
   .page-hero__search-col { flex: 0 0 360px; }
-  .films-grid { grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 16px; }
+  .films-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .films-grid.list-view { grid-template-columns: 1fr 1fr; }
 }
 
@@ -822,7 +863,7 @@ body.movies-page main {
   .hero-stat__num { font-size: 1.5rem; }
   .search-main-row { flex-wrap: wrap; }
   .films-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .films-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+  .films-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .films-grid.list-view { grid-template-columns: 1fr; }
   .film-cta-title { font-size: 1.5rem; }
 }
@@ -835,7 +876,58 @@ body.movies-page main {
   .fcard__desc { display: none; }
   .btn-film-cta { width: 100%; justify-content: center; }
   .film-cta-wrap { padding: 24px 20px; }
+  /* Bouton visible sur mobile (l'overlay poster est invisible) */
+  .fcard__btn-mobile { display: inline-flex; }
+  .fcard__hover-overlay { display: none; }
 }
+
+/* ── FCARD HOVER OVERLAY (lien "Voir les recettes" au hover) ── */
+.fcard__hover-overlay {
+  position: absolute; inset: 0; z-index: 4;
+  background: rgba(8,16,28,.48);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; text-decoration: none;
+  transition: opacity .3s ease;
+  border-radius: 0; /* clipped by fcard overflow:hidden */
+}
+.fcard:hover .fcard__hover-overlay { opacity: 1; }
+/* Invisible en vue liste (le btn-vr est dans le footer) */
+.films-grid.list-view .fcard__hover-overlay { display: none; }
+
+/* Pill "Voir les recettes" */
+.fcard__cta-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0 14px; height: 28px;
+  background: rgba(10,18,32,.72);
+  border: 1.5px solid rgba(196,160,82,.45);
+  border-radius: 100px;
+  backdrop-filter: blur(6px);
+  transform: translateY(5px) scale(.94);
+  opacity: 0;
+  transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .22s ease;
+}
+.fcard:hover .fcard__cta-pill { transform: translateY(0) scale(1); opacity: 1; }
+
+.fcard__cta-label {
+  font-family: var(--f-title);
+  font-size: .48rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--or-titre); white-space: nowrap;
+}
+
+/* ── COMPTEUR RECETTES DANS LE POSTER ── */
+.fcard__count-img {
+  position: absolute; bottom: .65rem; right: .75rem; z-index: 3;
+  display: inline-flex; align-items: center; gap: .28rem;
+  font-family: var(--f-display); font-size: .68rem; letter-spacing: 1px;
+  color: rgba(242,200,75,.85);
+  text-shadow: 0 1px 6px rgba(0,0,0,.9);
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: none;
+}
+.fcard:hover .fcard__count-img { opacity: 0; transform: translateY(4px); }
+.films-grid.list-view .fcard__count-img { display: none; }
 
 /* ── FCARD CTA (proposer un film — full-width banner, style djc-cta) ── */
 .fcard.fcard--cta {
@@ -853,9 +945,9 @@ body.movies-page main {
   box-shadow: none;
 }
 .fcard--cta__link {
-  display: flex; flex-direction: row; align-items: center; gap: 48px;
+  display: flex; flex-direction: row; align-items: center; gap: 0;
   text-decoration: none; color: inherit;
-  width: 100%; min-height: 180px; padding: 40px 52px;
+  width: 100%; min-height: 220px; padding: 40px 0 40px 52px;
   position: relative; overflow: hidden;
   background: linear-gradient(135deg, #5c0b05 0%, #8b1c13 28%, #c23018 58%, #d43a20 80%, #e04422 100%);
   border-radius: 20px;
@@ -887,8 +979,9 @@ body.movies-page main {
 }
 /* Corps texte */
 .fcard--cta__body {
-  flex: 1; min-width: 0; position: relative; z-index: 2;
+  flex: 0 0 42%; min-width: 0; position: relative; z-index: 2;
   display: flex; flex-direction: column; gap: 10px;
+  padding-right: 36px;
 }
 .fcard--cta__eyebrow {
   display: inline-flex; align-items: center; gap: 7px;
@@ -923,62 +1016,45 @@ body.movies-page main {
   transform: translateY(-2px);
   box-shadow: 0 0 40px rgba(196,160,82,.48), 0 10px 28px rgba(0,0,0,.40);
 }
-/* Décoration film (reel + strip) */
+/* ── Mini-affiches scrollantes horizontales (droite de la banner CTA) ── */
 .fcard--cta__deco {
-  flex-shrink: 0; position: relative; z-index: 2;
-  display: flex; align-items: center; gap: 20px;
-  opacity: 0.28; transition: opacity 0.35s ease;
+  flex: 1; min-width: 0; overflow: hidden; position: relative; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center; gap: 12px;
+  opacity: 0.58; transition: opacity 0.4s ease;
+  /* Fondu gauche → intégration naturelle avec le texte. Fondu droite → bord arrondi */
+  mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
 }
-.fcard--cta:hover .fcard--cta__deco { opacity: 0.50; }
-.fcard--cta__reel {
-  width: 140px; height: 140px; border-radius: 50%; position: relative; flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,.22);
-  animation: rotateReel 20s linear infinite;
+.fcard--cta:hover .fcard--cta__deco { opacity: 0.90; }
+
+/* Chaque rangée est un overflow:hidden indépendant */
+.fcard--cta__poster-row { overflow: hidden; }
+.fcard--cta__poster-track {
+  display: flex; gap: 12px; width: max-content;
 }
-.fcard--cta__reel-inner {
-  position: absolute; inset: 18px; border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,.12);
+/* Rangée 1 : glisse vers la gauche */
+.fcard--cta__poster-row--left  .fcard--cta__poster-track { animation: posterScrollLeft  18s linear infinite; }
+/* Rangée 2 : glisse vers la droite (sens inverse, vitesse différente → effet parallaxe) */
+.fcard--cta__poster-row--right .fcard--cta__poster-track { animation: posterScrollRight 24s linear infinite; }
+
+@keyframes posterScrollLeft  { from { transform: translateX(0);   } to { transform: translateX(-50%); } }
+@keyframes posterScrollRight { from { transform: translateX(-50%); } to { transform: translateX(0);   } }
+
+/* Mini-affiche : plus grande, hover "pop" individuel */
+.fcard--cta__mini {
+  width: 90px; height: 127px; /* ratio 2:3 */ border-radius: 9px; overflow: hidden; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 6px 20px rgba(0,0,0,.45);
+  transition: transform 0.32s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
 }
-.fcard--cta__reel-hub {
-  position: absolute; inset: 52px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.10) 0%, transparent 70%);
-  border: 1px solid rgba(255,255,255,.16);
-}
-.fcard--cta__reel-hole {
-  position: absolute; width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
-}
-.fcard--cta__reel-hole--1 { top: 20px; left: 50%; transform: translateX(-50%); }
-.fcard--cta__reel-hole--2 { bottom: 20px; left: 24px; }
-.fcard--cta__reel-hole--3 { bottom: 20px; right: 24px; }
-/* Cartes-film empilées */
-.fcard--cta__cards {
-  position: relative;
-  width: 130px; height: 170px; flex-shrink: 0;
-}
-.fcard--cta__card {
-  position: absolute;
-  width: 96px; height: 136px;
-  top: 50%; left: 50%;
-  border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.05);
-}
-.fcard--cta__card--1 { transform: translate(-50%, -50%) rotate(-10deg) translateX(-14px); }
-.fcard--cta__card--2 { transform: translate(-50%, -50%) rotate(-3deg) translateX(-4px); }
-.fcard--cta__card--3 {
-  transform: translate(-50%, -50%) rotate(6deg) translateX(10px);
-  border-color: rgba(255,255,255,.32);
-  background: rgba(255,255,255,.10);
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,.32);
-  transition: border-color 0.35s ease, color 0.35s ease, background 0.35s ease;
-}
-.fcard--cta:hover .fcard--cta__card--3 {
+.fcard--cta__mini:hover {
+  transform: scale(1.12) translateY(-5px);
   border-color: rgba(255,255,255,.55);
-  color: rgba(255,255,255,.60);
-  background: rgba(255,255,255,.15);
+  box-shadow: 0 16px 36px rgba(0,0,0,.65);
+  z-index: 3;
 }
+.fcard--cta__mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* Toujours visible même quand la grille limite à 9 films */
 .only__display__9__films .fcard--cta { display: flex !important; }
 @media (max-width: 900px) {

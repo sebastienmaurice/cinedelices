@@ -3,9 +3,6 @@ import recipesController from "../controllers/recipes-movie.controllers.js";
 
 const recipesRouter = Router();
 
-// liste des recettes (filtre optionnel par auteur)
-recipesRouter.get("/", recipesController.allRecipes);
-
 //le detail d'une recette d'un film spécifique
 recipesRouter.get("/details/:id", recipesController.detailRecipes);
 

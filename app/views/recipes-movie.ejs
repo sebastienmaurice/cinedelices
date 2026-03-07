@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -37,14 +37,14 @@
 
       <% if (movie) { %>
 
-        <!-- ════════════════════════════════════════════════════
+        <!-- ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔
              VUE FICHE FILM — Design cinématographique
-        ════════════════════════════════════════════════════ -->
+        ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔ -->
 
         <!-- ID film (caché) — nécessaire pour filtred-category.js -->
         <div id="movie" data-id="<%= movie.id %>" style="display:none" aria-hidden="true"></div>
 
-        <!-- ── BREADCRUMB ── -->
+        <!-- â”€â”€ BREADCRUMB â”€â”€ -->
         <div class="bc-bar">
           <nav class="bc" aria-label="Fil d'Ariane">
             <a href="/">Accueil</a>
@@ -55,7 +55,7 @@
           </nav>
         </div>
 
-        <!-- ══ HERO FILM ══ -->
+        <!-- ╔╔ HERO FILM ╔╔ -->
         <section class="film-hero" aria-labelledby="filmTitle">
           <div class="film-hero__bg" style="background-image: url('<%= bannerImage %>')"></div>
           <div class="film-hero__overlay"></div>
@@ -161,30 +161,11 @@
           </div>
         </section>
 
-        <!-- ══ MAIN CONTENT ══ -->
+        <!-- ╔╔ MAIN CONTENT ╔╔ -->
         <div class="film-main" id="film-recipes">
           <div class="film-main__inner">
 
-            <!-- Info bar -->
-            <div class="info-bar" role="list">
-              <div class="ib-item">
-                <svg class="ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                <span class="ib-val"><%= movie.year || '—' %></span>
-                <span class="ib-label">Année</span>
-              </div>
-              <div class="ib-item">
-                <svg class="ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
-                <span class="ib-val"><%= movie.genre || '—' %></span>
-                <span class="ib-label">Genre</span>
-              </div>
-              <div class="ib-item">
-                <svg class="ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
-                <span class="ib-val ib-val--gold"><%= recipes.length %></span>
-                <span class="ib-label">Recette<%= recipes.length > 1 ? 's' : '' %></span>
-              </div>
-            </div>
-
-            <!-- ══ RECETTES DU FILM ══ -->
+            <!-- ╔╔ RECETTES DU FILM ╔╔ -->
             <section id="recipes" aria-labelledby="recipes-title">
 
               <!-- Header section + toolbar -->
@@ -269,7 +250,7 @@
                         <% if (recipe.isNew) { %><span class="tag tag--bleu">Nouveau</span><% } %>
                       </div>
 
-                      <div class="recipe-card__infos-row">
+                      <div class="recipe-card__row">
                         <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
                           <% for (let i = 1; i <= 5; i++) { %>
                           <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
@@ -289,7 +270,7 @@
                       <p class="recipe-card__desc"><%= truncatedDescription %></p>
 
                       <div class="recipe-card__foot">
-                        <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
+                        <span class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
                           <span class="author__av">
                             <% if (authorAvatar) { %>
                             <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
@@ -300,13 +281,13 @@
                           <span class="author__info">
                             <span class="author__name"><%= authorName %></span>
                             <% if (cardBadge) { %>
-                            <span class="author__lvl"><%= cardBadge.cssClass.includes('lvl1') ? '★' : cardBadge.cssClass.includes('lvl2') ? '★★' : cardBadge.cssClass.includes('lvl3') ? '★★★' : cardBadge.cssClass.includes('lvl4') ? '★★★★' : '★★★★★' %></span>
+                            <span class="author__lvl"><%= cardBadge.cssClass.includes('lvl1') ? 'â˜…' : cardBadge.cssClass.includes('lvl2') ? 'â˜…â˜…' : cardBadge.cssClass.includes('lvl3') ? 'â˜…â˜…â˜…' : cardBadge.cssClass.includes('lvl4') ? 'â˜…â˜…â˜…â˜…' : 'â˜…â˜…â˜…â˜…â˜…' %></span>
                             <% } %>
                           </span>
-                        </a>
-                        <a class="btn btn--red" href="/recipes-movie/details/<%= recipe.id %>">
+                        </span>
+                        <a class="btn btn--red btn--sm" href="/recipes-movie/details/<%= recipe.id %>">
                           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                          Voir
+                          Voir la recette â†’
                         </a>
                       </div>
                     </div>
@@ -373,261 +354,7 @@
           </div><!-- /.film-main__inner -->
         </div><!-- /.film-main -->
 
-      <% } else { %>
-
-        <!-- ════════════════════════════════════════════════════
-             VUE TOUTES RECETTES / AUTEUR — Design existant
-        ════════════════════════════════════════════════════ -->
-
-        <section class="banner__image__film" aria-hidden="true">
-          <div class="banner__image__film__overlay"></div>
-          <img
-            src="<%= bannerImage %>"
-            alt="<%= 'Image de présentation des recettes' %>"
-            width="1440"
-            height="350"
-            decoding="async"
-          />
-          <% if (isOwner) { %>
-            <button class="banner__edit-btn" id="editBannerBtn" type="button" data-user-id="<%= userId %>">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-              Modifier ma bannière
-            </button>
-            <% if (bannerStatus && bannerStatus !== 'approved') { %>
-              <span class="banner__status-badge media-status-badge media-status-badge--<%= bannerStatus === 'pending' ? 'pending' : 'rejected' %>">
-                <%= bannerStatus === 'pending' ? 'En attente' : 'Refusée' %>
-              </span>
-            <% } else if (bannerStatus === 'approved' && authorBanner) { %>
-              <span class="banner__status-badge media-status-badge media-status-badge--approved">Validée</span>
-            <% } %>
-          <% } %>
-        </section>
-
-        <section class="banner banner--recipes" aria-labelledby="movie-title">
-          <div class="banner__title" id="movie" data-id="">
-            <p class="banner__meta">Recettes Ciné Délices</p>
-            <h2 id="movie-title">
-              <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : "Toutes les recettes" %>
-            </h2>
-            <p class="banner__subtitle">
-              Découvrez toutes les recettes inspirées du cinéma et partagez vos créations.
-            </p>
-            <% if (hasAuthorFilter) { %>
-              <a class="banner__reset-link" href="/recipes-movie">
-                Voir toutes les recettes
-              </a>
-            <% } %>
-          </div>
-
-          <% const authBadge = typeof authorBadge !== 'undefined' ? authorBadge : null; %>
-          <% if (hasAuthorFilter && authorImg) { %>
-            <div class="auteur-card<%= authBadge ? ' has-badge ' + authBadge.cssClass : '' %>">
-              <div class="auteur-card__strip" aria-hidden="true"></div>
-              <div class="auteur-card__frame">
-                <img
-                  src="<%= authorImg %>"
-                  alt="Photo de <%= authorDisplayName %>"
-                  class="auteur-card__photo"
-                  width="66"
-                  height="66"
-                  loading="lazy"
-                />
-                <% if (authBadge) { %>
-                <img src="<%= authBadge.frame %>" alt="" class="auteur-card__photo-frame" aria-hidden="true" />
-                <% } %>
-              </div>
-              <div class="auteur-card__body">
-                <span class="auteur-card__eyebrow">✦ Une création de ✦</span>
-                <h3 class="auteur-card__name"><%= authorDisplayName %></h3>
-                <% if (authBadge) { %>
-                <div class="auteur-card__badge-row">
-                  <span class="auteur-card__stars" aria-label="Niveau <%= authBadge.level %> sur 5"><%- '★'.repeat(authBadge.stars) %><span class="auteur-card__stars-empty"><%= '★'.repeat(5 - authBadge.stars) %></span></span>
-                  <span class="auteur-card__badge-tag"><%= authBadge.label %></span>
-                </div>
-                <% } %>
-                <p class="auteur-card__count">
-                  <span class="auteur-card__count-num"><%= recipes.length %></span>
-                  recette<%= recipes.length > 1 ? 's' : '' %> publiée<%= recipes.length > 1 ? 's' : '' %>
-                </p>
-              </div>
-              <% if (authBadge) { %>
-              <div class="auteur-card__trophy-wrap">
-                <div class="auteur-card__spotlight" aria-hidden="true"></div>
-                <img
-                  src="<%= authBadge.image %>"
-                  alt="<%= authBadge.label %>"
-                  class="auteur-card__trophy"
-                />
-              </div>
-              <% } %>
-            </div>
-          <% } %>
-
-        </section>
-
-        <!-- SECTION RECETTES -->
-        <section id="recipes">
-          <div class="presentation__recipes">
-            <h3 class="presentation__title">
-              <%= hasAuthorFilter && authorDisplayName ? `Recettes de ${authorDisplayName}` : "Nos recettes cultes" %>
-            </h3>
-            <div class="presentation__rule"></div>
-            <div class="presentation__button__recipes">
-              <a class="btn btn--primary" href="/add-recipes-movies/">
-                <span class="btn__shimmer"></span>
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                <span class="btn__text">Ajouter ma recette</span>
-              </a>
-            </div>
-          </div>
-
-          <div id="recipes__list" class="articles only__display__9__recipes">
-            <% if (!recipes || recipes.length === 0) { %>
-            <p class="no-recipes">Aucune recette n'est disponible.</p>
-            <% } else { %>
-              <% recipes.forEach(recipe => { %>
-              <%
-                const displayRating = recipe.avgRating || recipe.quote || '0';
-                const authorName = recipe.contributor.pseudo;
-                const authorAvatar = recipe.contributor.picture || null;
-                const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
-                const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
-                const badgesMap = typeof contributorBadgesMap !== 'undefined' ? contributorBadgesMap : {};
-                const cardBadge = badgesMap[recipe.contributor.id] || null;
-              %>
-              <article class="recipe-card">
-                <div class="recipe-card__img">
-                  <img
-                    src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
-                    alt="<%= recipe.name %>"
-                    loading="lazy"
-                    width="600"
-                    height="400"
-                    decoding="async"
-                  />
-                  <div class="recipe-card__ot">
-                    <span class="badge badge--type-b"><%= recipe.category %></span>
-                    <button
-                      class="btn-fav"
-                      data-entity-id="<%= recipe.id %>"
-                      data-entity-type="recipe"
-                      data-is-favorite="<%= recipe.isFavorite || false %>"
-                      aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-                      title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-                    >
-                      <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                    </button>
-                  </div>
-                </div>
-                <div class="recipe-card__body">
-                  <h3 class="recipe-ttl"><%= recipe.name %></h3>
-                  <div class="recipe-card__meta">
-                    <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--vert' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--rouge' : 'tag--or' %>"><%= recipe.difficulty || 'N/A' %></span>
-                    <% if (recipe.isNew) { %><span class="tag tag--bleu">Nouveau</span><% } %>
-                  </div>
-                  <div class="recipe-card__infos-row">
-                    <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
-                      <% for (let i = 1; i <= 5; i++) { %>
-                      <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
-                        <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      </span>
-                      <% } %>
-                      <span class="rating__value"><%= displayRating %></span>
-                    </div>
-                    <div class="recipe-card__infos">
-                      <span class="recipe-info-item">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <%= recipe.duration || recipe.time %> min
-                      </span>
-                    </div>
-                  </div>
-                  <p class="recipe-card__desc"><%= truncatedDescription %></p>
-                  <div class="recipe-card__foot">
-                    <a href="/recipes-movie?author=<%= encodeURIComponent(authorName.toLowerCase()) %>" class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
-                      <span class="author__av">
-                        <% if (authorAvatar) { %>
-                        <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
-                        <% } else { %>
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
-                        <% } %>
-                      </span>
-                      <span class="author__info">
-                        <span class="author__name"><%= authorName %></span>
-                        <% if (cardBadge) { %>
-                        <span class="author__lvl"><%= cardBadge.cssClass.includes('lvl1') ? '★' : cardBadge.cssClass.includes('lvl2') ? '★★' : cardBadge.cssClass.includes('lvl3') ? '★★★' : cardBadge.cssClass.includes('lvl4') ? '★★★★' : '★★★★★' %></span>
-                        <% } %>
-                      </span>
-                    </a>
-                    <a class="btn btn--red" href="/recipes-movie/details/<%= recipe.id %>">
-                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                      Voir
-                    </a>
-                  </div>
-                </div>
-              </article>
-              <% }) %>
-            <% } %>
-          </div>
-
-          <% if (recipes && recipes.length > 9) { %>
-          <div class="center-button">
-            <button
-              id="see__all__recipes__button"
-              class="btn btn--red"
-              aria-label="Voir plus de recettes"
-            >
-              <span class="btn__shimmer"></span>
-              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
-              <span class="btn__text">Voir plus</span>
-            </button>
-          </div>
-          <% } %>
-        </section>
-
-        <% if (isOwner) { %>
-        <!-- MODALE BANNIÈRE AVEC CROPPER -->
-        <div class="banner-modal" id="bannerModal" aria-hidden="true">
-          <div class="banner-modal__overlay"></div>
-          <div class="banner-modal__dialog">
-            <button type="button" class="banner-modal__close" id="closeBannerModal" aria-label="Fermer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-            <h3 class="banner-modal__title">Modifier ma bannière</h3>
-            <p class="banner-modal__hint">Format final : 1408 × 350 pixels — Zoomez et déplacez l'image pour cadrer</p>
-            <div class="banner-cropper" id="bannerCropperContainer">
-              <canvas class="banner-cropper__canvas" id="bannerCropperCanvas"></canvas>
-              <div class="banner-cropper__placeholder" id="bannerPlaceholder">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                <span>Cliquez pour choisir une image</span>
-              </div>
-            </div>
-            <div class="banner-cropper__zoom" id="bannerZoomControl">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg>
-              <input type="range" id="bannerZoomRange" min="0" max="100" value="0" />
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
-            </div>
-            <input type="file" id="bannerInput" accept="image/jpeg,image/png,image/webp" hidden />
-            <div class="banner-modal__actions">
-              <label for="bannerInput" class="btn btn--primary btn--sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                Choisir une image
-              </label>
-              <button type="button" class="btn btn--red btn--sm" id="resetBannerBtn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                Bannière par défaut
-              </button>
-            </div>
-            <div class="banner-modal__footer">
-              <button type="button" class="btn btn--primary" id="saveBannerBtn" disabled>Enregistrer</button>
-              <button type="button" class="btn btn--outline" id="cancelBannerModal">Annuler</button>
-            </div>
-          </div>
-        </div>
-        <script src="/js/banner-cropper.js" defer></script>
-        <script src="/js/banner-upload.js" defer></script>
-        <% } %>
-
-      <% } %><!-- /else non-movie view -->
+      <% } %>
 
     </main>
 
