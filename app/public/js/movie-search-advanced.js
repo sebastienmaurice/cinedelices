@@ -256,13 +256,13 @@
           <div class="search-result-empty-content">
             <p class="search-result-empty-message">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-              Aucun film trouvé pour "${escapeHtml(query)}"
+              &ldquo;${escapeHtml(query)}&rdquo; n'est pas encore dans Ciné Délices
             </p>
             <a href="/add-recipes-movies/?query=${encodeURIComponent(
               query
             )}" class="btn btn--primary btn-sm">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-              Créer une fiche film
+              Ajoutez-le !
             </a>
           </div>
         </div>
@@ -530,11 +530,11 @@
       <a href="${addUrl}" class="add-film-card-inject-inner">
         <div class="add-film-card-inject-poster">${posterImg}</div>
         <div class="add-film-card-inject-body">
-          <p class="add-film-card-inject-hint">Film non disponible dans Ciné Délices</p>
+          <p class="add-film-card-inject-hint">Ce film n'est pas encore dans Ciné Délices — ajoutez-le&nbsp;!</p>
           <h3 class="add-film-card-inject-title">${escapeHtml(filmTitle)}</h3>
           <span class="add-film-card-inject-btn">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Proposer ce film
+            Ajouter ce film
           </span>
         </div>
       </a>

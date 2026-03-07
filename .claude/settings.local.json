@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql -U cinedelices -d cinedelices -c \"\\\\dt\")",
+      "Bash(PGPASSWORD=cinedelices psql -U cinedelices -d cinedelices -c \"SELECT COUNT\\(*\\) FROM movies;\" -c \"SELECT COUNT\\(*\\) FROM users;\" -c \"SELECT COUNT\\(*\\) FROM recipes;\" -c \"SELECT COUNT\\(*\\) FROM notices;\")",
+      "Bash(PGPASSWORD=cinedelices psql -U cinedelices -d cinedelices -c \"SELECT table_name FROM information_schema.tables WHERE table_schema=''public'' ORDER BY table_name;\")",
+      "Bash(node \"C:/Users/overs/AppData/Local/Temp/claude/d--CINE-DELICES-cinedelices/550015f7-c957-4ecb-9f06-8f8b72d78e67/scratchpad/fetch-posters.mjs\")",
+      "Bash(node restore-data.mjs)",
+      "Bash(PGPASSWORD=cinedelices psql -U cinedelices -d postgres -c \"SELECT pg_terminate_backend\\(pid\\) FROM pg_stat_activity WHERE datname = ''cinedelices'' AND pid <> pg_backend_pid\\(\\);\")",
+      "Bash(PGPASSWORD=cinedelices psql -U cinedelices -d postgres -c \"DROP DATABASE IF EXISTS cinedelices;\")",
+      "Bash(PGPASSWORD=cinedelices psql -U cinedelices -d postgres -c \"CREATE DATABASE cinedelices OWNER cinedelices;\")",
+      "Bash(PGPASSWORD=\"cinedelices\" psql -U postgres -c \"CREATE DATABASE cinedelices OWNER cinedelices;\")",
+      "Bash(PGPASSWORD=\"js4life\" psql -U postgres -c \"CREATE DATABASE cinedelices OWNER cinedelices;\")"
+    ]
+  }
+}

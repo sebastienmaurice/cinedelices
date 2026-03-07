@@ -47,11 +47,6 @@ const homeController = {
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
 
-      // Refactoring : utilisation du helper centralisé renderNotFound()
-      if (!topRecipe) {
-        return renderNotFound(res, "Top recette", req.userRole);
-      }
-
       // afficher 4 films aléatoirement sur la page d'accueil
       const topMovies = await Movie.findAll({
         where: { status: "approved" },

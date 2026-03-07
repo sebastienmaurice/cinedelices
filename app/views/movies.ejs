@@ -24,112 +24,104 @@
 
     <main>
 
-      <!-- PAGE HERO -->
+      <!-- PAGE HERO : deux colonnes (texte + recherche) -->
       <section class="page-hero" aria-labelledby="heroTitle">
-        <div class="page-hero__bg"></div>
-        <div class="page-hero__reel page-hero__reel--1" aria-hidden="true"></div>
-        <div class="page-hero__reel page-hero__reel--2" aria-hidden="true"></div>
-        <div class="page-hero__scanlines" aria-hidden="true"></div>
-        <div class="page-hero__vignette" aria-hidden="true"></div>
+        <!-- Couche décorative clippée séparément pour que le dropdown ne soit pas masqué -->
+        <div class="page-hero__deco" aria-hidden="true">
+          <div class="page-hero__bg"></div>
+          <div class="page-hero__reel page-hero__reel--1"></div>
+          <div class="page-hero__reel page-hero__reel--2"></div>
+          <div class="page-hero__scanlines"></div>
+          <div class="page-hero__vignette"></div>
+        </div>
         <div class="page-hero__content">
-          <p class="page-hero__eyebrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-            Filmothèque Ciné Délices
-          </p>
-          <h1 class="page-hero__title" id="heroTitle">FILMS &amp; <em>SÉRIES</em></h1>
-          <p class="page-hero__sub">Chaque film cache une recette — explorez, savourez, cuisinez</p>
-          <div class="page-hero__stats" aria-label="Statistiques de la filmothèque">
-            <div class="hero-stat">
-              <span class="hero-stat__num"><%= typeof totalMovies !== 'undefined' ? totalMovies : movies.length %></span>
-              <span class="hero-stat__label">Films cultes</span>
+
+          <!-- Colonne gauche : identité & stats -->
+          <div class="page-hero__left">
+            <p class="page-hero__eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+              Filmothèque Ciné Délices
+            </p>
+            <h1 class="page-hero__title" id="heroTitle">FILMS &amp; <em>SÉRIES</em></h1>
+            <p class="page-hero__sub">Chaque film cache une recette — explorez, savourez, cuisinez</p>
+            <div class="page-hero__meta-row">
+              <div class="page-hero__stats" aria-label="Statistiques de la filmothèque">
+                <div class="hero-stat">
+                  <span class="hero-stat__num"><%= typeof totalMovies !== 'undefined' ? totalMovies : movies.length %></span>
+                  <span class="hero-stat__label">Films cultes</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                  <span class="hero-stat__num"><%= typeof totalRecipes !== 'undefined' ? totalRecipes : '...' %></span>
+                  <span class="hero-stat__label">Recettes</span>
+                </div>
+                <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                  <span class="hero-stat__num"><%= genres.length %></span>
+                  <span class="hero-stat__label">Genres</span>
+                </div>
+                <% } %>
+              </div>
+              <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+              <div class="quick-tags-row">
+                <span class="qt-label">Genre :</span>
+                <a href="/movies" class="qtag qtag-or <%= (typeof selectedGenre === 'undefined' || selectedGenre === 'tous') ? 'active' : '' %>">Tous</a>
+                <% genres.forEach(function(g) {
+                  const gl = g.toLowerCase();
+                  let cls = 'qtag-or';
+                  if (gl.includes('aventure') || gl.includes('action')) cls = 'qtag-rouge';
+                  else if (gl.includes('com') ) cls = 'qtag-bleu';
+                  else if (gl.includes('fanta') || gl.includes('magic') || gl.includes('merv')) cls = 'qtag-violet';
+                  else if (gl.includes('sci') || gl.includes('sf')) cls = 'qtag-vert';
+                  else if (gl.includes('horr') || gl.includes('épou') || gl.includes('effroi')) cls = 'qtag-rouge';
+                  else if (gl.includes('anima')) cls = 'qtag-bleu';
+                %>
+                <a href="/movies?genre=<%= encodeURIComponent(g) %>"
+                   class="qtag <%= cls %> <%= selectedGenre === g ? 'active' : '' %>">
+                  <%= g.charAt(0).toUpperCase() + g.slice(1) %>
+                </a>
+                <% }) %>
+              </div>
+              <% } %>
             </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat">
-              <span class="hero-stat__num"><%= typeof totalRecipes !== 'undefined' ? totalRecipes : '...' %></span>
-              <span class="hero-stat__label">Recettes</span>
-            </div>
-            <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat">
-              <span class="hero-stat__num"><%= genres.length %></span>
-              <span class="hero-stat__label">Genres</span>
-            </div>
-            <% } %>
           </div>
+
+          <!-- Colonne droite : barre de recherche (sans encadrement) -->
+          <div class="page-hero__search-col" aria-label="Recherche de films">
+            <p class="page-hero__search-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Trouver un film ou une série
+            </p>
+            <div class="search-main-row">
+              <!-- search-input-wrapper = classe attendue par movie-search-advanced.js -->
+              <div class="search-input-wrap search-input-wrapper" id="search-results-parent" style="position:relative;">
+                <input
+                  type="text"
+                  id="search-movie"
+                  name="search-movie"
+                  class="search__input__film"
+                  placeholder="Rechercher un film ou une série..."
+                  autocomplete="off"
+                  aria-label="Rechercher un film"
+                />
+                <!-- Dropdown résultats (movie-search-advanced.js) -->
+                <div id="search-results" class="search-results" aria-live="polite"></div>
+              </div>
+              <button
+                type="button"
+                id="search-boost-button"
+                class="btn-search-boost"
+                title="Recherche boostée"
+                aria-label="Recherche boostée"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+              </button>
+            </div>
+          </div>
+
         </div>
       </section>
-
-      <!-- SEARCH -->
-      <section class="search-section" aria-label="Recherche de films">
-        <div class="search-box">
-          <div class="search-main-row">
-            <!-- search-input-wrapper = classe attendue par movie-search-advanced.js -->
-            <div class="search-input-wrap search-input-wrapper" id="search-results-parent" style="position:relative;">
-              <input
-                type="text"
-                id="search-movie"
-                name="search-movie"
-                class="search__input__film"
-                placeholder="Rechercher un film ou une série..."
-                autocomplete="off"
-                aria-label="Rechercher un film"
-              />
-              <!-- Dropdown résultats (movie-search-advanced.js) -->
-              <div id="search-results" class="search-results" aria-live="polite"></div>
-            </div>
-            <button
-              type="button"
-              id="search-boost-button"
-              class="btn-search-boost"
-              title="Recherche boostée"
-              aria-label="Recherche boostée"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-            </button>
-          </div>
-
-          <!-- Quick genre tags (liens serveur) -->
-          <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
-          <div class="quick-tags-row">
-            <span class="qt-label">Genre :</span>
-            <a href="/movies" class="qtag qtag-or <%= (typeof selectedGenre === 'undefined' || selectedGenre === 'tous') ? 'active' : '' %>">Tous</a>
-            <% genres.forEach(function(g) {
-              const gl = g.toLowerCase();
-              let cls = 'qtag-or';
-              if (gl.includes('aventure') || gl.includes('action')) cls = 'qtag-rouge';
-              else if (gl.includes('com') ) cls = 'qtag-bleu';
-              else if (gl.includes('fanta') || gl.includes('magic') || gl.includes('merv')) cls = 'qtag-violet';
-              else if (gl.includes('sci') || gl.includes('sf')) cls = 'qtag-vert';
-              else if (gl.includes('horr') || gl.includes('épou') || gl.includes('effroi')) cls = 'qtag-rouge';
-              else if (gl.includes('anima')) cls = 'qtag-bleu';
-            %>
-            <a href="/movies?genre=<%= encodeURIComponent(g) %>"
-               class="qtag <%= cls %> <%= selectedGenre === g ? 'active' : '' %>">
-              <%= g.charAt(0).toUpperCase() + g.slice(1) %>
-            </a>
-            <% }) %>
-          </div>
-          <% } %>
-        </div>
-      </section>
-
-      <!-- ADD FILM BANNER -->
-      <div class="add-film-banner">
-        <a href="/add-recipes-movies/" class="add-film-inner">
-          <div class="add-film-icon" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-          </div>
-          <div class="add-film-text">
-            <p class="add-film-text__sup">Communauté Ciné Délices</p>
-            <h2 class="add-film-text__title">Proposez votre film culte&nbsp;!</h2>
-            <p class="add-film-text__sub">Partagez vos films préférés et créez la recette qui va avec — la communauté vous attend</p>
-          </div>
-          <span class="btn-add" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Ajouter un film
-          </span>
-        </a>
-      </div>
 
       <!-- FILMS TOOLBAR -->
       <div class="films-toolbar">
@@ -281,6 +273,44 @@
             </div>
           </article>
           <% }) %>
+
+          <!-- FCARD CTA : proposer un film — full-width banner -->
+          <article class="fcard fcard--cta" aria-label="Proposer votre film culte à Ciné Délices">
+            <a href="/add-recipes-movies/" class="fcard--cta__link">
+              <div class="fcard--cta__shimmer" aria-hidden="true"></div>
+              <div class="fcard--cta__body">
+                <p class="fcard--cta__eyebrow">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                  Communauté · Ciné Délices
+                </p>
+                <h2 class="fcard--cta__title">VOTRE FILM<em>MÉRITE UNE RECETTE.</em></h2>
+                <p class="fcard--cta__desc">Proposez un film culte et créez la recette qui va avec — rejoignez des cinéphiles gourmands.</p>
+                <span class="fcard--cta__action">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  Proposer un film
+                </span>
+              </div>
+              <div class="fcard--cta__deco" aria-hidden="true">
+                <!-- Reel animé -->
+                <div class="fcard--cta__reel">
+                  <div class="fcard--cta__reel-inner"></div>
+                  <div class="fcard--cta__reel-hub"></div>
+                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--1"></span>
+                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--2"></span>
+                  <span class="fcard--cta__reel-hole fcard--cta__reel-hole--3"></span>
+                </div>
+                <!-- Cartes-film empilées : "votre film va ici" -->
+                <div class="fcard--cta__cards">
+                  <div class="fcard--cta__card fcard--cta__card--1"></div>
+                  <div class="fcard--cta__card fcard--cta__card--2"></div>
+                  <div class="fcard--cta__card fcard--cta__card--3">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+
           <% } %>
 
         </div><!-- /#movies__list -->
