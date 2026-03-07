@@ -49,12 +49,8 @@ adminRouter.post("/recipes/:id/update", adminController.updateRecipeAdmin);
 // ajouter un film à valdier
 adminRouter.get("/movie/:id", adminController.editMovie);
 
-//! Valider un film (avec upload d'image optionnel)
-adminRouter.post(
-  "/validateMovie/:id",
-  uploadMovie.single("filmImage"),
-  adminController.validateMovie,
-);
+// Valider un film — l'affiche est importée depuis TMDB à la création (plus d'upload admin)
+adminRouter.post("/validateMovie/:id", adminController.validateMovie);
 
 // Refuser un film
 adminRouter.post("/rejectMovie/:id", adminController.rejectMovie);
@@ -122,5 +118,9 @@ adminRouter.post(
   "/notices/:id/edit/direct",
   adminController.updateNoticeDirect,
 );
+
+// Migration unique : remplace les anciennes images films par les affiches TMDB
+// Usage : POST /admin/migrate-movie-images (appel manuel une seule fois)
+adminRouter.post("/migrate-movie-images", adminController.migrateMovieImages);
 
 export default adminRouter;

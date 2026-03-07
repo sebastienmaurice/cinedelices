@@ -32,9 +32,9 @@
     // S'assurer que l'image par défaut est affichée au démarrage
     resetFilmImage();
 
-    // Pré-remplissage direct depuis les query params (sans appel API)
-    // Le synopsis n'est pas pré-rempli : il est géré exclusivement en admin
+    // Pré-remplissage depuis les query params
     if (tmdbId && title) {
+      // Remplissage immédiat des champs visibles (sans attendre l'API)
       prefillForm({
         tmdb_id: tmdbId,
         title_fr: title,
@@ -42,6 +42,9 @@
         genre: genre || null,
         overview: null,
       });
+      // Appel API TMDB pour récupérer le poster et le synopsis complet
+      // prefillForm() sera rappelé avec les données complètes (poster inclus)
+      loadTmdbInfo(tmdbId, type);
     }
   }
 
@@ -243,9 +246,10 @@
     // 3. Mettre à jour la colonne de gauche (film-info-box)
     updateFilmInfoBox(movie);
 
-    // 4. S'assurer que l'image reste à l'image par défaut
-    // L'image sera uploadée uniquement par l'admin, pas depuis TMDB
-    resetFilmImage();
+    // 4. Afficher le poster TMDB si disponible, sinon image par défaut
+    // "poster" = URL CDN TMDB (ex: https://image.tmdb.org/t/p/w500/...)
+    // L'affiche sera importée automatiquement côté serveur lors de la soumission
+    updateFilmPosterPreview(movie.poster || null);
 
     // 5. Synchroniser les champs cachés du formulaire unifié
     syncHiddenFields();
@@ -290,17 +294,26 @@
   }
 
   /**
-   * Réinitialiser l'image à l'image par défaut
-   * L'image du film est uploadée uniquement par l'admin
+   * Met à jour l'affiche dans .film-selected-image img.
+   * @param {string|null} posterUrl - URL du poster TMDB (CDN) ou null pour l'image par défaut
    */
-  function resetFilmImage() {
-    const filmSelectedImage = document.querySelector(
-      ".film-selected-image img"
-    );
-    if (filmSelectedImage) {
+  function updateFilmPosterPreview(posterUrl) {
+    const filmSelectedImage = document.querySelector(".film-selected-image img");
+    if (!filmSelectedImage) return;
+    if (posterUrl) {
+      filmSelectedImage.src = posterUrl;
+      filmSelectedImage.alt = "Affiche du film";
+    } else {
       filmSelectedImage.src = "/images/image-default-movie.jpg";
       filmSelectedImage.alt = "Image de film par defaut";
     }
+  }
+
+  /**
+   * Réinitialiser l'image à l'image par défaut (utilisé lors de changement de film)
+   */
+  function resetFilmImage() {
+    updateFilmPosterPreview(null);
   }
 
   // Refactoring : fonction updateURL() supprimée, maintenant centralisée dans

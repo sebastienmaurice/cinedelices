@@ -3,126 +3,203 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes"
-    />
+    <meta name="description" content="Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes" />
     <title>Films - Ciné Délices</title>
 
     <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
 
-    <!-- styles-->
+    <!-- styles -->
     <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/movies.css" />
 
     <!-- scripts -->
-    <!-- utils centralisés (doivent être chargés avant les scripts qui les utilisent) -->
     <script src="/js/utils/text-utils.js" defer></script>
     <script src="/js/movie-search-advanced.js" defer></script>
     <script src="/js/more-views.js" defer></script>
   </head>
 
-  <body>
-    <!-- HEADER -->
+  <body class="movies-page">
     <%- include("partials/header") %>
 
-    <!-- MAIN -->
     <main>
-      <!-- HERO IMAGE -->
-      <section
-        class="banner__image__film banner__image__film--movies"
-        aria-hidden="true"
-      >
-        <div class="banner__image__film__overlay"></div>
-        <img
-          src="/images/image-banner-movie-default.jpg"
-          alt="Sélection de films Ciné Délices"
-        />
+
+      <!-- PAGE HERO -->
+      <section class="page-hero" aria-labelledby="heroTitle">
+        <div class="page-hero__bg"></div>
+        <div class="page-hero__reel page-hero__reel--1" aria-hidden="true"></div>
+        <div class="page-hero__reel page-hero__reel--2" aria-hidden="true"></div>
+        <div class="page-hero__scanlines" aria-hidden="true"></div>
+        <div class="page-hero__vignette" aria-hidden="true"></div>
+        <div class="page-hero__content">
+          <p class="page-hero__eyebrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            Filmothèque Ciné Délices
+          </p>
+          <h1 class="page-hero__title" id="heroTitle">FILMS &amp; <em>SÉRIES</em></h1>
+          <p class="page-hero__sub">Chaque film cache une recette — explorez, savourez, cuisinez</p>
+          <div class="page-hero__stats" aria-label="Statistiques de la filmothèque">
+            <div class="hero-stat">
+              <span class="hero-stat__num"><%= typeof totalMovies !== 'undefined' ? totalMovies : movies.length %></span>
+              <span class="hero-stat__label">Films cultes</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat__num"><%= typeof totalRecipes !== 'undefined' ? totalRecipes : '...' %></span>
+              <span class="hero-stat__label">Recettes</span>
+            </div>
+            <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat__num"><%= genres.length %></span>
+              <span class="hero-stat__label">Genres</span>
+            </div>
+            <% } %>
+          </div>
+        </div>
       </section>
 
-      <!-- BANNIÈRE -->
-      <section class="banner" aria-labelledby="movies-title">
-        <div class="banner__title">
-          <p class="banner__meta">Films cultes</p>
-          <h2 id="movies-title">Découvrez nos films et séries cultes</h2>
-          <p class="banner__subtitle">
-            Explorez notre filmothèque et savourez le goût du cinéma
-          </p>
-        </div>
-
-        <div class="banner__search__films">
-          <div class="search-container">
-            <div class="search-input-wrapper">
+      <!-- SEARCH -->
+      <section class="search-section" aria-label="Recherche de films">
+        <div class="search-box">
+          <div class="search-main-row">
+            <!-- search-input-wrapper = classe attendue par movie-search-advanced.js -->
+            <div class="search-input-wrap search-input-wrapper" id="search-results-parent" style="position:relative;">
               <input
                 type="text"
                 id="search-movie"
                 name="search-movie"
                 class="search__input__film"
-                placeholder="Rechercher un film ou une série ..."
+                placeholder="Rechercher un film ou une série..."
                 autocomplete="off"
                 aria-label="Rechercher un film"
               />
-              <button
-                type="button"
-                id="search-boost-button"
-                class="btn-search-boost"
-                title="Recherche boostée"
-                aria-label="Recherche boostée"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-              </button>
+              <!-- Dropdown résultats (movie-search-advanced.js) -->
+              <div id="search-results" class="search-results" aria-live="polite"></div>
             </div>
-
-            <!-- Dropdown des résultats de recherche -->
-            <div id="search-results" class="search-results" aria-live="polite">
-              <!-- Les résultats s'afficheront ici dynamiquement -->
-            </div>
+            <button
+              type="button"
+              id="search-boost-button"
+              class="btn-search-boost"
+              title="Recherche boostée"
+              aria-label="Recherche boostée"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+            </button>
           </div>
+
+          <!-- Quick genre tags (liens serveur) -->
+          <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
+          <div class="quick-tags-row">
+            <span class="qt-label">Genre :</span>
+            <a href="/movies" class="qtag qtag-or <%= (typeof selectedGenre === 'undefined' || selectedGenre === 'tous') ? 'active' : '' %>">Tous</a>
+            <% genres.forEach(function(g) {
+              const gl = g.toLowerCase();
+              let cls = 'qtag-or';
+              if (gl.includes('aventure') || gl.includes('action')) cls = 'qtag-rouge';
+              else if (gl.includes('com') ) cls = 'qtag-bleu';
+              else if (gl.includes('fanta') || gl.includes('magic') || gl.includes('merv')) cls = 'qtag-violet';
+              else if (gl.includes('sci') || gl.includes('sf')) cls = 'qtag-vert';
+              else if (gl.includes('horr') || gl.includes('épou') || gl.includes('effroi')) cls = 'qtag-rouge';
+              else if (gl.includes('anima')) cls = 'qtag-bleu';
+            %>
+            <a href="/movies?genre=<%= encodeURIComponent(g) %>"
+               class="qtag <%= cls %> <%= selectedGenre === g ? 'active' : '' %>">
+              <%= g.charAt(0).toUpperCase() + g.slice(1) %>
+            </a>
+            <% }) %>
+          </div>
+          <% } %>
         </div>
       </section>
 
-      <!-- SECTION FILMS -->
-      <section id="films">
-        <div class="presentation__film">
-          <h3 class="presentation__title">Nos films et séries cultes</h3>
-          <div class="presentation__rule"></div>
-          <div class="presentation__actions__film">
-            <% if (typeof genres !== 'undefined' && genres && genres.length > 0) { %>
-            <div class="genre-filter">
-              <label for="genre-select" class="genre-filter__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-              </label>
-              <select id="genre-select" class="genre-filter__select" onchange="window.location.href=this.value">
-                <option value="/movies" <%= (typeof selectedGenre === 'undefined' || selectedGenre === 'tous') ? 'selected' : '' %>>Tous les genres</option>
-                <% genres.forEach(genre => { %>
-                <option value="/movies?genre=<%= genre %>" <%= selectedGenre === genre ? 'selected' : '' %>><%= genre.charAt(0).toUpperCase() + genre.slice(1) %></option>
-                <% }) %>
-              </select>
-            </div>
-            <% } %>
-            <a class="btn btn--primary" href="/add-recipes-movies/">
-              <span class="btn__shimmer"></span>
-              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-              <span class="btn__text">J'ajoute mon film</span>
-            </a>
+      <!-- ADD FILM BANNER -->
+      <div class="add-film-banner">
+        <a href="/add-recipes-movies/" class="add-film-inner">
+          <div class="add-film-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+          </div>
+          <div class="add-film-text">
+            <p class="add-film-text__sup">Communauté Ciné Délices</p>
+            <h2 class="add-film-text__title">Proposez votre film culte&nbsp;!</h2>
+            <p class="add-film-text__sub">Partagez vos films préférés et créez la recette qui va avec — la communauté vous attend</p>
+          </div>
+          <span class="btn-add" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            Ajouter un film
+          </span>
+        </a>
+      </div>
+
+      <!-- FILMS TOOLBAR -->
+      <div class="films-toolbar">
+        <div class="tb-left">
+          <div class="tb-label">Filmothèque</div>
+          <h2 class="tb-title">NOS FILMS ET SÉRIES CULTES</h2>
+        </div>
+        <div class="toolbar-right">
+          <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+            <button class="view-btn active" id="vGrid" title="Vue grille" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="view-btn" id="vList" title="Vue liste" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
           </div>
         </div>
+      </div>
 
-        <div id="movies__list" class="articles only__display__9__films">
+      <!-- FILMS GRID -->
+      <div class="films-wrap">
+        <div id="movies__list" class="films-grid only__display__9__films">
+
           <% if (!movies || movies.length === 0) { %>
-          <p class="no-movies">Aucun film trouvé pour ce genre.</p>
-          <% } else { %> <% movies.forEach(movie => { %>
-          <%
-            const recipesCount = typeof movie.recipeCount === "number" ? movie.recipeCount : 0;
+          <div class="no-results">
+            <div class="no-results__icon">🎬</div>
+            <p class="no-results__title">Aucun film trouvé</p>
+            <p class="no-results__sub">Aucun film pour ce genre — essayez un autre filtre</p>
+          </div>
+          <% } else { %>
+          <% movies.forEach(function(movie) {
+            const recipesCount = typeof movie.recipeCount === 'number' ? movie.recipeCount : 0;
             const displayRating = movie.rating || '4.0';
-            // Synopsis : priorité au champ BDD, fallback propre si NULL
             const movieSynopsis = movie.synopsis || 'Synopsis à venir...';
+
+            // Genre → classe fgt-*
+            const genreRaw = (movie.genre || '').toLowerCase();
+            let fgtClass = 'fgt-n';
+            if (genreRaw.includes('aventure') || genreRaw.includes('action')) fgtClass = 'fgt-a';
+            else if (genreRaw.includes('com')) fgtClass = 'fgt-c';
+            else if (genreRaw.includes('thriller') || genreRaw.includes('policier')) fgtClass = 'fgt-t';
+            else if (genreRaw.includes('fanta') || genreRaw.includes('merv')) fgtClass = 'fgt-f';
+            else if (genreRaw.includes('horr') || genreRaw.includes('épou')) fgtClass = 'fgt-h';
+            else if (genreRaw.includes('sci') || genreRaw.includes(' sf') || genreRaw.includes('sf ')) fgtClass = 'fgt-s';
+
+            const ratingNum = parseFloat(displayRating);
+            const starsRounded = Math.round(ratingNum);
+
+            // Data attributes pour filtrage JS
+            const dataGenre = (movie.genre || '').toLowerCase();
+            const dataTitle = (movie.title || '').toLowerCase();
           %>
-          <article id="film-<%= movie.id %>" class="film-card">
-            <!-- Image portrait 2:3 avec overlay et titre dans le fondu -->
-            <div class="film-card__img">
+          <article
+            id="film-<%= movie.id %>"
+            class="fcard"
+            data-genre="<%= dataGenre %>"
+            data-year="<%= movie.year || '' %>"
+            data-rating="<%= displayRating %>"
+            data-recipes="<%= recipesCount %>"
+            data-title="<%= dataTitle %>"
+          >
+            <!-- POSTER -->
+            <div class="fcard__poster">
+              <div class="fcard__lbox fcard__lbox-top" aria-hidden="true">
+                <div class="fcard__perf"></div><div class="fcard__perf"></div>
+                <div class="fcard__perf"></div><div class="fcard__perf"></div>
+                <div class="fcard__perf"></div><div class="fcard__perf"></div>
+              </div>
               <img
+                class="fcard__img"
                 src="<%= movie.cardPath || movie.picture %>"
                 alt="Affiche du film <%= movie.title %>"
                 loading="lazy"
@@ -130,99 +207,104 @@
                 height="600"
                 decoding="async"
               />
-              <!-- Overlay top : badges + favori -->
-              <div class="film-card__ot">
-                <div style="display:flex;flex-direction:column;gap:0.4rem;">
-                  <% if (movie.isNew) { %>
-                  <span class="badge badge--type-b">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                    Nouveau
-                  </span>
-                  <% } %>
-                  <% if (movie.isPopular) { %>
-                  <span class="badge badge--type-r">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                    Populaire
-                  </span>
-                  <% } %>
-                </div>
-                <button
-                  class="btn-fav"
-                  data-entity-id="<%= movie.id %>"
-                  data-entity-type="movie"
-                  data-is-favorite="<%= movie.isFavorite || false %>"
-                  aria-label="<%= movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-                  title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-                >
-                  <svg class="icon" viewBox="0 0 24 24" fill="<%= movie.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                </button>
+              <div class="fcard__overlay"></div>
+
+              <!-- Badges (Nouveau / Populaire) -->
+              <div class="fcard__badges">
+                <% if (movie.isNew) { %>
+                <span class="badge badge--type-b">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                  Nouveau
+                </span>
+                <% } %>
+                <% if (movie.isPopular) { %>
+                <span class="badge badge--type-r">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                  Populaire
+                </span>
+                <% } %>
               </div>
-              <!-- Titre dans le fondu bas de l'image -->
-              <div class="film-card__tz">
-                <span class="film-ttl"><%= movie.title %></span>
-                <span class="film-byl"><%= movie.year %></span>
+
+              <!-- Favori -->
+              <button
+                class="fcard__fav btn-fav"
+                data-entity-id="<%= movie.id %>"
+                data-entity-type="movie"
+                data-is-favorite="<%= movie.isFavorite || false %>"
+                aria-label="<%= movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+              >
+                <svg class="icon" viewBox="0 0 24 24" fill="<%= movie.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
+
+              <!-- Titre en fondu bas du poster -->
+              <div class="fcard__title-area">
+                <p class="fcard__year"><%= movie.year %></p>
+                <h3 class="fcard__title-main"><%= movie.title %></h3>
+              </div>
+
+              <div class="fcard__lbox fcard__lbox-bot" aria-hidden="true">
+                <div class="fcard__perf"></div><div class="fcard__perf"></div>
+                <div class="fcard__perf"></div><div class="fcard__perf"></div>
               </div>
             </div>
 
-            <!-- Corps de la card -->
-            <div class="film-card__body">
-              <!-- Tags meta -->
-              <div class="film-card__meta">
-                <span class="tag tag--bleu"><%= movie.genre %></span>
+            <!-- BODY -->
+            <div class="fcard__body">
+              <!-- Genre tag -->
+              <div class="fcard__genres">
+                <span class="fgt <%= fgtClass %>"><%= movie.genre %></span>
               </div>
 
-              <!-- Notation -->
-              <div class="rating rating--sm" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
+              <!-- Stars -->
+              <div class="fcard__stars" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
                 <% for (let i = 1; i <= 5; i++) { %>
-                <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
-                  <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                </span>
+                <span class="<%= i <= starsRounded ? 's' : 'se' %>">★</span>
                 <% } %>
-                <span class="rating__value"><%= displayRating %></span>
+                <span class="fcard__rating"><%= displayRating %></span>
               </div>
 
               <!-- Synopsis -->
-              <p class="film-card__desc"><%= movieSynopsis %></p>
+              <p class="fcard__desc"><%= movieSynopsis %></p>
 
-              <!-- Footer : compteur recettes + bouton -->
-              <div class="film-card__foot">
-                <span class="film-count">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                  <%= recipesCount %> <%= recipesCount > 1 ? "recettes" : "recette" %>
-                </span>
-                <a class="btn btn--red" href="/recipes-movie/<%= movie.id %>">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <!-- Footer -->
+              <div class="fcard__footer">
+                <p class="fcard__recipes">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                  <%= recipesCount %> <%= recipesCount > 1 ? 'recettes' : 'recette' %>
+                </p>
+                <a class="btn-vr" href="/recipes-movie/<%= movie.id %>">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                   Voir les recettes
                 </a>
               </div>
             </div>
           </article>
-          <% }) %> <% } %>
-        </div>
+          <% }) %>
+          <% } %>
 
-        <% if (movies && movies.length > 9) { %>
-        <div class="center-button">
-          <button
-            id="see__all__movies__button"
-            class="btn btn--red"
-            aria-label="Voir plus de films"
-          >
-            <span class="btn__shimmer"></span>
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-            <span class="btn__text">Voir plus</span>
-          </button>
-        </div>
-        <% } %>
-      </section>
+        </div><!-- /#movies__list -->
+      </div><!-- /.films-wrap -->
+
+      <!-- LOAD MORE (more-views.js) -->
+      <% if (movies && movies.length > 9) { %>
+      <div class="load-more-wrap">
+        <div class="load-bar"></div>
+        <p class="load-info"><%= movies.length %> films dans la filmothèque</p>
+        <button id="see__all__movies__button" class="btn-more" aria-label="Voir plus de films">
+          <span class="btn-txt">Voir plus de films</span>
+        </button>
+      </div>
+      <% } %>
+
     </main>
 
-    <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Scripts JS globaux -->
+    <!-- Scripts globaux -->
     <script src="/js/burger-menu.js" defer></script>
 
-    <!-- Configuration pour les favoris -->
+    <!-- Config favoris -->
     <script>
       window.CINEDELICES = {
         isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
@@ -230,5 +312,30 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+
+    <!-- Vue toggle grid/list -->
+    <script>
+      (function() {
+        const grid = document.getElementById('movies__list');
+        const vGrid = document.getElementById('vGrid');
+        const vList = document.getElementById('vList');
+        if (!grid || !vGrid || !vList) return;
+
+        vGrid.addEventListener('click', function() {
+          grid.classList.remove('list-view');
+          vGrid.classList.add('active');
+          vGrid.setAttribute('aria-pressed', 'true');
+          vList.classList.remove('active');
+          vList.setAttribute('aria-pressed', 'false');
+        });
+        vList.addEventListener('click', function() {
+          grid.classList.add('list-view');
+          vList.classList.add('active');
+          vList.setAttribute('aria-pressed', 'true');
+          vGrid.classList.remove('active');
+          vGrid.setAttribute('aria-pressed', 'false');
+        });
+      })();
+    </script>
   </body>
 </html>

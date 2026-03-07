@@ -841,12 +841,19 @@ const moviesController = {
       // Enrichir les movies avec les chemins d'images (banner/card)
       const enrichedMovies = enrichMoviesWithImagePaths(moviesWithCounts);
 
+      const [totalMovies, totalRecipes] = await Promise.all([
+        Movie.count({ where: { status: "approved" } }),
+        Recipe.count({ where: { status: "approved" } }),
+      ]);
+
       res.render("movies", {
         movies: enrichedMovies,
         selectedGenre,
         genres: uniqueGenres,
         role: req.userRole,
         userId: req.userId || null,
+        totalMovies,
+        totalRecipes,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

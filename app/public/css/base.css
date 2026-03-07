@@ -292,7 +292,7 @@
   --max-width: 1440px;           /* legacy — gardé pour compatibilité */
   --max-w: 1440px;               /* largeur max conteneur (choix projet — moodboard: 1408px) */
   --page-px: 64px;               /* moodboard V3 — padding horizontal pages */
-  --nav-h: 68px;                 /* moodboard V3 — hauteur navigation */
+  --nav-h: 70px;                 /* 68px + 2px border-top accent doré */
   --card-r: 16px;                /* moodboard V3 — border-radius cards */
 
   /* ====================================================== */
@@ -446,7 +446,7 @@ a {
   text-decoration: none;
   transition: color var(--transition);
 }
-a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
+a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):not(.nav-link):not(.nav-logo):not(.nav-btn-fav):not([class*="nav-"]):not([class*="drawer"]):hover {
   color: var(--rouge-projecteur);
 }
 
@@ -3339,12 +3339,18 @@ a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
 @media (max-width: 900px) { .wrap { padding: 0 32px; } }
 @media (max-width: 600px) { .wrap { padding: 0 20px; } }
 
+/* ── Décalage global nav fixe ── */
+/* La nav est fixed (z-index: 500) — toutes les pages décalent leur contenu vers le bas */
+main { padding-top: var(--nav-h); }
+
 /* ── Nav bar ── */
 .nav-bar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  background: rgba(15, 24, 38, 0);
-  backdrop-filter: blur(0px);
-  border-bottom: 1px solid rgba(196, 160, 82, 0);
+  background: rgba(10, 18, 30, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 2px solid rgba(196, 160, 82, 0.35);
+  border-bottom: 1px solid rgba(196, 160, 82, 0.08);
   transition: background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
               backdrop-filter 0.5s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
@@ -3354,22 +3360,22 @@ a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
   background: rgba(12, 20, 34, 0.92);
   backdrop-filter: blur(24px) saturate(1.6);
   -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border-top-color: rgba(196, 160, 82, 0.5);
   border-bottom-color: rgba(196, 160, 82, 0.14);
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.55);
 }
 .site-nav {
   position: relative;
-  height: var(--nav-h);          /* 68px */
+  height: var(--nav-h);          /* 70px */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
 }
 
 /* ── Logo ── */
 .nav-logo {
+  flex: 1;
   display: flex; align-items: center; gap: 11px;
-  text-decoration: none; flex-shrink: 0;
+  text-decoration: none;
 }
 .nav-logo__img {
   height: 44px; width: auto; display: block;
@@ -3391,6 +3397,7 @@ a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
 /* ── Nav links desktop ── */
 .nav-links {
   display: flex; align-items: center; gap: 2px;
+  flex-shrink: 0;
 }
 .nav-link {
   position: relative; padding: 7px 17px; border-radius: 6px;
@@ -3409,11 +3416,24 @@ a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
 .nav-link:hover { color: rgba(232, 232, 232, 0.9); background: rgba(255, 255, 255, 0.04); }
 .nav-link:hover::after, .nav-link--active::after { width: 55%; }
 .nav-link--active { color: var(--or-titre); }
+.nav-link--admin {
+  margin-left: 8px;
+  color: var(--rouge-projecteur);
+  border: 1px solid rgba(194, 48, 24, 0.35);
+  border-radius: 6px;
+}
+.nav-link--admin::after { display: none; }
+.nav-link--admin:hover {
+  color: #E84020;
+  background: rgba(194, 48, 24, 0.12);
+  border-color: rgba(194, 48, 24, 0.6);
+}
 
 /* ── Nav actions ── */
 .nav-actions {
+  flex: 1;
   display: flex; align-items: center; gap: 10px;
-  margin-left: auto;
+  justify-content: flex-end;
 }
 
 /* ── Search button ── */
@@ -3568,6 +3588,8 @@ a:not(.btn):not([class*="btn--"]):not(.author):not(.header-icon):hover {
 .mobile-drawer__link--active { color: var(--or-titre); background: rgba(196, 160, 82, 0.05); padding-left: 30px; }
 .mobile-drawer__link:hover::before,
 .mobile-drawer__link--active::before { height: 60%; }
+.mobile-drawer__link--admin { color: var(--rouge-projecteur); border-left: 2px solid rgba(194, 48, 24, 0.4); }
+.mobile-drawer__link--admin:hover { color: #E84020; background: rgba(194, 48, 24, 0.08); }
 .mobile-drawer__link--logout { color: rgba(194, 48, 24, 0.7); margin-top: 8px; }
 .mobile-drawer__link--logout:hover { color: #e84020; background: rgba(194, 48, 24, 0.08); }
 .mobile-drawer__actions { padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }

@@ -1,6 +1,7 @@
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 
 const addRecipesMoviesController = {
   // Page d'ajout de film et recette
@@ -53,7 +54,13 @@ const addRecipesMoviesController = {
    */
   async addMovie(req, res) {
     try {
-      const { title, year, genre, synopsis } = req.body;
+      const { title, year, genre, synopsis, tmdb_id, type } = req.body;
+
+      // Auto-import affiche TMDB (avant création en BDD pour stocker le chemin directement)
+      let picturePath = null;
+      if (tmdb_id) {
+        picturePath = await downloadTmdbPoster(parseInt(tmdb_id), type, title);
+      }
 
       // Création du film en base de données
       const newMovie = await Movie.create({
@@ -62,6 +69,8 @@ const addRecipesMoviesController = {
         genre: genre,
         synopsis: synopsis || null,
         id_user: req.userId,
+        tmdb_id: tmdb_id ? parseInt(tmdb_id) : null,
+        picture: picturePath,
       });
 
       // Enrichir le film avec les chemins d'images (banner/card)

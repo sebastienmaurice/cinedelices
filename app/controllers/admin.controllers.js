@@ -5,6 +5,7 @@ import {
   User,
   UsersRecipes,
 } from "../models/index.model.js";
+import { Op } from "sequelize";
 import {
   enrichMovieWithImagePaths,
   enrichMoviesWithImagePaths,
@@ -12,6 +13,7 @@ import {
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import searchCache from "../utils/search-cache.js";
+import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -201,28 +203,72 @@ const adminController = {
     try {
       const movieId = parseInt(req.params.id);
 
-      // Préparer les données à mettre à jour
+      // Préparer les données à mettre à jour : status seulement
+      // L'affiche est désormais téléchargée automatiquement depuis TMDB à la création du film
       const updateData = { status: "approved", validated_at: new Date() };
-
-      // Si un fichier a été uploadé lors de la validation, l'ajouter aux données
-      // Les images admin sont stockées dans movies/originals/
-      if (req.file) {
-        updateData.picture = `/images/movies/originals/${req.file.filename}`;
-      }
 
       // Mise à jour en BDD : status → 'approved' + horodatage validated_at
       await Movie.update(updateData, { where: { id: movieId } });
       searchCache.clear();
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
-      // Note : utiliser renderServerError au lieu de res.status(500).send() pour cohérence
       return renderServerError(
         res,
         error,
         req.userRole,
         "Erreur lors de la validation du film"
       );
+    }
+  },
+
+  /**
+   * POST /admin/migrate-movie-images
+   *
+   * Migration unique : remplace les images locales existantes des films ayant un tmdb_id
+   * par l'affiche officielle téléchargée depuis TMDB.
+   * Supprime les anciennes images locales après remplacement.
+   * Retourne un rapport JSON { updated, failed, skipped }.
+   *
+   * Usage : appel manuel une seule fois depuis l'interface admin ou Postman.
+   */
+  async migrateMovieImages(req, res) {
+    try {
+      const movies = await Movie.findAll({
+        where: { tmdb_id: { [Op.not]: null } },
+        attributes: ["id", "title", "tmdb_id", "type", "picture"],
+      });
+
+      const results = { updated: [], failed: [], skipped: [] };
+
+      for (const movie of movies) {
+        const newPath = await downloadTmdbPoster(
+          movie.tmdb_id,
+          movie.type,
+          movie.title
+        );
+
+        if (!newPath) {
+          results.failed.push({ id: movie.id, title: movie.title });
+          continue;
+        }
+
+        // Supprimer l'ancienne image locale si elle est différente de la nouvelle
+        if (movie.picture && movie.picture !== newPath) {
+          unlinkIfExists(movie.picture);
+        }
+
+        await movie.update({ picture: newPath });
+        results.updated.push({ id: movie.id, title: movie.title, path: newPath });
+      }
+
+      searchCache.clear();
+      return res.json({
+        success: true,
+        total: movies.length,
+        ...results,
+      });
+    } catch (error) {
+      return renderServerError(res, error, req.userRole, "Erreur migration images TMDB");
     }
   },
 

@@ -216,7 +216,7 @@
     item.className = "search-result-item";
     item.setAttribute("data-movie-id", movie.id);
 
-    const pictureUrl = movie.picture || "/images/image-default-movie.jpg";
+    const pictureUrl = movie.cardPath || movie.picture || "/images/image-default-movie.jpg";
 
     item.innerHTML = `
       <a href="/recipes-movie/${movie.id}" class="search-result-link">
@@ -272,7 +272,7 @@
     article.id = `film-${movie.id}`;
     article.className = "movie-card";
 
-    const pictureUrl = movie.picture || "/images/image-default-movie.jpg";
+    const pictureUrl = movie.cardPath || movie.picture || "/images/image-default-movie.jpg";
 
     article.innerHTML = `
       <div class="film-card-image">

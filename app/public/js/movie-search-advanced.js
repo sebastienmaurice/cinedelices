@@ -438,18 +438,8 @@
    */
   async function loadAllMovies() {
     if (!moviesList) return;
-
-    try {
-      const response = await fetch("/movies/api/search");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.movies) {
-          // Mettre à jour la liste des films (logique existante)
-        }
-      }
-    } catch (error) {
-      console.error("Erreur lors du chargement des films:", error);
-    }
+    removeInjectCard();
+    moviesList.querySelectorAll("article.fcard").forEach((a) => (a.style.display = ""));
   }
 
   /**
@@ -490,7 +480,7 @@
   }
 
   /**
-   * Efface les résultats
+   * Efface les résultats et restaure la grille
    */
   function clearResults() {
     searchResults.innerHTML = "";
@@ -498,98 +488,120 @@
     currentSearchQuery = "";
     currentResults = [];
     selectedIndex = -1;
-    // Restaurer l'affichage de tous les films
+    removeInjectCard();
     if (moviesList) {
-      const allArticles = moviesList.querySelectorAll("article");
-      allArticles.forEach((article) => {
-        article.style.display = "";
-      });
+      moviesList.querySelectorAll("article").forEach((a) => (a.style.display = ""));
     }
+  }
+
+  /**
+   * Supprime la carte "film non disponible" injectée dans la grille
+   */
+  function removeInjectCard() {
+    if (!moviesList) return;
+    const existing = moviesList.querySelector(".add-film-card-inject");
+    if (existing) existing.remove();
+  }
+
+  /**
+   * Injecte une carte "Proposer ce film" dans la grille quand aucun film local ne correspond
+   * @param {string} query - terme saisi
+   * @param {Array} apiResults - résultats TMDB (pour récupérer le meilleur candidat)
+   */
+  function injectAddFilmCard(query, apiResults) {
+    removeInjectCard();
+    if (!moviesList) return;
+
+    // Premier résultat non-local (TMDB)
+    const tmdb = (apiResults || []).find((r) => !r.isLocal);
+
+    const filmTitle = tmdb ? (tmdb.title_fr || tmdb.title || query) : query;
+    const posterImg = tmdb && tmdb.poster
+      ? `<img src="${escapeHtml(tmdb.poster)}" alt="" loading="lazy" />`
+      : "";
+
+    const addUrl = tmdb
+      ? `/add-recipes-movies/?tmdb_id=${encodeURIComponent(tmdb.tmdb_id || "")}&title=${encodeURIComponent(filmTitle)}&year=${tmdb.year || ""}&genre=${encodeURIComponent(tmdb.genre || "")}&type=${encodeURIComponent(tmdb.type || "film")}`
+      : `/add-recipes-movies/?query=${encodeURIComponent(query)}`;
+
+    const card = document.createElement("div");
+    card.className = "add-film-card-inject";
+    card.innerHTML = `
+      <a href="${addUrl}" class="add-film-card-inject-inner">
+        <div class="add-film-card-inject-poster">${posterImg}</div>
+        <div class="add-film-card-inject-body">
+          <p class="add-film-card-inject-hint">Film non disponible dans Ciné Délices</p>
+          <h3 class="add-film-card-inject-title">${escapeHtml(filmTitle)}</h3>
+          <span class="add-film-card-inject-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            Proposer ce film
+          </span>
+        </div>
+      </a>
+    `;
+    moviesList.appendChild(card);
   }
 
   /**
    * Filtre la liste des films affichés dans #movies__list
    * Affiche uniquement les films correspondant aux résultats de recherche
    */
-  function filterMoviesList(query, searchResults) {
+  function filterMoviesList(query, apiResults) {
     if (!moviesList) return;
 
-    // Refactoring : utilisation de la fonction centralisée normalizeText
     const normalizeTextFn = window.normalizeText || ((t) => t?.toLowerCase().trim() || "");
     const normalizedQuery = normalizeTextFn(query);
-    const articles = moviesList.querySelectorAll("article");
+    const articles = moviesList.querySelectorAll("article.fcard");
+    let visibleCount = 0;
 
     articles.forEach((article) => {
-      // Sélecteurs corrigés pour correspondre au HTML de movies.ejs
-      const titleElement = article.querySelector(".film-card__title");
-      const genreElement = article.querySelector(".tag--sapphire");
+      const normalizedTitle = normalizeTextFn(article.dataset.title || "");
+      const normalizedGenre = normalizeTextFn(article.dataset.genre || "");
 
-      if (!titleElement) {
-        article.style.display = "none";
-        return;
-      }
+      if (!normalizedTitle) { article.style.display = "none"; return; }
 
-      const title = titleElement.textContent || "";
-      const genre = genreElement ? genreElement.textContent || "" : "";
-
-      // Normaliser les textes pour la recherche
-      const normalizedTitle = normalizeTextFn(title);
-      const normalizedGenre = normalizeTextFn(genre);
-
-      // Vérifier si le film correspond aux résultats de recherche (par ID ou titre)
-      const isInSearchResults = searchResults.some((result) => {
-        const resultTitle = normalizeTextFn(
-          result.title_fr || result.title || ""
-        );
-        return (
-          resultTitle === normalizedTitle || article.id === `film-${result.id}`
-        );
+      const isInApiResults = (apiResults || []).some((result) => {
+        const resultTitle = normalizeTextFn(result.title_fr || result.title || "");
+        return resultTitle === normalizedTitle || article.id === `film-${result.id}`;
       });
 
-      // Vérifier si le titre ou le genre contient le terme de recherche
       const matchesQuery =
         normalizedTitle.includes(normalizedQuery) ||
         normalizedGenre.includes(normalizedQuery);
 
-      // Afficher si le film est dans les résultats OU correspond au terme de recherche
-      if (isInSearchResults || matchesQuery) {
+      if (isInApiResults || matchesQuery) {
         article.style.display = "";
+        visibleCount++;
       } else {
         article.style.display = "none";
       }
     });
+
+    // Aucun film local trouvé → proposer d'ajouter le film
+    if (visibleCount === 0) {
+      injectAddFilmCard(query, apiResults);
+    } else {
+      removeInjectCard();
+    }
   }
 
   /**
-   * Filtre la liste des films avec un terme partiel
-   * Affiche les films dont le titre commence par le terme saisi
+   * Filtre la liste des films avec un terme partiel (frappe en cours)
    */
   function filterMoviesListPartial(query) {
     if (!moviesList) return;
 
-    // Refactoring : utilisation de la fonction centralisée normalizeText
     const normalizeTextFn = window.normalizeText || ((t) => t?.toLowerCase().trim() || "");
     const normalizedQuery = normalizeTextFn(query);
-    const articles = moviesList.querySelectorAll("article");
+    const articles = moviesList.querySelectorAll("article.fcard");
+    let visibleCount = 0;
 
     articles.forEach((article) => {
-      // Sélecteurs corrigés pour correspondre au HTML de movies.ejs
-      const titleElement = article.querySelector(".film-card__title");
-      const genreElement = article.querySelector(".tag--sapphire");
+      const normalizedTitle = normalizeTextFn(article.dataset.title || "");
+      const normalizedGenre = normalizeTextFn(article.dataset.genre || "");
 
-      if (!titleElement) {
-        article.style.display = "none";
-        return;
-      }
+      if (!normalizedTitle) { article.style.display = "none"; return; }
 
-      const title = titleElement.textContent || "";
-      const genre = genreElement ? genreElement.textContent || "" : "";
-
-      // Normaliser les textes pour la recherche
-      const normalizedTitle = normalizeTextFn(title);
-      const normalizedGenre = normalizeTextFn(genre);
-
-      // Vérifier si le titre commence par le terme ou le contient
       const matchesQuery =
         normalizedTitle.startsWith(normalizedQuery) ||
         normalizedTitle.includes(normalizedQuery) ||
@@ -597,10 +609,14 @@
 
       if (matchesQuery) {
         article.style.display = "";
+        visibleCount++;
       } else {
         article.style.display = "none";
       }
     });
+
+    // Pour la frappe partielle, on n'injecte pas encore (attendre la recherche complète)
+    if (visibleCount > 0) removeInjectCard();
   }
 
   // Refactoring : fonction normalizeTextForSearch() supprimée, maintenant centralisée dans
