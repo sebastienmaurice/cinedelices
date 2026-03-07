@@ -1,0 +1,3647 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Le Ragoût de l'Explorateur — Indiana Jones — Ciné Délices</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bleu-nuit: #142234;
+        --bleu-inter: #1b263b;
+        --surface-card: #0f1e30;
+        --bleu-clair: #415a77;
+        --or-titre: #c4a052;
+        --or-100: #d4a843;
+        --or-200: #b8882a;
+        --dore-clair: #f2c84b;
+        --jaune-blond: #ffe085;
+        --rouge: #c23018;
+        --argent: #e8e8e8;
+        --gold-gradient: linear-gradient(
+          135deg,
+          #b8882a 0%,
+          #d4a843 30%,
+          #f2c84b 55%,
+          #ffe085 80%,
+          #d4a843 100%
+        );
+        --rouge-gradient: linear-gradient(
+          135deg,
+          #8b1c13 0%,
+          #c23018 55%,
+          #d43a20 100%
+        );
+        --f-display: "Bebas Neue", cursive;
+        --f-title: "Cinzel", serif;
+        --f-editorial: "Playfair Display", serif;
+        --f-body: "Lato", sans-serif;
+        --nav-h: 68px;
+        --max-w: 1200px;
+        --px: 64px;
+      }
+      body {
+        min-height: 100vh;
+        background: var(--bleu-nuit);
+        font-family: var(--f-body);
+        color: var(--argent);
+        overflow-x: hidden;
+      }
+
+      /* ── GRAIN ── */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 999;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 200px;
+      }
+
+      /* ── NAV ── */
+      .site-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        height: var(--nav-h);
+        display: flex;
+        align-items: center;
+        padding: 0 var(--px);
+        background: rgba(20, 34, 52, 0.72);
+        backdrop-filter: blur(20px) saturate(1.5);
+        border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+        transition: all 0.4s ease;
+      }
+      .site-nav.scrolled {
+        background: rgba(15, 27, 44, 0.93);
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
+        border-bottom-color: rgba(196, 160, 82, 0.18);
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-right: 48px;
+      }
+      .nav-logo__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--gold-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        color: var(--bleu-nuit);
+        box-shadow: 0 0 18px rgba(196, 160, 82, 0.3);
+      }
+      .nav-logo__name {
+        font-family: var(--f-display);
+        font-size: 1.15rem;
+        letter-spacing: 0.12em;
+        color: var(--or-titre);
+      }
+      .nav-logo__tagline {
+        font-size: 0.46rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.4);
+        display: block;
+        margin-top: 1px;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+      }
+      .nav-link {
+        position: relative;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-family: var(--f-title);
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: rgba(232, 232, 232, 0.55);
+        transition: all 0.25s ease;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--or-titre),
+          transparent
+        );
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover {
+        color: var(--argent);
+      }
+      .nav-link:hover::after,
+      .nav-link.active::after {
+        width: 55%;
+      }
+      .nav-link.active {
+        color: var(--or-titre);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+      .nav-fav {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(232, 232, 232, 0.55);
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.25s ease;
+      }
+      .nav-fav:hover {
+        background: rgba(194, 48, 24, 0.18);
+        border-color: rgba(194, 48, 24, 0.55);
+        color: #e84020;
+      }
+      .nav-connect {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 18px;
+        height: 34px;
+        border-radius: 7px;
+        background: var(--gold-gradient);
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--bleu-nuit);
+        text-decoration: none;
+        transition: all 0.25s ease;
+      }
+      .nav-connect:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      /* ── BREADCRUMB ── */
+      .bc-bar {
+        width: 100%;
+        background: rgba(8, 14, 24, 0.55);
+        border-bottom: 1px solid rgba(65, 90, 119, 0.18);
+        padding: 0 var(--px);
+        margin-top: var(--nav-h);
+      }
+      .bc {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 44px;
+      }
+      .bc a {
+        font-size: 0.62rem;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.32);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .bc a:hover {
+        color: var(--or-titre);
+      }
+      .bc-sep {
+        color: rgba(196, 160, 82, 0.22);
+        font-size: 0.7rem;
+      }
+      .bc-cur {
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.6);
+        font-family: var(--f-title);
+      }
+
+      /* ══════════════════════════════════════
+   HERO — image de fond bg_movies_page_3
+══════════════════════════════════════ */
+      .hero {
+        position: relative;
+        width: 100%;
+        min-height: 480px;
+        overflow: hidden;
+        background: #07101c;
+      }
+      .hero__bg {
+        position: absolute;
+        inset: -5%;
+        background-image: url("https://i.postimg.cc/CxZB5C8C/bg_movies_page_3.png");
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.32) saturate(0.55) sepia(0.25);
+        transform: scale(1.06);
+        transition: transform 8s cubic-bezier(0.1, 0, 0.2, 1);
+      }
+      .hero__bg.active {
+        transform: scale(1);
+      }
+      .hero__overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            to right,
+            rgba(7, 16, 28, 0.98) 0%,
+            rgba(7, 16, 28, 0.8) 42%,
+            rgba(7, 16, 28, 0.25) 72%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to top,
+            rgba(7, 16, 28, 0.97) 0%,
+            rgba(7, 16, 28, 0.3) 30%,
+            transparent 58%
+          );
+      }
+      /* Liseré pellicule gauche */
+      .hero__liseré {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        z-index: 2;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(196, 160, 82, 0.12) 12%,
+          rgba(196, 160, 82, 0.55) 35%,
+          rgba(196, 160, 82, 0.7) 50%,
+          rgba(196, 160, 82, 0.55) 65%,
+          rgba(196, 160, 82, 0.12) 88%,
+          transparent 100%
+        );
+      }
+      .hero__scanlines {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.04) 2px,
+          rgba(0, 0, 0, 0.04) 4px
+        );
+      }
+
+      .hero__content {
+        position: relative;
+        z-index: 5;
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 56px var(--px);
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 56px;
+        align-items: center;
+        min-height: 480px;
+      }
+
+      /* ── Left: infos recette ── */
+      .hero-info {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .hero-badge-film {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        width: fit-content;
+        padding: 5px 14px;
+        border-radius: 6px;
+        background: rgba(10, 22, 36, 0.88);
+        border: 1px solid rgba(196, 160, 82, 0.3);
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+        animation: fadeUp 0.5s ease 0.1s both;
+      }
+      .hero-eyebrow {
+        font-family: var(--f-title);
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: fadeUp 0.5s ease 0.18s both;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        display: block;
+        width: 28px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--or-titre));
+      }
+      .hero-title {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(1.9rem, 4vw, 3rem);
+        line-height: 1.15;
+        color: var(--dore-clair);
+        text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        animation: fadeUp 0.5s ease 0.26s both;
+      }
+      .hero-film {
+        font-family: var(--f-display);
+        font-size: 1.05rem;
+        letter-spacing: 0.12em;
+        color: rgba(232, 232, 232, 0.38);
+        animation: fadeUp 0.5s ease 0.32s both;
+      }
+      .hero-tags {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.5s ease 0.38s both;
+      }
+      .htag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 5px;
+        font-family: var(--f-title);
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 1px solid;
+      }
+      .htag--or {
+        color: var(--or-100);
+        border-color: rgba(212, 168, 67, 0.38);
+        background: rgba(212, 168, 67, 0.07);
+      }
+      .htag--rouge {
+        color: #e84020;
+        border-color: rgba(194, 48, 24, 0.38);
+        background: rgba(194, 48, 24, 0.07);
+      }
+      .htag--vert {
+        color: #4caf82;
+        border-color: rgba(76, 175, 130, 0.38);
+        background: rgba(76, 175, 130, 0.07);
+      }
+      .htag--bleu {
+        color: #7ba7bc;
+        border-color: rgba(123, 167, 188, 0.38);
+        background: rgba(123, 167, 188, 0.07);
+      }
+      .hero-desc {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 1rem;
+        line-height: 1.72;
+        color: rgba(232, 232, 232, 0.52);
+        max-width: 510px;
+        animation: fadeUp 0.5s ease 0.44s both;
+      }
+      .hero-meta {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.5s ease 0.5s both;
+      }
+      .hm-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .hm-item__label {
+        font-size: 0.5rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.38);
+        font-weight: 300;
+      }
+      .hm-item__val {
+        font-family: var(--f-title);
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--argent);
+      }
+      .hm-div {
+        width: 1px;
+        height: 30px;
+        background: rgba(65, 90, 119, 0.35);
+      }
+      .hero-stars {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 1.05rem;
+      }
+      .hero-stars .s {
+        color: var(--dore-clair);
+      }
+      .hero-stars .se {
+        color: rgba(196, 160, 82, 0.2);
+      }
+      .diff-piments {
+        display: flex;
+        gap: 2px;
+        font-size: 0.9rem;
+      }
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: fadeUp 0.5s ease 0.56s both;
+      }
+      .btn-red {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 24px;
+        height: 44px;
+        border-radius: 9px;
+        background: var(--rouge-gradient);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        font-family: var(--f-body);
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #fff;
+        box-shadow: 0 0 18px rgba(194, 48, 24, 0.3);
+        transition: all 0.25s ease;
+      }
+      .btn-red:hover {
+        background: var(--gold-gradient);
+        color: var(--bleu-nuit);
+        transform: translateY(-1px);
+      }
+      .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 20px;
+        height: 44px;
+        border-radius: 9px;
+        background: transparent;
+        border: 1.5px solid rgba(196, 160, 82, 0.3);
+        cursor: pointer;
+        text-decoration: none;
+        font-family: var(--f-title);
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+        transition: all 0.25s ease;
+      }
+      .btn-outline:hover {
+        background: rgba(196, 160, 82, 0.08);
+        border-color: rgba(196, 160, 82, 0.65);
+        transform: translateY(-1px);
+      }
+
+      /* ── Right: poster with cinema frame ── */
+      .hero-poster-wrap {
+        animation: fadeRight 0.6s ease 0.3s both;
+        position: relative;
+      }
+      .hero-poster {
+        width: 100%;
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.7),
+          0 0 60px rgba(196, 160, 82, 0.06);
+        border: 1px solid rgba(196, 160, 82, 0.12);
+        aspect-ratio: 2/3;
+      }
+      .hero-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        filter: saturate(0.88);
+      }
+      .hp-lbox {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: rgba(5, 10, 18, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        z-index: 3;
+      }
+      .hp-lbox--t {
+        top: 0;
+      }
+      .hp-lbox--b {
+        bottom: 0;
+      }
+      .hp-perf {
+        width: 10px;
+        height: 9px;
+        border-radius: 2px;
+        background: rgba(196, 160, 82, 0.1);
+        border: 1px solid rgba(196, 160, 82, 0.07);
+      }
+      /* Floating badge stat */
+      .hero-poster__stat {
+        position: absolute;
+        bottom: -18px;
+        left: -18px;
+        z-index: 10;
+        background: linear-gradient(
+          135deg,
+          var(--surface-card),
+          rgba(20, 38, 58, 0.98)
+        );
+        border: 1px solid rgba(196, 160, 82, 0.22);
+        border-radius: 14px;
+        padding: 14px 18px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .hps-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--rouge-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        box-shadow: 0 0 14px rgba(194, 48, 24, 0.35);
+      }
+      .hps-text {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .hps-num {
+        font-family: var(--f-display);
+        font-size: 1.4rem;
+        letter-spacing: 0.06em;
+        color: var(--or-titre);
+        line-height: 1;
+      }
+      .hps-label {
+        font-size: 0.52rem;
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.35);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeRight {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* ══════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════ */
+      .main {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 56px var(--px) 80px;
+        position: relative;
+        z-index: 2;
+      }
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 52px;
+        align-items: start;
+      }
+
+      /* ── Section heading ── */
+      .sec-h {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 24px;
+      }
+      .sec-h__eye {
+        font-size: 0.56rem;
+        font-weight: 300;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.42);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sec-h__eye::before {
+        content: "";
+        width: 18px;
+        height: 1px;
+        background: var(--or-titre);
+      }
+      .sec-h__title {
+        font-family: var(--f-display);
+        font-size: 1.85rem;
+        letter-spacing: 0.1em;
+        color: var(--or-titre);
+      }
+
+      /* ══════════════════════════════════════
+   CONTEXTE CINÉ — photo user + badge contributeur
+   (plus d'image du film répétée ici)
+══════════════════════════════════════ */
+      .cine-context {
+        margin-bottom: 44px;
+        background: linear-gradient(
+          135deg,
+          rgba(15, 30, 48, 0.82),
+          rgba(20, 38, 58, 0.78)
+        );
+        border: 1px solid rgba(65, 90, 119, 0.22);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Photos recette user — grille 2 colonnes, ratio 3:2 */
+      .cine-context__photos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        position: relative;
+      }
+      .cine-context__photo-wrap {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 3/2;
+        cursor: zoom-in;
+      }
+      .cine-context__photo-wrap:first-child {
+        border-right: 1px solid rgba(65, 90, 119, 0.18);
+      }
+      .cine-context__photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.82) brightness(0.75);
+        transition: all 0.5s ease;
+      }
+      .cine-context__photo-wrap:hover .cine-context__photo {
+        filter: saturate(1.08) brightness(0.9);
+        transform: scale(1.04);
+      }
+      .cine-context__photo-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          transparent 50%,
+          rgba(7, 14, 24, 0.7) 100%
+        );
+      }
+      /* Icône zoom */
+      .cine-context__photo-wrap::after {
+        content: "🔍";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(10, 20, 34, 0.72);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+        z-index: 4;
+      }
+      .cine-context__photo-wrap:hover::after {
+        opacity: 1;
+      }
+
+      /* Label photo */
+      .photo-label {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        z-index: 5;
+        padding: 3px 10px;
+        border-radius: 4px;
+        background: rgba(10, 20, 34, 0.8);
+        border: 1px solid rgba(196, 160, 82, 0.22);
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.65);
+      }
+
+      /* Corps du bloc contexte */
+      .cine-context__body {
+        padding: 22px 26px;
+      }
+      .cine-context__title {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 1.2rem;
+        color: var(--dore-clair);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cine-context__title::before {
+        content: "🎬";
+        font-style: normal;
+        font-size: 1rem;
+      }
+      .cine-context__text {
+        font-size: 0.83rem;
+        font-weight: 300;
+        line-height: 1.75;
+        color: rgba(232, 232, 232, 0.54);
+      }
+
+      /* Badge contributeur — EN DESSOUS des photos, pas dessus */
+      .contributor-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px 0;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .contributor-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px 8px 8px;
+        border-radius: 22px;
+        background: rgba(10, 20, 34, 0.75);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(205, 127, 50, 0.28);
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+      .contributor-badge:hover {
+        border-color: rgba(205, 127, 50, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+      }
+      .cb-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 2px solid rgba(205, 127, 50, 0.55);
+        box-shadow: 0 0 10px rgba(205, 127, 50, 0.25);
+      }
+      .cb-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .cb-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .cb-name {
+        font-family: var(--f-title);
+        font-size: 0.66rem;
+        font-weight: 600;
+        color: var(--argent);
+      }
+      .cb-lvl {
+        font-size: 0.52rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: #cd7f32;
+      }
+      .cb-count {
+        font-size: 0.46rem;
+        color: rgba(232, 232, 232, 0.32);
+      }
+      .cb-arrow {
+        margin-left: 4px;
+        color: rgba(205, 127, 50, 0.45);
+        font-size: 0.75rem;
+        transition: transform 0.2s ease;
+      }
+      .contributor-badge:hover .cb-arrow {
+        transform: translateX(3px);
+        color: var(--or-titre);
+      }
+
+      /* Zoom lightbox */
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        background: rgba(0, 0, 0, 0.92);
+        backdrop-filter: blur(18px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .lightbox.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .lightbox__img {
+        max-width: 90vw;
+        max-height: 90vh;
+        border-radius: 12px;
+        object-fit: contain;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+        transform: scale(0.92);
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .lightbox.open .lightbox__img {
+        transform: scale(1);
+      }
+      .lightbox__close {
+        position: absolute;
+        top: 20px;
+        right: 24px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        cursor: pointer;
+        color: rgba(232, 232, 232, 0.7);
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .lightbox__close:hover {
+        background: rgba(194, 48, 24, 0.25);
+        color: #fff;
+      }
+      .lightbox__caption {
+        position: absolute;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 0.82rem;
+        color: rgba(232, 232, 232, 0.45);
+        white-space: nowrap;
+      }
+
+      /* ══════════════════════════════════════
+   INFOS BAR
+══════════════════════════════════════ */
+      .info-bar {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+        background: rgba(65, 90, 119, 0.1);
+        border: 1px solid rgba(65, 90, 119, 0.2);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 44px;
+      }
+      .ib-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 18px 10px;
+        gap: 4px;
+        background: linear-gradient(
+          180deg,
+          rgba(15, 30, 48, 0.88),
+          rgba(12, 24, 40, 0.92)
+        );
+        transition: background 0.2s ease;
+      }
+      .ib-item:hover {
+        background: rgba(196, 160, 82, 0.07);
+      }
+      .ib-item + .ib-item {
+        border-left: 1px solid rgba(65, 90, 119, 0.2);
+      }
+      .ib-icon {
+        font-size: 1.3rem;
+      }
+      .ib-val {
+        font-family: var(--f-title);
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--dore-clair);
+      }
+      .ib-label {
+        font-size: 0.5rem;
+        font-weight: 300;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.32);
+        text-align: center;
+      }
+      .piment-row {
+        display: flex;
+        gap: 2px;
+        font-size: 0.8rem;
+      }
+      .piment-on {
+        opacity: 1;
+      }
+      .piment-off {
+        opacity: 0.2;
+      }
+
+      /* ══════════════════════════════════════
+   STEPS — Préparation (colonne centrale uniquement)
+══════════════════════════════════════ */
+      .steps-section__title {
+        font-family: var(--f-display);
+        font-size: 1.5rem;
+        letter-spacing: 0.1em;
+        color: var(--or-titre);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .steps-section__title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(196, 160, 82, 0.28),
+          transparent
+        );
+      }
+
+      .step-item {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 0;
+        position: relative;
+      }
+      .step-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 27px;
+        top: 56px;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          rgba(196, 160, 82, 0.2),
+          rgba(65, 90, 119, 0.1)
+        );
+      }
+      .step-num-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 12px;
+        flex-shrink: 0;
+        z-index: 1;
+      }
+      .step-num {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        background: linear-gradient(
+          135deg,
+          rgba(20, 38, 58, 0.92),
+          rgba(15, 30, 48, 0.96)
+        );
+        border: 1.5px solid rgba(65, 90, 119, 0.38);
+        color: rgba(232, 232, 232, 0.4);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .step-item.active .step-num,
+      .step-item:hover .step-num {
+        border-color: rgba(196, 160, 82, 0.55);
+        color: var(--or-titre);
+        box-shadow: 0 0 16px rgba(196, 160, 82, 0.15);
+      }
+      .step-item.done .step-num {
+        border-color: rgba(76, 175, 130, 0.42);
+        color: #4caf82;
+        background: rgba(76, 175, 130, 0.07);
+      }
+      .step-body {
+        padding: 10px 0 32px 20px;
+      }
+      .step-title {
+        font-family: var(--f-title);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.65);
+        margin-bottom: 8px;
+      }
+      .step-text {
+        font-size: 0.83rem;
+        font-weight: 300;
+        line-height: 1.78;
+        color: rgba(232, 232, 232, 0.58);
+      }
+      .step-text strong {
+        font-weight: 700;
+        color: rgba(232, 232, 232, 0.8);
+      }
+      .step-tip {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: rgba(196, 160, 82, 0.05);
+        border: 1px solid rgba(196, 160, 82, 0.14);
+        font-size: 0.76rem;
+        font-weight: 300;
+        font-style: italic;
+        line-height: 1.55;
+        color: rgba(196, 160, 82, 0.6);
+      }
+      .step-tip::before {
+        content: "💡";
+        font-style: normal;
+        flex-shrink: 0;
+      }
+      .step-timer {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        background: rgba(10, 18, 30, 0.6);
+        border: 1px solid rgba(65, 90, 119, 0.26);
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.4);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+      .step-timer:hover {
+        border-color: rgba(196, 160, 82, 0.38);
+        color: var(--or-titre);
+      }
+      .step-timer.running {
+        border-color: rgba(76, 175, 130, 0.42);
+        color: #4caf82;
+        animation: timerPulse 1s ease infinite;
+      }
+      @keyframes timerPulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+
+      /* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        position: sticky;
+        top: calc(var(--nav-h) + 24px);
+      }
+
+      /* ── CARD DORÉE ingrédients — inspirée homepage ── */
+      .card-gold {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        background: linear-gradient(
+          135deg,
+          #7a5a14 0%,
+          #b8882a 15%,
+          #c4a052 35%,
+          #d4a843 50%,
+          #f2c84b 65%,
+          #d4a843 80%,
+          #b8882a 95%
+        );
+        padding: 2px; /* border trick */
+        box-shadow:
+          0 18px 55px rgba(184, 136, 42, 0.25),
+          0 4px 18px rgba(0, 0, 0, 0.55);
+      }
+      .card-gold__inner {
+        background: linear-gradient(
+          135deg,
+          #1a2e18 0%,
+          #1e3420 40%,
+          #162a14 70%,
+          #1a2e18 100%
+        );
+        border-radius: 16px;
+        padding: 26px 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      /* Halo coin haut-droit */
+      .card-gold__inner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(
+          circle at top right,
+          rgba(196, 160, 82, 0.22) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      /* Motif cinéma en fond */
+      .card-gold__inner::after {
+        content: "🎬";
+        position: absolute;
+        bottom: -10px;
+        right: 12px;
+        font-size: 5rem;
+        opacity: 0.04;
+        pointer-events: none;
+        line-height: 1;
+      }
+
+      .card-gold__header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .card-gold__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: rgba(196, 160, 82, 0.15);
+        border: 1px solid rgba(196, 160, 82, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .card-gold__title {
+        font-family: var(--f-display);
+        font-size: 1.3rem;
+        letter-spacing: 0.1em;
+        color: var(--dore-clair);
+        line-height: 1;
+      }
+      .card-gold__sub {
+        font-size: 0.52rem;
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.48);
+        margin-top: 2px;
+      }
+
+      /* Contrôle portions */
+      .portions-ctrl {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.12);
+      }
+      .portions-label {
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.55);
+        flex: 1;
+      }
+      .portions-btns {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        border: 1px solid rgba(196, 160, 82, 0.28);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .pb {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: rgba(196, 160, 82, 0.12);
+        cursor: pointer;
+        color: rgba(232, 232, 232, 0.55);
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .pb:hover {
+        background: rgba(196, 160, 82, 0.22);
+        color: var(--dore-clair);
+      }
+      .pnum {
+        width: 34px;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-title);
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--dore-clair);
+        border-left: 1px solid rgba(196, 160, 82, 0.2);
+        border-right: 1px solid rgba(196, 160, 82, 0.2);
+      }
+
+      /* Liste ingrédients */
+      .ing-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .ing-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 7px 0;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.08);
+        cursor: pointer;
+        transition: padding-left 0.15s ease;
+      }
+      .ing-item:last-child {
+        border-bottom: none;
+      }
+      .ing-item:hover {
+        padding-left: 6px;
+      }
+      .ing-item::before {
+        content: "◆";
+        color: rgba(196, 160, 82, 0.22);
+        font-size: 0.44rem;
+        flex-shrink: 0;
+        transition: color 0.2s;
+      }
+      .ing-item.checked::before {
+        color: var(--dore-clair);
+      }
+      .ing-item.checked {
+        opacity: 0.42;
+        text-decoration: line-through;
+      }
+      .ing-qty {
+        font-family: var(--f-title);
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: var(--dore-clair);
+        flex-shrink: 0;
+        min-width: 48px;
+      }
+      .ing-name {
+        font-size: 0.76rem;
+        font-weight: 300;
+        color: rgba(255, 230, 160, 0.72);
+        line-height: 1.3;
+      }
+      .ing-note {
+        font-size: 0.66rem;
+        font-style: italic;
+        color: rgba(196, 160, 82, 0.38);
+        margin-left: 3px;
+      }
+
+      /* ── Sidebar card standard ── */
+      .sidebar-card {
+        background: linear-gradient(
+          135deg,
+          rgba(13, 26, 42, 0.92),
+          rgba(20, 38, 58, 0.88)
+        );
+        border: 1px solid rgba(65, 90, 119, 0.2);
+        border-radius: 16px;
+        padding: 22px 22px;
+      }
+      .sc-title {
+        font-family: var(--f-title);
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Avis communauté */
+      .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .rating-num {
+        font-family: var(--f-display);
+        font-size: 2.8rem;
+        letter-spacing: 0.04em;
+        color: var(--or-titre);
+        line-height: 1;
+      }
+      .rating-stars {
+        display: flex;
+        gap: 4px;
+        font-size: 1.4rem;
+      }
+      .rating-stars .s {
+        color: var(--dore-clair);
+      }
+      .rating-stars .se {
+        color: rgba(196, 160, 82, 0.2);
+      }
+      .rating-sub {
+        font-size: 0.63rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.28);
+        margin-top: 1px;
+      }
+      .rbar-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .rbar-lbl {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.35);
+        width: 58px;
+      }
+      .rbar-track {
+        flex: 1;
+        height: 3px;
+        background: rgba(65, 90, 119, 0.28);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .rbar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--gold-gradient);
+        transition: width 1s ease;
+      }
+      .rbar-n {
+        font-size: 0.58rem;
+        color: rgba(232, 232, 232, 0.3);
+        width: 22px;
+        text-align: right;
+      }
+
+      /* Partage */
+      .share-row {
+        display: flex;
+        gap: 8px;
+      }
+      .share-btn {
+        flex: 1;
+        height: 36px;
+        border-radius: 8px;
+        background: rgba(10, 18, 30, 0.55);
+        border: 1px solid rgba(65, 90, 119, 0.28);
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.45);
+        transition: all 0.2s ease;
+      }
+      .share-btn:hover {
+        border-color: rgba(196, 160, 82, 0.4);
+        color: var(--or-titre);
+        background: rgba(196, 160, 82, 0.06);
+      }
+
+      /* Autres recettes */
+      .or-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        border-radius: 9px;
+        background: rgba(10, 18, 30, 0.5);
+        border: 1px solid rgba(65, 90, 119, 0.16);
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.22s ease;
+      }
+      .or-card:hover {
+        border-color: rgba(196, 160, 82, 0.26);
+        background: rgba(196, 160, 82, 0.05);
+        transform: translateX(4px);
+      }
+      .or-card + .or-card {
+        margin-top: 8px;
+      }
+      .or-card__img {
+        width: 46px;
+        height: 46px;
+        border-radius: 6px;
+        object-fit: cover;
+        filter: saturate(0.65);
+        flex-shrink: 0;
+      }
+      .or-card__title {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: rgba(232, 232, 232, 0.68);
+      }
+      .or-card__film {
+        font-size: 0.56rem;
+        font-weight: 300;
+        color: rgba(196, 160, 82, 0.4);
+        margin-top: 1px;
+      }
+
+      /* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+      .footer {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(7, 12, 22, 0.96) 20%,
+          #070c16 100%
+        );
+        border-top: 1px solid rgba(196, 160, 82, 0.07);
+        padding: 52px var(--px) 0;
+      }
+      .footer-inner {
+        max-width: var(--max-w);
+        margin: 0 auto;
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 42px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid rgba(65, 90, 119, 0.12);
+      }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-bottom: 12px;
+      }
+      .fl-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        background: var(--gold-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        color: var(--bleu-nuit);
+      }
+      .fl-name {
+        font-family: var(--f-display);
+        font-size: 1.2rem;
+        letter-spacing: 0.12em;
+        color: var(--or-titre);
+      }
+      .footer-tagline {
+        font-size: 0.76rem;
+        font-weight: 300;
+        font-style: italic;
+        color: rgba(232, 232, 232, 0.28);
+        line-height: 1.65;
+        max-width: 240px;
+        margin-bottom: 16px;
+      }
+      .footer-col__title {
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.5);
+        margin-bottom: 12px;
+      }
+      .footer-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .footer-links a {
+        font-size: 0.74rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.36);
+        text-decoration: none;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .footer-links a::before {
+        content: "›";
+        color: rgba(196, 160, 82, 0.25);
+      }
+      .footer-links a:hover {
+        color: rgba(232, 232, 232, 0.72);
+      }
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+      }
+      .footer-copy {
+        font-size: 0.64rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.18);
+      }
+      .footer-legal {
+        display: flex;
+        gap: 16px;
+      }
+      .footer-legal a {
+        font-size: 0.58rem;
+        color: rgba(232, 232, 232, 0.16);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-legal a:hover {
+        color: rgba(232, 232, 232, 0.42);
+      }
+      .filmstrip {
+        height: 22px;
+        overflow: hidden;
+        background: rgba(5, 8, 16, 0.95);
+        border-top: 1px solid rgba(196, 160, 82, 0.04);
+      }
+      .filmstrip-inner {
+        display: flex;
+        width: max-content;
+        animation: filmScroll 18s linear infinite;
+      }
+      .fs-hole {
+        width: 46px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fs-hole-inner {
+        width: 20px;
+        height: 12px;
+        border-radius: 3px;
+        background: rgba(196, 160, 82, 0.06);
+        border: 1px solid rgba(196, 160, 82, 0.09);
+      }
+      @keyframes filmScroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      .scroll-top {
+        position: fixed;
+        bottom: 28px;
+        right: 36px;
+        z-index: 100;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(20, 34, 52, 0.9);
+        border: 1px solid rgba(196, 160, 82, 0.22);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--or-titre);
+        text-decoration: none;
+        transition: all 0.25s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .scroll-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .scroll-top:hover {
+        background: rgba(196, 160, 82, 0.14);
+        border-color: rgba(196, 160, 82, 0.5);
+        transform: translateY(-3px);
+      }
+
+      /* ══════════════════════════════════════
+   GOLD CTA CARD — style "Duo du Jour" homepage
+   Adapté pour la banner "Votre Avis"
+══════════════════════════════════════ */
+      .gold-avis-card {
+        position: relative;
+        margin: 48px 0 0;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          #1a1208 0%,
+          #2a1c0a 35%,
+          #1e150a 70%,
+          #150f08 100%
+        );
+        border: 1.5px solid rgba(196, 160, 82, 0.38);
+        box-shadow:
+          0 12px 48px rgba(0, 0, 0, 0.55),
+          0 0 50px rgba(184, 136, 42, 0.08);
+        transition:
+          border-color 0.35s ease,
+          box-shadow 0.35s ease;
+      }
+      .gold-avis-card:hover {
+        border-color: rgba(196, 160, 82, 0.6);
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.65),
+          0 0 60px rgba(184, 136, 42, 0.14);
+      }
+      /* Liseré doré haut */
+      .gold-avis-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(196, 160, 82, 0.55) 30%,
+          rgba(242, 200, 75, 0.8) 50%,
+          rgba(196, 160, 82, 0.55) 70%,
+          transparent
+        );
+        pointer-events: none;
+      }
+      /* Halo radial gauche */
+      .gold-avis-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 70% 80% at 5% 50%,
+          rgba(196, 160, 82, 0.07) 0%,
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      /* Perforations pellicule sur les côtés */
+      .gold-avis-card__perfs {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 22px;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        pointer-events: none;
+      }
+      .gold-avis-card__perfs--l {
+        left: 0;
+        background: rgba(0, 0, 0, 0.25);
+        border-right: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      .gold-avis-card__perfs--r {
+        right: 0;
+        background: rgba(0, 0, 0, 0.25);
+        border-left: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      .gac-perf {
+        width: 11px;
+        height: 8px;
+        border-radius: 2px;
+        background: rgba(196, 160, 82, 0.08);
+        border: 1px solid rgba(196, 160, 82, 0.15);
+      }
+
+      .gold-avis-card__inner {
+        padding: 32px 44px 32px 40px;
+        position: relative;
+        z-index: 1;
+      }
+      .gold-avis-card__top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 32px;
+        margin-bottom: 24px;
+      }
+      .gold-avis-card__left {
+        flex: 1;
+      }
+      .gold-avis-card__eyebrow {
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.55);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .gold-avis-card__eyebrow::before {
+        content: "";
+        width: 18px;
+        height: 1px;
+        background: var(--or-titre);
+      }
+      .gold-avis-card__title {
+        font-family: var(--f-display);
+        font-size: 2.2rem;
+        letter-spacing: 0.08em;
+        line-height: 1.05;
+        color: var(--or-titre);
+        text-shadow: 0 0 24px rgba(196, 160, 82, 0.25);
+        margin-bottom: 10px;
+      }
+      .gold-avis-card__sub {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(232, 232, 232, 0.45);
+        max-width: 480px;
+      }
+      /* Stats petites */
+      .gold-avis-card__stats {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      .gac-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .gac-stat__num {
+        font-family: var(--f-display);
+        font-size: 1.6rem;
+        letter-spacing: 0.06em;
+        color: var(--dore-clair);
+        line-height: 1;
+      }
+      .gac-stat__label {
+        font-size: 0.5rem;
+        font-weight: 300;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.38);
+      }
+      .gac-stat-div {
+        width: 1px;
+        height: 28px;
+        background: rgba(196, 160, 82, 0.14);
+      }
+      /* Icônes flottantes côté droit */
+      .gold-avis-card__icons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding-top: 8px;
+        flex-shrink: 0;
+      }
+      .gac-icon {
+        font-size: 2rem;
+        filter: drop-shadow(0 0 10px rgba(196, 160, 82, 0.4));
+        animation: gacFloat 3s ease-in-out infinite;
+      }
+      .gac-icon:nth-child(3) {
+        animation-delay: 0.4s;
+        font-size: 1.3rem;
+      }
+      .gac-plus {
+        font-family: var(--f-display);
+        font-size: 1.2rem;
+        color: var(--or-titre);
+        opacity: 0.65;
+        line-height: 1;
+      }
+      @keyframes gacFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      /* Membres avatars */
+      .gold-avis-card__membres {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-top: 14px;
+      }
+      .gac-av {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid rgba(196, 160, 82, 0.3);
+        object-fit: cover;
+        margin-left: -6px;
+      }
+      .gac-av:first-child {
+        margin-left: 0;
+      }
+      .gac-av-label {
+        font-size: 0.58rem;
+        font-weight: 300;
+        letter-spacing: 0.08em;
+        color: rgba(196, 160, 82, 0.45);
+        margin-left: 10px;
+      }
+
+      /* ══════════════════════════════════════
+   FORMULAIRE AVIS — en bas de préparation
+══════════════════════════════════════ */
+      .review-section {
+        margin-top: 0;
+      }
+      .review-section__title {
+        font-family: var(--f-display);
+        font-size: 1.5rem;
+        letter-spacing: 0.1em;
+        color: var(--or-titre);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .review-section__title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(196, 160, 82, 0.28),
+          transparent
+        );
+      }
+
+      /* Avis existants */
+      .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+      .review-card {
+        background: linear-gradient(
+          135deg,
+          rgba(13, 26, 42, 0.88),
+          rgba(20, 38, 58, 0.82)
+        );
+        border: 1px solid rgba(65, 90, 119, 0.2);
+        border-radius: 14px;
+        padding: 16px 18px;
+        transition: border-color 0.2s ease;
+      }
+      .review-card:hover {
+        border-color: rgba(196, 160, 82, 0.18);
+      }
+      .review-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .review-card__author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .rca-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1.5px solid rgba(65, 90, 119, 0.35);
+        flex-shrink: 0;
+      }
+      .rca-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .rca-name {
+        font-family: var(--f-title);
+        font-size: 0.66rem;
+        font-weight: 600;
+        color: rgba(232, 232, 232, 0.75);
+      }
+      .rca-lvl {
+        font-size: 0.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: #cd7f32;
+      }
+      .review-card__meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .rcs-stars {
+        display: flex;
+        gap: 2px;
+        font-size: 0.78rem;
+      }
+      .rcs-stars .s {
+        color: var(--dore-clair);
+      }
+      .rcs-stars .se {
+        color: rgba(196, 160, 82, 0.2);
+      }
+      .review-card__date {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.25);
+        margin-left: 6px;
+      }
+      .review-card__text {
+        font-size: 0.8rem;
+        font-weight: 300;
+        line-height: 1.68;
+        color: rgba(232, 232, 232, 0.52);
+      }
+      .review-card__tag {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 2px 9px;
+        border-radius: 4px;
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(65, 90, 119, 0.2);
+        border: 1px solid rgba(65, 90, 119, 0.35);
+        color: rgba(232, 232, 232, 0.4);
+      }
+
+      /* Formulaire ajout avis */
+      .review-form-block {
+        background: linear-gradient(
+          135deg,
+          rgba(13, 26, 42, 0.92),
+          rgba(20, 38, 58, 0.88)
+        );
+        border: 1px solid rgba(196, 160, 82, 0.15);
+        border-radius: 16px;
+        padding: 24px;
+      }
+      .review-form-block__title {
+        font-family: var(--f-title);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+        margin-bottom: 18px;
+      }
+
+      /* Sélecteur étoiles */
+      .star-picker {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 16px;
+      }
+      .star-picker__label {
+        font-size: 0.6rem;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.4);
+        margin-right: 8px;
+      }
+      .star-btn {
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: rgba(196, 160, 82, 0.2);
+        transition: all 0.15s ease;
+        background: none;
+        border: none;
+        padding: 2px;
+        line-height: 1;
+      }
+      .star-btn:hover,
+      .star-btn.active {
+        color: var(--dore-clair);
+        transform: scale(1.15);
+      }
+
+      /* Type avis selector */
+      .review-type-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .rtype-btn {
+        padding: 5px 14px;
+        border-radius: 6px;
+        border: 1.5px solid rgba(65, 90, 119, 0.3);
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.4);
+        transition: all 0.2s ease;
+      }
+      .rtype-btn:hover,
+      .rtype-btn.active {
+        border-color: rgba(196, 160, 82, 0.5);
+        color: var(--or-titre);
+        background: rgba(196, 160, 82, 0.07);
+      }
+
+      /* Textarea */
+      .review-textarea {
+        width: 100%;
+        min-height: 90px;
+        background: rgba(10, 18, 30, 0.7);
+        border: 1.5px solid rgba(65, 90, 119, 0.28);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-family: var(--f-body);
+        font-size: 0.82rem;
+        font-weight: 300;
+        color: var(--argent);
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.22s ease;
+        line-height: 1.65;
+        margin-bottom: 14px;
+      }
+      .review-textarea:focus {
+        border-color: rgba(196, 160, 82, 0.48);
+        box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.06);
+      }
+      .review-textarea::placeholder {
+        color: rgba(232, 232, 232, 0.2);
+      }
+
+      /* Submit row */
+      .review-submit-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .review-chars {
+        font-size: 0.62rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.25);
+      }
+      .btn-review-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 24px;
+        height: 40px;
+        border-radius: 9px;
+        background: var(--gold-gradient);
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--bleu-nuit);
+        box-shadow: 0 2px 14px rgba(184, 136, 42, 0.28);
+        transition: all 0.25s ease;
+      }
+      .btn-review-submit:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      /* Etat non-connecté */
+      .review-locked {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 28px;
+        text-align: center;
+        background: rgba(10, 18, 30, 0.6);
+        border-radius: 12px;
+        border: 1.5px dashed rgba(65, 90, 119, 0.28);
+      }
+      .review-locked__icon {
+        font-size: 2rem;
+        opacity: 0.5;
+      }
+      .review-locked__text {
+        font-size: 0.82rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.4);
+        line-height: 1.6;
+      }
+      .btn-connect-review {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 22px;
+        height: 38px;
+        border-radius: 8px;
+        background: var(--rouge-gradient);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #fff;
+        transition: all 0.25s ease;
+      }
+      .btn-connect-review:hover {
+        background: var(--gold-gradient);
+        color: var(--bleu-nuit);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 1100px) {
+        :root {
+          --px: 32px;
+        }
+        .hero__content,
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-poster-wrap {
+          display: none;
+        }
+        .sidebar {
+          position: static;
+        }
+        .info-bar {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .footer-top {
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+        }
+      }
+      @media (max-width: 768px) {
+        :root {
+          --px: 18px;
+        }
+        .hero {
+          min-height: auto;
+        }
+        .cine-context__photos {
+          grid-template-columns: 1fr;
+        }
+        .cine-context__photo-wrap:first-child {
+          border-right: none;
+          border-bottom: 1px solid rgba(65, 90, 119, 0.18);
+        }
+        .footer-top {
+          grid-template-columns: 1fr;
+        }
+        .footer-bottom {
+          flex-direction: column;
+          gap: 10px;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="site-nav" id="siteNav">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo__icon">CD</div>
+        <div>
+          <span class="nav-logo__name">CINÉ DÉLICES</span>
+          <span class="nav-logo__tagline">Cuisine &amp; Cinéma</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/films" class="nav-link">Films</a>
+        <a href="/recettes" class="nav-link active">Recettes</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <a href="/favoris" class="nav-fav" aria-label="Favoris">♡</a>
+        <a href="/connexion" class="nav-connect">✦ Connexion</a>
+      </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <div class="bc-bar">
+      <nav class="bc">
+        <a href="/">Accueil</a><span class="bc-sep">›</span>
+        <a href="/films">Films</a><span class="bc-sep">›</span>
+        <a href="/films/indiana-jones">Indiana Jones</a
+        ><span class="bc-sep">›</span>
+        <span class="bc-cur">Le Ragoût de l'Explorateur</span>
+      </nav>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="recipeTitle">
+      <div class="hero__bg" id="heroBg"></div>
+      <div class="hero__overlay"></div>
+      <div class="hero__liseré" aria-hidden="true"></div>
+      <div class="hero__scanlines" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <!-- Infos -->
+        <div class="hero-info">
+          <div class="hero-badge-film">
+            🎬 Indiana Jones et les Aventuriers de l'Arche Perdue — 1981
+          </div>
+          <p class="hero-eyebrow">Recette inspirée du film</p>
+          <h1 class="hero-title" id="recipeTitle">
+            Le Ragoût de l'Explorateur<br />au Bœuf &amp; Épices d'Orient
+          </h1>
+          <p class="hero-film">
+            INDIANA JONES &amp; THE RAIDERS OF THE LOST ARK
+          </p>
+          <div class="hero-tags">
+            <span class="htag htag--or">Plat principal</span>
+            <span class="htag htag--rouge">Épicé</span>
+            <span class="htag htag--vert">Mijotage lent</span>
+            <span class="htag htag--bleu">Moyen-Orient</span>
+          </div>
+          <p class="hero-desc">
+            Un ragoût robuste inspiré des haltes dans les souks du Caire —
+            cumin, coriandre, cannelle et citron confit. Le plat de
+            l'explorateur qui rentre au campement après une longue journée
+            d'aventures.
+          </p>
+          <div class="hero-meta">
+            <div class="hm-item">
+              <span class="hm-item__label">Durée totale</span
+              ><span class="hm-item__val">2h 15min</span>
+            </div>
+            <div class="hm-div"></div>
+            <div class="hm-item">
+              <span class="hm-item__label">Personnes</span
+              ><span class="hm-item__val">4 convives</span>
+            </div>
+            <div class="hm-div"></div>
+            <div class="hm-item">
+              <span class="hm-item__label">Difficulté</span>
+              <div class="piment-row">
+                <span class="piment-on">🌶</span
+                ><span class="piment-on">🌶</span
+                ><span class="piment-off">🌶</span
+                ><span class="piment-off">🌶</span
+                ><span class="piment-off">🌶</span>
+              </div>
+            </div>
+            <div class="hm-div"></div>
+            <div class="hm-item">
+              <span class="hm-item__label">Note</span>
+              <div class="hero-stars">
+                <span class="s">★</span><span class="s">★</span
+                ><span class="s">★</span><span class="s">★</span
+                ><span class="se">★</span>
+                <span
+                  style="
+                    font-family: var(--f-title);
+                    font-size: 0.76rem;
+                    font-weight: 700;
+                    color: var(--argent);
+                    opacity: 0.65;
+                    margin-left: 4px;
+                  "
+                  >4.3</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <a href="#preparation" class="btn-red">🍴 Commencer la recette</a>
+            <button class="btn-outline" id="favBtn">♡ Sauvegarder</button>
+            <button class="btn-outline" onclick="window.print()">
+              🖨 Imprimer
+            </button>
+          </div>
+        </div>
+
+        <!-- Poster -->
+        <div class="hero-poster-wrap" aria-hidden="true">
+          <div class="hero-poster">
+            <div class="hp-lbox hp-lbox--t">
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+            </div>
+            <img
+              src="https://image.tmdb.org/t/p/w500/ceG9VzoRAVGwivFU403Wc3AHRys.jpg"
+              alt="Affiche Indiana Jones"
+            />
+            <div class="hp-lbox hp-lbox--b">
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+              <div class="hp-perf"></div>
+            </div>
+          </div>
+          <div class="hero-poster__stat">
+            <div class="hps-icon">🍴</div>
+            <div class="hps-text">
+              <span class="hps-num">1</span>
+              <span class="hps-label">Recette du film</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="main-grid">
+        <!-- ═══ COLONNE CENTRALE ═══ -->
+        <div>
+          <!-- Contexte ciné — photos user (3:2) + badge contributeur dessous -->
+          <div class="cine-context">
+            <div class="cine-context__photos">
+              <!-- Photo 1 — cliquable zoom -->
+              <div
+                class="cine-context__photo-wrap"
+                onclick="
+                  openLightbox(
+                    'https://images.unsplash.com/photo-1574484284002-952d92456975?w=1200&auto=format&fit=crop&q=90',
+                    'Photo par Sophie L. — Le Ragoût de l\'Explorateur',
+                  )
+                "
+              >
+                <img
+                  class="cine-context__photo"
+                  src="https://images.unsplash.com/photo-1574484284002-952d92456975?w=700&auto=format&fit=crop&q=75"
+                  alt="Le ragoût de l'explorateur, photo principale"
+                  loading="lazy"
+                />
+                <div class="cine-context__photo-overlay"></div>
+              </div>
+
+              <!-- Photo 2 — cliquable zoom -->
+              <div
+                class="cine-context__photo-wrap"
+                onclick="
+                  openLightbox(
+                    'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=1200&auto=format&fit=crop&q=90',
+                    'Détail épices — Le Ragoût de l\'Explorateur',
+                  )
+                "
+              >
+                <img
+                  class="cine-context__photo"
+                  src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=700&auto=format&fit=crop&q=75"
+                  alt="Détail du plat"
+                  loading="lazy"
+                />
+                <div class="cine-context__photo-overlay"></div>
+                <span class="photo-label">📷 Photo de l'auteur</span>
+              </div>
+            </div>
+
+            <!-- Badge contributeur — EN DESSOUS des photos, lien vers page auteur -->
+            <div class="contributor-row">
+              <a
+                href="/auteurs/sophie-l"
+                class="contributor-badge"
+                title="Voir toutes les recettes de Sophie L."
+              >
+                <div class="cb-avatar">
+                  <img src="https://i.pravatar.cc/64?img=5" alt="Sophie L." />
+                </div>
+                <div class="cb-info">
+                  <span class="cb-name">Sophie L.</span>
+                  <span class="cb-lvl">★★ Studio Bronze</span>
+                  <span class="cb-count">5 recettes approuvées</span>
+                </div>
+                <span class="cb-arrow">›</span>
+              </a>
+              <span
+                style="
+                  font-size: 0.62rem;
+                  font-weight: 300;
+                  color: rgba(232, 232, 232, 0.28);
+                  font-style: italic;
+                "
+                >Recette publiée le 14 jan. 2025</span
+              >
+            </div>
+
+            <div class="cine-context__body">
+              <h3 class="cine-context__title">Pourquoi cette recette ?</h3>
+              <p class="cine-context__text">
+                Dans <em>Les Aventuriers de l'Arche Perdue</em>, Indiana Jones
+                parcourt l'Égypte des années 1930 à la poursuite de l'Arche
+                d'Alliance. Le film regorge de scènes dans les marchés du Caire,
+                où les épices côtoient les mystères archéologiques. Ce ragoût
+                s'inspire des plats mijotés que dégustent les explorateurs et
+                leurs alliés locaux — riches en cumin, en coriandre et en fruits
+                secs, typiques de la cuisine du Moyen-Orient. C'est le plat du
+                campement, de ceux qui cherchent l'aventure à la lueur d'une
+                torche… et méritent bien un repas chaud après avoir échappé à un
+                rocher géant.
+              </p>
+            </div>
+          </div>
+
+          <!-- Barre infos -->
+          <div class="info-bar" role="list" aria-label="Infos recette">
+            <div class="ib-item" role="listitem">
+              <span class="ib-icon">⏱</span><span class="ib-val">20 min</span
+              ><span class="ib-label">Préparation</span>
+            </div>
+            <div class="ib-item" role="listitem">
+              <span class="ib-icon">🔥</span><span class="ib-val">1h 55</span
+              ><span class="ib-label">Cuisson</span>
+            </div>
+            <div class="ib-item" role="listitem">
+              <span class="ib-icon">👥</span
+              ><span class="ib-val" id="portionsBar">4</span
+              ><span class="ib-label">Personnes</span>
+            </div>
+            <div class="ib-item" role="listitem">
+              <span class="ib-icon">🌶</span>
+              <div class="piment-row">
+                <span class="piment-on">🌶</span
+                ><span class="piment-on">🌶</span
+                ><span class="piment-off">🌶</span
+                ><span class="piment-off">🌶</span
+                ><span class="piment-off">🌶</span>
+              </div>
+              <span class="ib-label">Facile</span>
+            </div>
+            <div class="ib-item" role="listitem">
+              <span class="ib-icon">💰</span><span class="ib-val">€€</span
+              ><span class="ib-label">Budget</span>
+            </div>
+          </div>
+
+          <!-- Préparation -->
+          <div id="preparation">
+            <div class="sec-h">
+              <span class="sec-h__eye">Étapes</span>
+              <h2 class="sec-h__title">PRÉPARATION</h2>
+            </div>
+
+            <div class="steps-section__title">👨‍🍳 Les 6 étapes</div>
+
+            <div class="step-item" id="step1">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step1')">1</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">Préparer &amp; mariner la viande</p>
+                <p class="step-text">
+                  Coupez le bœuf en <strong>cubes de 4 cm</strong>. Épongez
+                  soigneusement avec du papier absorbant. Dans un bol, mélangez
+                  cumin, coriandre, cannelle, paprika et piment. Enrobez les
+                  cubes avec la moitié des épices. Laissez mariner
+                  <strong>15 à 20 minutes</strong> à température ambiante.
+                </p>
+                <div class="step-tip">
+                  Un bœuf bien séché avant cuisson est la clé d'une belle croûte
+                  dorée.
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item" id="step2">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step2')">2</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">Faire dorer la viande</p>
+                <p class="step-text">
+                  Chauffez l'huile d'olive dans une grande cocotte à feu
+                  <strong>vif</strong>. En plusieurs fournées (ne surchargez pas
+                  !), faites dorer les cubes
+                  <strong>2 à 3 min par face</strong> jusqu'à coloration
+                  profonde. Réservez. Cette étape crée les sucs qui donnent
+                  toute la profondeur au ragoût.
+                </p>
+                <button class="step-timer" onclick="startTimer(this, 180)">
+                  ⏱ Timer 3 min — Brunissage
+                </button>
+              </div>
+            </div>
+
+            <div class="step-item" id="step3">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step3')">3</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">La base aromatique</p>
+                <p class="step-text">
+                  Baissez à feu <strong>moyen</strong>. Faites revenir les
+                  oignons <strong>8 à 10 min</strong> jusqu'à ce qu'ils soient
+                  fondants et caramélisés. Ajoutez l'ail, le gingembre et le
+                  reste des épices. Toastez <strong>1 minute</strong> en remuant
+                  — les épices libèrent leurs arômes dans la matière grasse.
+                </p>
+                <button class="step-timer" onclick="startTimer(this, 600)">
+                  ⏱ Timer 10 min — Oignons
+                </button>
+              </div>
+            </div>
+
+            <div class="step-item" id="step4">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step4')">4</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">Assembler &amp; déglacer</p>
+                <p class="step-text">
+                  Remettez le bœuf dans la cocotte. Ajoutez les tomates
+                  concassées, versez le bouillon <strong>chaud</strong> en
+                  grattant les sucs de fond. Incorporez carottes, raisins secs
+                  et citron confit haché. Portez à ébullition puis réduisez
+                  immédiatement à feu très doux.
+                </p>
+                <div class="step-tip">
+                  Le citron confit est le secret d'authenticité — son amertume
+                  tranche avec la richesse du bœuf.
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item" id="step5">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step5')">5</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">Mijoter lentement</p>
+                <p class="step-text">
+                  Couvrez et laissez mijoter à feu
+                  <strong>très doux pendant 1h30</strong>. Le liquide doit à
+                  peine frémir. À mi-cuisson, ajoutez les pois chiches égouttés.
+                  La viande est prête lorsqu'elle se défait facilement à la
+                  fourchette.
+                </p>
+                <button class="step-timer" onclick="startTimer(this, 5400)">
+                  ⏱ Timer 1h30 — Mijotage
+                </button>
+                <div class="step-tip">
+                  Comme Indiana, la patience est une vertu — et ça vaut le coup
+                  d'attendre.
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item" id="step6">
+              <div class="step-num-wrap">
+                <div class="step-num" onclick="toggleStep('step6')">6</div>
+              </div>
+              <div class="step-body">
+                <p class="step-title">Finition &amp; dressage</p>
+                <p class="step-text">
+                  Retirez le couvercle, montez légèrement le feu
+                  <strong>5 à 10 min</strong> pour réduire la sauce si besoin.
+                  Goûtez, rectifiez l'assaisonnement. Servez dans des bols bien
+                  chauds, garnis de <strong>coriandre fraîche ciselée</strong>.
+                  Accompagnez de pain pita grillé ou semoule à la vapeur.
+                </p>
+                <div class="step-tip">
+                  Encore meilleur le lendemain — les saveurs s'approfondissent
+                  après une nuit de repos.
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /preparation -->
+
+          <!-- ══ GOLD CARD — VOTRE AVIS & SUGGESTIONS ══ -->
+          <div class="gold-avis-card" id="avis">
+            <!-- Perforations pellicule -->
+            <div class="gold-avis-card__perfs gold-avis-card__perfs--l">
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+            </div>
+            <div class="gold-avis-card__perfs gold-avis-card__perfs--r">
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+              <div class="gac-perf"></div>
+            </div>
+
+            <div class="gold-avis-card__inner">
+              <div class="gold-avis-card__top">
+                <div class="gold-avis-card__left">
+                  <p class="gold-avis-card__eyebrow">Rejoignez la communauté</p>
+                  <h2 class="gold-avis-card__title">
+                    PARTAGEZ<br />VOTRE AVIS.
+                  </h2>
+                  <p class="gold-avis-card__sub">
+                    Vous avez cuisiné ce ragoût ? Une suggestion d'épice, une
+                    variante végétarienne, une astuce de chef ? La communauté
+                    Ciné Délices vous lit.
+                  </p>
+                  <div class="gold-avis-card__stats">
+                    <div class="gac-stat">
+                      <span class="gac-stat__num">127</span
+                      ><span class="gac-stat__label">Avis</span>
+                    </div>
+                    <div class="gac-stat-div"></div>
+                    <div class="gac-stat">
+                      <span class="gac-stat__num">4.3</span
+                      ><span class="gac-stat__label">Note moy.</span>
+                    </div>
+                    <div class="gac-stat-div"></div>
+                    <div class="gac-stat">
+                      <span class="gac-stat__num">1 240</span
+                      ><span class="gac-stat__label">Membres</span>
+                    </div>
+                  </div>
+                  <div class="gold-avis-card__membres">
+                    <img
+                      src="https://i.pravatar.cc/32?img=12"
+                      alt=""
+                      class="gac-av"
+                    />
+                    <img
+                      src="https://i.pravatar.cc/32?img=25"
+                      alt=""
+                      class="gac-av"
+                    />
+                    <img
+                      src="https://i.pravatar.cc/32?img=33"
+                      alt=""
+                      class="gac-av"
+                    />
+                    <img
+                      src="https://i.pravatar.cc/32?img=7"
+                      alt=""
+                      class="gac-av"
+                    />
+                    <span class="gac-av-label">+1 240 membres actifs</span>
+                  </div>
+                </div>
+                <div class="gold-avis-card__icons">
+                  <span class="gac-icon">⭐</span>
+                  <span class="gac-plus">+</span>
+                  <span
+                    class="gac-icon"
+                    style="font-size: 1.7rem; animation-delay: 0.6s"
+                    >💬</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ SECTION AVIS ══ -->
+          <div class="review-section" style="margin-top: 36px">
+            <h3 class="review-section__title">💬 Avis &amp; Suggestions</h3>
+
+            <!-- Avis existants (3 exemples) -->
+            <div class="reviews-list">
+              <div class="review-card">
+                <div class="review-card__header">
+                  <a
+                    href="/auteurs/jean-m"
+                    class="review-card__author"
+                    style="text-decoration: none"
+                  >
+                    <div class="rca-avatar">
+                      <img
+                        src="https://i.pravatar.cc/64?img=12"
+                        alt="Jean M."
+                      />
+                    </div>
+                    <div>
+                      <div class="rca-name">Jean M.</div>
+                      <div class="rca-lvl">★★★ Cinéma Culte</div>
+                    </div>
+                  </a>
+                  <div class="review-card__meta">
+                    <div class="rcs-stars">
+                      <span class="s">★</span><span class="s">★</span
+                      ><span class="s">★</span><span class="s">★</span
+                      ><span class="s">★</span>
+                    </div>
+                    <span class="review-card__date">Il y a 3 jours</span>
+                  </div>
+                </div>
+                <p class="review-card__text">
+                  Absolument délicieux ! J'ai ajouté quelques amandes effilées
+                  grillées en fin de cuisson — ça apporte un croquant inattendu
+                  qui rappelle vraiment la cuisine du Moyen-Orient. À refaire
+                  sans hésitation.
+                </p>
+                <span class="review-card__tag">💡 Suggestion</span>
+              </div>
+
+              <div class="review-card">
+                <div class="review-card__header">
+                  <a
+                    href="/auteurs/marie-c"
+                    class="review-card__author"
+                    style="text-decoration: none"
+                  >
+                    <div class="rca-avatar">
+                      <img
+                        src="https://i.pravatar.cc/64?img=5"
+                        alt="Marie C."
+                      />
+                    </div>
+                    <div>
+                      <div class="rca-name">Marie C.</div>
+                      <div class="rca-lvl">★★ Studio Bronze</div>
+                    </div>
+                  </a>
+                  <div class="review-card__meta">
+                    <div class="rcs-stars">
+                      <span class="s">★</span><span class="s">★</span
+                      ><span class="s">★</span><span class="s">★</span
+                      ><span class="se">★</span>
+                    </div>
+                    <span class="review-card__date">Il y a 1 semaine</span>
+                  </div>
+                </div>
+                <p class="review-card__text">
+                  Très bonne recette, mais j'ai réduit le piment de moitié pour
+                  mes enfants. La prochaine fois j'essaierai avec de l'agneau au
+                  lieu du bœuf — j'imagine que ça serait encore plus authentique
+                  !
+                </p>
+                <span class="review-card__tag">⭐ Avis cuisiné</span>
+              </div>
+
+              <div class="review-card">
+                <div class="review-card__header">
+                  <a
+                    href="/auteurs/alex-r"
+                    class="review-card__author"
+                    style="text-decoration: none"
+                  >
+                    <div class="rca-avatar">
+                      <img
+                        src="https://i.pravatar.cc/64?img=33"
+                        alt="Alex R."
+                      />
+                    </div>
+                    <div>
+                      <div class="rca-name">Alex R.</div>
+                      <div class="rca-lvl">★★★ Cinéma Culte</div>
+                    </div>
+                  </a>
+                  <div class="review-card__meta">
+                    <div class="rcs-stars">
+                      <span class="s">★</span><span class="s">★</span
+                      ><span class="s">★</span><span class="s">★</span
+                      ><span class="se">★</span>
+                    </div>
+                    <span class="review-card__date">Il y a 2 semaines</span>
+                  </div>
+                </div>
+                <p class="review-card__text">
+                  Je l'ai servi lors d'une soirée Indiana Jones avec tout le
+                  film en fond ! Le lien avec la scène du marché du Caire est
+                  vraiment bien trouvé. Suggestion : servir avec du couscous
+                  perlé, c'est encore meilleur.
+                </p>
+                <span class="review-card__tag">🎬 Soirée ciné</span>
+              </div>
+            </div>
+
+            <!-- Formulaire — état connecté (toggle JS) -->
+            <div
+              id="reviewFormConnected"
+              class="review-form-block"
+              style="display: none"
+            >
+              <p class="review-form-block__title">
+                ✍️ Votre avis sur cette recette
+              </p>
+
+              <!-- Type -->
+              <div class="review-type-row">
+                <button class="rtype-btn active" onclick="setType(this)">
+                  ⭐ Avis cuisiné
+                </button>
+                <button class="rtype-btn" onclick="setType(this)">
+                  💡 Suggestion
+                </button>
+                <button class="rtype-btn" onclick="setType(this)">
+                  🎬 Soirée ciné
+                </button>
+                <button class="rtype-btn" onclick="setType(this)">
+                  ❓ Question
+                </button>
+              </div>
+
+              <!-- Note -->
+              <div class="star-picker">
+                <span class="star-picker__label">Votre note :</span>
+                <button class="star-btn" data-val="1" onclick="setStars(1)">
+                  ★
+                </button>
+                <button class="star-btn" data-val="2" onclick="setStars(2)">
+                  ★
+                </button>
+                <button class="star-btn" data-val="3" onclick="setStars(3)">
+                  ★
+                </button>
+                <button class="star-btn" data-val="4" onclick="setStars(4)">
+                  ★
+                </button>
+                <button class="star-btn" data-val="5" onclick="setStars(5)">
+                  ★
+                </button>
+              </div>
+
+              <!-- Texte -->
+              <textarea
+                class="review-textarea"
+                id="reviewText"
+                placeholder="Partagez votre expérience, une variante, une astuce de préparation…"
+                maxlength="500"
+                oninput="updateChars()"
+              ></textarea>
+
+              <div class="review-submit-row">
+                <span class="review-chars"
+                  ><span id="charCount">0</span>/500 caractères</span
+                >
+                <button class="btn-review-submit" onclick="submitReview()">
+                  ✦ Publier mon avis →
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulaire — état non connecté -->
+            <div id="reviewFormLocked" class="review-locked">
+              <span class="review-locked__icon">🔒</span>
+              <p class="review-locked__text">
+                Connectez-vous pour partager votre avis,<br />une suggestion ou
+                une variante de cette recette.
+              </p>
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                "
+              >
+                <a href="/connexion" class="btn-connect-review"
+                  >✦ Se connecter</a
+                >
+                <a
+                  href="/inscription"
+                  class="btn-outline"
+                  style="height: 38px; font-size: 0.62rem"
+                  >Créer un compte →</a
+                >
+              </div>
+              <!-- Toggle démo -->
+              <button
+                onclick="toggleLogin()"
+                style="
+                  margin-top: 8px;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  font-size: 0.6rem;
+                  color: rgba(196, 160, 82, 0.4);
+                  text-decoration: underline;
+                  font-style: italic;
+                "
+              >
+                [;;Démo : simuler connexion]
+              </button>
+            </div>
+          </div>
+          <!-- /review-section -->
+        </div>
+        <!-- /colonne centrale -->
+        <aside class="sidebar">
+          <!-- ── CARD DORÉE INGRÉDIENTS ── -->
+          <div class="card-gold">
+            <div class="card-gold__inner">
+              <div class="card-gold__header">
+                <div class="card-gold__icon">🥩</div>
+                <div>
+                  <div class="card-gold__title">INGRÉDIENTS</div>
+                  <div class="card-gold__sub">Cliquez pour cocher</div>
+                </div>
+              </div>
+
+              <!-- Contrôle portions -->
+              <div class="portions-ctrl">
+                <span class="portions-label">Portions</span>
+                <div class="portions-btns">
+                  <button class="pb" id="decBtn" aria-label="Diminuer">
+                    −
+                  </button>
+                  <div class="pnum" id="pnum">4</div>
+                  <button class="pb" id="incBtn" aria-label="Augmenter">
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <!-- Liste ingrédients -->
+              <div class="ing-list">
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base="800">800g</span
+                  ><span class="ing-name"
+                    >bœuf à braiser
+                    <span class="ing-note">(paleron)</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base-ml="600">600ml</span
+                  ><span class="ing-name">bouillon de bœuf</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base-n="2">2</span
+                  ><span class="ing-name"
+                    >oignons jaunes <span class="ing-note">émincés</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base-n="4">4</span
+                  ><span class="ing-name"
+                    >gousses d'ail <span class="ing-note">écrasées</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base-n="3">3</span
+                  ><span class="ing-name"
+                    >carottes <span class="ing-note">en tronçons</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base="400">400g</span
+                  ><span class="ing-name"
+                    >pois chiches <span class="ing-note">cuits</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base="200">200g</span
+                  ><span class="ing-name">tomates concassées</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty" data-base="60">60g</span
+                  ><span class="ing-name">raisins secs</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">2 c.c.</span
+                  ><span class="ing-name">cumin moulu</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">1½ c.c.</span
+                  ><span class="ing-name">coriandre moulue</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">1 c.c.</span
+                  ><span class="ing-name">cannelle en poudre</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">½ c.c.</span
+                  ><span class="ing-name">piment de Cayenne</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">1 c.c.</span
+                  ><span class="ing-name">paprika fumé</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">½ c.c.</span
+                  ><span class="ing-name">gingembre râpé</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">1</span
+                  ><span class="ing-name"
+                    >citron confit <span class="ing-note">haché</span></span
+                  >
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">3 c.s.</span
+                  ><span class="ing-name">huile d'olive</span>
+                </div>
+                <div
+                  class="ing-item"
+                  onclick="this.classList.toggle('checked')"
+                >
+                  <span class="ing-qty">1 bouquet</span
+                  ><span class="ing-name">coriandre fraîche</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Avis communauté -->
+          <div class="sidebar-card">
+            <h3 class="sc-title">⭐ Avis communauté</h3>
+            <div class="rating-display">
+              <span class="rating-num">4.3</span>
+              <div>
+                <div class="rating-stars">
+                  <span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span><span class="s">★</span
+                  ><span class="se">★</span>
+                </div>
+                <p class="rating-sub">Basé sur 127 avis</p>
+              </div>
+            </div>
+            <div>
+              <div class="rbar-row">
+                <span class="rbar-lbl">5 étoiles</span>
+                <div class="rbar-track">
+                  <div class="rbar-fill" style="width: 58%"></div>
+                </div>
+                <span class="rbar-n">74</span>
+              </div>
+              <div class="rbar-row">
+                <span class="rbar-lbl">4 étoiles</span>
+                <div class="rbar-track">
+                  <div class="rbar-fill" style="width: 28%"></div>
+                </div>
+                <span class="rbar-n">36</span>
+              </div>
+              <div class="rbar-row">
+                <span class="rbar-lbl">3 étoiles</span>
+                <div class="rbar-track">
+                  <div class="rbar-fill" style="width: 10%"></div>
+                </div>
+                <span class="rbar-n">13</span>
+              </div>
+              <div class="rbar-row">
+                <span class="rbar-lbl">2 étoiles</span>
+                <div class="rbar-track">
+                  <div class="rbar-fill" style="width: 3%"></div>
+                </div>
+                <span class="rbar-n">3</span>
+              </div>
+              <div class="rbar-row">
+                <span class="rbar-lbl">1 étoile</span>
+                <div class="rbar-track">
+                  <div class="rbar-fill" style="width: 1%"></div>
+                </div>
+                <span class="rbar-n">1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Partager -->
+          <div class="sidebar-card">
+            <h3 class="sc-title">📤 Partager</h3>
+            <div class="share-row" style="margin-bottom: 8px">
+              <button class="share-btn">📘 Facebook</button
+              ><button class="share-btn">📸 Instagram</button>
+            </div>
+            <div class="share-row">
+              <button class="share-btn">🔗 Copier le lien</button
+              ><button class="share-btn">🖨 Imprimer</button>
+            </div>
+          </div>
+
+          <!-- Autres recettes -->
+          <div class="sidebar-card">
+            <h3 class="sc-title">🎬 Recettes similaires</h3>
+            <a href="/recettes/ratatouille-de-remy" class="or-card">
+              <img
+                class="or-card__img"
+                src="https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?w=100&auto=format&fit=crop"
+                alt="Ratatouille"
+                loading="lazy"
+              />
+              <div>
+                <div class="or-card__title">La Ratatouille de Rémy</div>
+                <div class="or-card__film">🎬 Ratatouille (2007)</div>
+              </div>
+            </a>
+            <a href="/recettes/royale-cheese" class="or-card">
+              <img
+                class="or-card__img"
+                src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=100&auto=format&fit=crop"
+                alt="Burger"
+                loading="lazy"
+              />
+              <div>
+                <div class="or-card__title">Le Royale with Cheese</div>
+                <div class="or-card__film">🎬 Pulp Fiction (1994)</div>
+              </div>
+            </a>
+            <a href="/recettes/foie-agneaux" class="or-card">
+              <img
+                class="or-card__img"
+                src="https://images.unsplash.com/photo-1558030006-450675393462?w=100&auto=format&fit=crop"
+                alt="Foie"
+                loading="lazy"
+              />
+              <div>
+                <div class="or-card__title">Le Foie et ses Fèves</div>
+                <div class="or-card__film">🎬 Le Silence des Agneaux</div>
+              </div>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div>
+            <a href="/" class="footer-logo">
+              <div class="fl-icon">CD</div>
+              <span class="fl-name">CINÉ DÉLICES</span>
+            </a>
+            <p class="footer-tagline">
+              Le goût du cinéma, et le cinéma du goût. Une filmothèque culinaire
+              unique.
+            </p>
+          </div>
+          <div>
+            <div class="footer-col__title">Navigation</div>
+            <ul class="footer-links">
+              <li><a href="/">Accueil</a></li>
+              <li><a href="/films">Films</a></li>
+              <li><a href="/recettes">Recettes</a></li>
+              <li><a href="/a-propos">À propos</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="footer-col__title">Genres</div>
+            <ul class="footer-links">
+              <li><a href="#">Aventure</a></li>
+              <li><a href="#">Comédie</a></li>
+              <li><a href="#">Thriller</a></li>
+              <li><a href="#">Fantastique</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="footer-col__title">Communauté</div>
+            <ul class="footer-links">
+              <li><a href="#">Créer une recette</a></li>
+              <li><a href="#">Classement</a></li>
+              <li><a href="#">Forum</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-copy">
+            © 2026 Ciné Délices — Tous droits réservés · Fait avec 🎬 &amp; 🍴
+            par The Hand Creative
+          </p>
+          <nav class="footer-legal">
+            <a href="#">Confidentialité</a><a href="#">Mentions légales</a
+            ><a href="#">Cookies</a>
+          </nav>
+        </div>
+      </div>
+      <div class="filmstrip" aria-hidden="true">
+        <div class="filmstrip-inner" id="filmstrip"></div>
+      </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+      <img class="lightbox__img" id="lightboxImg" src="" alt="" />
+      <button
+        class="lightbox__close"
+        onclick="closeLightbox()"
+        aria-label="Fermer"
+      >
+        ✕
+      </button>
+      <p class="lightbox__caption" id="lightboxCaption"></p>
+    </div>
+
+    <a href="#" class="scroll-top" id="scrollTop" aria-label="Haut de page"
+      >↑</a
+    >
+
+    <script>
+      // Filmstrip
+      (function () {
+        const el = document.getElementById("filmstrip");
+        let h = "";
+        for (let i = 0; i < 60; i++)
+          h += '<div class="fs-hole"><div class="fs-hole-inner"></div></div>';
+        el.innerHTML = h + h;
+      })();
+
+      // Nav scroll + hero parallax
+      const nav = document.getElementById("siteNav");
+      const stBtn = document.getElementById("scrollTop");
+      const heroBg = document.getElementById("heroBg");
+      setTimeout(() => heroBg.classList.add("active"), 100);
+      window.addEventListener(
+        "scroll",
+        () => {
+          nav.classList.toggle("scrolled", scrollY > 40);
+          stBtn.classList.toggle("visible", scrollY > 400);
+          if (scrollY < 600)
+            heroBg.style.transform = `translateY(${scrollY * 0.12}px) scale(1.05)`;
+        },
+        { passive: true },
+      );
+      stBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Fav button
+      const favBtn = document.getElementById("favBtn");
+      favBtn.addEventListener("click", () => {
+        const saved = favBtn.textContent.includes("♥");
+        favBtn.textContent = saved ? "♡ Sauvegarder" : "♥ Sauvegardé !";
+        favBtn.style.cssText = saved
+          ? ""
+          : "border-color:rgba(76,175,130,.55);color:#4CAF82";
+      });
+
+      // Portions
+      let portions = 4;
+      const BASE = 4;
+      const pnumEl = document.getElementById("pnum");
+      const pbarEl = document.getElementById("portionsBar");
+      const ingItems = [];
+      document.querySelectorAll(".ing-list .ing-qty").forEach((el) => {
+        ingItems.push({
+          el,
+          base: el.dataset.base,
+          baseMl: el.dataset.baseMl,
+          baseN: el.dataset.baseN,
+        });
+      });
+      function updatePortions() {
+        pnumEl.textContent = portions;
+        if (pbarEl) pbarEl.textContent = portions;
+        const r = portions / BASE;
+        ingItems.forEach((d) => {
+          if (d.base) {
+            d.el.textContent =
+              Math.round((parseFloat(d.base) * r) / 5) * 5 + "g";
+          } else if (d.baseMl) {
+            d.el.textContent =
+              Math.round((parseFloat(d.baseMl) * r) / 5) * 5 + "ml";
+          } else if (d.baseN) {
+            const v = parseFloat(d.baseN) * r;
+            d.el.textContent = v % 1 === 0 ? v : parseFloat(v.toFixed(1));
+          }
+        });
+      }
+      document.getElementById("decBtn").addEventListener("click", () => {
+        if (portions > 1) {
+          portions--;
+          updatePortions();
+        }
+      });
+      document.getElementById("incBtn").addEventListener("click", () => {
+        if (portions < 12) {
+          portions++;
+          updatePortions();
+        }
+      });
+
+      // Steps toggle
+      function toggleStep(id) {
+        const s = document.getElementById(id);
+        if (s.classList.contains("done")) {
+          s.classList.remove("done", "active");
+        } else if (s.classList.contains("active")) {
+          s.classList.remove("active");
+          s.classList.add("done");
+        } else {
+          s.classList.add("active");
+        }
+      }
+
+      // Timers
+      const timers = new Map();
+      function startTimer(btn, secs) {
+        if (timers.has(btn)) {
+          clearInterval(timers.get(btn));
+          timers.delete(btn);
+          btn.classList.remove("running");
+          const lbl = btn.textContent.split("—")[1]?.trim() || "";
+          btn.textContent = "⏱ " + fmt(secs) + (lbl ? " — " + lbl : "");
+          return;
+        }
+        let rem = secs;
+        const lbl = btn.textContent.split("—")[1]?.trim() || "";
+        btn.classList.add("running");
+        const id = setInterval(() => {
+          if (rem <= 0) {
+            clearInterval(id);
+            timers.delete(btn);
+            btn.classList.remove("running");
+            btn.textContent = "✅ Terminé" + (lbl ? " — " + lbl : "");
+            return;
+          }
+          btn.textContent = "⏱ " + fmt(rem) + (lbl ? " — " + lbl : "");
+          rem--;
+        }, 1000);
+        timers.set(btn, id);
+      }
+      function fmt(s) {
+        return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+      }
+
+      // ── LIGHTBOX ──
+      function openLightbox(src, caption) {
+        const lb = document.getElementById("lightbox");
+        document.getElementById("lightboxImg").src = src;
+        document.getElementById("lightboxCaption").textContent = caption || "";
+        lb.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function closeLightbox() {
+        document.getElementById("lightbox").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeLightbox();
+      });
+      // Prevent closing when clicking the image itself
+      document
+        .getElementById("lightboxImg")
+        ?.addEventListener("click", (e) => e.stopPropagation());
+
+      // ── AVIS / REVIEW FORM ──
+      let isConnected = false;
+      function toggleLogin() {
+        isConnected = !isConnected;
+        document.getElementById("reviewFormConnected").style.display =
+          isConnected ? "block" : "none";
+        isConnected;
+        isConnected;
+        document.getElementById("reviewFormLocked").style.display = isConnected
+          ? "none"
+          : "block";
+        isConnected;
+        isConnected;
+      }
+
+      // Star picker
+      let selectedStars = 0;
+      function setStars(n) {
+        selectedStars = n;
+        document.querySelectorAll(".star-btn").forEach((btn, i) => {
+          btn.classList.toggle("active", i < n);
+        });
+      }
+
+      // Type selector
+      function setType(btn) {
+        document
+          .querySelectorAll(".rtype-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
+
+      // Char counter
+      function updateChars() {
+        const v = document.getElementById("reviewText").value.length;
+        document.getElementById("charCount").textContent = v;
+      }
+
+      // Submit demo
+      function submitReview() {
+        const text = document.getElementById("reviewText").value.trim();
+        if (!text) {
+          document.getElementById("reviewText").style.borderColor =
+            "rgba(194,48,24,.55)";
+          return;
+        }
+        if (selectedStars === 0) {
+          alert("Merci de sélectionner une note !");
+          return;
+        }
+        // Demo feedback
+        const btn = document.querySelector(".btn-review-submit");
+        btn.textContent = "✅ Avis publié !";
+        btn.style.background = "linear-gradient(135deg,#1a3a28,#2a5a3a)";
+        btn.style.color = "#4CAF82";
+        document.getElementById("reviewText").value = "";
+        document.getElementById("charCount").textContent = "0";
+        setTimeout(() => {
+          btn.textContent = "✦ Publier mon avis →";
+          btn.style.background = "";
+          btn.style.color = "";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
