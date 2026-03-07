@@ -3,6 +3,1233 @@
  * RECIPE-DETAIL.CSS - Styles de la page détail d'une recette
  * ======================================================
  *
+ * NOUVEAU DESIGN (V3) — sections :
+ *   0. FULL-BLEED BODY
+ *   1. BREADCRUMB
+ *   2. RECIPE HERO (rh-*)
+ *   3. MAIN LAYOUT (recipe-main, recipe-main-grid)
+ *   4. CONTEXT BLOCK (rd-context, rd-author-*)
+ *   5. INFO BAR (rd-info-bar, rd-ib-*)
+ *   6. STEPS / PRÉPARATION (rd-steps, rd-step-*)
+ *   7. GOLD AVIS CTA (rd-avis-cta)
+ *   8. NAV ACTIONS
+ *   9. SIDEBAR (rd-sidebar)
+ *  10. INGRÉDIENTS CARD (rd-ingredients, rd-ing-*)
+ *  11. SIDEBAR CARDS (rd-sidebar-card, rd-movie-card)
+ *  12. RESPONSIVE
+ */
+
+/* ====================================================== */
+/* ══════════ 0. FULL-BLEED BODY ═════════════════════════ */
+/* ====================================================== */
+
+body.recipe-page {
+  max-width: unset;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+body.recipe-page main {
+  padding-top: var(--nav-h);
+}
+
+/* ====================================================== */
+/* ══════════ 1. BREADCRUMB ══════════════════════════════ */
+/* ====================================================== */
+
+.bc-bar {
+  width: 100%;
+  background: rgba(8, 14, 24, 0.55);
+  border-bottom: 1px solid rgba(65, 90, 119, 0.18);
+  padding: 0 var(--px, 2rem);
+}
+
+.bc {
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  flex-wrap: wrap;
+}
+
+.bc a {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.32);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.bc a:hover {
+  color: var(--or-titre, var(--dore-popcorn));
+}
+
+.bc-sep {
+  color: rgba(196, 160, 82, 0.22);
+  font-size: 0.7rem;
+}
+
+.bc-cur {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.6);
+  font-family: var(--f-title, var(--font-h2-h6));
+}
+
+/* ====================================================== */
+/* ══════════ 2. RECIPE HERO ══════════════════════════════ */
+/* ====================================================== */
+
+.recipe-hero {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  overflow: hidden;
+  background: #07101c;
+}
+
+.recipe-hero__bg {
+  position: absolute;
+  inset: -5%;
+  background-size: cover;
+  background-position: center 30%;
+  filter: brightness(0.28) saturate(0.5) sepia(0.3);
+  transform: scale(1.06);
+  transition: transform 8s cubic-bezier(0.1, 0, 0.2, 1);
+}
+
+.recipe-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      rgba(7, 16, 28, 0.99) 0%,
+      rgba(7, 16, 28, 0.82) 40%,
+      rgba(7, 16, 28, 0.32) 68%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(7, 16, 28, 0.98) 0%,
+      rgba(7, 16, 28, 0.25) 32%,
+      transparent 60%
+    );
+}
+
+.recipe-hero__lisere {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(196, 160, 82, 0.12) 12%,
+    rgba(196, 160, 82, 0.6) 35%,
+    rgba(196, 160, 82, 0.75) 50%,
+    rgba(196, 160, 82, 0.6) 65%,
+    rgba(196, 160, 82, 0.12) 88%,
+    transparent 100%
+  );
+}
+
+.recipe-hero__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+}
+
+.recipe-hero__content {
+  position: relative;
+  z-index: 5;
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  padding: 56px var(--px, 2rem) 56px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 56px;
+  align-items: center;
+  min-height: 480px;
+}
+
+/* ── Colonne gauche : infos ── */
+.rh-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rh-badge-film {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 5px 14px;
+  border-radius: 6px;
+  background: rgba(10, 22, 36, 0.88);
+  border: 1px solid rgba(196, 160, 82, 0.3);
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--or-titre, var(--dore-popcorn));
+}
+
+.rh-badge-film .icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.rh-eyebrow {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rh-eyebrow::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--or-titre, var(--dore-popcorn)));
+  flex-shrink: 0;
+}
+
+.rh-title {
+  font-family: var(--f-editorial, 'Playfair Display', serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.15;
+  color: var(--dore-clair, #f2c84b);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+.rh-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rh-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 5px;
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.rh-tag--or {
+  color: var(--or-100, #d4a843);
+  border-color: rgba(212, 168, 67, 0.38);
+  background: rgba(212, 168, 67, 0.07);
+}
+
+.rh-tag--bleu {
+  color: #7ba7bc;
+  border-color: rgba(123, 167, 188, 0.38);
+  background: rgba(123, 167, 188, 0.07);
+}
+
+.rh-tag--vert {
+  color: #4caf82;
+  border-color: rgba(76, 175, 130, 0.38);
+  background: rgba(76, 175, 130, 0.07);
+}
+
+.rh-tag--violet {
+  color: #9b8ec4;
+  border-color: rgba(155, 142, 196, 0.38);
+  background: rgba(155, 142, 196, 0.07);
+}
+
+.rh-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rh-meta__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rh-meta__label {
+  font-size: 0.48rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.38);
+  font-weight: 300;
+}
+
+.rh-meta__val {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--argent, #e8e8e8);
+}
+
+.rh-meta__val--gold {
+  color: var(--or-titre, var(--dore-popcorn));
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rh-meta__sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(65, 90, 119, 0.35);
+  flex-shrink: 0;
+}
+
+.rh-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ── Colonne droite : poster image ── */
+.rh-poster-wrap {
+  position: relative;
+}
+
+.rh-poster {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.75),
+    0 0 60px rgba(196, 160, 82, 0.07);
+  border: 1px solid rgba(196, 160, 82, 0.14);
+  aspect-ratio: 3 / 2;
+}
+
+.rh-poster__lbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: rgba(5, 10, 18, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 3;
+}
+
+.rh-poster__lbox--t { top: 0; }
+.rh-poster__lbox--b { bottom: 0; }
+
+.rh-perf {
+  width: 10px;
+  height: 9px;
+  border-radius: 2px;
+  background: rgba(196, 160, 82, 0.1);
+  border: 1px solid rgba(196, 160, 82, 0.07);
+}
+
+.rh-poster__img-btn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: zoom-in;
+  position: relative;
+}
+
+.rh-poster__img-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: saturate(0.88);
+  display: block;
+}
+
+/* Floating stat badge */
+.rh-poster__stat {
+  position: absolute;
+  bottom: -16px;
+  left: -16px;
+  z-index: 10;
+  background: linear-gradient(135deg, var(--surface-card, #0f1e30), rgba(20, 38, 58, 0.98));
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rh-ps-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: var(--rouge-gradient, linear-gradient(135deg, #8b1c13, #c23018, #d43a20));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(194, 48, 24, 0.35);
+  flex-shrink: 0;
+  color: var(--or-titre, #c4a052);
+}
+
+.rh-ps-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rh-ps-num {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.35rem;
+  letter-spacing: 0.06em;
+  color: var(--or-titre, var(--dore-popcorn));
+  line-height: 1;
+}
+
+.rh-ps-label {
+  font-size: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.35);
+}
+
+/* ====================================================== */
+/* ══════════ 3. MAIN LAYOUT ══════════════════════════════ */
+/* ====================================================== */
+
+.recipe-main {
+  max-width: var(--max-width, 1280px);
+  margin: 0 auto;
+  padding: 56px var(--px, 2rem) 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.recipe-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 52px;
+  align-items: start;
+}
+
+.recipe-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+/* ====================================================== */
+/* ══════════ 4. CONTEXT BLOCK ════════════════════════════ */
+/* ====================================================== */
+
+.rd-context {
+  background: linear-gradient(135deg, rgba(15, 30, 48, 0.82), rgba(20, 38, 58, 0.78));
+  border: 1px solid rgba(65, 90, 119, 0.22);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.rd-context__media {
+  position: relative;
+  overflow: hidden;
+  width: 280px;
+  flex-shrink: 0;
+  aspect-ratio: 3 / 2;
+}
+
+.rd-context__aside {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rd-context__img-btn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: zoom-in;
+  position: relative;
+}
+
+.rd-context__img-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.82) brightness(0.75);
+  transition: filter 0.5s ease, transform 0.5s ease;
+  display: block;
+}
+
+.rd-context__img-btn:hover img {
+  filter: saturate(1.05) brightness(0.88);
+  transform: scale(1.04);
+}
+
+.rd-context__zoom {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(10, 20, 34, 0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(232, 232, 232, 0.65);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.rd-context__img-btn:hover .rd-context__zoom {
+  opacity: 1;
+}
+
+/* Badge auteur */
+.rd-author-row {
+  padding: 18px 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rd-author-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  border-radius: 22px;
+  background: rgba(10, 20, 34, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.rd-author-badge:hover {
+  border-color: rgba(196, 160, 82, 0.55);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.rd-author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(196, 160, 82, 0.45);
+}
+
+.rd-author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rd-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rd-author-label {
+  font-size: 0.46rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.4);
+}
+
+.rd-author-name {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--argent, #e8e8e8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rd-author-official {
+  font-size: 0.44rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--or-titre, #c4a052);
+  background: rgba(196, 160, 82, 0.12);
+  border: 1px solid rgba(196, 160, 82, 0.28);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.rd-author-arrow {
+  margin-left: 4px;
+  color: rgba(196, 160, 82, 0.45);
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.rd-author-badge:hover .rd-author-arrow {
+  transform: translateX(3px);
+  color: var(--or-titre, #c4a052);
+}
+
+/* Corps description */
+.rd-context__body {
+  padding: 20px 24px 24px;
+}
+
+.rd-context__title {
+  font-family: var(--f-editorial, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--dore-clair, #f2c84b);
+  margin-bottom: 10px;
+}
+
+.rd-context__text {
+  font-size: 0.83rem;
+  font-weight: 300;
+  line-height: 1.78;
+  color: rgba(232, 232, 232, 0.52);
+}
+
+.rd-context__text--lead {
+  font-size: 0.88rem;
+  color: rgba(232, 232, 232, 0.62);
+  margin-bottom: 8px;
+}
+
+.rd-context__text + .rd-context__text {
+  margin-top: 8px;
+}
+
+/* ====================================================== */
+/* ══════════ 5. INFO BAR ════════════════════════════════ */
+/* ====================================================== */
+
+.rd-info-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  background: rgba(65, 90, 119, 0.1);
+  border: 1px solid rgba(65, 90, 119, 0.18);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Ajustement si 4 colonnes (sans servings) */
+.rd-info-bar:has(.rd-ib-item:nth-child(4):last-child) {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.rd-ib-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 8px;
+  gap: 4px;
+  background: linear-gradient(180deg, rgba(15, 30, 48, 0.88), rgba(12, 24, 40, 0.92));
+  transition: background 0.2s ease;
+  text-align: center;
+}
+
+.rd-ib-item:hover {
+  background: rgba(196, 160, 82, 0.06);
+}
+
+.rd-ib-item + .rd-ib-item {
+  border-left: 1px solid rgba(65, 90, 119, 0.18);
+}
+
+.rd-ib-icon {
+  width: 1.3rem;
+  height: 1.3rem;
+  color: rgba(196, 160, 82, 0.55);
+}
+
+.rd-ib-val {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--dore-clair, #f2c84b);
+}
+
+.rd-ib-label {
+  font-size: 0.46rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.3);
+}
+
+/* ====================================================== */
+/* ══════════ 6. SECTION HEADER (rd-sec-h) ═══════════════ */
+/* ====================================================== */
+
+.rd-sec-h {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.rd-sec-h__eye {
+  font-size: 0.56rem;
+  font-weight: 300;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.42);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rd-sec-h__eye::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--or-titre, var(--dore-popcorn));
+  flex-shrink: 0;
+}
+
+.rd-sec-h__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  color: var(--or-titre, var(--dore-popcorn));
+  text-shadow: 0 0 24px rgba(196, 160, 82, 0.22);
+  margin: 0;
+}
+
+/* ====================================================== */
+/* ══════════ 7. STEPS / PRÉPARATION ═════════════════════ */
+/* ====================================================== */
+
+.rd-steps-section {
+  /* flex column gap depuis .recipe-main-col */
+}
+
+.rd-steps-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(196, 160, 82, 0.55);
+  margin-bottom: 28px;
+}
+
+.rd-steps-count .icon {
+  color: rgba(196, 160, 82, 0.45);
+}
+
+.rd-step-item {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  position: relative;
+  margin-bottom: 0;
+}
+
+.rd-step-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 27px;
+  top: 54px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(196, 160, 82, 0.2),
+    rgba(65, 90, 119, 0.1)
+  );
+}
+
+.rd-step-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.rd-step-num {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, rgba(20, 38, 58, 0.92), rgba(15, 30, 48, 0.96));
+  border: 1.5px solid rgba(65, 90, 119, 0.38);
+  color: rgba(232, 232, 232, 0.4);
+  transition: all 0.3s ease;
+}
+
+.rd-step-item:hover .rd-step-num {
+  border-color: rgba(196, 160, 82, 0.55);
+  color: var(--or-titre, #c4a052);
+  box-shadow: 0 0 16px rgba(196, 160, 82, 0.15);
+}
+
+.rd-step-body {
+  padding: 10px 16px 32px 20px;
+  background: rgba(65, 90, 119, 0.06);
+  border-radius: 0 10px 10px 0;
+}
+
+.rd-step-title {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.88);
+  margin-bottom: 8px;
+}
+
+.rd-step-text {
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.82;
+  color: rgba(232, 232, 232, 0.85);
+}
+
+/* ====================================================== */
+/* ══════════ 8. (supprimé — voir section 9) ═════════════ */
+/* ====================================================== */
+
+
+/* ====================================================== */
+/* ══════════ 9. NAV ACTIONS ══════════════════════════════ */
+/* ====================================================== */
+
+.rd-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ====================================================== */
+/* ══════════ 10. SIDEBAR ═════════════════════════════════ */
+/* ====================================================== */
+
+.rd-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: sticky;
+  top: calc(var(--nav-h, 68px) + 24px);
+}
+
+/* ====================================================== */
+/* ══════════ 11. INGRÉDIENTS CARD ════════════════════════ */
+/* ====================================================== */
+
+/* Gold border trick : outer wrapper = gold gradient + 2px padding */
+.rd-ingredients {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #7a5a14 0%,
+    #b8882a 15%,
+    #c4a052 35%,
+    #d4a843 50%,
+    #f2c84b 65%,
+    #d4a843 80%,
+    #b8882a 95%
+  );
+  padding: 2px;
+  box-shadow:
+    0 18px 55px rgba(184, 136, 42, 0.25),
+    0 4px 18px rgba(0, 0, 0, 0.55);
+}
+
+.rd-ingredients__inner {
+  background: linear-gradient(135deg, #1a2e18 0%, #1e3420 40%, #162a14 70%, #1a2e18 100%);
+  border-radius: 16px;
+  padding: 24px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.rd-ingredients__inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle at top right, rgba(196, 160, 82, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.rd-ingredients__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rd-ingredients__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(196, 160, 82, 0.15);
+  border: 1px solid rgba(196, 160, 82, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--or-titre, #c4a052);
+  flex-shrink: 0;
+}
+
+.rd-ingredients__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: var(--dore-clair, #f2c84b);
+  line-height: 1;
+}
+
+.rd-ingredients__sub {
+  font-size: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.48);
+  margin-top: 2px;
+}
+
+.rd-ing-portions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.12);
+}
+
+.rd-ing-portions__label {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.55);
+}
+
+.rd-ing-portions__val {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--dore-clair, #f2c84b);
+}
+
+.rd-ing-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.rd-ing-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.08);
+  transition: padding-left 0.15s ease;
+}
+
+.rd-ing-item:last-child {
+  border-bottom: none;
+}
+
+.rd-ing-item:hover {
+  padding-left: 5px;
+}
+
+.rd-ing-item::before {
+  content: "◆";
+  color: rgba(196, 160, 82, 0.22);
+  font-size: 0.44rem;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.rd-ing-item:hover::before {
+  color: var(--dore-clair, #f2c84b);
+}
+
+.rd-ing-text {
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: rgba(255, 230, 160, 0.72);
+  line-height: 1.4;
+}
+
+/* ====================================================== */
+/* ══════════ 12. SIDEBAR CARDS ══════════════════════════ */
+/* ====================================================== */
+
+.rd-sidebar-card {
+  background: linear-gradient(135deg, rgba(13, 26, 42, 0.92), rgba(20, 38, 58, 0.88));
+  border: 1px solid rgba(65, 90, 119, 0.2);
+  border-radius: 16px;
+  padding: 20px 20px;
+}
+
+.rd-sc-title {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--or-titre, #c4a052);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Rating summary */
+.rd-rating-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.rd-rating-big {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 3rem;
+  letter-spacing: 0.04em;
+  color: var(--or-titre, #c4a052);
+  line-height: 1;
+}
+
+.rd-rating-stars-row {
+  display: flex;
+  gap: 4px;
+  font-size: 1.3rem;
+}
+
+.rd-rating-stars-row .rating-star {
+  color: rgba(196, 160, 82, 0.2);
+  transition: color 0.2s;
+}
+
+.rd-rating-stars-row .rating-star.is-active {
+  color: var(--dore-clair, #f2c84b);
+}
+
+.rd-rating-sub {
+  font-size: 0.62rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.3);
+}
+
+.rd-rating-cta {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Film card */
+.rd-movie-card .rd-movie-media {
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  aspect-ratio: 16 / 9;
+}
+
+.rd-movie-card .rd-movie-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.7);
+  transition: filter 0.3s ease;
+}
+
+.rd-movie-card:hover .rd-movie-media img {
+  filter: saturate(1);
+}
+
+.rd-movie-title {
+  font-family: var(--f-title, var(--font-h2-h6));
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--argent, #e8e8e8);
+  margin-bottom: 4px;
+}
+
+.rd-movie-meta {
+  font-size: 0.68rem;
+  font-weight: 300;
+  color: rgba(196, 160, 82, 0.5);
+  margin-bottom: 12px;
+}
+
+.rd-movie-link {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ====================================================== */
+/* ══════════ 13. RESPONSIVE ══════════════════════════════ */
+/* ====================================================== */
+
+@media (max-width: 1100px) {
+  .recipe-hero__content {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: auto;
+    padding: 40px var(--px, 2rem) 36px;
+  }
+
+  .rh-poster-wrap {
+    display: none;
+  }
+
+  .recipe-hero {
+    min-height: auto;
+  }
+
+  .recipe-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rd-sidebar {
+    position: static;
+  }
+
+  .rd-info-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .recipe-main {
+    padding: 32px 1rem 60px;
+  }
+
+  .recipe-main-col {
+    gap: 32px;
+  }
+
+  .rd-context {
+    flex-direction: column;
+  }
+
+  .rd-context__media {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+  }
+
+  .rd-info-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .rd-nav-actions .btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 540px) {
+  .bc-bar {
+    padding: 0 1rem;
+  }
+
+  .recipe-hero__content {
+    padding: 32px 1rem 28px;
+  }
+
+  .rh-title {
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
+  }
+
+  .rd-info-bar {
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: 10px;
+  }
+
+  .rd-ib-item:nth-child(2n) {
+    border-left: 1px solid rgba(65, 90, 119, 0.18);
+  }
+
+  .rd-ib-item:nth-child(2) ~ .rd-ib-item:nth-child(odd) {
+    border-left: none;
+    border-top: 1px solid rgba(65, 90, 119, 0.18);
+  }
+
+}
+
+/* ====================================================== */
+ *
  * Rôle : Styles spécifiques à la page de détail d'une recette.
  *        Gère la bannière, les colonnes (ingrédients, préparation), les avis, etc.
  *
@@ -1653,684 +2880,434 @@ body.lightbox-open {
   flex-wrap: wrap;
 }
 
-/* ================= RECIPE REVIEW BANNER ================= */
-.recipe-review-banner {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1.45fr 0.55fr;
-  align-items: stretch;
-  gap: 0;
-  border-radius: 15px;
-  overflow: hidden;
-  background: var(--red-cine);
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(198, 166, 100, 0.2),
-    0 4px 20px rgba(198, 166, 100, 0.15);
-  border: 1px solid rgba(236, 239, 241, 0.2);
-  margin: 0 auto;
-  max-width: 95%;
-}
+/* ====================================================== */
+/* ══════════ 9. BANNIÈRE D'AVIS (avis-banner) ═══════════ */
+/* ====================================================== */
 
-.review-banner__content {
-  position: relative;
-  z-index: 1;
-  padding: 2.25rem;
-}
-
-.review-banner__illustration {
-  position: relative;
-  overflow: visible;
-  background:
-    linear-gradient(
-      to left,
-      var(--dore-popcorn) 0 40%,
-      rgba(198, 166, 100, 0) 60%
-    ),
-    var(--dore-popcorn);
-  min-height: 260px;
-}
-
-.review-banner__illustration::after {
-  content: "";
-  position: absolute;
-  top: -18px;
-  bottom: -18px;
-  right: -15px;
-  width: 145%;
-  background: url("/images/background-comments-popcorn.png") right center /
-    contain no-repeat;
-  background-position: 92% center;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.review-banner__texts h2 {
-  font-family: var(--font-h2-h6);
-  color: var(--argent-ecran);
-  margin-bottom: 0;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-}
-
-.review-banner__subtitle {
-  color: var(--bleu-nuit);
-  margin-bottom: 1.1rem;
-}
-.review-banner__subtitle .subtitle--brand {
-  color: var(--argent-ecran);
-  font-weight: 700;
-}
-
-.review-banner__form {
+/* Conteneur vertical : carte dorée + formulaire/message en dessous */
+.avis-banner {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 16px;
 }
 
-.review-banner__form .form-row {
+/* ── Carte dorée d'appel à l'action ── */
+.avis-banner__card {
+  background: linear-gradient(145deg, #8B6914 0%, #B8882A 22%, #C4A052 42%, #D4A843 55%, #F2C84B 68%, #D4A843 80%, #B8882A 100%);
+  border-radius: 16px;
+  padding: 32px 36px;
+  box-shadow: 0 12px 40px rgba(184, 136, 42, 0.35), 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
+}
+
+.avis-banner__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 55px rgba(184, 136, 42, 0.45), 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Petit texte au-dessus du titre */
+.avis-banner__eyebrow {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(20, 10, 0, 0.5);
+  margin-bottom: 8px;
+}
+
+/* Titre principal — Bebas Neue, texte sombre sur fond doré */
+.avis-banner__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 2.4rem;
+  letter-spacing: 0.08em;
+  line-height: 0.92;
+  color: var(--bleu-nuit, #0d1a2a);
+  margin-bottom: 12px;
+}
+
+/* Description courte */
+.avis-banner__desc {
+  font-family: var(--f-body, 'Lato', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: rgba(20, 10, 0, 0.62);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Bloc de statistiques : nombre d'avis + note moyenne */
+.avis-banner__stats {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  flex-wrap: nowrap;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(20, 10, 0, 0.14);
 }
 
-.review-input {
-  height: 48px;
-  border-radius: 12px;
-  padding: 0 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  max-width: 380px;
-  width: 100%;
-  justify-self: start;
-  flex: 0 0 380px;
+/* Une statistique individuelle */
+.avis-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.review-input::placeholder,
-.review-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.9);
+/* Chiffre de la stat (ex: "2" ou "4.5") */
+.avis-stat__num {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--bleu-nuit, #0d1a2a);
 }
 
-.review-textarea {
-  width: 100%;
-  min-height: 110px;
+/* Label de la stat (ex: "Avis" ou "Note moy.") */
+.avis-stat__label {
+  font-family: var(--f-body, 'Lato', sans-serif);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(20, 10, 0, 0.5);
+}
+
+/* Séparateur vertical entre les deux stats */
+.avis-stat__sep {
+  width: 1px;
+  height: 32px;
+  background: rgba(20, 10, 0, 0.14);
+}
+
+/* ── Formulaire d'avis (utilisateur connecté) ── */
+.avis-form {
+  background: linear-gradient(135deg, rgba(13, 26, 42, 0.92), rgba(20, 38, 58, 0.88));
+  border: 1.5px solid rgba(196, 160, 82, 0.18);
   border-radius: 14px;
-  padding: 0.9rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  resize: vertical;
+  padding: 24px 28px 28px;
 }
 
-.review-submit {
-  align-self: end;
-  justify-self: start;
+/* Titre du formulaire */
+.avis-form__title {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--or-titre, #c4a052);
+  margin-bottom: 18px;
 }
 
-.review-stars {
-  display: contents;
-  border: 0;
-  margin: 0;
+/* Note en étoiles — fieldset sans bordure */
+.rd-star-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  border: none;
   padding: 0;
 }
-.review-stars__label {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--argent-ecran);
-  margin: 0 1rem 0 0;
-  padding: 0;
-  white-space: nowrap;
-  display: inline-flex;
+
+.rd-star-picker__label {
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.4);
+  margin-right: 8px;
+  display: flex;
   align-items: center;
+  gap: 6px;
 }
-.review-stars__value {
-  color: var(--bleu-nuit);
+
+/* Valeur numérique de la note (ex: "3/5") */
+.rd-stars-value {
+  color: var(--or-titre, #c4a052);
   font-weight: 700;
 }
 
-.stars-group {
+/* Groupe de 5 étoiles cliquables */
+.rd-stars-group {
   display: inline-flex;
-  gap: 0.5rem;
+  gap: 2px;
   align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  min-width: 200px;
-  margin-left: -1.25rem;
 }
 
-.stars-group input {
+/* Les inputs radio sont invisibles — les labels font office de boutons */
+.rd-stars-group input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-.stars-group label {
-  font-size: 2.1rem;
-  color: var(--bleu-nuit);
-  cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease,
-    text-shadow 0.2s ease,
-    filter 0.2s ease;
-  user-select: none;
-  text-shadow: 0 0 0.8px var(--ombre-intermediaire);
-  filter: drop-shadow(0 0 0.6px var(--ombre-intermediaire));
-}
-
-.stars-group label.is-active {
-  color: var(--dore-popcorn);
-  text-shadow: 0 0 1.2px var(--ombre-intermediaire-strong);
-  filter: drop-shadow(0 0 1.2px var(--ombre-intermediaire-strong));
-}
-
-.stars-group input:checked + label,
-.stars-group label:hover,
-.stars-group label:focus {
-  color: var(--dore-popcorn);
-  transform: translateY(-1px) scale(1.05);
-  text-shadow: 0 0 6px rgba(198, 166, 100, 0.5);
-}
-
-.review-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) auto;
-  gap: 0.9rem;
-  align-items: end;
-}
-
-.review-textarea {
-  resize: none;
-  line-height: 1.4;
-  min-height: calc(1.4em * 3 + 1.8rem);
-  max-height: calc(1.4em * 3 + 1.8rem);
-  max-width: 520px;
-  justify-self: start;
-}
-
-@media (max-width: 1024px) {
-  .recipe-review-banner {
-    grid-template-columns: 1fr;
-  }
-  .review-banner__illustration {
-    display: none;
-  }
-  .review-submit {
-    align-self: stretch;
-  }
-  .review-banner__form .form-row {
-    flex-wrap: wrap;
-  }
-  .review-actions {
-    grid-template-columns: 1fr;
-  }
-  .review-textarea,
-  .review-submit {
-    justify-self: stretch;
-  }
-}
-
-/* ==================== SECTION AVIS VISITEURS ====================== */
-.reviews-display-section {
-  margin: 3rem 0;
-  padding: 2rem;
-}
-
-.reviews-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--dore-popcorn);
-}
-
-.reviews-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--dore-popcorn);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--font-h2-h6);
-}
-
-.reviews-title i {
+.rd-stars-group label {
   font-size: 1.5rem;
-  color: var(--or-200);
+  cursor: pointer;
+  color: rgba(196, 160, 82, 0.2);
+  transition: all 0.15s ease;
+  line-height: 1;
+  user-select: none;
 }
 
-.reviews-count {
-  font-size: 1rem;
-  color: var(--argent-ecran);
-  margin: 0;
-  font-weight: 500;
+.rd-stars-group label:hover,
+.rd-stars-group input:checked + label {
+  color: var(--dore-clair, #f2c84b);
+  transform: scale(1.15);
 }
 
-.reviews-container {
+/* Zone de texte libre pour l'avis */
+.rd-review-textarea {
+  width: 100%;
+  min-height: 90px;
+  background: rgba(10, 18, 30, 0.7);
+  border: 1.5px solid rgba(65, 90, 119, 0.28);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--f-body, 'Lato', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--argent, #e8e8e8);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.22s ease;
+  line-height: 1.65;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.rd-review-textarea:focus {
+  border-color: rgba(196, 160, 82, 0.48);
+  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.06);
+}
+
+.rd-review-textarea::placeholder {
+  color: rgba(232, 232, 232, 0.2);
+}
+
+/* Pied du formulaire : compteur + bouton */
+.avis-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Compteur de caractères (ex: "42/500") */
+.avis-form__chars {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.25);
+}
+
+/* ── Message si l'utilisateur n'est pas connecté ── */
+.avis-locked {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 28px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(13, 26, 42, 0.92), rgba(20, 38, 58, 0.88));
+  border: 1.5px solid rgba(196, 160, 82, 0.15);
+  border-radius: 14px;
 }
 
-.reviews-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, auto);
-  gap: 1.5rem;
-  grid-auto-flow: dense;
+/* Icône cadenas */
+.avis-locked__icon {
+  font-size: 2rem;
+  opacity: 0.45;
 }
 
+/* Texte d'invitation à se connecter */
+.avis-locked__text {
+  font-family: var(--f-body, 'Lato', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.5);
+  line-height: 1.6;
+}
+
+/* Boutons Se connecter / Créer un compte */
+.avis-locked__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ====================================================== */
+/* ══════════ 10. AVIS DES VISITEURS (reviews-section) ══ */
+/* ====================================================== */
+
+/* Section conteneur */
+.reviews-section {
+  margin-top: 0;
+}
+
+/* Titre de section avec ligne décorative à droite */
+.reviews-section__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: var(--or-titre, #c4a052);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviews-section__title svg {
+  color: rgba(196, 160, 82, 0.6);
+  flex-shrink: 0;
+}
+
+/* Ligne décorative qui s'étend jusqu'au bord */
+.reviews-section__title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 160, 82, 0.28), transparent);
+}
+
+/* Liste verticale des avis */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* ── Carte d'un avis individuel ── */
 .review-card {
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(4px);
-}
-
-/* Grande carte (première) - Style doré */
-.review-card-large {
-  grid-column: span 2;
-  grid-row: span 1;
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    var(--or-200) 100%
-  );
-  border: 2px solid var(--or-300);
-  color: var(--bleu-nuit);
-}
-
-.review-card-large::before {
-  content: '"';
-  position: absolute;
-  top: -10px;
-  right: 20px;
-  font-size: 8rem;
-  font-family: serif;
-  color: rgba(13, 27, 42, 0.15);
-  line-height: 1;
-  z-index: 0;
-}
-
-/* Cartes moyennes - Style bleu nuit */
-.review-card-medium {
-  grid-column: span 1;
-  grid-row: span 1;
-  background: linear-gradient(
-    135deg,
-    rgba(13, 27, 42, 0.95) 0%,
-    rgba(30, 52, 76, 0.95) 100%
-  );
-  border: 2px solid var(--bleu-intermediaire);
-  color: var(--argent-ecran);
-  border-radius: 8px;
-  box-shadow: 0 10px 20px rgba(0, 2, 12, 0.35);
-}
-
-/* Petites cartes - Style blanc/gris clair */
-.review-card-small {
-  grid-column: span 1;
-  grid-row: span 1;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(245, 245, 245, 0.95) 100%
-  );
-  border: 2px solid var(--dore-popcorn);
-  color: var(--bleu-nuit);
+  background: linear-gradient(160deg, #0f1e30, #142234);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  border-radius: 14px;
+  padding: 16px 20px;
+  transition: border-color 0.25s ease;
 }
 
 .review-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(198, 166, 100, 0.4);
+  border-color: rgba(196, 160, 82, 0.4);
 }
 
-.review-card-large:hover {
-  box-shadow: 0 8px 25px rgba(198, 166, 100, 0.6);
-}
-
-.review-card-medium:hover {
-  border: 2px solid var(--dore-popcorn);
-  box-shadow:
-    0 10px 20px rgba(198, 166, 100, 0.5),
-    0 4px 6px rgba(0, 0, 0, 0.4);
-  transform: translateY(-3px) scale(1.02);
-  animation: cinema-glow 0.2s linear;
-}
-
-.review-card-small:hover {
-  border-color: var(--or-200);
-  box-shadow: 0 8px 25px rgba(198, 166, 100, 0.3);
-}
-
-.review-card-hidden {
+/* Avis masqué par défaut (visible après "Voir Plus") */
+.review-card--hidden {
   display: none;
 }
 
-.review-card-hidden.show {
+/* Animation d'apparition quand l'avis devient visible */
+.review-card--hidden.show {
   display: block;
-  animation: fadeInUp 0.4s ease forwards;
+  animation: reviewFadeIn 0.35s ease forwards;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes reviewFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.review-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-  gap: 1rem;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
-}
-
-.review-user-info {
+/* En-tête : auteur à gauche, note+date à droite */
+.review-card__header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex: 1;
-  min-width: 200px;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.review-user-avatar {
-  width: 50px;
-  height: 50px;
+/* Bloc auteur : avatar + nom */
+.review-card__author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Avatar circulaire avec icône utilisateur */
+.review-card__avatar {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
+  border: 1.5px solid rgba(196, 160, 82, 0.28);
+  background: rgba(65, 90, 119, 0.3);
+  color: rgba(196, 160, 82, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  border: 2px solid;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
 }
 
-/* Avatar selon le type de carte */
-.review-card-large .review-user-avatar {
-  background: var(--bleu-nuit);
-  color: var(--dore-popcorn);
-  border-color: var(--or-300);
-}
-
-.review-card-medium .review-user-avatar {
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    var(--or-200) 100%
-  );
-  color: var(--bleu-nuit);
-  border-color: var(--or-200);
-}
-
-.review-card-small .review-user-avatar {
-  background: linear-gradient(
-    135deg,
-    var(--dore-popcorn) 0%,
-    var(--or-200) 100%
-  );
-  color: var(--bleu-nuit);
-  border-color: var(--or-200);
-}
-
-.review-user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.review-user-name {
-  font-size: 1rem;
+/* Nom de l'auteur */
+.review-card__name {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.66rem;
   font-weight: 600;
-  margin: 0;
-  font-family: var(--font-h2-h6);
+  color: rgba(232, 232, 232, 0.88);
 }
 
-/* Nom selon le type de carte */
-.review-card-large .review-user-name {
-  color: var(--bleu-nuit);
-}
-
-.review-card-medium .review-user-name,
-.review-card-small .review-user-name {
-  color: var(--dore-popcorn);
-}
-
-.review-date {
-  font-size: 0.85rem;
-  opacity: 0.7;
-}
-
-/* Date selon le type de carte */
-.review-card-large .review-date {
-  color: var(--bleu-nuit);
-}
-
-.review-card-medium .review-date {
-  color: var(--argent-ecran);
-}
-
-.review-card-small .review-date {
-  color: var(--bleu-nuit);
-}
-
-.review-rating {
+/* Bloc méta : étoiles + date */
+.review-card__meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
+  gap: 8px;
 }
 
-.review-star {
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
+/* Rangée d'étoiles */
+.review-card__stars {
+  display: flex;
+  gap: 2px;
+  font-size: 0.8rem;
 }
 
-/* Étoiles selon le type de carte */
-.review-card-large .review-star {
-  color: rgba(13, 27, 42, 0.3);
+/* Étoile active — jaune dorée */
+.star--active {
+  color: var(--dore-clair, #f2c84b);
 }
 
-.review-card-large .review-star.active {
-  color: var(--bleu-nuit);
-  text-shadow: 0 0 4px rgba(13, 27, 42, 0.3);
+/* Étoile vide — gris transparent */
+.star--empty {
+  color: rgba(196, 160, 82, 0.2);
 }
 
-.review-card-medium .review-star,
-.review-card-small .review-star {
-  color: rgba(198, 166, 100, 0.3);
+/* Date de l'avis */
+.review-card__date {
+  font-size: 0.58rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.3);
 }
 
-.review-card-medium .review-star.active,
-.review-card-small .review-star.active {
-  color: var(--dore-popcorn);
-  text-shadow: 0 0 8px rgba(198, 166, 100, 0.6);
-  filter: drop-shadow(0 0 4px rgba(198, 166, 100, 0.4));
+/* Contenu textuel de l'avis */
+.review-card__text {
+  font-family: var(--f-body, 'Lato', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 300;
+  line-height: 1.72;
+  color: rgba(232, 232, 232, 0.72);
 }
 
-.review-rating-value {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-left: 0.25rem;
-}
-
-/* Valeur note selon le type de carte */
-.review-card-large .review-rating-value {
-  color: var(--bleu-nuit);
-}
-
-.review-card-medium .review-rating-value,
-.review-card-small .review-rating-value {
-  color: var(--dore-popcorn);
-}
-
-.review-card-body {
-  margin-top: 1rem;
-  position: relative;
-  z-index: 1;
-}
-
-.review-content-main {
-  font-size: 1.1rem;
-  line-height: 1.5;
-  margin: 0 0 1rem 0;
-  font-weight: 600;
-}
-
-/* Contenu principal selon le type de carte */
-.review-card-large .review-content-main {
-  color: var(--bleu-nuit);
-  font-size: 1.3rem;
-}
-
-.review-card-medium .review-content-main,
-.review-card-small .review-content-main {
-  color: var(--argent-ecran);
-}
-
-.review-card-small .review-content-main {
-  color: var(--bleu-nuit);
-}
-
-.review-content-detail {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* Contenu détaillé selon le type de carte */
-.review-card-large .review-content-detail {
-  color: var(--bleu-nuit);
-}
-
-.review-card-medium .review-content-detail {
-  color: var(--argent-ecran);
-}
-
-.btn-see-more-reviews {
-  align-self: center;
-  margin-top: 1rem;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
+/* Bouton "Voir Plus / Voir Moins" centré */
+.reviews-more {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border: 2px solid var(--dore-popcorn);
-}
-
-.btn-see-more-reviews:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(198, 166, 100, 0.4);
-}
-
-.btn-see-more-reviews i {
-  transition: transform 0.3s ease;
-}
-
-.btn-see-more-reviews.expanded i {
-  transform: rotate(180deg);
-}
-
-.btn-see-more-reviews.hidden {
-  display: none;
-}
-
-/* Responsive pour les avis */
-@media (max-width: 1024px) {
-  .reviews-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-  }
-
-  .review-card-large {
-    grid-column: span 2;
-  }
-
-  .review-card-medium,
-  .review-card-small {
-    grid-column: span 1;
-  }
+  gap: 8px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-  .reviews-display-section {
-    padding: 1.5rem;
-    margin: 2rem 0;
+  .avis-banner {
+    gap: 12px;
   }
 
-  .reviews-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .avis-banner__card {
+    padding: 24px 20px;
+    transform: none !important;
   }
 
-  .reviews-title {
-    font-size: 1.5rem;
+  .avis-banner__title {
+    font-size: 1.9rem;
   }
 
-  .reviews-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .review-card-large,
-  .review-card-medium,
-  .review-card-small {
-    grid-column: span 1;
-    grid-row: span 1;
-  }
-
-  .review-card {
-    padding: 1rem;
-  }
-
-  .review-card-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .review-user-info {
-    width: 100%;
-  }
-
-  .review-rating {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .review-content-main {
-    font-size: 1rem;
-  }
-
-  .review-card-large .review-content-main {
-    font-size: 1.1rem;
-  }
-
-  .review-card-large::before {
-    font-size: 5rem;
-    top: -5px;
-    right: 10px;
+  .avis-form,
+  .avis-locked {
+    padding: 20px;
   }
 }
 

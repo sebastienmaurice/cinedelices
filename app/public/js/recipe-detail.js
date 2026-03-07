@@ -1,52 +1,59 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Review banner stars (radio based): persistent selection + label update
-  const reviewStarGroups = document.querySelectorAll(".review-stars");
-  reviewStarGroups.forEach((fieldset) => {
-    const legend = fieldset.querySelector(".review-stars__label");
+  // ── Star picker (rd-star-picker) ──
+  const starPickers = document.querySelectorAll(".rd-star-picker");
+  starPickers.forEach((fieldset) => {
+    const valueDisplay = fieldset.querySelector(".rd-stars-value");
     const inputs = Array.from(fieldset.querySelectorAll("input[type='radio']"));
-    const labels = inputs
+    const items = inputs
       .map((input) => ({
         input,
         label: fieldset.querySelector(`label[for='${input.id}']`),
-        value: Number(input.value || input.id.replace(/\D+/g, "")),
+        value: Number(input.value),
       }))
       .filter(({ label }) => !!label)
-      // Assure un ordre ascendant 1..5 pour gérer l'activation
       .sort((a, b) => a.value - b.value);
 
     let selected = 0;
 
-    const render = (value) => {
-      const active = typeof value === "number" ? value : selected || 0;
-      labels.forEach(({ label, value }) => {
-        label.classList.toggle("is-active", value <= active);
+    const render = (hovered) => {
+      const active = typeof hovered === "number" ? hovered : selected;
+      items.forEach(({ label, value }) => {
+        label.style.color = value <= active
+          ? "var(--dore-clair, #f2c84b)"
+          : "rgba(196, 160, 82, 0.2)";
       });
-      if (legend) {
-        legend.innerHTML = `Ta note pour la recette <span class="review-stars__value">${active}/5</span> :`;
-      }
+      if (valueDisplay) valueDisplay.textContent = `${active}/5`;
     };
 
-    inputs.forEach((inputObj) => {
-      inputObj.addEventListener("change", () => {
-        selected = Number(inputObj.value);
+    inputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        selected = Number(input.value);
         render();
       });
     });
 
-    // Cliquer sur l'étoile (label) coche l'input et déclenche render
-    labels.forEach(({ label, input, value }) => {
+    items.forEach(({ label, input, value }) => {
       label.addEventListener("click", (e) => {
         e.preventDefault();
         input.checked = true;
-        input.dispatchEvent(new Event("change", { bubbles: true }));
+        selected = value;
+        render();
       });
-      // Aperçu au survol (facultatif, non persistant)
       label.addEventListener("mouseenter", () => render(value));
       label.addEventListener("mouseleave", () => render());
     });
 
     render(0);
   });
+
+  // ── Compteur de caractères (rd-review-textarea) ──
+  const reviewTextarea = document.querySelector(".rd-review-textarea");
+  const charCount = document.getElementById("charCount");
+  if (reviewTextarea && charCount) {
+    reviewTextarea.addEventListener("input", () => {
+      charCount.textContent = reviewTextarea.value.length;
+    });
+  }
 });
 
 // Smooth scroll to review banner from the top CTA
@@ -222,80 +229,36 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", syncHeight);
 });
 
-// Gestion du bouton "Voir Plus" pour afficher les avis supplémentaires
+// ── "Voir Plus" avis ──
 document.addEventListener("DOMContentLoaded", () => {
-  const seeMoreButton = document.getElementById("seeMoreReviews");
-  const hiddenReviews = document.querySelectorAll(".review-card-hidden");
+  const seeMoreBtn = document.getElementById("seeMoreReviews");
+  const extraReviews = document.querySelectorAll("[data-review-extra]");
 
-  if (!seeMoreButton || !hiddenReviews.length) {
-    return;
-  }
+  if (!seeMoreBtn || !extraReviews.length) return;
 
   let isExpanded = false;
 
-  seeMoreButton.addEventListener("click", () => {
+  seeMoreBtn.addEventListener("click", () => {
     if (!isExpanded) {
-      // Afficher tous les avis cachés avec animation
-      hiddenReviews.forEach((review, index) => {
-        setTimeout(() => {
-          review.classList.add("show");
-          // Réorganiser la grille pour les nouveaux avis
-          const grid = document.getElementById("reviewsList");
-          if (grid) {
-            // Calculer la position dans la grille
-            const totalIndex = index + 5; // 5 avis déjà affichés
-            const cardType =
-              totalIndex % 3 === 0
-                ? "large"
-                : totalIndex % 3 === 1
-                ? "medium"
-                : "small";
-            review.className = `review-card review-card-${cardType} show`;
-          }
-        }, index * 100); // Délai progressif pour l'animation
+      extraReviews.forEach((review, i) => {
+        setTimeout(() => review.classList.add("show"), i * 80);
       });
-
-      // Mettre à jour le bouton
-      seeMoreButton.classList.add("expanded");
-      const currentText = seeMoreButton.innerHTML;
-      const countMatch = currentText.match(/\((\d+)\)/);
-      if (countMatch) {
-        seeMoreButton.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m18 15-6-6-6 6"/></svg>
-          Voir Moins
-        `;
-      }
-
-      isExpanded = true;
-
-      // Scroll vers le premier avis affiché
-      setTimeout(() => {
-        hiddenReviews[0].scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-      }, 300);
-    } else {
-      // Masquer les avis supplémentaires
-      hiddenReviews.forEach((review) => {
-        review.classList.remove("show");
-      });
-
-      // Mettre à jour le bouton
-      seeMoreButton.classList.remove("expanded");
-      const totalHidden = hiddenReviews.length;
-      seeMoreButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m6 9 6 6 6-6"/></svg>
-        Voir Plus (${totalHidden})
+      seeMoreBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m18 15-6-6-6 6"/></svg>
+        Voir Moins
       `;
-
+      isExpanded = true;
+      setTimeout(() => {
+        extraReviews[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, extraReviews.length * 80 + 50);
+    } else {
+      extraReviews.forEach((review) => review.classList.remove("show"));
+      seeMoreBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m6 9 6 6 6-6"/></svg>
+        Voir Plus (${extraReviews.length})
+      `;
       isExpanded = false;
-
-      // Scroll vers le bouton
-      seeMoreButton.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
+      seeMoreBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   });
 });
