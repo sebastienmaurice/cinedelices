@@ -112,6 +112,28 @@ const homeController = {
         Movie.count({ where: { status: "approved" } }),
       ]);
 
+      // Top 3 contributeurs (classés par nombre de recettes approuvées, admins exclus)
+      const topContributors = await User.findAll({
+        attributes: [
+          "id",
+          "pseudo",
+          "picture",
+          [Sequelize.fn("COUNT", Sequelize.col("recipes.id")), "recipe_count"],
+        ],
+        where: { role: "user" },
+        include: [{
+          model: Recipe,
+          as: "recipes",
+          where: { status: "approved" },
+          attributes: [],
+          required: true,
+        }],
+        group: ["User.id"],
+        order: [[Sequelize.fn("COUNT", Sequelize.col("recipes.id")), "DESC"]],
+        limit: 3,
+        subQuery: false,
+      });
+
       // Rendre la vue avec les recettes
       res.render("home", {
         recipes,
@@ -123,6 +145,7 @@ const homeController = {
         totalUsers,
         totalRecipes,
         totalMovies,
+        topContributors: topContributors.map((u) => u.toJSON()),
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

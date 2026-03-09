@@ -81,11 +81,10 @@ authRouter.post(
   authController.deleteUserNotice
 );
 
-//! a passer en post
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.post("/register", validateUserRegister, authController.register);
 authRouter.post("/login", validateUserLogin , authController.login);
 authRouter.get("/avis", isLogged, authController.quote);
-authRouter.get("/logout", isLogged, authController.logout);
+authRouter.post("/logout", isLogged, authController.logout);
 
 export default authRouter;

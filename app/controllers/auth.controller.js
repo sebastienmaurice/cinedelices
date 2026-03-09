@@ -71,7 +71,7 @@ const authController = {
       // On stocke le token dans un cookie httpOnly
       res.cookie("token", token, {
         httpOnly: true, // Sécurise contre les attaques XSS
-        secure: false, // Mettre true pour etre en HTTPS
+        secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
 
@@ -122,7 +122,7 @@ const authController = {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
       });
 
@@ -265,6 +265,16 @@ const authController = {
       });
       const contributionBadge = getContributionBadge(validatedRecipeCount);
 
+      // Détection de montée en niveau de badge (cookie-based)
+      const currentBadgeLevel = contributionBadge ? contributionBadge.level : 0;
+      const lastBadgeLevel = parseInt(req.cookies?.lastBadgeLevel || "0", 10);
+      const badgeJustUpgraded = currentBadgeLevel > lastBadgeLevel;
+      res.cookie("lastBadgeLevel", currentBadgeLevel, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 an
+      });
+
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
@@ -287,6 +297,7 @@ const authController = {
         avgUserRating,
         validatedRecipeCount,
         contributionBadge,
+        badgeJustUpgraded,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

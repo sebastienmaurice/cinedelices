@@ -204,6 +204,7 @@
     const filmSynopsisInput = document.getElementById("film-synopsis");
     if (filmSynopsisInput && movie.overview) {
       filmSynopsisInput.value = movie.overview;
+      if (window.autoResizeSynopsis) window.autoResizeSynopsis();
     }
 
     // 2. Pré-remplir les champs cachés du formulaire unifié

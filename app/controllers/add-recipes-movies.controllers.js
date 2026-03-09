@@ -2,6 +2,8 @@ import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
+import sharp from "sharp";
+import fs from "fs";
 
 const addRecipesMoviesController = {
   // Page d'ajout de film et recette
@@ -105,9 +107,22 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      // Récupération du chemin de l'image uploadée (si présente)
+      // Récupération et validation de l'image uploadée (si présente)
       let imagePath = null;
       if (req.file) {
+        // Vérification du ratio 3:2 (tolérance ±15%)
+        const metadata = await sharp(req.file.path).metadata();
+        const ratio = metadata.width / metadata.height;
+        const TARGET_RATIO = 3 / 2;
+        const TOLERANCE = 0.15;
+        if (Math.abs(ratio - TARGET_RATIO) > TOLERANCE) {
+          fs.unlinkSync(req.file.path); // Supprimer le fichier non conforme
+          return res.status(400).render("add-recipes-movies", {
+            role: req.userRole,
+            error: true,
+            errorMessage: `L'image doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${metadata.width}×${metadata.height} px.`,
+          });
+        }
         // Chemin relatif pour l'affichage dans le HTML
         imagePath = `/images/recipes/${req.file.filename}`;
       }

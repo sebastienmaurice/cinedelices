@@ -440,13 +440,56 @@
     fillFormWithMovieData(movie);
     lastValidatedMovie = movie;
 
-    // Mettre à jour l'image : afficher l'image si film existant, sinon image par défaut
-    if (movie.isLocal && movie.id) {
-      // Film existant : récupérer ses données complètes pour avoir l'image
-      updateFilmImage(movie);
-    } else {
-      // Nouveau film : image par défaut
-      updateFilmImage(null);
+    // Verrouiller les champs dont les données viennent de TMDB (lecture seule)
+    setFieldsLocked(true);
+
+    // Mettre à jour l'affichage du poster card (les .value assignés programmatiquement
+    // ne déclenchent pas les événements input/blur de film-preview-handler.js)
+    if (window.updateFilmDisplayFromPreview) {
+      window.updateFilmDisplayFromPreview();
+    }
+
+    // Masquer les textes EJS statiques qui ne sont plus pertinents
+    const posterEmpty = document.getElementById("arm-posterEmpty");
+    if (posterEmpty) posterEmpty.style.display = "none";
+    const posterHint = document.querySelector(".arm-hint.arm-hint--italic");
+    if (posterHint) posterHint.style.display = "none";
+
+    // Mettre à jour l'image : passer le movie dans tous les cas
+    // film-image-utils.js gère : poster_path (TMDB), id (local), null (défaut)
+    updateFilmImage(movie);
+
+    // Pour les films TMDB : fetcher les détails complets (synopsis + poster HD)
+    if (!movie.isLocal && movie.tmdb_id) {
+      const type = movie.type || null;
+      const url = type
+        ? `/movies/get-tmdb-info/${movie.tmdb_id}?type=${encodeURIComponent(type)}`
+        : `/movies/get-tmdb-info/${movie.tmdb_id}`;
+
+      fetch(url)
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data.success || !data.movie) return;
+
+          // Remplir le textarea synopsis avec la data TMDB
+          const synopsisTextarea = document.getElementById("film-synopsis");
+          if (synopsisTextarea && data.movie.overview) {
+            synopsisTextarea.value = data.movie.overview;
+            if (window.autoResizeSynopsis) window.autoResizeSynopsis();
+          }
+          // Synchroniser le poster card (display-film-synopsis lit le textarea via updateFilmDisplay)
+          if (window.updateFilmDisplayFromPreview) {
+            window.updateFilmDisplayFromPreview();
+          }
+
+          // Mettre à jour le poster avec l'URL HD si disponible
+          const filmImg = document.querySelector(".film-selected-image img");
+          if (filmImg && data.movie.poster) {
+            filmImg.src = data.movie.poster;
+            filmImg.alt = `Affiche du film ${data.movie.title_fr || movie.title || ""}`;
+          }
+        })
+        .catch((err) => console.warn("⚠️ Détails TMDB non récupérés:", err));
     }
 
     // Mettre à jour l'URL pour supprimer les paramètres tmdb_id et title
@@ -588,6 +631,51 @@
   }
 
   /**
+   * Verrouiller / déverrouiller les champs TMDB (année, genre, synopsis)
+   * Les données TMDB sont fiables → pas besoin que l'user les modifie
+   */
+  function setFieldsLocked(locked) {
+    const yearField    = document.getElementById("arm-field-year");
+    const genreField   = document.getElementById("arm-field-genre");
+    const synopsisField = document.getElementById("arm-field-synopsis");
+    const synopsisTextarea = document.getElementById("film-synopsis");
+
+    if (filmYearInput) {
+      if (locked) {
+        filmYearInput.setAttribute("readonly", "readonly");
+      } else {
+        filmYearInput.removeAttribute("readonly");
+      }
+    }
+
+    if (filmGenreSelect) {
+      if (locked) {
+        filmGenreSelect.classList.add("arm-select--locked");
+      } else {
+        filmGenreSelect.classList.remove("arm-select--locked");
+      }
+    }
+
+    if (synopsisTextarea) {
+      if (locked) {
+        synopsisTextarea.setAttribute("readonly", "readonly");
+      } else {
+        synopsisTextarea.removeAttribute("readonly");
+      }
+    }
+
+    // Badge TMDB visible quand verrouillé
+    [yearField, genreField, synopsisField].forEach((el) => {
+      if (!el) return;
+      if (locked) {
+        el.classList.add("arm-field--tmdb");
+      } else {
+        el.classList.remove("arm-field--tmdb");
+      }
+    });
+  }
+
+  /**
    * Réinitialiser la validation
    */
   function resetValidation() {
@@ -596,6 +684,7 @@
     if (titleFRHidden) titleFRHidden.value = "";
     if (tmdbYearHidden) tmdbYearHidden.value = "";
     if (tmdbGenreHidden) tmdbGenreHidden.value = "";
+    setFieldsLocked(false);
   }
 
   // Initialiser au chargement du DOM

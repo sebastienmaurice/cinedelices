@@ -17,27 +17,86 @@
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/add-recipes-movies.css" />
   </head>
-  <body>
+  <body class="arm-full-bleed">
     <!-- HEADER -->
     <%- include("partials/header") %>
 
-    <!-- MAIN -->
-    <main class="add-recipe-page">
-      <!-- HERO -->
-      <header class="add-recipe-hero">
-        <div class="add-recipe-hero__content">
-          <p class="add-recipe-hero__eyebrow">Contribution</p>
-          <h1 class="add-recipe-hero__title">Ajouter un film & une recette</h1>
-          <p class="add-recipe-hero__subtitle">
-            Partagez votre passion du cinéma et de la cuisine avec la communauté
-            Ciné Délices.
+    <!-- ═══════════ HERO CINÉMA FULL-WIDTH ═══════════ -->
+    <section class="arm-hero">
+      <!-- Couche décorative clippée séparément pour que les dropdowns ne soient pas masqués -->
+      <div class="arm-hero__deco" aria-hidden="true">
+        <div class="arm-hero__bg"></div>
+        <div class="arm-hero__reel arm-hero__reel--1"></div>
+        <div class="arm-hero__reel arm-hero__reel--2"></div>
+        <div class="arm-hero__scanlines"></div>
+        <div class="arm-hero__vignette"></div>
+      </div>
+      <div class="arm-hero__content">
+        <div class="arm-hero__top">
+          <p class="arm-hero__breadcrumb">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            Contribution · Communauté
           </p>
+          <h1 class="arm-hero__title">AJOUTER UN FILM &amp; <em>UNE RECETTE</em></h1>
+          <p class="arm-hero__sub">Partagez votre passion du cinéma et de la cuisine avec la communauté Ciné Délices.</p>
         </div>
-      </header>
+
+        <div class="arm-hero__bottom">
+          <!-- Tags — classes officielles moodboard v3 -->
+          <div class="arm-hero__tags" aria-hidden="true">
+            <span class="tag tag--or">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/><path d="M17 3v18"/></svg>
+              Film &amp; Série
+            </span>
+            <span class="tag tag--rouge">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              Recette inspirée
+            </span>
+            <span class="tag tag--bleu">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Communauté
+            </span>
+            <span class="tag tag--vert">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              Contribution libre
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ STEPPER STICKY ═══════════ -->
+    <div class="arm-stepper-wrap">
+      <nav class="arm-stepper" aria-label="Progression du formulaire">
+        <a class="arm-step arm-step--active" href="#arm-s1">
+          <div class="arm-step__bubble">1</div>
+          <div class="arm-step__info">
+            <span class="arm-step__label">Étape 1 / 3</span>
+            <span class="arm-step__name">Mon film ou ma série</span>
+          </div>
+        </a>
+        <a class="arm-step" href="#arm-s2">
+          <div class="arm-step__bubble">2</div>
+          <div class="arm-step__info">
+            <span class="arm-step__label">Étape 2 / 3</span>
+            <span class="arm-step__name">Ma recette</span>
+          </div>
+        </a>
+        <a class="arm-step" href="#arm-s3">
+          <div class="arm-step__bubble">3</div>
+          <div class="arm-step__info">
+            <span class="arm-step__label">Étape 3 / 3</span>
+            <span class="arm-step__name">Ingrédients &amp; préparation</span>
+          </div>
+        </a>
+      </nav>
+    </div>
+
+    <!-- ═══════════ MAIN ═══════════ -->
+    <main class="arm-page">
 
       <!-- ALERTES -->
-      <% if (typeof success !== "undefined" && success && typeof successMessage
-      !== "undefined" && successMessage) { %>
+      <% if (typeof success !== "undefined" && success && typeof successMessage !== "undefined" && successMessage) { %>
       <div class="alert alert-success alert-success--with-actions">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
         <div class="alert__content">
@@ -48,14 +107,14 @@
           </div>
         </div>
       </div>
-      <% } %> <% if (typeof error !== "undefined" && error && typeof
-      errorMessage !== "undefined" && errorMessage) { %>
+      <% } %>
+      <% if (typeof error !== "undefined" && error && typeof errorMessage !== "undefined" && errorMessage) { %>
       <div class="alert alert-error">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
         <p><%= errorMessage %></p>
       </div>
-      <% } %> <% if (typeof duplicateWarning !== "undefined" &&
-      duplicateWarning) { %>
+      <% } %>
+      <% if (typeof duplicateWarning !== "undefined" && duplicateWarning) { %>
       <div class="alert alert-info">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         <p>
@@ -65,407 +124,805 @@
       </div>
       <% } %>
 
-      <!-- CARD 1 : Film -->
-      <section class="add-recipe-card">
-        <div class="add-recipe-card__header">
-          <h2>1. Mon film ou ma série</h2>
-          <p class="add-recipe-card__subtitle">
-            Renseignez le film ou la série qui inspire votre recette.
-          </p>
-        </div>
+      <!-- ══════════════════════════════════════════
+         SECTION 1 — MON FILM
+         Layout 2 colonnes : champs | poster preview
+      ══════════════════════════════════════════ -->
+      <article class="arm-card" id="arm-s1" aria-labelledby="arm-s1-title">
+        <span class="arm-card__num" aria-hidden="true">01</span>
+        <div class="arm-body">
 
-        <form id="film-preview-form" method="post" onsubmit="return false;">
-          <div class="add-recipe-form-row">
-            <!-- Titre -->
-            <div class="add-recipe-field add-recipe-field--title">
-              <label for="film-name" class="add-recipe-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-                <span>Nom du film ou de la série</span>
-              </label>
-              <div class="film-name-input-wrapper">
-                <input type="text" name="title" id="film-name"
-                class="add-recipe-input" spellcheck="true"
-                lang="fr en" autocomplete="off" <% if (typeof newMovie ===
-                "undefined" || !newMovie || newMovie.length === 0) { %>
-                placeholder="Ex: Retour vers le futur, Breaking Bad..." <% }
-                else { %> placeholder="<%= newMovie.title %>" <% } %> value=""
-                />
-                <!-- Dropdown pour les résultats de recherche -->
-                <div
-                  id="film-search-results"
-                  class="film-search-results"
-                  aria-live="polite"
-                ></div>
-              </div>
-            </div>
+          <form id="film-preview-form" method="post" onsubmit="return false;">
+            <div class="arm-s1-layout">
 
-            <!-- Année -->
-            <div class="add-recipe-field add-recipe-field--year">
-              <label for="film-year" class="add-recipe-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                <span>Année</span>
-              </label>
-              <input type="number" name="year" id="film-year"
-              class="add-recipe-input" min="1888" max="<%= new
-              Date().getFullYear() + 5 %>" <% if (typeof newMovie ===
-              "undefined" || !newMovie || newMovie.length === 0) { %>
-              placeholder="Ex: 1985" <% } else { %> placeholder="<%=
-              newMovie.year %>" <% } %> value="" />
-            </div>
+              <!-- ── Champs formulaire ── -->
+              <div class="arm-s1-fields">
 
-            <!-- Genre -->
-            <div class="add-recipe-field add-recipe-field--genre">
-              <label for="film-genre" class="add-recipe-label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
-                <span>Genre</span>
-              </label>
-              <select
-                name="genre"
-                id="film-genre"
-                class="add-recipe-select"
-              >
-                <% if (typeof newMovie === "undefined" || !newMovie ||
-                newMovie.length === 0) { %>
-                <option value="">Genre</option>
-                <% } else { %>
-                <option value=""><%= newMovie.genre %></option>
-                <% } %>
+                <div class="arm-hd">
+                  <div class="arm-hd__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                  </div>
+                  <div class="arm-hd__text">
+                    <span class="arm-hd__step">Étape 1</span>
+                    <h2 class="arm-hd__title" id="arm-s1-title">MON FILM OU MA SÉRIE</h2>
+                    <p class="arm-hd__desc">
+                      Renseignez l'œuvre qui inspire votre recette. Titre, année,
+                      genre — ces informations apparaîtront sur votre fiche.
+                    </p>
+                  </div>
+                  <div class="arm-hd__rule"></div>
+                </div>
 
-                <option value="action">Action</option>
-                <option value="animation">Animation</option>
-                <option value="aventure">Aventure</option>
-                <option value="comédie">Comédie</option>
-                <option value="crime">Crime</option>
-                <option value="documentaire">Documentaire</option>
-                <option value="drame">Drame</option>
-                <option value="familial">Familial</option>
-                <option value="fantastique">Fantastique</option>
-                <option value="guerre">Guerre</option>
-                <option value="histoire">Histoire</option>
-                <option value="horreur">Horreur</option>
-                <option value="musique">Musique</option>
-                <option value="mystère">Mystère</option>
-                <option value="romance">Romance</option>
-                <option value="science-fiction">Science-Fiction</option>
-                <option value="thriller">Thriller</option>
-                <option value="téléfilm">Téléfilm</option>
-                <option value="western">Western</option>
-              </select>
-            </div>
-          </div>
+                <!-- Titre · Année · Genre -->
+                <div class="arm-row arm-row--film">
+                  <div class="arm-field">
+                    <label for="film-name" class="arm-label">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                      Titre
+                      <span class="arm-req">*</span>
+                    </label>
+                    <div class="film-name-input-wrapper">
+                      <input
+                        type="text"
+                        name="title"
+                        id="film-name"
+                        class="arm-input"
+                        spellcheck="true"
+                        lang="fr en"
+                        autocomplete="off"
+                        <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+                        placeholder="Ex: Retour vers le futur, Breaking Bad..."
+                        <% } else { %>
+                        placeholder="<%= newMovie.title %>"
+                        <% } %>
+                        value=""
+                      />
+                      <div
+                        id="film-search-results"
+                        class="film-search-results"
+                        aria-live="polite"
+                      ></div>
+                    </div>
+                    <span class="arm-hint">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                      Film, série, anime, documentaire…
+                    </span>
+                  </div>
 
-          <!-- Synopsis du film : visible uniquement pour les admins -->
-          <% if (typeof role !== "undefined" && role === "admin") { %>
-          <div class="add-recipe-field add-recipe-field--synopsis">
-            <label for="film-synopsis" class="add-recipe-label">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-              <span>Synopsis</span>
-            </label>
-            <textarea
-              name="synopsis"
-              id="film-synopsis"
-              class="add-recipe-textarea"
-              rows="2"
-              spellcheck="true"
-              lang="fr"
-              maxlength="500"
-              placeholder="Résumé court du film ou de la série..."
-            ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
-          </div>
-          <% } %>
+                  <div class="arm-field arm-field--year" id="arm-field-year">
+                    <label for="film-year" class="arm-label">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                      Année
+                      <span class="arm-req">*</span>
+                      <span class="arm-label__source">TMDB</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="year"
+                      id="film-year"
+                      class="arm-input"
+                      min="1888"
+                      max="<%= new Date().getFullYear() + 5 %>"
+                      <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+                      placeholder="Ex: 1985"
+                      <% } else { %>
+                      placeholder="<%= newMovie.year %>"
+                      <% } %>
+                      value=""
+                    />
+                  </div>
 
-          <div class="add-recipe-card__footer">
-            <p>
-              Une fois votre film ou série renseigné, vous pourrez passer à
-              l'ajout de votre recette inspirée du grand écran.
-            </p>
-            <% if (typeof newMovie === "undefined" || !newMovie ||
-            newMovie.length === 0) { %>
-            <button class="btn btn--hero add-recipe-card__btn">
-              Je passe à la recette
-            </button>
-            <% } %>
-          </div>
-        </form>
-      </section>
+                  <div class="arm-field arm-field--genre" id="arm-field-genre">
+                    <label for="film-genre" class="arm-label">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+                      Genre
+                      <span class="arm-req">*</span>
+                      <span class="arm-label__source">TMDB</span>
+                    </label>
+                    <select name="genre" id="film-genre" class="arm-select">
+                      <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+                      <option value="" disabled selected>Choisir…</option>
+                      <% } else { %>
+                      <option value=""><%= newMovie.genre %></option>
+                      <% } %>
+                      <option value="action">Action</option>
+                      <option value="animation">Animation</option>
+                      <option value="aventure">Aventure</option>
+                      <option value="comédie">Comédie</option>
+                      <option value="crime">Crime</option>
+                      <option value="documentaire">Documentaire</option>
+                      <option value="drame">Drame</option>
+                      <option value="familial">Familial</option>
+                      <option value="fantastique">Fantastique</option>
+                      <option value="guerre">Guerre</option>
+                      <option value="histoire">Histoire</option>
+                      <option value="horreur">Horreur</option>
+                      <option value="musique">Musique</option>
+                      <option value="mystère">Mystère</option>
+                      <option value="romance">Romance</option>
+                      <option value="science-fiction">Science-Fiction</option>
+                      <option value="thriller">Thriller</option>
+                      <option value="téléfilm">Téléfilm</option>
+                      <option value="western">Western</option>
+                    </select>
+                  </div>
+                </div>
 
-      <!-- CARD 2 : Recette -->
-      <section class="add-recipe-card">
-        <div class="add-recipe-card__header">
-          <h2>2. Ma recette</h2>
-          <p class="add-recipe-card__subtitle">
-            Décrivez votre recette inspirée du film pour la partager avec la
-            communauté.
-          </p>
-        </div>
-
-        <form
-          id="unified-form"
-          action="/add-recipes-movies/movie-and-recipe"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <!-- CHAMPS CACHÉS -->
-          <input type="hidden" name="filmId" id="filmId-hidden" value="<% if
-          (typeof newMovie !== "undefined" && newMovie && newMovie.id) { %><%=
-          newMovie.id %><% } %>" />
-          <input type="hidden" name="title" id="film-title-hidden" value="" />
-          <input type="hidden" name="year" id="film-year-hidden" value="" />
-          <input type="hidden" name="genre" id="film-genre-hidden" value="" />
-          <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="" />
-          <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
-          <input type="hidden" name="titleFR" id="titleFR-hidden" value="" />
-          <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="" />
-          <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="" />
-
-          <!-- Grille 3 colonnes -->
-          <div class="add-recipe-grid">
-            <!-- Film sélectionné -->
-            <div class="add-recipe-subcard">
-              <h3>Film sélectionné</h3>
-              <div class="film-selected-image">
-                <% let hasMovieWithImage = false; if (typeof newMovie !==
-                "undefined" && newMovie && (newMovie.cardPath ||
-                newMovie.picture) && typeof (newMovie.cardPath ||
-                newMovie.picture) === "string" && (newMovie.cardPath ||
-                newMovie.picture).trim() !== "") { hasMovieWithImage = true; }
-                %> <% if (hasMovieWithImage) { %>
-                <img
-                  src="<%= newMovie.cardPath || newMovie.picture %>"
-                  alt="Image du film ajouté par un admin Ciné Délices"
-                />
-                <% } else { %>
-                <img
-                  src="/images/image-default-movie.jpg"
-                  alt="Image de film par defaut"
-                />
-                <% } %>
-              </div>
-              <% if (!hasMovieWithImage) { %>
-              <p class="add-recipe-hint">
-                * L'image de votre film sera intégrée prochainement par Ciné
-                Délices
-              </p>
-              <% } %>
-              <div class="film-info-box">
-                <h4>Les infos du film</h4>
-                <% if (typeof newMovie === "undefined" || !newMovie ||
-                newMovie.length === 0) { %>
-                <ul>
-                  <li id="display-film-name">titre</li>
-                  <li id="display-film-genre">genre</li>
-                  <li id="display-film-year">année</li>
-                </ul>
-                <p id="display-film-synopsis" class="film-info-synopsis">synopsis</p>
-                <% } else { %>
-                <ul>
-                  <li id="display-film-name"><%= newMovie.title %></li>
-                  <li id="display-film-genre"><%= newMovie.genre %></li>
-                  <li id="display-film-year"><%= newMovie.year %></li>
-                </ul>
-                <p id="display-film-synopsis" class="film-info-synopsis"><%= newMovie.synopsis || 'synopsis' %></p>
-                <% } %>
-              </div>
-            </div>
-
-            <!-- Détails recette -->
-            <div class="add-recipe-subcard">
-              <h3>Détails de la recette</h3>
-              <p class="add-recipe-subcard__desc">
-                Partagez votre recette inspirée du film ou de la série que vous
-                avez sélectionné.
-              </p>
-              <div class="add-recipe-subcard__fields">
-                <div class="add-recipe-field">
-                  <label for="recipe-name" class="add-recipe-label">Nom de la recette</label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="recipe-name"
-                    class="add-recipe-input"
-                    placeholder="Le nom de la recette"
-                    value=""
+                <!-- Synopsis -->
+                <div class="arm-field" id="arm-field-synopsis">
+                  <label for="film-synopsis" class="arm-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                    Synopsis
+                    <span class="arm-label__source">TMDB</span>
+                  </label>
+                  <textarea
+                    name="synopsis"
+                    id="film-synopsis"
+                    class="arm-textarea"
+                    rows="3"
                     spellcheck="true"
                     lang="fr"
-                  />
+                    maxlength="800"
+                    placeholder="Résumé court du film ou de la série — rempli automatiquement depuis TMDB…"
+                  ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
                 </div>
-                <div class="add-recipe-field">
-                  <label for="recipe-servings" class="add-recipe-label">Portions</label>
-                  <input
-                    type="number"
-                    name="servings"
-                    id="recipe-servings"
-                    class="add-recipe-input"
-                    min="1"
-                    step="1"
-                    placeholder="Pour combien de personnes"
-                    value=""
-                  />
+
+                <!-- CTA -->
+                <div class="arm-cta-row">
+                  <span class="arm-cta-row__hint">Renseignez votre film pour continuer</span>
+                  <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+                  <button class="btn btn--hero arm-cta-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                    Je passe à la recette
+                  </button>
+                  <% } %>
                 </div>
-                <div class="add-recipe-field">
-                  <label for="recipe-time" class="add-recipe-label">Temps (min)</label>
-                  <input
-                    type="number"
-                    name="time"
-                    id="recipe-time"
-                    class="add-recipe-input"
-                    min="1"
-                    step="1"
-                    placeholder="Temps de préparation en minutes"
-                    value=""
-                  />
+              </div>
+
+              <!-- ── Poster preview droite ── -->
+              <div class="arm-poster-wrap">
+                <p class="arm-poster__label">Aperçu de votre fiche film</p>
+                <div class="arm-poster-card" id="arm-posterCard">
+                  <%
+                    let hasMovieWithImage = false;
+                    if (
+                      typeof newMovie !== "undefined" &&
+                      newMovie &&
+                      (newMovie.cardPath || newMovie.picture) &&
+                      typeof (newMovie.cardPath || newMovie.picture) === "string" &&
+                      (newMovie.cardPath || newMovie.picture).trim() !== ""
+                    ) {
+                      hasMovieWithImage = true;
+                    }
+                  %>
+                  <div class="arm-poster-img film-selected-image">
+                    <% if (hasMovieWithImage) { %>
+                    <img
+                      src="<%= newMovie.cardPath || newMovie.picture %>"
+                      alt="Affiche du film ajouté"
+                    />
+                    <% } else { %>
+                    <img
+                      src="/images/image-default-movie.jpg"
+                      alt="Image de film par défaut"
+                    />
+                    <% } %>
+                    <div class="arm-poster-ph" id="arm-posterPh">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/><path d="M17 3v18"/></svg>
+                      <span>Affiche du film</span>
+                    </div>
+                    <div class="arm-poster-tz">
+                      <span class="arm-poster-name" id="display-film-name">
+                        <% if (typeof newMovie !== "undefined" && newMovie && newMovie.title) { %><%= newMovie.title %><% } else { %>—<% } %>
+                      </span>
+                      <span class="arm-poster-year" id="display-film-year">
+                        <% if (typeof newMovie !== "undefined" && newMovie && newMovie.year) { %><%= newMovie.year %><% } %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="arm-poster-body">
+                    <div class="arm-poster-genre-row" id="display-film-genre">
+                      <% if (typeof newMovie !== "undefined" && newMovie && newMovie.genre) { %>
+                      <span class="arm-genre-badge"><%= newMovie.genre %></span>
+                      <% } %>
+                    </div>
+                    <p id="display-film-synopsis" class="arm-poster-synopsis">
+                      <% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %>
+                    </p>
+                    <% if (!hasMovieWithImage) { %>
+                    <p class="arm-hint arm-hint--italic">
+                      * L'affiche sera ajoutée par Ciné Délices
+                    </p>
+                    <% } %>
+                    <p class="arm-poster-empty" id="arm-posterEmpty">
+                      <% if (typeof newMovie === "undefined" || !newMovie || !newMovie.title) { %>
+                      Remplissez les champs pour prévisualiser
+                      <% } %>
+                    </p>
+                  </div>
                 </div>
-                <div class="add-recipe-field">
-                  <label for="category" class="add-recipe-label">Catégorie</label>
-                  <select name="category" id="category" class="add-recipe-select">
-                    <option value="">Catégorie</option>
-                    <option value="apéritif">Apéritif</option>
-                    <option value="entrée">Entrée</option>
-                    <option value="plat">Plat</option>
-                    <option value="dessert">Dessert</option>
-                    <option value="boisson">Boisson</option>
-                    <option value="autres">Autres</option>
-                  </select>
+              </div>
+
+            </div><!-- /arm-s1-layout -->
+          </form>
+
+        </div>
+      </article>
+
+      <!-- ══════════════════════════════════════════
+         SECTIONS 2, 3 & TICKET — dans unified-form
+      ══════════════════════════════════════════ -->
+      <form
+        id="unified-form"
+        action="/add-recipes-movies/movie-and-recipe"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <!-- CHAMPS CACHÉS -->
+        <input type="hidden" name="filmId" id="filmId-hidden" value="<% if (typeof newMovie !== 'undefined' && newMovie && newMovie.id) { %><%= newMovie.id %><% } %>" />
+        <input type="hidden" name="title" id="film-title-hidden" value="" />
+        <input type="hidden" name="year" id="film-year-hidden" value="" />
+        <input type="hidden" name="genre" id="film-genre-hidden" value="" />
+        <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="" />
+        <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
+        <input type="hidden" name="titleFR" id="titleFR-hidden" value="" />
+        <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="" />
+        <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="" />
+
+        <!-- ══════════════════════════════════════════
+           SECTION 2 — MA RECETTE
+        ══════════════════════════════════════════ -->
+        <article class="arm-card" id="arm-s2" aria-labelledby="arm-s2-title">
+          <span class="arm-card__num" aria-hidden="true">02</span>
+          <div class="arm-body">
+
+            <div class="arm-hd">
+              <div class="arm-hd__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              </div>
+              <div class="arm-hd__text">
+                <span class="arm-hd__step">Étape 2</span>
+                <h2 class="arm-hd__title" id="arm-s2-title">MA RECETTE</h2>
+                <p class="arm-hd__desc">
+                  Décrivez votre recette, choisissez la catégorie et ajoutez votre photo.
+                </p>
+              </div>
+              <div class="arm-hd__rule"></div>
+            </div>
+
+
+
+            <!-- Nom de la recette -->
+            <div class="arm-field">
+              <label for="recipe-name" class="arm-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                Nom de la recette
+                <span class="arm-req">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="recipe-name"
+                class="arm-input"
+                placeholder="Ex : Le Ragoût de l'Explorateur, Tarte des Sorcières…"
+                value=""
+                spellcheck="true"
+                lang="fr"
+              />
+              <span class="arm-hint">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                Un nom évocateur qui rappelle le film ou la scène.
+              </span>
+            </div>
+
+            <!-- Méta : Portions | Temps | Catégorie | Difficulté -->
+            <div class="arm-row arm-row--meta">
+
+              <div class="arm-field">
+                <label class="arm-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  Portions
+                </label>
+                <div class="arm-portions-ctrl" id="arm-portionsCtrl">
+                  <button type="button" class="arm-portions-btn" id="arm-portionsMinus" aria-label="Moins">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                  <span class="arm-portions-val" id="arm-portionsVal">4</span>
+                  <input type="hidden" name="servings" id="recipe-servings" value="4" />
+                  <button type="button" class="arm-portions-btn" id="arm-portionsPlus" aria-label="Plus">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
                 </div>
-                <div class="add-recipe-field">
-                  <label for="difficulty" class="add-recipe-label">Difficulté</label>
-                  <select name="difficulty" id="difficulty" class="add-recipe-select">
-                    <option value="">Difficulté</option>
-                    <option value="Facile">Facile</option>
-                    <option value="Moyenne">Moyenne</option>
-                    <option value="Difficile">Difficile</option>
-                  </select>
-                </div>
+              </div>
+
+              <div class="arm-field">
+                <label for="recipe-time" class="arm-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Temps (min)
+                  <span class="arm-req">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="time"
+                  id="recipe-time"
+                  class="arm-input"
+                  min="1"
+                  step="1"
+                  placeholder="45"
+                  value=""
+                />
+              </div>
+
+              <div class="arm-field">
+                <label for="category" class="arm-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                  Catégorie
+                  <span class="arm-req">*</span>
+                </label>
+                <select name="category" id="category" class="arm-select">
+                  <option value="" disabled selected>Choisir…</option>
+                  <option value="apéritif">Apéritif</option>
+                  <option value="entrée">Entrée</option>
+                  <option value="plat">Plat</option>
+                  <option value="dessert">Dessert</option>
+                  <option value="boisson">Boisson</option>
+                  <option value="autres">Autres</option>
+                </select>
+              </div>
+
+              <div class="arm-field">
+                <label for="difficulty" class="arm-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                  Difficulté
+                  <span class="arm-req">*</span>
+                </label>
+                <select name="difficulty" id="difficulty" class="arm-select">
+                  <option value="" disabled selected>Niveau…</option>
+                  <option value="Facile">Facile</option>
+                  <option value="Moyenne">Moyenne</option>
+                  <option value="Difficile">Difficile</option>
+                </select>
               </div>
             </div>
 
-            <!-- Image & contexte -->
-            <div class="add-recipe-subcard">
-              <h3>Image & contexte</h3>
-              <div class="recipe-image-upload">
-                <img
-                  id="recipeImagePreview"
-                  src="/images/image-default-movie.jpg"
-                  alt="Image par défaut Ciné Délices"
-                />
-                <input
-                  type="file"
-                  name="recipeImage"
-                  id="recipeImageInput"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  style="display: none"
-                />
-                <button
-                  type="button"
-                  class="btn btn--secondary btn-upload"
-                  id="uploadButton"
-                >
-                  Je télécharge mon image
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon btn-upload-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                </button>
-                <p class="add-recipe-hint">
-                  * Votre image sera validée par Ciné Délices avant publication
-                  (respect des droits d'auteur requis).
-                </p>
+            <hr class="arm-sep" />
+
+            <!-- Upload photos — 3 slots 3:2 -->
+            <div class="arm-field">
+              <label class="arm-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                Photos de la recette
+                <span class="arm-req">*</span>
+              </label>
+
+              <div class="arm-upload-grid" id="arm-uploadGrid">
+
+                <!-- Slot 1 — Photo principale -->
+                <div class="arm-upload-slot" id="arm-slot1">
+                  <input
+                    type="file"
+                    name="recipeImage"
+                    id="recipeImageInput"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    class="arm-upload-slot__input"
+                  />
+                  <span class="arm-upload-slot__n">01<span class="arm-upload-slot__badge"> PRINC.</span></span>
+                  <div class="arm-upload-slot__ico">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><path d="M16 3v4"/><path d="M21 8h-4"/></svg>
+                  </div>
+                  <span class="arm-upload-slot__lbl">Photo principale</span>
+                  <div class="arm-upload-slot__prev" id="arm-prev1"></div>
+                  <div class="arm-upload-slot__acts">
+                    <button class="arm-slot-act" type="button" id="arm-chg1" title="Changer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del1" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Slot 2 — Photo secondaire -->
+                <div class="arm-upload-slot" id="arm-slot2">
+                  <input
+                    type="file"
+                    name="recipeImage2"
+                    id="recipeImageInput2"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    class="arm-upload-slot__input"
+                  />
+                  <span class="arm-upload-slot__n">02</span>
+                  <div class="arm-upload-slot__ico">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><path d="M16 3v4"/><path d="M21 8h-4"/></svg>
+                  </div>
+                  <span class="arm-upload-slot__lbl">Photo secondaire</span>
+                  <div class="arm-upload-slot__prev" id="arm-prev2"></div>
+                  <div class="arm-upload-slot__acts">
+                    <button class="arm-slot-act" type="button" id="arm-chg2" title="Changer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del2" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Slot 3 — Photo détail -->
+                <div class="arm-upload-slot" id="arm-slot3">
+                  <input
+                    type="file"
+                    name="recipeImage3"
+                    id="recipeImageInput3"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    class="arm-upload-slot__input"
+                  />
+                  <span class="arm-upload-slot__n">03</span>
+                  <div class="arm-upload-slot__ico">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><path d="M16 3v4"/><path d="M21 8h-4"/></svg>
+                  </div>
+                  <span class="arm-upload-slot__lbl">Photo détail</span>
+                  <div class="arm-upload-slot__prev" id="arm-prev3"></div>
+                  <div class="arm-upload-slot__acts">
+                    <button class="arm-slot-act" type="button" id="arm-chg3" title="Changer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del3" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+              </div><!-- /arm-upload-grid -->
+
+              <!-- Compteur photos -->
+              <div class="arm-upload-count">
+                <span class="arm-upload-count__n" id="arm-photoNum">0</span>/3 photos —
+                <span id="arm-photoLbl">Au moins 1 photo requise · Format 3:2 conseillé</span>
               </div>
-              <div class="add-recipe-field" style="margin-top: 1rem">
-                <label for="recipe-context" class="add-recipe-label">Contexte de la recette</label>
+
+              <!-- Éléments backward-compat pour recipe-image-upload.js -->
+              <img id="recipeImagePreview" src="" alt="" style="display:none;" />
+              <button type="button" id="uploadButton" style="display:none;"></button>
+
+              <span class="arm-hint">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Images validées par l'équipe Ciné Délices (droits d'auteur requis). · Seule la photo principale sera publiée.
+              </span>
+            </div>
+
+            <!-- Contexte cinématographique -->
+            <div class="arm-field">
+              <label for="recipe-context" class="arm-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Contexte cinématographique
+              </label>
+              <div class="arm-cine-context">
+                <p class="arm-cine-context__quote">
+                  « Quelle scène vous a inspiré cette recette ? »
+                </p>
                 <textarea
                   name="description"
                   id="recipe-context"
-                  class="add-recipe-textarea"
-                  placeholder="Décrivez la scène du film où cette recette apparaît ou qui vous a inspiré..."
+                  class="arm-textarea arm-textarea--bare"
+                  placeholder="Ex : Cette recette m'a été inspirée par la scène où le personnage prépare ce plat…"
                   spellcheck="true"
                   lang="fr"
                   maxlength="500"
                 ></textarea>
               </div>
+              <span class="arm-hint">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                Apparaîtra dans la section "Pourquoi cette recette ?" de votre fiche.
+              </span>
             </div>
+
+            <div class="arm-cta-row">
+              <a class="arm-btn-ghost" href="#arm-s1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Retour
+              </a>
+              <a class="btn btn--hero arm-cta-btn" href="#arm-s3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                Ajouter les ingrédients
+              </a>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- ══════════════════════════════════════════
+           SECTION 3 — INGRÉDIENTS & PRÉPARATION
+        ══════════════════════════════════════════ -->
+        <article class="arm-card" id="arm-s3" aria-labelledby="arm-s3-title">
+          <span class="arm-card__num" aria-hidden="true">03</span>
+          <div class="arm-body">
+
+            <div class="arm-hd">
+              <div class="arm-hd__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+              </div>
+              <div class="arm-hd__text">
+                <span class="arm-hd__step">Étape 3</span>
+                <h2 class="arm-hd__title" id="arm-s3-title">INGRÉDIENTS &amp; PRÉPARATION</h2>
+                <p class="arm-hd__desc">
+                  Un retour à la ligne = un élément. Décrivez clairement chaque
+                  ingrédient et chaque étape de préparation.
+                </p>
+              </div>
+              <div class="arm-hd__rule"></div>
+            </div>
+
+            <div class="arm-ing-prep-grid">
+
+              <!-- Ingrédients -->
+              <div class="arm-editor">
+                <div class="arm-editor__header">
+                  <div class="arm-editor__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  </div>
+                  <span class="arm-editor__title">INGRÉDIENTS</span>
+                  <span class="arm-editor__hint">1 ligne = 1 ingrédient</span>
+                </div>
+                <div class="arm-editor__body">
+                  <textarea
+                    name="ingredients"
+                    id="ingredients"
+                    class="arm-editor__ta add-recipe-textarea add-recipe-textarea--tall"
+                    placeholder="200g de farine&#10;3 œufs&#10;100g de beurre fondu&#10;1 pincée de sel…"
+                    spellcheck="true"
+                    lang="fr"
+                  ></textarea>
+                </div>
+                <div class="arm-editor__footer">
+                  <span class="arm-line-counter"><span id="ingCount">0</span> ingrédient(s)</span>
+                </div>
+              </div>
+
+              <!-- Préparation -->
+              <div class="arm-editor">
+                <div class="arm-editor__header">
+                  <div class="arm-editor__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+                  </div>
+                  <span class="arm-editor__title">PRÉPARATION</span>
+                  <span class="arm-editor__hint">1 ligne = 1 étape</span>
+                </div>
+                <div class="arm-editor__body">
+                  <textarea
+                    name="preparation"
+                    id="preparation"
+                    class="arm-editor__ta add-recipe-textarea add-recipe-textarea--tall"
+                    placeholder="Préchauffer le four à 180°C&#10;Mélanger la farine et les œufs&#10;Ajouter le beurre fondu progressivement…"
+                    spellcheck="true"
+                    lang="fr"
+                  ></textarea>
+                </div>
+                <div class="arm-editor__footer">
+                  <span class="arm-line-counter"><span id="prepCount">0</span> étape(s)</span>
+                </div>
+              </div>
+
+            </div><!-- /arm-ing-prep-grid -->
+
+            <div class="arm-cta-row">
+              <a class="arm-btn-ghost" href="#arm-s2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Retour
+              </a>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- ══════════════════════════════════════════
+           GOLDEN TICKET — Validation finale
+        ══════════════════════════════════════════ -->
+        <div class="arm-ticket" id="arm-ticket">
+          <div class="arm-ticket__shimmer" aria-hidden="true"></div>
+          <div class="arm-ticket__perfo arm-ticket__perfo--l" aria-hidden="true">
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+          </div>
+          <div class="arm-ticket__perfo arm-ticket__perfo--r" aria-hidden="true">
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+            <div class="arm-ticket__hole"></div>
+          </div>
+          <div class="arm-ticket__tear" aria-hidden="true"></div>
+          <div class="arm-ticket__stamp" aria-hidden="true">
+            <div class="arm-ticket__stamp-inner">PRÊT À<br />PUBLIER</div>
           </div>
 
-          <!-- Grille 2 colonnes : ingrédients + préparation -->
-          <div class="add-recipe-card__header add-recipe-card__header--sub">
-            <h2>3. Ingrédients & préparation</h2>
-            <p class="add-recipe-card__subtitle">
-              Détaillez les ingrédients et les étapes de votre recette.
+          <div class="arm-ticket__text">
+            <h2 class="arm-ticket__title">PRÊT À PARTAGER ?</h2>
+            <p class="arm-ticket__desc">
+              Votre recette sera soumise à modération. Une fois validée, elle sera
+              publiée sur Ciné Délices et visible par toute la communauté.
+            </p>
+            <p class="arm-ticket__note">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              * Soumise à validation — délai habituel 24 à 48h.
             </p>
           </div>
 
-          <div class="add-recipe-grid add-recipe-grid--2cols">
-            <div class="add-recipe-subcard">
-              <h3>Ingrédients</h3>
-              <p class="add-recipe-hint">
-                Astuce : un retour à la ligne = un ingrédient.
-              </p>
-              <textarea
-                name="ingredients"
-                id="ingredients"
-                class="add-recipe-textarea add-recipe-textarea--tall"
-                placeholder="Ex :&#10;200g de farine&#10;3 œufs&#10;100g de sucre"
-                spellcheck="true"
-                lang="fr"
-              ></textarea>
-            </div>
-            <div class="add-recipe-subcard">
-              <h3>Préparation</h3>
-              <p class="add-recipe-hint">
-                Astuce : un retour à la ligne = une étape.
-              </p>
-              <textarea
-                name="preparation"
-                id="preparation"
-                class="add-recipe-textarea add-recipe-textarea--tall"
-                placeholder="Ex :&#10;Préchauffer le four à 180°C&#10;Mélanger les ingrédients"
-                spellcheck="true"
-                lang="fr"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Footer formulaire -->
-          <div class="add-recipe-card__footer">
-            <p class="add-recipe-hint">
-              * Votre recette sera soumise à validation par l'équipe Ciné
-              Délices avant publication.
-            </p>
+          <div class="arm-ticket__cta">
             <button
               type="submit"
-              class="btn btn--hero add-recipe-card__btn"
+              class="arm-ticket__submit"
               id="submit-unified-form"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               Je valide ma recette
             </button>
           </div>
-        </form>
-      </section>
+        </div>
+
+      </form><!-- /unified-form -->
+
     </main>
 
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Scripts JS globaux -->
+    <!-- Scripts JS -->
     <script src="/js/burger-menu.js" defer></script>
-    <!-- effet glassmorphism -->
     <script src="/js/glowy-container.js" defer></script>
-    <!-- prévisualisation image upload -->
     <script src="/js/recipe-image-upload.js" defer></script>
-    <!-- utils centralisés (doivent être chargés en premier) -->
     <script src="/js/utils/film-image-utils.js" defer></script>
     <script src="/js/utils/url-utils.js" defer></script>
     <script src="/js/utils/text-utils.js" defer></script>
-    <!-- autocomplétion film dans formulaire -->
     <script src="/js/movie-autocomplete-form.js" defer></script>
-    <!-- gestionnaire formulaire unifié -->
     <script src="/js/unified-form-handler.js" defer></script>
-    <!-- gestionnaire bouton "Je passe à la recette" -->
     <script src="/js/film-preview-handler.js" defer></script>
-    <!-- validation intelligente TMDB -->
     <script src="/js/tmdb-validator.js" defer></script>
-    <!-- pré-remplissage formulaire depuis TMDB -->
     <script src="/js/tmdb-form-prefill.js" defer></script>
-    <!-- chargement de l'image pour les films existants -->
     <script src="/js/load-existing-movie-image.js" defer></script>
-    <!-- auto-resize des textareas -->
     <script src="/js/add-recipes-movies-textarea.js" defer></script>
+
+    <!-- 3-slot upload avec preview -->
+    <script>
+      (function () {
+        var photoCount = 0;
+        var slotNums = [1, 2, 3];
+
+        slotNums.forEach(function (n) {
+          var slot  = document.getElementById('arm-slot' + n);
+          var input = document.getElementById(n === 1 ? 'recipeImageInput' : 'recipeImageInput' + n);
+          var prev  = document.getElementById('arm-prev' + n);
+          var chgBtn = document.getElementById('arm-chg' + n);
+          var delBtn = document.getElementById('arm-del' + n);
+          if (!slot || !input || !prev) return;
+
+          // Click sur le slot (si pas déjà une photo) → ouvrir fichier
+          slot.addEventListener('click', function (e) {
+            if (chgBtn && (e.target === chgBtn || chgBtn.contains(e.target))) return;
+            if (delBtn && (e.target === delBtn || delBtn.contains(e.target))) return;
+            if (!slot.classList.contains('has-photo')) input.click();
+          });
+
+          // Bouton "Changer"
+          if (chgBtn) {
+            chgBtn.addEventListener('click', function (e) { e.stopPropagation(); input.click(); });
+          }
+
+          // Bouton "Supprimer"
+          if (delBtn) {
+            delBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              if (!slot.classList.contains('has-photo')) return;
+              input.value = '';
+              prev.style.backgroundImage = '';
+              prev.classList.remove('on');
+              slot.classList.remove('has-photo');
+              photoCount = Math.max(0, photoCount - 1);
+              updateCount();
+              if (n === 1) {
+                var lp = document.getElementById('recipeImagePreview');
+                if (lp) lp.src = '';
+              }
+            });
+          }
+
+          // Sélection de fichier
+          input.addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var ok = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            if (!ok.includes(file.type)) {
+              alert('Format non supporté. Utilisez JPG, PNG ou WEBP.');
+              input.value = '';
+              return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+              alert('Fichier trop volumineux (max 5 Mo).');
+              input.value = '';
+              return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+              prev.style.backgroundImage = 'url("' + ev.target.result + '")';
+              prev.classList.add('on');
+              if (!slot.classList.contains('has-photo')) {
+                slot.classList.add('has-photo');
+                photoCount++;
+                updateCount();
+              }
+              if (n === 1) {
+                var lp = document.getElementById('recipeImagePreview');
+                if (lp) lp.src = ev.target.result;
+              }
+            };
+            reader.readAsDataURL(file);
+          });
+        });
+
+        function updateCount() {
+          var numEl = document.getElementById('arm-photoNum');
+          var lblEl = document.getElementById('arm-photoLbl');
+          if (numEl) numEl.textContent = photoCount;
+          if (lblEl) {
+            if (photoCount === 0) lblEl.textContent = 'Au moins 1 photo requise · Format 3:2 conseillé';
+            else if (photoCount === 1) lblEl.textContent = '1 photo ajoutée — Vous pouvez en ajouter 2 de plus';
+            else if (photoCount === 2) lblEl.textContent = '2 photos ajoutées — Vous pouvez en ajouter 1 de plus';
+            else lblEl.textContent = '3 photos ajoutées ✓';
+          }
+        }
+      })();
+    </script>
+
+    <!-- Stepper actif au scroll + Portions stepper + Compteurs lignes -->
+    <script>
+      // ── Stepper : highlight section active au scroll ──
+      (function () {
+        const steps = document.querySelectorAll('.arm-step');
+        const sections = ['arm-s1', 'arm-s2', 'arm-s3'].map(function(id) { return document.getElementById(id); });
+        function updateStepper() {
+          var active = 0;
+          sections.forEach(function(s, i) {
+            if (s && s.getBoundingClientRect().top <= 120) active = i;
+          });
+          steps.forEach(function(st, i) {
+            st.classList.toggle('arm-step--active', i === active);
+            st.classList.toggle('arm-step--done', i < active);
+          });
+        }
+        window.addEventListener('scroll', updateStepper, { passive: true });
+        updateStepper();
+      })();
+
+      // ── Portions stepper ──
+      (function () {
+        var minus = document.getElementById('arm-portionsMinus');
+        var plus = document.getElementById('arm-portionsPlus');
+        var val = document.getElementById('arm-portionsVal');
+        var input = document.getElementById('recipe-servings');
+        var count = 4;
+        function update() { val.textContent = count; input.value = count; }
+        if (minus && plus) {
+          minus.addEventListener('click', function() { count = Math.max(1, count - 1); update(); });
+          plus.addEventListener('click', function() { count = Math.min(99, count + 1); update(); });
+        }
+      })();
+
+      // ── Compteurs de lignes ingrédients / préparation ──
+      (function () {
+        function countLines(taId, countId) {
+          var ta = document.getElementById(taId);
+          var counter = document.getElementById(countId);
+          if (!ta || !counter) return;
+          ta.addEventListener('input', function() {
+            var lines = ta.value.split('\n').filter(function(l) { return l.trim() !== ''; }).length;
+            counter.textContent = lines;
+          });
+        }
+        countLines('ingredients', 'ingCount');
+        countLines('preparation', 'prepCount');
+      })();
+    </script>
   </body>
 </html>

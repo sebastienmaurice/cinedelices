@@ -5,22 +5,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const filmPreviewForm = document.getElementById("film-preview-form");
-  let goToRecipeButton = filmPreviewForm?.querySelector(".add-recipe-card__btn");
-
-  // Si le bouton n'existe pas (film pré-sélectionné), le créer dynamiquement
-  if (!goToRecipeButton && filmPreviewForm) {
-    const formFooter = filmPreviewForm.querySelector(".add-recipe-card__footer");
-    if (formFooter) {
-      goToRecipeButton = document.createElement("button");
-      goToRecipeButton.className = "btn btn--hero add-recipe-card__btn";
-      goToRecipeButton.textContent = "Je passe à la recette";
-      formFooter.appendChild(goToRecipeButton);
-    }
-  }
-
-  if (!goToRecipeButton) {
-    return;
-  }
+  // Sélecteur mis à jour : nouvelle classe arm-cta-btn (refonte moodboard v2)
+  let goToRecipeButton = filmPreviewForm?.querySelector(".arm-cta-btn, .add-recipe-card__btn");
 
   // Champs du formulaire de film
   const filmNameInput = document.getElementById("film-name");
@@ -103,7 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
       displayFilmName.textContent = title || "titre";
     }
     if (displayFilmGenre) {
-      displayFilmGenre.textContent = genre || "genre";
+      displayFilmGenre.innerHTML = genre
+        ? `<span class="arm-genre-badge">${genre}</span>`
+        : "genre";
     }
     if (displayFilmYear) {
       displayFilmYear.textContent = year || "année";
@@ -170,9 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Exposer la fonction updateFilmDisplay pour qu'elle puisse être appelée depuis l'extérieur
+   * Exposer les fonctions pour qu'elles puissent être appelées depuis l'extérieur
    */
   window.updateFilmDisplayFromPreview = updateFilmDisplay;
+  window.autoResizeSynopsis = autoResizeSynopsis;
 
   /**
    * Faire défiler vers la section recette
@@ -237,9 +226,17 @@ document.addEventListener("DOMContentLoaded", () => {
     syncToUnifiedForm();
   });
 
+  // Auto-resize du textarea synopsis selon son contenu
+  function autoResizeSynopsis() {
+    if (!filmSynopsisInput) return;
+    filmSynopsisInput.style.height = "auto";
+    filmSynopsisInput.style.height = filmSynopsisInput.scrollHeight + "px";
+  }
+
   // Écouteurs pour le synopsis
   if (filmSynopsisInput) {
     filmSynopsisInput.addEventListener("input", () => {
+      autoResizeSynopsis();
       updateFilmDisplay();
       syncToUnifiedForm();
     });
@@ -248,6 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
       updateFilmDisplay();
       syncToUnifiedForm();
     });
+
+    // Redimensionner au chargement si le champ est pré-rempli
+    autoResizeSynopsis();
   }
 
   console.log("✅ Gestionnaire bouton 'Je passe à la recette' initialisé");

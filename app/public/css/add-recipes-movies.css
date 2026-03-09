@@ -1,69 +1,282 @@
 /**
  * ======================================================
- * ADD-RECIPES-MOVIES.CSS - Styles de la page d'ajout film/recette
+ * ADD-RECIPES-MOVIES.CSS — Refonte moodboard v2
  * ======================================================
- *
- * Rôle : Styles spécifiques à la page de création/ajout d'un film et d'une recette.
- *        Design System cohérent avec /auth/profil/, /admin/, /movies.
- *
- * Pages concernées : /add-recipes-movies (page d'ajout de film et recette)
- *
- * Ordre de chargement : Chargé APRÈS base.css
+ * Pages : /add-recipes-movies
+ * Chargé APRÈS base.css
+ * Préfixe des classes : arm-
+ * ======================================================
  */
 
-/* ====================================================== */
-/* ====================== PAGE LAYOUT ================== */
-/* ====================================================== */
-.add-recipe-page {
-  color: var(--argent-ecran);
-  padding: 1rem 1.5rem 4rem;
-  max-width: calc(var(--max-width) - 4rem);
+/* ── FULL-BLEED : écrase le max-width/padding du body pour cette page ── */
+body.arm-full-bleed {
+  max-width: unset;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE LAYOUT
+══════════════════════════════════════════════════════ */
+.arm-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 72px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO CINÉMA FULL-WIDTH
+══════════════════════════════════════════════════════ */
+.arm-hero {
+  position: relative;
+  margin-top: var(--nav-height, 68px);
+  width: 100%;
+  height: 310px;
+  background: linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%);
+}
+
+/* Couche décorative clippée — le hero lui-même n'a plus overflow:hidden pour laisser passer les dropdowns */
+.arm-hero__deco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.arm-hero__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 72% 55%, rgba(194, 48, 24, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 80% at 18% 28%, rgba(196, 160, 82, 0.11) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 105%, rgba(20, 34, 52, 0.98) 0%, transparent 55%);
+}
+
+.arm-hero__reel {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid rgba(196, 160, 82, 0.1);
+  animation: armRotateReel 30s linear infinite;
+}
+.arm-hero__reel::before {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(196, 160, 82, 0.06);
+}
+.arm-hero__reel::after {
+  content: "";
+  position: absolute;
+  inset: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196, 160, 82, 0.05) 0%, transparent 70%);
+}
+.arm-hero__reel--1 { width: 200px; height: 200px; right: -55px; top: -55px; }
+.arm-hero__reel--2 {
+  width: 280px; height: 280px; left: -90px; bottom: -90px;
+  animation-direction: reverse;
+  animation-duration: 48s;
+}
+@keyframes armRotateReel { to { transform: rotate(360deg); } }
+
+.arm-hero__scanlines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.032) 2px, rgba(0,0,0,.032) 4px);
+}
+
+.arm-hero__vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 3;
+  background: radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,.55) 35%, transparent 65%);
+}
+
+.arm-hero__content {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 28px var(--page-px, 72px) 24px;
+  max-width: var(--max-width, 1440px);
   margin: 0 auto;
 }
 
-/* ====================================================== */
-/* ====================== HERO ========================= */
-/* ====================================================== */
-.add-recipe-hero {
+.arm-hero__top {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.add-recipe-hero__content {
-  display: block;
+.arm-hero__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.add-recipe-hero__eyebrow {
+.arm-hero__breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.85rem;
-  color: rgba(236, 239, 241, 0.7);
-  margin-bottom: 0.35rem;
+  color: rgba(196, 160, 82, 0.6);
+  animation: armFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
-.add-recipe-hero__title {
-  font-size: 2.6rem;
-  font-family: var(--font-h1);
-  color: var(--dore-popcorn);
-  margin: 0;
-  line-height: 1.1;
+.arm-hero__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  letter-spacing: 0.08em;
+  line-height: 0.95;
+  color: #fff;
+  text-shadow: 0 4px 40px rgba(0,0,0,.6);
+  animation: armFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
-.add-recipe-hero__subtitle {
+.arm-hero__title em {
+  color: var(--or-titre);
+  font-style: normal;
+}
+
+.arm-hero__sub {
+  font-family: var(--f-editorial, 'Playfair Display', serif);
+  font-style: italic;
+  font-weight: 700;
   font-size: 1rem;
-  color: rgba(236, 239, 241, 0.85);
-  max-width: 560px;
-  margin: 0;
-  text-align: left;
+  color: rgba(232, 232, 232, 0.5);
+  animation: armFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both;
 }
 
-/* ====================================================== */
-/* ====================== ALERTES ====================== */
-/* ====================================================== */
+/* Tags hero — utilisent les classes .tag--* officielles du design system (base.css) */
+.arm-hero__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  animation: armFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+.arm-hero__tags .tag {
+  padding: 6px 14px;
+}
+
+@keyframes armFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════
+   STEPPER STICKY
+══════════════════════════════════════════════════════ */
+.arm-stepper-wrap {
+  position: sticky;
+  top: var(--nav-height, 68px);
+  z-index: 200;
+  background: rgba(8, 14, 24, 0.75);
+  backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+}
+
+.arm-stepper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 72px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.arm-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  height: 100%;
+  padding: 0 8px;
+  text-decoration: none;
+  transition: background 0.2s;
+  border-right: 1px solid rgba(196, 160, 82, 0.08);
+}
+
+.arm-step:last-child {
+  border-right: none;
+}
+
+.arm-step:hover {
+  background: rgba(196, 160, 82, 0.025);
+}
+
+.arm-step__bubble {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.95rem;
+  border: 1.5px solid rgba(196, 160, 82, 0.18);
+  background: rgba(15, 26, 42, 0.9);
+  color: rgba(232, 232, 232, 0.28);
+  transition: all 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.arm-step__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.arm-step__label {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.28);
+  transition: color 0.28s;
+}
+
+.arm-step__name {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.28);
+  transition: color 0.28s;
+}
+
+/* États stepper */
+.arm-step--active .arm-step__bubble {
+  background: var(--gold-gradient);
+  border-color: var(--or-titre);
+  color: var(--bleu-nuit);
+  box-shadow: 0 0 16px rgba(196, 160, 82, 0.3);
+}
+
+.arm-step--active .arm-step__label { color: rgba(196, 160, 82, 0.62); }
+.arm-step--active .arm-step__name  { color: var(--or-titre); }
+
+.arm-step--done .arm-step__bubble {
+  background: rgba(196, 160, 82, 0.1);
+  border-color: rgba(196, 160, 82, 0.42);
+  color: var(--or-titre);
+}
+
+.arm-step--done .arm-step__label { color: rgba(196, 160, 82, 0.4); }
+.arm-step--done .arm-step__name  { color: rgba(196, 160, 82, 0.58); }
+
+/* ══════════════════════════════════════════════════════
+   ALERTES
+══════════════════════════════════════════════════════ */
 .alert {
   margin: 0 0 1.5rem 0;
   padding: 1.25rem 1.5rem;
@@ -71,13 +284,11 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  animation: slideDown 0.3s ease-out;
+  animation: armSlideDown 0.3s ease-out;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.alert svg {
-  flex-shrink: 0;
-}
+.alert svg { flex-shrink: 0; }
 
 .alert-success {
   background: rgba(76, 175, 80, 0.15);
@@ -97,399 +308,348 @@
   color: #f44336;
 }
 
-.alert p {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5;
+.alert p { margin: 0; font-size: 1rem; font-weight: 500; line-height: 1.5; }
+
+.alert-success--with-actions { align-items: flex-start; }
+
+.alert__content { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.alert__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+@keyframes armSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.alert-success--with-actions {
-  align-items: flex-start;
-}
-
-.alert__content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.alert__actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-/* ====================================================== */
-/* ====================== CARDS ======================== */
-/* ====================================================== */
-.add-recipe-card {
-  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(198, 166, 100, 0.15);
-  margin-bottom: 1.5rem;
-}
-
-.add-recipe-card__header {
-  margin-bottom: 1.5rem;
-}
-
-.add-recipe-card__header--sub {
-  margin-top: 1.5rem;
-}
-
-.add-recipe-card__header h2 {
-  font-family: var(--font-h1);
-  color: var(--dore-popcorn);
-  font-size: 1.6rem;
-  margin: 0 0 0.25rem 0;
-  line-height: 1.2;
-}
-
-.add-recipe-card__subtitle {
-  color: rgba(236, 239, 241, 0.7);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-.add-recipe-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(198, 166, 100, 0.1);
-}
-
-.add-recipe-card__footer p {
-  color: rgba(236, 239, 241, 0.7);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.add-recipe-card__btn {
-  flex-shrink: 0;
-}
-
-/* ====================================================== */
-/* ====================== GRIDS ======================== */
-/* ====================================================== */
-.add-recipe-grid {
-  display: grid;
-  grid-template-columns: 1fr 0.8fr 1fr;
-  gap: 1.5rem;
-}
-
-.add-recipe-grid--2cols {
-  grid-template-columns: 1fr 1fr;
-}
-
-/* ====================================================== */
-/* ===================== SUBCARDS ====================== */
-/* ====================================================== */
-.add-recipe-subcard {
-  background-color: var(--bleu-fond);
-  border-radius: 12px;
-  padding: 1.25rem;
-  border: 1px solid rgba(198, 166, 100, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.add-recipe-subcard h3 {
-  font-family: var(--font-h2-h6);
-  color: var(--dore-popcorn);
-  font-size: 1.15rem;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.add-recipe-subcard__desc {
-  color: rgba(236, 239, 241, 0.7);
-  font-size: 0.9rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.add-recipe-subcard__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-/* ====================================================== */
-/* =============== FORM ROW (Section Film) ============= */
-/* ====================================================== */
-.add-recipe-form-row {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+/* ══════════════════════════════════════════════════════
+   FORM CARD — wrapper commun aux 3 sections
+══════════════════════════════════════════════════════ */
+.arm-card {
   position: relative;
-  overflow: visible;
-}
-
-/* ====================================================== */
-/* ===================== FIELDS ======================== */
-/* ====================================================== */
-.add-recipe-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  flex: 1;
-  position: relative;
-}
-
-.add-recipe-field--title {
-  flex: 2;
-}
-
-.add-recipe-field--year {
-  flex: 0 0 130px;
-}
-
-.add-recipe-field--genre {
-  flex: 0 0 170px;
-}
-
-.add-recipe-field--synopsis {
-  margin-top: 1rem;
-  width: 100%;
-}
-
-/* ====================================================== */
-/* ==================== LABELS ========================= */
-/* ====================================================== */
-.add-recipe-label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--dore-popcorn);
-  font-size: 0.88rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  margin: 0;
-}
-
-.add-recipe-label svg {
-  color: var(--dore-popcorn);
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-/* ====================================================== */
-/* ============== INPUTS / SELECTS / TEXTAREAS ========= */
-/* ====================================================== */
-.add-recipe-input,
-.add-recipe-select,
-.add-recipe-textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(198, 166, 100, 0.2);
-  background-color: var(--bleu-fond);
-  color: var(--argent-ecran);
-  font-size: 0.95rem;
-  font-family: var(--font-body);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.add-recipe-input::placeholder,
-.add-recipe-textarea::placeholder {
-  color: rgba(236, 239, 241, 0.4);
-}
-
-.add-recipe-input:hover,
-.add-recipe-select:hover,
-.add-recipe-textarea:hover {
-  border-color: rgba(198, 166, 100, 0.4);
-  box-shadow: 0 2px 8px rgba(198, 166, 100, 0.15);
-}
-
-.add-recipe-input:focus,
-.add-recipe-select:focus,
-.add-recipe-textarea:focus {
-  outline: none;
-  border-color: var(--dore-popcorn);
-  box-shadow: 0 0 0 3px rgba(198, 166, 100, 0.15),
-    0 4px 12px rgba(198, 166, 100, 0.2);
-}
-
-.add-recipe-select {
-  appearance: none;
-  cursor: pointer;
-}
-
-.add-recipe-textarea {
-  resize: none;
+  background: linear-gradient(148deg, rgba(15, 30, 46, 0.96) 0%, rgba(12, 22, 38, 0.92) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.12);
+  border-radius: 20px;
   overflow: hidden;
-  min-height: 100px;
-  line-height: 1.5;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: border-color 0.3s;
 }
 
-.add-recipe-textarea--tall {
-  min-height: 200px;
+.arm-card:focus-within {
+  border-color: rgba(196, 160, 82, 0.24);
 }
 
-/* ====================================================== */
-/* =================== HINTS ========================== */
-/* ====================================================== */
-.add-recipe-hint {
-  font-size: 0.8rem;
-  color: rgba(236, 239, 241, 0.55);
-  margin: 0;
-  font-style: italic;
-  line-height: 1.4;
-  text-align: center;
-}
-
-/* ====================================================== */
-/* ============= FILM SELECTED (subcard) =============== */
-/* ====================================================== */
-.film-selected-image {
-  position: relative;
-  width: 100%;
-  /* Ratio affiche cinéma standard 2:3 — s'adapte à la largeur du conteneur */
-  aspect-ratio: 2 / 3;
-  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(198, 166, 100, 0.15);
-}
-
-.film-selected-image::before {
+/* Liseré doré haut */
+.arm-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  box-shadow: inset 0 0 20px rgba(0, 24, 60, 0.5);
-  pointer-events: none;
-  z-index: 1;
-  border-radius: 12px;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(196, 160, 82, 0.35) 25%,
+    rgba(242, 200, 75, 0.58) 50%,
+    rgba(196, 160, 82, 0.35) 75%,
+    transparent 100%
+  );
 }
 
-.film-selected-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
-}
-
-.film-info-box {
-  background: linear-gradient(160deg, var(--surface-card-warm) 0%, var(--bleu-nuit) 100%);
-  border: 1px solid rgba(198, 166, 100, 0.15);
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.film-info-box h4 {
-  color: var(--dore-popcorn);
-  font-size: 1rem;
-  font-weight: 700;
-  font-family: var(--font-h2-h6);
-  margin: 0 0 0.5rem 0;
-}
-
-.film-info-box ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.film-info-box li {
-  color: var(--argent-ecran);
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-  padding-left: 1.25rem;
-  position: relative;
-  font-weight: 500;
-}
-
-.film-info-box li::before {
-  content: "\2022";
+/* Watermark numéro */
+.arm-card__num {
   position: absolute;
-  left: 0;
-  color: var(--dore-popcorn);
-  font-weight: bold;
+  top: 20px;
+  right: 28px;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 7rem;
+  letter-spacing: -0.02em;
+  color: rgba(196, 160, 82, 0.032);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
 }
 
-.film-info-synopsis {
-  color: var(--argent-ecran);
-  font-size: 0.82rem;
-  line-height: 1.4;
-  margin: 0.5rem 0 0 0;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(198, 166, 100, 0.15);
-  font-style: italic;
-  opacity: 0.8;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.arm-body {
+  padding: 36px 40px 40px;
 }
 
-/* ====================================================== */
-/* ============== IMAGE UPLOAD (subcard) =============== */
-/* ====================================================== */
-.recipe-image-upload {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px dashed rgba(198, 166, 100, 0.25);
-  border-radius: 12px;
-  background-color: rgba(198, 166, 100, 0.03);
-  transition: all 0.3s ease;
+/* ══════════════════════════════════════════════════════
+   EN-TÊTE DE SECTION
+══════════════════════════════════════════════════════ */
+.arm-hd {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.recipe-image-upload:hover {
-  border-color: rgba(198, 166, 100, 0.4);
-  background-color: rgba(198, 166, 100, 0.06);
-}
-
-.recipe-image-upload img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  background-color: var(--bleu-intermediaire);
-  border: 1px solid rgba(198, 166, 100, 0.15);
-  display: block;
-  margin-bottom: 0.75rem;
-}
-
-.btn-upload {
-  width: 100%;
+.arm-hd__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  flex-shrink: 0;
+  background: rgba(196, 160, 82, 0.07);
+  border: 1px solid rgba(196, 160, 82, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
 }
 
-.btn-upload-icon {
+.arm-hd__icon svg {
+  width: 19px;
+  height: 19px;
+  stroke: var(--or-titre);
+  fill: none;
+}
+
+.arm-hd__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.arm-hd__step {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.46rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.4);
+}
+
+.arm-hd__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.55rem;
+  letter-spacing: 0.08em;
+  color: var(--or-titre);
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(196, 160, 82, 0.14);
+  margin: 0;
+}
+
+.arm-hd__desc {
+  font-size: 0.76rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.35);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.arm-hd__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 160, 82, 0.18), transparent);
+  margin-left: 8px;
+}
+
+/* ══════════════════════════════════════════════════════
+   FIELDS, LABELS, INPUTS
+══════════════════════════════════════════════════════ */
+.arm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.arm-label {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.52);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.arm-label svg {
+  width: 12px;
+  height: 12px;
+  stroke: rgba(196, 160, 82, 0.42);
+  stroke-width: 2;
+  fill: none;
   flex-shrink: 0;
-  transition: transform 0.3s ease;
 }
 
-.btn-upload:hover .btn-upload-icon {
-  transform: translateY(-2px);
+.arm-req {
+  color: rgba(194, 48, 24, 0.65);
+  font-size: 0.52rem;
 }
 
-/* ====================================================== */
-/* ========== AUTOCOMPLÉTION FILM ====================== */
-/* ====================================================== */
-/* Wrapper pour l'input titre avec autocomplétion */
+.arm-hint {
+  font-size: 0.58rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.28);
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.arm-hint svg {
+  width: 10px;
+  height: 10px;
+  stroke: rgba(196, 160, 82, 0.35);
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.arm-hint--italic { font-style: italic; justify-content: center; }
+
+/* Inputs / Selects / Textareas */
+.arm-input,
+.arm-select,
+.arm-textarea {
+  width: 100%;
+  background: rgba(10, 18, 30, 0.85);
+  border: 1.5px solid rgba(196, 160, 82, 0.16);
+  border-radius: 10px;
+  padding: 11px 15px;
+  font-family: var(--font-body, 'Lato', sans-serif);
+  font-size: 0.86rem;
+  font-weight: 300;
+  color: var(--argent-ecran);
+  outline: none;
+  transition: border-color 0.22s, box-shadow 0.22s, background 0.2s;
+}
+
+.arm-input:focus,
+.arm-select:focus,
+.arm-textarea:focus {
+  border-color: rgba(196, 160, 82, 0.52);
+  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.07);
+  background: rgba(12, 22, 36, 0.92);
+}
+
+.arm-input::placeholder,
+.arm-textarea::placeholder {
+  color: rgba(232, 232, 232, 0.18);
+}
+
+.arm-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(196,160,82,0.45)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  background-color: rgba(10, 18, 30, 0.85);
+}
+
+.arm-select option {
+  background: #142234;
+  color: var(--argent-ecran);
+}
+
+.arm-textarea {
+  resize: none;
+  overflow: hidden;
+  min-height: 92px;
+  line-height: 1.65;
+  caret-color: var(--or-titre);
+}
+
+/* Champs verrouillés (données TMDB — lecture seule) */
+.arm-input[readonly],
+.arm-textarea[readonly] {
+  cursor: default;
+  opacity: 0.65;
+  border-color: rgba(196, 160, 82, 0.08);
+  border-style: dashed;
+  background: rgba(10, 18, 30, 0.55);
+}
+
+.arm-input[readonly]:focus,
+.arm-textarea[readonly]:focus {
+  border-color: rgba(196, 160, 82, 0.12);
+  box-shadow: none;
+  background: rgba(10, 18, 30, 0.55);
+}
+
+.arm-select--locked {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.65;
+  border-color: rgba(196, 160, 82, 0.08) !important;
+  border-style: dashed !important;
+  background-color: rgba(10, 18, 30, 0.55) !important;
+  background-image: none !important;
+}
+
+/* Label avec badge source TMDB */
+.arm-label__source {
+  margin-left: auto;
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.38rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.38);
+  border: 1px solid rgba(196, 160, 82, 0.18);
+  border-radius: 3px;
+  padding: 1px 5px;
+  display: none;
+}
+
+.arm-field--tmdb .arm-label__source {
+  display: inline-block;
+}
+
+.arm-textarea--bare {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  min-height: 76px;
+}
+
+.arm-textarea--bare:focus {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+/* ══════════════════════════════════════════════════════
+   GRILLES DE CHAMPS
+══════════════════════════════════════════════════════ */
+.arm-row {
+  display: grid;
+  gap: 16px;
+}
+
+.arm-row--film {
+  grid-template-columns: 2fr 110px 1.2fr;
+}
+
+.arm-row--meta {
+  grid-template-columns: 140px 160px 1fr 1fr;
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION 1 — LAYOUT 2 COLONNES (champs + poster)
+══════════════════════════════════════════════════════ */
+.arm-s1-layout {
+  display: grid;
+  grid-template-columns: 1fr 230px;
+  gap: 36px;
+  align-items: start;
+}
+
+.arm-s1-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Autocomplétion film */
 .film-name-input-wrapper {
   position: relative;
-  flex: 1;
   width: 100%;
   z-index: 1001;
   overflow: visible;
@@ -498,11 +658,9 @@
 .film-search-results {
   position: absolute;
   top: calc(100% + 0.5rem);
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   background: rgba(13, 27, 42, 0.98);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(198, 166, 100, 0.3);
   border-radius: 12px;
   max-height: 300px;
@@ -510,12 +668,10 @@
   z-index: 1002;
   display: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  animation: slideDown 0.2s ease-out;
+  animation: armSlideDown 0.2s ease-out;
 }
 
-.film-search-results.active {
-  display: block;
-}
+.film-search-results.active { display: block; }
 
 .film-search-result-item {
   padding: 1rem 1.25rem;
@@ -526,124 +682,942 @@
   border-left: 3px solid var(--rouge-projecteur);
 }
 
-.film-search-result-item:last-child {
-  border-bottom: none;
-  border-radius: 0 0 12px 12px;
-}
+.film-search-result-item:last-child  { border-bottom: none; border-radius: 0 0 12px 12px; }
+.film-search-result-item:first-child { border-radius: 12px 12px 0 0; }
+.film-search-result-item:hover { box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4); }
 
-.film-search-result-item:first-child {
-  border-radius: 12px 12px 0 0;
-}
-
-.film-search-result-item:hover {
-  background-color: var(--dore-popcorn);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
-}
-
-.film-search-result-item .film-result-title {
-  color: var(--bleu-nuit);
-  font-weight: 600;
-}
+.film-search-result-item .film-result-title,
+.film-search-result-item .film-result-meta,
+.film-search-result-item .film-result-year,
+.film-search-result-item .film-result-genre { color: var(--bleu-nuit); }
 
 .film-search-result-item .film-result-meta,
 .film-search-result-item .film-result-year,
-.film-search-result-item .film-result-genre {
-  color: var(--bleu-nuit);
-  opacity: 0.8;
-}
+.film-search-result-item .film-result-genre { opacity: 0.8; }
 
-.film-result-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.film-result-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--bleu-nuit);
-  margin: 0;
-}
-
-.film-result-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--argent-ecran);
-  opacity: 0.8;
-}
-
-.film-result-year,
-.film-result-separator,
-.film-result-genre {
-  display: inline;
-}
-
-.film-result-separator {
-  opacity: 0.6;
-}
+.film-result-content  { display: flex; flex-direction: column; gap: 0.5rem; }
+.film-result-title    { font-size: 1rem; font-weight: 600; color: var(--bleu-nuit); margin: 0; }
+.film-result-meta     { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; opacity: 0.8; }
+.film-result-year, .film-result-separator, .film-result-genre { display: inline; }
+.film-result-separator { opacity: 0.6; }
 
 .film-search-result-empty,
 .film-search-result-loading,
-.film-search-result-error {
-  padding: 1.5rem 1.25rem;
-  text-align: center;
+.film-search-result-error { padding: 1.5rem 1.25rem; text-align: center; }
+
+.film-result-message { color: var(--argent-ecran); font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+.film-result-help    { color: var(--argent-ecran); font-size: 0.9rem; opacity: 0.8; margin: 0; }
+
+/* ══════════════════════════════════════════════════════
+   POSTER PREVIEW (section 1, droite)
+══════════════════════════════════════════════════════ */
+.arm-poster-wrap {
+  position: sticky;
+  top: calc(var(--nav-height, 68px) + 64px + 16px);
 }
 
-.film-result-message {
-  color: var(--argent-ecran);
-  font-size: 1rem;
-  margin-bottom: 1rem;
+.arm-poster__label {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.28);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.arm-poster-card {
+  background: linear-gradient(148deg, rgba(10, 18, 30, 0.96), rgba(14, 24, 38, 0.92));
+  border: 1px solid rgba(196, 160, 82, 0.14);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.52);
+  transition: border-color 0.4s;
+}
+
+.arm-poster-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: linear-gradient(145deg, rgba(20, 34, 52, 0.85), rgba(10, 18, 30, 0.95));
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 }
 
-.film-result-message i {
-  color: var(--dore-popcorn);
+.arm-poster-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.film-result-help {
+.arm-poster-img::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(to bottom, transparent, rgba(5, 10, 20, 0.92) 65%, rgba(5, 10, 20, 0.99));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.arm-poster-ph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.28;
+  z-index: 0;
+  transition: opacity 0.3s;
+}
+
+.arm-poster-ph svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--or-titre);
+  fill: none;
+}
+
+.arm-poster-ph span {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.42rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.55);
+}
+
+.arm-poster-tz {
+  position: absolute;
+  bottom: 14px;
+  left: 0; right: 0;
+  padding: 0 12px;
+  z-index: 3;
+}
+
+.arm-poster-name {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.22;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.88);
+  display: block;
+  margin-bottom: 2px;
+  min-height: 1.1em;
+  transition: all 0.28s;
+}
+
+.arm-poster-year {
+  font-family: var(--font-body, 'Lato', sans-serif);
+  font-size: 0.52rem;
+  font-style: italic;
+  color: rgba(196, 160, 82, 0.68);
+}
+
+.arm-poster-body {
+  padding: 10px 14px 12px;
+}
+
+.arm-poster-genre-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 20px;
+}
+
+.arm-genre-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.52rem;
+  border-radius: 4px;
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(196, 160, 82, 0.1);
+  border: 1px solid rgba(196, 160, 82, 0.24);
+  color: rgba(196, 160, 82, 0.82);
+}
+
+.arm-poster-synopsis {
+  font-size: 0.72rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(232, 232, 232, 0.35);
+  margin: 8px 0 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.arm-poster-empty {
+  font-size: 0.56rem;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(232, 232, 232, 0.2);
+  text-align: center;
+  padding: 6px 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   BANDEAU FILM SÉLECTIONNÉ (section 2) — supprimé
+══════════════════════════════════════════════════════ */
+.arm-film-bar {
+  display: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 28px;
+}
+
+.arm-film-bar__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-gradient);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(196, 160, 82, 0.5);
+}
+
+.arm-film-bar__label {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.45);
+  flex-shrink: 0;
+}
+
+.arm-film-bar__title {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--argent-ecran);
-  font-size: 0.9rem;
-  opacity: 0.8;
+  flex: 1;
+}
+
+.arm-film-bar__meta {
+  font-size: 0.6rem;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(196, 160, 82, 0.52);
+  flex-shrink: 0;
+}
+
+.arm-film-bar__edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.44rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.36);
+  text-decoration: none;
+  transition: color 0.22s;
+}
+
+.arm-film-bar__edit:hover { color: var(--or-titre); }
+
+.arm-film-bar__edit svg {
+  width: 10px; height: 10px;
+  stroke: currentColor; stroke-width: 2; fill: none;
+}
+
+/* ══════════════════════════════════════════════════════
+   PORTIONS STEPPER
+══════════════════════════════════════════════════════ */
+.arm-portions-ctrl {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid rgba(196, 160, 82, 0.16);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(10, 18, 30, 0.85);
+  width: 100%;
+  transition: border-color 0.22s;
+}
+
+.arm-portions-ctrl:focus-within {
+  border-color: rgba(196, 160, 82, 0.52);
+}
+
+.arm-portions-btn {
+  width: 38px;
+  height: 42px;
+  flex-shrink: 0;
+  background: rgba(15, 26, 42, 0.8);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(196, 160, 82, 0.5);
+  transition: all 0.2s;
+}
+
+.arm-portions-btn:hover {
+  background: rgba(196, 160, 82, 0.09);
+  color: var(--or-titre);
+}
+
+.arm-portions-btn svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+}
+
+.arm-portions-val {
+  flex: 1;
+  text-align: center;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  color: var(--or-titre);
+  user-select: none;
+  border-left: 1px solid rgba(196, 160, 82, 0.12);
+  border-right: 1px solid rgba(196, 160, 82, 0.12);
+  padding: 6px 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   SÉPARATEUR DE SECTION
+══════════════════════════════════════════════════════ */
+.arm-sep {
+  height: 1px;
+  border: none;
+  background: linear-gradient(90deg, transparent, rgba(196, 160, 82, 0.14) 25%, rgba(196, 160, 82, 0.14) 75%, transparent);
+  margin: 4px 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   UPLOAD PHOTOS — grille 3 slots 3:2
+══════════════════════════════════════════════════════ */
+.arm-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.arm-upload-slot {
+  position: relative;
+  aspect-ratio: 3/2;
+  border: 1.5px dashed rgba(196, 160, 82, 0.2);
+  border-radius: 12px;
+  background: rgba(8, 14, 24, 0.65);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.25s;
+}
+
+.arm-upload-slot:hover,
+.arm-upload-slot.drag-on {
+  border-color: rgba(196, 160, 82, 0.48);
+  background: rgba(196, 160, 82, 0.04);
+}
+
+/* Input file invisible couvrant tout le slot */
+.arm-upload-slot__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  display: none; /* géré par le JS via .click() */
+}
+
+.arm-upload-slot__n {
+  position: absolute;
+  top: 7px; left: 9px;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: rgba(196, 160, 82, 0.2);
+  line-height: 1;
+  z-index: 4;
+}
+
+.arm-upload-slot__badge {
+  font-size: 0.32rem;
+  letter-spacing: 0.08em;
+}
+
+.arm-upload-slot__ico {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+  transition: opacity 0.25s;
+}
+
+.arm-upload-slot__ico svg {
+  width: 20px; height: 20px;
+  stroke: rgba(196, 160, 82, 0.35);
+  fill: none;
+  transition: stroke 0.22s;
+}
+
+.arm-upload-slot:hover .arm-upload-slot__ico svg {
+  stroke: rgba(196, 160, 82, 0.6);
+}
+
+.arm-upload-slot__lbl {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.42rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.38);
+  transition: color 0.22s;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.arm-upload-slot:hover .arm-upload-slot__lbl {
+  color: rgba(196, 160, 82, 0.65);
+}
+
+/* Preview photo (background-image) */
+.arm-upload-slot__prev {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  border-radius: 11px;
+  display: none;
+  z-index: 1;
+}
+
+.arm-upload-slot__prev.on {
+  display: block;
+}
+
+.arm-upload-slot__prev::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 11px;
+}
+
+/* Boutons action (changer / supprimer) — visibles quand has-photo */
+.arm-upload-slot__acts {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 5;
+  display: none;
+  gap: 4px;
+}
+
+.arm-upload-slot.has-photo .arm-upload-slot__acts {
+  display: flex;
+}
+
+.arm-upload-slot.has-photo .arm-upload-slot__ico,
+.arm-upload-slot.has-photo .arm-upload-slot__lbl {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arm-slot-act {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: rgba(8, 14, 24, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--or-titre);
+}
+
+.arm-slot-act:hover {
+  background: rgba(196, 160, 82, 0.16);
+  border-color: rgba(196, 160, 82, 0.52);
+}
+
+.arm-slot-act svg {
+  width: 11px; height: 11px;
+  stroke: currentColor; stroke-width: 2; fill: none;
+}
+
+.arm-slot-act--del {
+  border-color: rgba(194, 48, 24, 0.22);
+  color: rgba(220, 70, 50, 0.72);
+}
+
+.arm-slot-act--del:hover {
+  background: rgba(194, 48, 24, 0.18);
+  border-color: rgba(194, 48, 24, 0.52);
+  color: #e84020;
+}
+
+/* Compteur photos */
+.arm-upload-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.58rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.28);
+  margin-top: 8px;
+}
+
+.arm-upload-count__n {
+  color: rgba(196, 160, 82, 0.52);
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.8rem;
+}
+
+/* ══════════════════════════════════════════════════════
+   CONTEXTE CINÉMATOGRAPHIQUE
+══════════════════════════════════════════════════════ */
+.arm-cine-context {
+  background: rgba(196, 160, 82, 0.04);
+  border: 1px solid rgba(196, 160, 82, 0.12);
+  border-left: 3px solid rgba(196, 160, 82, 0.35);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+}
+
+.arm-cine-context__quote {
+  font-family: var(--f-editorial, 'Playfair Display', serif);
+  font-style: italic;
+  font-size: 0.72rem;
+  color: rgba(196, 160, 82, 0.45);
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ══════════════════════════════════════════════════════
+   EDITOR PANELS (section 3)
+══════════════════════════════════════════════════════ */
+.arm-ing-prep-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.arm-editor {
+  background: rgba(8, 14, 24, 0.72);
+  border: 1px solid rgba(196, 160, 82, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.25s;
+}
+
+.arm-editor:focus-within {
+  border-color: rgba(196, 160, 82, 0.26);
+}
+
+.arm-editor__header {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(6, 10, 18, 0.42);
+}
+
+.arm-editor__icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: rgba(196, 160, 82, 0.07);
+  border: 1px solid rgba(196, 160, 82, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arm-editor__icon svg {
+  width: 15px; height: 15px;
+  stroke: var(--or-titre);
+  fill: none;
+}
+
+.arm-editor__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: var(--or-titre);
+}
+
+.arm-editor__hint {
+  margin-left: auto;
+  font-size: 0.52rem;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(232, 232, 232, 0.2);
+}
+
+.arm-editor__body {
+  padding: 14px 16px;
+}
+
+.arm-editor__ta {
+  width: 100%;
+  min-height: 260px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-body, 'Lato', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 300;
+  color: var(--argent-ecran);
+  line-height: 1.88;
+  caret-color: var(--or-titre);
+  overflow: hidden;
+}
+
+.arm-editor__ta::placeholder { color: rgba(232, 232, 232, 0.15); }
+
+.arm-editor__footer {
+  padding: 9px 18px;
+  border-top: 1px solid rgba(196, 160, 82, 0.06);
+  display: flex;
+  align-items: center;
+}
+
+.arm-line-counter {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: rgba(196, 160, 82, 0.3);
+}
+
+.arm-line-counter span { color: rgba(196, 160, 82, 0.55); }
+
+/* ══════════════════════════════════════════════════════
+   CTA ROW (bas de section)
+══════════════════════════════════════════════════════ */
+.arm-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(196, 160, 82, 0.08);
+}
+
+.arm-cta-row__hint {
+  font-size: 0.64rem;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(232, 232, 232, 0.26);
+  margin-right: auto;
+}
+
+.arm-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arm-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba(232, 232, 232, 0.14);
+  border-radius: 9px;
+  color: rgba(232, 232, 232, 0.42);
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.48rem 1rem;
+  transition: all 0.22s;
+}
+
+.arm-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(232, 232, 232, 0.3);
+  color: rgba(232, 232, 232, 0.72);
+}
+
+.arm-btn-ghost svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   GOLDEN TICKET — Validation finale
+══════════════════════════════════════════════════════ */
+.arm-ticket {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  margin-top: 8px;
+  background: linear-gradient(142deg, #7a5a14 0%, #b8882a 18%, #c4a052 38%, #d4a843 52%, #f2c84b 65%, #d4a843 78%, #b8882a 100%);
+  box-shadow: 0 16px 56px rgba(184, 136, 42, 0.38), 0 4px 20px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+}
+
+.arm-ticket:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 72px rgba(184, 136, 42, 0.48), 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Grain or */
+.arm-ticket::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.042;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* Watermark */
+.arm-ticket::after {
+  content: "CINÉ DÉLICES";
+  white-space: nowrap;
+  position: absolute;
+  bottom: -4px; right: 20px;
+  z-index: 0;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 4.5rem;
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+  color: rgba(20, 14, 0, 0.08);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Shimmer */
+@keyframes armShim {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(320%) skewX(-18deg); }
+}
+
+.arm-ticket__shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.arm-ticket__shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+}
+
+.arm-ticket:hover .arm-ticket__shimmer::after {
+  animation: armShim 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Perforations */
+.arm-ticket__perfo {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  top: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 14px 0;
+}
+
+.arm-ticket__perfo--l { left: -1px; }
+.arm-ticket__perfo--r { right: -1px; }
+
+.arm-ticket__hole {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--bleu-nuit);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Ligne de déchirure */
+.arm-ticket__tear {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  top: 50%;
+  left: 18px; right: 18px;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, rgba(20, 10, 0, 0.18) 0, rgba(20, 10, 0, 0.18) 5px, transparent 5px, transparent 11px);
+}
+
+.arm-ticket__tear::before,
+.arm-ticket__tear::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--bleu-nuit);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+.arm-ticket__tear::before { left: -18px; }
+.arm-ticket__tear::after  { right: -18px; }
+
+/* Tampon */
+.arm-ticket__stamp {
+  position: absolute;
+  z-index: 4;
+  top: 50%; right: 250px;
+  transform: translateY(-50%) rotate(-12deg);
+  pointer-events: none;
+}
+
+.arm-ticket__stamp-inner {
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  border: 3px solid rgba(20, 10, 0, 0.24);
+  box-shadow: 0 0 0 2px rgba(20, 10, 0, 0.08), inset 0 0 0 4px rgba(20, 10, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 0.54rem;
+  letter-spacing: 0.14em;
+  text-align: center;
+  line-height: 1.2;
+  color: rgba(20, 10, 0, 0.26);
+  text-transform: uppercase;
+  padding: 8px;
+}
+
+/* Contenu gauche */
+.arm-ticket__text {
+  flex: 1;
+  padding: 34px 40px 34px 50px;
+  position: relative;
+  z-index: 2;
+}
+
+.arm-ticket__title {
+  font-family: var(--f-display, 'Bebas Neue', cursive);
+  font-size: 2.1rem;
+  letter-spacing: 0.08em;
+  color: var(--bleu-nuit);
+  line-height: 1;
+  margin: 0 0 6px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.arm-ticket__desc {
+  font-size: 0.76rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(20, 10, 0, 0.55);
+  max-width: 430px;
+  margin: 0 0 10px 0;
+}
+
+.arm-ticket__note {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.58rem;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(20, 10, 0, 0.38);
   margin: 0;
 }
 
-.film-search-result-loading .film-result-content,
-.film-search-result-error .film-result-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  color: var(--argent-ecran);
+.arm-ticket__note svg {
+  width: 12px; height: 12px;
+  stroke: rgba(20, 10, 0, 0.42);
+  stroke-width: 2; fill: none;
 }
 
-.film-search-result-loading i {
+/* CTA droite */
+.arm-ticket__cta {
+  flex-shrink: 0;
+  padding: 34px 40px 34px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  border-left: 1px dashed rgba(20, 10, 0, 0.14);
+}
+
+.arm-ticket__submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 28px;
+  height: 50px;
+  border-radius: 11px;
+  background: var(--bleu-nuit);
+  border: none;
+  cursor: pointer;
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--or-titre);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.arm-ticket__submit:hover {
+  background: #0a1520;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
   color: var(--dore-popcorn);
 }
 
-.film-search-result-error .film-result-content {
-  color: #ff6b6b;
+.arm-ticket__submit svg {
+  width: 15px; height: 15px;
+  stroke: currentColor; stroke-width: 2; fill: none;
 }
 
-.film-search-result-error i {
-  color: #ff6b6b;
-}
-
-/* ====================================================== */
-/* ========== VALIDATION TMDB - SUGGESTIONS ============ */
-/* ====================================================== */
+/* ══════════════════════════════════════════════════════
+   TMDB SUGGESTIONS (styles fonctionnels conservés)
+══════════════════════════════════════════════════════ */
 .tmdb-suggestions {
   position: absolute;
   top: calc(100% + 0.5rem);
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   background: rgba(13, 27, 42, 0.98);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(198, 166, 100, 0.3);
   border-radius: 12px;
   max-height: 300px;
@@ -651,12 +1625,10 @@
   z-index: 1003;
   display: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  animation: slideDown 0.2s ease-out;
+  animation: armSlideDown 0.2s ease-out;
 }
 
-.tmdb-suggestions.active {
-  display: block;
-}
+.tmdb-suggestions.active { display: block; }
 
 .tmdb-suggestion-item {
   padding: 1rem 1.25rem;
@@ -674,272 +1646,77 @@
   padding-left: calc(1.25rem - 3px);
 }
 
-.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-title {
-  color: var(--bleu-nuit);
-  font-weight: 600;
-}
-
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-title { color: var(--bleu-nuit); font-weight: 600; }
 .tmdb-suggestion-item.suggestion-local .tmdb-suggestion-year,
-.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-genre {
-  color: var(--bleu-nuit);
-  opacity: 0.8;
+.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-genre { color: var(--bleu-nuit); opacity: 0.8; }
+.tmdb-suggestion-item.suggestion-local:hover { background-color: var(--dore-popcorn); box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4); }
+
+.tmdb-suggestion-content { display: flex; align-items: center; gap: 1rem; }
+
+.tmdb-suggestion-poster { width: 60px; height: 90px; object-fit: cover; border-radius: 6px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
+
+.tmdb-suggestion-info { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 0; }
+
+.tmdb-suggestion-badge { display: inline-block; padding: 0.25rem 0.5rem; background-color: var(--rouge-projecteur); color: var(--argent-ecran); border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem; text-transform: uppercase; }
+
+.tmdb-suggestion-item:hover, .tmdb-suggestion-item:focus { background-color: rgba(198, 166, 100, 0.15); outline: none; }
+.tmdb-suggestion-item:last-child { border-bottom: none; }
+
+.tmdb-suggestion-title { color: var(--argent-ecran); font-size: 1rem; font-weight: 500; }
+.tmdb-suggestion-year, .tmdb-suggestion-genre { color: var(--argent-ecran); font-size: 0.875rem; opacity: 0.8; }
+
+.tmdb-suggestion-type { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.2em 0.5em; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 0.5rem; white-space: nowrap; }
+.tmdb-suggestion-type--film  { background-color: var(--rouge-projecteur); color: var(--argent-ecran); border: 1px solid var(--rouge-projecteur); }
+.tmdb-suggestion-type--serie { background-color: var(--bleu-nuit); color: var(--argent-ecran); border: 1px solid var(--bleu-nuit); }
+
+.tmdb-suggestion-item.tmdb-suggestion-highlighted { background-color: rgba(198, 166, 100, 0.1); border-left: 3px solid var(--dore-popcorn); padding-left: calc(1.25rem - 3px); }
+.tmdb-suggestion-item.tmdb-suggestion-highlighted .tmdb-suggestion-title { font-weight: 600; color: var(--dore-popcorn); }
+
+.tmdb-suggestion-loading { padding: 1.5rem 1.25rem; text-align: center; color: var(--dore-popcorn); font-size: 0.9rem; }
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 1280px) {
+  .arm-page, .arm-hero__content { padding-left: 48px; padding-right: 48px; }
+  .arm-stepper { padding: 0 48px; }
+  .arm-s1-layout { grid-template-columns: 1fr 210px; gap: 28px; }
 }
 
-.tmdb-suggestion-item.suggestion-local:hover {
-  background-color: var(--dore-popcorn);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
+@media (max-width: 1060px) {
+  .arm-page { padding: 32px 32px 80px; }
+  .arm-hero__content { padding: 0 32px; }
+  .arm-stepper { padding: 0 32px; }
+  .arm-s1-layout { grid-template-columns: 1fr; }
+  .arm-poster-wrap { position: static; }
+  .arm-poster-card { display: grid; grid-template-columns: 150px 1fr; }
+  .arm-poster-img { aspect-ratio: auto; min-height: 210px; border-radius: 14px 0 0 14px; }
+  .arm-row--meta { grid-template-columns: 1fr 1fr; }
+  .arm-ing-prep-grid { grid-template-columns: 1fr; }
+  .arm-ticket__stamp { display: none; }
 }
 
-.tmdb-suggestion-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.tmdb-suggestion-poster {
-  width: 60px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 6px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.tmdb-suggestion-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.tmdb-suggestion-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-left: 0.5rem;
-  text-transform: uppercase;
-  border: 1px solid var(--rouge-projecteur);
-  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
-}
-
-.tmdb-suggestion-item:hover,
-.tmdb-suggestion-item:focus {
-  background-color: rgba(198, 166, 100, 0.15);
-  outline: none;
-}
-
-.tmdb-suggestion-item.suggestion-local:hover {
-  background-color: var(--dore-popcorn);
-  box-shadow: 0 4px 12px rgba(198, 166, 100, 0.4);
-}
-
-.tmdb-suggestion-item.tmdb-suggestion-highlighted {
-  background-color: rgba(198, 166, 100, 0.1);
-  border-left: 3px solid var(--dore-popcorn);
-  padding-left: calc(1.25rem - 3px);
-}
-
-.tmdb-suggestion-item.tmdb-suggestion-highlighted .tmdb-suggestion-title {
-  font-weight: 600;
-  color: var(--dore-popcorn);
-}
-
-.tmdb-suggestion-item:last-child {
-  border-bottom: none;
-}
-
-.tmdb-suggestion-title {
-  color: var(--argent-ecran);
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.tmdb-suggestion-year,
-.tmdb-suggestion-genre {
-  color: var(--argent-ecran);
-  font-size: 0.875rem;
-  opacity: 0.8;
-}
-
-.tmdb-suggestion-type {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.2em 0.5em;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-left: 0.5rem;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.tmdb-suggestion-type--film {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border: 1px solid var(--rouge-projecteur);
-  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.3);
-}
-
-.tmdb-suggestion-type--serie {
-  background-color: var(--bleu-nuit);
-  color: var(--argent-ecran);
-  border: 1px solid var(--bleu-nuit);
-  box-shadow: 0 2px 4px rgba(13, 27, 42, 0.3);
-}
-
-.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-type--film {
-  background-color: var(--rouge-projecteur);
-  color: var(--argent-ecran);
-  border: 1px solid var(--rouge-projecteur);
-  box-shadow: 0 2px 4px rgba(215, 38, 56, 0.5);
-}
-
-.tmdb-suggestion-item.suggestion-local .tmdb-suggestion-type--serie {
-  background-color: var(--bleu-nuit);
-  color: var(--argent-ecran);
-  border: 1px solid var(--bleu-nuit);
-  box-shadow: 0 2px 4px rgba(13, 27, 42, 0.5);
-}
-
-.tmdb-suggestion-loading {
-  padding: 1.5rem 1.25rem;
-  text-align: center;
-  color: var(--dore-popcorn);
-  font-size: 0.9rem;
-}
-
-/* ====================================================== */
-/* ====================== ANIMATIONS =================== */
-/* ====================================================== */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ====================================================== */
-/* ====================== RESPONSIVE =================== */
-/* ====================================================== */
-@media (max-width: 1000px) {
-  .add-recipe-grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  .add-recipe-grid--2cols {
-    grid-template-columns: 1fr;
-  }
-
-  .add-recipe-form-row {
-    gap: 1rem;
-  }
-
-  .add-recipe-card__footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .add-recipe-card__footer p {
-    margin: 0;
-  }
-
-  .add-recipe-card__btn {
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .add-recipe-page {
-    padding: 1rem 1rem 3rem;
-  }
-
-  .add-recipe-hero__title {
-    font-size: 2rem;
-  }
-
-  .add-recipe-form-row {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .add-recipe-field--title,
-  .add-recipe-field--year,
-  .add-recipe-field--genre {
-    flex: 1 1 100%;
-  }
-
-  .add-recipe-card {
-    padding: 1.25rem;
-    border-radius: 12px;
-  }
-
-  .add-recipe-subcard {
-    padding: 1rem;
-  }
-
-  .add-recipe-card__header h2 {
-    font-size: 1.4rem;
-  }
-
-  .add-recipe-subcard h3 {
-    font-size: 1.05rem;
-  }
+@media (max-width: 760px) {
+  .arm-page { padding: 24px 20px 60px; }
+  .arm-hero__content { padding: 0 20px; }
+  .arm-stepper { padding: 0 20px; }
+  .arm-body { padding: 26px 22px 28px; }
+  .arm-row--film { grid-template-columns: 1fr 1fr; }
+  .arm-row--meta { grid-template-columns: 1fr 1fr; }
+  .arm-upload-grid { grid-template-columns: 1fr 1fr; }
+  .arm-ticket { flex-direction: column; }
+  .arm-ticket__text { padding: 28px 28px 16px; }
+  .arm-ticket__cta { border-left: none; border-top: 1px dashed rgba(20, 10, 0, 0.14); padding: 16px 28px 28px; align-items: flex-start; }
+  .arm-step__name { display: none; }
+  .arm-hd { flex-wrap: wrap; }
+  .arm-hd__rule { display: none; }
 }
 
 @media (max-width: 480px) {
-  .add-recipe-page {
-    padding: 0.75rem 0.5rem 2.5rem;
-  }
-
-  .add-recipe-hero__title {
-    font-size: 1.6rem;
-  }
-
-  .add-recipe-hero__subtitle {
-    font-size: 0.9rem;
-  }
-
-  .add-recipe-card {
-    padding: 1rem;
-  }
-
-  .add-recipe-subcard {
-    padding: 0.875rem;
-  }
-
-  .add-recipe-input,
-  .add-recipe-select,
-  .add-recipe-textarea {
-    padding: 0.65rem 0.8rem;
-    font-size: 0.88rem;
-    border-radius: 8px;
-  }
-
-  .add-recipe-textarea--tall {
-    min-height: 150px;
-  }
-
-  .add-recipe-label {
-    font-size: 0.82rem;
-  }
-
-  .film-selected-image {
-    height: 160px;
-  }
-
-  .recipe-image-upload img {
-    height: 150px;
-  }
+  .arm-page { padding: 16px 16px 48px; }
+  .arm-body { padding: 20px 16px 24px; }
+  .arm-row--film, .arm-row--meta { grid-template-columns: 1fr; }
+  .arm-ticket__title { font-size: 1.6rem; }
+  .arm-upload-grid { grid-template-columns: 1fr; }
+  .arm-step__label { display: none; }
 }

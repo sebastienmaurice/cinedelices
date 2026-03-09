@@ -33,6 +33,13 @@ async function updateFilmImage(movie) {
   const filmSelectedImage = document.querySelector(".film-selected-image img");
   if (!filmSelectedImage) return;
 
+  // Si c'est un film TMDB avec poster_path (URL CDN directe), l'afficher immédiatement
+  if (movie && !movie.isLocal && movie.poster_path) {
+    filmSelectedImage.src = movie.poster_path;
+    filmSelectedImage.alt = `Affiche du film ${movie.title || movie.original_title || ""}`;
+    return;
+  }
+
   // Si c'est un film existant (movie.id existe), récupérer ses données complètes pour avoir l'image
   if (movie && movie.id) {
     try {

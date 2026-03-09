@@ -21,6 +21,43 @@
     <!-- HEADER -->
     <%- include("partials/header") %>
 
+    <!-- Toast montée en niveau de badge -->
+    <% if (typeof badgeJustUpgraded !== 'undefined' && badgeJustUpgraded && contributionBadge) { %>
+    <div class="badge-toast" id="badgeToast" role="alert" aria-live="polite">
+      <img src="<%= contributionBadge.image %>" alt="<%= contributionBadge.label %>" class="badge-toast__img">
+      <div class="badge-toast__body">
+        <div class="badge-toast__title">Nouveau badge débloqué !</div>
+        <div class="badge-toast__label"><%= contributionBadge.label %></div>
+      </div>
+      <button class="badge-toast__close" onclick="document.getElementById('badgeToast').remove()" aria-label="Fermer">✕</button>
+    </div>
+    <style>
+      .badge-toast {
+        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+        display: flex; align-items: center; gap: 14px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 1px solid rgba(196,160,82,.5);
+        border-radius: 12px; padding: 14px 18px;
+        box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(196,160,82,.2);
+        animation: toastIn .4s cubic-bezier(.22,1,.36,1);
+        max-width: 320px;
+      }
+      .badge-toast__img { width: 52px; height: 52px; object-fit: contain; flex-shrink: 0; }
+      .badge-toast__body { flex: 1; }
+      .badge-toast__title { font-size: .75rem; color: #c4a052; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-bottom: 2px; }
+      .badge-toast__label { font-size: 1rem; color: #fff; font-weight: 600; }
+      .badge-toast__close { background: none; border: none; color: #888; cursor: pointer; font-size: 1rem; padding: 0 0 0 8px; flex-shrink: 0; }
+      .badge-toast__close:hover { color: #fff; }
+      @keyframes toastIn {
+        from { opacity: 0; transform: translateY(20px) scale(.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+    </style>
+    <script>
+      setTimeout(() => { const t = document.getElementById('badgeToast'); if (t) t.remove(); }, 6000);
+    </script>
+    <% } %>
+
     <!-- MAIN -->
     <main
       class="profile-page <%= user.picture_status === 'pending' ? 'profile-page--pending' : '' %>"

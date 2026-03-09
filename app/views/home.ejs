@@ -610,35 +610,34 @@
                   </div>
                 </div>
 
-                <!-- Liste (statique — données réelles à connecter ultérieurement) -->
+                <!-- Liste dynamique — top 3 contributeurs par recettes approuvées -->
                 <div class="contrib-list">
-                  <div class="contrib-item">
-                    <span class="contrib-item__rank">1</span>
-                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=15" alt="Top contributeur 1">
-                    <div class="contrib-item__info">
-                      <div class="contrib-item__name">Jean M.</div>
-                      <div class="contrib-item__meta">21 recettes · 🎬 Crocodile Dundee, Joker…</div>
+                  <% const contribEmojis = ['🥇', '🎞️', '🎬']; %>
+                  <% const contribAvatarImgs = [15, 47, 32]; %>
+                  <% if (topContributors && topContributors.length > 0) { %>
+                    <% topContributors.forEach(function(contrib, idx) { %>
+                    <div class="contrib-item <%= idx === 0 ? 'contrib-item--first' : '' %>">
+                      <span class="contrib-item__rank"><%= idx + 1 %></span>
+                      <% if (idx === 0) { %>
+                      <div class="contrib-item__avatar-wrap">
+                        <svg class="contrib-item__crown" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+                        <img class="contrib-item__avatar" src="<%= contrib.picture || 'https://i.pravatar.cc/68?img=' + contribAvatarImgs[idx] %>" alt="Top contributeur 1">
+                      </div>
+                      <% } else { %>
+                      <img class="contrib-item__avatar" src="<%= contrib.picture || 'https://i.pravatar.cc/68?img=' + contribAvatarImgs[idx] %>" alt="Top contributeur <%= idx + 1 %>">
+                      <% } %>
+                      <div class="contrib-item__info">
+                        <div class="contrib-item__name"><%= contrib.pseudo %></div>
+                        <div class="contrib-item__meta"><%= contrib.recipe_count %> recette<%= contrib.recipe_count > 1 ? 's' : '' %></div>
+                      </div>
+                      <span class="contrib-item__badge-emoji"><%= contribEmojis[idx] %></span>
                     </div>
-                    <span class="contrib-item__badge-emoji">🥇</span>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="contrib-item" style="justify-content:center;opacity:.6;font-size:.85rem;">
+                    Aucun contributeur pour le moment.
                   </div>
-                  <div class="contrib-item">
-                    <span class="contrib-item__rank">2</span>
-                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=47" alt="Top contributeur 2">
-                    <div class="contrib-item__info">
-                      <div class="contrib-item__name">Marie C.</div>
-                      <div class="contrib-item__meta">14 recettes · 🎬 Ratatouille, Silence des Agneaux…</div>
-                    </div>
-                    <span class="contrib-item__badge-emoji">🎞️</span>
-                  </div>
-                  <div class="contrib-item">
-                    <span class="contrib-item__rank">3</span>
-                    <img class="contrib-item__avatar" src="https://i.pravatar.cc/68?img=32" alt="Top contributeur 3">
-                    <div class="contrib-item__info">
-                      <div class="contrib-item__name">Sophie L.</div>
-                      <div class="contrib-item__meta">9 recettes · 🎬 Indiana Jones, Breaking Bad…</div>
-                    </div>
-                    <span class="contrib-item__badge-emoji">🎬</span>
-                  </div>
+                  <% } %>
                 </div>
 
                 <div class="contrib-sep"></div>
