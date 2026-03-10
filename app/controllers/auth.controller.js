@@ -84,12 +84,7 @@ const authController = {
           role: req.userRole,
         });
       }
-
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -135,12 +130,7 @@ const authController = {
           role: req.userRole,
         });
       }
-
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      return renderServerError(res, error, req.userRole);
     }
   },
 
@@ -367,11 +357,13 @@ const authController = {
       }
 
       if (remove_avatar === "true" && !req.file) {
+        unlinkIfExists(user.picture); // supprimer l'avatar du disque
         updateData.picture = null;
         updateData.picture_status = "approved";
       }
 
       if (req.file) {
+        unlinkIfExists(user.picture); // supprimer l'ancien avatar avant d'enregistrer le nouveau
         updateData.picture = `/images/profiles/${req.file.filename}`;
         updateData.picture_status = "pending";
       }
@@ -443,14 +435,8 @@ const authController = {
         });
       }
 
-      // Supprimer l'ancien fichier physique si existe
-      if (user.picture) {
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const oldPath = path.join(__dirname, "../public", user.picture);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
+      // Supprimer l'ancien avatar du disque avant d'enregistrer le nouveau
+      unlinkIfExists(user.picture);
 
       const newPicture = `/images/profiles/${req.file.filename}`;
       await User.update(
@@ -1230,13 +1216,6 @@ const authController = {
         message: "Erreur lors de la suppression du film.",
       });
     }
-  },
-
-  //page avis
-  quote(req, res) {
-    res.send("donne note et avis");
-    // ajout de la gestion de role
-    //res.render("user-quote" ,{ role: req.userRole });
   },
 
   //deconnexion

@@ -47,29 +47,7 @@ body.film-page main {
   /* Pas de margin-top ici : le header partiel gère son propre offset */
 }
 
-.bc {
-  max-width: var(--max-width, 1280px);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  flex-wrap: wrap;
-}
-
-.bc a {
-  font-size: 0.62rem;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(232, 232, 232, 0.32);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.bc a:hover {
-  color: var(--or-titre, var(--dore-popcorn));
-}
+/* .bc défini dans base.css */
 
 .bc-sep {
   color: rgba(196, 160, 82, 0.22);
@@ -1526,23 +1504,15 @@ body.film-page main {
   backdrop-filter: blur(4px);
 }
 
-/**
- * badge--film : titre du film en bas à gauche de l'image recette
- * Fond très sombre pour contraste sur l'image, max-width pour éviter débordement
- */
-.badge--film {
-  background: rgba(4, 8, 18, 0.75);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(200, 215, 235, 0.88);
-  font-size: 0.52rem;
-  letter-spacing: 0.6px;
-  max-width: 160px;
+/* Gestion longs titres : badge limité à la largeur du conteneur, wrapping 2 lignes */
+.recipe-card__ob .badge--film-dk {
+  max-width: 100%;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0.22rem 0.55rem;
-  border-radius: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
 }
 
 /* ====================================================== */
@@ -1900,15 +1870,16 @@ body.film-page main {
   z-index: 5;
 }
 
-/* Badge film en bas à gauche de l'image */
+/* Badge film en bas à gauche de l'image (moodboard) */
 .recipe-card__ob {
   position: absolute;
   bottom: 0.55rem;
   left: 0.6rem;
+  right: 0.6rem;
   display: flex;
   gap: 0.3rem;
   z-index: 3;
-  align-items: center;
+  align-items: flex-start;
 }
 
 /* Bouton favori dans la card */
@@ -2541,7 +2512,7 @@ body.film-page main {
   border-top: 1px solid rgba(236, 239, 241, 0.1);
 }
 
-.btn--outline {
+.btn--outline-silver {
   background: transparent;
   border: 1px solid rgba(236, 239, 241, 0.25);
   color: var(--argent-ecran);
@@ -2553,7 +2524,7 @@ body.film-page main {
   transition: all 0.2s ease;
 }
 
-.btn--outline:hover {
+.btn--outline-silver:hover {
   border-color: rgba(236, 239, 241, 0.5);
   background: rgba(236, 239, 241, 0.05);
 }

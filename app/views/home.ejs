@@ -232,7 +232,7 @@
 
             <!-- ① FILM — affiche 2:3 cadrée — topMovies[0] -->
             <% if (topMovies && topMovies[0]) { %>
-            <a href="/recipes-movie/<%= topMovies[0].id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= topMovies[0].title %>">
+            <a href="/recipes-movie/<%= topMovies[0].slug || topMovies[0].id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= topMovies[0].title %>">
               <img class="djc-film__img" src="<%= topMovies[0].cardPath || topMovies[0].picture %>" alt="Affiche <%= topMovies[0].title %>" loading="lazy">
               <div class="djc-film__overlay"></div>
               <div class="djc-film__top">
@@ -343,7 +343,7 @@
                       <div class="djc-recette__author-rank">★★ Studio Bronze</div>
                     </div>
                   </div>
-                  <a href="/recipes-movie/details/<%= topRecipe.id %>" class="djc-recette__btn">Voir la recette →</a>
+                  <a href="/recipes-movie/details/<%= topRecipe.slug || topRecipe.id %>" class="djc-recette__btn">Voir la recette →</a>
                 </div>
               </div>
             </div>
@@ -420,7 +420,7 @@
                         <span class="lvl-title"><%= c0ttl %></span>
                       </div>
                     </div>
-                    <a href="/recipes-movie/details/<%= recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
+                    <a href="/recipes-movie/details/<%= recipes[0].slug || recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
                   </div>
                 </div>
               </div>
@@ -467,7 +467,7 @@
                         <span class="lvl-title"><%= c1ttl %></span>
                       </div>
                     </div>
-                    <a href="/recipes-movie/details/<%= recipes[1].id %>" class="top3-card__btn">Voir</a>
+                    <a href="/recipes-movie/details/<%= recipes[1].slug || recipes[1].id %>" class="top3-card__btn">Voir</a>
                   </div>
                 </div>
               </div>
@@ -510,7 +510,7 @@
                         <span class="lvl-title"><%= c2ttl %></span>
                       </div>
                     </div>
-                    <a href="/recipes-movie/details/<%= recipes[2].id %>" class="top3-card__btn">Voir</a>
+                    <a href="/recipes-movie/details/<%= recipes[2].slug || recipes[2].id %>" class="top3-card__btn">Voir</a>
                   </div>
                 </div>
               </div>

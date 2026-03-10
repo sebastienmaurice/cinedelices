@@ -1,15 +1,12 @@
-// importation des modules nécessaires
-
 import { DataTypes, Model } from 'sequelize';
 import sequelize from "../database/sequelize-client.js";
-
-
-// définition du modèle Recipe
+import slugify from "slugify";
 
 class Recipe extends Model {}
 
 Recipe.init({
   name: { type: DataTypes.TEXT, allowNull: false },
+  slug: { type: DataTypes.STRING(255), allowNull: true, unique: true },
   description: { type: DataTypes.TEXT, allowNull: false },
   picture: { type: DataTypes.STRING(255) },
   category: { type: DataTypes.STRING(100), allowNull: false },
@@ -36,8 +33,20 @@ Recipe.init({
   id_user: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
-  sequelize, // instance sequelize pour lui donner le nom de la table où aller chercher les données
+  sequelize,
   tableName: "recipes",
+  hooks: {
+    beforeCreate: (recipe) => {
+      if (!recipe.slug && recipe.name) {
+        recipe.slug = slugify(recipe.name, { lower: true, strict: true });
+      }
+    },
+    beforeUpdate: (recipe) => {
+      if (recipe.changed("name") && recipe.name) {
+        recipe.slug = slugify(recipe.name, { lower: true, strict: true });
+      }
+    },
+  },
   });
 
 export default Recipe;

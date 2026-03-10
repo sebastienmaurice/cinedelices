@@ -180,9 +180,17 @@ const recipesController = {
   // Afficher le film et ses recettes
   async movieRecipes(req, res) {
     try {
-      const movie = await Movie.findOne({
-        where: { id: req.params.id, status: "approved" },
-      });
+      const param = req.params.id;
+      let movie;
+
+      if (/^\d+$/.test(param)) {
+        // Ancienne URL numérique → redirect 301 vers slug
+        movie = await Movie.findOne({ where: { id: param, status: "approved" } });
+        if (movie?.slug) return res.redirect(301, `/recipes-movie/${movie.slug}`);
+        if (movie) return res.redirect(301, `/recipes-movie/${movie.id}`);
+      } else {
+        movie = await Movie.findOne({ where: { slug: param, status: "approved" } });
+      }
 
       // Utilisation du helper centralisé pour les erreurs 404
       if (!movie) {
@@ -237,11 +245,17 @@ const recipesController = {
   // Filtrage des recettes du film par catégorie
   async filtredRecipes(req, res) {
     try {
-      const { id, category } = req.params;
+      const { id: param, category } = req.params;
+      let movie;
 
-      const movie = await Movie.findOne({
-        where: { id, status: "approved" },
-      });
+      if (/^\d+$/.test(param)) {
+        // Ancienne URL numérique → redirect 301 vers slug
+        movie = await Movie.findOne({ where: { id: param, status: "approved" } });
+        if (movie?.slug) return res.redirect(301, `/recipes-movie/category/${movie.slug}/${category}`);
+        if (movie) return res.redirect(301, `/recipes-movie/category/${movie.id}/${category}`);
+      } else {
+        movie = await Movie.findOne({ where: { slug: param, status: "approved" } });
+      }
 
       if (!movie) {
         return renderNotFound(res, "Film", req.userRole);
@@ -299,12 +313,20 @@ const recipesController = {
     - Rend la vue "recipes-movie" avec la liste filtrée
   */
 
-  // Afficher le détail d'une recette spécifique ajouté par SEB le 14 Nov à 18h30
+  // Afficher le détail d'une recette spécifique
   async detailRecipes(req, res) {
     try {
-      const recipe = await Recipe.findOne({
-        where: { id: req.params.id, status: "approved" },
-      });
+      const param = req.params.id;
+      let recipe;
+
+      if (/^\d+$/.test(param)) {
+        // Ancienne URL numérique → redirect 301 vers slug
+        recipe = await Recipe.findOne({ where: { id: param, status: "approved" } });
+        if (recipe?.slug) return res.redirect(301, `/recipes-movie/details/${recipe.slug}`);
+        if (recipe) return res.redirect(301, `/recipes-movie/details/${recipe.id}`);
+      } else {
+        recipe = await Recipe.findOne({ where: { slug: param, status: "approved" } });
+      }
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!recipe) {
@@ -337,7 +359,7 @@ const recipesController = {
 
       // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
       const notices = await Notice.findAll({
-        where: { id_recipe: req.params.id },
+        where: { id_recipe: plainRecipe.id },
         include: [
           {
             model: User,

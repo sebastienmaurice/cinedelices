@@ -1,11 +1,13 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
+import slugify from "slugify";
 
 class Movie extends Model {}
 
 Movie.init(
   {
     title: { type: DataTypes.TEXT, allowNull: false },
+    slug: { type: DataTypes.STRING(255), allowNull: true, unique: true },
     year: { type: DataTypes.INTEGER, allowNull: false },
     genre: { type: DataTypes.STRING(100), allowNull: false },
     picture: { type: DataTypes.STRING(255) },
@@ -36,6 +38,18 @@ Movie.init(
   {
     sequelize,
     tableName: "movies",
+    hooks: {
+      beforeCreate: (movie) => {
+        if (!movie.slug && movie.title) {
+          movie.slug = slugify(movie.title, { lower: true, strict: true });
+        }
+      },
+      beforeUpdate: (movie) => {
+        if (movie.changed("title") && movie.title) {
+          movie.slug = slugify(movie.title, { lower: true, strict: true });
+        }
+      },
+    },
   }
 );
 

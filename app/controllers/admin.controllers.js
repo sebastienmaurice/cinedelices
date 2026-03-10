@@ -180,12 +180,7 @@ const adminController = {
         role: req.userRole,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-        role: req.userRole,
-      });
+      return renderServerError(res, error, req.userRole);
     }
   },
 

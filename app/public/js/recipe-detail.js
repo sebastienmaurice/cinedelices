@@ -1,76 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ── Star picker (rd-star-picker) ──
-  const starPickers = document.querySelectorAll(".rd-star-picker");
-  starPickers.forEach((fieldset) => {
-    const valueDisplay = fieldset.querySelector(".rd-stars-value");
-    const inputs = Array.from(fieldset.querySelectorAll("input[type='radio']"));
-    const items = inputs
-      .map((input) => ({
-        input,
-        label: fieldset.querySelector(`label[for='${input.id}']`),
-        value: Number(input.value),
-      }))
-      .filter(({ label }) => !!label)
-      .sort((a, b) => a.value - b.value);
-
-    let selected = 0;
-
-    const render = (hovered) => {
-      const active = typeof hovered === "number" ? hovered : selected;
-      items.forEach(({ label, value }) => {
-        label.style.color = value <= active
-          ? "var(--dore-clair, #f2c84b)"
-          : "rgba(196, 160, 82, 0.2)";
+  // ── Star picker (avis-form-block) ──
+  let selectedStars = 0;
+  const starPicks = document.querySelectorAll(".star-pick");
+  if (starPicks.length) {
+    starPicks.forEach((el) => {
+      el.addEventListener("click", () => {
+        selectedStars = parseInt(el.dataset.v);
+        starPicks.forEach((s) => s.classList.toggle("on", parseInt(s.dataset.v) <= selectedStars));
       });
-      if (valueDisplay) valueDisplay.textContent = `${active}/5`;
-    };
-
-    inputs.forEach((input) => {
-      input.addEventListener("change", () => {
-        selected = Number(input.value);
-        render();
+      el.addEventListener("mouseenter", () => {
+        const v = parseInt(el.dataset.v);
+        starPicks.forEach((s) => { s.style.color = parseInt(s.dataset.v) <= v ? "var(--dore-clair)" : ""; });
       });
-    });
-
-    items.forEach(({ label, input, value }) => {
-      label.addEventListener("click", (e) => {
-        e.preventDefault();
-        input.checked = true;
-        selected = value;
-        render();
+      el.addEventListener("mouseleave", () => {
+        starPicks.forEach((s) => { s.style.color = parseInt(s.dataset.v) <= selectedStars ? "var(--dore-clair)" : ""; });
       });
-      label.addEventListener("mouseenter", () => render(value));
-      label.addEventListener("mouseleave", () => render());
-    });
-
-    render(0);
-  });
-
-  // ── Compteur de caractères (rd-review-textarea) ──
-  const reviewTextarea = document.querySelector(".rd-review-textarea");
-  const charCount = document.getElementById("charCount");
-  if (reviewTextarea && charCount) {
-    reviewTextarea.addEventListener("input", () => {
-      charCount.textContent = reviewTextarea.value.length;
     });
   }
 });
 
-// Smooth scroll to review banner from the top CTA
+// Smooth scroll vers la section avis depuis les CTAs
 document.addEventListener("DOMContentLoaded", () => {
-  const ctaAnchor = document.querySelector(
-    'a.rating-hint__cta--primary[href="#review-banner"]'
-  );
-  if (!ctaAnchor) return;
-  ctaAnchor.addEventListener("click", (event) => {
-    event.preventDefault();
-    const target = document.getElementById("review-banner");
-    if (target && typeof target.scrollIntoView === "function") {
+  document.querySelectorAll('a[href="#avis"]').forEach((anchor) => {
+    anchor.addEventListener("click", (event) => {
+      const target = document.getElementById("avis");
+      if (!target) return;
+      event.preventDefault();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else if (target) {
-      // fallback
-      window.location.hash = "#review-banner";
-    }
+    });
   });
 });
 
@@ -229,37 +186,18 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", syncHeight);
 });
 
-// ── "Voir Plus" avis ──
+// ── "Charger plus" avis ──
 document.addEventListener("DOMContentLoaded", () => {
-  const seeMoreBtn = document.getElementById("seeMoreReviews");
-  const extraReviews = document.querySelectorAll("[data-review-extra]");
+  const seeMoreBtn = document.getElementById("seeMoreAvis");
+  const extraGrid = document.getElementById("avisGridExtra");
+  const loadmore = document.getElementById("avisLoadmore");
 
-  if (!seeMoreBtn || !extraReviews.length) return;
-
-  let isExpanded = false;
+  if (!seeMoreBtn || !extraGrid) return;
 
   seeMoreBtn.addEventListener("click", () => {
-    if (!isExpanded) {
-      extraReviews.forEach((review, i) => {
-        setTimeout(() => review.classList.add("show"), i * 80);
-      });
-      seeMoreBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m18 15-6-6-6 6"/></svg>
-        Voir Moins
-      `;
-      isExpanded = true;
-      setTimeout(() => {
-        extraReviews[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }, extraReviews.length * 80 + 50);
-    } else {
-      extraReviews.forEach((review) => review.classList.remove("show"));
-      seeMoreBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m6 9 6 6 6-6"/></svg>
-        Voir Plus (${extraReviews.length})
-      `;
-      isExpanded = false;
-      seeMoreBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
+    extraGrid.removeAttribute("hidden");
+    loadmore.style.display = "none";
+    extraGrid.querySelector(".avis-card")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 });
 

@@ -33,11 +33,7 @@ const homeController = {
       });
 
       if (!recipes) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Recettes introuvable.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Recettes", req.userRole);
       }
 
       // recette du jour en aléatoire
@@ -54,11 +50,7 @@ const homeController = {
         limit: 4,
       });
       if (!topMovies || topMovies.length === 0) {
-        return res.status(404).render("error", {
-          error: "404",
-          message: "Films introuvables.",
-          role: req.userRole,
-        });
+        return renderNotFound(res, "Films", req.userRole);
       }
 
       // Lister les images du dossier recipes
