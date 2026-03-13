@@ -1,0 +1,5656 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Compte — Ciné Délices</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ═══════════════════════════════════════════════════
+   TOKENS DS v5
+═══════════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bleu-nuit: #142234;
+        --bleu-inter: #1b263b;
+        --surface-card: #0f1e30;
+        --surface-deep: #0a1522;
+        --bleu-clair: #415a77;
+        --bleu-second: #5a7391;
+        --gris-ardoise: #8294a8;
+        --or-titre: #c4a052;
+        --or-100: #d4a843;
+        --or-200: #b8882a;
+        --or-300: #7a5a14;
+        --dore-clair: #f2c84b;
+        --jaune-blond: #ffe085;
+        --rouge-cta: #c23018;
+        --argent: #e8e8e8;
+        --vert-valide: #2a7a50;
+        --vert-clair: #3daa72;
+        --orange-ambre: #d4820a;
+        --orange-clair: #f0a030;
+        --violet-cinema: #6b4fa0;
+        --violet-clair: #9b7ed0;
+        --caramel: #c97b3a;
+        --gold-gradient: linear-gradient(
+          135deg,
+          #b8882a 0%,
+          #d4a843 30%,
+          #f2c84b 55%,
+          #ffe085 80%,
+          #d4a843 100%
+        );
+        --gold-h: linear-gradient(
+          90deg,
+          #b8882a 0%,
+          #d4a843 30%,
+          #f2c84b 55%,
+          #ffe085 80%,
+          #d4a843 100%
+        );
+        --rouge-gradient: linear-gradient(
+          135deg,
+          #8c1c13 0%,
+          #c23018 45%,
+          #e84020 75%,
+          #c23018 100%
+        );
+        --f-display: "Bebas Neue", cursive;
+        --f-title: "Cinzel", serif;
+        --f-editorial: "Playfair Display", serif;
+        --f-body: "Lato", sans-serif;
+        --nav-h: 68px;
+        --max-w: 1280px;
+        --page-px: 64px;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        min-height: 100vh;
+        background: var(--bleu-nuit);
+        font-family: var(--f-body);
+        color: var(--argent);
+        overflow-x: hidden;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(196, 160, 82, 0.18);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(196, 160, 82, 0.32);
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      input,
+      select,
+      textarea {
+        font-family: var(--f-body);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   PARTICLES
+═══════════════════════════════════════════════════ */
+      .particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: floatUp linear infinite;
+      }
+      .p-gold {
+        background: rgba(196, 160, 82, 0.22);
+      }
+      .p-blue {
+        background: rgba(65, 90, 119, 0.2);
+      }
+      @keyframes floatUp {
+        from {
+          transform: translateY(105vh);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 0.35;
+        }
+        to {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+      .site-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        height: var(--nav-h);
+        display: flex;
+        align-items: center;
+        padding: 0 var(--page-px);
+        background: rgba(20, 34, 52, 0.72);
+        backdrop-filter: blur(20px) saturate(1.5);
+        border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+        transition:
+          background 0.4s,
+          box-shadow 0.4s;
+      }
+      .site-nav.scrolled {
+        background: rgba(15, 27, 44, 0.94);
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
+        border-bottom-color: rgba(196, 160, 82, 0.18);
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        flex-shrink: 0;
+        margin-right: 44px;
+      }
+      .nav-logo__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--gold-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        color: var(--bleu-nuit);
+        box-shadow: 0 0 18px rgba(196, 160, 82, 0.3);
+      }
+      .nav-logo__text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .nav-logo__name {
+        font-family: var(--f-display);
+        font-size: 1.15rem;
+        letter-spacing: 0.12em;
+        color: var(--or-titre);
+      }
+      .nav-logo__tag {
+        font-size: 0.44rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.42);
+        margin-top: 1px;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+      }
+      .nav-link {
+        position: relative;
+        padding: 6px 15px;
+        border-radius: 6px;
+        font-family: var(--f-title);
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: rgba(232, 232, 232, 0.58);
+        transition:
+          color 0.25s,
+          background 0.25s;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--or-titre),
+          transparent
+        );
+        transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .nav-link:hover {
+        color: var(--argent);
+        background: rgba(196, 160, 82, 0.06);
+      }
+      .nav-link:hover::after,
+      .nav-link--active::after {
+        width: 55%;
+      }
+      .nav-link--active {
+        color: var(--or-titre);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+      .nav-av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1.5px solid rgba(196, 160, 82, 0.45);
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      .nav-av:hover {
+        border-color: var(--or-titre);
+      }
+      .nav-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .nav-lvl-tag {
+        display: inline-flex;
+        padding: 3px 9px;
+        border-radius: 5px;
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(196, 160, 82, 0.12);
+        border: 1px solid rgba(196, 160, 82, 0.3);
+        color: var(--or-titre);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   HERO PROFILE
+═══════════════════════════════════════════════════ */
+      .profile-hero {
+        position: relative;
+        width: 100%;
+        margin-top: var(--nav-h);
+        height: 360px;
+        overflow: hidden;
+      }
+
+      .hero-banner {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          #08101a 0%,
+          #142234 55%,
+          #0b1522 100%
+        );
+      }
+      .hero-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: brightness(0.48) saturate(0.85);
+      }
+      .hero-banner-grad {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(20, 34, 52, 0.15) 0%,
+          rgba(10, 18, 30, 0.72) 55%,
+          var(--bleu-nuit) 100%
+        );
+      }
+
+      /* Cinematic reels */
+      .hero-reel {
+        position: absolute;
+        border-radius: 50%;
+        border: 3px solid rgba(196, 160, 82, 0.1);
+        animation: rotateReel 32s linear infinite;
+      }
+      .hero-reel::before {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(196, 160, 82, 0.06);
+      }
+      .hero-reel--1 {
+        width: 190px;
+        height: 190px;
+        right: -50px;
+        top: -50px;
+      }
+      .hero-reel--2 {
+        width: 260px;
+        height: 260px;
+        left: -80px;
+        bottom: -80px;
+        animation-direction: reverse;
+        animation-duration: 52s;
+      }
+      @keyframes rotateReel {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .hero-scanlines {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.028) 2px,
+          rgba(0, 0, 0, 0.028) 4px
+        );
+      }
+      .hero-vignette {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 100% 110% at 50% 110%,
+          var(--bleu-nuit) 0%,
+          rgba(20, 34, 52, 0.5) 35%,
+          transparent 65%
+        );
+      }
+
+      /* Banner status badge */
+      .hero-banner-status {
+        position: absolute;
+        top: 20px;
+        right: 32px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .banner-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-family: var(--f-title);
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: 1px solid;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: all 0.22s;
+      }
+      .banner-btn--upload {
+        background: rgba(15, 26, 42, 0.78);
+        border-color: rgba(196, 160, 82, 0.38);
+        color: rgba(196, 160, 82, 0.82);
+      }
+      .banner-btn--upload:hover {
+        background: rgba(196, 160, 82, 0.15);
+        border-color: rgba(196, 160, 82, 0.65);
+        color: var(--or-titre);
+      }
+      .banner-btn--pending {
+        background: rgba(30, 15, 4, 0.8);
+        border-color: rgba(212, 130, 10, 0.5);
+        color: var(--orange-clair);
+      }
+      .banner-btn--rejected {
+        background: rgba(30, 8, 6, 0.8);
+        border-color: rgba(194, 48, 24, 0.5);
+        color: #e84020;
+      }
+      .b-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulsedot 1.8s ease infinite;
+      }
+      @keyframes pulsedot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+
+      /* Author link */
+      .hero-author-link {
+        position: absolute;
+        top: 22px;
+        left: 32px;
+        z-index: 20;
+      }
+      .author-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 13px;
+        border-radius: 7px;
+        background: rgba(15, 26, 42, 0.78);
+        border: 1px solid rgba(196, 160, 82, 0.28);
+        color: rgba(196, 160, 82, 0.72);
+        font-family: var(--f-title);
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+        transition: all 0.22s;
+      }
+      .author-link:hover {
+        background: rgba(196, 160, 82, 0.14);
+        border-color: rgba(196, 160, 82, 0.6);
+        color: var(--or-titre);
+      }
+      .author-link svg {
+        width: 12px;
+        height: 12px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        flex-shrink: 0;
+      }
+
+      /* Hero content layout */
+      .hero-content {
+        position: relative;
+        z-index: 10;
+        height: 100%;
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 var(--page-px);
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: 32px;
+        gap: 28px;
+      }
+
+      /* Avatar block */
+      .avatar-block {
+        position: relative;
+        flex-shrink: 0;
+        animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+      }
+      .avatar-frame {
+        position: relative;
+        width: 110px;
+        height: 110px;
+      }
+      .avatar-frame__ring {
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        z-index: 2;
+      }
+      .avatar-frame__ring--rookie {
+        background: conic-gradient(
+          rgba(130, 148, 185, 0.6) 0%,
+          rgba(192, 200, 215, 0.9) 60%,
+          rgba(130, 148, 185, 0.6) 100%
+        );
+      }
+      .avatar-frame__ring--argent {
+        background: conic-gradient(
+          #8b4e15 0%,
+          #cd7f32 40%,
+          #e8a060 60%,
+          #cd7f32 80%,
+          #8b4e15 100%
+        );
+      }
+      .avatar-frame__ring--culte {
+        background: conic-gradient(
+          rgba(100, 140, 175, 0.5) 0%,
+          rgba(192, 210, 225, 0.95) 50%,
+          rgba(100, 140, 175, 0.5) 100%
+        );
+      }
+      .avatar-frame__ring--or {
+        background: conic-gradient(
+          #b8882a 0%,
+          #d4a843 25%,
+          #f2c84b 50%,
+          #ffe085 65%,
+          #d4a843 85%,
+          #b8882a 100%
+        );
+        box-shadow: 0 0 20px rgba(212, 168, 67, 0.3);
+      }
+      .avatar-frame__ring--legend {
+        background: conic-gradient(
+          #d4a843 0%,
+          #f2c84b 20%,
+          #ffe085 40%,
+          #f2c84b 60%,
+          #d4a843 80%,
+          #ffe085 100%
+        );
+        box-shadow: 0 0 30px rgba(247, 201, 72, 0.45);
+        animation: legendGlow 2s ease infinite alternate;
+      }
+      @keyframes legendGlow {
+        from {
+          box-shadow: 0 0 20px rgba(247, 201, 72, 0.35);
+        }
+        to {
+          box-shadow: 0 0 40px rgba(247, 201, 72, 0.65);
+        }
+      }
+      .avatar-img {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        position: relative;
+        z-index: 1;
+        display: block;
+        border: 3px solid var(--surface-deep);
+      }
+
+      /* Level badge top */
+      .avatar-lvl-badge {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        font-family: var(--f-title);
+        font-size: 0.42rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .avatar-lvl-badge--rookie {
+        background: rgba(65, 90, 119, 0.75);
+        border: 1px solid rgba(130, 148, 185, 0.3);
+        color: rgba(192, 200, 215, 0.8);
+      }
+      .avatar-lvl-badge--argent {
+        background: rgba(45, 25, 5, 0.8);
+        border: 1px solid rgba(205, 127, 50, 0.45);
+        color: #cd7f32;
+      }
+      .avatar-lvl-badge--culte {
+        background: rgba(40, 55, 70, 0.8);
+        border: 1px solid rgba(192, 210, 225, 0.3);
+        color: rgba(192, 210, 225, 0.9);
+      }
+      .avatar-lvl-badge--or {
+        background: rgba(20, 12, 2, 0.82);
+        border: 1px solid rgba(196, 160, 82, 0.45);
+        color: var(--or-titre);
+      }
+      .avatar-lvl-badge--legend {
+        background: rgba(20, 12, 2, 0.88);
+        border: 1px solid rgba(247, 201, 72, 0.55);
+        color: #f7c948;
+        box-shadow: 0 0 10px rgba(247, 201, 72, 0.2);
+      }
+
+      /* Photo status badge bottom */
+      .avatar-photo-status {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 5px;
+        font-family: var(--f-title);
+        font-size: 0.4rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        backdrop-filter: blur(4px);
+      }
+      .avatar-photo-status--ok {
+        background: rgba(10, 34, 20, 0.82);
+        border: 1px solid rgba(61, 170, 114, 0.4);
+        color: var(--vert-clair);
+      }
+      .avatar-photo-status--pending {
+        background: rgba(30, 15, 4, 0.82);
+        border: 1px solid rgba(212, 130, 10, 0.4);
+        color: var(--orange-clair);
+      }
+      .avatar-photo-status--rejected {
+        background: rgba(30, 8, 6, 0.82);
+        border: 1px solid rgba(194, 48, 24, 0.4);
+        color: #e84020;
+      }
+      .avatar-photo-status .b-dot {
+        width: 4px;
+        height: 4px;
+      }
+
+      /* Avatar action buttons */
+      .avatar-actions {
+        position: absolute;
+        right: -36px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        z-index: 5;
+      }
+      .av-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid;
+        cursor: pointer;
+        transition: all 0.2s;
+        backdrop-filter: blur(6px);
+        font-size: 0.7rem;
+      }
+      .av-btn--upload {
+        background: rgba(15, 26, 42, 0.8);
+        border-color: rgba(196, 160, 82, 0.35);
+        color: rgba(196, 160, 82, 0.7);
+      }
+      .av-btn--upload:hover {
+        background: rgba(196, 160, 82, 0.16);
+        border-color: rgba(196, 160, 82, 0.65);
+        color: var(--or-titre);
+      }
+      .av-btn--del {
+        background: rgba(20, 6, 4, 0.8);
+        border-color: rgba(194, 48, 24, 0.28);
+        color: rgba(232, 90, 70, 0.5);
+      }
+      .av-btn--del:hover {
+        background: rgba(194, 48, 24, 0.22);
+        border-color: rgba(194, 48, 24, 0.6);
+        color: #e84020;
+      }
+      .av-btn svg {
+        width: 12px;
+        height: 12px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Hero identity */
+      .hero-identity {
+        flex: 1;
+        animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+      }
+      .hero-pseudo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .hero-pseudo {
+        font-family: var(--f-display);
+        font-size: 2.6rem;
+        letter-spacing: 0.06em;
+        color: #fff;
+        text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
+        line-height: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: text;
+        border-bottom: 1.5px solid transparent;
+        transition: border-color 0.2s;
+        min-width: 100px;
+        max-width: 340px;
+      }
+      .hero-pseudo:focus {
+        border-bottom-color: rgba(196, 160, 82, 0.5);
+        color: var(--or-titre);
+      }
+      .hero-pseudo-edit {
+        width: 24px;
+        height: 24px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(196, 160, 82, 0.45);
+        font-size: 0.7rem;
+        transition: all 0.2s;
+      }
+      .hero-pseudo-edit:hover {
+        background: rgba(196, 160, 82, 0.12);
+        border-color: rgba(196, 160, 82, 0.38);
+        color: var(--or-titre);
+      }
+      .hero-pseudo-edit svg {
+        width: 11px;
+        height: 11px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .hero-pseudo-save {
+        display: none;
+        padding: 4px 10px;
+        border-radius: 5px;
+        background: var(--gold-gradient);
+        border: none;
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--bleu-nuit);
+        cursor: pointer;
+        transition: filter 0.2s;
+      }
+      .hero-pseudo-save:hover {
+        filter: brightness(1.08);
+      }
+      .hero-sub {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 0.9rem;
+        color: rgba(232, 232, 232, 0.42);
+        margin-bottom: 16px;
+      }
+
+      /* XP Bar */
+      .xp-bar-block {
+        max-width: 420px;
+      }
+      .xp-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .xp-label {
+        font-family: var(--f-title);
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.55);
+      }
+      .xp-frac {
+        font-family: var(--f-display);
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        color: rgba(196, 160, 82, 0.45);
+      }
+      .xp-track {
+        height: 5px;
+        background: rgba(65, 90, 119, 0.25);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .xp-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: var(--gold-h);
+        box-shadow: 0 0 6px rgba(212, 168, 67, 0.25);
+        transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .xp-hint {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.25);
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      /* Hero stats inline */
+      .hero-stats-row {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 14px;
+        animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+      }
+      .h-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .h-stat__num {
+        font-family: var(--f-display);
+        font-size: 1.65rem;
+        letter-spacing: 0.06em;
+        color: var(--or-titre);
+        line-height: 1;
+      }
+      .h-stat__lbl {
+        font-size: 0.5rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.3);
+        font-weight: 300;
+      }
+      .h-stat-div {
+        width: 1px;
+        height: 32px;
+        background: rgba(196, 160, 82, 0.14);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════
+   NAVIGATION ONGLETS
+═══════════════════════════════════════════════════ */
+      .profile-tabs-wrap {
+        position: sticky;
+        top: var(--nav-h);
+        z-index: 150;
+        background: rgba(10, 18, 30, 0.92);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(196, 160, 82, 0.08);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      }
+      .profile-tabs {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 var(--page-px);
+        display: flex;
+        gap: 0;
+      }
+      .ptab {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 14px 20px;
+        font-family: var(--f-title);
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.4);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.22s;
+        position: relative;
+        user-select: none;
+        white-space: nowrap;
+      }
+      .ptab:hover {
+        color: rgba(232, 232, 232, 0.78);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .ptab.active {
+        color: var(--or-titre);
+        border-bottom-color: var(--or-titre);
+      }
+      .ptab svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .ptab-badge {
+        min-width: 18px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 8px;
+        background: rgba(212, 130, 10, 0.2);
+        border: 1px solid rgba(212, 130, 10, 0.38);
+        font-size: 0.42rem;
+        font-weight: 700;
+        color: var(--orange-clair);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ptab.active .ptab-badge {
+        background: rgba(196, 160, 82, 0.16);
+        border-color: rgba(196, 160, 82, 0.4);
+        color: var(--or-titre);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   CONTENT WRAPPER
+═══════════════════════════════════════════════════ */
+      .profile-content {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 36px var(--page-px) 80px;
+      }
+      .tab-pane {
+        display: none;
+      }
+      .tab-pane.active {
+        display: block;
+        animation: fadeUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════════════ */
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .section-eyebrow {
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.4);
+      }
+      .section-title {
+        font-family: var(--f-display);
+        font-size: 1.45rem;
+        letter-spacing: 4px;
+        color: var(--argent);
+        line-height: 1;
+      }
+      .section-rule {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(196, 160, 82, 0.2),
+          transparent
+        );
+      }
+      .section-sep {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(196, 160, 82, 0.1),
+          transparent
+        );
+        margin: 36px 0;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   STAT OVERVIEW CARDS
+═══════════════════════════════════════════════════ */
+      .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 36px;
+      }
+      .ov-card {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 20px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .ov-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      }
+      .ov-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .ov-card--recettes::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--caramel),
+          transparent
+        );
+      }
+      .ov-card--films::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--violet-clair),
+          transparent
+        );
+      }
+      .ov-card--avis::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--bleu-second),
+          transparent
+        );
+      }
+      .ov-card--favoris::before {
+        background: linear-gradient(90deg, transparent, #e84020, transparent);
+      }
+      .ov-card--note::before {
+        background: var(--gold-h);
+        opacity: 0.6;
+      }
+      .ov-card__icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ov-card__icon svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ov-card--recettes .ov-card__icon {
+        background: rgba(201, 123, 58, 0.16);
+        color: var(--caramel);
+      }
+      .ov-card--films .ov-card__icon {
+        background: rgba(107, 79, 160, 0.16);
+        color: var(--violet-clair);
+      }
+      .ov-card--avis .ov-card__icon {
+        background: rgba(90, 115, 145, 0.18);
+        color: rgba(140, 180, 225, 0.85);
+      }
+      .ov-card--favoris .ov-card__icon {
+        background: rgba(194, 48, 24, 0.14);
+        color: #e84020;
+      }
+      .ov-card--note .ov-card__icon {
+        background: rgba(196, 160, 82, 0.12);
+        color: var(--or-titre);
+      }
+      .ov-val {
+        font-family: var(--f-display);
+        font-size: 2rem;
+        letter-spacing: 2px;
+        line-height: 1;
+      }
+      .ov-card--recettes .ov-val {
+        color: var(--caramel);
+      }
+      .ov-card--films .ov-val {
+        color: var(--violet-clair);
+      }
+      .ov-card--avis .ov-val {
+        color: rgba(140, 180, 225, 0.88);
+      }
+      .ov-card--favoris .ov-val {
+        color: #e84020;
+      }
+      .ov-card--note .ov-val {
+        color: var(--dore-clair);
+      }
+      .ov-label {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.38);
+        letter-spacing: 0.06em;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   PROFIL TAB
+═══════════════════════════════════════════════════ */
+      .profil-grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 24px;
+      }
+
+      .form-card {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .form-card__head {
+        padding: 16px 22px 14px;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .form-card__title {
+        font-family: var(--f-display);
+        font-size: 0.95rem;
+        letter-spacing: 3px;
+        color: var(--argent);
+      }
+      .form-card__body {
+        padding: 22px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .form-row--full {
+        grid-template-columns: 1fr;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-label {
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.42);
+      }
+      .form-input {
+        height: 40px;
+        padding: 0 13px;
+        background: rgba(10, 18, 30, 0.65);
+        border: 1.5px solid rgba(65, 90, 119, 0.35);
+        border-radius: 9px;
+        color: var(--argent);
+        font-size: 0.8rem;
+        font-weight: 300;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .form-input:focus {
+        border-color: rgba(196, 160, 82, 0.52);
+        box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.07);
+      }
+      .form-input::placeholder {
+        color: rgba(232, 232, 232, 0.22);
+      }
+      .form-input:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .form-hint {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.28);
+        font-style: italic;
+      }
+      .form-pwd-link {
+        font-size: 0.6rem;
+        color: rgba(196, 160, 82, 0.52);
+        cursor: pointer;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+      .form-pwd-link:hover {
+        color: var(--or-titre);
+      }
+      .form-actions {
+        display: flex;
+        gap: 9px;
+        margin-top: 18px;
+      }
+
+      /* Toggles notifications */
+      .notif-block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .notif-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+      }
+      .notif-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .notif-label {
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: rgba(232, 232, 232, 0.72);
+      }
+      .notif-sub {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.28);
+        font-style: italic;
+      }
+      .toggle {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+        flex-shrink: 0;
+      }
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 11px;
+        background: rgba(65, 90, 119, 0.35);
+        border: 1px solid rgba(65, 90, 119, 0.45);
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        left: 3px;
+        bottom: 2px;
+        background: rgba(130, 148, 185, 0.65);
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+      .toggle input:checked + .toggle-slider {
+        background: rgba(42, 122, 80, 0.35);
+        border-color: rgba(61, 170, 114, 0.5);
+      }
+      .toggle input:checked + .toggle-slider::before {
+        transform: translateX(18px);
+        background: var(--vert-clair);
+      }
+
+      /* Side stats panel */
+      .side-stats {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .side-stats__head {
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.07);
+      }
+      .side-stats__title {
+        font-family: var(--f-display);
+        font-size: 0.88rem;
+        letter-spacing: 3px;
+        color: var(--argent);
+      }
+      .side-stats__rows {
+        padding: 6px 0;
+      }
+      .ss-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .ss-row:last-child {
+        border-bottom: none;
+      }
+      .ss-label {
+        font-size: 0.65rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.42);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .ss-label svg {
+        width: 13px;
+        height: 13px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ss-val {
+        font-family: var(--f-display);
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      /* Danger zone */
+      .danger-zone {
+        margin-top: 22px;
+        background: rgba(30, 8, 6, 0.55);
+        border: 1px solid rgba(194, 48, 24, 0.22);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .danger-zone__head {
+        padding: 12px 18px;
+        border-bottom: 1px solid rgba(194, 48, 24, 0.16);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .danger-zone__title {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(194, 48, 24, 0.65);
+      }
+      .danger-zone__icon {
+        font-size: 0.8rem;
+      }
+      .danger-zone__body {
+        padding: 14px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .danger-zone__sub {
+        font-size: 0.68rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.35);
+        line-height: 1.65;
+      }
+      .danger-zone__actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   PALMARES TAB
+═══════════════════════════════════════════════════ */
+      .palmares-header {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .palmares-header__xp {
+        flex: 1;
+        max-width: 440px;
+      }
+      .palmares-header__desc {
+        font-family: var(--f-editorial);
+        font-style: italic;
+        font-size: 0.88rem;
+        color: rgba(232, 232, 232, 0.52);
+        line-height: 1.75;
+        max-width: 400px;
+      }
+      .xp-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .xp-block-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .xp-block-title {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.5);
+      }
+      .xp-block-frac {
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        color: rgba(196, 160, 82, 0.55);
+      }
+      .xp-block-track {
+        height: 7px;
+        background: rgba(65, 90, 119, 0.22);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .xp-block-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: var(--gold-h);
+        box-shadow: 0 0 8px rgba(212, 168, 67, 0.28);
+        transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .xp-block-hint {
+        font-size: 0.62rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.28);
+        font-style: italic;
+      }
+
+      /* Badge timeline */
+      .badges-timeline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+      }
+      .badge-card {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 24px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .badge-card.current {
+        border-color: rgba(196, 160, 82, 0.35);
+        box-shadow: 0 0 30px rgba(196, 160, 82, 0.1);
+      }
+      .badge-card.current::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gold-h);
+      }
+      .badge-card.locked {
+        opacity: 0.48;
+        filter: grayscale(0.55);
+      }
+      .badge-card:not(.locked):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+      }
+      .badge-card__lock {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        background: rgba(65, 90, 119, 0.28);
+        border: 1px solid rgba(65, 90, 119, 0.38);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        color: rgba(130, 148, 185, 0.55);
+      }
+      .badge-card__current-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 2px 7px;
+        border-radius: 4px;
+        background: rgba(196, 160, 82, 0.14);
+        border: 1px solid rgba(196, 160, 82, 0.38);
+        font-family: var(--f-title);
+        font-size: 0.4rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+      }
+
+      .badge-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .badge-icon--rookie {
+        background: rgba(65, 90, 119, 0.25);
+        border: 2px solid rgba(130, 148, 185, 0.3);
+      }
+      .badge-icon--argent {
+        background: rgba(45, 25, 5, 0.65);
+        border: 2px solid rgba(205, 127, 50, 0.38);
+        box-shadow: 0 0 14px rgba(205, 127, 50, 0.12);
+      }
+      .badge-icon--culte {
+        background: rgba(40, 55, 70, 0.65);
+        border: 2px solid rgba(192, 210, 225, 0.28);
+        box-shadow: 0 0 14px rgba(192, 210, 225, 0.1);
+      }
+      .badge-icon--or {
+        background: rgba(20, 12, 2, 0.7);
+        border: 2px solid rgba(196, 160, 82, 0.45);
+        box-shadow: 0 0 20px rgba(196, 160, 82, 0.18);
+      }
+      .badge-icon--legend {
+        background: rgba(20, 12, 2, 0.75);
+        border: 2px solid rgba(247, 201, 72, 0.55);
+        box-shadow: 0 0 30px rgba(247, 201, 72, 0.28);
+        animation: legendGlow 2s ease infinite alternate;
+      }
+      .badge-stars {
+        display: flex;
+        gap: 2px;
+        font-size: 0.7rem;
+      }
+      .badge-name {
+        font-family: var(--f-display);
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        line-height: 1.1;
+      }
+      .badge-card.unlocked .badge-name {
+        color: var(--argent);
+      }
+      .badge-card.locked .badge-name {
+        color: rgba(232, 232, 232, 0.4);
+      }
+      .badge-range {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.3);
+      }
+      .badge-hint {
+        font-size: 0.56rem;
+        font-weight: 300;
+        color: var(--orange-clair);
+        font-style: italic;
+      }
+      .badge-progress {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .bp-track {
+        height: 4px;
+        background: rgba(65, 90, 119, 0.22);
+        border-radius: 2px;
+        overflow: hidden;
+        width: 100%;
+      }
+      .bp-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .badge-card--rookie .bp-fill {
+        background: linear-gradient(
+          90deg,
+          rgba(130, 148, 185, 0.5),
+          rgba(192, 200, 215, 0.8)
+        );
+      }
+      .badge-card--argent .bp-fill {
+        background: linear-gradient(90deg, #8b4e15, #cd7f32, #e8a060);
+      }
+      .badge-card--culte .bp-fill {
+        background: linear-gradient(
+          90deg,
+          rgba(100, 140, 175, 0.5),
+          rgba(192, 210, 225, 0.9)
+        );
+      }
+      .badge-card--or .bp-fill {
+        background: var(--gold-h);
+      }
+      .badge-card--legend .bp-fill {
+        background: linear-gradient(
+          90deg,
+          var(--or-200),
+          var(--dore-clair),
+          #f7c948,
+          var(--jaune-blond)
+        );
+        box-shadow: 0 0 6px rgba(247, 201, 72, 0.3);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   FAVORIS TAB
+═══════════════════════════════════════════════════ */
+      .fav-cols {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+      .fav-section {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .fav-section__head {
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .fav-section__title {
+        font-family: var(--f-display);
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        color: var(--argent);
+      }
+      .fav-section__count {
+        font-family: var(--f-display);
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        color: rgba(196, 160, 82, 0.42);
+      }
+      .fav-list {
+        padding: 10px;
+      }
+      .fav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 9px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        color: inherit;
+      }
+      .fav-item:hover {
+        background: rgba(196, 160, 82, 0.06);
+      }
+      .fav-item__thumb {
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 6px;
+      }
+      .fav-item__thumb--poster {
+        width: 34px;
+        height: 50px;
+        object-fit: cover;
+        object-position: top;
+      }
+      .fav-item__thumb--recipe {
+        width: 62px;
+        height: 40px;
+        object-fit: cover;
+      }
+      .fav-item__thumb--placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(65, 90, 119, 0.22);
+        font-size: 1rem;
+      }
+      .fav-item__info {
+        flex: 1;
+        min-width: 0;
+      }
+      .fav-item__title {
+        font-family: var(--f-title);
+        font-size: 0.64rem;
+        font-weight: 600;
+        color: rgba(232, 232, 232, 0.88);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .fav-item__sub {
+        font-size: 0.56rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.35);
+      }
+      .fav-item__note {
+        font-size: 0.65rem;
+        color: var(--dore-clair);
+        flex-shrink: 0;
+      }
+      .fav-empty {
+        padding: 28px;
+        text-align: center;
+        color: rgba(232, 232, 232, 0.22);
+        font-size: 0.7rem;
+        font-style: italic;
+      }
+      .fav-more {
+        display: block;
+        text-align: center;
+        padding: 8px;
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.42);
+        cursor: pointer;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        transition: color 0.2s;
+        margin: 4px 0 0;
+      }
+      .fav-more:hover {
+        color: var(--or-titre);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   CRÉATIONS TAB
+═══════════════════════════════════════════════════ */
+      .creations-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .creation-section {
+        background: var(--surface-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .creation-section__head {
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.07);
+      }
+      .creation-section__title {
+        font-family: var(--f-display);
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        color: var(--argent);
+      }
+
+      /* Inline filter */
+      .inline-filter {
+        display: flex;
+        gap: 6px;
+        padding: 10px 14px;
+        background: rgba(10, 18, 30, 0.55);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .if-input {
+        flex: 1;
+        height: 28px;
+        padding: 0 10px;
+        background: rgba(15, 26, 42, 0.65);
+        border: 1px solid rgba(65, 90, 119, 0.3);
+        border-radius: 6px;
+        color: rgba(232, 232, 232, 0.72);
+        font-size: 0.72rem;
+        font-weight: 300;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .if-input:focus {
+        border-color: rgba(196, 160, 82, 0.45);
+      }
+      .if-input::placeholder {
+        color: rgba(232, 232, 232, 0.2);
+      }
+      .if-sel {
+        height: 28px;
+        padding: 0 24px 0 8px;
+        background: rgba(15, 26, 42, 0.65);
+        border: 1px solid rgba(65, 90, 119, 0.3);
+        border-radius: 6px;
+        color: rgba(232, 232, 232, 0.65);
+        font-size: 0.7rem;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(196,160,82,0.45)'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 7px center;
+        transition: border-color 0.2s;
+      }
+      .if-sel:focus {
+        border-color: rgba(196, 160, 82, 0.4);
+      }
+      .if-sel option {
+        background: #142234;
+      }
+
+      /* Creation items */
+      .creation-list {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 460px;
+      }
+      .ci-item {
+        padding: 11px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        transition: background 0.2s;
+      }
+      .ci-item:last-child {
+        border-bottom: none;
+      }
+      .ci-item:hover {
+        background: rgba(196, 160, 82, 0.03);
+      }
+      .ci-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .ci-thumb {
+        width: 38px;
+        height: 52px;
+        border-radius: 5px;
+        object-fit: cover;
+        object-position: top;
+        flex-shrink: 0;
+      }
+      .ci-thumb--recipe {
+        width: 52px;
+        height: 34px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+      .ci-thumb--placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(65, 90, 119, 0.22);
+        font-size: 1.1rem;
+        border-radius: 5px;
+      }
+      .ci-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .ci-title {
+        font-family: var(--f-title);
+        font-size: 0.64rem;
+        font-weight: 600;
+        color: rgba(232, 232, 232, 0.88);
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ci-meta {
+        font-size: 0.56rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.35);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .ci-dot {
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        background: rgba(232, 232, 232, 0.28);
+      }
+      .ci-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-family: var(--f-title);
+        font-size: 0.4rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+      }
+      .ci-status::before {
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .ci-status--ok {
+        background: rgba(10, 34, 20, 0.65);
+        border-color: rgba(61, 170, 114, 0.38);
+        color: var(--vert-clair);
+      }
+      .ci-status--pending {
+        background: rgba(30, 15, 4, 0.65);
+        border-color: rgba(212, 130, 10, 0.38);
+        color: var(--orange-clair);
+        animation-name: none;
+      }
+      .ci-status--pending::before {
+        animation: pulsedot 1.8s ease infinite;
+      }
+      .ci-status--refused {
+        background: rgba(30, 8, 6, 0.65);
+        border-color: rgba(194, 48, 24, 0.38);
+        color: #e84020;
+      }
+
+      /* Actions row */
+      .ci-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: flex-end;
+      }
+      .ci-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 9px;
+        border-radius: 5px;
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .ci-btn svg {
+        width: 11px;
+        height: 11px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .ci-btn--edit {
+        background: rgba(196, 160, 82, 0.1);
+        border-color: rgba(196, 160, 82, 0.28);
+        color: var(--or-titre);
+      }
+      .ci-btn--edit:hover {
+        background: rgba(196, 160, 82, 0.2);
+        border-color: rgba(196, 160, 82, 0.55);
+      }
+      .ci-btn--del {
+        background: rgba(30, 8, 6, 0.65);
+        border-color: rgba(194, 48, 24, 0.28);
+        color: rgba(232, 90, 70, 0.6);
+      }
+      .ci-btn--del:hover {
+        background: rgba(194, 48, 24, 0.22);
+        border-color: rgba(194, 48, 24, 0.55);
+        color: #e84020;
+      }
+
+      /* Inline edit form */
+      .ci-edit-form {
+        background: rgba(10, 18, 30, 0.72);
+        border: 1px solid rgba(196, 160, 82, 0.15);
+        border-radius: 9px;
+        padding: 12px;
+        margin-top: 4px;
+        display: none;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .ci-edit-form.open {
+        display: flex;
+        animation: fadeUp 0.28s both;
+      }
+      .ci-ef-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .ci-ef-full {
+        grid-column: 1/-1;
+      }
+      .ci-ef-label {
+        font-family: var(--f-title);
+        font-size: 0.42rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.4);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .ci-ef-input {
+        width: 100%;
+        height: 32px;
+        padding: 0 10px;
+        background: rgba(15, 26, 42, 0.65);
+        border: 1.5px solid rgba(65, 90, 119, 0.32);
+        border-radius: 7px;
+        color: var(--argent);
+        font-size: 0.72rem;
+        font-weight: 300;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .ci-ef-input:focus {
+        border-color: rgba(196, 160, 82, 0.48);
+      }
+      .ci-ef-textarea {
+        width: 100%;
+        padding: 8px 10px;
+        height: 60px;
+        background: rgba(15, 26, 42, 0.65);
+        border: 1.5px solid rgba(65, 90, 119, 0.32);
+        border-radius: 7px;
+        color: var(--argent);
+        font-size: 0.72rem;
+        font-weight: 300;
+        outline: none;
+        resize: vertical;
+        transition: border-color 0.2s;
+        font-family: var(--f-body);
+      }
+      .ci-ef-textarea:focus {
+        border-color: rgba(196, 160, 82, 0.48);
+      }
+      .ci-ef-actions {
+        display: flex;
+        gap: 7px;
+        justify-content: flex-end;
+      }
+
+      /* Avis note */
+      .ci-note {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.68rem;
+        color: var(--dore-clair);
+      }
+      .ci-note-val {
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        color: rgba(196, 160, 82, 0.55);
+        margin-left: 2px;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   SHARED BUTTONS
+═══════════════════════════════════════════════════ */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 18px;
+        height: 38px;
+        border-radius: 9px;
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.22s;
+        white-space: nowrap;
+      }
+      .btn svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .btn--primary {
+        background: var(--gold-gradient);
+        color: var(--bleu-nuit);
+        box-shadow: 0 2px 12px rgba(184, 136, 42, 0.22);
+      }
+      .btn--primary:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 4px 20px rgba(212, 168, 67, 0.35);
+        transform: translateY(-1px);
+      }
+      .btn--ghost {
+        background: transparent;
+        border: 1.5px solid rgba(232, 232, 232, 0.18);
+        color: rgba(232, 232, 232, 0.55);
+      }
+      .btn--ghost:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(232, 232, 232, 0.38);
+        color: rgba(232, 232, 232, 0.88);
+      }
+      .btn--red {
+        background: var(--rouge-gradient);
+        color: #fff;
+        box-shadow: 0 2px 12px rgba(194, 48, 24, 0.25);
+      }
+      .btn--red:hover {
+        box-shadow: 0 4px 20px rgba(194, 48, 24, 0.45);
+        transform: translateY(-1px);
+      }
+      .btn--outline-red {
+        background: transparent;
+        border: 1.5px solid rgba(194, 48, 24, 0.35);
+        color: rgba(232, 90, 70, 0.65);
+      }
+      .btn--outline-red:hover {
+        background: rgba(194, 48, 24, 0.12);
+        border-color: rgba(194, 48, 24, 0.65);
+        color: #e84020;
+      }
+      .btn--sm {
+        height: 32px;
+        padding: 0 13px;
+        font-size: 0.52rem;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   TOAST SYSTEM
+═══════════════════════════════════════════════════ */
+      .toast-wrap {
+        position: fixed;
+        top: calc(var(--nav-h) + 14px);
+        right: 24px;
+        z-index: 500;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+      }
+      .profile-toast {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        padding: 13px 15px;
+        background: rgba(10, 18, 30, 0.97);
+        border: 1px solid rgba(196, 160, 82, 0.18);
+        border-radius: 12px;
+        box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
+        min-width: 280px;
+        max-width: 360px;
+        pointer-events: all;
+        position: relative;
+        overflow: hidden;
+        transform: translateX(120%);
+        transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+        opacity: 1;
+      }
+      .profile-toast::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .profile-toast.in {
+        transform: translateX(0);
+      }
+      .profile-toast.out {
+        transform: translateX(120%);
+        transition-duration: 0.22s;
+      }
+      .profile-toast--success::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--vert-clair),
+          transparent
+        );
+      }
+      .profile-toast--error::before {
+        background: linear-gradient(90deg, transparent, #e84020, transparent);
+      }
+      .profile-toast--gold::before {
+        background: var(--gold-h);
+        opacity: 0.55;
+      }
+      .profile-toast--info::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(140, 180, 245, 0.85),
+          transparent
+        );
+      }
+      .toast-icon {
+        font-size: 0.95rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .toast-title {
+        font-family: var(--f-title);
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .profile-toast--success .toast-title {
+        color: var(--vert-clair);
+      }
+      .profile-toast--error .toast-title {
+        color: #e84020;
+      }
+      .profile-toast--gold .toast-title {
+        color: var(--dore-clair);
+      }
+      .profile-toast--info .toast-title {
+        color: rgba(140, 180, 245, 0.95);
+      }
+      .toast-msg {
+        font-size: 0.64rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.52);
+        margin-top: 2px;
+        line-height: 1.55;
+      }
+
+      /* Badge toast special */
+      .profile-toast--badge {
+        padding: 16px 18px;
+        background: linear-gradient(
+          135deg,
+          rgba(20, 12, 2, 0.97),
+          rgba(12, 8, 2, 0.97)
+        );
+      }
+      .profile-toast--badge::before {
+        background: var(--gold-h);
+        opacity: 0.8;
+      }
+      .badge-toast-inner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .badge-toast-icon {
+        font-size: 2.2rem;
+        animation: badgePop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      @keyframes badgePop {
+        from {
+          transform: scale(0) rotate(-20deg);
+        }
+        to {
+          transform: scale(1) rotate(0);
+        }
+      }
+      .badge-toast-title {
+        font-family: var(--f-display);
+        font-size: 1rem;
+        letter-spacing: 3px;
+        color: var(--dore-clair);
+        line-height: 1;
+        margin-bottom: 3px;
+      }
+      .badge-toast-sub {
+        font-size: 0.64rem;
+        font-weight: 300;
+        color: rgba(196, 160, 82, 0.55);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   CONFIRM MODAL
+═══════════════════════════════════════════════════ */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 400;
+        background: rgba(0, 0, 0, 0.68);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .modal-box {
+        background: rgba(10, 18, 30, 0.98);
+        border: 1px solid rgba(196, 160, 82, 0.18);
+        border-radius: 18px;
+        overflow: hidden;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.75);
+        transform: scale(0.94) translateY(8px);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .modal-overlay.open .modal-box {
+        transform: scale(1) translateY(0);
+      }
+      .modal-stripe {
+        height: 3px;
+        background: var(--rouge-gradient);
+      }
+      .modal-head {
+        padding: 20px 24px 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .modal-ico {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(194, 48, 24, 0.18);
+        border: 1px solid rgba(194, 48, 24, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .modal-titles {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .modal-title {
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        letter-spacing: 3px;
+        color: var(--argent);
+      }
+      .modal-sub {
+        font-size: 0.68rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.38);
+      }
+      .modal-body {
+        padding: 4px 24px 18px;
+        font-size: 0.76rem;
+        font-weight: 300;
+        line-height: 1.72;
+        color: rgba(232, 232, 232, 0.55);
+      }
+      .modal-target {
+        margin-top: 10px;
+        padding: 9px 14px;
+        background: rgba(194, 48, 24, 0.07);
+        border-radius: 7px;
+        border: 1px solid rgba(194, 48, 24, 0.18);
+        font-family: var(--f-title);
+        font-size: 0.6rem;
+        font-weight: 600;
+        color: rgba(232, 232, 232, 0.7);
+      }
+      .modal-footer {
+        padding: 12px 24px 22px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+
+      /* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+      .site-footer {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(7, 12, 22, 0.95) 20%,
+          #070c16 100%
+        );
+        border-top: 1px solid rgba(196, 160, 82, 0.07);
+        padding: 60px var(--page-px) 0;
+      }
+      .footer-inner {
+        max-width: var(--max-w);
+        margin: 0 auto;
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr 1fr 1fr;
+        gap: 48px;
+        padding-bottom: 48px;
+        border-bottom: 1px solid rgba(65, 90, 119, 0.15);
+      }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .footer-logo__icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--gold-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.15rem;
+        color: var(--bleu-nuit);
+      }
+      .footer-logo__name {
+        font-family: var(--f-display);
+        font-size: 1.3rem;
+        letter-spacing: 0.12em;
+        color: var(--or-titre);
+      }
+      .footer-tagline {
+        font-size: 0.76rem;
+        font-weight: 300;
+        font-style: italic;
+        color: rgba(232, 232, 232, 0.28);
+        line-height: 1.65;
+        max-width: 260px;
+        margin-bottom: 18px;
+      }
+      .footer-nl__label {
+        font-family: var(--f-title);
+        font-size: 0.48rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.4);
+        margin-bottom: 7px;
+      }
+      .footer-nl__row {
+        display: flex;
+        gap: 7px;
+      }
+      .footer-nl__input {
+        flex: 1;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 8px;
+        background: rgba(10, 18, 30, 0.65);
+        border: 1px solid rgba(65, 90, 119, 0.3);
+        color: rgba(232, 232, 232, 0.72);
+        font-size: 0.76rem;
+        outline: none;
+      }
+      .footer-nl__input::placeholder {
+        color: rgba(232, 232, 232, 0.18);
+      }
+      .footer-nl__btn {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 8px;
+        background: var(--gold-gradient);
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--bleu-nuit);
+        transition: filter 0.2s;
+      }
+      .footer-nl__btn:hover {
+        filter: brightness(1.1);
+      }
+      .footer-social {
+        display: flex;
+        gap: 6px;
+        margin-top: 14px;
+      }
+      .social-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(65, 90, 119, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.88rem;
+        color: rgba(232, 232, 232, 0.4);
+        cursor: pointer;
+        transition: all 0.25s;
+      }
+      .social-btn:hover {
+        background: rgba(196, 160, 82, 0.1);
+        border-color: rgba(196, 160, 82, 0.38);
+        color: var(--or-titre);
+        transform: translateY(-2px);
+      }
+      .footer-col__title {
+        font-family: var(--f-title);
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--or-titre);
+        margin-bottom: 16px;
+      }
+      .footer-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .footer-links li a {
+        font-size: 0.74rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.38);
+        text-decoration: none;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .footer-links li a::before {
+        content: "›";
+        color: rgba(196, 160, 82, 0.3);
+        font-size: 0.9rem;
+      }
+      .footer-links li a:hover {
+        color: rgba(232, 232, 232, 0.78);
+      }
+      .footer-links li a:hover::before {
+        color: var(--or-titre);
+      }
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+      }
+      .footer-copy {
+        font-size: 0.64rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.2);
+        letter-spacing: 0.05em;
+      }
+      .footer-copy a {
+        color: rgba(196, 160, 82, 0.4);
+        text-decoration: none;
+      }
+      .footer-legal {
+        display: flex;
+        gap: 18px;
+      }
+      .footer-legal a {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(232, 232, 232, 0.18);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-legal a:hover {
+        color: rgba(232, 232, 232, 0.52);
+      }
+      .footer-filmstrip {
+        height: 20px;
+        overflow: hidden;
+        background: rgba(5, 8, 16, 0.95);
+        border-top: 1px solid rgba(196, 160, 82, 0.05);
+      }
+      .filmstrip-scroll {
+        display: flex;
+        width: max-content;
+        animation: filmScroll 18s linear infinite;
+      }
+      .fs-hole {
+        width: 44px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fs-inner {
+        width: 18px;
+        height: 11px;
+        border-radius: 2px;
+        background: rgba(196, 160, 82, 0.07);
+        border: 1px solid rgba(196, 160, 82, 0.09);
+      }
+      @keyframes filmScroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════
+   SCROLL TOP
+═══════════════════════════════════════════════════ */
+      .scroll-top {
+        position: fixed;
+        bottom: 30px;
+        right: 38px;
+        z-index: 100;
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        background: linear-gradient(
+          135deg,
+          rgba(20, 34, 52, 0.9),
+          rgba(15, 27, 44, 0.95)
+        );
+        border: 1px solid rgba(196, 160, 82, 0.22);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--or-titre);
+        font-size: 0.9rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: all 0.25s;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .scroll-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .scroll-top:hover {
+        background: rgba(196, 160, 82, 0.12);
+        border-color: rgba(196, 160, 82, 0.5);
+        transform: translateY(-3px);
+      }
+
+      /* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+      @media (max-width: 1100px) {
+        :root {
+          --page-px: 32px;
+        }
+        .badges-timeline {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .overview-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .profil-grid {
+          grid-template-columns: 1fr;
+        }
+        .creations-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 768px) {
+        :root {
+          --page-px: 18px;
+        }
+        .profile-hero {
+          height: 310px;
+        }
+        .hero-content {
+          flex-direction: column;
+          align-items: flex-start;
+          padding-bottom: 20px;
+          gap: 14px;
+        }
+        .avatar-frame {
+          width: 80px;
+          height: 80px;
+        }
+        .avatar-img {
+          width: 80px;
+          height: 80px;
+        }
+        .avatar-actions {
+          right: -28px;
+        }
+        .hero-pseudo {
+          font-size: 1.8rem;
+        }
+        .badges-timeline {
+          grid-template-columns: 1fr 1fr;
+        }
+        .overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .fav-cols {
+          grid-template-columns: 1fr;
+        }
+        .creations-grid {
+          grid-template-columns: 1fr;
+        }
+        .footer-top {
+          grid-template-columns: 1fr 1fr;
+          gap: 28px;
+        }
+        .ptab span.ptab-text {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Particules -->
+    <div class="particles" aria-hidden="true">
+      <div
+        class="particle p-gold"
+        style="
+          left: 12%;
+          width: 2px;
+          height: 2px;
+          animation-duration: 17s;
+          animation-delay: 0s;
+        "
+      ></div>
+      <div
+        class="particle p-blue"
+        style="
+          left: 28%;
+          width: 1px;
+          height: 1px;
+          animation-duration: 21s;
+          animation-delay: 4s;
+        "
+      ></div>
+      <div
+        class="particle p-gold"
+        style="
+          left: 55%;
+          width: 2px;
+          height: 2px;
+          animation-duration: 14s;
+          animation-delay: 2s;
+        "
+      ></div>
+      <div
+        class="particle p-blue"
+        style="
+          left: 72%;
+          width: 3px;
+          height: 3px;
+          animation-duration: 24s;
+          animation-delay: 7s;
+        "
+      ></div>
+      <div
+        class="particle p-gold"
+        style="
+          left: 88%;
+          width: 1px;
+          height: 1px;
+          animation-duration: 19s;
+          animation-delay: 1s;
+        "
+      ></div>
+      <div
+        class="particle p-blue"
+        style="
+          left: 42%;
+          width: 2px;
+          height: 2px;
+          animation-duration: 22s;
+          animation-delay: 9s;
+        "
+      ></div>
+    </div>
+
+    <!-- ════════════════════════ NAV ════════════════════════ -->
+    <nav class="site-nav" id="siteNav">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo__icon">CD</div>
+        <div class="nav-logo__text">
+          <span class="nav-logo__name">Ciné Délices</span>
+          <span class="nav-logo__tag">Cinéma · Gastronomie</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="/movies">Films</a>
+        <a class="nav-link" href="/recipes-movie">Recettes</a>
+        <a class="nav-link" href="/avis">Avis</a>
+        <a class="nav-link" href="/add-recipes-movies">Contribuer</a>
+        <a class="nav-link" href="/contact-about">À propos</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-lvl-tag">★ Projecteur d'Or</span>
+        <div class="nav-av">
+          <img src="https://i.pravatar.cc/68?img=12" alt="Sara M." />
+        </div>
+      </div>
+    </nav>
+
+    <!-- ════════════════════════ HERO PROFILE ════════════════════════ -->
+    <section class="profile-hero">
+      <!-- Bannière -->
+      <div class="hero-banner">
+        <img
+          src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1400&q=80"
+          alt="Bannière de Sara M."
+        />
+        <div class="hero-banner-grad"></div>
+      </div>
+
+      <!-- Reels cinéma -->
+      <div class="hero-reel hero-reel--1"></div>
+      <div class="hero-reel hero-reel--2"></div>
+      <div class="hero-scanlines"></div>
+      <div class="hero-vignette"></div>
+
+      <!-- Lien page auteur (visible si recettes validées) -->
+      <div class="hero-author-link">
+        <a class="author-link" href="/auth/profil/1">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Ma page auteur
+        </a>
+      </div>
+
+      <!-- Statut bannière -->
+      <div class="hero-banner-status">
+        <button
+          class="banner-btn banner-btn--upload"
+          onclick="document.getElementById('bannerInput').click()"
+        >
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Changer
+        </button>
+        <input
+          id="bannerInput"
+          type="file"
+          accept="image/*"
+          style="display: none"
+          onchange="onBannerUpload(this)"
+        />
+      </div>
+
+      <!-- Contenu hero -->
+      <div class="hero-content">
+        <!-- Avatar block -->
+        <div class="avatar-block">
+          <div class="avatar-frame">
+            <!-- Badge niveau (top) -->
+            <div class="avatar-lvl-badge avatar-lvl-badge--or">
+              ★ Projecteur d'Or
+            </div>
+            <!-- Cadre gamification -->
+            <div class="avatar-frame__ring avatar-frame__ring--or"></div>
+            <!-- Avatar -->
+            <img
+              class="avatar-img"
+              src="https://i.pravatar.cc/110?img=12"
+              alt="Avatar de Sara M."
+              id="avatarImg"
+            />
+            <!-- Badge statut photo (bottom) -->
+            <div class="avatar-photo-status avatar-photo-status--ok">
+              <span class="b-dot"></span>Vérifié
+            </div>
+            <!-- Boutons avatar -->
+            <div class="avatar-actions">
+              <div
+                class="av-btn av-btn--upload"
+                title="Changer la photo"
+                onclick="document.getElementById('avatarInput').click()"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div
+                class="av-btn av-btn--del"
+                title="Supprimer la photo"
+                onclick="confirmDeleteAvatar()"
+              >
+                <svg viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <input
+            id="avatarInput"
+            type="file"
+            accept="image/*"
+            style="display: none"
+            onchange="onAvatarUpload(this)"
+          />
+        </div>
+
+        <!-- Identité -->
+        <div class="hero-identity">
+          <div class="hero-pseudo-row">
+            <input
+              class="hero-pseudo"
+              id="pseudoInput"
+              value="Sara M."
+              readonly
+            />
+            <div
+              class="hero-pseudo-edit"
+              id="pseudoEditBtn"
+              onclick="editPseudo()"
+              title="Modifier le pseudo"
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M12 20h9" />
+                <path
+                  d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                />
+              </svg>
+            </div>
+            <button
+              class="hero-pseudo-save"
+              id="pseudoSaveBtn"
+              onclick="savePseudo()"
+            >
+              Enregistrer
+            </button>
+          </div>
+          <p class="hero-sub">
+            Membre depuis janvier 2024 · Cuisine passionnée & cinéphile
+          </p>
+
+          <!-- XP Bar -->
+          <div class="xp-bar-block">
+            <div class="xp-head">
+              <span class="xp-label">Projecteur d'Or → Legend Superstar</span>
+              <span class="xp-frac">18 / 20</span>
+            </div>
+            <div class="xp-track">
+              <div class="xp-fill" style="width: 90%"></div>
+            </div>
+            <p class="xp-hint">
+              Plus que 2 recettes validées pour atteindre le rang Legend
+              Superstar !
+            </p>
+          </div>
+        </div>
+
+        <!-- Stats hero -->
+        <div class="hero-stats-row">
+          <div class="h-stat">
+            <span class="h-stat__num">18</span
+            ><span class="h-stat__lbl">Recettes</span>
+          </div>
+          <div class="h-stat-div"></div>
+          <div class="h-stat">
+            <span class="h-stat__num">6</span
+            ><span class="h-stat__lbl">Films</span>
+          </div>
+          <div class="h-stat-div"></div>
+          <div class="h-stat">
+            <span class="h-stat__num">34</span
+            ><span class="h-stat__lbl">Avis</span>
+          </div>
+          <div class="h-stat-div"></div>
+          <div class="h-stat">
+            <span class="h-stat__num">4.7</span
+            ><span class="h-stat__lbl">Note moy.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════ TABS ════════════════════════ -->
+    <div class="profile-tabs-wrap">
+      <div class="profile-tabs">
+        <div class="ptab active" data-tab="overview">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          <span class="ptab-text">Vue d'ensemble</span>
+        </div>
+        <div class="ptab" data-tab="profil">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span class="ptab-text">Profil</span>
+        </div>
+        <div class="ptab" data-tab="palmares">
+          <svg viewBox="0 0 24 24">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+            />
+          </svg>
+          <span class="ptab-text">Palmarès</span>
+        </div>
+        <div class="ptab" data-tab="favoris">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            />
+          </svg>
+          <span class="ptab-text">Favoris</span>
+        </div>
+        <div class="ptab" data-tab="creations">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          <span class="ptab-text">Créations</span>
+          <span class="ptab-badge">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════ CONTENT ════════════════════════ -->
+    <div class="profile-content">
+      <!-- ══════ VUE D'ENSEMBLE ══════ -->
+      <div class="tab-pane active" id="pane-overview">
+        <div class="section-head">
+          <span class="section-eyebrow">Mon compte</span>
+          <span class="section-title">VUE D'ENSEMBLE</span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="overview-grid">
+          <div class="ov-card ov-card--recettes">
+            <div class="ov-card__icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 2l1.5 1.5L6 2l1.5 1.5L9 2l1.5 1.5L12 2l1.5 1.5L15 2l1.5 1.5L18 2l1.5 1.5L21 2v20l-1.5-1.5L18 22l-1.5-1.5L15 22l-1.5-1.5L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5L3 22Z"
+                />
+                <path d="M7 9h10M7 12h10M7 15h10" />
+              </svg>
+            </div>
+            <div class="ov-val">18</div>
+            <div class="ov-label">Recettes publiées</div>
+          </div>
+          <div class="ov-card ov-card--films">
+            <div class="ov-card__icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="2" />
+                <line x1="7" y1="2" x2="7" y2="22" />
+                <line x1="17" y1="2" x2="17" y2="22" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="2" y1="7" x2="7" y2="7" />
+                <line x1="2" y1="17" x2="7" y2="17" />
+                <line x1="17" y1="17" x2="22" y2="17" />
+                <line x1="17" y1="7" x2="22" y2="7" />
+              </svg>
+            </div>
+            <div class="ov-val">6</div>
+            <div class="ov-label">Films ajoutés</div>
+          </div>
+          <div class="ov-card ov-card--avis">
+            <div class="ov-card__icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+            </div>
+            <div class="ov-val">34</div>
+            <div class="ov-label">Avis rédigés</div>
+          </div>
+          <div class="ov-card ov-card--favoris">
+            <div class="ov-card__icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                />
+              </svg>
+            </div>
+            <div class="ov-val">47</div>
+            <div class="ov-label">Favoris totaux</div>
+          </div>
+          <div class="ov-card ov-card--note">
+            <div class="ov-card__icon">
+              <svg viewBox="0 0 24 24">
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                />
+              </svg>
+            </div>
+            <div class="ov-val">4.7</div>
+            <div class="ov-label">Note moyenne</div>
+          </div>
+        </div>
+
+        <div class="section-sep"></div>
+
+        <!-- Activité récente + quick palmares -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+          <div class="form-card">
+            <div class="form-card__head">
+              <span class="form-card__title">ACTIVITÉ RÉCENTE</span>
+              <button
+                class="btn btn--ghost btn--sm"
+                onclick="activateTab('creations')"
+              >
+                Tout voir
+              </button>
+            </div>
+            <div style="padding: 6px 0">
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 10px;
+                  padding: 11px 18px;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+                "
+              >
+                <div
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: var(--vert-clair);
+                    margin-top: 5px;
+                    flex-shrink: 0;
+                  "
+                ></div>
+                <div
+                  style="
+                    flex: 1;
+                    font-size: 0.68rem;
+                    font-weight: 300;
+                    color: rgba(232, 232, 232, 0.58);
+                    line-height: 1.55;
+                  "
+                >
+                  <strong style="color: var(--argent)"
+                    >Bouillabaisse de Gusteau</strong
+                  >
+                  — recette validée par l'équipe
+                </div>
+                <span
+                  style="font-size: 0.55rem; color: rgba(232, 232, 232, 0.22)"
+                  >il y a 2j</span
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 10px;
+                  padding: 11px 18px;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+                "
+              >
+                <div
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: var(--or-titre);
+                    margin-top: 5px;
+                    flex-shrink: 0;
+                  "
+                ></div>
+                <div
+                  style="
+                    flex: 1;
+                    font-size: 0.68rem;
+                    font-weight: 300;
+                    color: rgba(232, 232, 232, 0.58);
+                    line-height: 1.55;
+                  "
+                >
+                  Avis
+                  <strong style="color: var(--argent)">"Amélie Poulain"</strong>
+                  — 5 personnes l'ont trouvé utile
+                </div>
+                <span
+                  style="font-size: 0.55rem; color: rgba(232, 232, 232, 0.22)"
+                  >il y a 3j</span
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 10px;
+                  padding: 11px 18px;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+                "
+              >
+                <div
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: var(--orange-clair);
+                    margin-top: 5px;
+                    flex-shrink: 0;
+                  "
+                ></div>
+                <div
+                  style="
+                    flex: 1;
+                    font-size: 0.68rem;
+                    font-weight: 300;
+                    color: rgba(232, 232, 232, 0.58);
+                    line-height: 1.55;
+                  "
+                >
+                  Recette
+                  <strong style="color: var(--argent)"
+                    >"Royale with Cheese"</strong
+                  >
+                  — en attente de validation
+                </div>
+                <span
+                  style="font-size: 0.55rem; color: rgba(232, 232, 232, 0.22)"
+                  >il y a 4j</span
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 10px;
+                  padding: 11px 18px;
+                "
+              >
+                <div
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: var(--violet-clair);
+                    margin-top: 5px;
+                    flex-shrink: 0;
+                  "
+                ></div>
+                <div
+                  style="
+                    flex: 1;
+                    font-size: 0.68rem;
+                    font-weight: 300;
+                    color: rgba(232, 232, 232, 0.58);
+                    line-height: 1.55;
+                  "
+                >
+                  Film
+                  <strong style="color: var(--argent)">Babette's Feast</strong>
+                  ajouté à vos favoris
+                </div>
+                <span
+                  style="font-size: 0.55rem; color: rgba(232, 232, 232, 0.22)"
+                  >il y a 5j</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card__head">
+              <span class="form-card__title">MON PALMARÈS</span>
+              <button
+                class="btn btn--ghost btn--sm"
+                onclick="activateTab('palmares')"
+              >
+                Voir le détail
+              </button>
+            </div>
+            <div
+              style="
+                padding: 16px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+              "
+            >
+              <div style="display: flex; align-items: center; gap: 14px">
+                <div style="font-size: 2rem">🏆</div>
+                <div>
+                  <div
+                    style="
+                      font-family: var(--f-display);
+                      font-size: 1.1rem;
+                      letter-spacing: 2px;
+                      color: var(--or-titre);
+                    "
+                  >
+                    PROJECTEUR D'OR
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.62rem;
+                      font-weight: 300;
+                      color: rgba(232, 232, 232, 0.38);
+                    "
+                  >
+                    Niveau 4 · 15–19 recettes validées
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 5px">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                  "
+                >
+                  <span
+                    style="
+                      font-family: var(--f-title);
+                      font-size: 0.48rem;
+                      font-weight: 700;
+                      letter-spacing: 0.14em;
+                      text-transform: uppercase;
+                      color: rgba(196, 160, 82, 0.42);
+                    "
+                    >Vers Legend Superstar</span
+                  >
+                  <span
+                    style="
+                      font-family: var(--f-display);
+                      font-size: 0.85rem;
+                      letter-spacing: 1px;
+                      color: rgba(196, 160, 82, 0.45);
+                    "
+                    >18 / 20</span
+                  >
+                </div>
+                <div
+                  style="
+                    height: 6px;
+                    background: rgba(65, 90, 119, 0.22);
+                    border-radius: 3px;
+                    overflow: hidden;
+                  "
+                >
+                  <div
+                    style="
+                      width: 90%;
+                      height: 100%;
+                      border-radius: 3px;
+                      background: var(--gold-h);
+                      box-shadow: 0 0 7px rgba(212, 168, 67, 0.25);
+                    "
+                  ></div>
+                </div>
+                <div
+                  style="
+                    font-size: 0.6rem;
+                    font-weight: 300;
+                    color: rgba(232, 232, 232, 0.28);
+                    font-style: italic;
+                  "
+                >
+                  Plus que 2 recettes validées !
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px">
+                <div
+                  style="
+                    flex: 1;
+                    text-align: center;
+                    padding: 10px;
+                    background: rgba(10, 18, 30, 0.55);
+                    border-radius: 9px;
+                    border: 1px solid rgba(255, 255, 255, 0.04);
+                  "
+                >
+                  <div
+                    style="
+                      font-family: var(--f-display);
+                      font-size: 1.1rem;
+                      letter-spacing: 2px;
+                      color: var(--caramel);
+                    "
+                  >
+                    18
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.54rem;
+                      font-weight: 300;
+                      color: rgba(232, 232, 232, 0.3);
+                    "
+                  >
+                    Recettes validées
+                  </div>
+                </div>
+                <div
+                  style="
+                    flex: 1;
+                    text-align: center;
+                    padding: 10px;
+                    background: rgba(10, 18, 30, 0.55);
+                    border-radius: 9px;
+                    border: 1px solid rgba(255, 255, 255, 0.04);
+                  "
+                >
+                  <div
+                    style="
+                      font-family: var(--f-display);
+                      font-size: 1.1rem;
+                      letter-spacing: 2px;
+                      color: var(--violet-clair);
+                    "
+                  >
+                    Rang 4
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.54rem;
+                      font-weight: 300;
+                      color: rgba(232, 232, 232, 0.3);
+                    "
+                  >
+                    sur 5 niveaux
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ PROFIL ══════ -->
+      <div class="tab-pane" id="pane-profil">
+        <div class="section-head">
+          <span class="section-eyebrow">Mon compte</span>
+          <span class="section-title">PROFIL</span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="profil-grid">
+          <div style="display: flex; flex-direction: column; gap: 18px">
+            <!-- Formulaire infos -->
+            <div class="form-card">
+              <div class="form-card__head">
+                <span class="form-card__title">INFORMATIONS</span>
+                <div style="display: flex; gap: 8px">
+                  <button
+                    class="btn btn--ghost btn--sm"
+                    id="editInfoBtn"
+                    onclick="toggleEditForm()"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    class="btn btn--primary btn--sm"
+                    id="saveInfoBtn"
+                    style="display: none"
+                    onclick="saveProfile()"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+              <div class="form-card__body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <input
+                      class="form-input profile-field"
+                      type="text"
+                      value="Sara"
+                      disabled
+                      id="fieldPrenom"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input
+                      class="form-input profile-field"
+                      type="text"
+                      value="Martinez"
+                      disabled
+                      id="fieldNom"
+                    />
+                  </div>
+                </div>
+                <div class="form-row form-row--full">
+                  <div class="form-group">
+                    <label class="form-label">Adresse e-mail</label>
+                    <input
+                      class="form-input profile-field"
+                      type="email"
+                      value="sara.m@example.com"
+                      disabled
+                      id="fieldEmail"
+                    />
+                  </div>
+                </div>
+                <div class="form-row form-row--full">
+                  <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input
+                      class="form-input profile-field"
+                      type="password"
+                      value="••••••••••"
+                      disabled
+                      id="fieldPassword"
+                    />
+                    <span
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        margin-top: 4px;
+                      "
+                      ><span
+                        class="form-pwd-link"
+                        id="pwdLink"
+                        style="display: none"
+                        >Mot de passe oublié ?</span
+                      ></span
+                    >
+                  </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="notif-block">
+                  <div
+                    style="
+                      font-family: var(--f-title);
+                      font-size: 0.46rem;
+                      font-weight: 700;
+                      letter-spacing: 0.18em;
+                      text-transform: uppercase;
+                      color: rgba(196, 160, 82, 0.38);
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Préférences notifications
+                  </div>
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <span class="notif-label">Nouvelles recettes</span>
+                      <span class="notif-sub"
+                        >Soyez alerté quand une recette est publiée pour un film
+                        que vous aimez</span
+                      >
+                    </div>
+                    <label class="toggle"
+                      ><input type="checkbox" checked /><span
+                        class="toggle-slider"
+                      ></span
+                    ></label>
+                  </div>
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <span class="notif-label">Nouveaux films</span>
+                      <span class="notif-sub"
+                        >Notifié lors de l'ajout d'un nouveau film dans votre
+                        genre préféré</span
+                      >
+                    </div>
+                    <label class="toggle"
+                      ><input type="checkbox" /><span
+                        class="toggle-slider"
+                      ></span
+                    ></label>
+                  </div>
+                  <div class="notif-row">
+                    <div class="notif-info">
+                      <span class="notif-label">Réponses à mes avis</span>
+                      <span class="notif-sub"
+                        >Alertes quand quelqu'un répond à l'un de vos avis</span
+                      >
+                    </div>
+                    <label class="toggle"
+                      ><input type="checkbox" checked /><span
+                        class="toggle-slider"
+                      ></span
+                    ></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Zone danger -->
+            <div class="danger-zone">
+              <div class="danger-zone__head">
+                <span class="danger-zone__icon">⚠</span>
+                <span class="danger-zone__title">Zone de danger</span>
+              </div>
+              <div class="danger-zone__body">
+                <p class="danger-zone__sub">
+                  La suppression de votre compte est définitive et irréversible.
+                  Toutes vos recettes, avis et contributions seront anonymisés
+                  et vos données personnelles supprimées.
+                </p>
+                <div class="danger-zone__actions">
+                  <button
+                    class="btn btn--outline-red btn--sm"
+                    onclick="confirmDeleteAccount()"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                      <line x1="18" y1="8" x2="23" y2="13" />
+                      <line x1="23" y1="8" x2="18" y2="13" />
+                    </svg>
+                    Supprimer mon compte
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side stats -->
+          <div style="display: flex; flex-direction: column; gap: 18px">
+            <div class="side-stats">
+              <div class="side-stats__head">
+                <span class="side-stats__title">MES STATISTIQUES</span>
+              </div>
+              <div class="side-stats__rows">
+                <div class="ss-row">
+                  <span class="ss-label" style="color: var(--caramel)">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M3 2l1.5 1.5L6 2l1.5 1.5L9 2l1.5 1.5L12 2l1.5 1.5L15 2l1.5 1.5L18 2l1.5 1.5L21 2v20l-1.5-1.5L18 22l-1.5-1.5L15 22l-1.5-1.5L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5L3 22Z"
+                      />
+                    </svg>
+                    Recettes
+                  </span>
+                  <span class="ss-val" style="color: var(--caramel)">18</span>
+                </div>
+                <div class="ss-row">
+                  <span class="ss-label" style="color: var(--violet-clair)">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="2" y="2" width="20" height="20" rx="2" />
+                      <line x1="7" y1="2" x2="7" y2="22" />
+                      <line x1="17" y1="2" x2="17" y2="22" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                    </svg>
+                    Films
+                  </span>
+                  <span class="ss-val" style="color: var(--violet-clair)"
+                    >6</span
+                  >
+                </div>
+                <div class="ss-row">
+                  <span class="ss-label">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                      />
+                    </svg>
+                    Avis
+                  </span>
+                  <span class="ss-val" style="color: rgba(140, 180, 225, 0.88)"
+                    >34</span
+                  >
+                </div>
+                <div class="ss-row">
+                  <span class="ss-label" style="color: #e84020">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                      />
+                    </svg>
+                    Favoris ♥
+                  </span>
+                  <span class="ss-val" style="color: #e84020">47</span>
+                </div>
+                <div class="ss-row">
+                  <span class="ss-label" style="color: var(--dore-clair)">
+                    <svg viewBox="0 0 24 24">
+                      <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                      />
+                    </svg>
+                    Notes ★
+                  </span>
+                  <span class="ss-val" style="color: var(--dore-clair)"
+                    >22</span
+                  >
+                </div>
+                <div class="ss-row">
+                  <span class="ss-label">
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    Note moyenne
+                  </span>
+                  <span class="ss-val" style="color: var(--dore-clair)"
+                    >4.7 / 5</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Bannière CTA -->
+            <div
+              style="
+                background: rgba(10, 18, 30, 0.65);
+                border: 1.5px dashed rgba(196, 160, 82, 0.18);
+                border-radius: 12px;
+                padding: 18px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 1.8rem; opacity: 0.45">🎬</div>
+              <div
+                style="
+                  font-family: var(--f-display);
+                  font-size: 0.88rem;
+                  letter-spacing: 2px;
+                  color: rgba(232, 232, 232, 0.42);
+                "
+              >
+                PAGE AUTEUR
+              </div>
+              <p
+                style="
+                  font-size: 0.64rem;
+                  font-weight: 300;
+                  color: rgba(232, 232, 232, 0.28);
+                  font-style: italic;
+                  line-height: 1.6;
+                "
+              >
+                Partagez votre page auteur pour mettre en avant vos meilleures
+                recettes.
+              </p>
+              <a href="/auth/profil/1" class="btn btn--ghost btn--sm"
+                >Voir ma page →</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ PALMARÈS ══════ -->
+      <div class="tab-pane" id="pane-palmares">
+        <div class="section-head">
+          <span class="section-eyebrow">Progression</span>
+          <span class="section-title">PALMARÈS</span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="palmares-header">
+          <div class="palmares-header__desc">
+            <p>
+              Chaque recette validée vous rapproche du rang ultime. Vous êtes
+              actuellement au niveau
+              <strong style="color: var(--or-titre)">Projecteur d'Or</strong>, à
+              deux recettes du sommet absolu. Continuez sur votre lancée — la
+              légende vous attend.
+            </p>
+          </div>
+          <div class="palmares-header__xp">
+            <div class="xp-block">
+              <div class="xp-block-head">
+                <span class="xp-block-title"
+                  >Projecteur d'Or → Legend Superstar</span
+                >
+                <span class="xp-block-frac">18 / 20</span>
+              </div>
+              <div class="xp-block-track">
+                <div class="xp-block-fill" style="width: 90%"></div>
+              </div>
+              <p class="xp-block-hint">
+                Plus que
+                <strong style="color: var(--or-titre)"
+                  >2 recettes validées</strong
+                >
+                pour atteindre le sommet
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="badges-timeline">
+          <!-- Rookie -->
+          <div class="badge-card badge-card--rookie unlocked">
+            <img
+              src="https://i.postimg.cc/ZKg3q9TF/badge_niv1_popcorn_rookie.png"
+              style="
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+              "
+            />
+            <div class="badge-stars">
+              <span style="color: rgba(192, 200, 215, 0.8)">★</span>
+              <span style="color: rgba(192, 200, 215, 0.25)">★★★★</span>
+            </div>
+            <div class="badge-name">BURGER ROOKIE</div>
+            <div class="badge-range">0 – 4 recettes</div>
+            <div class="badge-progress">
+              <div class="bp-track">
+                <div class="bp-fill" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Studio Bronze -->
+          <div class="badge-card badge-card--argent unlocked">
+            <img
+              src="https://i.postimg.cc/pXyzxQtk/badge_niv2_studio_bronze.png"
+              style="
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+              "
+            />
+            <div class="badge-stars">
+              <span style="color: #cd7f32">★★</span>
+              <span style="color: rgba(205, 127, 50, 0.25)">★★★</span>
+            </div>
+            <div class="badge-name">STUDIO BRONZE</div>
+            <div class="badge-range">5 – 9 recettes</div>
+            <div class="badge-progress">
+              <div class="bp-track">
+                <div class="bp-fill" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clap d'Argent -->
+          <div class="badge-card badge-card--culte unlocked">
+            <img
+              src="https://i.postimg.cc/kXZ85Vnb/badge_niv3_clap_argent.png"
+              style="
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+              "
+            />
+            <div class="badge-stars">
+              <span style="color: rgba(192, 210, 225, 0.9)">★★★</span>
+              <span style="color: rgba(192, 210, 225, 0.22)">★★</span>
+            </div>
+            <div class="badge-name">CLAP D'ARGENT</div>
+            <div class="badge-range">10 – 14 recettes</div>
+            <div class="badge-progress">
+              <div class="bp-track">
+                <div class="bp-fill" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projecteur Or — CURRENT -->
+          <div class="badge-card badge-card--or current">
+            <div class="badge-card__current-tag">Actuel</div>
+            <img
+              src="https://i.postimg.cc/WbKr4D2g/badge_niv4_projecteur_or.png"
+              style="
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
+                filter: drop-shadow(0 4px 14px rgba(196, 160, 82, 0.35));
+              "
+            />
+            <div class="badge-stars">
+              <span style="color: var(--or-titre)">★★★★</span>
+              <span style="color: rgba(196, 160, 82, 0.22)">★</span>
+            </div>
+            <div class="badge-name">PROJECTEUR D'OR</div>
+            <div class="badge-range">15 – 19 recettes</div>
+            <div class="badge-progress">
+              <div class="bp-track">
+                <div class="bp-fill" style="width: 80%"></div>
+              </div>
+            </div>
+            <div class="badge-hint">18 / 20 recettes</div>
+          </div>
+
+          <!-- Legend Superstar — locked -->
+          <div class="badge-card badge-card--legend locked">
+            <div class="badge-card__lock">🔒</div>
+            <img
+              src="https://i.postimg.cc/qMYn7tkQ/badge_niv5_superstar_legend.png"
+              style="
+                width: 72px;
+                height: 72px;
+                object-fit: contain;
+                filter: drop-shadow(0 4px 18px rgba(247, 201, 72, 0.4));
+              "
+            />
+            <div class="badge-stars">
+              <span style="color: #f7c948; opacity: 0.5">★★★★★</span>
+            </div>
+            <div class="badge-name">LEGEND SUPERSTAR</div>
+            <div class="badge-range">20 + recettes</div>
+            <div class="badge-progress">
+              <div class="bp-track">
+                <div class="bp-fill" style="width: 90%"></div>
+              </div>
+            </div>
+            <div class="badge-hint">Plus que 2 recettes !</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ FAVORIS ══════ -->
+      <div class="tab-pane" id="pane-favoris">
+        <div class="section-head">
+          <span class="section-eyebrow">Ma collection</span>
+          <span class="section-title">FAVORIS & NOTES</span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="fav-cols">
+          <!-- Films favoris -->
+          <div class="fav-section">
+            <div class="fav-section__head">
+              <span class="fav-section__title">FILMS FAVORIS</span>
+              <span class="fav-section__count">6</span>
+            </div>
+            <div class="fav-list">
+              <a class="fav-item" href="/recipes-movie/ratatouille">
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--poster"
+                    src="https://image.tmdb.org/t/p/w92/npHNjldbeTHdKKw28bJKs7lzqzj.jpg"
+                    alt="Ratatouille"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Ratatouille</span
+                  ><span class="fav-item__sub"
+                    >Brad Bird · 2007 · Animation</span
+                  >
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="/recipes-movie/pulp-fiction">
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--poster"
+                    src="https://image.tmdb.org/t/p/w92/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"
+                    alt="Pulp Fiction"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Pulp Fiction</span
+                  ><span class="fav-item__sub"
+                    >Tarantino · 1994 · Thriller</span
+                  >
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="/recipes-movie/amelie">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Amélie Poulain</span
+                  ><span class="fav-item__sub">Jeunet · 2001 · Comédie</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="/recipes-movie/babettes-feast">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Babette's Feast</span
+                  ><span class="fav-item__sub">Axel · 1987 · Drame</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="/recipes-movie/the-menu">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">The Menu</span
+                  ><span class="fav-item__sub">Mylod · 2022 · Thriller</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="/recipes-movie/julie-julia">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Julie & Julia</span
+                  ><span class="fav-item__sub">Ephron · 2009 · Biopic</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Recettes favorites -->
+          <div class="fav-section">
+            <div class="fav-section__head">
+              <span class="fav-section__title">RECETTES FAVORITES</span>
+              <span class="fav-section__count">8</span>
+            </div>
+            <div class="fav-list">
+              <a
+                class="fav-item"
+                href="/recipes-movie/details/bouillabaisse-gusteau"
+              >
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--recipe"
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=80&q=60"
+                    alt="Bouillabaisse"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Bouillabaisse de Gusteau</span
+                  ><span class="fav-item__sub">Ratatouille · Plat</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a
+                class="fav-item"
+                href="/recipes-movie/details/creme-brulee-amelie"
+              >
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍮
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Crème brûlée d'Amélie</span
+                  ><span class="fav-item__sub">Amélie · Dessert</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a
+                class="fav-item"
+                href="/recipes-movie/details/royale-with-cheese"
+              >
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍔
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Royale with Cheese</span
+                  ><span class="fav-item__sub">Pulp Fiction · Plat</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍝
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title"
+                    >Spaghetti alla Scarpariello</span
+                  ><span class="fav-item__sub">The Menu · Plat</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🥐
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Croissants de Babette</span
+                  ><span class="fav-item__sub">Babette's Feast · Dessert</span>
+                </div>
+                <span style="font-size: 0.8rem">♥</span>
+              </a>
+              <a class="fav-more" href="#">Voir les 3 autres →</a>
+            </div>
+          </div>
+
+          <!-- Films notés -->
+          <div class="fav-section">
+            <div class="fav-section__head">
+              <span class="fav-section__title">FILMS NOTÉS</span>
+              <span class="fav-section__count">12</span>
+            </div>
+            <div class="fav-list">
+              <a class="fav-item" href="/recipes-movie/ratatouille">
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--poster"
+                    src="https://image.tmdb.org/t/p/w92/npHNjldbeTHdKKw28bJKs7lzqzj.jpg"
+                    alt="Ratatouille"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Ratatouille</span
+                  ><span class="fav-item__sub">Animation · 2007</span>
+                </div>
+                <span class="fav-item__note">★ 5.0</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Amélie Poulain</span
+                  ><span class="fav-item__sub">Comédie · 2001</span>
+                </div>
+                <span class="fav-item__note">★ 4.5</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--poster"
+                    src="https://image.tmdb.org/t/p/w92/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"
+                    alt="Pulp Fiction"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Pulp Fiction</span
+                  ><span class="fav-item__sub">Thriller · 1994</span>
+                </div>
+                <span class="fav-item__note">★ 4.0</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">The Menu</span
+                  ><span class="fav-item__sub">Thriller · 2022</span>
+                </div>
+                <span class="fav-item__note">★ 4.5</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb" style="width: 34px; height: 50px">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 34px; height: 50px; font-size: 1.1rem"
+                  >
+                    🎬
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Babette's Feast</span
+                  ><span class="fav-item__sub">Drame · 1987</span>
+                </div>
+                <span class="fav-item__note">★ 5.0</span>
+              </a>
+              <a class="fav-more" href="#">Voir les 7 autres →</a>
+            </div>
+          </div>
+
+          <!-- Recettes notées -->
+          <div class="fav-section">
+            <div class="fav-section__head">
+              <span class="fav-section__title">RECETTES NOTÉES</span>
+              <span class="fav-section__count">22</span>
+            </div>
+            <div class="fav-list">
+              <a
+                class="fav-item"
+                href="/recipes-movie/details/bouillabaisse-gusteau"
+              >
+                <div class="fav-item__thumb">
+                  <img
+                    class="fav-item__thumb--recipe"
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=80&q=60"
+                    alt="Bouillabaisse"
+                  />
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Bouillabaisse de Gusteau</span
+                  ><span class="fav-item__sub">Ratatouille</span>
+                </div>
+                <span class="fav-item__note">★ 5.0</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍮
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Crème brûlée d'Amélie</span
+                  ><span class="fav-item__sub">Amélie Poulain</span>
+                </div>
+                <span class="fav-item__note">★ 4.5</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍔
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Royale with Cheese</span
+                  ><span class="fav-item__sub">Pulp Fiction</span>
+                </div>
+                <span class="fav-item__note">★ 4.0</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🥘
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title"
+                    >Tajine des mille et une nuits</span
+                  ><span class="fav-item__sub">Babel</span>
+                </div>
+                <span class="fav-item__note">★ 4.0</span>
+              </a>
+              <a class="fav-item" href="#">
+                <div class="fav-item__thumb">
+                  <div
+                    class="fav-item__thumb--placeholder"
+                    style="width: 62px; height: 40px; font-size: 1rem"
+                  >
+                    🍝
+                  </div>
+                </div>
+                <div class="fav-item__info">
+                  <span class="fav-item__title">Pasta del Mare</span
+                  ><span class="fav-item__sub">Cinema Paradiso</span>
+                </div>
+                <span class="fav-item__note">★ 5.0</span>
+              </a>
+              <a class="fav-more" href="#">Voir les 17 autres →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ CRÉATIONS ══════ -->
+      <div class="tab-pane" id="pane-creations">
+        <div class="section-head">
+          <span class="section-eyebrow">Mes contributions</span>
+          <span class="section-title">CRÉATIONS</span>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="creations-grid">
+          <!-- Mes recettes -->
+          <div class="creation-section">
+            <div class="creation-section__head">
+              <div class="form-card__head" style="border: none; padding: 0">
+                <span class="creation-section__title">MES RECETTES</span>
+                <span
+                  style="
+                    font-family: var(--f-display);
+                    font-size: 0.8rem;
+                    letter-spacing: 1px;
+                    color: rgba(196, 160, 82, 0.42);
+                  "
+                  >18</span
+                >
+              </div>
+            </div>
+            <div class="inline-filter">
+              <input
+                class="if-input"
+                type="text"
+                placeholder="Rechercher une recette…"
+                oninput="filterItems(this, 'recette-items')"
+              />
+              <select
+                class="if-sel"
+                onchange="filterByStatus(this, 'recette-items')"
+              >
+                <option value="">Tous statuts</option>
+                <option value="ok">Validées</option>
+                <option value="pending">En attente</option>
+                <option value="refused">Refusées</option>
+              </select>
+            </div>
+            <div class="creation-list" id="recette-items">
+              <!-- Item 1 -->
+              <div class="ci-item">
+                <div class="ci-top">
+                  <img
+                    class="ci-thumb ci-thumb--recipe"
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=80&q=60"
+                    alt="Bouillabaisse"
+                  />
+                  <div class="ci-info">
+                    <div class="ci-title">Bouillabaisse de Gusteau</div>
+                    <div class="ci-meta">
+                      <span style="color: var(--or-titre)">Ratatouille</span>
+                      <span class="ci-dot"></span>
+                      <span>Plat · 45 min</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--ok">Validée</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <button
+                    class="ci-btn ci-btn--edit"
+                    onclick="toggleEditForm('ef-1')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 20h9" />
+                      <path
+                        d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                      />
+                    </svg>
+                    Éditer
+                  </button>
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="
+                      confirmDeleteContent(
+                        'la recette Bouillabaisse de Gusteau',
+                      )
+                    "
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+                <div class="ci-edit-form" id="ef-1">
+                  <div class="ci-ef-row">
+                    <div>
+                      <label class="ci-ef-label">Titre</label
+                      ><input
+                        class="ci-ef-input"
+                        value="Bouillabaisse de Gusteau"
+                      />
+                    </div>
+                    <div>
+                      <label class="ci-ef-label">Catégorie</label>
+                      <select
+                        class="ci-ef-input"
+                        style="
+                          height: 32px;
+                          appearance: none;
+                          background-image: none;
+                        "
+                      >
+                        <option>Plat</option>
+                        <option>Dessert</option>
+                        <option>Apéritif</option>
+                        <option>Entrée</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="ci-ef-row">
+                    <div>
+                      <label class="ci-ef-label">Durée (min)</label
+                      ><input class="ci-ef-input" type="number" value="45" />
+                    </div>
+                    <div>
+                      <label class="ci-ef-label">Portions</label
+                      ><input class="ci-ef-input" type="number" value="4" />
+                    </div>
+                  </div>
+                  <div class="ci-ef-full">
+                    <label class="ci-ef-label">Description courte</label
+                    ><textarea class="ci-ef-textarea">
+Une bouillabaisse authentique inspirée du chef Gusteau dans Ratatouille.</textarea
+                    >
+                  </div>
+                  <div class="ci-ef-actions">
+                    <button
+                      class="btn btn--ghost btn--sm"
+                      onclick="toggleEditForm('ef-1')"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      class="btn btn--primary btn--sm"
+                      onclick="saveEdit('Bouillabaisse de Gusteau')"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 2 (pending) -->
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--recipe ci-thumb--placeholder"
+                    style="width: 52px; height: 34px; font-size: 1rem"
+                  >
+                    🍔
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">Royale with Cheese</div>
+                    <div class="ci-meta">
+                      <span style="color: var(--or-titre)">Pulp Fiction</span>
+                      <span class="ci-dot"></span>
+                      <span>Plat · 20 min</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--pending"
+                        >En attente</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <button
+                    class="ci-btn ci-btn--edit"
+                    onclick="toggleEditForm('ef-2')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 20h9" />
+                      <path
+                        d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                      />
+                    </svg>
+                    Éditer
+                  </button>
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="
+                      confirmDeleteContent('la recette Royale with Cheese')
+                    "
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+                <div class="ci-edit-form" id="ef-2">
+                  <div class="ci-ef-row">
+                    <div>
+                      <label class="ci-ef-label">Titre</label
+                      ><input class="ci-ef-input" value="Royale with Cheese" />
+                    </div>
+                    <div>
+                      <label class="ci-ef-label">Catégorie</label>
+                      <select class="ci-ef-input" style="height: 32px">
+                        <option selected>Plat</option>
+                        <option>Dessert</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="ci-ef-full">
+                    <label class="ci-ef-label">Description</label
+                    ><textarea class="ci-ef-textarea">
+Le mythique burger du film, reconstitué avec précision.</textarea
+                    >
+                  </div>
+                  <div class="ci-ef-actions">
+                    <button
+                      class="btn btn--ghost btn--sm"
+                      onclick="toggleEditForm('ef-2')"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      class="btn btn--primary btn--sm"
+                      onclick="saveEdit('Royale with Cheese')"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 3 (refused) -->
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--recipe ci-thumb--placeholder"
+                    style="width: 52px; height: 34px; font-size: 1rem"
+                  >
+                    🍝
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">Pasta Vongole di Cinema</div>
+                    <div class="ci-meta">
+                      <span style="color: var(--or-titre)"
+                        >Cinema Paradiso</span
+                      >
+                      <span class="ci-dot"></span>
+                      <span>Plat · 35 min</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--refused">Refusée</span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    padding: 6px 0 0;
+                    font-size: 0.6rem;
+                    font-weight: 300;
+                    color: rgba(232, 90, 70, 0.55);
+                    font-style: italic;
+                  "
+                >
+                  Motif : film non trouvé dans la base TMDB — veuillez corriger.
+                </div>
+                <div class="ci-actions" style="margin-top: 4px">
+                  <button
+                    class="ci-btn ci-btn--edit"
+                    onclick="toggleEditForm('ef-3')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 20h9" />
+                      <path
+                        d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+                      />
+                    </svg>
+                    Corriger & Resoumettre
+                  </button>
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="confirmDeleteContent('la recette Pasta Vongole')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+                <div class="ci-edit-form" id="ef-3">
+                  <div class="ci-ef-row">
+                    <div>
+                      <label class="ci-ef-label">Titre</label
+                      ><input
+                        class="ci-ef-input"
+                        value="Pasta Vongole di Cinema"
+                      />
+                    </div>
+                    <div>
+                      <label class="ci-ef-label">Film associé (TMDB)</label
+                      ><input
+                        class="ci-ef-input"
+                        value="Cinema Paradiso"
+                        placeholder="Rechercher sur TMDB…"
+                      />
+                    </div>
+                  </div>
+                  <div class="ci-ef-actions">
+                    <button
+                      class="btn btn--ghost btn--sm"
+                      onclick="toggleEditForm('ef-3')"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      class="btn btn--primary btn--sm"
+                      onclick="saveEdit('Pasta Vongole — resoumettre')"
+                    >
+                      Resoumettre
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mes films -->
+          <div class="creation-section">
+            <div class="creation-section__head">
+              <div class="form-card__head" style="border: none; padding: 0">
+                <span class="creation-section__title">MES FILMS</span>
+                <span
+                  style="
+                    font-family: var(--f-display);
+                    font-size: 0.8rem;
+                    letter-spacing: 1px;
+                    color: rgba(196, 160, 82, 0.42);
+                  "
+                  >6</span
+                >
+              </div>
+            </div>
+            <div class="inline-filter">
+              <input
+                class="if-input"
+                type="text"
+                placeholder="Rechercher un film…"
+                oninput="filterItems(this, 'film-items')"
+              />
+              <select class="if-sel">
+                <option>Tous statuts</option>
+                <option>Validés</option>
+                <option>En attente</option>
+                <option>Refusés</option>
+              </select>
+            </div>
+            <div class="creation-list" id="film-items">
+              <div class="ci-item">
+                <div class="ci-top">
+                  <img
+                    class="ci-thumb"
+                    src="https://image.tmdb.org/t/p/w92/npHNjldbeTHdKKw28bJKs7lzqzj.jpg"
+                    alt="Ratatouille"
+                  />
+                  <div class="ci-info">
+                    <div class="ci-title">Ratatouille</div>
+                    <div class="ci-meta">
+                      <span>2007 · Animation</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--ok">Validé</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ci-item">
+                <div class="ci-top">
+                  <img
+                    class="ci-thumb"
+                    src="https://image.tmdb.org/t/p/w92/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg"
+                    alt="Pulp Fiction"
+                  />
+                  <div class="ci-info">
+                    <div class="ci-title">Pulp Fiction</div>
+                    <div class="ci-meta">
+                      <span>1994 · Thriller</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--ok">Validé</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--placeholder"
+                    style="width: 38px; height: 52px; font-size: 1.2rem"
+                  >
+                    🎬
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">The Menu</div>
+                    <div class="ci-meta">
+                      <span>2022 · Thriller</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--pending"
+                        >En attente</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--placeholder"
+                    style="width: 38px; height: 52px; font-size: 1.2rem"
+                  >
+                    🎬
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">Babette's Feast</div>
+                    <div class="ci-meta">
+                      <span>1987 · Drame</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--ok">Validé</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--placeholder"
+                    style="width: 38px; height: 52px; font-size: 1.2rem"
+                  >
+                    🎬
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">Amélie</div>
+                    <div class="ci-meta">
+                      <span>2001 · Comédie</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--ok">Validé</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    class="ci-thumb ci-thumb--placeholder"
+                    style="width: 38px; height: 52px; font-size: 1.2rem"
+                  >
+                    🎬
+                  </div>
+                  <div class="ci-info">
+                    <div class="ci-title">Julie & Julia</div>
+                    <div class="ci-meta">
+                      <span>2009 · Biopic</span>
+                      <span class="ci-dot"></span>
+                      <span class="ci-status ci-status--pending"
+                        >En attente</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  padding: 8px 14px;
+                  font-size: 0.58rem;
+                  font-weight: 300;
+                  color: rgba(232, 232, 232, 0.22);
+                  font-style: italic;
+                  text-align: center;
+                "
+              >
+                Lecture seule — pour modifier un film, contactez
+                l'administration
+              </div>
+            </div>
+          </div>
+
+          <!-- Mes avis -->
+          <div class="creation-section">
+            <div class="creation-section__head">
+              <div class="form-card__head" style="border: none; padding: 0">
+                <span class="creation-section__title">MES AVIS</span>
+                <span
+                  style="
+                    font-family: var(--f-display);
+                    font-size: 0.8rem;
+                    letter-spacing: 1px;
+                    color: rgba(196, 160, 82, 0.42);
+                  "
+                  >34</span
+                >
+              </div>
+            </div>
+            <div class="inline-filter">
+              <input
+                class="if-input"
+                type="text"
+                placeholder="Rechercher un avis…"
+                oninput="filterItems(this, 'avis-items')"
+              />
+              <select class="if-sel">
+                <option>Tous statuts</option>
+                <option>Validés</option>
+                <option>En attente</option>
+              </select>
+            </div>
+            <div class="creation-list" id="avis-items">
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      gap: 3px;
+                      flex: 1;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <div class="ci-meta">
+                        <span style="color: var(--or-titre)"
+                          >Bouillabaisse de Gusteau</span
+                        >
+                        <span class="ci-dot"></span>
+                        <span>Ratatouille</span>
+                      </div>
+                      <span
+                        class="ci-status ci-status--ok"
+                        style="font-size: 0.38rem"
+                        >Validé</span
+                      >
+                    </div>
+                    <div class="ci-note">
+                      ★★★★★ <span class="ci-note-val">5.0 / 5</span>
+                    </div>
+                    <div
+                      style="
+                        font-family: var(--f-editorial);
+                        font-style: italic;
+                        font-size: 0.7rem;
+                        color: rgba(232, 232, 232, 0.58);
+                        line-height: 1.6;
+                        margin-top: 3px;
+                      "
+                    >
+                      "La ratatouille m'a émue aux larmes. Un pont magique entre
+                      l'écran et la table."
+                    </div>
+                    <div
+                      style="
+                        font-size: 0.52rem;
+                        color: rgba(232, 232, 232, 0.22);
+                        margin-top: 2px;
+                      "
+                    >
+                      08 mars 2026
+                    </div>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="confirmDeleteContent('cet avis')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      gap: 3px;
+                      flex: 1;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <div class="ci-meta">
+                        <span style="color: var(--or-titre)"
+                          >Royale with Cheese</span
+                        >
+                        <span class="ci-dot"></span>
+                        <span>Pulp Fiction</span>
+                      </div>
+                      <span
+                        class="ci-status ci-status--pending"
+                        style="font-size: 0.38rem"
+                        >En attente</span
+                      >
+                    </div>
+                    <div class="ci-note">
+                      ★★★★ <span class="ci-note-val">4.0 / 5</span>
+                    </div>
+                    <div
+                      style="
+                        font-family: var(--f-editorial);
+                        font-style: italic;
+                        font-size: 0.7rem;
+                        color: rgba(232, 232, 232, 0.58);
+                        line-height: 1.6;
+                        margin-top: 3px;
+                      "
+                    >
+                      "Recette fidèle et savoureuse. Le rapport au film est
+                      immédiat, c'est l'essentiel."
+                    </div>
+                    <div
+                      style="
+                        font-size: 0.52rem;
+                        color: rgba(232, 232, 232, 0.22);
+                        margin-top: 2px;
+                      "
+                    >
+                      09 mars 2026
+                    </div>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="confirmDeleteContent('cet avis')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+
+              <div class="ci-item">
+                <div class="ci-top">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      gap: 3px;
+                      flex: 1;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <div class="ci-meta">
+                        <span style="color: var(--or-titre)"
+                          >Crème brûlée d'Amélie</span
+                        >
+                        <span class="ci-dot"></span>
+                        <span>Amélie Poulain</span>
+                      </div>
+                      <span
+                        class="ci-status ci-status--ok"
+                        style="font-size: 0.38rem"
+                        >Validé</span
+                      >
+                    </div>
+                    <div class="ci-note">
+                      ★★★★★ <span class="ci-note-val">4.5 / 5</span>
+                    </div>
+                    <div
+                      style="
+                        font-family: var(--f-editorial);
+                        font-style: italic;
+                        font-size: 0.7rem;
+                        color: rgba(232, 232, 232, 0.58);
+                        line-height: 1.6;
+                        margin-top: 3px;
+                      "
+                    >
+                      "Parfaite pour un dimanche paresseux. Le caramel
+                      croustillant est la cerise sur le gâteau."
+                    </div>
+                    <div
+                      style="
+                        font-size: 0.52rem;
+                        color: rgba(232, 232, 232, 0.22);
+                        margin-top: 2px;
+                      "
+                    >
+                      06 mars 2026
+                    </div>
+                  </div>
+                </div>
+                <div class="ci-actions">
+                  <button
+                    class="ci-btn ci-btn--del"
+                    onclick="confirmDeleteContent('cet avis')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M9 6V4h6v2" />
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+
+              <a
+                class="fav-more"
+                style="
+                  display: block;
+                  text-align: center;
+                  padding: 8px;
+                  font-family: var(--f-title);
+                  font-size: 0.46rem;
+                  font-weight: 700;
+                  letter-spacing: 0.12em;
+                  text-transform: uppercase;
+                  color: rgba(196, 160, 82, 0.42);
+                  cursor: pointer;
+                  border-top: 1px solid rgba(255, 255, 255, 0.04);
+                  transition: color 0.2s;
+                  margin-top: 4px;
+                "
+                href="#"
+                >Voir les 31 autres avis →</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /profile-content -->
+
+    <!-- ════════════════════════ FOOTER ════════════════════════ -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div>
+            <div class="footer-logo">
+              <div
+                style="
+                  width: 42px;
+                  height: 42px;
+                  border-radius: 10px;
+                  background: var(--gold-gradient);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-family: var(--f-display);
+                  font-size: 1.15rem;
+                  color: var(--bleu-nuit);
+                "
+              >
+                CD
+              </div>
+              <span class="footer-logo__name" style="color: var(--or-titre)"
+                >Ciné Délices</span
+              >
+            </div>
+            <p class="footer-tagline">
+              "Le cinéma et la gastronomie — deux arts qui nourrissent l'âme."
+            </p>
+            <div style="margin-bottom: 10px">
+              <div class="footer-nl__label">Newsletter</div>
+              <div class="footer-nl__row">
+                <input
+                  class="footer-nl__input"
+                  type="email"
+                  placeholder="votre@email.fr"
+                />
+                <button class="footer-nl__btn">S'abonner</button>
+              </div>
+            </div>
+            <div class="footer-social">
+              <div class="social-btn" title="Instagram">📸</div>
+              <div class="social-btn" title="TikTok">🎵</div>
+              <div class="social-btn" title="Pinterest">📌</div>
+              <div class="social-btn" title="YouTube">▶️</div>
+            </div>
+          </div>
+          <div>
+            <div class="footer-col__title">Découvrir</div>
+            <ul class="footer-links">
+              <li><a href="/movies">Tous les films</a></li>
+              <li><a href="/recipes-movie">Toutes les recettes</a></li>
+              <li><a href="/avis">Avis &amp; communauté</a></li>
+              <li><a href="/add-recipes-movies">Proposer un film</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="footer-col__title">Mon compte</div>
+            <ul class="footer-links">
+              <li><a href="/auth/profil/1">Mon profil</a></li>
+              <li><a href="/auth/profil/1#pane-creations">Mes recettes</a></li>
+              <li><a href="/auth/profil/1#pane-favoris">Mes favoris</a></li>
+              <li><a href="/auth/profil/1#pane-palmares">Palmarès</a></li>
+              <li><a href="/auth/logout">Déconnexion</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="footer-col__title">À propos</div>
+            <ul class="footer-links">
+              <li><a href="/contact-about">Contact</a></li>
+              <li><a href="/contact-about">Notre mission</a></li>
+              <li><a href="#">Mentions légales</a></li>
+              <li><a href="#">CGU</a></li>
+              <li><a href="#">Politique cookies</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-copy"
+            >© 2026 <a href="/">Ciné Délices</a> — Tous droits réservés</span
+          >
+          <div class="footer-legal">
+            <a href="#">Mentions légales</a>
+            <a href="#">Confidentialité</a>
+            <a href="#">CGU</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-filmstrip">
+        <div class="filmstrip-scroll">
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+          <div class="fs-hole"><div class="fs-inner"></div></div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll top -->
+    <a class="scroll-top" id="scrollTopBtn" href="#" aria-label="Retour en haut"
+      >↑</a
+    >
+
+    <!-- ════════════════════════ MODAL ════════════════════════ -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <div class="modal-stripe" id="modalStripe"></div>
+        <div class="modal-head">
+          <div class="modal-ico" id="modalIco">⚠</div>
+          <div class="modal-titles">
+            <div class="modal-title" id="modalTitle">CONFIRMER</div>
+            <div class="modal-sub" id="modalSub">
+              Cette action est irréversible
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" id="modalMsg">Êtes-vous sûr ?</div>
+        <div class="modal-footer">
+          <button class="btn btn--ghost btn--sm" onclick="closeModal()">
+            Annuler
+          </button>
+          <button
+            class="btn btn--red btn--sm"
+            id="modalConfirmBtn"
+            onclick="executeModal()"
+          >
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════ TOASTS ════════════════════════ -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- ════════════════════════ SCRIPTS ════════════════════════ -->
+    <script>
+      // ─── profile-tabs.js ────────────────────────────────────
+      function activateTab(name) {
+        document
+          .querySelectorAll(".ptab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-pane")
+          .forEach((p) => p.classList.remove("active"));
+        const tab = document.querySelector(`.ptab[data-tab="${name}"]`);
+        const pane = document.getElementById(`pane-${name}`);
+        if (tab) tab.classList.add("active");
+        if (pane) pane.classList.add("active");
+      }
+      document.querySelectorAll(".ptab").forEach((tab) => {
+        tab.addEventListener("click", () => activateTab(tab.dataset.tab));
+      });
+
+      // ─── Nav scroll ──────────────────────────────────────────
+      const nav = document.getElementById("siteNav");
+      const scrollTop = document.getElementById("scrollTopBtn");
+      window.addEventListener("scroll", () => {
+        nav.classList.toggle("scrolled", window.scrollY > 40);
+        scrollTop.classList.toggle("visible", window.scrollY > 400);
+      });
+
+      // ─── account.js — pseudo edit ────────────────────────────
+      function editPseudo() {
+        const inp = document.getElementById("pseudoInput");
+        const save = document.getElementById("pseudoSaveBtn");
+        const edit = document.getElementById("pseudoEditBtn");
+        inp.removeAttribute("readonly");
+        inp.focus();
+        inp.select();
+        save.style.display = "inline-flex";
+        edit.style.display = "none";
+      }
+      function savePseudo() {
+        const inp = document.getElementById("pseudoInput");
+        const save = document.getElementById("pseudoSaveBtn");
+        const edit = document.getElementById("pseudoEditBtn");
+        inp.setAttribute("readonly", true);
+        save.style.display = "none";
+        edit.style.display = "flex";
+        showToast(
+          "Pseudo mis à jour avec succès.",
+          "success",
+          "Profil enregistré",
+        );
+      }
+
+      // ─── Profile form edit ───────────────────────────────────
+      function toggleEditForm() {
+        const fields = document.querySelectorAll(".profile-field");
+        const editBtn = document.getElementById("editInfoBtn");
+        const saveBtn = document.getElementById("saveInfoBtn");
+        const pwdLink = document.getElementById("pwdLink");
+        const editing = editBtn.style.display !== "none";
+        if (editing) {
+          fields.forEach((f) => (f.disabled = false));
+          editBtn.style.display = "none";
+          saveBtn.style.display = "inline-flex";
+          pwdLink.style.display = "block";
+        } else {
+          fields.forEach((f) => (f.disabled = true));
+          editBtn.style.display = "inline-flex";
+          saveBtn.style.display = "none";
+          pwdLink.style.display = "none";
+        }
+      }
+      function saveProfile() {
+        const fields = document.querySelectorAll(".profile-field");
+        fields.forEach((f) => (f.disabled = true));
+        document.getElementById("editInfoBtn").style.display = "inline-flex";
+        document.getElementById("saveInfoBtn").style.display = "none";
+        document.getElementById("pwdLink").style.display = "none";
+        showToast(
+          "Vos informations ont été enregistrées.",
+          "success",
+          "Profil mis à jour",
+        );
+      }
+
+      // ─── Inline edit forms ───────────────────────────────────
+      function toggleEditForm(id) {
+        const form = document.getElementById(id);
+        if (!form) return;
+        form.classList.toggle("open");
+      }
+      function saveEdit(name) {
+        showToast(
+          `"${name}" — modifications enregistrées.`,
+          "success",
+          "Contenu mis à jour",
+        );
+        document
+          .querySelectorAll(".ci-edit-form.open")
+          .forEach((f) => f.classList.remove("open"));
+      }
+
+      // ─── Avatar / Banner upload ───────────────────────────────
+      function onAvatarUpload(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById("avatarImg").src = e.target.result;
+          document.querySelector(".avatar-photo-status").className =
+            "avatar-photo-status avatar-photo-status--pending";
+          document.querySelector(".avatar-photo-status").innerHTML =
+            '<span class="b-dot"></span>En attente';
+          showToast(
+            "Photo soumise — en attente de validation par l'équipe.",
+            "info",
+            "Photo envoyée",
+          );
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+      function onBannerUpload(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.querySelector(".hero-banner img");
+          if (img) img.src = e.target.result;
+          showToast(
+            "Bannière soumise — en attente de validation.",
+            "info",
+            "Bannière envoyée",
+          );
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+
+      // ─── Inline search filter ────────────────────────────────
+      function filterItems(input, listId) {
+        const q = input.value.toLowerCase();
+        const items = document.querySelectorAll(`#${listId} .ci-item`);
+        items.forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          item.style.display = text.includes(q) ? "" : "none";
+        });
+      }
+      function filterByStatus(select, listId) {
+        const val = select.value;
+        const items = document.querySelectorAll(`#${listId} .ci-item`);
+        items.forEach((item) => {
+          if (!val) {
+            item.style.display = "";
+            return;
+          }
+          const badge = item.querySelector(".ci-status");
+          if (!badge) {
+            item.style.display = "none";
+            return;
+          }
+          const cls = badge.className;
+          const match =
+            (val === "ok" && cls.includes("--ok")) ||
+            (val === "pending" && cls.includes("--pending")) ||
+            (val === "refused" && cls.includes("--refused"));
+          item.style.display = match ? "" : "none";
+        });
+      }
+
+      // ─── Modal ───────────────────────────────────────────────
+      let _pendingFn = null;
+      function openModal({
+        title,
+        sub,
+        ico,
+        msg,
+        target,
+        confirmLabel,
+        stripe,
+        confirmFn,
+      }) {
+        document.getElementById("modalTitle").textContent =
+          title || "CONFIRMER";
+        document.getElementById("modalSub").textContent = sub || "";
+        document.getElementById("modalIco").textContent = ico || "⚠";
+        document.getElementById("modalMsg").textContent = msg || "";
+        if (target) {
+          const t = document.createElement("div");
+          t.className = "modal-target";
+          t.textContent = target;
+          document.getElementById("modalMsg").appendChild(t);
+        }
+        document.getElementById("modalConfirmBtn").textContent =
+          confirmLabel || "Confirmer";
+        document.getElementById("modalStripe").style.background =
+          stripe === "gold"
+            ? "linear-gradient(135deg,#B8882A,#D4A843,#F2C84B,#D4A843)"
+            : "linear-gradient(135deg,#8C1C13 0%,#C23018 45%,#E84020 75%,#C23018 100%)";
+        _pendingFn = confirmFn || null;
+        document.getElementById("modalOverlay").classList.add("open");
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+        _pendingFn = null;
+      }
+      function executeModal() {
+        closeModal();
+        if (_pendingFn) _pendingFn();
+      }
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      function confirmDeleteContent(name) {
+        openModal({
+          title: "SUPPRIMER",
+          sub: "Action irréversible",
+          ico: "🗑",
+          msg: `Confirmez-vous la suppression de ${name} ? Cette action est définitive.`,
+          confirmLabel: "Supprimer",
+          confirmFn: () => showToast(`${name} supprimé.`, "error", "Supprimé"),
+        });
+      }
+      function confirmDeleteAvatar() {
+        openModal({
+          title: "SUPPRIMER LA PHOTO",
+          sub: "Votre avatar sera retiré",
+          ico: "🖼",
+          msg: "Votre photo de profil sera supprimée. L'avatar par défaut sera utilisé.",
+          confirmLabel: "Supprimer la photo",
+          confirmFn: () => {
+            document.getElementById("avatarImg").src =
+              "https://i.pravatar.cc/110?img=0";
+            document.querySelector(".avatar-photo-status").className =
+              "avatar-photo-status avatar-photo-status--ok";
+            document.querySelector(".avatar-photo-status").innerHTML =
+              '<span class="b-dot"></span>Vérifié';
+            showToast("Photo de profil supprimée.", "error", "Photo retirée");
+          },
+        });
+      }
+      function confirmDeleteAccount() {
+        openModal({
+          title: "SUPPRIMER MON COMPTE",
+          sub: "Irréversible · Toutes vos données seront supprimées",
+          ico: "💀",
+          msg: "Vous êtes sur le point de supprimer définitivement votre compte. Toutes vos recettes, avis et contributions seront anonymisés.",
+          target: "Sara M. — sara.m@example.com",
+          confirmLabel: "Supprimer définitivement",
+          stripe: "red",
+          confirmFn: () =>
+            showToast(
+              "Compte supprimé. Vous allez être redirigé.",
+              "error",
+              "Compte supprimé",
+            ),
+        });
+      }
+
+      // ─── Toast ───────────────────────────────────────────────
+      function showToast(msg, type = "success", title = null) {
+        const icons = { success: "✓", error: "✕", info: "ℹ", gold: "★" };
+        const titles = {
+          success: "Succès",
+          error: "Attention",
+          info: "Information",
+          gold: "Félicitations !",
+        };
+        const wrap = document.getElementById("toastWrap");
+        const toast = document.createElement("div");
+        toast.className = `profile-toast profile-toast--${type}`;
+        toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || "ℹ"}</span>
+    <div>
+      <div class="toast-title">${title || titles[type]}</div>
+      <div class="toast-msg">${msg}</div>
+    </div>`;
+        wrap.appendChild(toast);
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => toast.classList.add("in")),
+        );
+        setTimeout(() => {
+          toast.classList.remove("in");
+          toast.classList.add("out");
+          setTimeout(() => toast.remove(), 280);
+        }, 3800);
+      }
+
+      function showBadgeToast(badgeName, icon) {
+        const wrap = document.getElementById("toastWrap");
+        const toast = document.createElement("div");
+        toast.className = "profile-toast profile-toast--badge";
+        toast.innerHTML = `
+    <div class="badge-toast-inner">
+      <span class="badge-toast-icon">${icon}</span>
+      <div>
+        <div class="badge-toast-title">BADGE DÉBLOQUÉ !</div>
+        <div class="badge-toast-sub">${badgeName} — Félicitations, Sara !</div>
+      </div>
+    </div>`;
+        wrap.appendChild(toast);
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => toast.classList.add("in")),
+        );
+        setTimeout(() => {
+          toast.classList.remove("in");
+          toast.classList.add("out");
+          setTimeout(() => toast.remove(), 280);
+        }, 6000);
+      }
+
+      // Demo: show badge toast after 2.5s on load
+      setTimeout(() => {
+        showBadgeToast("Projecteur d'Or ✦", "🏆");
+      }, 2500);
+    </script>
+  </body>
+</html>

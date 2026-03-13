@@ -3,1177 +3,1359 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Espace Administrateur - Ciné Délices</title>
-    <meta
-      name="description"
-      content="Ciné Délices — Espace Administrateur, gestion des recettes et films"
-    />
-
-    <!-- Ressources globales : Google Fonts, FontAwesome, base.css, preload éventuel -->
-    <%- include("partials/head-resources") %>
-
-    <!-- Styles spécifiques à l'admin -->
+    <title>Administration — Ciné Délices</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin-dashboard.css" />
   </head>
   <body>
-    <!-- HEADER -->
-    <%- include("partials/header") %>
 
-    <!-- Bannière Administrateur -->
-    <div class="admin-header-banner">
-      <div class="admin-header-banner__content">
-        <p class="admin-header-banner__eyebrow">Administration</p>
-        <h1 class="admin-header-banner__title">Espace Administrateur</h1>
-        <p class="admin-header-banner__subtitle">
-          Validation des contenus et suivi de la communauté Ciné Délices.
-        </p>
+    <!-- ═══════════════════════════════════════════
+         SIDEBAR
+    ═══════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <span class="sidebar-logo__icon">🎬</span>
+        <span class="sidebar-logo__text">Ciné Délices</span>
+        <span class="sidebar-logo__badge">Admin</span>
       </div>
-    </div>
 
-    <!-- CONTAINER PRINCIPAL -->
-    <div class="admin-container">
-      <!-- SIDEBAR -->
-      <aside class="admin-sidebar">
-        <div class="admin-tabs">
-          <button class="admin-tab" data-section="published">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>
-            <span class="admin-tab__label">
-              <span data-global-title>Contenus validés</span>
-              <small>
-                Films • Recettes • Avis
-                <span class="admin-tab__badge" data-global-zero-badge>0 résultat</span>
-              </small>
-            </span>
-          </button>
-          <button class="admin-tab is-active" data-section="validations">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
-            <span class="admin-tab__label">
-              <span>Validations / Suppressions</span>
-              <small>Film - Recette - Image film</small>
-            </span>
-          </button>
-          <button class="admin-tab" data-section="photos">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Photos profil
-          </button>
-          <button class="admin-tab" data-section="banners">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Bannières
-          </button>
-          <button class="admin-tab" data-section="avis">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Avis
-          </button>
-          <button class="admin-tab" data-section="users">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Utilisateurs
+      <nav class="sidebar-nav">
+        <p class="sidebar-nav__label">Tableau de bord</p>
+        <button class="nav-item is-active" data-nav-view="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Vue d'ensemble</span>
         </button>
-        </div>
 
-        <div class="admin-tab-panels">
-          <div class="admin-tab-panel" data-panel="published">
-            <div class="admin-sidebar-group">
-              <p class="admin-sidebar-title">Contenus publiés</p>
-              <p class="admin-sidebar-hint">
-                Gestion éditoriale directe (édition / suppression).
-              </p>
+        <p class="sidebar-nav__label">Modération</p>
+        <button class="nav-item" data-nav-view="films">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          <span>Films</span>
+          <% const pendingMoviesCount = movies ? movies.filter(m => m.status === 'pending').length : 0; %>
+          <% if (pendingMoviesCount > 0) { %><span class="nav-badge"><%= pendingMoviesCount %></span><% } %>
+        </button>
+        <button class="nav-item" data-nav-view="recettes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2"/><path d="M18 15h.01"/><path d="M18 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+          <span>Recettes</span>
+          <% const pendingRecipesCount = recipes ? recipes.filter(r => r.status === 'pending').length : 0; %>
+          <% if (pendingRecipesCount > 0) { %><span class="nav-badge"><%= pendingRecipesCount %></span><% } %>
+        </button>
+        <button class="nav-item" data-nav-view="avis">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Avis</span>
+          <% const pendingAvisCount = avis ? avis.filter(a => a.status === 'pending').length : 0; %>
+          <% if (pendingAvisCount > 0) { %><span class="nav-badge"><%= pendingAvisCount %></span><% } %>
+        </button>
+        <button class="nav-item" data-nav-view="demandes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Demandes</span>
+          <% const totalDemandes = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0); %>
+          <% if (totalDemandes > 0) { %><span class="nav-badge"><%= totalDemandes %></span><% } %>
+        </button>
+
+        <p class="sidebar-nav__label">Médias</p>
+        <button class="nav-item" data-nav-view="photos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Photos profil</span>
+          <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %><span class="nav-badge"><%= pendingProfilePhotos.length %></span><% } %>
+        </button>
+        <button class="nav-item" data-nav-view="bannieres">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Bannières</span>
+          <% if (pendingBanners && pendingBanners.length > 0) { %><span class="nav-badge"><%= pendingBanners.length %></span><% } %>
+        </button>
+
+        <p class="sidebar-nav__label">Communauté</p>
+        <button class="nav-item" data-nav-view="utilisateurs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Utilisateurs</span>
+        </button>
+        <button class="nav-item" data-nav-view="publies">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+          <span>Contenus publiés</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="/" class="sidebar-footer__link" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Voir le site
+        </a>
+        <a href="/logout" class="sidebar-footer__link sidebar-footer__link--logout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Déconnexion
+        </a>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════
+         MAIN WRAPPER
+    ═══════════════════════════════════════════ -->
+    <div class="main-wrapper">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-burger" id="sidebar-toggle" aria-label="Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <nav class="topbar-breadcrumb" id="topbar-breadcrumb" aria-label="Fil d'ariane">
+            <span class="topbar-breadcrumb__item">Admin</span>
+            <span class="topbar-breadcrumb__sep">›</span>
+            <span class="topbar-breadcrumb__item topbar-breadcrumb__item--current" id="breadcrumb-current">Vue d'ensemble</span>
+          </nav>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Recherche globale…" id="topbar-search-input" autocomplete="off" />
+          </div>
+          <a href="/" class="topbar-site-link" target="_blank" title="Voir le site">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <main class="content">
+
+        <!-- ═══════════════════════════════════════════
+             VUE — DASHBOARD
+        ═══════════════════════════════════════════ -->
+        <section class="view is-active" data-view-id="dashboard">
+          <div class="page-header">
+            <h1 class="page-header__title">Vue d'ensemble</h1>
+            <p class="page-header__sub">Bienvenue dans l'espace d'administration Ciné Délices.</p>
+          </div>
+
+          <!-- Stats rapides -->
+          <div class="stats-grid">
+            <div class="stat-card stat-card--orange">
+              <div class="stat-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value"><%= (movies ? movies.filter(m => m.status === 'pending').length : 0) + (recipes ? recipes.filter(r => r.status === 'pending').length : 0) + (avis ? avis.filter(a => a.status === 'pending').length : 0) %></span>
+                <span class="stat-card__label">En attente de validation</span>
+              </div>
+            </div>
+            <div class="stat-card stat-card--violet">
+              <div class="stat-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value"><%= totalDemandes %></span>
+                <span class="stat-card__label">Demandes en cours</span>
+              </div>
+            </div>
+            <div class="stat-card stat-card--vert">
+              <div class="stat-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value"><%= (validatedMovies ? validatedMovies.length : 0) + (validatedRecipes ? validatedRecipes.length : 0) + (validatedNotices ? validatedNotices.length : 0) %></span>
+                <span class="stat-card__label">Contenus validés</span>
+              </div>
+            </div>
+            <div class="stat-card stat-card--or">
+              <div class="stat-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="stat-card__body">
+                <span class="stat-card__value"><%= users ? users.length : 0 %></span>
+                <span class="stat-card__label">Utilisateurs inscrits</span>
+              </div>
             </div>
           </div>
 
-          <div class="admin-tab-panel is-open" data-panel="validations">
-            <div class="admin-sidebar-group">
-              <p class="admin-sidebar-title">Films</p>
-              <% if (movies.length > 0) { %>
-                <% movies.forEach(movie => { %>
-                  <button
-                    type="button"
-                    class="admin-sidebar-item"
-                    data-detail-target="movie-<%= movie.id %>"
-                  >
-                    <span><%= movie.title %></span>
-                    <small><%= movie.year %> • <%= movie.genre %></small>
-        </button>
-          <% }) %>
-              <% } else { %>
-                <p class="admin-sidebar-empty">Aucun film en attente.</p>
-              <% } %>
-        </div>
-
-            <div class="admin-sidebar-group">
-              <p class="admin-sidebar-title">Recettes</p>
-              <% if (recipes.length > 0) { %>
-                <% recipes.forEach(recipe => { %>
-                  <button
-                    type="button"
-                    class="admin-sidebar-item"
-                    data-detail-target="recipe-<%= recipe.id %>"
-                  >
-                    <span><%= recipe.name %></span>
-                    <small><%= recipe.category %> • <%= recipe.time %> min</small>
-        </button>
-          <% }) %>
-              <% } else { %>
-                <p class="admin-sidebar-empty">Aucune recette en attente.</p>
-              <% } %>
+          <!-- Grille rapide -->
+          <div class="dash-grid">
+            <div class="dash-card">
+              <h3 class="dash-card__title">Activité récente</h3>
+              <ul class="activity-feed">
+                <% if (movies && movies.filter(m => m.status === 'pending').length > 0) { %>
+                <li class="activity-item activity-item--orange">
+                  <span class="activity-dot"></span>
+                  <span><strong><%= movies.filter(m => m.status === 'pending').length %></strong> film(s) en attente de validation</span>
+                </li>
+                <% } %>
+                <% if (recipes && recipes.filter(r => r.status === 'pending').length > 0) { %>
+                <li class="activity-item activity-item--or">
+                  <span class="activity-dot"></span>
+                  <span><strong><%= recipes.filter(r => r.status === 'pending').length %></strong> recette(s) en attente de validation</span>
+                </li>
+                <% } %>
+                <% if (avis && avis.filter(a => a.status === 'pending').length > 0) { %>
+                <li class="activity-item activity-item--violet">
+                  <span class="activity-dot"></span>
+                  <span><strong><%= avis.filter(a => a.status === 'pending').length %></strong> avis en attente de validation</span>
+                </li>
+                <% } %>
+                <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %>
+                <li class="activity-item activity-item--vert">
+                  <span class="activity-dot"></span>
+                  <span><strong><%= pendingProfilePhotos.length %></strong> photo(s) de profil à modérer</span>
+                </li>
+                <% } %>
+                <% if (pendingBanners && pendingBanners.length > 0) { %>
+                <li class="activity-item activity-item--vert">
+                  <span class="activity-dot"></span>
+                  <span><strong><%= pendingBanners.length %></strong> bannière(s) à modérer</span>
+                </li>
+                <% } %>
+                <% if ((movies ? movies.filter(m => m.status === 'pending').length : 0) === 0 && (recipes ? recipes.filter(r => r.status === 'pending').length : 0) === 0 && (avis ? avis.filter(a => a.status === 'pending').length : 0) === 0 && (!pendingProfilePhotos || pendingProfilePhotos.length === 0) && (!pendingBanners || pendingBanners.length === 0)) { %>
+                <li class="activity-item">
+                  <span class="activity-dot activity-dot--vert"></span>
+                  <span>Tout est à jour — aucune modération en attente.</span>
+                </li>
+                <% } %>
+              </ul>
             </div>
-
-            <div class="admin-sidebar-group">
-              <p class="admin-sidebar-title">Photo film (admin)</p>
-              <p class="admin-sidebar-hint">
-                Upload uniquement via la fiche film sélectionnée.
-              </p>
-        </div>
-
-            <div class="admin-sidebar-group">
-              <p class="admin-sidebar-title">Suppression films</p>
-              <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %>
-                <% pendingMovieDeleteRequests.forEach(movie => { %>
-                  <button
-                    type="button"
-                    class="admin-sidebar-item"
-                    data-detail-target="delete-movie-<%= movie.id %>"
-                  >
-                    <span><%= movie.title %></span>
-                    <small>Demande suppression</small>
-              </button>
-          <% }) %>
-              <% } else { %>
-                <p class="admin-sidebar-empty">Aucune demande en attente.</p>
-              <% } %>
+            <div class="dash-card">
+              <h3 class="dash-card__title">Résumé rapide</h3>
+              <ul class="quick-stats">
+                <li class="qs-item">
+                  <span class="qs-label">Films publiés</span>
+                  <span class="qs-value"><%= validatedMovies ? validatedMovies.length : 0 %></span>
+                </li>
+                <li class="qs-item">
+                  <span class="qs-label">Recettes publiées</span>
+                  <span class="qs-value"><%= validatedRecipes ? validatedRecipes.length : 0 %></span>
+                </li>
+                <li class="qs-item">
+                  <span class="qs-label">Avis publiés</span>
+                  <span class="qs-value"><%= validatedNotices ? validatedNotices.length : 0 %></span>
+                </li>
+                <li class="qs-item">
+                  <span class="qs-label">Modifications en attente</span>
+                  <span class="qs-value qs-value--orange"><%= (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) %></span>
+                </li>
+                <li class="qs-item">
+                  <span class="qs-label">Suppressions en attente</span>
+                  <span class="qs-value qs-value--rouge"><%= (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0) %></span>
+                </li>
+              </ul>
             </div>
-          </div>
-
-          <div class="admin-tab-panel" data-panel="photos"></div>
-          <div class="admin-tab-panel" data-panel="banners"></div>
-          <div class="admin-tab-panel" data-panel="avis"></div>
-          <div class="admin-tab-panel" data-panel="users"></div>
-        </div>
-      </aside>
-
-      <!-- CONTENU PRINCIPAL -->
-      <main class="admin-main">
-        <section class="admin-overview" data-admin-section="validations">
-          <div class="admin-overview-card <%= recipes.length > 0 ? 'is-pending' : '' %>">
-            <span>Recettes en attente</span>
-            <strong><%= recipes.length %></strong>
-          </div>
-          <div class="admin-overview-card <%= movies.length > 0 ? 'is-pending' : '' %>">
-            <span>Films en attente</span>
-            <strong><%= movies.length %></strong>
-          </div>
-          <div class="admin-overview-card <%= pendingProfilePhotos && pendingProfilePhotos.length > 0 ? 'is-pending' : '' %>">
-            <span>Photos en attente</span>
-            <strong><%= pendingProfilePhotos ? pendingProfilePhotos.length : 0 %></strong>
-          </div>
-          <div class="admin-overview-card <%= pendingBanners && pendingBanners.length > 0 ? 'is-pending' : '' %>">
-            <span>Bannières en attente</span>
-            <strong><%= pendingBanners ? pendingBanners.length : 0 %></strong>
-          </div>
-          <div class="admin-overview-card <%= avis.length > 0 ? 'is-pending' : '' %>">
-            <span>Avis</span>
-            <strong><%= avis.length %></strong>
-          </div>
-          <div class="admin-overview-card <%= users.length > 0 ? 'is-pending' : '' %>">
-            <span>Utilisateurs</span>
-            <strong><%= users.length %></strong>
           </div>
         </section>
 
-        <% const formatList = (value) => {
-             if (!value) return [];
-             return value
-               .split(/\r?\n/)
-               .map(line => line.trim())
-               .filter(Boolean);
-           }; %>
 
-        <section class="admin-section admin-section--panel" data-admin-section="published">
-          <div class="admin-section__header">
-            <h2>Gestion des contenus publiés</h2>
-            <span class="badge badge--gold">Publié</span>
+        <!-- ═══════════════════════════════════════════
+             VUE — FILMS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="films">
+          <div class="page-header">
+            <h1 class="page-header__title">Films</h1>
+            <p class="page-header__sub">Validation et gestion des films soumis par la communauté.</p>
           </div>
-          <p class="admin-empty">
-            Édition et suppression immédiates (pas de mini-validation).
-          </p>
-          <div class="admin-published-toolbar">
-            <div class="admin-search-group">
-              <div class="admin-search admin-search--global">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" placeholder="Recherche globale (films, recettes, avis)..." data-search-global />
-                <div class="admin-search__actions">
-                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
-                    Clear
+
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="films-pending" role="tab">
+              En attente
+              <% const filmsPending = movies ? movies.filter(m => m.status === 'pending') : []; %>
+              <% if (filmsPending.length > 0) { %><span class="queue-tab__count"><%= filmsPending.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="films-validated" role="tab">
+              Validés
+              <% if (validatedMovies && validatedMovies.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedMovies.length %></span><% } %>
+            </button>
+          </div>
+
+          <!-- Sous-panel : Films en attente -->
+          <div class="sub-panel" id="films-pending">
+            <% if (filmsPending.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucun film en attente de validation.</p>
+            </div>
+            <% } else { %>
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Filtrer les films…" data-filter-input="films-pending" />
+            </div>
+            <% filmsPending.forEach(function(movie) { %>
+            <div class="movie-val-panel" data-search-item="<%= (movie.title || '').toLowerCase() %>">
+              <div class="movie-val-panel__poster">
+                <% if (movie.poster) { %>
+                <img src="<%= movie.poster %>" alt="Affiche <%= movie.title %>" loading="lazy" />
+                <% } else { %>
+                <div class="movie-val-panel__poster--placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                </div>
+                <% } %>
+              </div>
+              <div class="movie-val-panel__body">
+                <div class="movie-val-panel__meta">
+                  <h3 class="movie-val-panel__title"><%= movie.title %></h3>
+                  <span class="s-badge s-badge--pending">En attente</span>
+                </div>
+                <div class="movie-val-panel__info">
+                  <% if (movie.year) { %><span class="tag"><%= movie.year %></span><% } %>
+                  <% if (movie.genre) { %><span class="tag"><%= movie.genre %></span><% } %>
+                  <% if (movie.director) { %><span class="tag">Réal. <%= movie.director %></span><% } %>
+                  <% if (movie.submittedBy) { %><span class="tag tag--user">Par : <%= movie.submittedBy %></span><% } %>
+                </div>
+                <% if (movie.synopsis) { %>
+                <p class="movie-val-panel__synopsis"><%= movie.synopsis.substring(0, 240) %><%= movie.synopsis.length > 240 ? '…' : '' %></p>
+                <% } %>
+                <div class="movie-val-panel__actions">
+                  <form action="/admin/validateMovie/<%= movie.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Valider
+                    </button>
+                  </form>
+                  <form action="/admin/rejectMovie/<%= movie.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      Refuser
+                    </button>
+                  </form>
+                  <button type="button" class="act-btn act-btn--edit"
+                    data-edit-btn
+                    data-edit-type="movie"
+                    data-edit-id="<%= movie.id %>"
+                    data-edit-title="<%= movie.title %>"
+                    data-edit-year="<%= movie.year || '' %>"
+                    data-edit-genre="<%= movie.genre || '' %>"
+                    data-edit-synopsis="<%= String(movie.synopsis || '').replace(/"/g, '&quot;') %>">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Éditer
                   </button>
                 </div>
               </div>
-              <button type="button" class="btn btn--ghost btn--sm admin-search__reset" data-search-reset>
-                Reset global
-              </button>
             </div>
-            <p class="admin-filter-total" data-search-total-global></p>
+            <% }) %>
+            <% } %>
           </div>
-          <p class="admin-empty admin-no-results-global" data-no-results-global>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            Aucun résultat trouvé pour tous les contenus validés.
-          </p>
 
-          <div class="admin-edit-requests admin-published-section" data-page-size="6">
-            <div class="admin-section__header">
-              <h3 data-search-title>Films validés</h3>
-              <div class="admin-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" placeholder="Rechercher un film..." data-search-input />
-                <div class="admin-search__actions">
-                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
-                    Clear
-                  </button>
+          <!-- Sous-panel : Films validés -->
+          <div class="sub-panel" id="films-validated" style="display:none;">
+            <% if (!validatedMovies || validatedMovies.length === 0) { %>
+            <div class="empty-state">
+              <p>Aucun film validé.</p>
+            </div>
+            <% } else { %>
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Filtrer les films validés…" data-filter-input="films-validated" />
+            </div>
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th>Film</th>
+                  <th>Année</th>
+                  <th>Genre</th>
+                  <th>Soumis par</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% validatedMovies.forEach(function(movie) { %>
+                <tr class="admin-list-item" data-search="<%= (movie.title || '').toLowerCase() + ' ' + (movie.genre || '').toLowerCase() %>">
+                  <td class="cell-media">
+                    <% if (movie.poster) { %><img src="<%= movie.poster %>" alt="" class="cell-media__thumb" /><% } %>
+                    <span class="cell-media__title"><%= movie.title %></span>
+                  </td>
+                  <td><%= movie.year || '—' %></td>
+                  <td><span class="tag"><%= movie.genre || '—' %></span></td>
+                  <td class="user-cell"><%= movie.submittedBy || '—' %></td>
+                  <td class="actions-cell">
+                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
+                      data-edit-btn
+                      data-edit-type="movie"
+                      data-edit-id="<%= movie.id %>"
+                      data-edit-title="<%= movie.title %>"
+                      data-edit-year="<%= movie.year || '' %>"
+                      data-edit-genre="<%= movie.genre || '' %>"
+                      data-edit-synopsis="<%= String(movie.synopsis || '').replace(/"/g, '&quot;') %>">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <form action="/admin/movies/<%= movie.id %>/delete/direct" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <% } %>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — RECETTES
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="recettes">
+          <div class="page-header">
+            <h1 class="page-header__title">Recettes</h1>
+            <p class="page-header__sub">Validation et gestion des recettes soumises.</p>
+          </div>
+
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="recettes-pending" role="tab">
+              En attente
+              <% const recipesPending = recipes ? recipes.filter(r => r.status === 'pending') : []; %>
+              <% if (recipesPending.length > 0) { %><span class="queue-tab__count"><%= recipesPending.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="recettes-validated" role="tab">
+              Validées
+              <% if (validatedRecipes && validatedRecipes.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedRecipes.length %></span><% } %>
+            </button>
+          </div>
+
+          <!-- Sous-panel : Recettes en attente -->
+          <div class="sub-panel" id="recettes-pending">
+            <% if (recipesPending.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucune recette en attente de validation.</p>
+            </div>
+            <% } else { %>
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Filtrer les recettes…" data-filter-input="recettes-pending" />
+            </div>
+            <% recipesPending.forEach(function(recipe) { %>
+            <div class="recipe-val-panel" data-search-item="<%= (recipe.name || '').toLowerCase() %>">
+              <div class="recipe-val-panel__header">
+                <div>
+                  <h3 class="recipe-val-panel__title"><%= recipe.name %></h3>
+                  <div class="recipe-val-panel__meta">
+                    <% if (recipe.category) { %><span class="tag"><%= recipe.category %></span><% } %>
+                    <% if (recipe.preparationTime) { %><span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <%= recipe.preparationTime %> min</span><% } %>
+                    <% if (recipe.difficulty) { %><span class="tag"><%= recipe.difficulty %></span><% } %>
+                    <% if (recipe.submittedBy) { %><span class="tag tag--user">Par : <%= recipe.submittedBy %></span><% } %>
+                  </div>
                 </div>
+                <span class="s-badge s-badge--pending">En attente</span>
+              </div>
+
+              <% if (recipe.image) { %>
+              <div class="recipe-val-panel__img-wrap">
+                <img src="<%= recipe.image %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" data-lightbox-trigger data-lightbox-src="<%= recipe.image %>" data-lightbox-alt="<%= recipe.name %>" />
+              </div>
+              <% } %>
+
+              <% if (recipe.description) { %>
+              <p class="recipe-val-panel__desc"><%= recipe.description %></p>
+              <% } %>
+
+              <% if (recipe.ingredients) { %>
+              <div class="recipe-val-panel__section">
+                <h4 class="recipe-val-panel__section-title">Ingrédients</h4>
+                <pre class="recipe-val-panel__pre"><%= recipe.ingredients %></pre>
+              </div>
+              <% } %>
+
+              <% if (recipe.preparation) { %>
+              <div class="recipe-val-panel__section">
+                <h4 class="recipe-val-panel__section-title">Préparation</h4>
+                <pre class="recipe-val-panel__pre"><%= recipe.preparation %></pre>
+              </div>
+              <% } %>
+
+              <div class="recipe-val-panel__actions">
+                <form action="/admin/validateRecipe/<%= recipe.id %>" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--approve">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Valider
+                  </button>
+                </form>
+                <form action="/admin/rejectRecipe/<%= recipe.id %>" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--reject">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Refuser
+                  </button>
+                </form>
+                <button type="button" class="act-btn act-btn--edit"
+                  data-edit-btn
+                  data-edit-type="recipe"
+                  data-edit-id="<%= recipe.id %>"
+                  data-edit-name="<%= recipe.name %>"
+                  data-edit-category="<%= recipe.category || '' %>"
+                  data-edit-time="<%= recipe.preparationTime || '' %>"
+                  data-edit-difficulty="<%= recipe.difficulty || '' %>"
+                  data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
+                  data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
+                  data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Éditer
+                </button>
               </div>
             </div>
-            <p class="admin-filter-total" data-search-total></p>
-            <% if (validatedMovies && validatedMovies.length > 0) { %>
-              <div class="admin-list">
-                <% validatedMovies.forEach(movie => { %>
-                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${movie.title} ${movie.year} ${movie.genre}`.toLowerCase() %>">
-                    <span>#<%= movie.id %></span>
-                    <p><%= movie.title %> • <%= movie.year %> • <%= movie.genre %></p>
-                    <span class="badge badge--gold">Validé</span>
-                    <div class="admin-list-actions">
-                      <button
-                        type="button"
-                        class="btn btn--primary btn--sm"
+            <% }) %>
+            <% } %>
+          </div>
+
+          <!-- Sous-panel : Recettes validées -->
+          <div class="sub-panel" id="recettes-validated" style="display:none;">
+            <% if (!validatedRecipes || validatedRecipes.length === 0) { %>
+            <div class="empty-state"><p>Aucune recette validée.</p></div>
+            <% } else { %>
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Filtrer les recettes validées…" data-filter-input="recettes-validated" />
+            </div>
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th>Recette</th>
+                  <th>Catégorie</th>
+                  <th>Difficulté</th>
+                  <th>Soumis par</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% validatedRecipes.forEach(function(recipe) { %>
+                <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
+                  <td class="cell-media">
+                    <% if (recipe.image) { %><img src="<%= recipe.image %>" alt="" class="cell-media__thumb" /><% } %>
+                    <span class="cell-media__title"><%= recipe.name %></span>
+                  </td>
+                  <td><span class="tag"><%= recipe.category || '—' %></span></td>
+                  <td><%= recipe.difficulty || '—' %></td>
+                  <td class="user-cell"><%= recipe.submittedBy || '—' %></td>
+                  <td class="actions-cell">
+                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
+                      data-edit-btn
+                      data-edit-type="recipe"
+                      data-edit-id="<%= recipe.id %>"
+                      data-edit-name="<%= recipe.name %>"
+                      data-edit-category="<%= recipe.category || '' %>"
+                      data-edit-time="<%= recipe.preparationTime || '' %>"
+                      data-edit-difficulty="<%= recipe.difficulty || '' %>"
+                      data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
+                      data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
+                      data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <form action="/admin/recipes/<%= recipe.id %>/delete/direct" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <% } %>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — AVIS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="avis">
+          <div class="page-header">
+            <h1 class="page-header__title">Avis</h1>
+            <p class="page-header__sub">Modération des avis et commentaires communautaires.</p>
+          </div>
+
+          <% const avisPending = avis ? avis.filter(a => a.status === 'pending') : []; %>
+
+          <% if (avisPending.length === 0) { %>
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <p>Aucun avis en attente de validation.</p>
+          </div>
+          <% } else { %>
+          <div class="filter-bar">
+            <input type="text" class="filter-bar__search" placeholder="Filtrer les avis…" data-filter-input="avis" />
+          </div>
+          <table class="ctable">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Recette</th>
+                <th>Note</th>
+                <th>Commentaire</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% avisPending.forEach(function(notice) { %>
+              <tr class="admin-list-item" data-search="<%= notice.id %>">
+                <td class="user-cell"><%= notice.id_user || '—' %></td>
+                <td><%= notice.id_recipe || '—' %></td>
+                <td class="score-cell">
+                  <% if (notice.quote) { %>
+                  <span class="score-badge"><%= notice.quote %>/5</span>
+                  <% } else { %>—<% } %>
+                </td>
+                <td><span class="cell-excerpt"><%= (notice.content || '').substring(0, 80) %>…</span></td>
+                <td><span class="s-badge s-badge--pending">En attente</span></td>
+                <td class="actions-cell">
+                  <form action="/admin/validateNotice/<%= notice.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Valider">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </form>
+                  <form action="/admin/rejectNotice/<%= notice.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </form>
+                  <button type="button" class="act-btn act-btn--edit act-btn--sm" title="Éditer"
+                    data-edit-btn
+                    data-edit-type="notice"
+                    data-edit-id="<%= notice.id %>"
+                    data-edit-content="<%= String(notice.content || '').replace(/"/g, '&quot;') %>"
+                    data-edit-quote="<%= notice.quote || '' %>"
+                    data-edit-author="<%= notice.id_user || '' %>"
+                    data-edit-recipe="<%= notice.id_recipe || '' %>">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — DEMANDES
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="demandes">
+          <div class="page-header">
+            <h1 class="page-header__title">Demandes</h1>
+            <p class="page-header__sub">Modifications et suppressions demandées par les utilisateurs.</p>
+          </div>
+
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="demandes-movie-edits" role="tab">
+              Modif. Films
+              <% if (pendingMovieEdits && pendingMovieEdits.length > 0) { %><span class="queue-tab__count"><%= pendingMovieEdits.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="demandes-recipe-edits" role="tab">
+              Modif. Recettes
+              <% if (pendingRecipeEdits && pendingRecipeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingRecipeEdits.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="demandes-notice-edits" role="tab">
+              Modif. Avis
+              <% if (pendingNoticeEdits && pendingNoticeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingNoticeEdits.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="demandes-movie-deletes" role="tab">
+              Suppr. Films
+              <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingMovieDeleteRequests.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="demandes-notice-deletes" role="tab">
+              Suppr. Avis
+              <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingNoticeDeleteRequests.length %></span><% } %>
+            </button>
+          </div>
+
+          <!-- Modifications Films -->
+          <div class="sub-panel" id="demandes-movie-edits">
+            <% if (!pendingMovieEdits || pendingMovieEdits.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de modification de film.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingMovieEdits.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--modif">Modification</span>
+                  <strong class="mod-row__title"><%= req.title || req.movieTitle || (req.movie && req.movie.title) || 'Film inconnu' %></strong>
+                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                  <% if (req.changes && Object.keys(req.changes).length > 0) { %>
+                  <ul class="mod-row__changes">
+                    <% Object.entries(req.changes).forEach(function([key, val]) { %>
+                    <li><em><%= key %> :</em> <%= val %></li>
+                    <% }) %>
+                  </ul>
+                  <% } %>
+                </div>
+                <div class="mod-row__actions">
+                  <form action="/admin/movies/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                  </form>
+                  <form action="/admin/movies/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Modifications Recettes -->
+          <div class="sub-panel" id="demandes-recipe-edits" style="display:none;">
+            <% if (!pendingRecipeEdits || pendingRecipeEdits.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de modification de recette.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingRecipeEdits.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--modif">Modification</span>
+                  <strong class="mod-row__title"><%= req.name || req.recipeName || (req.recipe && req.recipe.name) || 'Recette inconnue' %></strong>
+                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                </div>
+                <div class="mod-row__actions">
+                  <form action="/admin/recipes/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                  </form>
+                  <form action="/admin/recipes/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Modifications Avis -->
+          <div class="sub-panel" id="demandes-notice-edits" style="display:none;">
+            <% if (!pendingNoticeEdits || pendingNoticeEdits.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de modification d'avis.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingNoticeEdits.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--modif">Modification</span>
+                  <strong class="mod-row__title">Avis #<%= req._id %></strong>
+                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                  <% if (req.content || req.newContent) { %><p class="mod-row__excerpt">"<%= (req.content || req.newContent || '').substring(0, 120) %>…"</p><% } %>
+                </div>
+                <div class="mod-row__actions">
+                  <form action="/admin/notices/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                  </form>
+                  <form action="/admin/notices/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Suppressions Films -->
+          <div class="sub-panel" id="demandes-movie-deletes" style="display:none;">
+            <% if (!pendingMovieDeleteRequests || pendingMovieDeleteRequests.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de suppression de film.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingMovieDeleteRequests.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <strong class="mod-row__title"><%= req.title || req.movieTitle || (req.movie && req.movie.title) || 'Film inconnu' %></strong>
+                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                  <% if (req.reason) { %><p class="mod-row__excerpt">Motif : <%= req.reason %></p><% } %>
+                </div>
+                <div class="mod-row__actions">
+                  <form action="/admin/movies/<%= req._id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm">Approuver</button>
+                  </form>
+                  <form action="/admin/movies/<%= req._id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Suppressions Avis -->
+          <div class="sub-panel" id="demandes-notice-deletes" style="display:none;">
+            <% if (!pendingNoticeDeleteRequests || pendingNoticeDeleteRequests.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de suppression d'avis.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingNoticeDeleteRequests.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <strong class="mod-row__title">Avis #<%= req._id %></strong>
+                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                  <% if (req.reason) { %><p class="mod-row__excerpt">Motif : <%= req.reason %></p><% } %>
+                </div>
+                <div class="mod-row__actions">
+                  <form action="/admin/notices/<%= req._id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm">Approuver</button>
+                  </form>
+                  <form action="/admin/notices/<%= req._id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — PHOTOS PROFIL
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="photos">
+          <div class="page-header">
+            <h1 class="page-header__title">Photos de profil</h1>
+            <p class="page-header__sub">Validation des photos de profil soumises par les utilisateurs.</p>
+          </div>
+
+          <% if (!pendingProfilePhotos || pendingProfilePhotos.length === 0) { %>
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <p>Aucune photo de profil en attente de validation.</p>
+          </div>
+          <% } else { %>
+          <div class="media-approval-grid">
+            <% pendingProfilePhotos.forEach(function(photo) { %>
+            <div class="media-card">
+              <div class="media-card__img-wrap">
+                <img src="<%= photo.picture %>" alt="Photo de profil" class="media-card__img" />
+              </div>
+              <div class="media-card__body">
+                <p class="media-card__user"><%= photo.username || 'Utilisateur inconnu' %></p>
+                <span class="s-badge s-badge--pending">En attente</span>
+              </div>
+              <div class="media-card__actions">
+                <form action="/admin/users/<%= photo.id %>/photo/approve" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--approve">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Valider</span>
+                  </button>
+                </form>
+                <form action="/admin/users/<%= photo.id %>/photo/reject" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--reject">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>Refuser</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — BANNIÈRES
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="bannieres">
+          <div class="page-header">
+            <h1 class="page-header__title">Bannières</h1>
+            <p class="page-header__sub">Validation des bannières de profil soumises par les utilisateurs.</p>
+          </div>
+
+          <% if (!pendingBanners || pendingBanners.length === 0) { %>
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <p>Aucune bannière en attente de validation.</p>
+          </div>
+          <% } else { %>
+          <div class="media-approval-grid media-approval-grid--wide">
+            <% pendingBanners.forEach(function(banner) { %>
+            <div class="media-card media-card--banner">
+              <div class="media-card__img-wrap media-card__img-wrap--banner">
+                <img src="<%= banner.banner_image %>" alt="Bannière" class="media-card__img" />
+              </div>
+              <div class="media-card__body">
+                <p class="media-card__user"><%= banner.username || 'Utilisateur inconnu' %></p>
+                <span class="s-badge s-badge--pending">En attente</span>
+              </div>
+              <div class="media-card__actions">
+                <form action="/admin/users/<%= banner.id %>/banner/approve" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--approve">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Valider</span>
+                  </button>
+                </form>
+                <form action="/admin/users/<%= banner.id %>/banner/reject" method="POST" style="display:inline;">
+                  <button type="submit" class="act-btn act-btn--reject">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>Refuser</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — UTILISATEURS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="utilisateurs">
+          <div class="page-header">
+            <h1 class="page-header__title">Utilisateurs</h1>
+            <p class="page-header__sub">Gestion et modération des membres de la communauté.</p>
+          </div>
+
+          <div class="filter-bar">
+            <input type="text" class="filter-bar__search" placeholder="Rechercher un utilisateur…" data-filter-input="utilisateurs" />
+          </div>
+
+          <% const regularUsers = users ? users.filter(u => !u.isAdmin && u.role !== 'admin') : []; %>
+          <% const adminUsers = users ? users.filter(u => u.isAdmin || u.role === 'admin') : []; %>
+
+          <% if (adminUsers.length > 0) { %>
+          <h3 class="section-title section-title--admin">Administrateurs</h3>
+          <table class="ctable">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% adminUsers.forEach(function(user) { %>
+              <tr class="admin-list-item" data-search="<%= (user.username || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
+                <td class="user-cell">
+                  <% if (user.profilePhoto) { %><img src="<%= user.profilePhoto %>" alt="" class="user-cell__avatar" /><% } %>
+                  <span><%= user.username || user.name || '—' %></span>
+                </td>
+                <td><%= user.email || '—' %></td>
+                <td><span class="tag tag--admin">Admin</span></td>
+                <td class="date-cell"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '—' %></td>
+                <td class="actions-cell">—</td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% } %>
+
+          <h3 class="section-title">Membres <span class="section-title__count"><%= regularUsers.length %></span></h3>
+          <% if (regularUsers.length === 0) { %>
+          <div class="empty-state"><p>Aucun membre inscrit.</p></div>
+          <% } else { %>
+          <table class="ctable">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Email</th>
+                <th>Niveau</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% regularUsers.forEach(function(user) { %>
+              <tr class="admin-list-item" data-search="<%= (user.username || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
+                <td class="user-cell">
+                  <% if (user.profilePhoto) { %><img src="<%= user.profilePhoto %>" alt="" class="user-cell__avatar" /><% } %>
+                  <span><%= user.username || user.name || '—' %></span>
+                </td>
+                <td><%= user.email || '—' %></td>
+                <td><span class="lvl-inline">Niv. <%= user.level || 1 %></span></td>
+                <td class="date-cell"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '—' %></td>
+                <td class="actions-cell">
+                  <form action="/admin/deleteUser/<%= user._id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer l'utilisateur">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — CONTENUS PUBLIÉS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="publies">
+          <div class="page-header">
+            <h1 class="page-header__title">Contenus publiés</h1>
+            <p class="page-header__sub">Tous les contenus validés et visibles sur le site.</p>
+          </div>
+
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="publies-films" role="tab">
+              Films
+              <% if (validatedMovies && validatedMovies.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedMovies.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="publies-recettes" role="tab">
+              Recettes
+              <% if (validatedRecipes && validatedRecipes.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedRecipes.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="publies-avis" role="tab">
+              Avis
+              <% if (validatedNotices && validatedNotices.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedNotices.length %></span><% } %>
+            </button>
+          </div>
+
+          <!-- Films publiés -->
+          <div class="sub-panel" id="publies-films">
+            <% if (!validatedMovies || validatedMovies.length === 0) { %>
+            <div class="empty-state"><p>Aucun film publié.</p></div>
+            <% } else { %>
+            <div class="admin-published-section" data-page-size="10">
+              <div class="filter-bar">
+                <input type="text" class="filter-bar__search" placeholder="Rechercher un film publié…" data-search-input />
+                <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
+              </div>
+              <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
+              <table class="ctable">
+                <thead>
+                  <tr>
+                    <th>Film</th>
+                    <th>Année</th>
+                    <th>Genre</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% validatedMovies.forEach(function(movie) { %>
+                  <tr class="admin-list-item" data-search="<%= (movie.title || '').toLowerCase() + ' ' + (movie.genre || '').toLowerCase() %>">
+                    <td class="cell-media">
+                      <% if (movie.poster) { %><img src="<%= movie.poster %>" alt="" class="cell-media__thumb" /><% } %>
+                      <span class="cell-media__title"><%= movie.title %></span>
+                    </td>
+                    <td><%= movie.year || '—' %></td>
+                    <td><span class="tag"><%= movie.genre || '—' %></span></td>
+                    <td class="actions-cell">
+                      <button type="button" class="act-btn act-btn--edit act-btn--sm"
                         data-edit-btn
                         data-edit-type="movie"
                         data-edit-id="<%= movie.id %>"
                         data-edit-title="<%= movie.title %>"
-                        data-edit-year="<%= movie.year %>"
-                        data-edit-genre="<%= movie.genre %>"
-                        data-edit-synopsis="<%= movie.synopsis || '' %>"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                        Éditer
+                        data-edit-year="<%= movie.year || '' %>"
+                        data-edit-genre="<%= movie.genre || '' %>"
+                        data-edit-synopsis="<%= String(movie.synopsis || '').replace(/"/g, '&quot;') %>">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <form method="POST" action="/admin/movies/<%= movie.id %>/delete/direct">
-                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      <form action="/admin/movies/<%= movie.id %>/delete/direct" method="POST" style="display:inline;">
+                        <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                        </button>
                       </form>
-                    </div>
-                  </div>
-                <% }) %>
-              </div>
-              <p class="admin-empty admin-no-results" data-no-results>
-                Aucun résultat pour les films.
-              </p>
-              <div class="admin-pagination">
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+              <div class="admin-pagination" style="display:none;">
+                <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
                 <span class="admin-pagination__info"></span>
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
+                <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
               </div>
-            <% } else { %>
-              <p class="admin-empty">Aucun film validé.</p>
+            </div>
             <% } %>
           </div>
 
-          <div class="admin-edit-requests admin-published-section" data-page-size="6">
-            <div class="admin-section__header">
-              <h3 data-search-title>Recettes validées</h3>
-              <div class="admin-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" placeholder="Rechercher une recette..." data-search-input />
-                <div class="admin-search__actions">
-                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
-                    Clear
-                  </button>
-                </div>
+          <!-- Recettes publiées -->
+          <div class="sub-panel" id="publies-recettes" style="display:none;">
+            <% if (!validatedRecipes || validatedRecipes.length === 0) { %>
+            <div class="empty-state"><p>Aucune recette publiée.</p></div>
+            <% } else { %>
+            <div class="admin-published-section" data-page-size="10">
+              <div class="filter-bar">
+                <input type="text" class="filter-bar__search" placeholder="Rechercher une recette publiée…" data-search-input />
+                <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
               </div>
-            </div>
-            <p class="admin-filter-total" data-search-total></p>
-            <% if (validatedRecipes && validatedRecipes.length > 0) { %>
-              <div class="admin-list">
-                <% validatedRecipes.forEach(recipe => { %>
-                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${recipe.name} ${recipe.category} ${recipe.Movie ? recipe.Movie.title : ''}`.toLowerCase() %>">
-                    <span>#<%= recipe.id %></span>
-                    <p>
-                      <%= recipe.name %>
-                      <% if (recipe.Movie) { %> • <%= recipe.Movie.title %><% } %>
-                    </p>
-                    <span class="badge badge--gold">Validé</span>
-                    <div class="admin-list-actions">
-                      <button
-                        type="button"
-                        class="btn btn--primary btn--sm"
+              <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
+              <table class="ctable">
+                <thead>
+                  <tr>
+                    <th>Recette</th>
+                    <th>Catégorie</th>
+                    <th>Difficulté</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% validatedRecipes.forEach(function(recipe) { %>
+                  <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
+                    <td class="cell-media">
+                      <% if (recipe.image) { %><img src="<%= recipe.image %>" alt="" class="cell-media__thumb" /><% } %>
+                      <span class="cell-media__title"><%= recipe.name %></span>
+                    </td>
+                    <td><span class="tag"><%= recipe.category || '—' %></span></td>
+                    <td><%= recipe.difficulty || '—' %></td>
+                    <td class="actions-cell">
+                      <button type="button" class="act-btn act-btn--edit act-btn--sm"
                         data-edit-btn
                         data-edit-type="recipe"
                         data-edit-id="<%= recipe.id %>"
                         data-edit-name="<%= recipe.name %>"
-                        data-edit-description="<%= recipe.description || '' %>"
-                        data-edit-category="<%= recipe.category %>"
-                        data-edit-time="<%= recipe.time %>"
-                        data-edit-difficulty="<%= recipe.difficulty %>"
-                        data-edit-ingredients="<%= recipe.ingredients || '' %>"
-                        data-edit-preparation="<%= recipe.preparation || '' %>"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                        Éditer
+                        data-edit-category="<%= recipe.category || '' %>"
+                        data-edit-time="<%= recipe.preparationTime || '' %>"
+                        data-edit-difficulty="<%= recipe.difficulty || '' %>"
+                        data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
+                        data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
+                        data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <form method="POST" action="/admin/recipes/<%= recipe.id %>/delete/direct">
-                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      <form action="/admin/recipes/<%= recipe.id %>/delete/direct" method="POST" style="display:inline;">
+                        <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                        </button>
                       </form>
-                    </div>
-                  </div>
-                <% }) %>
-              </div>
-              <p class="admin-empty admin-no-results" data-no-results>
-                Aucun résultat pour les recettes.
-              </p>
-              <div class="admin-pagination">
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+              <div class="admin-pagination" style="display:none;">
+                <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
                 <span class="admin-pagination__info"></span>
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
+                <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
               </div>
-            <% } else { %>
-              <p class="admin-empty">Aucune recette validée.</p>
+            </div>
             <% } %>
           </div>
 
-          <div class="admin-edit-requests admin-published-section" data-page-size="6">
-            <div class="admin-section__header">
-              <h3 data-search-title>Avis validés</h3>
-              <div class="admin-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="search" placeholder="Rechercher un avis..." data-search-input />
-                <div class="admin-search__actions">
-                  <button type="button" class="btn btn--ghost btn--sm admin-search__clear" data-search-clear>
-                    Clear
-                  </button>
-                </div>
+          <!-- Avis publiés -->
+          <div class="sub-panel" id="publies-avis" style="display:none;">
+            <% if (!validatedNotices || validatedNotices.length === 0) { %>
+            <div class="empty-state"><p>Aucun avis publié.</p></div>
+            <% } else { %>
+            <div class="admin-published-section" data-page-size="10">
+              <div class="filter-bar">
+                <input type="text" class="filter-bar__search" placeholder="Rechercher un avis publié…" data-search-input />
+                <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
               </div>
-            </div>
-            <p class="admin-filter-total" data-search-total></p>
-            <% if (validatedNotices && validatedNotices.length > 0) { %>
-              <div class="admin-list">
-                <% validatedNotices.forEach(note => { %>
-                  <div class="admin-list-item admin-list-item--action" data-search="<%= `${note.content} ${note.Recipe ? note.Recipe.name : ''} ${note.Recipe && note.Recipe.Movie ? note.Recipe.Movie.title : ''}`.toLowerCase() %>">
-                    <span>#<%= note.id %></span>
-                    <p>
-                      <%= note.content %>
-                      <% if (note.Recipe) { %>
-                        • <%= note.Recipe.name %>
-                        <% if (note.Recipe.Movie) { %>
-                          (<%= note.Recipe.Movie.title %>)
-                        <% } %>
-                      <% } %>
-                    </p>
-                    <span class="badge badge--gold">Validé</span>
-                    <div class="admin-list-actions">
-                      <button
-                        type="button"
-                        class="btn btn--primary btn--sm"
+              <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
+              <table class="ctable">
+                <thead>
+                  <tr>
+                    <th>Utilisateur</th>
+                    <th>Recette</th>
+                    <th>Note</th>
+                    <th>Commentaire</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% validatedNotices.forEach(function(notice) { %>
+                  <tr class="admin-list-item" data-search="<%= (notice.user || notice.author || '').toLowerCase() + ' ' + (notice.recipe || '').toLowerCase() %>">
+                    <td class="user-cell"><%= notice.user || notice.author || '—' %></td>
+                    <td><%= notice.recipe || '—' %></td>
+                    <td class="score-cell">
+                      <% if (notice.rating || notice.note) { %><span class="score-badge"><%= notice.rating || notice.note %>/5</span><% } else { %>—<% } %>
+                    </td>
+                    <td><span class="cell-excerpt"><%= ((notice.content || notice.comment || notice.quote || '') + '').substring(0, 60) %>…</span></td>
+                    <td class="actions-cell">
+                      <button type="button" class="act-btn act-btn--edit act-btn--sm"
                         data-edit-btn
                         data-edit-type="notice"
-                        data-edit-id="<%= note.id %>"
-                        data-edit-content="<%= note.content %>"
-                        data-edit-quote="<%= note.quote %>"
-                        data-edit-author="<%= note.User ? note.User.pseudo : 'Anonyme' %>"
-                        data-edit-recipe="<%= note.Recipe ? note.Recipe.name : '' %>"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                        Éditer
+                        data-edit-id="<%= notice.id %>"
+                        data-edit-content="<%= String(notice.content || notice.comment || '').replace(/"/g, '&quot;') %>"
+                        data-edit-quote="<%= String(notice.quote || '').replace(/"/g, '&quot;') %>"
+                        data-edit-author="<%= notice.user || notice.author || '' %>"
+                        data-edit-recipe="<%= notice.recipe || '' %>">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/direct">
-                        <button type="submit" class="btn btn--red btn--sm">Supprimer définitivement</button>
+                      <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
+                        <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                        </button>
                       </form>
-                    </div>
-                  </div>
-                <% }) %>
-              </div>
-              <p class="admin-empty admin-no-results" data-no-results>
-                Aucun résultat pour les avis.
-              </p>
-              <div class="admin-pagination">
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__prev">Précédent</button>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+              <div class="admin-pagination" style="display:none;">
+                <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
                 <span class="admin-pagination__info"></span>
-                <button type="button" class="btn btn--ghost btn--sm admin-pagination__next">Suivant</button>
-              </div>
-            <% } else { %>
-              <p class="admin-empty">Aucun avis validé.</p>
-            <% } %>
-          </div>
-        </section>
-
-        <section class="admin-section admin-section--panel" data-admin-section="validations">
-          <div class="admin-section__header">
-            <h2>Validations en attente</h2>
-            <span class="badge badge--copper">En attente</span>
-          </div>
-          <div class="admin-validation-detail">
-            <div class="admin-detail-empty is-active">
-              Sélectionnez un film ou une recette dans la sidebar pour afficher la fiche.
-            </div>
-
-            <% if (movies.length > 0) { %>
-              <% movies.forEach(movie => { %>
-                <article class="admin-detail-card admin-detail-card--film" data-detail-id="movie-<%= movie.id %>">
-                  <div class="admin-detail-film-layout">
-                    <div class="admin-detail-film-info">
-                      <p class="admin-detail-eyebrow">Film à valider</p>
-                      <h3><%= movie.title %></h3>
-                      <p class="admin-detail-meta"><%= movie.year %> • <%= movie.genre %></p>
-                    </div>
-                    <div class="admin-detail-film-media">
-                      <form
-                        method="POST"
-                        action="/admin/validateMovie/<%= movie.id %>"
-                        enctype="multipart/form-data"
-                        class="admin-detail-form admin-detail-form--movie"
-                      >
-                        <div class="admin-upload-block">
-                          <p><strong>Photo du film</strong></p>
-                          <button
-                            type="button"
-                            class="admin-upload-thumb"
-                            data-upload-preview
-                            data-lightbox-trigger
-                            data-lightbox-image=""
-                            data-lightbox-alt="Prévisualisation de la photo du film"
-                            aria-label="Voir l'affiche en grand"
-                          >
-                            <img src="" alt="Prévisualisation de la photo du film" />
-                            <span class="admin-film-thumb__hint">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                            </span>
-                          </button>
-                          <label class="btn btn--primary btn--sm admin-upload-btn">
-                            Choisir une photo
-                            <input
-                              type="file"
-                              name="filmImage"
-                              accept="image/*"
-                              class="admin-upload-input"
-                            />
-                          </label>
-                        </div>
-                        <div class="admin-detail-actions admin-detail-actions--right admin-detail-actions--film">
-                          <button class="btn btn--primary btn--sm" type="submit">Valider le film</button>
-                          <button
-                            class="btn btn--red btn--sm"
-                            type="submit"
-                            formaction="/admin/rejectMovie/<%= movie.id %>"
-                          >
-                            Refuser le film
-                  </button>
-                </div>
-                      </form>
-                    </div>
-                  </div>
-                </article>
-              <% }) %>
-                    <% } %>
-
-            <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %>
-              <% pendingMovieDeleteRequests.forEach(movie => { %>
-                <article class="admin-detail-card" data-detail-id="delete-movie-<%= movie.id %>">
-                  <div class="admin-detail-card__header">
-                    <div>
-                      <p class="admin-detail-eyebrow">Demande de suppression</p>
-                      <h3><%= movie.title %></h3>
-                      <p class="admin-detail-meta"><%= movie.year %> • <%= movie.genre %></p>
-                      <% if (movie.User) { %>
-                        <p class="admin-detail-meta">
-                          Demandé par : <%= movie.User.pseudo %> • <%= movie.User.email %>
-                        </p>
-                      <% } %>
-                    </div>
-                    <span class="badge badge--copper">En attente</span>
-                  </div>
-                  <div class="admin-detail-card__body">
-                    <div class="admin-detail-media">
-                      <img
-                        src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>"
-                        alt="Affiche <%= movie.title %>"
-                      />
-                    </div>
-                    <div class="admin-detail-content">
-                      <p class="admin-detail-text">
-                        <strong>Action :</strong> suppression du film demandée par l’auteur.
-                      </p>
-                      <div class="admin-detail-actions">
-                        <form method="POST" action="/admin/movies/<%= movie.id %>/delete/approve">
-                          <button class="btn btn--primary btn--sm" type="submit">Approuver</button>
-                        </form>
-                        <form method="POST" action="/admin/movies/<%= movie.id %>/delete/reject">
-                          <button class="btn btn--red btn--sm" type="submit">Refuser</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              <% }) %>
-            <% } %>
-
-            <% if (recipes.length > 0) { %>
-              <% recipes.forEach(recipe => { %>
-                <article class="admin-detail-card" data-detail-id="recipe-<%= recipe.id %>">
-                  <div class="admin-detail-card__header">
-                    <div>
-                      <p class="admin-detail-eyebrow">Recette à valider</p>
-                      <h3><%= recipe.name %></h3>
-                      <div class="admin-detail-tags">
-                        <span class="tag tag--sapphire"><%= recipe.category %></span>
-                        <span class="tag tag--silver"><%= recipe.time %> min</span>
-                        <span class="tag tag--gold"><%= recipe.difficulty %></span>
-                      </div>
-                    </div>
-                    <span class="badge badge--copper">En attente</span>
-                  </div>
-                  <div class="admin-detail-card__body">
-                    <div class="admin-detail-media">
-                      <img
-                        src="<%= recipe.picture || '/images/image-default-recipe.jpg' %>"
-                        alt="Recette <%= recipe.name %>"
-                      />
-                    </div>
-                    <div class="admin-detail-content">
-                      <p class="admin-detail-text">
-                        <span class="admin-label-gold">Film associé :</span>
-                        <%= recipe.Movie ? `${recipe.Movie.title} (${recipe.Movie.year || '—'}) • ${recipe.Movie.genre || '—'}` : "Non renseigné" %>
-                      </p>
-
-                      <div class="admin-detail-block">
-                        <p class="admin-detail-text">
-                          <span class="admin-label-gold">Ingrédients :</span>
-                        </p>
-                        <% const ingredientsLines = formatList(recipe.ingredients); %>
-                        <% if (ingredientsLines.length > 0) { %>
-                          <ul class="admin-detail-list">
-                            <% ingredientsLines.forEach(line => { %>
-                              <li><%= line %></li>
-                            <% }) %>
-                          </ul>
-                        <% } else { %>
-                          <p class="admin-detail-text">Non renseigné.</p>
-                        <% } %>
-                      </div>
-
-                      <div class="admin-detail-block">
-                        <p class="admin-detail-text">
-                          <span class="admin-label-gold">Préparation :</span>
-                        </p>
-                        <% const prepLines = formatList(recipe.preparation); %>
-                        <% if (prepLines.length > 0) { %>
-                          <ol class="admin-detail-list admin-detail-list--ordered">
-                            <% prepLines.forEach(line => { %>
-                              <li><%= line %></li>
-                            <% }) %>
-                          </ol>
-                        <% } else { %>
-                          <p class="admin-detail-text">Non renseigné.</p>
-                        <% } %>
-                      </div>
-
-                      <details class="admin-edit-panel">
-                        <summary>Éditer la recette (avant validation)</summary>
-                        <form
-                          method="POST"
-                          action="/admin/recipes/<%= recipe.id %>/update"
-                          class="admin-edit-form"
-                        >
-                          <label>
-                            Titre
-                            <input type="text" name="name" value="<%= recipe.name %>" />
-                          </label>
-                          <label>
-                            Catégorie
-                            <input type="text" name="category" value="<%= recipe.category %>" />
-                          </label>
-                          <label>
-                            Temps (min)
-                            <input type="number" name="time" value="<%= recipe.time %>" />
-                          </label>
-                          <label>
-                            Difficulté
-                            <input type="text" name="difficulty" value="<%= recipe.difficulty %>" />
-                          </label>
-                          <label>
-                            Contexte / Description
-                            <textarea name="description" rows="3"><%= recipe.description %></textarea>
-                          </label>
-                          <label>
-                            Ingrédients (1 ligne = 1 item)
-                            <textarea name="ingredients" rows="4"><%= recipe.ingredients || "" %></textarea>
-                          </label>
-                          <label>
-                            Préparation (1 ligne = 1 étape)
-                            <textarea name="preparation" rows="5"><%= recipe.preparation || "" %></textarea>
-                          </label>
-                          <button class="btn btn--primary btn--sm" type="submit">
-                            Enregistrer modifications
-                  </button>
-                        </form>
-                      </details>
-
-                      <div class="admin-detail-actions admin-detail-actions--right">
-                        <form method="POST" action="/admin/validateRecipe/<%= recipe.id %>">
-                          <button class="btn btn--primary btn--sm" type="submit">Valider la recette</button>
-                        </form>
-                        <form method="POST" action="/admin/rejectRecipe/<%= recipe.id %>">
-                          <button class="btn btn--red btn--sm" type="submit">Refuser la recette</button>
-                        </form>
-                </div>
+                <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
               </div>
             </div>
-                </article>
-              <% }) %>
-            <% } %>
-          </div>
-
-          <div class="admin-edit-requests">
-            <h3>Modifications en attente</h3>
-            <% const hasEditRequests =
-              (pendingMovieEdits && pendingMovieEdits.length > 0) ||
-              (pendingRecipeEdits && pendingRecipeEdits.length > 0) ||
-              (pendingNoticeEdits && pendingNoticeEdits.length > 0); %>
-
-            <% if (hasEditRequests) { %>
-              <% if (pendingMovieEdits && pendingMovieEdits.length > 0) { %>
-                <p class="admin-subtitle">Films</p>
-                <div class="admin-list">
-                  <% pendingMovieEdits.forEach(movie => { %>
-                    <% const nextTitle = movie.pending_title || movie.title; %>
-                    <% const nextYear = movie.pending_year || movie.year; %>
-                    <% const nextGenre = movie.pending_genre || movie.genre; %>
-                    <div class="admin-list-item admin-list-item--action">
-                      <span>#<%= movie.id %></span>
-                      <p>
-                        Modification film :
-                        <strong><%= movie.title %></strong>
-                        (<%= movie.year %> • <%= movie.genre %>)
-                        → <strong><%= nextTitle %></strong>
-                        (<%= nextYear %> • <%= nextGenre %>)
-                      </p>
-                      <span class="badge badge--copper">Modif</span>
-                      <div class="admin-list-actions">
-                        <form method="POST" action="/admin/movies/<%= movie.id %>/edit/approve">
-                          <button type="submit" class="btn btn--primary btn--sm">Valider</button>
-                        </form>
-                        <form method="POST" action="/admin/movies/<%= movie.id %>/edit/reject">
-                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
-                        </form>
-                      </div>
-                    </div>
-                  <% }) %>
-                </div>
-              <% } %>
-
-              <% if (pendingRecipeEdits && pendingRecipeEdits.length > 0) { %>
-                <p class="admin-subtitle">Recettes</p>
-                <div class="admin-list">
-                  <% pendingRecipeEdits.forEach(recipe => { %>
-                    <% const nextName = recipe.pending_name || recipe.name; %>
-                    <div class="admin-list-item admin-list-item--action">
-                      <span>#<%= recipe.id %></span>
-                      <p>
-                        Modification recette :
-                        <strong><%= recipe.name %></strong>
-                        → <strong><%= nextName %></strong>
-                        <% if (recipe.Movie) { %>
-                          • Film associé : <%= recipe.Movie.title %>
-                        <% } %>
-                      </p>
-                      <span class="badge badge--copper">Modif</span>
-                      <div class="admin-list-actions">
-                        <form method="POST" action="/admin/recipes/<%= recipe.id %>/edit/approve">
-                          <button type="submit" class="btn btn--primary btn--sm">Valider</button>
-                        </form>
-                        <form method="POST" action="/admin/recipes/<%= recipe.id %>/edit/reject">
-                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
-                        </form>
-                      </div>
-                    </div>
-                  <% }) %>
-                </div>
-              <% } %>
-
-              <% if (pendingNoticeEdits && pendingNoticeEdits.length > 0) { %>
-                <p class="admin-subtitle">Avis</p>
-                <div class="admin-list">
-                  <% pendingNoticeEdits.forEach(note => { %>
-                    <div class="admin-list-item admin-list-item--action">
-                      <span>#<%= note.id %></span>
-                      <p>
-                        Modification avis :
-                        <strong><%= note.content %></strong>
-                        → <strong><%= note.pending_content || note.content %></strong>
-                        <% if (note.Recipe) { %>
-                          • Recette : <%= note.Recipe.name %>
-                          <% if (note.Recipe.Movie) { %>
-                            (<%= note.Recipe.Movie.title %>)
-                          <% } %>
-                        <% } %>
-                      </p>
-                      <span class="badge badge--copper">Modif</span>
-                      <div class="admin-list-actions">
-                        <form method="POST" action="/admin/notices/<%= note.id %>/edit/approve">
-                          <button type="submit" class="btn btn--primary btn--sm">Valider</button>
-                        </form>
-                        <form method="POST" action="/admin/notices/<%= note.id %>/edit/reject">
-                          <button type="submit" class="btn btn--red btn--sm">Refuser</button>
-                        </form>
-                      </div>
-                    </div>
-                  <% }) %>
-                </div>
-              <% } %>
-            <% } else { %>
-              <p class="admin-empty">Aucune modification en attente.</p>
-            <% } %>
-          </div>
-
-          <div class="admin-edit-requests">
-            <h3>Demandes de suppression d'avis</h3>
-            <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %>
-              <div class="admin-list">
-                <% pendingNoticeDeleteRequests.forEach(note => { %>
-                  <div class="admin-list-item admin-list-item--action">
-                    <span>#<%= note.id %></span>
-                    <p>
-                      Suppression avis demandée
-                      <% if (note.Recipe) { %>
-                        • Recette : <%= note.Recipe.name %>
-                        <% if (note.Recipe.Movie) { %>
-                          (<%= note.Recipe.Movie.title %>)
-                        <% } %>
-                      <% } %>
-                    </p>
-                    <span class="badge badge--copper">Suppression</span>
-                    <div class="admin-list-actions">
-                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/approve">
-                        <button type="submit" class="btn btn--primary btn--sm">Approuver</button>
-                      </form>
-                      <form method="POST" action="/admin/notices/<%= note.id %>/delete/reject">
-                        <button type="submit" class="btn btn--red btn--sm">Refuser</button>
-                      </form>
-                    </div>
-                  </div>
-                <% }) %>
-              </div>
-            <% } else { %>
-              <p class="admin-empty">Aucune demande en attente.</p>
-            <% } %>
-          </div>
-
-        </section>
-
-        <section class="admin-section admin-section--panel" data-admin-section="photos">
-          <div class="admin-section__header">
-            <h2>Photos de profil en attente</h2>
-            <span class="badge badge--copper">
-              <%= pendingProfilePhotos ? pendingProfilePhotos.length : 0 %> en attente
-            </span>
-        </div>
-          <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %>
-          <div class="profile-approval-grid">
-            <% pendingProfilePhotos.forEach(profile => { %>
-            <div class="profile-approval-card">
-              <img
-                src="<%= profile.picture %>"
-                alt="Photo de profil de <%= profile.first_name %>"
-              />
-              <div class="profile-approval-content">
-                <h3><%= profile.first_name %> <%= profile.last_name %></h3>
-                <p><%= profile.pseudo %> • <%= profile.email %></p>
-                <span class="badge badge--copper">En attente</span>
-              </div>
-              <div class="profile-approval-actions">
-                <form
-                  method="POST"
-                  action="/admin/users/<%= profile.id %>/photo/approve"
-                >
-                  <button class="btn btn--primary" type="submit">Valider</button>
-                </form>
-                <form
-                  method="POST"
-                  action="/admin/users/<%= profile.id %>/photo/reject"
-                >
-                  <button class="btn btn--red" type="submit">Refuser</button>
-                </form>
-            </div>
-            </div>
-            <% }) %>
-          </div>
-            <% } else { %>
-            <p class="admin-empty">Aucune photo en attente.</p>
-            <% } %>
-        </section>
-
-        <section class="admin-section admin-section--panel" data-admin-section="banners">
-          <div class="admin-section__header">
-            <h2>Bannières auteur en attente</h2>
-            <span class="badge badge--copper">
-              <%= pendingBanners ? pendingBanners.length : 0 %> en attente
-            </span>
-          </div>
-          <% if (pendingBanners && pendingBanners.length > 0) { %>
-          <div class="banner-approval-grid">
-            <% pendingBanners.forEach(profile => { %>
-            <div class="banner-approval-card">
-              <img
-                class="banner-approval-card__preview"
-                src="<%= profile.banner_image %>"
-                alt="Bannière de <%= profile.pseudo %>"
-              />
-              <div class="banner-approval-card__info">
-                <h3><%= profile.pseudo %></h3>
-                <p><%= profile.first_name %> <%= profile.last_name %> • <%= profile.email %></p>
-                <span class="badge badge--copper">En attente</span>
-              </div>
-              <div class="banner-approval-card__actions">
-                <form method="POST" action="/admin/users/<%= profile.id %>/banner/approve">
-                  <button class="btn btn--primary" type="submit">Valider</button>
-                </form>
-                <form method="POST" action="/admin/users/<%= profile.id %>/banner/reject">
-                  <button class="btn btn--red" type="submit">Refuser</button>
-                </form>
-              </div>
-            </div>
-            <% }) %>
-          </div>
-          <% } else { %>
-            <p class="admin-empty">Aucune bannière en attente.</p>
-          <% } %>
-        </section>
-
-        <section class="admin-section admin-section--panel" data-admin-section="avis">
-          <div class="admin-section__header">
-            <h2>Avis & critiques</h2>
-            <span class="badge badge--silver"><%= avis.length %> éléments</span>
-          </div>
-          <div class="admin-list">
-            <% if (avis.length > 0) { %>
-              <% avis.forEach(note => { %>
-                <div class="admin-list-item admin-list-item--action">
-                  <span>#<%= note.id %></span>
-                  <p><%= note.content %></p>
-                  <span class="badge <%= note.status ? 'badge--velvet' : 'badge--copper' %>">
-                    <%= note.status ? 'Validé' : 'En attente' %>
-                  </span>
-                  <div class="admin-list-actions">
-                    <% if (!note.status) { %>
-                      <form method="POST" action="/admin/validateNotice/<%= note.id %>">
-                        <button type="submit" class="btn btn--primary btn--sm">Valider</button>
-                      </form>
-                    <% } %>
-                    <form method="POST" action="/admin/rejectNotice/<%= note.id %>">
-                      <button type="submit" class="btn btn--red btn--sm">Refuser</button>
-                    </form>
-                  </div>
-                </div>
-              <% }) %>
-            <% } else { %>
-              <p class="admin-empty">Aucun avis enregistré.</p>
             <% } %>
           </div>
         </section>
 
-        <section class="admin-section admin-section--panel" data-admin-section="users">
-          <% const regularUsers = users.filter(u => u.role !== 'admin'); %>
-          <% const adminUsers = users.filter(u => u.role === 'admin'); %>
-
-          <div class="admin-section__header">
-            <h2>Utilisateurs</h2>
-            <span class="badge badge--copper"><%= regularUsers.length %> comptes</span>
-          </div>
-          <% if (regularUsers.length > 0) { %>
-          <div class="admin-list">
-            <% regularUsers.forEach(user => { %>
-              <div class="admin-list-item admin-list-item--action">
-                <span>#<%= user.id %></span>
-                <p><%= user.first_name %> <%= user.last_name %> • <%= user.email %></p>
-                <span class="badge badge--copper">Utilisateur</span>
-                <form method="POST" action="/admin/deleteUser/<%= user.id %>">
-                  <button type="submit" class="btn btn--red btn--sm">Supprimer</button>
-                </form>
-              </div>
-            <% }) %>
-          </div>
-          <% } else { %>
-          <p class="admin-empty">Aucun utilisateur inscrit.</p>
-          <% } %>
-
-          <div class="admin-section__header" style="margin-top: 2rem;">
-            <h2>Administrateurs</h2>
-            <span class="badge badge--velvet"><%= adminUsers.length %> comptes</span>
-          </div>
-          <div class="admin-list">
-            <% adminUsers.forEach(user => { %>
-              <div class="admin-list-item admin-list-item--action">
-                <span>#<%= user.id %></span>
-                <p><%= user.first_name %> <%= user.last_name %> • <%= user.email %></p>
-                <span class="badge badge--velvet">Admin</span>
-                <form method="POST" action="/admin/deleteUser/<%= user.id %>">
-                  <button type="submit" class="btn btn--red btn--sm">Supprimer</button>
-                </form>
-              </div>
-            <% }) %>
-          </div>
-        </section>
+      </main>
+    </div><!-- /.main-wrapper -->
 
 
-    <!-- ================================================== -->
-    <!-- MODAL ÉDITION UNIFIÉ (Films, Recettes, Avis) -->
-    <!-- ================================================== -->
-    <div id="admin-edit-modal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-edit-modal-title">
-      <!-- Backdrop (ferme le modal au clic) -->
-      <div class="admin-modal__backdrop" data-modal-close aria-hidden="true"></div>
+    <!-- ═══════════════════════════════════════════
+         TOAST STACK
+    ═══════════════════════════════════════════ -->
+    <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+    <!-- Legacy compat -->
+    <div class="admin-toast" id="admin-toast" aria-live="polite"></div>
 
-      <!-- Dialog -->
+
+    <!-- ═══════════════════════════════════════════
+         MODAL ÉDITION ADMIN (Films, Recettes, Avis)
+    ═══════════════════════════════════════════ -->
+    <div class="admin-modal" id="admin-edit-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+      <div class="admin-modal__backdrop"></div>
       <div class="admin-modal__dialog">
-        <!-- Header avec bouton fermer -->
         <div class="admin-modal__header">
-          <h2 id="admin-edit-modal-title" class="admin-modal__title">
-            <!-- Icône dynamique selon le type -->
-            <span class="admin-modal__icon" data-modal-icon="movie">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+          <div class="admin-modal__title-row">
+            <!-- Icônes dynamiques selon le type -->
+            <span data-modal-icon="movie" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
             </span>
-            <span class="admin-modal__icon" data-modal-icon="recipe" style="display:none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+            <span data-modal-icon="recipe" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/></svg>
             </span>
-            <span class="admin-modal__icon" data-modal-icon="notice" style="display:none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span data-modal-icon="notice" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </span>
-            <span data-modal-title-text>Éditer le film</span>
-          </h2>
-          <button type="button" class="admin-modal__close" data-modal-close aria-label="Fermer le modal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <h2 class="admin-modal__title" id="admin-modal-title">
+              <span data-modal-title-text>Éditer</span>
+            </h2>
+          </div>
+          <button type="button" class="admin-modal__close" data-modal-close aria-label="Fermer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
-        <!-- Formulaire d'édition unifié -->
-        <form id="admin-edit-form" method="POST" action="" class="admin-modal__form" enctype="multipart/form-data">
-
-          <!-- ========== SECTION FILM ========== -->
-          <div class="admin-modal__section" data-modal-section="movie">
-            <!-- Ligne 1 : Titre, Année, Genre -->
-            <div class="admin-modal__row admin-modal__row--3cols">
-              <div class="admin-modal__field admin-modal__field--title">
-                <label for="edit-movie-title" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
-                  Titre
-                </label>
-                <input type="text" id="edit-movie-title" name="title" class="admin-modal__input" required placeholder="Titre du film"/>
+        <form class="admin-modal__form" id="admin-edit-form" method="POST">
+          <!-- Section Film -->
+          <div data-modal-section="movie" style="display:none; flex-direction:column; gap:14px;">
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-movie-title">Titre</label>
+              <input type="text" id="edit-movie-title" name="title" class="admin-modal__input" required />
+            </div>
+            <div class="admin-modal__field-row">
+              <div class="admin-modal__field">
+                <label class="admin-modal__label" for="edit-movie-year">Année</label>
+                <input type="number" id="edit-movie-year" name="year" class="admin-modal__input" min="1888" max="2099" />
               </div>
-              <div class="admin-modal__field admin-modal__field--year">
-                <label for="edit-movie-year" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                  Année
-                </label>
-                <input type="number" id="edit-movie-year" name="year" class="admin-modal__input" min="1888" max="2030" required placeholder="Ex: 1985"/>
-              </div>
-              <div class="admin-modal__field admin-modal__field--genre">
-                <label for="edit-movie-genre" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
-                  Genre
-                </label>
-                <select id="edit-movie-genre" name="genre" class="admin-modal__select" required>
-                  <option value="">Sélectionner un genre</option>
-                  <option value="action">Action</option>
-                  <option value="animation">Animation</option>
-                  <option value="aventure">Aventure</option>
-                  <option value="comédie">Comédie</option>
-                  <option value="documentaire">Documentaire</option>
-                  <option value="drame">Drame</option>
-                  <option value="famille">Famille</option>
-                  <option value="fantastique">Fantastique</option>
-                  <option value="guerre">Guerre</option>
-                  <option value="historique">Historique</option>
-                  <option value="horreur">Horreur</option>
-                  <option value="musical">Musical</option>
-                  <option value="policier">Policier</option>
-                  <option value="romance">Romance</option>
-                  <option value="science-fiction">Science-Fiction</option>
-                  <option value="thriller">Thriller</option>
-                  <option value="téléfilm">Téléfilm</option>
-                  <option value="western">Western</option>
+              <div class="admin-modal__field">
+                <label class="admin-modal__label" for="edit-movie-genre">Genre</label>
+                <select id="edit-movie-genre" name="genre" class="admin-modal__select">
+                  <option value="">— Choisir —</option>
+                  <option value="Action">Action</option>
+                  <option value="Aventure">Aventure</option>
+                  <option value="Animation">Animation</option>
+                  <option value="Comédie">Comédie</option>
+                  <option value="Documentaire">Documentaire</option>
+                  <option value="Drame">Drame</option>
+                  <option value="Fantastique">Fantastique</option>
+                  <option value="Horreur">Horreur</option>
+                  <option value="Musical">Musical</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Science-Fiction">Science-Fiction</option>
+                  <option value="Thriller">Thriller</option>
+                  <option value="Western">Western</option>
                 </select>
               </div>
             </div>
-            <!-- Synopsis -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-movie-synopsis" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-                Synopsis
-              </label>
-              <textarea id="edit-movie-synopsis" name="synopsis" class="admin-modal__textarea admin-modal__textarea--autosize" rows="3" placeholder="Résumé court du film ou de la série..." maxlength="1000"></textarea>
-              <span class="admin-modal__hint">Optionnel - Maximum 1000 caractères</span>
-            </div>
-            <!-- Photo du film -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-movie-image" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                Photo du film
-              </label>
-              <input type="file" id="edit-movie-image" name="filmImage" accept="image/*" class="admin-modal__input-file" />
-              <span class="admin-modal__hint">Optionnel - Formats : JPG, PNG, JPEG, WebP</span>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-movie-synopsis">Synopsis</label>
+              <textarea id="edit-movie-synopsis" name="synopsis" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4"></textarea>
             </div>
           </div>
 
-          <!-- ========== SECTION RECETTE ========== -->
-          <div class="admin-modal__section" data-modal-section="recipe" style="display:none;">
-            <!-- Ligne 1 : Titre + Catégorie -->
-            <div class="admin-modal__row admin-modal__row--2cols">
-              <div class="admin-modal__field admin-modal__field--title">
-                <label for="edit-recipe-name" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
-                  Titre
-                </label>
-                <input type="text" id="edit-recipe-name" name="name" class="admin-modal__input" required placeholder="Nom de la recette"/>
-              </div>
+          <!-- Section Recette -->
+          <div data-modal-section="recipe" style="display:none; flex-direction:column; gap:14px;">
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-recipe-name">Nom de la recette</label>
+              <input type="text" id="edit-recipe-name" name="name" class="admin-modal__input" required />
+            </div>
+            <div class="admin-modal__field-row">
               <div class="admin-modal__field">
-                <label for="edit-recipe-category" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/></svg>
-                  Catégorie
-                </label>
-                <select id="edit-recipe-category" name="category" class="admin-modal__select" required>
-                  <option value="">Sélectionner</option>
+                <label class="admin-modal__label" for="edit-recipe-category">Catégorie</label>
+                <select id="edit-recipe-category" name="category" class="admin-modal__select">
+                  <option value="">— Choisir —</option>
                   <option value="Entrée">Entrée</option>
-                  <option value="Plat">Plat</option>
+                  <option value="Plat principal">Plat principal</option>
                   <option value="Dessert">Dessert</option>
                   <option value="Boisson">Boisson</option>
+                  <option value="Apéritif">Apéritif</option>
                   <option value="Snack">Snack</option>
                 </select>
               </div>
-            </div>
-            <!-- Ligne 2 : Temps + Difficulté -->
-            <div class="admin-modal__row admin-modal__row--2cols">
               <div class="admin-modal__field">
-                <label for="edit-recipe-time" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  Temps (min)
-                </label>
-                <input type="number" id="edit-recipe-time" name="time" class="admin-modal__input" min="1" placeholder="Ex: 30"/>
+                <label class="admin-modal__label" for="edit-recipe-time">Temps (min)</label>
+                <input type="number" id="edit-recipe-time" name="preparationTime" class="admin-modal__input" min="1" />
               </div>
               <div class="admin-modal__field">
-                <label for="edit-recipe-difficulty" class="admin-modal__label">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  Difficulté
-                </label>
+                <label class="admin-modal__label" for="edit-recipe-difficulty">Difficulté</label>
                 <select id="edit-recipe-difficulty" name="difficulty" class="admin-modal__select">
-                  <option value="">Sélectionner</option>
+                  <option value="">— Choisir —</option>
                   <option value="Facile">Facile</option>
                   <option value="Moyen">Moyen</option>
                   <option value="Difficile">Difficile</option>
                 </select>
               </div>
             </div>
-            <!-- Description -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-recipe-description" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Description / Contexte
-              </label>
-              <textarea id="edit-recipe-description" name="description" class="admin-modal__textarea admin-modal__textarea--autosize" rows="2" placeholder="Contexte de la recette..." maxlength="1000"></textarea>
-            </div>
-            <!-- Ingrédients -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-recipe-ingredients" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/><path d="M11 17v.01"/><path d="M7 14v.01"/></svg>
-                Ingrédients
-              </label>
-              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" placeholder="1 ligne = 1 ingrédient"></textarea>
-              <span class="admin-modal__hint">1 ingrédient par ligne</span>
-            </div>
-            <!-- Préparation -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-recipe-preparation" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
-                Préparation
-              </label>
-              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5" placeholder="1 ligne = 1 étape"></textarea>
-              <span class="admin-modal__hint">1 étape par ligne</span>
-            </div>
-            <!-- Photo de la recette -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-recipe-image" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                Photo de la recette
-              </label>
-              <input type="file" id="edit-recipe-image" name="recipeImage" accept="image/*" class="admin-modal__input-file" />
-              <span class="admin-modal__hint">Optionnel - Formats : JPG, PNG, JPEG, WebP</span>
-            </div>
-          </div>
-
-          <!-- ========== SECTION AVIS ========== -->
-          <div class="admin-modal__section" data-modal-section="notice" style="display:none;">
-            <!-- Info auteur (lecture seule) -->
-            <div class="admin-modal__info-box">
-              <span class="admin-modal__info-label">Auteur :</span>
-              <span id="edit-notice-author-display">-</span>
-              <span class="admin-modal__info-separator">•</span>
-              <span class="admin-modal__info-label">Recette :</span>
-              <span id="edit-notice-recipe-display">-</span>
-            </div>
-            <!-- Note (1-5) -->
             <div class="admin-modal__field">
-              <label for="edit-notice-quote" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                Note (1-5)
-              </label>
-              <input type="number" id="edit-notice-quote" name="quote" class="admin-modal__input admin-modal__input--short" min="1" max="5" required placeholder="1-5"/>
+              <label class="admin-modal__label" for="edit-recipe-description">Description</label>
+              <textarea id="edit-recipe-description" name="description" class="admin-modal__textarea admin-modal__textarea--autosize" rows="2"></textarea>
             </div>
-            <!-- Commentaire -->
-            <div class="admin-modal__field admin-modal__field--full">
-              <label for="edit-notice-content" class="admin-modal__label">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Commentaire
-              </label>
-              <textarea id="edit-notice-content" name="content" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" placeholder="Contenu de l'avis..." required maxlength="1000"></textarea>
-              <span class="admin-modal__hint">Maximum 1000 caractères</span>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-recipe-ingredients">Ingrédients</label>
+              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4"></textarea>
+            </div>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-recipe-preparation">Préparation</label>
+              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5"></textarea>
             </div>
           </div>
 
-          <!-- Actions (commun à tous) -->
-          <div class="admin-modal__actions">
-            <button type="button" class="btn btn--ghost" data-modal-close>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-              Annuler
-            </button>
-            <button type="submit" class="btn btn--primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Enregistrer les modifications
-            </button>
+          <!-- Section Avis -->
+          <div data-modal-section="notice" style="display:none; flex-direction:column; gap:14px;">
+            <div class="admin-modal__info-row">
+              <div class="admin-modal__info-chip">
+                <span class="admin-modal__info-label">Auteur :</span>
+                <span id="edit-notice-author-display">—</span>
+              </div>
+              <div class="admin-modal__info-chip">
+                <span class="admin-modal__info-label">Recette :</span>
+                <span id="edit-notice-recipe-display">—</span>
+              </div>
+            </div>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-notice-quote">Citation courte</label>
+              <input type="text" id="edit-notice-quote" name="quote" class="admin-modal__input" />
+            </div>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-notice-content">Commentaire</label>
+              <textarea id="edit-notice-content" name="content" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4"></textarea>
+            </div>
+          </div>
+
+          <div class="admin-modal__footer">
+            <button type="button" class="btn btn--ghost" data-modal-close>Annuler</button>
+            <button type="submit" class="btn btn--primary">Enregistrer</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Lightbox pour zoom image -->
-    <div id="recipe-lightbox" class="recipe-lightbox">
-      <div
-        class="recipe-lightbox__backdrop"
-        data-lightbox-close
-        aria-hidden="true"
-      ></div>
-      <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
-        <button
-          type="button"
-          class="recipe-lightbox__close"
-          aria-label="Fermer l'aperçu"
-          data-lightbox-close
-        >
-          &times;
+
+    <!-- ═══════════════════════════════════════════
+         LIGHTBOX
+    ═══════════════════════════════════════════ -->
+    <div class="recipe-lightbox" id="recipe-lightbox" role="dialog" aria-modal="true" aria-label="Visionneuse d'image">
+      <div class="recipe-lightbox__backdrop" id="lightbox-backdrop"></div>
+      <div class="recipe-lightbox__panel">
+        <button class="recipe-lightbox__close" id="lightbox-close" aria-label="Fermer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <img
-          src=""
-          alt="Image du film Ciné Délices"
-          class="recipe-lightbox__image"
-          loading="lazy"
-        />
+        <img src="" alt="" class="recipe-lightbox__img" id="lightbox-img" />
       </div>
     </div>
 
-    <!-- FOOTER -->
-    <%- include("partials/footer") %>
 
-    <div class="admin-toast" role="status" aria-live="polite"></div>
-
-    <!-- JS Admin -->
-    <script src="/js/admin-dashboard.js" defer></script>
-    <script src="/js/recipe-detail.js" defer></script>
-    
+    <!-- Scripts -->
+    <script src="/js/confirm-action.js"></script>
+    <script src="/js/admin-dashboard.js"></script>
+    <script src="/js/recipe-detail.js"></script>
   </body>
 </html>

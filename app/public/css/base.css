@@ -321,6 +321,24 @@
   --card-r: 16px;                /* moodboard V3 — border-radius cards */
 
   /* ====================================================== */
+  /* PALETTE ENRICHIE V4 — Culinaire & Cinéma
+  ====================================================== */
+  --caramel: #c97b3a;          /* tags recettes · warm accent */
+  --cuivre: #b5622c;           /* hover caramel · deep warm */
+  --terracotta: #a84e3a;       /* difficulté · recettes piquantes */
+  --gris-ardoise: #8294a8;     /* éléments neutres · métadata */
+  --violet-cinema: #6b4fa0;    /* nouveautés · tags genre cinéma */
+  --violet-clair: #9b7ed0;     /* badges NEW · glow cinéma */
+  --vert-valide: #2a7a50;      /* statuts validés · success */
+  --vert-clair: #3daa72;       /* vert léger */
+  --orange-ambre: #d4820a;     /* statuts pending · tendance */
+  --orange-clair: #f0a030;     /* trending badge */
+
+  /* Gradients V4 */
+  --violet-gradient: linear-gradient(135deg, #3d2870 0%, #6b4fa0 55%, #8b6dc0 100%);
+  --caramel-gradient: linear-gradient(135deg, #8a4a18 0%, #c97b3a 55%, #e8a060 100%);
+
+  /* ====================================================== */
   /* TRANSITIONS ET ANIMATIONS
   ====================================================== */
   --transition: 0.3s ease;
@@ -3682,4 +3700,305 @@ main { padding-top: var(--nav-h); }
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ====================================================== */
+/* DESIGN SYSTEM V4 — Tags, Badges & Composants enrichis
+====================================================== */
+
+/* ── Tags Films V4 — identité cinéma avec glow ── */
+.tag--genre-cinema {
+  background: rgba(30, 16, 62, 0.65);
+  border-color: rgba(107, 79, 160, 0.45);
+  color: rgba(180, 155, 228, 0.95);
+  text-shadow: 0 0 10px rgba(155, 126, 208, 0.28);
+}
+.tag--genre-cinema:hover {
+  background: rgba(30, 16, 62, 0.9);
+  border-color: rgba(107, 79, 160, 0.8);
+  box-shadow: 0 0 10px rgba(107, 79, 160, 0.25);
+}
+.tag--film-annee {
+  background: rgba(10, 16, 30, 0.6);
+  border-color: rgba(90, 115, 145, 0.32);
+  color: rgba(162, 184, 210, 0.85);
+  font-family: var(--f-display);
+  letter-spacing: 2px;
+}
+.tag--film-saga {
+  background: rgba(20, 8, 8, 0.6);
+  border-color: rgba(194, 48, 24, 0.38);
+  color: rgba(220, 100, 85, 0.92);
+}
+.tag--film-saga:hover {
+  border-color: rgba(194, 48, 24, 0.65);
+  box-shadow: 0 0 8px rgba(194, 48, 24, 0.18);
+}
+.tag--film-culte {
+  background: rgba(58, 42, 12, 0.6);
+  border-color: rgba(212, 168, 67, 0.5);
+  color: var(--dore-clair);
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.12);
+}
+.tag--film-culte:hover {
+  box-shadow: 0 0 14px rgba(212, 168, 67, 0.28);
+}
+/* Supprimer le liseré pointillé interne sur les tags film V4 */
+.tag--genre-cinema::after,
+.tag--film-annee::after,
+.tag--film-saga::after,
+.tag--film-culte::after { display: none; }
+
+/* ── Tags Recettes V4 — palette culinaire chaude ── */
+.tag--recette-cat {
+  background: rgba(45, 22, 6, 0.6);
+  border-color: rgba(201, 123, 58, 0.4);
+  color: rgba(230, 160, 85, 0.92);
+}
+.tag--recette-cat:hover {
+  background: rgba(45, 22, 6, 0.9);
+  border-color: rgba(201, 123, 58, 0.7);
+}
+.tag--recette-facile {
+  background: rgba(10, 32, 18, 0.55);
+  border-color: rgba(40, 110, 65, 0.3);
+  color: rgba(100, 185, 130, 0.95);
+}
+.tag--recette-moyen {
+  background: rgba(48, 28, 4, 0.6);
+  border-color: rgba(212, 130, 10, 0.4);
+  color: rgba(230, 165, 50, 0.92);
+}
+.tag--recette-difficile {
+  background: rgba(42, 12, 8, 0.65);
+  border-color: rgba(168, 78, 58, 0.45);
+  color: rgba(218, 105, 85, 0.92);
+}
+.tag--recette-rapide {
+  background: rgba(8, 28, 46, 0.58);
+  border-color: rgba(60, 140, 200, 0.35);
+  color: rgba(115, 185, 240, 0.92);
+}
+.tag--recette-gourmand {
+  background: rgba(38, 14, 32, 0.62);
+  border-color: rgba(180, 80, 148, 0.38);
+  color: rgba(218, 130, 190, 0.92);
+}
+/* Supprimer le liseré pointillé interne sur les tags recette V4 */
+.tag--recette-cat::after,
+.tag--recette-facile::after,
+.tag--recette-moyen::after,
+.tag--recette-difficile::after,
+.tag--recette-rapide::after,
+.tag--recette-gourmand::after { display: none; }
+
+/* ── Badges Nouveautés V4 ── */
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.24rem 0.65rem;
+  border-radius: 5px;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  font-family: var(--f-title);
+  white-space: nowrap;
+}
+.badge-new--new {
+  background: rgba(30, 16, 62, 0.7);
+  border-color: rgba(155, 126, 208, 0.55);
+  color: var(--violet-clair);
+  box-shadow: 0 0 10px rgba(107, 79, 160, 0.22), inset 0 1px 0 rgba(155, 126, 208, 0.1);
+}
+.badge-new--trending {
+  background: rgba(50, 24, 4, 0.7);
+  border-color: rgba(240, 160, 48, 0.5);
+  color: var(--orange-clair);
+  box-shadow: 0 0 10px rgba(212, 130, 10, 0.18);
+}
+.badge-new--popular {
+  background: rgba(58, 42, 12, 0.7);
+  border-color: rgba(242, 200, 75, 0.52);
+  color: var(--dore-clair);
+  box-shadow: 0 0 10px rgba(212, 168, 67, 0.2);
+}
+.badge-new--recommande {
+  background: rgba(10, 32, 18, 0.7);
+  border-color: rgba(61, 170, 114, 0.48);
+  color: var(--vert-clair);
+  box-shadow: 0 0 8px rgba(42, 122, 80, 0.18);
+}
+
+/* ── Badges Statuts Admin V4 ── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.28rem 0.72rem;
+  border-radius: 6px;
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  font-family: var(--f-title);
+}
+.badge-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge-status--pending {
+  background: rgba(58, 32, 4, 0.62);
+  border-color: rgba(212, 130, 10, 0.42);
+  color: var(--orange-clair);
+}
+.badge-status--pending::before {
+  background: var(--orange-clair);
+  box-shadow: 0 0 5px rgba(240, 160, 48, 0.6);
+  animation: pulse-dot 1.8s ease infinite;
+}
+.badge-status--approved {
+  background: rgba(10, 34, 20, 0.62);
+  border-color: rgba(61, 170, 114, 0.42);
+  color: var(--vert-clair);
+}
+.badge-status--approved::before {
+  background: var(--vert-clair);
+}
+.badge-status--rejected {
+  background: rgba(44, 10, 8, 0.62);
+  border-color: rgba(194, 48, 24, 0.42);
+  color: #e84020;
+}
+.badge-status--rejected::before {
+  background: #e84020;
+}
+.badge-status--proposed {
+  background: rgba(14, 24, 52, 0.62);
+  border-color: rgba(80, 120, 200, 0.42);
+  color: rgba(140, 180, 245, 0.95);
+}
+.badge-status--proposed::before {
+  background: rgba(140, 180, 245, 0.9);
+  box-shadow: 0 0 5px rgba(80, 120, 200, 0.45);
+  animation: pulse-dot 2s ease infinite;
+}
+
+/* ── Avis Cards V4 ── */
+@keyframes shimmer-gold-avis {
+  0%   { background-position: 100% 100%, 0% 50%; }
+  50%  { background-position: 100% 100%, 100% 50%; }
+  100% { background-position: 100% 100%, 200% 50%; }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.7; }
+}
+
+.avis-card {
+  position: relative;
+  border-radius: 14px;
+  padding: 18px 18px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background:
+    linear-gradient(160deg, #0f1e30, #142234) padding-box,
+    rgba(255, 255, 255, 0.06) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: 0 6px 24px rgba(0, 2, 12, 0.45);
+  overflow: hidden;
+}
+.avis-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(196, 160, 82, 0.55) 35%,
+    rgba(196, 160, 82, 0.7) 50%,
+    rgba(196, 160, 82, 0.55) 65%,
+    transparent
+  );
+  border-radius: 14px 0 0 14px;
+}
+.avis-card--featured {
+  background:
+    linear-gradient(160deg, #0f1e30, #1b263b) padding-box,
+    linear-gradient(135deg, #7a5a14, #b8882a, #f2c84b, #ffe085, #f2c84b, #b8882a, #7a5a14) border-box;
+  background-size: 100% 100%, 300% 300%;
+  animation: shimmer-gold-avis 3s ease infinite;
+  box-shadow: 0 12px 40px rgba(212, 168, 67, 0.18), 0 4px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* Badges avis */
+.badge-avis {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-family: var(--f-title);
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge-avis--coup {
+  background: rgba(196, 160, 82, 0.12);
+  border: 1px solid rgba(196, 160, 82, 0.38);
+  color: var(--or-titre);
+}
+.badge-avis--top {
+  background: rgba(194, 48, 24, 0.14);
+  border: 1px solid rgba(194, 48, 24, 0.4);
+  color: #e84020;
+}
+.badge-avis--pop {
+  background: rgba(14, 24, 52, 0.7);
+  border: 1px solid rgba(80, 120, 200, 0.4);
+  color: rgba(140, 180, 245, 0.95);
+}
+
+/* ── Bouton Connexion Nav V4 (Cinzel doré, 36px) ── */
+.btn--connect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--gold-gradient);
+  border: none;
+  cursor: pointer;
+  font-family: var(--f-title);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bleu-nuit);
+  box-shadow: 0 2px 16px rgba(184, 136, 42, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition: all 0.25s;
+  text-decoration: none;
+}
+.btn--connect:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(212, 168, 67, 0.42);
+  filter: brightness(1.08);
+  color: var(--bleu-nuit);
 }
