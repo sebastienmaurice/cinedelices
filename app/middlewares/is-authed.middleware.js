@@ -50,14 +50,12 @@ function verifyToken(req, res, next) {
       return res.status(401).render("error", {
         error: "401",  // Code d'erreur HTTP
         message: "Session expirée. Veuillez vous reconnecter",
-        role: undefined,  // Pas de rôle car token invalide
       });
     } else {
       // Autre erreur (token modifié, signature invalide, etc.)
       return res.status(401).render("error", {
         error: "401",
         message: "Session invalide. Veuillez vous reconnecter",
-        role: undefined,  // Pas de rôle car token invalide
       });
     }
   }
@@ -80,14 +78,12 @@ function injectId(req, res, next) {
       return res.status(401).render("error", {
         error: "401",
         message: "Session expirée. Veuillez vous reconnecter",
-        role: req.userRole,
-      });
+        });
     } else {
       return res.status(401).render("error", {
         error: "401",
         message: "Session invalide. Veuillez vous reconnecter",
-        role: req.userRole,
-      });
+        });
     }
   }
 }
@@ -103,7 +99,6 @@ function isLogged(req, res, next) {
     res.status(403).render("error", {
       error: "403",
       message: "Route interdite. Vous n'êtes pas connecté.",
-      role: req.userRole,
       openLoginPopup: true  // 👈 Nouveau paramètre
     });
   }

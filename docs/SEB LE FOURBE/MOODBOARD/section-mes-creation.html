@@ -1,0 +1,1470 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ciné Délices — Mes Créations</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bleu-nuit: #142234;
+        --bleu-inter: #1b263b;
+        --surface-card: #0f1e30;
+        --bleu-clair: #415a77;
+        --bleu-secondaire: #5a7391;
+        --gris-ardoise: #8294a8;
+        --or-titre: #c4a052;
+        --or-100: #d4a843;
+        --or-200: #b8882a;
+        --dore-clair: #f2c84b;
+        --rouge-cta: #c23018;
+        --argent: #e8e8e8;
+        --vert-valide: #2a7a50;
+        --vert-clair: #3daa72;
+        --orange-ambre: #d4820a;
+        --orange-clair: #f0a030;
+        --gold-gradient: linear-gradient(
+          135deg,
+          #b8882a 0%,
+          #d4a843 30%,
+          #f2c84b 55%,
+          #ffe085 80%,
+          #d4a843 100%
+        );
+        --rouge-gradient: linear-gradient(
+          135deg,
+          #8b1c13 0%,
+          #c23018 55%,
+          #d43a20 100%
+        );
+        --f-display: "Bebas Neue", cursive;
+        --f-title: "Cinzel", serif;
+        --f-editorial: "Playfair Display", serif;
+        --f-body: "Lato", sans-serif;
+        --max-w: 1440px;
+        --nav-h: 70px;
+        --card-r: 14px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bleu-nuit);
+        font-family: var(--f-body);
+        color: var(--argent);
+        min-height: 100vh;
+      }
+
+      /* ── Faux nav ── */
+      .fake-nav {
+        height: var(--nav-h);
+        background: rgba(10, 18, 30, 0.92);
+        border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        gap: 12px;
+      }
+      .fake-nav__logo {
+        font-family: var(--f-display);
+        font-size: 1.3rem;
+        letter-spacing: 6px;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .fake-nav__sep {
+        flex: 1;
+      }
+      .fake-nav__user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        color: rgba(196, 160, 82, 0.65);
+        letter-spacing: 0.08em;
+      }
+      .fake-nav__av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(196, 160, 82, 0.35);
+        overflow: hidden;
+        background: rgba(196, 160, 82, 0.08);
+      }
+      .fake-nav__av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* ── Faux tabs profil ── */
+      .profile-tabs {
+        background: rgba(10, 18, 30, 0.65);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .profile-tabs__inner {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 48px;
+        display: flex;
+        gap: 0;
+      }
+      .ptab {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 24px;
+        font-family: var(--f-title);
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(232, 232, 232, 0.38);
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.22s;
+      }
+      .ptab:hover {
+        color: rgba(232, 232, 232, 0.72);
+      }
+      .ptab.active {
+        color: var(--or-titre);
+        border-bottom-color: var(--or-titre);
+      }
+      .ptab__count {
+        background: rgba(196, 160, 82, 0.14);
+        border: 1px solid rgba(196, 160, 82, 0.28);
+        color: var(--or-titre);
+        font-size: 0.48rem;
+        padding: 2px 7px;
+        border-radius: 20px;
+        font-family: var(--f-title);
+        font-weight: 700;
+      }
+
+      /* ── Page wrapper ── */
+      .page {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 48px 48px 80px;
+      }
+
+      /* ── Hero section ── */
+      .creations-hero {
+        margin-bottom: 40px;
+      }
+      .creations-hero__eyebrow {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.42);
+        margin-bottom: 8px;
+      }
+      .creations-hero__title {
+        font-family: var(--f-display);
+        font-size: 3rem;
+        letter-spacing: 6px;
+        color: var(--argent);
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .creations-hero__title span {
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .creations-hero__rule {
+        width: 80px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(196, 160, 82, 0.55),
+          transparent
+        );
+      }
+
+      /* ── Grille 3 colonnes ── */
+      .creations-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      /* ── Colonne ── */
+      .col {
+        background: linear-gradient(160deg, #0f1e30, #142234);
+        border: 1.5px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--card-r);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* En-tête colonne */
+      .col__head {
+        padding: 20px 20px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: rgba(10, 18, 30, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      .col__title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .col__icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(196, 160, 82, 0.08);
+        border: 1px solid rgba(196, 160, 82, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .col__title {
+        font-family: var(--f-display);
+        font-size: 1rem;
+        letter-spacing: 3px;
+        color: var(--argent);
+      }
+      .col__count {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        color: rgba(196, 160, 82, 0.55);
+        background: rgba(196, 160, 82, 0.08);
+        border: 1px solid rgba(196, 160, 82, 0.18);
+        border-radius: 20px;
+        padding: 3px 9px;
+      }
+
+      /* Filtre recherche */
+      .col__search {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(10, 18, 30, 0.25);
+      }
+      .search-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 8px 12px 8px 34px;
+        font-family: var(--f-body);
+        font-size: 0.72rem;
+        color: var(--argent);
+        outline: none;
+        transition: border-color 0.2s;
+        position: relative;
+      }
+      .search-input::placeholder {
+        color: rgba(232, 232, 232, 0.25);
+      }
+      .search-input:focus {
+        border-color: rgba(196, 160, 82, 0.35);
+      }
+      .search-wrap {
+        position: relative;
+      }
+      .search-wrap::before {
+        content: "⌕";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(196, 160, 82, 0.35);
+        font-size: 0.88rem;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* Filtres rapides */
+      .col__filters {
+        padding: 8px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        background: rgba(10, 18, 30, 0.15);
+      }
+      .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: transparent;
+        color: rgba(232, 232, 232, 0.38);
+        transition: all 0.18s;
+      }
+      .filter-pill:hover {
+        border-color: rgba(196, 160, 82, 0.35);
+        color: var(--or-titre);
+      }
+      .filter-pill.active {
+        background: rgba(196, 160, 82, 0.1);
+        border-color: rgba(196, 160, 82, 0.42);
+        color: var(--or-titre);
+      }
+      .filter-pill__dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* Corps scrollable */
+      .col__body {
+        overflow-y: auto;
+        max-height: 680px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(196, 160, 82, 0.18) transparent;
+      }
+      .col__body::-webkit-scrollbar {
+        width: 4px;
+      }
+      .col__body::-webkit-scrollbar-thumb {
+        background: rgba(196, 160, 82, 0.18);
+        border-radius: 4px;
+      }
+
+      /* Empty state */
+      .col__empty {
+        padding: 32px 16px;
+        text-align: center;
+        color: rgba(232, 232, 232, 0.22);
+        font-size: 0.72rem;
+        font-style: italic;
+      }
+
+      /* ── CARD RECETTE ── */
+      .item-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        gap: 12px;
+        transition: all 0.22s;
+        position: relative;
+        overflow: hidden;
+      }
+      .item-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(196, 160, 82, 0.5) 40%,
+          rgba(196, 160, 82, 0.6) 50%,
+          rgba(196, 160, 82, 0.5) 60%,
+          transparent
+        );
+        border-radius: 10px 0 0 10px;
+        opacity: 0;
+        transition: opacity 0.22s;
+      }
+      .item-card:hover {
+        background: rgba(196, 160, 82, 0.04);
+        border-color: rgba(196, 160, 82, 0.18);
+      }
+      .item-card:hover::before {
+        opacity: 1;
+      }
+
+      .item-card__thumb {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: var(--bleu-inter);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .item-card__thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s;
+      }
+      .item-card:hover .item-card__thumb img {
+        transform: scale(1.08);
+      }
+
+      .item-card__body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .item-card__status-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 2px;
+      }
+      .item-card__title {
+        font-family: var(--f-editorial);
+        font-size: 0.8rem;
+        font-style: italic;
+        font-weight: 700;
+        color: var(--or-titre);
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-card__meta {
+        font-size: 0.62rem;
+        color: rgba(232, 232, 232, 0.38);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .item-card__meta-dot {
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        background: rgba(232, 232, 232, 0.22);
+        flex-shrink: 0;
+      }
+      .item-card__film {
+        font-size: 0.6rem;
+        color: rgba(196, 160, 82, 0.55);
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-card__actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      /* ── BADGE STATUT ── */
+      .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+      .badge-status::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .badge-status--approved {
+        background: rgba(10, 34, 20, 0.62);
+        border-color: rgba(61, 170, 114, 0.42);
+        color: var(--vert-clair);
+      }
+      .badge-status--approved::before {
+        background: var(--vert-clair);
+      }
+      .badge-status--pending {
+        background: rgba(58, 32, 4, 0.62);
+        border-color: rgba(212, 130, 10, 0.42);
+        color: var(--orange-clair);
+      }
+      .badge-status--pending::before {
+        background: var(--orange-clair);
+        box-shadow: 0 0 5px rgba(240, 160, 48, 0.6);
+        animation: pulse-dot 1.8s ease infinite;
+      }
+      .badge-status--rejected {
+        background: rgba(44, 10, 8, 0.62);
+        border-color: rgba(194, 48, 24, 0.42);
+        color: #e84020;
+      }
+      .badge-status--rejected::before {
+        background: #e84020;
+      }
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+
+      /* ── BOUTONS action ── */
+      .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border: 1px solid;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .btn-action--edit {
+        background: rgba(196, 160, 82, 0.06);
+        border-color: rgba(196, 160, 82, 0.25);
+        color: var(--or-titre);
+      }
+      .btn-action--edit:hover {
+        background: rgba(196, 160, 82, 0.14);
+        border-color: rgba(196, 160, 82, 0.55);
+      }
+      .btn-action--delete {
+        background: rgba(194, 48, 24, 0.06);
+        border-color: rgba(194, 48, 24, 0.25);
+        color: #e84020;
+      }
+      .btn-action--delete:hover {
+        background: rgba(194, 48, 24, 0.14);
+        border-color: rgba(194, 48, 24, 0.55);
+      }
+      .btn-action--view {
+        background: rgba(65, 90, 119, 0.08);
+        border-color: rgba(65, 90, 119, 0.28);
+        color: rgba(140, 175, 235, 0.85);
+      }
+      .btn-action--view:hover {
+        background: rgba(65, 90, 119, 0.18);
+        border-color: rgba(65, 90, 119, 0.55);
+        color: rgba(140, 175, 235, 1);
+      }
+
+      /* ── CARD FILM ── */
+      .item-film {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        gap: 12px;
+        transition: all 0.22s;
+        position: relative;
+        overflow: hidden;
+      }
+      .item-film::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(107, 79, 160, 0.5) 40%,
+          rgba(107, 79, 160, 0.65) 50%,
+          rgba(107, 79, 160, 0.5) 60%,
+          transparent
+        );
+        border-radius: 10px 0 0 10px;
+        opacity: 0;
+        transition: opacity 0.22s;
+      }
+      .item-film:hover {
+        background: rgba(107, 79, 160, 0.04);
+        border-color: rgba(107, 79, 160, 0.22);
+      }
+      .item-film:hover::before {
+        opacity: 1;
+      }
+
+      .item-film__poster {
+        width: 44px;
+        height: 62px;
+        border-radius: 6px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: var(--bleu-inter);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .item-film__poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .item-film__body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .item-film__title {
+        font-family: var(--f-title);
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--argent);
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-film__meta {
+        font-size: 0.6rem;
+        color: rgba(232, 232, 232, 0.38);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .item-film__actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      /* ── CARD AVIS ── */
+      .item-avis {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: all 0.22s;
+        position: relative;
+        overflow: hidden;
+      }
+      .item-avis::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(61, 170, 114, 0.5) 40%,
+          rgba(61, 170, 114, 0.65) 50%,
+          rgba(61, 170, 114, 0.5) 60%,
+          transparent
+        );
+        border-radius: 10px 0 0 10px;
+        opacity: 0;
+        transition: opacity 0.22s;
+      }
+      .item-avis:hover {
+        background: rgba(61, 170, 114, 0.03);
+        border-color: rgba(61, 170, 114, 0.18);
+      }
+      .item-avis:hover::before {
+        opacity: 1;
+      }
+
+      .item-avis__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .item-avis__ref {
+        font-family: var(--f-title);
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: rgba(196, 160, 82, 0.55);
+      }
+      .item-avis__stars {
+        display: flex;
+        gap: 2px;
+        font-size: 0.78rem;
+      }
+      .item-avis__stars .s {
+        color: var(--dore-clair);
+      }
+      .item-avis__stars .se {
+        color: rgba(196, 160, 82, 0.18);
+      }
+      .item-avis__target {
+        font-family: var(--f-title);
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--argent);
+        line-height: 1.3;
+      }
+      .item-avis__recette {
+        font-size: 0.6rem;
+        color: rgba(196, 160, 82, 0.55);
+        font-style: italic;
+      }
+      .item-avis__film {
+        font-size: 0.58rem;
+        color: rgba(232, 232, 232, 0.32);
+      }
+      .item-avis__comment {
+        font-family: var(--f-editorial);
+        font-size: 0.72rem;
+        font-style: italic;
+        color: rgba(232, 232, 232, 0.55);
+        line-height: 1.55;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .item-avis__foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 6px;
+        border-top: 1px solid rgba(65, 90, 119, 0.12);
+      }
+      .item-avis__date {
+        font-size: 0.52rem;
+        color: rgba(232, 232, 232, 0.22);
+        font-weight: 300;
+      }
+
+      /* Tag genre */
+      .tag-genre {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: rgba(30, 16, 62, 0.65);
+        border: 1px solid rgba(107, 79, 160, 0.4);
+        color: rgba(180, 155, 228, 0.92);
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .tag-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: rgba(45, 22, 6, 0.6);
+        border: 1px solid rgba(201, 123, 58, 0.4);
+        color: rgba(230, 160, 85, 0.92);
+        font-family: var(--f-title);
+        font-size: 0.44rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      /* Section header avis */
+      .avis-section-label {
+        padding: 8px 12px 4px;
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avis-section-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(196, 160, 82, 0.08);
+      }
+
+      /* Tooltip difficulté */
+      .diff {
+        font-size: 0.58rem;
+        color: rgba(232, 232, 232, 0.38);
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      /* ── Footer colonne ── */
+      .col__foot {
+        padding: 12px 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(10, 18, 30, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .col__foot-link {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.45);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: all 0.2s;
+        padding-bottom: 1px;
+      }
+      .col__foot-link:hover {
+        color: var(--or-titre);
+        border-bottom-color: rgba(196, 160, 82, 0.45);
+      }
+
+      /* Scrollbar firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(196, 160, 82, 0.14) transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- FAUSSE NAV -->
+    <nav class="fake-nav">
+      <span class="fake-nav__logo">CINÉ DÉLICES</span>
+      <div class="fake-nav__sep"></div>
+      <div class="fake-nav__user">
+        <div class="fake-nav__av">
+          <img
+            src="https://i.postimg.cc/yxGtqK0X/lucid_origin_Prompt_Leonardo_AI_Avatar_Cin%C3%A9_D%C3%A9lices_inspir%C3%A9_Matrix_Create_a_cinematic_0.jpg"
+            alt="Seb"
+          />
+        </div>
+        Seb le Fourbe
+      </div>
+    </nav>
+
+    <!-- ONGLETS PROFIL -->
+    <div class="profile-tabs">
+      <div class="profile-tabs__inner">
+        <button class="ptab">Vue d'ensemble</button>
+        <button class="ptab">Profil</button>
+        <button class="ptab">Palmarès</button>
+        <button class="ptab">Favoris</button>
+        <button class="ptab active">
+          Créations
+          <span class="ptab__count">11</span>
+        </button>
+        <button class="ptab">Contributions</button>
+      </div>
+    </div>
+
+    <!-- PAGE -->
+    <div class="page">
+      <!-- HERO -->
+      <div class="creations-hero">
+        <p class="creations-hero__eyebrow">Mon Compte</p>
+        <h1 class="creations-hero__title">Mes <span>Créations</span></h1>
+        <div class="creations-hero__rule"></div>
+      </div>
+
+      <!-- GRILLE 3 COLONNES -->
+      <div class="creations-grid">
+        <!-- ══════════════════════
+         COLONNE 1 — RECETTES
+    ══════════════════════ -->
+        <div class="col">
+          <div class="col__head">
+            <div class="col__title-wrap">
+              <div class="col__icon">🍽️</div>
+              <span class="col__title">Mes Recettes</span>
+            </div>
+            <span class="col__count">6</span>
+          </div>
+
+          <div class="col__search">
+            <div class="search-wrap">
+              <input
+                class="search-input"
+                type="text"
+                placeholder="Filtrer mes recettes…"
+              />
+            </div>
+          </div>
+
+          <div class="col__filters">
+            <button class="filter-pill active">Toutes</button>
+            <button class="filter-pill">
+              <span
+                class="filter-pill__dot"
+                style="background: var(--vert-clair)"
+              ></span>
+              Validées
+            </button>
+            <button class="filter-pill">
+              <span
+                class="filter-pill__dot"
+                style="background: var(--orange-clair)"
+              ></span>
+              En attente
+            </button>
+            <button class="filter-pill">
+              <span class="filter-pill__dot" style="background: #e84020"></span>
+              Refusées
+            </button>
+          </div>
+
+          <div class="col__body">
+            <!-- Recette 1 -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&q=80"
+                  alt="Bol du Temple Perdu"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validée</span
+                  >
+                  <span class="tag-cat">Plat</span>
+                </div>
+                <div class="item-card__title">Le Bol du Temple Perdu</div>
+                <div class="item-card__meta">
+                  <span>25 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Moyenne</span>
+                </div>
+                <div class="item-card__film">
+                  🎬 Indiana Jones et les Aventuriers de l'Arche Perdue
+                </div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Recette 2 -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=200&q=80"
+                  alt="Foie et Fèves"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validée</span
+                  >
+                  <span class="tag-cat">Plat</span>
+                </div>
+                <div class="item-card__title">
+                  Le Foie et ses Fèves au Beurre
+                </div>
+                <div class="item-card__meta">
+                  <span>60 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Facile</span>
+                </div>
+                <div class="item-card__film">🎬 Le Silence des Agneaux</div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Recette 3 -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=200&q=80"
+                  alt="Carbonnade"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validée</span
+                  >
+                  <span class="tag-cat">Plat</span>
+                </div>
+                <div class="item-card__title">Carbonnade Flamande</div>
+                <div class="item-card__meta">
+                  <span>220 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Facile</span>
+                </div>
+                <div class="item-card__film">🎬 Bienvenue chez les Ch'tis</div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Recette 4 — En attente -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&q=80"
+                  alt="Bièraubeurre"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--pending"
+                    >En attente</span
+                  >
+                  <span class="tag-cat">Dessert</span>
+                </div>
+                <div class="item-card__title">Bièraubeurre</div>
+                <div class="item-card__meta">
+                  <span>15 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Facile</span>
+                </div>
+                <div class="item-card__film">🎬 Harry Potter</div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Recette 5 — Refusée -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=200&q=80"
+                  alt="Pillule Rouge"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--rejected"
+                    >Refusée</span
+                  >
+                  <span class="tag-cat">Dessert</span>
+                </div>
+                <div class="item-card__title">La Pilule Rouge</div>
+                <div class="item-card__meta">
+                  <span>10 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Facile</span>
+                </div>
+                <div class="item-card__film">🎬 Matrix</div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Recette 6 -->
+            <div class="item-card">
+              <div class="item-card__thumb">
+                <img
+                  src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=200&q=80"
+                  alt="Tarte Mélasse"
+                />
+              </div>
+              <div class="item-card__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validée</span
+                  >
+                  <span class="tag-cat">Dessert</span>
+                </div>
+                <div class="item-card__title">La Tarte à la Mélasse</div>
+                <div class="item-card__meta">
+                  <span>45 min</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Facile</span>
+                </div>
+                <div class="item-card__film">🎬 Harry Potter</div>
+                <div class="item-card__actions">
+                  <a class="btn-action btn-action--edit" href="#">✎ Éditer</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /col__body -->
+
+          <div class="col__foot">
+            <a class="col__foot-link" href="#">+ Ajouter une recette</a>
+          </div>
+        </div>
+        <!-- /col recettes -->
+
+        <!-- ══════════════════════
+         COLONNE 2 — FILMS
+    ══════════════════════ -->
+        <div class="col">
+          <div class="col__head">
+            <div class="col__title-wrap">
+              <div class="col__icon">🎬</div>
+              <span class="col__title">Mes Films</span>
+            </div>
+            <span class="col__count">2</span>
+          </div>
+
+          <div class="col__search">
+            <div class="search-wrap">
+              <input
+                class="search-input"
+                type="text"
+                placeholder="Filtrer mes films…"
+              />
+            </div>
+          </div>
+
+          <div class="col__filters">
+            <button class="filter-pill active">Tous</button>
+            <button class="filter-pill">
+              <span
+                class="filter-pill__dot"
+                style="background: var(--vert-clair)"
+              ></span>
+              Validés
+            </button>
+            <button class="filter-pill">
+              <span
+                class="filter-pill__dot"
+                style="background: var(--orange-clair)"
+              ></span>
+              En attente
+            </button>
+          </div>
+
+          <div class="col__body">
+            <!-- Film 1 -->
+            <div class="item-film">
+              <div class="item-film__poster">
+                <img
+                  src="https://image.tmdb.org/t/p/w92/tQtWZFRLkvfvfL7TIXU5HmtCvHQ.jpg"
+                  alt="Indiana Jones"
+                  onerror="this.parentElement.style.background = '#1b263b'"
+                />
+              </div>
+              <div class="item-film__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validé</span
+                  >
+                  <span class="tag-genre">Aventure</span>
+                </div>
+                <div class="item-film__title">
+                  Indiana Jones et les Aventuriers de l'Arche Perdue
+                </div>
+                <div class="item-film__meta">
+                  <span>1981</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Steven Spielberg</span>
+                </div>
+                <div class="item-film__actions">
+                  <a class="btn-action btn-action--view" href="#">👁 Voir</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Film 2 -->
+            <div class="item-film">
+              <div class="item-film__poster">
+                <img
+                  src="https://image.tmdb.org/t/p/w92/5onbgSuQyOh6YXJiQzJFCJtNDgE.jpg"
+                  alt="Harry Potter"
+                  onerror="this.parentElement.style.background = '#1b263b'"
+                />
+              </div>
+              <div class="item-film__body">
+                <div class="item-card__status-row">
+                  <span class="badge-status badge-status--approved"
+                    >Validé</span
+                  >
+                  <span class="tag-genre">Fantastique</span>
+                </div>
+                <div class="item-film__title">
+                  Harry Potter à l'École des Sorciers
+                </div>
+                <div class="item-film__meta">
+                  <span>2001</span>
+                  <span class="item-card__meta-dot"></span>
+                  <span>Chris Columbus</span>
+                </div>
+                <div class="item-film__actions">
+                  <a class="btn-action btn-action--view" href="#">👁 Voir</a>
+                  <a class="btn-action btn-action--delete" href="#"
+                    >✕ Supprimer</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /col__body films -->
+
+          <div class="col__foot">
+            <a class="col__foot-link" href="#">+ Contribuer un film</a>
+          </div>
+        </div>
+        <!-- /col films -->
+
+        <!-- ══════════════════════
+         COLONNE 3 — AVIS
+    ══════════════════════ -->
+        <div class="col">
+          <div class="col__head">
+            <div class="col__title-wrap">
+              <div class="col__icon">💬</div>
+              <span class="col__title">Mes Avis</span>
+            </div>
+            <span class="col__count">3</span>
+          </div>
+
+          <div class="col__search">
+            <div class="search-wrap">
+              <input
+                class="search-input"
+                type="text"
+                placeholder="Filtrer mes avis…"
+              />
+            </div>
+          </div>
+
+          <div class="col__filters">
+            <button class="filter-pill active">Tous</button>
+            <button class="filter-pill">
+              <span
+                class="filter-pill__dot"
+                style="background: var(--dore-clair)"
+              ></span>
+              5 ★
+            </button>
+            <button class="filter-pill">Sur mes recettes</button>
+            <button class="filter-pill">Sur autres</button>
+          </div>
+
+          <div class="col__body">
+            <!-- Label section : avis laissés par moi -->
+            <div class="avis-section-label">Avis que j'ai laissés</div>
+
+            <!-- Avis 1 -->
+            <div class="item-avis">
+              <div class="item-avis__head">
+                <span class="item-avis__ref">Avis #18</span>
+                <div class="item-avis__stars">
+                  <span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span>
+                </div>
+              </div>
+              <div>
+                <div class="item-avis__recette">Le Bol du Temple Perdu</div>
+                <div class="item-avis__film">
+                  🎬 Indiana Jones et les Aventuriers de l'Arche Perdue
+                </div>
+              </div>
+              <div class="item-avis__comment">
+                "J'adore cette recette, elle me rappelle tellement le film !"
+              </div>
+              <div class="item-avis__foot">
+                <span class="item-avis__date">15 mars 2026</span>
+                <a class="btn-action btn-action--delete" href="#"
+                  >✕ Supprimer</a
+                >
+              </div>
+            </div>
+
+            <!-- Avis 2 -->
+            <div class="item-avis">
+              <div class="item-avis__head">
+                <span class="item-avis__ref">Avis #12</span>
+                <div class="item-avis__stars">
+                  <span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span>
+                </div>
+              </div>
+              <div>
+                <div class="item-avis__recette">Carbonnade Flamande</div>
+                <div class="item-avis__film">🎬 Bienvenue chez les Ch'tis</div>
+              </div>
+              <div class="item-avis__comment">
+                "Une merveille, recette parfaitement équilibrée."
+              </div>
+              <div class="item-avis__foot">
+                <span class="item-avis__date">13 mars 2026</span>
+                <a class="btn-action btn-action--delete" href="#"
+                  >✕ Supprimer</a
+                >
+              </div>
+            </div>
+
+            <!-- Avis 3 -->
+            <div class="item-avis">
+              <div class="item-avis__head">
+                <span class="item-avis__ref">Avis #3</span>
+                <div class="item-avis__stars">
+                  <span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span><span class="s">★</span
+                  ><span class="se">★</span>
+                </div>
+              </div>
+              <div>
+                <div class="item-avis__recette">La Tarte à la Mélasse</div>
+                <div class="item-avis__film">🎬 Harry Potter</div>
+              </div>
+              <div class="item-avis__comment">
+                "Recette moyenne mais le concept est sympa."
+              </div>
+              <div class="item-avis__foot">
+                <span class="item-avis__date">10 mars 2026</span>
+                <a class="btn-action btn-action--delete" href="#"
+                  >✕ Supprimer</a
+                >
+              </div>
+            </div>
+
+            <!-- Label section : avis reçus sur mes recettes -->
+            <div class="avis-section-label" style="margin-top: 8px">
+              Avis reçus sur mes recettes
+            </div>
+
+            <!-- Avis reçu 1 -->
+            <div
+              class="item-avis"
+              style="border-color: rgba(196, 160, 82, 0.1)"
+            >
+              <div class="item-avis__head">
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <div
+                    style="
+                      width: 26px;
+                      height: 26px;
+                      border-radius: 50%;
+                      overflow: hidden;
+                      border: 1.5px solid rgba(196, 160, 82, 0.28);
+                      flex-shrink: 0;
+                      background: rgba(196, 160, 82, 0.08);
+                    "
+                  >
+                    <img
+                      src="https://i.pravatar.cc/50?img=12"
+                      alt="Marie"
+                      style="width: 100%; height: 100%; object-fit: cover"
+                    />
+                  </div>
+                  <span
+                    style="
+                      font-family: var(--f-title);
+                      font-size: 0.62rem;
+                      font-weight: 600;
+                      color: var(--argent);
+                    "
+                    >Marie D.</span
+                  >
+                </div>
+                <div class="item-avis__stars">
+                  <span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span><span class="s">★</span
+                  ><span class="s">★</span>
+                </div>
+              </div>
+              <div>
+                <div class="item-avis__recette">
+                  Sur : Le Bol du Temple Perdu
+                </div>
+              </div>
+              <div class="item-avis__comment">
+                "Incroyable recette, je l'ai faite deux fois cette semaine !"
+              </div>
+              <div class="item-avis__foot">
+                <span class="item-avis__date">14 mars 2026</span>
+                <a class="btn-action btn-action--view" href="#">👁 Voir</a>
+              </div>
+            </div>
+          </div>
+          <!-- /col__body avis -->
+
+          <div class="col__foot">
+            <span
+              style="
+                font-family: var(--f-title);
+                font-size: 0.52rem;
+                color: rgba(232, 232, 232, 0.2);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+              "
+            >
+              Les avis sont liés aux recettes consultées
+            </span>
+          </div>
+        </div>
+        <!-- /col avis -->
+      </div>
+      <!-- /creations-grid -->
+    </div>
+    <!-- /page -->
+  </body>
+</html>

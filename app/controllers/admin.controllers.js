@@ -51,7 +51,7 @@ const adminController = {
         validatedNotices,
       } = await loadAdminData();
       const pendingProfilePhotos = users.filter(
-        (user) => user.picture && user.picture_status === "pending"
+        (user) => user.pending_picture && user.picture_status === "pending"
       );
       const pendingBanners = users.filter(
         (user) => user.banner_image && user.banner_status === "pending"
@@ -73,11 +73,10 @@ const adminController = {
         validatedRecipes,
         validatedNotices,
         success: req.query.success,
-        role: req.userRole,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -101,7 +100,7 @@ const adminController = {
         validatedNotices,
       } = await loadAdminData();
       const pendingProfilePhotos = users.filter(
-        (user) => user.picture && user.picture_status === "pending"
+        (user) => user.pending_picture && user.picture_status === "pending"
       );
 
       const recipeId = req.params.id;
@@ -123,11 +122,10 @@ const adminController = {
         validatedNotices,
         upRecipe,
         success: req.query.success,
-        role: req.userRole,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -150,7 +148,7 @@ const adminController = {
         validatedNotices,
       } = await loadAdminData();
       const pendingProfilePhotos = users.filter(
-        (user) => user.picture && user.picture_status === "pending"
+        (user) => user.pending_picture && user.picture_status === "pending"
       );
       const movieId = req.params.id;
       const upMovie = await Movie.findByPk(movieId);
@@ -177,10 +175,9 @@ const adminController = {
         validatedNotices,
         upMovie: enrichedUpMovie,
         success: req.query.success,
-        role: req.userRole,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -210,7 +207,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation du film"
       );
     }
@@ -263,7 +259,7 @@ const adminController = {
         ...results,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole, "Erreur migration images TMDB");
+      return renderServerError(res, error, "Erreur migration images TMDB");
     }
   },
 
@@ -290,7 +286,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus du film."
       );
     }
@@ -305,7 +300,7 @@ const adminController = {
 
       const movie = await Movie.findByPk(movieId);
       if (!movie) {
-        return renderNotFound(res, "Film", req.userRole);
+        return renderNotFound(res, "Film");
       }
 
       if (movie.delete_request_status !== "pending") {
@@ -329,7 +324,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la suppression du film."
       );
     }
@@ -356,7 +350,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de suppression."
       );
     }
@@ -393,7 +386,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de modification du film."
       );
     }
@@ -422,7 +414,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de modification du film."
       );
     }
@@ -476,7 +467,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de modification de la recette."
       );
     }
@@ -520,7 +510,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de modification de la recette."
       );
     }
@@ -554,7 +543,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de modification de l'avis."
       );
     }
@@ -582,7 +570,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de modification de l'avis."
       );
     }
@@ -606,7 +593,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la suppression de l'avis."
       );
     }
@@ -632,7 +618,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de suppression de l'avis."
       );
     }
@@ -670,7 +655,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de la recette"
       );
     }
@@ -682,8 +666,7 @@ const adminController = {
         return res.status(403).render("error", {
           error: "403",
           message: "Accès interdit.",
-          role: req.userRole,
-        });
+          });
       }
 
       const recipeId = parseInt(req.params.id, 10);
@@ -693,7 +676,7 @@ const adminController = {
 
       const recipe = await Recipe.findByPk(recipeId);
       if (!recipe) {
-        return renderNotFound(res, "Recette", req.userRole);
+        return renderNotFound(res, "Recette");
       }
 
       const {
@@ -752,7 +735,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la mise à jour de la recette."
       );
     }
@@ -780,7 +762,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de la recette"
       );
     }
@@ -794,7 +775,7 @@ const adminController = {
       // Vérifier si l'utilisateur existe
       const user = await User.findByPk(userId);
       if (!user) {
-        return renderNotFound(res, "Utilisateur", req.userRole);
+        return renderNotFound(res, "Utilisateur");
       }
 
       // Suppression en cascade des données associées (ordre important)
@@ -811,7 +792,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la suppression de l'utilisateur."
       );
     }
@@ -820,8 +800,15 @@ const adminController = {
   async validateUserPhoto(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);
+      const user = await User.findByPk(userId);
+      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
+
+      // Supprimer l'ancienne photo validée si elle existe
+      if (user.picture) unlinkIfExists(user.picture);
+
+      // Promouvoir pending_picture → picture
       await User.update(
-        { picture_status: "approved" },
+        { picture: user.pending_picture, pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
       );
       res.redirect("/admin?success=user_photo_approved");
@@ -829,7 +816,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de la photo."
       );
     }
@@ -838,8 +824,13 @@ const adminController = {
   async rejectUserPhoto(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);
+      const user = await User.findByPk(userId);
+      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
+
+      // Supprimer la photo en attente et restaurer le statut sans toucher à picture
+      if (user.pending_picture) unlinkIfExists(user.pending_picture);
       await User.update(
-        { picture: null, picture_status: "rejected" },
+        { pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
       );
       res.redirect("/admin?success=user_photo_rejected");
@@ -847,7 +838,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de la photo."
       );
     }
@@ -865,7 +855,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de la bannière."
       );
     }
@@ -890,7 +879,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de la bannière."
       );
     }
@@ -905,7 +893,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors de la validation de l'avis."
       );
     }
@@ -921,7 +908,6 @@ const adminController = {
       return renderServerError(
         res,
         error,
-        req.userRole,
         "Erreur lors du refus de l'avis."
       );
     }

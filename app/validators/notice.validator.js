@@ -36,7 +36,6 @@ function validateNoticeCreate(req, res, next) {
     return res.status(400).render("error", {
       error: "400",
       message: `${error.details[0].message}`,
-      role: req.userRole,
     });
   }
   next();
@@ -59,7 +58,6 @@ function validateNoticeUpdate(req, res, next) {
     return res.status(400).render("error", {
       error: "400",
       message: `${error.details[0].message}`,
-      role: req.userRole,
     });
   }
   next();

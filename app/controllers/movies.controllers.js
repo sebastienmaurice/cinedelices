@@ -14,6 +14,7 @@ import {
   enrichMovieWithImagePaths,
 } from "../utils/movie-image-helper.js";
 import { renderServerError } from "../utils/error-handler.js";
+import tmdbGenreMap from "../utils/tmdb-genre-map.js";
 import "dotenv/config";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -161,14 +162,12 @@ const moviesController = {
       res.render("movies", {
         movies: enrichedMovies,
         selectedGenre: genre || "tous",
-        role: req.userRole,
       });
     } catch (error) {
       console.error(error);
       res.status(500).render("error", {
         error: "500",
         message: "Erreur serveur.",
-        role: req.userRole,
       });
     }
   },
@@ -272,29 +271,6 @@ const moviesController = {
           // Recherche intelligente TMDB avec variantes (comme dans tmdb.controllers.js)
           const searchTerms = extractKeywords(searchTerm);
 
-          // Mapper les genres TMDB (commun pour films et séries)
-          const genreMap = {
-            28: "action",
-            12: "aventure",
-            16: "animation",
-            35: "comédie",
-            80: "crime",
-            99: "documentaire",
-            18: "drame",
-            10751: "familial",
-            14: "fantastique",
-            36: "histoire",
-            27: "horreur",
-            10402: "musique",
-            9648: "mystère",
-            10749: "romance",
-            878: "science-fiction",
-            10770: "téléfilm",
-            53: "thriller",
-            10752: "guerre",
-            37: "western",
-          };
-
           // Fonction helper pour rechercher sur TMDB
           const searchTmdb = async (type, query) => {
             const endpoint = type === "serie" ? "tv" : "movie";
@@ -374,7 +350,7 @@ const moviesController = {
                   ? result.genre_ids[0]
                   : null;
               const genre =
-                genreId && genreMap[genreId] ? genreMap[genreId] : "autre";
+                genreId && tmdbGenreMap[genreId] ? tmdbGenreMap[genreId] : "autre";
 
               const tmdbMovie = {
                 tmdb_id: result.id,
@@ -431,7 +407,7 @@ const moviesController = {
                   ? result.genre_ids[0]
                   : null;
               const genre =
-                genreId && genreMap[genreId] ? genreMap[genreId] : "autre";
+                genreId && tmdbGenreMap[genreId] ? tmdbGenreMap[genreId] : "autre";
 
               const tmdbSerie = {
                 tmdb_id: result.id,
@@ -657,40 +633,17 @@ const moviesController = {
       tmdbData = await response.json();
       contentType = contentType || (endpoint === "tv" ? "serie" : "film");
 
-      // Mapper les genres TMDB
-      const genreMap = {
-        28: "action",
-        12: "aventure",
-        16: "animation",
-        35: "comédie",
-        80: "crime",
-        99: "documentaire",
-        18: "drame",
-        10751: "familial",
-        14: "fantastique",
-        36: "histoire",
-        27: "horreur",
-        10402: "musique",
-        9648: "mystère",
-        10749: "romance",
-        878: "science-fiction",
-        10770: "téléfilm",
-        53: "thriller",
-        10752: "guerre",
-        37: "western",
-      };
-
       // Extraire le premier genre (ou "autre" si aucun)
       const genreId =
         tmdbData.genres && tmdbData.genres.length > 0
           ? tmdbData.genres[0].id
           : null;
-      const genre = genreId && genreMap[genreId] ? genreMap[genreId] : "autre";
+      const genre = genreId && tmdbGenreMap[genreId] ? tmdbGenreMap[genreId] : "autre";
 
       // Extraire tous les genres (array)
       const genresArray =
         tmdbData.genres && tmdbData.genres.length > 0
-          ? tmdbData.genres.map((g) => genreMap[g.id] || g.name.toLowerCase())
+          ? tmdbData.genres.map((g) => tmdbGenreMap[g.id] || g.name.toLowerCase())
           : ["autre"];
 
       // Formater la réponse selon le type (film ou série)
@@ -850,14 +803,12 @@ const moviesController = {
         movies: enrichedMovies,
         selectedGenre,
         genres: uniqueGenres,
-        role: req.userRole,
-        userId: req.userId || null,
         totalMovies,
         totalRecipes,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 

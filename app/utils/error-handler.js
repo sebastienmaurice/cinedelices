@@ -17,23 +17,17 @@
  *
  * @param {Object} res - Objet response Express
  * @param {string} resourceType - Type de ressource (ex: "Film", "Recette", "Utilisateur")
- * @param {string} userRole - Rôle de l'utilisateur (pour l'affichage conditionnel dans la vue)
  * @returns {Object} - Réponse HTTP 404 avec rendu de la vue error
  *
  * @example
  * if (!movie) {
- *   return renderNotFound(res, "Film", req.userRole);
+ *   return renderNotFound(res, "Film");
  * }
  */
-export function renderNotFound(
-  res,
-  resourceType = "Ressource",
-  userRole = null
-) {
+export function renderNotFound(res, resourceType = "Ressource") {
   return res.status(404).render("error", {
     error: "404",
     message: `${resourceType} introuvable.`,
-    role: userRole,
   });
 }
 
@@ -42,7 +36,6 @@ export function renderNotFound(
  *
  * @param {Object} res - Objet response Express
  * @param {Error} error - L'erreur capturée (optionnel, pour le logging)
- * @param {string} userRole - Rôle de l'utilisateur (pour l'affichage conditionnel dans la vue)
  * @param {string} customMessage - Message d'erreur personnalisé (optionnel)
  * @returns {Object} - Réponse HTTP 500 avec rendu de la vue error
  *
@@ -50,16 +43,10 @@ export function renderNotFound(
  * try {
  *   // code...
  * } catch (error) {
- *   return renderServerError(res, error, req.userRole);
+ *   return renderServerError(res, error);
  * }
  */
-export function renderServerError(
-  res,
-  error = null,
-  userRole = null,
-  customMessage = null
-) {
-  // Log l'erreur dans la console pour le debugging (si disponible)
+export function renderServerError(res, error = null, customMessage = null) {
   if (error) {
     console.error("Erreur serveur:", error);
   }
@@ -67,7 +54,6 @@ export function renderServerError(
   return res.status(500).render("error", {
     error: "500",
     message: customMessage || "Erreur serveur.",
-    role: userRole,
   });
 }
 
@@ -89,15 +75,10 @@ export function renderServerError(
  *   // ...
  * }, res, req.userRole);
  */
-export async function handleAsyncError(
-  asyncFn,
-  res,
-  userRole = null,
-  customMessage = null
-) {
+export async function handleAsyncError(asyncFn, res, customMessage = null) {
   try {
     return await asyncFn();
   } catch (error) {
-    return renderServerError(res, error, userRole, customMessage);
+    return renderServerError(res, error, customMessage);
   }
 }

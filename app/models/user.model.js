@@ -15,6 +15,7 @@ User.init({
   email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
   password: { type: DataTypes.STRING(255), allowNull: false },
   picture: { type: DataTypes.STRING(255) },
+  pending_picture: { type: DataTypes.STRING(255), allowNull: true },
   picture_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
   banner_image: { type: DataTypes.STRING(255) },
   banner_status: { type: DataTypes.STRING(20), defaultValue: "approved" },

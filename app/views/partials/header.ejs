@@ -81,10 +81,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Mon compte</span>
           </a>
-          <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-            <span>Se déconnecter</span>
-          </a>
+          <form action="/auth/logout" method="POST" style="margin:0">
+            <button type="submit" class="user-dropdown__item user-dropdown__item--logout">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+              <span>Se déconnecter</span>
+            </button>
+          </form>
         </div>
       </div>
       <% } %>
@@ -130,9 +132,33 @@
       <button type="button" class="mobile-drawer__btn-connect js-open-login">✦ Se connecter</button>
       <% } else { %>
       <a href="/auth/profil/<%= userId %>" class="mobile-drawer__btn-connect">✦ Mon profil</a>
-      <a href="/auth/logout" class="mobile-drawer__link mobile-drawer__link--logout">Se déconnecter</a>
+      <form action="/auth/logout" method="POST" style="margin:0">
+        <button type="submit" class="mobile-drawer__link mobile-drawer__link--logout">Se déconnecter</button>
+      </form>
       <% } %>
     </div>
+  </div>
+</div>
+
+<!-- ===================== SEARCH OVERLAY ===================== -->
+<div class="search-overlay" id="searchOverlay" aria-hidden="true" role="dialog" aria-label="Recherche">
+  <div class="search-overlay__backdrop" id="searchBackdrop"></div>
+  <div class="search-overlay__box">
+    <form class="search-overlay__inner" id="searchForm" action="/movies/search-advanced" method="GET">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input
+        type="text"
+        name="query"
+        class="search-overlay__input"
+        id="searchInput"
+        placeholder="Rechercher un film, une recette…"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+      />
+      <button type="button" class="search-overlay__close" id="searchClose" aria-label="Fermer">✕</button>
+    </form>
+    <p class="search-overlay__hint">Appuyez sur <kbd>Entrée</kbd> pour rechercher &nbsp;·&nbsp; <kbd>Échap</kbd> pour fermer</p>
   </div>
 </div>
 
@@ -321,6 +347,32 @@
       userDropdown?.closeDropdown();
       authDropdown?.closeDropdown();
     }
+  });
+
+  /* ── Search overlay ── */
+  const searchOverlay  = document.getElementById("searchOverlay");
+  const searchInput    = document.getElementById("searchInput");
+  const searchClose    = document.getElementById("searchClose");
+  const searchBackdrop = document.getElementById("searchBackdrop");
+  const searchBtn      = document.querySelector(".nav-btn-search");
+
+  function openSearch() {
+    searchOverlay.classList.add("is-open");
+    searchOverlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => searchInput?.focus(), 60);
+  }
+  function closeSearch() {
+    searchOverlay.classList.remove("is-open");
+    searchOverlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  searchBtn?.addEventListener("click", openSearch);
+  searchClose?.addEventListener("click", closeSearch);
+  searchBackdrop?.addEventListener("click", closeSearch);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && searchOverlay?.classList.contains("is-open")) closeSearch();
   });
 
   /* ── Boutons js-open-login / js-open-register ── */

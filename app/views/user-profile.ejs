@@ -75,10 +75,10 @@
                 alt="Avatar de <%= user.pseudo %>"
                 class="avatar-img"
               />
-              <% if (user.picture || user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
-              <span class="avatar-photo-status avatar-photo-status--<%= user.picture_status === 'pending' ? 'pending' : user.picture_status === 'rejected' ? 'rejected' : 'ok' %>">
+              <% if (user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
+              <span class="avatar-photo-status avatar-photo-status--<%= user.picture_status === 'pending' ? 'pending' : 'rejected' %>">
                 <span class="b-dot"></span>
-                <%= user.picture_status === 'pending' ? 'En attente' : user.picture_status === 'rejected' ? 'Refusée' : 'Vérifié' %>
+                <%= user.picture_status === 'pending' ? 'En attente' : 'Refusée' %>
               </span>
               <% } %>
               <div class="avatar-actions">
@@ -505,79 +505,63 @@
           <div class="creations-grid">
 
             <!-- ── RECETTES ── -->
-            <div class="creation-section">
-              <div class="creation-section__head">
-                <span class="creation-section__title">MES RECETTES (<%= userRecipes.length %>)</span>
+            <div class="col">
+              <div class="col__head">
+                <div class="col__title-wrap">
+                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                  <span class="col__title">Mes Recettes</span>
+                </div>
+                <span class="col__count"><%= userRecipes.length %></span>
               </div>
-              <div class="inline-filter">
-                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes recettes…" />
+              <div class="col__search">
+                <div class="search-wrap">
+                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes recettes…" />
+                </div>
               </div>
-              <div class="creation-list collections-section__list" id="collections-recipes-list">
+              <div class="col__filters">
+                <button class="filter-pill active" data-filter="all">Toutes</button>
+                <button class="filter-pill" data-filter="approved"><span class="filter-pill__dot" style="background:var(--vert-clair)"></span>Validées</button>
+                <button class="filter-pill" data-filter="pending"><span class="filter-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
+                <button class="filter-pill" data-filter="rejected"><span class="filter-pill__dot" style="background:#e84020"></span>Refusées</button>
+              </div>
+              <div class="col__body collections-section__list" id="collections-recipes-list">
                 <% if (userRecipes && userRecipes.length > 0) { %>
                   <% userRecipes.forEach(recipe => { %>
                   <article
-                    class="account-item ci-item"
+                    class="item-card account-item ci-item"
                     data-type="recipe"
                     data-id="<%= recipe.id %>"
                     data-name="<%= recipe.name %>"
                     data-category="<%= recipe.category %>"
                     data-time="<%= recipe.time %>"
                     data-difficulty="<%= recipe.difficulty %>"
+                    data-status="<%= recipe.status %>"
                     data-edit-status="<%= recipe.edit_status || 'none' %>"
+                    data-description="<%= recipe.description || '' %>"
+                    data-ingredients="<%= recipe.ingredients || '' %>"
+                    data-preparation="<%= recipe.preparation || '' %>"
                   >
-                    <div class="ci-top">
+                    <div class="item-card__thumb">
                       <% if (recipe.picture) { %>
-                      <img class="ci-thumb ci-thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <img src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
                       <% } else { %>
-                      <div class="ci-thumb ci-thumb--recipe ci-thumb--placeholder">🍽️</div>
+                      <div class="item-card__thumb--placeholder">🍽️</div>
                       <% } %>
-                      <div class="ci-info account-item__content">
-                        <div class="account-item__header">
-                          <span class="ci-title account-item__title"><%= recipe.name %></span>
-                          <span class="ci-status ci-status--<%= recipe.status === 'approved' ? 'ok' : recipe.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= recipe.status === 'approved' ? 'is-approved' : recipe.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                            <%= recipe.status === 'approved' ? 'Validé' : recipe.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                          </span>
-                        </div>
-                        <div class="ci-meta account-item__meta">
-                          <%= recipe.category %>
-                          <span class="ci-dot"></span>
-                          <%= recipe.time %> min
-                          <span class="ci-dot"></span>
-                          <%= recipe.difficulty %>
-                        </div>
-                        <% if (recipe.Movie) { %><p class="account-item__hint">Film : <%= recipe.Movie.title %></p><% } %>
-                        <% if (recipe.edit_status === 'pending') { %><p class="account-item__hint">Modification en attente de validation.</p><% } %>
-                      </div>
                     </div>
-                    <div class="ci-actions account-item__actions">
-                      <button class="ci-btn ci-btn--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>
-                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        Éditer
-                      </button>
-                      <button class="ci-btn ci-btn--del account-delete-btn">
-                        <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-                        Supprimer
-                      </button>
-                    </div>
-                    <div class="account-item__edit ci-edit-form">
-                      <div class="ci-ef-row">
-                        <div><label class="ci-ef-label">Titre</label><input class="ci-ef-input" type="text" name="name" value="<%= recipe.name %>" /></div>
-                        <div><label class="ci-ef-label">Catégorie</label><input class="ci-ef-input" type="text" name="category" value="<%= recipe.category %>" /></div>
+                    <div class="item-card__body">
+                      <div class="item-card__status-row account-item__header">
+                        <span class="badge-status badge-status--<%= recipe.status %> account-item__status is-<%= recipe.status %>">
+                          <%= recipe.status === 'approved' ? 'Validé' : recipe.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                        </span>
+                        <span class="tag-cat"><%= recipe.category %></span>
                       </div>
-                      <div class="ci-ef-row">
-                        <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" type="number" name="time" value="<%= recipe.time %>" /></div>
-                        <div><label class="ci-ef-label">Difficulté</label><input class="ci-ef-input" type="text" name="difficulty" value="<%= recipe.difficulty %>" /></div>
-                      </div>
-                      <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" name="description" rows="2"><%= recipe.description %></textarea></div>
-                      <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" name="ingredients" rows="3"><%= recipe.ingredients %></textarea></div>
-                      <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" name="preparation" rows="4"><%= recipe.preparation %></textarea></div>
-                      <div class="ci-ef-full">
-                        <label class="ci-ef-label account-item__file">Photo de la recette<input type="file" name="recipeImage" accept="image/*" /></label>
-                        <p class="account-item__preview">Aperçu : <span></span></p>
-                      </div>
-                      <div class="ci-ef-actions account-item__edit-actions">
-                        <button class="btn btn--primary btn--sm account-save-btn">Enregistrer</button>
-                        <button class="btn btn--ghost btn--sm account-cancel-btn">Annuler</button>
+                      <div class="item-card__title account-item__title"><%= recipe.name %></div>
+                      <div class="item-card__meta account-item__meta"><%= recipe.time %> min · <%= recipe.difficulty %></div>
+                      <% if (recipe.Movie) { %><div class="item-card__film account-item__hint">🎬 <%= recipe.Movie.title %></div><% } %>
+                      <% if (recipe.edit_status === 'pending') { %><p class="account-item__hint">Modification en attente de validation.</p><% } %>
+                      <div class="item-card__actions">
+                        <button class="btn-action btn-action--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>Éditer</button>
+                        <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
                       </div>
                     </div>
                   </article>
@@ -585,47 +569,60 @@
                 <% } else { %>
                   <p class="fav-empty account-empty">Aucune recette enregistrée pour le moment.</p>
                 <% } %>
+                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
               </div>
-              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
             <!-- ── FILMS ── -->
-            <div class="creation-section">
-              <div class="creation-section__head">
-                <span class="creation-section__title">MES FILMS (<%= userMovies.length %>)</span>
+            <div class="col">
+              <div class="col__head">
+                <div class="col__title-wrap">
+                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
+                  <span class="col__title">Mes Films</span>
+                </div>
+                <span class="col__count"><%= userMovies.length %></span>
               </div>
-              <div class="inline-filter">
-                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes films…" />
+              <div class="col__search">
+                <div class="search-wrap">
+                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes films…" />
+                </div>
               </div>
-              <div class="creation-list collections-section__list" id="collections-movies-list">
+              <div class="col__filters">
+                <button class="filter-pill active" data-filter="all">Tous</button>
+                <button class="filter-pill" data-filter="approved"><span class="filter-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
+                <button class="filter-pill" data-filter="pending"><span class="filter-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
+                <button class="filter-pill" data-filter="rejected"><span class="filter-pill__dot" style="background:#e84020"></span>Refusés</button>
+              </div>
+              <div class="col__body collections-section__list" id="collections-movies-list">
                 <% if (userMovies && userMovies.length > 0) { %>
                   <% userMovies.forEach(movie => { %>
                   <article
-                    class="account-item ci-item"
+                    class="item-film account-item ci-item"
                     data-type="movie"
                     data-id="<%= movie.id %>"
                     data-title="<%= movie.title %>"
                     data-year="<%= movie.year %>"
                     data-genre="<%= movie.genre %>"
-                    data-status="<%= movie.status === 'approved' ? 'validated' : 'draft' %>"
+                    data-status="<%= movie.status %>"
                   >
-                    <div class="ci-top">
+                    <div class="item-film__poster">
                       <% if (movie.cardPath || movie.picture) { %>
-                      <img class="ci-thumb" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                      <img src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
                       <% } else { %>
-                      <div class="ci-thumb ci-thumb--placeholder">🎬</div>
+                      <div class="item-film__poster--placeholder">🎬</div>
                       <% } %>
-                      <div class="ci-info account-item__content">
-                        <div class="account-item__header">
-                          <span class="ci-title account-item__title"><%= movie.title %></span>
-                          <span class="ci-status ci-status--<%= movie.status === 'approved' ? 'ok' : movie.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= movie.status === 'approved' ? 'is-approved' : movie.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                            <%= movie.status === 'approved' ? 'Validé' : movie.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                          </span>
-                        </div>
-                        <div class="ci-meta account-item__meta">
-                          <%= movie.year %>
-                          <% if (movie.genre) { %><span class="ci-dot"></span><%= movie.genre %><% } %>
-                        </div>
+                    </div>
+                    <div class="item-film__body">
+                      <div class="item-film__status-row account-item__header">
+                        <span class="badge-status badge-status--<%= movie.status %> account-item__status is-<%= movie.status %>">
+                          <%= movie.status === 'approved' ? 'Validé' : movie.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                        </span>
+                      </div>
+                      <div class="item-film__title account-item__title"><%= movie.title %></div>
+                      <div class="item-film__meta account-item__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></div>
+                      <div class="item-film__actions">
+                        <a href="/recipes-movie/<%= movie.id %>" class="btn-action btn-action--view">Voir</a>
+                        <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
                       </div>
                     </div>
                   </article>
@@ -633,65 +630,61 @@
                 <% } else { %>
                   <p class="fav-empty account-empty">Aucun film enregistré pour le moment.</p>
                 <% } %>
+                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
               </div>
-              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
             <!-- ── AVIS ── -->
-            <div class="creation-section">
-              <div class="creation-section__head">
-                <span class="creation-section__title">MES AVIS (<%= userNoticesCount %>)</span>
+            <div class="col">
+              <div class="col__head">
+                <div class="col__title-wrap">
+                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                  <span class="col__title">Mes Avis</span>
+                </div>
+                <span class="col__count"><%= userNoticesCount %></span>
               </div>
-              <div class="inline-filter">
-                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes avis…" />
+              <div class="col__search">
+                <div class="search-wrap">
+                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes avis…" />
+                </div>
               </div>
-              <div class="creation-list collections-section__list" id="collections-notices-list">
+              <div class="col__body collections-section__list" id="collections-notices-list">
                 <% if (userNotices && userNotices.length > 0) { %>
                   <% userNotices.forEach(notice => { %>
                   <article
-                    class="account-item account-item--notice ci-item"
+                    class="item-avis account-item account-item--notice ci-item"
                     data-type="notice"
                     data-id="<%= notice.id %>"
                     data-delete-request="<%= notice.delete_request_status || 'none' %>"
                   >
-                    <div class="ci-top">
-                      <div class="ci-info account-item__content">
-                        <div class="account-item__header">
-                          <span class="ci-title account-item__title">Avis #<%= notice.id %></span>
-                          <span class="ci-status ci-status--<%= notice.status === 'approved' ? 'ok' : notice.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= notice.status === 'approved' ? 'is-approved' : notice.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                            <%= notice.status === 'approved' ? 'Validé' : notice.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                          </span>
-                        </div>
-                        <div class="ci-meta account-item__meta">
-                          <%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %>
-                          <span class="ci-dot"></span>
-                          <span class="ci-note"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <%= notice.quote %>/5</span>
-                        </div>
-                        <% if (notice.Recipe) { %>
-                        <p class="account-item__hint">
-                          Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a>
-                          <% if (notice.Recipe.Movie) { %> · Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a><% } %>
-                        </p>
-                        <% } %>
-                        <p class="account-item__text" style="font-size:.65rem;color:rgba(232,232,232,.5);margin-top:4px;line-height:1.5;"><%= notice.content %></p>
-                        <% if (notice.delete_request_status === 'pending') { %>
-                        <p class="account-item__hint">Suppression en attente de validation admin.</p>
-                        <% } %>
-                      </div>
+                    <div class="item-avis__head account-item__header">
+                      <span class="badge-status badge-status--<%= notice.status %> account-item__status is-<%= notice.status %>">
+                        <%= notice.status === 'approved' ? 'Validé' : notice.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                      </span>
+                      <span class="item-avis__stars"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <%= notice.quote %>/5</span>
                     </div>
-                    <div class="ci-actions account-item__actions">
-                      <button class="ci-btn ci-btn--del account-delete-btn" <%= notice.delete_request_status === 'pending' ? 'disabled' : '' %>>
-                        <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-                        Supprimer
-                      </button>
+                    <% if (notice.Recipe) { %>
+                    <div class="item-avis__recette account-item__hint">
+                      Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a>
+                      <% if (notice.Recipe.Movie) { %> · Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a><% } %>
+                    </div>
+                    <% } %>
+                    <p class="item-avis__comment account-item__text"><%= notice.content %></p>
+                    <div class="item-avis__foot">
+                      <span class="item-avis__date account-item__meta"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
+                      <% if (notice.delete_request_status === 'pending') { %>
+                      <span class="account-item__hint">Suppression en attente.</span>
+                      <% } else { %>
+                      <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
+                      <% } %>
                     </div>
                   </article>
                   <% }) %>
                 <% } else { %>
                   <p class="fav-empty account-empty">Aucun avis enregistré pour le moment.</p>
                 <% } %>
+                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
               </div>
-              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
           </div><!-- /creations-grid -->
@@ -744,6 +737,41 @@
         <div class="modal-footer">
           <button class="btn btn--ghost btn--sm" id="modalCancel">Annuler</button>
           <button class="btn btn--red btn--sm" id="modalConfirm">Confirmer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal édition recette -->
+    <div class="modal-overlay" id="editRecipeModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="modal-box modal-box--edit">
+        <div class="modal-stripe modal-stripe--gold"></div>
+        <div class="modal-head">
+          <div class="modal-ico modal-ico--edit">✏️</div>
+          <div class="modal-titles">
+            <div class="modal-title" id="editModalTitle">ÉDITER LA RECETTE</div>
+            <div class="modal-sub">Les modifications sont soumises à validation</div>
+          </div>
+        </div>
+        <div class="modal-body modal-body--form">
+          <div class="ci-ef-row">
+            <div><label class="ci-ef-label">Titre</label><input class="ci-ef-input" id="editField-name" type="text" name="name" /></div>
+            <div><label class="ci-ef-label">Catégorie</label><input class="ci-ef-input" id="editField-category" type="text" name="category" /></div>
+          </div>
+          <div class="ci-ef-row">
+            <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" id="editField-time" type="number" name="time" /></div>
+            <div><label class="ci-ef-label">Difficulté</label><input class="ci-ef-input" id="editField-difficulty" type="text" name="difficulty" /></div>
+          </div>
+          <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" id="editField-description" name="description" rows="2"></textarea></div>
+          <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" id="editField-ingredients" name="ingredients" rows="3"></textarea></div>
+          <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" id="editField-preparation" name="preparation" rows="4"></textarea></div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Photo de la recette</label>
+            <input class="ci-ef-file" type="file" id="editField-recipeImage" name="recipeImage" accept="image/*" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn--ghost btn--sm" id="editModalCancel">Annuler</button>
+          <button class="btn btn--primary btn--sm" id="editModalSave">Enregistrer</button>
         </div>
       </div>
     </div>

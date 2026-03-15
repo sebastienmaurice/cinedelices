@@ -4,6 +4,7 @@
  */
 
 import "dotenv/config";
+import tmdbGenreMap from "../utils/tmdb-genre-map.js";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_API_URL = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
@@ -164,39 +165,15 @@ async function searchMovie(req, res) {
     const maxResults = Math.min(data.results.length, 5);
     const formattedMovies = [];
 
-    // Mapper le genre (TMDB retourne un ID de genre, on doit mapper)
-    const genreMap = {
-      28: "action",
-      12: "aventure",
-      16: "animation",
-      35: "comédie",
-      80: "crime",
-      99: "documentaire",
-      18: "drame",
-      10751: "familial",
-      14: "fantastique",
-      36: "histoire",
-      27: "horreur",
-      10402: "musique",
-      9648: "mystère",
-      10749: "romance",
-      878: "science-fiction",
-      10770: "téléfilm",
-      53: "thriller",
-      10752: "guerre",
-      37: "western",
-    };
-
     for (let i = 0; i < maxResults; i++) {
       const result = data.results[i];
 
-      // Mapper le genre pour chaque résultat
       const genreId =
         result.genre_ids && result.genre_ids.length > 0
           ? result.genre_ids[0]
           : null;
 
-      const genre = genreId && genreMap[genreId] ? genreMap[genreId] : "autre";
+      const genre = genreId && tmdbGenreMap[genreId] ? tmdbGenreMap[genreId] : "autre";
 
       formattedMovies.push({
         tmdb_id: result.id,

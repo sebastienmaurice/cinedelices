@@ -84,6 +84,7 @@ authRouter.post(
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.post("/register", validateUserRegister, authController.register);
 authRouter.post("/login", validateUserLogin , authController.login);
+authRouter.get("/logout", authController.logout);
 authRouter.post("/logout", isLogged, authController.logout);
 
 export default authRouter;

@@ -11,6 +11,5 @@ export function isAdmin(req, res, next) {
   res.status(403).render("error", {
     error: "403",
     message: "Route interdite. Vous n'êtes pas administrateur.",
-    role: req.userRole,
   });
 }

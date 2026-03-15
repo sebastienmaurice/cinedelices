@@ -4,7 +4,7 @@
  * Injecte dans res.locals les données accessibles dans tous les templates EJS.
  *
  * Données synchrones (toujours disponibles) :
- *   role, user, userId, userPseudo
+ *   role, userId
  *
  * Données asynchrones enrichies (silencieuses si indisponibles) :
  *   footerStats      — { members, recipes, films } — cache 5 min
@@ -63,10 +63,8 @@ async function getTopContributors() {
 ────────────────────────────────────────────────────────────── */
 async function injectLocals(req, res, next) {
   // Données synchrones — toujours définies en premier
-  res.locals.role       = req.userRole  || undefined;
-  res.locals.user       = req.user      || null;
-  res.locals.userId     = req.userId    || null;
-  res.locals.userPseudo = req.userPseudo || null;
+  res.locals.role   = req.userRole || undefined;
+  res.locals.userId = req.userId   || null;
 
   // Données asynchrones — silencieuses en cas d'erreur
   try {

@@ -29,7 +29,7 @@ app.use(router);
 
 // middleware (404)
 app.use((req, res) => {
-  res.status(404).render("error", { role: req.userRole });
+  res.status(404).render("error", { error: "404", message: "Page introuvable." });
 });
 
 app.listen(PORT, () => {

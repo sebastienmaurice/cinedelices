@@ -8,8 +8,11 @@
   const toastContainer = document.querySelector(".profile-toast");
   const removeAvatarBtn = document.getElementById("removeAvatarBtn");
   const avatarInput = document.getElementById("avatar");
-  const avatarImage = document.querySelector(".profile-photo");
+  const avatarImg = profilePage.querySelector(".avatar-img");
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+  const editPseudoBtn = document.getElementById("editPseudoBtn");
+  const savePseudoBtn = document.getElementById("savePseudoBtn");
+  const pseudoInput = document.getElementById("username");
 
   const editableInputs = profilePage.querySelectorAll(
     "#profileInfoForm input, #profileAvatarForm input[type='text'], #profilePrefsForm input"
@@ -56,9 +59,24 @@
   setEditingState(false);
 
   let pictureStatus = profilePage.dataset.pictureStatus;
-  const avatarBadge = profilePage.querySelector(".profile-avatar__badge");
-  const avatarNote = profilePage.querySelector(".profile-avatar__note");
-  const statusBanner = profilePage.querySelector(".profile-status-banner");
+
+  const getOrCreateBadge = () => {
+    let badge = profilePage.querySelector(".avatar-photo-status");
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "avatar-photo-status";
+      profilePage.querySelector(".avatar-frame")?.appendChild(badge);
+    }
+    return badge;
+  };
+
+  const dismissBadge = (badge, delay = 3500) => {
+    setTimeout(() => {
+      badge.style.transition = "opacity .6s";
+      badge.style.opacity = "0";
+      setTimeout(() => badge.remove(), 650);
+    }, delay);
+  };
 
   const updatePhotoUI = (status) => {
     pictureStatus = status;
@@ -67,53 +85,63 @@
     if (status === "pending") {
       if (avatarInput) avatarInput.disabled = true;
       if (removeAvatarBtn) removeAvatarBtn.disabled = true;
-      if (avatarImage) {
-        avatarImage.classList.add("profile-photo--pending");
-      }
-      if (avatarBadge) {
-        avatarBadge.className = "profile-avatar__badge media-status-badge media-status-badge--pending";
-        avatarBadge.textContent = "En attente";
-        avatarBadge.style.display = "";
-      }
-      if (avatarNote) {
-        avatarNote.textContent = "Validation en cours par Ciné Délices";
-      }
-      if (statusBanner) {
-        statusBanner.textContent = "Votre photo de profil est en attente de validation par Ciné Délices.";
-        statusBanner.className = "profile-status-banner";
-        statusBanner.style.display = "";
-      }
+      const badge = getOrCreateBadge();
+      badge.className = "avatar-photo-status avatar-photo-status--pending";
+      badge.innerHTML = '<span class="b-dot"></span>En attente';
     } else if (status === "rejected") {
       if (avatarInput) avatarInput.disabled = false;
       if (removeAvatarBtn) removeAvatarBtn.disabled = false;
-      if (avatarImage) {
-        avatarImage.classList.remove("profile-photo--pending");
-      }
-      if (avatarBadge) {
-        avatarBadge.className = "profile-avatar__badge media-status-badge media-status-badge--rejected";
-        avatarBadge.textContent = "Refusée";
-        avatarBadge.style.display = "";
-      }
-      if (avatarNote) {
-        avatarNote.textContent = "Photo refusée — vous pouvez en téléverser une nouvelle";
-      }
+      const badge = getOrCreateBadge();
+      badge.className = "avatar-photo-status avatar-photo-status--rejected";
+      badge.innerHTML = '<span class="b-dot"></span>Refusée';
     } else {
       if (avatarInput) avatarInput.disabled = false;
       if (removeAvatarBtn) removeAvatarBtn.disabled = false;
-      if (avatarImage) {
-        avatarImage.classList.remove("profile-photo--pending");
-      }
+      const badge = getOrCreateBadge();
+      badge.className = "avatar-photo-status avatar-photo-status--ok";
+      badge.innerHTML = '<span class="b-dot"></span>Vérifié';
+      dismissBadge(badge, 3500);
     }
   };
 
-  // Appliquer l'état initial
+  // État initial
   if (pictureStatus === "pending") {
-    updatePhotoUI("pending");
     showToast("Photo en attente de validation.", "warning");
   } else if (pictureStatus === "rejected") {
-    updatePhotoUI("rejected");
     showToast("Photo refusée. Vous pouvez en téléverser une nouvelle.", "warning");
   }
+
+  // ── PSEUDO EDIT ──────────────────────────────────
+  editPseudoBtn?.addEventListener("click", () => {
+    if (!pseudoInput) return;
+    pseudoInput.disabled = false;
+    pseudoInput.focus();
+    pseudoInput.select();
+    editPseudoBtn.style.display = "none";
+    if (savePseudoBtn) savePseudoBtn.style.display = "";
+  });
+
+  savePseudoBtn?.addEventListener("click", async () => {
+    if (!pseudoInput) return;
+    const pseudo = pseudoInput.value.trim();
+    if (!pseudo) {
+      showToast("Le pseudo ne peut pas être vide.", "error");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("pseudo", pseudo);
+    try {
+      const response = await fetch(`/auth/profil/${userId}/update`, { method: "POST", body: formData });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Erreur lors de la mise à jour.");
+      pseudoInput.disabled = true;
+      if (savePseudoBtn) savePseudoBtn.style.display = "none";
+      if (editPseudoBtn) editPseudoBtn.style.display = "";
+      showToast("Pseudo mis à jour.", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
 
   if (editButton) {
     editButton.addEventListener("click", () => {
@@ -131,8 +159,8 @@
         showToast("Mode édition activé.", "success");
       }
       removeAvatar = true;
-      if (avatarImage) {
-        avatarImage.src = "/images/image-default-profile.jpg";
+      if (avatarImg) {
+        avatarImg.src = "/images/image-default-profile.jpg";
       }
       showToast("La photo sera supprimée lors de l'enregistrement.", "success");
     });
@@ -151,8 +179,8 @@
       // Prévisualisation immédiate
       const reader = new FileReader();
       reader.onload = (event) => {
-        if (avatarImage && event.target?.result) {
-          avatarImage.src = event.target.result;
+        if (avatarImg && event.target?.result) {
+          avatarImg.src = event.target.result;
         }
       };
       reader.readAsDataURL(file);
@@ -301,16 +329,112 @@
     });
   }
 
+  // ====================================================
+  // EDIT RECIPE MODAL
+  // ====================================================
+  const editRecipeModal = document.getElementById("editRecipeModal");
+  const editModalCancel = document.getElementById("editModalCancel");
+  const editModalSave = document.getElementById("editModalSave");
+  let activeEditItem = null;
+
+  const openEditModal = (item) => {
+    activeEditItem = item;
+    document.getElementById("editField-name").value = item.dataset.name || "";
+    document.getElementById("editField-category").value = item.dataset.category || "";
+    document.getElementById("editField-time").value = item.dataset.time || "";
+    document.getElementById("editField-difficulty").value = item.dataset.difficulty || "";
+    document.getElementById("editField-description").value = item.dataset.description || "";
+    document.getElementById("editField-ingredients").value = item.dataset.ingredients || "";
+    document.getElementById("editField-preparation").value = item.dataset.preparation || "";
+    document.getElementById("editField-recipeImage").value = "";
+    editRecipeModal.classList.add("open");
+  };
+
+  const closeEditModal = () => {
+    editRecipeModal?.classList.remove("open");
+    activeEditItem = null;
+  };
+
+  editModalCancel?.addEventListener("click", closeEditModal);
+  editRecipeModal?.addEventListener("click", (e) => {
+    if (e.target === editRecipeModal) closeEditModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && editRecipeModal?.classList.contains("open")) closeEditModal();
+  });
+
+  editModalSave?.addEventListener("click", async () => {
+    if (!activeEditItem) return;
+    const item = activeEditItem;
+    if ((item.dataset.editStatus || "none") === "pending") {
+      showToast("Modification déjà en attente.", "warning");
+      return;
+    }
+
+    const payload = {};
+    const formData = new FormData();
+    ["name", "category", "time", "difficulty", "description", "ingredients", "preparation"].forEach((name) => {
+      const el = document.getElementById(`editField-${name}`);
+      if (el && el.value.trim()) {
+        payload[name] = el.value.trim();
+        formData.append(name, el.value.trim());
+      }
+    });
+    const imgInput = document.getElementById("editField-recipeImage");
+    if (imgInput?.files?.[0]) formData.append("recipeImage", imgInput.files[0]);
+
+    if (Object.keys(payload).length === 0 && !imgInput?.files?.[0]) {
+      showToast("Aucune modification détectée.", "warning");
+      return;
+    }
+
+    const endpoint = `/auth/profil/${userId}/recipes/${item.dataset.id}/update`;
+    try {
+      const response = await fetch(endpoint, { method: "POST", body: formData });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || "Erreur lors de la mise à jour.");
+
+      if (data.pending) {
+        item.dataset.editStatus = "pending";
+        const editBtn = item.querySelector(".account-edit-btn");
+        if (editBtn) editBtn.disabled = true;
+        const statusEl = item.querySelector(".account-item__header .account-item__status");
+        if (statusEl) {
+          statusEl.textContent = "Modif en attente";
+          statusEl.className = "account-item__status is-pending";
+        }
+        closeEditModal();
+        showToast(data.message || "Modification envoyée.", "warning");
+        return;
+      }
+
+      const titleEl = item.querySelector(".account-item__title");
+      const metaEl = item.querySelector(".account-item__meta");
+      if (payload.name && titleEl) titleEl.textContent = payload.name;
+      if (metaEl) {
+        const category = payload.category || item.dataset.category;
+        const time = payload.time || item.dataset.time;
+        const difficulty = payload.difficulty || item.dataset.difficulty;
+        metaEl.textContent = `${category} · ${time} min · ${difficulty}`;
+      }
+      ["name", "category", "time", "difficulty", "description", "ingredients", "preparation"].forEach((k) => {
+        if (payload[k]) item.dataset[k] = payload[k];
+      });
+      closeEditModal();
+      showToast(data.message || "Mise à jour effectuée.", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
+
+  // ====================================================
+  // PER-ITEM HANDLERS (edit btn → modal, delete)
+  // ====================================================
   const items = profilePage.querySelectorAll(".account-item");
   items.forEach((item) => {
     const type = item.dataset.type;
     const editBtn = item.querySelector(".account-edit-btn");
     const deleteBtn = item.querySelector(".account-delete-btn");
-    const editPanel = item.querySelector(".account-item__edit");
-    const cancelBtn = item.querySelector(".account-cancel-btn");
-    const saveBtn = item.querySelector(".account-save-btn");
-    const previewSpan = item.querySelector(".account-item__preview span");
-    const titleEl = item.querySelector(".account-item__title");
     const metaEl = item.querySelector(".account-item__meta");
     const hintEl = item.querySelector(".account-item__hint");
     const headerEl = item.querySelector(".account-item__header");
@@ -331,133 +455,13 @@
       headerEl.appendChild(badge);
     };
 
-    const updatePreview = () => {
-      if (!previewSpan || !editPanel) return;
-      const inputs = editPanel.querySelectorAll("input, textarea");
-      const values = {};
-      inputs.forEach((input) => {
-        if (input.type === "file") return;
-        values[input.name] = input.value.trim();
-      });
-      if (type === "recipe") {
-        previewSpan.textContent = `${values.name || ""} • ${values.category || ""} • ${values.time || ""} min • ${values.difficulty || ""}`.trim();
-      } else if (type === "movie") {
-        previewSpan.textContent = `${values.title || ""} • ${values.year || ""} • ${values.genre || ""}`.trim();
-      } else if (type === "notice") {
-        previewSpan.textContent = `${values.quote || ""}/5 • ${values.content || ""}`.trim();
-      }
-    };
-
     editBtn?.addEventListener("click", () => {
-      if (!editPanel) return;
+      if (type !== "recipe") return;
       if (getEditStatus() === "pending") {
         showToast("Modification déjà en attente.", "warning");
         return;
       }
-      editPanel.classList.add("is-open");
-      updatePreview();
-    });
-
-    cancelBtn?.addEventListener("click", () => {
-      if (!editPanel) return;
-      editPanel.classList.remove("is-open");
-    });
-
-    editPanel?.querySelectorAll("input, textarea").forEach((input) => {
-      input.addEventListener("input", updatePreview);
-    });
-
-    saveBtn?.addEventListener("click", async () => {
-      if (!editPanel) return;
-      if (getEditStatus() === "pending") {
-        showToast("Modification déjà en attente.", "warning");
-        return;
-      }
-
-      const payload = {};
-      const formData = new FormData();
-      const fields = editPanel.querySelectorAll("input, textarea");
-      fields.forEach((input) => {
-        if (input.type === "file") {
-          if (input.files && input.files[0]) {
-            formData.append(input.name, input.files[0]);
-          }
-          return;
-        }
-        if (input.value.trim()) {
-          payload[input.name] = input.value.trim();
-          formData.append(input.name, input.value.trim());
-        }
-      });
-
-      if (Object.keys(payload).length === 0 && formData.entries().next().done) {
-        showToast("Aucune modification détectée.", "warning");
-        return;
-      }
-
-      const endpoint =
-        type === "recipe"
-          ? `/auth/profil/${userId}/recipes/${item.dataset.id}/update`
-          : type === "movie"
-            ? `/auth/profil/${userId}/movies/${item.dataset.id}/update`
-            : `/auth/profil/${userId}/notices/${item.dataset.id}/update`;
-
-      try {
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: type === "recipe" ? undefined : { "Content-Type": "application/json" },
-          body: type === "recipe" ? formData : JSON.stringify(payload),
-        });
-        const data = await response.json();
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "Erreur lors de la mise à jour.");
-        }
-
-        if (data.pending) {
-          item.dataset.editStatus = "pending";
-          if (editBtn) editBtn.disabled = true;
-          setStatusBadge("Modif en attente", "is-pending");
-          editPanel.classList.remove("is-open");
-          showToast(data.message || "Modification envoyée.", "warning");
-          return;
-        }
-
-        if (type === "recipe") {
-          if (payload.name && titleEl) titleEl.textContent = payload.name;
-          if (metaEl) {
-            const category = payload.category || item.dataset.category;
-            const time = payload.time || item.dataset.time;
-            const difficulty = payload.difficulty || item.dataset.difficulty;
-            metaEl.textContent = `${category} • ${time} min • ${difficulty}`;
-          }
-          item.dataset.category = payload.category || item.dataset.category;
-          item.dataset.time = payload.time || item.dataset.time;
-          item.dataset.difficulty = payload.difficulty || item.dataset.difficulty;
-        } else if (type === "movie") {
-          if (payload.title && titleEl) titleEl.textContent = payload.title;
-          if (metaEl) {
-            const year = payload.year || item.dataset.year;
-            const genre = payload.genre || item.dataset.genre;
-            metaEl.textContent = `${year} • ${genre}`;
-          }
-          item.dataset.year = payload.year || item.dataset.year;
-          item.dataset.genre = payload.genre || item.dataset.genre;
-        } else if (type === "notice") {
-          if (payload.content && titleEl) {
-            const textEl = item.querySelector(".account-item__text");
-            if (textEl) textEl.textContent = payload.content;
-          }
-          if (metaEl && payload.quote) {
-            const dateText = metaEl.textContent.split("•")[0]?.trim() || "";
-            metaEl.textContent = `${dateText} • ${payload.quote}/5`.trim();
-          }
-        }
-
-        editPanel.classList.remove("is-open");
-        showToast(data.message || "Mise à jour effectuée.", "success");
-      } catch (error) {
-        showToast(error.message, "error");
-      }
+      openEditModal(item);
     });
 
     deleteBtn?.addEventListener("click", async () => {
@@ -493,12 +497,10 @@
           if (!hintEl) {
             const hint = document.createElement("p");
             hint.className = "account-item__hint";
-            hint.textContent =
-              "Demande de suppression en attente de validation admin.";
+            hint.textContent = "Demande de suppression en attente de validation admin.";
             metaEl?.insertAdjacentElement("afterend", hint);
           } else {
-            hintEl.textContent =
-              "Demande de suppression en attente de validation admin.";
+            hintEl.textContent = "Demande de suppression en attente de validation admin.";
           }
           item.dataset.deleteRequest = "pending";
           setStatusBadge("Suppression en attente", "is-pending");
@@ -507,10 +509,6 @@
 
         item.remove();
         showToast(data.message || "Suppression effectuée.", "success");
-
-        if (type === "recipe" && hintEl) {
-          hintEl.remove();
-        }
       } catch (error) {
         showToast(error.message, "error");
       }
@@ -542,7 +540,7 @@
   );
 
   searchInputs.forEach((input) => {
-    const section = input.closest(".collections-section");
+    const section = input.closest(".col");
     if (!section) return;
 
     const clearBtn = section.querySelector(".collections-section__search-clear");

@@ -33,7 +33,7 @@ const homeController = {
       });
 
       if (!recipes) {
-        return renderNotFound(res, "Recettes", req.userRole);
+        return renderNotFound(res, "Recettes");
       }
 
       // recette du jour en aléatoire
@@ -50,7 +50,7 @@ const homeController = {
         limit: 4,
       });
       if (!topMovies || topMovies.length === 0) {
-        return renderNotFound(res, "Films", req.userRole);
+        return renderNotFound(res, "Films");
       }
 
       // Lister les images du dossier recipes
@@ -133,7 +133,6 @@ const homeController = {
         topMovies: enrichedTopMovies,
         recipeImages,
         genreStats,
-        role: req.userRole,
         totalUsers,
         totalRecipes,
         totalMovies,
@@ -141,7 +140,7 @@ const homeController = {
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 };

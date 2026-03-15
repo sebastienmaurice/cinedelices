@@ -153,8 +153,6 @@ const recipesController = {
       res.render("recipes-movie", {
         movie: null,
         recipes: enrichedRecipes,
-        role: req.userRole,
-        userId: req.userId,
         authorDisplayName,
         isAuthorFiltered: Boolean(rawAuthor),
         authorBannerImage,
@@ -163,7 +161,7 @@ const recipesController = {
         authorId: authorUser?.id || null,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
   // Afficher le film et ses recettes
@@ -183,7 +181,7 @@ const recipesController = {
 
       // Utilisation du helper centralisé pour les erreurs 404
       if (!movie) {
-        return renderNotFound(res, "Film", req.userRole);
+        return renderNotFound(res, "Film");
       }
 
       // Toutes les recettes du film — jointure User via alias "contributor"
@@ -210,13 +208,11 @@ const recipesController = {
       res.render("recipes-movie", {
         movie: enrichedMovie,
         recipes: enrichedRecipes,
-        role: req.userRole,
-        userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
   /*
@@ -243,7 +239,7 @@ const recipesController = {
       }
 
       if (!movie) {
-        return renderNotFound(res, "Film", req.userRole);
+        return renderNotFound(res, "Film");
       }
 
       // Jointure User via alias "contributor" — même include dans les 2 cas
@@ -279,13 +275,11 @@ const recipesController = {
       res.render("recipes-movie", {
         movie: enrichedMovie,
         recipes: enrichedRecipes,
-        role: req.userRole,
-        userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
   /*
@@ -315,7 +309,7 @@ const recipesController = {
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!recipe) {
-        return renderNotFound(res, "Recette", req.userRole);
+        return renderNotFound(res, "Recette");
       }
 
       const plainRecipe = recipe.get({ plain: true });
@@ -374,8 +368,6 @@ const recipesController = {
       const avgData = avgRatingsMap[plainRecipe.id];
 
       res.render("recipe-detail", {
-        role: req.userRole,
-        userId: req.userId,
         recipe: {
           ...plainRecipe,
           isFavorite,
@@ -399,7 +391,7 @@ const recipesController = {
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
   /*

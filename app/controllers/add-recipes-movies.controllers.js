@@ -17,11 +17,11 @@ const addRecipesMoviesController = {
   addRecipesMovies(req, res) {
     try {
       // ajout gestion du role
-      res.render("add-recipes-movies", { role: req.userRole });
+      res.render("add-recipes-movies");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
       // Note : loginPopup: false retiré car non utilisé dans la vue error
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -34,7 +34,7 @@ const addRecipesMoviesController = {
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!newMovie) {
-        return renderNotFound(res, "Film", req.userRole);
+        return renderNotFound(res, "Film");
       }
 
       // Enrichir le movie avec les chemins d'images (card pour la prévisualisation)
@@ -43,11 +43,10 @@ const addRecipesMoviesController = {
       // Rendu de la vue pour le pre-remplissage du film
       res.render("add-recipes-movies", {
         newMovie: enrichedMovie,
-        role: req.userRole,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -89,12 +88,11 @@ const addRecipesMoviesController = {
       // Rendre la page avec le film créé pour permettre l'ajout de la recette
       res.status(201).render("add-recipes-movies", {
         newMovie: enrichedMovie,
-        role: req.userRole,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
       // Code commenté supprimé (loginPopup: false)
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -125,8 +123,7 @@ const addRecipesMoviesController = {
         if (Math.abs(ratio - TARGET_RATIO) > TOLERANCE) {
           fs.unlinkSync(req.file.path); // Supprimer le fichier non conforme
           return res.status(400).render("add-recipes-movies", {
-            role: req.userRole,
-            error: true,
+                error: true,
             errorMessage: `L'image doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${metadata.width}×${metadata.height} px.`,
           });
         }
@@ -153,11 +150,10 @@ const addRecipesMoviesController = {
       // Rendre la page avec la recette créée
       res.status(201).render("add-recipes-movies", {
         newRecipe,
-        role: req.userRole,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -184,8 +180,7 @@ const addRecipesMoviesController = {
         return res.status(400).render("add-recipes-movies", {
           error: true,
           errorMessage: "Merci de compléter tous les champs de la recette.",
-          role: req.userRole,
-        });
+          });
       }
 
       let movie = null;
@@ -198,8 +193,7 @@ const addRecipesMoviesController = {
           return res.status(400).render("add-recipes-movies", {
             error: true,
             errorMessage: "Merci de compléter les informations du film.",
-            role: req.userRole,
-          });
+              });
         }
 
         movie = await Movie.create({
@@ -237,10 +231,9 @@ const addRecipesMoviesController = {
         successMessage: "Film et recette envoyés pour validation.",
         newMovie: enrichedMovie,
         newRecipe,
-        role: req.userRole,
       });
     } catch (error) {
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 };

@@ -10,7 +10,6 @@ const contactAboutController = {
     ]);
 
     res.render("contact-about", {
-      role: req.userRole,
       movieCount,
       recipeCount,
       userCount,

@@ -40,7 +40,6 @@ const authController = {
         return res.status(StatusCodes.UNAUTHORIZED).render("error", {
           error: "401",
           message: "pseudo ou mot de passe invalide",
-          role: req.userRole,
         });
       }
 
@@ -53,7 +52,6 @@ const authController = {
         return res.status(StatusCodes.UNAUTHORIZED).render("error", {
           error: "401",
           message: "Pseudo ou mot de passe invalide",
-          role: req.userRole,
         });
       }
 
@@ -80,10 +78,9 @@ const authController = {
         return res.status(StatusCodes.CONFLICT).render("error", {
           error: "409",
           message: "le pseudo existe déjà.",
-          role: req.userRole,
         });
       }
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -126,10 +123,9 @@ const authController = {
         return res.status(StatusCodes.CONFLICT).render("error", {
           error: "409",
           message: "Ce pseudo est déjà utilisé.",
-          role: req.userRole,
         });
       }
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -147,7 +143,7 @@ const authController = {
 
       // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!user) {
-        return renderNotFound(res, "Utilisateur", req.userRole);
+        return renderNotFound(res, "Utilisateur");
       }
 
       const userRecipes = await Recipe.findAll({
@@ -251,8 +247,6 @@ const authController = {
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
-        role: req.userRole,
-        userId: req.userId,
         userRecipes,
         userMovies,
         userNotices,
@@ -271,7 +265,7 @@ const authController = {
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error, req.userRole);
+      return renderServerError(res, error);
     }
   },
 
@@ -415,19 +409,18 @@ const authController = {
         });
       }
 
-      // Supprimer l'ancien avatar du disque avant d'enregistrer le nouveau
-      unlinkIfExists(user.picture);
+      // Supprimer l'éventuelle photo précédente en attente (non encore validée)
+      if (user.pending_picture) unlinkIfExists(user.pending_picture);
 
-      const newPicture = `/images/profiles/${req.file.filename}`;
+      const pendingPicture = `/images/profiles/${req.file.filename}`;
       await User.update(
-        { picture: newPicture, picture_status: "pending" },
+        { pending_picture: pendingPicture, picture_status: "pending" },
         { where: { id: userId } }
       );
 
       return res.status(StatusCodes.OK).json({
         success: true,
-        message: "Photo envoyée. En attente de validation.",
-        picture: newPicture,
+        message: "Photo envoyée. En attente de validation admin.",
         picture_status: "pending",
       });
     } catch (error) {
