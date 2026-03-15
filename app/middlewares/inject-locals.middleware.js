@@ -9,14 +9,11 @@
  * Données asynchrones enrichies (silencieuses si indisponibles) :
  *   footerStats      — { members, recipes, films } — cache 5 min
  *   topContributors  — top 3 par recettes approuvées — cache 5 min
- *   userLevel        — code du niveau (si connecté)
- *   userBadges       — codes des badges Signature débloqués (si connecté)
  */
 
 import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { User, Recipe, Movie } from "../models/index.model.js";
-import { getUserGamificationData } from "../services/gamification.service.js";
 
 /* ──────────────────────────────────────────────────────────────
    Cache en mémoire — évite de refaire les COUNT à chaque requête
@@ -81,18 +78,6 @@ async function injectLocals(req, res, next) {
     res.locals.topContributors = contributors;
   } catch {
     /* Stats indisponibles — le footer utilisera les valeurs par défaut EJS */
-  }
-
-  try {
-    if (req.userId) {
-      const gamif = await getUserGamificationData(req.userId);
-      res.locals.userLevel      = gamif.levelCode;
-      res.locals.userPoints     = gamif.points;
-      res.locals.userBadges     = gamif.badges;
-      res.locals.userBadgesData = gamif.badgesData; // [{ code, label, film, unlocked_at }]
-    }
-  } catch {
-    /* Gamification indisponible — migration non jouée ou tables absentes */
   }
 
   next();

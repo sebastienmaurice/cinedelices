@@ -3,151 +3,97 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Gérez votre compte et vos préférences cinéma & recettes"
-    />
+    <meta name="description" content="Ciné Délices — Gérez votre compte et vos préférences cinéma & recettes" />
     <title>Mon compte - Ciné Délices</title>
-
-    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
-
-    <!-- Styles spécifiques à la page -->
-    <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/user-profile.css" />
-
   </head>
 
   <body class="profile-page">
-    <!-- HEADER -->
     <%- include("partials/header") %>
 
+    <% const bannerUrl = user.banner || user.banner_image || null; %>
+
     <!-- MAIN -->
-    <main
-      class="profile-page <%= user.picture_status === 'pending' ? 'profile-page--pending' : '' %>"
-      data-user-id="<%= user.id %>"
-      data-picture-status="<%= user.picture_status || 'approved' %>"
-    >
+    <main data-user-id="<%= user.id %>" data-picture-status="<%= user.picture_status || 'approved' %>">
+
       <h1 class="sr-only"><%= user.pseudo %> — Mon compte Ciné Délices</h1>
-      <%
-        const bannerUrl    = user.banner || user.banner_image || null;
-        const _memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '';
-        const palCount     = typeof validatedRecipeCount !== 'undefined' ? validatedRecipeCount : 0;
 
-        /* Palmarès — Système 1 (points & niveaux Ciné Délices) */
-        const _pts = typeof userPoints !== 'undefined' ? userPoints : 0;
-        const _gamLevels = [
-          { code: 'legende',     label: 'Légende',     min: 200 },
-          { code: 'realisateur', label: 'Réalisateur', min: 100 },
-          { code: 'acteur',      label: 'Acteur',      min: 50  },
-          { code: 'second-role', label: 'Second Rôle', min: 25  },
-          { code: 'figurant',    label: 'Figurant',    min: 10  },
-        ];
-        const _lvlCode  = typeof userLevel !== 'undefined' ? userLevel : null;
-        const _curLvl   = _gamLevels.find(l => l.code === _lvlCode) || null;
-        const _curIdx   = _curLvl ? _gamLevels.indexOf(_curLvl) : _gamLevels.length;
-        const _nextLvl  = _curIdx > 0 ? _gamLevels[_curIdx - 1] : null;
-        let _barPct = 0, _barCurrent = _pts, _barMax = 10;
-        if (!_curLvl) {
-          _barMax     = 10;
-          _barCurrent = _pts;
-          _barPct     = Math.min(100, Math.round((_pts / 10) * 100));
-        } else if (_nextLvl) {
-          _barMax     = _nextLvl.min - _curLvl.min;
-          _barCurrent = _pts - _curLvl.min;
-          _barPct     = Math.min(100, Math.round((_barCurrent / _barMax) * 100));
-        } else {
-          _barPct = 100; _barCurrent = _pts; _barMax = _pts || 200;
-        }
-      %>
-
-
-      <!-- ════════════════════════════════════════════════════
-           HERO BANNER IMMERSIF
-      ════════════════════════════════════════════════════ -->
+      <!-- ══════════════════════════════════════════
+           HERO BANNER
+      ══════════════════════════════════════════ -->
       <section class="profile-hero">
 
-        <!-- Bannière image -->
+        <!-- Bannière -->
         <div class="hero-banner">
-          <img
-            src="<%= bannerUrl || '/images/image-banner-movie-default.jpg' %>"
-            alt="Bannière de <%= user.pseudo %>"
-          />
+          <% if (bannerUrl) { %>
+          <img src="<%= bannerUrl %>" alt="Bannière de <%= user.pseudo %>" />
+          <% } %>
           <div class="hero-banner-grad"></div>
         </div>
 
-        <!-- Décorations cinéma -->
+        <!-- Déco cinématographique -->
         <div class="hero-reel hero-reel--1" aria-hidden="true"></div>
         <div class="hero-reel hero-reel--2" aria-hidden="true"></div>
         <div class="hero-scanlines" aria-hidden="true"></div>
         <div class="hero-vignette" aria-hidden="true"></div>
 
-        <!-- Lien page auteur (visible si recettes validées) -->
-        <% if (typeof validatedRecipeCount !== 'undefined' && validatedRecipeCount > 0) { %>
+        <!-- Page auteur (top-left) -->
+        <% if (userRecipes && userRecipes.length > 0) { %>
         <div class="hero-author-link">
-          <a class="author-link" href="/movies">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
+          <a href="/movies" class="author-link">
+            <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
             Ma page auteur
           </a>
         </div>
         <% } %>
 
-        <!-- Statut bannière (pending / rejected) -->
+        <!-- Statut bannière (top-right) -->
         <div class="hero-banner-status">
           <% if (user.banner_status === 'pending') { %>
-            <span class="media-status-badge media-status-badge--pending profile-status-banner">Bannière en attente</span>
+            <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
           <% } else if (user.banner_status === 'rejected') { %>
-            <span class="media-status-badge media-status-badge--rejected profile-status-banner">Bannière refusée</span>
+            <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
+          <% } else { %>
+            <button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById('bannerInput').click()">
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Modifier la bannière
+            </button>
           <% } %>
         </div>
+        <input id="bannerInput" type="file" name="banner" accept="image/*" hidden />
 
-        <!-- Contenu hero — enveloppé dans form pour account.js -->
+        <!-- Contenu hero bas -->
         <form id="profileAvatarForm" class="hero-content">
 
-          <!-- Avatar block -->
+          <!-- Avatar -->
           <div class="avatar-block">
             <div class="avatar-frame">
-
-              <!-- Badge actif --md (260px natif) — remplace la photo seule -->
-              <%- include('partials/badges/_active-badge-overlay', {
-                badgeId:        'profile-overlay',
-                photoSrc:       user.picture || '',
-                size:           'md',
-                userBadgesData: typeof userBadgesData !== 'undefined' ? userBadgesData : [],
-              }) %>
-
-              <!-- Badge statut photo (bas du cadre) — toujours présent pour account.js -->
-              <div
-                class="avatar-photo-status<%= user.picture_status === 'pending' ? ' avatar-photo-status--pending' : user.picture_status === 'rejected' ? ' avatar-photo-status--rejected' : ' avatar-photo-status--ok' %> profile-avatar__badge"
-                <% if (!user.picture && user.picture_status !== 'pending' && user.picture_status !== 'rejected') { %>style="display:none"<% } %>
-              >
-                <span class="b-dot"></span><%= user.picture_status === 'pending' ? 'En attente' : user.picture_status === 'rejected' ? 'Refusée' : 'Vérifié' %>
-              </div>
-
-              <!-- Boutons avatar -->
+              <div class="avatar-frame__ring"></div>
+              <img
+                src="<%= user.picture || '/images/image-default-profile.jpg' %>"
+                alt="Avatar de <%= user.pseudo %>"
+                class="avatar-img"
+              />
+              <% if (user.picture || user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
+              <span class="avatar-photo-status avatar-photo-status--<%= user.picture_status === 'pending' ? 'pending' : user.picture_status === 'rejected' ? 'rejected' : 'ok' %>">
+                <span class="b-dot"></span>
+                <%= user.picture_status === 'pending' ? 'En attente' : user.picture_status === 'rejected' ? 'Refusée' : 'Vérifié' %>
+              </span>
+              <% } %>
               <div class="avatar-actions">
                 <label for="avatar" class="av-btn av-btn--upload" title="Changer la photo">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </label>
                 <input type="file" id="avatar" name="avatar" accept="image/*" hidden />
-                <button type="button" id="removeAvatarBtn" class="av-btn av-btn--del" title="Supprimer la photo">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6l-1 14H6L5 6"/>
-                    <path d="M9 6V4h6v2"/>
-                  </svg>
+                <button type="button" class="av-btn av-btn--del" id="removeAvatarBtn" title="Supprimer la photo">
+                  <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Identité -->
+          <!-- Identité + XP -->
           <div class="hero-identity">
             <div class="hero-pseudo-row">
               <input
@@ -159,152 +105,79 @@
                 maxlength="30"
                 disabled
               />
-              <!-- id="editProfileBtn" : account.js écoute ce clic pour activer l'édition -->
-              <div
-                class="hero-pseudo-edit"
-                id="editProfileBtn"
-                title="Modifier le pseudo"
-                role="button"
-                tabindex="0"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 20h9"/>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                </svg>
-              </div>
-              <!-- id="saveProfileBtn" : account.js écoute ce clic pour sauvegarder -->
-              <button
-                type="button"
-                class="hero-pseudo-save"
-                id="saveProfileBtn"
-              >
-                Enregistrer
+              <button type="button" class="hero-pseudo-edit" id="editPseudoBtn" title="Modifier le pseudo">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
+              <button type="button" class="hero-pseudo-save" id="savePseudoBtn">Sauvegarder</button>
             </div>
+            <p class="hero-sub">Membre Ciné Délices</p>
 
-            <p class="hero-sub">
-              <% if (_memberSince) { %>Membre depuis <%= _memberSince %><% } else { %>Membre Ciné Délices<% } %>
-            </p>
-
-            <!-- Barre XP palmarès -->
-            <div class="xp-bar-block">
-              <div class="xp-head">
-                <span class="xp-label">
-                  <% if (!_nextLvl && _curLvl) { %>
-                    Légende — Rang max ✦
-                  <% } else if (_curLvl && _nextLvl) { %>
-                    <%= _curLvl.label %> → <%= _nextLvl.label %>
-                  <% } else { %>
-                    Commencer votre progression
-                  <% } %>
-                </span>
-                <span class="xp-frac">
-                  <% if (!_nextLvl) { %><%= _pts %> pts<% } else { %><%= _barCurrent %> / <%= _barMax %> pts<% } %>
-                </span>
+            <div class="hero-stats-row">
+              <div class="h-stat">
+                <span class="h-stat__num"><%= userRecipes.length %></span>
+                <span class="h-stat__lbl">Recettes</span>
               </div>
-              <div class="xp-track">
-                <div class="xp-fill" style="width: <%= _barPct %>%"></div>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= userMovies.length %></span>
+                <span class="h-stat__lbl">Films</span>
               </div>
-              <p class="xp-hint">
-                <% if (!_nextLvl && _curLvl) { %>
-                  ✨ Rang Légende atteint !
-                <% } else if (_nextLvl) { %>
-                  Plus que <strong><%= Math.max(1, _nextLvl.min - _pts) %> pt<%= (_nextLvl.min - _pts) > 1 ? 's' : '' %></strong> pour atteindre <strong><%= _nextLvl.label %></strong>
-                <% } else { %>
-                  Contribue pour débuter ton palmarès !
-                <% } %>
-              </p>
-            </div>
-          </div>
-
-          <!-- Mini stats -->
-          <div class="hero-stats-row">
-            <div class="h-stat">
-              <span class="h-stat__num"><%= userRecipes.length %></span>
-              <span class="h-stat__lbl">Recettes</span>
-            </div>
-            <div class="h-stat-div"></div>
-            <div class="h-stat">
-              <span class="h-stat__num"><%= userMovies.length %></span>
-              <span class="h-stat__lbl">Films</span>
-            </div>
-            <div class="h-stat-div"></div>
-            <div class="h-stat">
-              <span class="h-stat__num"><%= userNoticesCount %></span>
-              <span class="h-stat__lbl">Avis</span>
-            </div>
-            <div class="h-stat-div"></div>
-            <div class="h-stat">
-              <span class="h-stat__num"><%= avgUserRating || '—' %></span>
-              <span class="h-stat__lbl">Note moy.</span>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= userNoticesCount %></span>
+                <span class="h-stat__lbl">Avis</span>
+              </div>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></span>
+                <span class="h-stat__lbl">Favoris</span>
+              </div>
             </div>
           </div>
 
         </form>
-      </section><!-- /profile-hero -->
+      </section>
 
-
-      <!-- ════════════════════════════════════════════════════
-           NAVIGATION ONGLETS
-      ════════════════════════════════════════════════════ -->
+      <!-- ══════════════════════════════════════════
+           TABS NAVIGATION
+      ══════════════════════════════════════════ -->
       <div class="profile-tabs-wrap">
-        <div class="profile-tabs" role="tablist" aria-label="Navigation du compte">
-
-          <div class="ptab" data-tab="overview" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-            </svg>
-            Vue d'ensemble
-          </div>
-
-          <div class="ptab" data-tab="profil" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-            Profil
-          </div>
-
-          <div class="ptab" data-tab="palmares" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            Palmarès
-          </div>
-
-          <div class="ptab" data-tab="favoris" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            Favoris
-          </div>
-
-          <div class="ptab" data-tab="creations" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Créations
-            <%
-              const _pendingCount = ((userRecipes || []).filter(r => r.status !== 'approved').length)
-                                  + ((userMovies  || []).filter(m => m.status !== 'approved').length);
-            %>
-            <% if (_pendingCount > 0) { %>
-            <span class="ptab-badge"><%= _pendingCount %></span>
+        <nav class="profile-tabs" role="tablist" aria-label="Navigation du compte">
+          <button class="ptab active" data-tab="overview" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span class="ptab-text">Vue d'ensemble</span>
+          </button>
+          <button class="ptab" data-tab="profil" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="ptab-text">Profil</span>
+          </button>
+          <button class="ptab" data-tab="favoris" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span class="ptab-text">Favoris</span>
+          </button>
+          <button class="ptab" data-tab="creations" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span class="ptab-text">Créations</span>
+            <% const totalCreations = userRecipes.length + userMovies.length + userNoticesCount; if (totalCreations > 0) { %>
+            <span class="ptab-badge"><%= totalCreations %></span>
             <% } %>
-          </div>
-
-        </div>
+          </button>
+          <button class="ptab" data-tab="contributions" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span class="ptab-text">Contributions</span>
+          </button>
+        </nav>
       </div>
 
-
-      <!-- ════════════════════════════════════════════════════
-           CONTENU DES ONGLETS
-      ════════════════════════════════════════════════════ -->
+      <!-- ══════════════════════════════════════════
+           CONTENT
+      ══════════════════════════════════════════ -->
       <div class="profile-content">
 
-
-        <!-- ══════ VUE D'ENSEMBLE ══════ -->
-        <div class="tab-pane" id="overview" role="tabpanel" aria-label="Vue d'ensemble">
+        <!-- ─────────────────────────────────── -->
+        <!-- TAB : VUE D'ENSEMBLE               -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane active" id="overview" role="tabpanel">
 
           <div class="section-head">
             <span class="section-eyebrow">Mon compte</span>
@@ -313,147 +186,69 @@
           </div>
 
           <div class="overview-grid">
-
-            <!-- Recettes -->
             <div class="ov-card ov-card--recettes">
               <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M15 11h.01"/><path d="M11 15h.01"/><path d="M16 16h.01"/>
-                  <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/>
-                  <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M15 11h.01"/><path d="M11 15h.01"/><path d="M16 16h.01"/><path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/><path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"/></svg>
               </div>
               <div class="ov-val"><%= userRecipes.length %></div>
               <div class="ov-label">Recettes publiées</div>
             </div>
-
-            <!-- Films -->
             <div class="ov-card ov-card--films">
               <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect width="18" height="18" x="3" y="3" rx="2"/>
-                  <path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/>
-                  <path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
               </div>
               <div class="ov-val"><%= userMovies.length %></div>
               <div class="ov-label">Films ajoutés</div>
             </div>
-
-            <!-- Avis -->
             <div class="ov-card ov-card--avis">
               <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               </div>
               <div class="ov-val"><%= userNoticesCount %></div>
               <div class="ov-label">Avis rédigés</div>
             </div>
-
-            <!-- Favoris -->
             <div class="ov-card ov-card--favoris">
               <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </div>
               <div class="ov-val"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></div>
               <div class="ov-label">Favoris totaux</div>
             </div>
-
-            <!-- Note moyenne -->
             <div class="ov-card ov-card--note">
               <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               </div>
               <div class="ov-val"><%= avgUserRating || '—' %></div>
               <div class="ov-label">Note moyenne</div>
             </div>
-
-          </div><!-- /overview-grid -->
-
-          <div class="section-sep"></div>
-
-          <!-- Activité rapide : badge actuel + lien palmares -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-
-            <div class="form-card">
-              <div class="form-card__head">
-                <span class="form-card__title">MON NIVEAU</span>
-                <button type="button" class="btn btn--ghost btn--sm" onclick="window.activateTab('palmares')">Tout voir</button>
-              </div>
-              <div class="form-card__body" style="padding:16px 18px;">
-                <% if (_curLvl) { %>
-                  <div style="font-family:var(--f-display);font-size:1rem;letter-spacing:2px;color:var(--argent);margin-bottom:6px;"><%= _curLvl.label.toUpperCase() %></div>
-                  <div style="font-size:.68rem;color:rgba(232,232,232,.45);margin-bottom:8px;"><%= _pts %> pts</div>
-                  <% if (_nextLvl) { %>
-                  <div style="font-size:.65rem;color:var(--or-titre);">→ <%= _nextLvl.label %> dans <%= Math.max(1, _nextLvl.min - _pts) %> pts</div>
-                  <% } %>
-                <% } else { %>
-                  <div style="font-size:.72rem;color:rgba(232,232,232,.38);line-height:1.6;">Contribuez (recettes, avis, favoris) pour monter en niveau !</div>
-                <% } %>
-              </div>
-            </div>
-
-            <div class="form-card">
-              <div class="form-card__head">
-                <span class="form-card__title">MES STATS</span>
-              </div>
-              <div class="form-card__body" style="padding:0;">
-                <div class="side-stats__rows" style="padding:6px 0;">
-                  <div class="ss-row">
-                    <span class="ss-label">Recettes validées</span>
-                    <span class="ss-val" style="color:var(--caramel)"><%= palCount %></span>
-                  </div>
-                  <div class="ss-row">
-                    <span class="ss-label">Films notés</span>
-                    <span class="ss-val"><%= ratedMoviesCount || 0 %></span>
-                  </div>
-                  <div class="ss-row">
-                    <span class="ss-label">Recettes notées</span>
-                    <span class="ss-val"><%= ratedRecipesCount || 0 %></span>
-                  </div>
-                  <div class="ss-row">
-                    <span class="ss-label">Note moyenne</span>
-                    <span class="ss-val" style="color:var(--or-titre)"><%= avgUserRating || '—' %></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
 
         </div><!-- /tab-pane#overview -->
 
 
-        <!-- ══════ PROFIL ══════ -->
-        <div class="tab-pane" id="profil" role="tabpanel" aria-label="Profil">
+        <!-- ─────────────────────────────────── -->
+        <!-- TAB : PROFIL                        -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane" id="profil" role="tabpanel">
 
           <div class="section-head">
             <span class="section-eyebrow">Mon compte</span>
-            <span class="section-title">PROFIL</span>
+            <span class="section-title">MON PROFIL</span>
             <span class="section-rule"></span>
           </div>
 
           <div class="profil-grid">
 
-            <!-- Colonne gauche : formulaires + danger zone -->
-            <div style="display:flex;flex-direction:column;gap:18px;">
+            <!-- Colonne gauche : formulaires -->
+            <div class="profil-left">
 
-              <!-- Formulaire infos -->
+              <!-- Infos personnelles -->
               <div class="form-card">
                 <div class="form-card__head">
                   <span class="form-card__title">INFORMATIONS</span>
-                  <div style="display:flex;gap:8px;">
-                    <button type="button" class="btn btn--ghost btn--sm" onclick="document.getElementById('editProfileBtn').click()">Modifier</button>
-                    <button type="button" class="btn btn--primary btn--sm" onclick="document.getElementById('saveProfileBtn').click()">Enregistrer</button>
-                  </div>
+                  <button type="button" class="btn btn--ghost btn--sm" id="editProfileBtn">Éditer</button>
                 </div>
                 <div class="form-card__body">
-
                   <form id="profileInfoForm">
                     <div class="form-row">
                       <div class="form-group">
@@ -467,7 +262,7 @@
                     </div>
                     <div class="form-row form-row--full">
                       <div class="form-group">
-                        <label class="form-label" for="email">Adresse e-mail</label>
+                        <label class="form-label" for="email">Email</label>
                         <input class="form-input" type="email" id="email" name="email" value="<%= user.email %>" disabled />
                       </div>
                     </div>
@@ -478,18 +273,19 @@
                         <a href="/auth/forgot-password" class="form-pwd-link">Mot de passe oublié ?</a>
                       </div>
                     </div>
+                    <div class="form-actions">
+                      <button type="submit" class="btn btn--primary btn--sm" id="saveProfileBtn" style="display:none;">Enregistrer</button>
+                      <button type="button" class="btn btn--ghost btn--sm" id="cancelProfileBtn" style="display:none;">Annuler</button>
+                    </div>
                   </form>
 
                   <!-- Notifications -->
                   <form id="profilePrefsForm">
                     <div class="notif-block">
-                      <div style="font-family:var(--f-title);font-size:.46rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,160,82,.38);margin-bottom:6px;">
-                        Préférences notifications
-                      </div>
                       <div class="notif-row">
                         <div class="notif-info">
-                          <span class="notif-label">Nouvelles recettes</span>
-                          <span class="notif-sub">Alerté quand une recette est publiée pour un film que vous aimez</span>
+                          <span class="notif-label">Notifications recettes</span>
+                          <span class="notif-sub">Nouvelles recettes sur vos films favoris</span>
                         </div>
                         <label class="toggle">
                           <input type="checkbox" name="notify_recipes" <%= user.notify_recipes ? 'checked' : '' %> disabled />
@@ -498,8 +294,8 @@
                       </div>
                       <div class="notif-row">
                         <div class="notif-info">
-                          <span class="notif-label">Nouveaux films</span>
-                          <span class="notif-sub">Notifié lors de l'ajout d'un nouveau film dans votre genre préféré</span>
+                          <span class="notif-label">Notifications cinéma</span>
+                          <span class="notif-sub">Nouveaux films ajoutés à la collection</span>
                         </div>
                         <label class="toggle">
                           <input type="checkbox" name="notify_cinema" <%= user.notify_cinema ? 'checked' : '' %> disabled />
@@ -508,171 +304,68 @@
                       </div>
                     </div>
                   </form>
-
                 </div>
               </div>
 
-              <!-- Zone de danger -->
-              <div class="danger-zone">
-                <div class="danger-zone__head">
-                  <span class="danger-zone__icon">⚠</span>
-                  <span class="danger-zone__title">Zone de danger</span>
+            </div><!-- /profil-left -->
+
+            <!-- Colonne droite : stats + danger -->
+            <div>
+              <div class="side-stats">
+                <div class="side-stats__head">
+                  <div class="side-stats__title">MON COMPTE</div>
                 </div>
-                <div class="danger-zone__body">
-                  <p class="danger-zone__sub">
-                    La suppression de votre compte est définitive et irréversible.
-                    Toutes vos recettes, avis et contributions seront anonymisés et vos données personnelles supprimées.
-                  </p>
-                  <div class="danger-zone__actions">
-                    <button type="button" class="btn btn--red btn--sm" id="deleteAccountBtn">
-                      Supprimer mon compte
-                    </button>
+                <div class="side-stats__rows">
+                  <div class="ss-row">
+                    <span class="ss-label">
+                      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      Pseudo
+                    </span>
+                    <span class="ss-val" style="color:var(--or-titre);font-size:.75rem"><%= user.pseudo %></span>
+                  </div>
+                  <div class="ss-row">
+                    <span class="ss-label">
+                      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      Avis publiés
+                    </span>
+                    <span class="ss-val"><%= userNoticesCount %></span>
+                  </div>
+                  <div class="ss-row">
+                    <span class="ss-label">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      Note moyenne
+                    </span>
+                    <span class="ss-val" style="color:var(--dore-clair)"><%= avgUserRating || '—' %></span>
                   </div>
                 </div>
               </div>
 
-            </div><!-- /col gauche -->
-
-            <!-- Colonne droite : stats compte -->
-            <div class="side-stats">
-              <div class="side-stats__head">
-                <div class="side-stats__title">Compte</div>
-              </div>
-              <div class="side-stats__rows">
-                <div class="ss-row">
-                  <span class="ss-label">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;margin-right:5px;vertical-align:-2px;stroke-linecap:round;stroke-linejoin:round;">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Pseudo
-                  </span>
-                  <span class="ss-val" style="color:var(--or-titre);font-size:.75rem"><%= user.pseudo %></span>
+              <div class="danger-zone">
+                <div class="danger-zone__head">
+                  <span class="danger-zone__icon">⚠️</span>
+                  <span class="danger-zone__title">Zone Danger</span>
                 </div>
-                <div class="ss-row">
-                  <span class="ss-label">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;margin-right:5px;vertical-align:-2px;stroke-linecap:round;stroke-linejoin:round;">
-                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-                    </svg>
-                    Niveau
-                  </span>
-                  <span class="ss-val" style="color:var(--or-titre);font-size:.72rem">
-                    <% if (_curLvl) { %><%= _curLvl.label %><% } else { %>Débutant<% } %>
-                  </span>
-                </div>
-                <div class="ss-row">
-                  <span class="ss-label">Recettes validées</span>
-                  <span class="ss-val" style="color:var(--caramel)"><%= palCount %></span>
-                </div>
-                <div class="ss-row">
-                  <span class="ss-label">Films ajoutés</span>
-                  <span class="ss-val"><%= userMovies.length %></span>
-                </div>
-                <div class="ss-row">
-                  <span class="ss-label">Avis publiés</span>
-                  <span class="ss-val"><%= userNoticesCount %></span>
-                </div>
-                <div class="ss-row">
-                  <span class="ss-label">Favoris</span>
-                  <span class="ss-val"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></span>
-                </div>
-                <div class="ss-row">
-                  <span class="ss-label">Membre depuis</span>
-                  <span class="ss-val" style="font-size:.68rem"><%= _memberSince || '—' %></span>
+                <div class="danger-zone__body">
+                  <p class="danger-zone__sub">La suppression de votre compte est irréversible. Toutes vos données, recettes, avis et favoris seront définitivement effacés.</p>
+                  <div class="danger-zone__actions">
+                    <button class="btn btn--red btn--sm" id="deleteAccountBtn" style="width:100%;">Supprimer mon compte</button>
+                  </div>
                 </div>
               </div>
-
-              <% if (typeof validatedRecipeCount !== 'undefined' && validatedRecipeCount > 0) { %>
-              <div style="padding:14px 18px;border-top:1px solid rgba(196,160,82,.08);">
-                <a href="/movies" class="btn btn--ghost btn--sm" style="width:100%;justify-content:center;display:flex;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:6px;" aria-hidden="true">
-                    <rect width="18" height="18" x="3" y="3" rx="2"/>
-                    <path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/>
-                    <path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/>
-                  </svg>
-                  Ma page auteur
-                </a>
-              </div>
-              <% } %>
-
-            </div><!-- /side-stats -->
+            </div>
 
           </div><!-- /profil-grid -->
-
         </div><!-- /tab-pane#profil -->
 
 
-        <!-- ══════ PALMARÈS ══════ -->
-        <div class="tab-pane" id="palmares" role="tabpanel" aria-label="Palmarès">
+        <!-- ─────────────────────────────────── -->
+        <!-- TAB : FAVORIS                       -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane" id="favoris" role="tabpanel">
 
           <div class="section-head">
-            <span class="section-eyebrow">Progression</span>
-            <span class="section-title">PALMARÈS</span>
-            <span class="section-rule"></span>
-          </div>
-
-          <div class="palmares-header">
-            <div class="palmares-header__desc">
-              <p>
-                <% if (_pts === 0) { %>
-                  Ajoutez des recettes, postez des avis ou des favoris pour accumuler vos premiers points et monter en rang.
-                <% } else if (!_nextLvl) { %>
-                  Félicitations&nbsp;! Vous avez atteint le rang maximum&nbsp;: <strong>Légende</strong>. Vous êtes une icône Ciné Délices.
-                <% } else if (_curLvl) { %>
-                  Vous êtes au rang <strong style="color:var(--or-titre)"><%= _curLvl.label %></strong> avec <strong><%= _pts %> pts</strong>. Plus que <strong><%= Math.max(1, _nextLvl.min - _pts) %> pt<%= (_nextLvl.min - _pts) > 1 ? 's' : '' %></strong> pour atteindre <strong><%= _nextLvl.label %></strong>.
-                <% } else { %>
-                  Chaque action vous rapproche du rang ultime. Commencez dès maintenant !
-                <% } %>
-              </p>
-            </div>
-            <div class="palmares-header__xp">
-              <div class="xp-block">
-                <div class="xp-block-head">
-                  <span class="xp-block-title">
-                    <% if (!_nextLvl) { %>Légende — Rang Max
-                    <% } else if (_curLvl) { %><%= _curLvl.label %> → <%= _nextLvl.label %>
-                    <% } else { %>Débutant → Figurant<% } %>
-                  </span>
-                  <span class="xp-block-frac">
-                    <% if (!_nextLvl) { %><%= _pts %> pts<% } else { %><%= _barCurrent %> / <%= _barMax %> pts<% } %>
-                  </span>
-                </div>
-                <div class="xp-block-track">
-                  <div class="xp-block-fill" style="width: <%= _barPct %>%"></div>
-                </div>
-                <p class="xp-block-hint">
-                  <% if (!_nextLvl) { %>
-                    ✨ Rang maximum atteint
-                  <% } else if (_nextLvl) { %>
-                    Plus que <strong style="color:var(--or-titre)"><%= Math.max(1, _nextLvl.min - _pts) %> pt<%= (_nextLvl.min - _pts) > 1 ? 's' : '' %></strong> pour atteindre <strong><%= _nextLvl.label %></strong>
-                  <% } else { %>
-                    Contribuez pour gagner vos premiers points !
-                  <% } %>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── BADGES SIGNATURE ── -->
-          <div class="section-head" style="margin-top:2.5rem">
-            <span class="section-eyebrow">Collection</span>
-            <span class="section-title">BADGES SIGNATURE</span>
-            <span class="section-rule"></span>
-          </div>
-          <%- include('partials/badges/_badge-grid', {
-            photoSrc:   user.picture,
-            photoAlt:   user.username || 'Avatar',
-            userBadges: typeof userBadges !== 'undefined' ? userBadges : [],
-          }) %>
-
-        </div><!-- /tab-pane#palmares -->
-
-
-        <!-- ══════ FAVORIS & NOTES ══════ -->
-        <div class="tab-pane" id="favoris" role="tabpanel" aria-label="Favoris et notes">
-
-          <div class="section-head">
-            <span class="section-eyebrow">Ma collection</span>
-            <span class="section-title">FAVORIS & NOTES</span>
+            <span class="section-eyebrow">Mon compte</span>
+            <span class="section-title">FAVORIS &amp; NOTES</span>
             <span class="section-rule"></span>
           </div>
 
@@ -686,27 +379,24 @@
               </div>
               <div class="fav-list">
                 <% if (favoriteMovies && favoriteMovies.length > 0) { %>
-                  <% favoriteMovies.slice(0, 8).forEach(function(movie) { %>
-                  <a class="fav-item" href="/recipes-movie/<%= movie.id %>">
-                    <div class="fav-item__thumb">
-                      <% if (movie.cardPath || movie.picture) { %>
-                        <img class="fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                      <% } else { %>
-                        <div class="fav-item__thumb--placeholder">🎬</div>
-                      <% } %>
-                    </div>
+                  <% favoriteMovies.slice(0, 8).forEach(movie => { %>
+                  <a href="/recipes-movie/<%= movie.id %>" class="fav-item">
+                    <% if (movie.cardPath || movie.picture) { %>
+                    <img class="fav-item__thumb fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="fav-item__thumb fav-item__thumb--poster fav-item__thumb--placeholder">🎬</div>
+                    <% } %>
                     <div class="fav-item__info">
                       <span class="fav-item__title"><%= movie.title %></span>
                       <span class="fav-item__sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></span>
                     </div>
-                    <span style="font-size:.8rem;color:var(--rouge-cta);">♥</span>
                   </a>
                   <% }) %>
                   <% if (favoriteMoviesCount > 8) { %>
-                  <div class="fav-more">+ <%= favoriteMoviesCount - 8 %> autre<%= favoriteMoviesCount - 8 > 1 ? 's' : '' %></div>
+                  <span class="fav-more">Voir tous les <%= favoriteMoviesCount %> films favoris →</span>
                   <% } %>
                 <% } else { %>
-                  <div class="fav-empty">Aucun film en favoris.</div>
+                  <p class="fav-empty">Aucun film en favoris pour l'instant.</p>
                 <% } %>
               </div>
             </div>
@@ -719,28 +409,24 @@
               </div>
               <div class="fav-list">
                 <% if (favoriteRecipes && favoriteRecipes.length > 0) { %>
-                  <% favoriteRecipes.slice(0, 8).forEach(function(recipe) { %>
-                  <a class="fav-item" href="/recipes-movie/details/<%= recipe.id %>">
-                    <div class="fav-item__thumb">
-                      <% if (recipe.picture) { %>
-                        <img class="fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
-                      <% } else { %>
-                        <div class="fav-item__thumb--placeholder">🍽</div>
-                      <% } %>
-                    </div>
+                  <% favoriteRecipes.slice(0, 8).forEach(recipe => { %>
+                  <a href="/recipes-movie/details/<%= recipe.id %>" class="fav-item">
+                    <% if (recipe.picture) { %>
+                    <img class="fav-item__thumb fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="fav-item__thumb fav-item__thumb--recipe fav-item__thumb--placeholder">🍽️</div>
+                    <% } %>
                     <div class="fav-item__info">
                       <span class="fav-item__title"><%= recipe.name %></span>
-                      <span class="fav-item__sub"><% if (recipe.category) { %><%= recipe.category %><% } %><% if (recipe.time) { %> · <%= recipe.time %> min<% } %></span>
-                      <% if (recipe.Movie) { %><span class="fav-item__note"><%= recipe.Movie.title %></span><% } %>
+                      <span class="fav-item__sub"><%= recipe.category %> · <%= recipe.time %> min<% if (recipe.Movie) { %> · <%= recipe.Movie.title %><% } %></span>
                     </div>
-                    <span style="font-size:.8rem;color:var(--rouge-cta);">♥</span>
                   </a>
                   <% }) %>
                   <% if (favoriteRecipesCount > 8) { %>
-                  <div class="fav-more">+ <%= favoriteRecipesCount - 8 %> autre<%= favoriteRecipesCount - 8 > 1 ? 's' : '' %></div>
+                  <span class="fav-more">Voir toutes les <%= favoriteRecipesCount %> recettes favorites →</span>
                   <% } %>
                 <% } else { %>
-                  <div class="fav-empty">Aucune recette en favoris.</div>
+                  <p class="fav-empty">Aucune recette en favoris pour l'instant.</p>
                 <% } %>
               </div>
             </div>
@@ -753,27 +439,22 @@
               </div>
               <div class="fav-list">
                 <% if (ratedMovies && ratedMovies.length > 0) { %>
-                  <% ratedMovies.slice(0, 8).forEach(function(movie) { %>
-                  <a class="fav-item" href="/recipes-movie/<%= movie.id %>">
-                    <div class="fav-item__thumb">
-                      <% if (movie.cardPath || movie.picture) { %>
-                        <img class="fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                      <% } else { %>
-                        <div class="fav-item__thumb--placeholder">🎬</div>
-                      <% } %>
-                    </div>
+                  <% ratedMovies.slice(0, 8).forEach(movie => { %>
+                  <a href="/recipes-movie/<%= movie.id %>" class="fav-item">
+                    <% if (movie.cardPath || movie.picture) { %>
+                    <img class="fav-item__thumb fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="fav-item__thumb fav-item__thumb--poster fav-item__thumb--placeholder">🎬</div>
+                    <% } %>
                     <div class="fav-item__info">
                       <span class="fav-item__title"><%= movie.title %></span>
                       <span class="fav-item__sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></span>
                     </div>
-                    <span class="fav-item__note">★ <%= movie.userScore %>/5</span>
+                    <span class="fav-item__note">★ <%= movie.userScore %></span>
                   </a>
                   <% }) %>
-                  <% if (ratedMoviesCount > 8) { %>
-                  <div class="fav-more">+ <%= ratedMoviesCount - 8 %> autre<%= ratedMoviesCount - 8 > 1 ? 's' : '' %></div>
-                  <% } %>
                 <% } else { %>
-                  <div class="fav-empty">Aucun film noté.</div>
+                  <p class="fav-empty">Aucun film noté pour l'instant.</p>
                 <% } %>
               </div>
             </div>
@@ -786,69 +467,56 @@
               </div>
               <div class="fav-list">
                 <% if (ratedRecipes && ratedRecipes.length > 0) { %>
-                  <% ratedRecipes.slice(0, 8).forEach(function(recipe) { %>
-                  <a class="fav-item" href="/recipes-movie/details/<%= recipe.id %>">
-                    <div class="fav-item__thumb">
-                      <% if (recipe.picture) { %>
-                        <img class="fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
-                      <% } else { %>
-                        <div class="fav-item__thumb--placeholder">🍽</div>
-                      <% } %>
-                    </div>
+                  <% ratedRecipes.slice(0, 8).forEach(recipe => { %>
+                  <a href="/recipes-movie/details/<%= recipe.id %>" class="fav-item">
+                    <% if (recipe.picture) { %>
+                    <img class="fav-item__thumb fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="fav-item__thumb fav-item__thumb--recipe fav-item__thumb--placeholder">🍽️</div>
+                    <% } %>
                     <div class="fav-item__info">
                       <span class="fav-item__title"><%= recipe.name %></span>
-                      <span class="fav-item__sub"><% if (recipe.category) { %><%= recipe.category %><% } %><% if (recipe.time) { %> · <%= recipe.time %> min<% } %></span>
+                      <span class="fav-item__sub"><%= recipe.category %> · <%= recipe.time %> min</span>
                     </div>
-                    <span class="fav-item__note">★ <%= recipe.userScore %>/5</span>
+                    <span class="fav-item__note">★ <%= recipe.userScore %></span>
                   </a>
                   <% }) %>
-                  <% if (ratedRecipesCount > 8) { %>
-                  <div class="fav-more">+ <%= ratedRecipesCount - 8 %> autre<%= ratedRecipesCount - 8 > 1 ? 's' : '' %></div>
-                  <% } %>
                 <% } else { %>
-                  <div class="fav-empty">Aucune recette notée.</div>
+                  <p class="fav-empty">Aucune recette notée pour l'instant.</p>
                 <% } %>
               </div>
             </div>
 
           </div><!-- /fav-cols -->
-
         </div><!-- /tab-pane#favoris -->
 
 
-        <!-- ══════ CRÉATIONS ══════ -->
-        <div class="tab-pane" id="creations" role="tabpanel" aria-label="Mes créations">
+        <!-- ─────────────────────────────────── -->
+        <!-- TAB : CRÉATIONS                     -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane" id="creations" role="tabpanel">
 
           <div class="section-head">
-            <span class="section-eyebrow">Mes contributions</span>
-            <span class="section-title">CRÉATIONS</span>
+            <span class="section-eyebrow">Mon compte</span>
+            <span class="section-title">MES CRÉATIONS</span>
             <span class="section-rule"></span>
           </div>
 
           <div class="creations-grid">
 
-            <!-- MES RECETTES -->
+            <!-- ── RECETTES ── -->
             <div class="creation-section">
               <div class="creation-section__head">
-                <div class="form-card__head" style="border:none;padding:0;">
-                  <span class="creation-section__title">MES RECETTES</span>
-                  <span style="font-family:var(--f-display);font-size:.8rem;letter-spacing:1px;color:rgba(196,160,82,.42);"><%= userRecipes.length %></span>
-                </div>
+                <span class="creation-section__title">MES RECETTES (<%= userRecipes.length %>)</span>
               </div>
               <div class="inline-filter">
-                <input
-                  class="if-input collections-section__search-input"
-                  type="search"
-                  placeholder="Rechercher une recette…"
-                  data-list="recipes-list"
-                />
-                <button type="button" class="collections-section__search-clear" aria-label="Effacer">×</button>
+                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes recettes…" />
               </div>
-              <div class="creation-list" id="recipes-list">
+              <div class="creation-list collections-section__list" id="collections-recipes-list">
                 <% if (userRecipes && userRecipes.length > 0) { %>
-                  <% userRecipes.forEach(function(recipe) { %>
+                  <% userRecipes.forEach(recipe => { %>
                   <article
-                    class="account-item"
+                    class="account-item ci-item"
                     data-type="recipe"
                     data-id="<%= recipe.id %>"
                     data-name="<%= recipe.name %>"
@@ -857,76 +525,83 @@
                     data-difficulty="<%= recipe.difficulty %>"
                     data-edit-status="<%= recipe.edit_status || 'none' %>"
                   >
-                    <img
-                      src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
-                      alt="<%= recipe.name %>"
-                      loading="lazy"
-                    />
-                    <div class="account-item__content">
-                      <div class="account-item__header">
-                        <h4 class="account-item__title" title="<%= recipe.name %>"><%= recipe.name %></h4>
-                        <span class="account-item__status <%= recipe.status === 'approved' ? 'is-approved' : recipe.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                          <%= recipe.status === 'approved' ? 'Validé' : recipe.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                        </span>
-                      </div>
-                      <p class="account-item__meta"><%= recipe.category %> · <%= recipe.time %> min · <%= recipe.difficulty %></p>
-                      <% if (recipe.Movie) { %>
-                        <p class="account-item__hint">Film associé : <%= recipe.Movie.title %></p>
+                    <div class="ci-top">
+                      <% if (recipe.picture) { %>
+                      <img class="ci-thumb ci-thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="ci-thumb ci-thumb--recipe ci-thumb--placeholder">🍽️</div>
                       <% } %>
-                      <% if (recipe.edit_status === 'pending') { %>
-                        <p class="account-item__hint">Modification en attente de validation admin.</p>
-                      <% } %>
-                      <div class="account-item__actions">
-                        <button class="btn btn--primary btn--sm account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>Éditer</button>
-                        <button class="btn btn--red btn--sm account-delete-btn">Supprimer</button>
-                      </div>
-                      <div class="account-item__edit">
-                        <label>Titre<input type="text" name="name" value="<%= recipe.name %>" /></label>
-                        <label>Description<textarea name="description" rows="2"><%= recipe.description %></textarea></label>
-                        <label>Catégorie<input type="text" name="category" value="<%= recipe.category %>" /></label>
-                        <label>Temps (min)<input type="number" name="time" value="<%= recipe.time %>" /></label>
-                        <label>Difficulté<input type="text" name="difficulty" value="<%= recipe.difficulty %>" /></label>
-                        <label>Ingrédients<textarea name="ingredients" rows="3"><%= recipe.ingredients %></textarea></label>
-                        <label>Préparation<textarea name="preparation" rows="4"><%= recipe.preparation %></textarea></label>
-                        <label class="account-item__file">Photo de la recette<input type="file" name="recipeImage" accept="image/*" /></label>
-                        <p class="account-item__preview">Aperçu : <span></span></p>
-                        <div class="account-item__edit-actions">
-                          <button class="btn btn--primary btn--sm account-save-btn">Enregistrer</button>
-                          <button class="btn btn--ghost btn--sm account-cancel-btn">Annuler</button>
+                      <div class="ci-info account-item__content">
+                        <div class="account-item__header">
+                          <span class="ci-title account-item__title"><%= recipe.name %></span>
+                          <span class="ci-status ci-status--<%= recipe.status === 'approved' ? 'ok' : recipe.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= recipe.status === 'approved' ? 'is-approved' : recipe.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
+                            <%= recipe.status === 'approved' ? 'Validé' : recipe.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                          </span>
                         </div>
+                        <div class="ci-meta account-item__meta">
+                          <%= recipe.category %>
+                          <span class="ci-dot"></span>
+                          <%= recipe.time %> min
+                          <span class="ci-dot"></span>
+                          <%= recipe.difficulty %>
+                        </div>
+                        <% if (recipe.Movie) { %><p class="account-item__hint">Film : <%= recipe.Movie.title %></p><% } %>
+                        <% if (recipe.edit_status === 'pending') { %><p class="account-item__hint">Modification en attente de validation.</p><% } %>
+                      </div>
+                    </div>
+                    <div class="ci-actions account-item__actions">
+                      <button class="ci-btn ci-btn--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>
+                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Éditer
+                      </button>
+                      <button class="ci-btn ci-btn--del account-delete-btn">
+                        <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                        Supprimer
+                      </button>
+                    </div>
+                    <div class="account-item__edit ci-edit-form">
+                      <div class="ci-ef-row">
+                        <div><label class="ci-ef-label">Titre</label><input class="ci-ef-input" type="text" name="name" value="<%= recipe.name %>" /></div>
+                        <div><label class="ci-ef-label">Catégorie</label><input class="ci-ef-input" type="text" name="category" value="<%= recipe.category %>" /></div>
+                      </div>
+                      <div class="ci-ef-row">
+                        <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" type="number" name="time" value="<%= recipe.time %>" /></div>
+                        <div><label class="ci-ef-label">Difficulté</label><input class="ci-ef-input" type="text" name="difficulty" value="<%= recipe.difficulty %>" /></div>
+                      </div>
+                      <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" name="description" rows="2"><%= recipe.description %></textarea></div>
+                      <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" name="ingredients" rows="3"><%= recipe.ingredients %></textarea></div>
+                      <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" name="preparation" rows="4"><%= recipe.preparation %></textarea></div>
+                      <div class="ci-ef-full">
+                        <label class="ci-ef-label account-item__file">Photo de la recette<input type="file" name="recipeImage" accept="image/*" /></label>
+                        <p class="account-item__preview">Aperçu : <span></span></p>
+                      </div>
+                      <div class="ci-ef-actions account-item__edit-actions">
+                        <button class="btn btn--primary btn--sm account-save-btn">Enregistrer</button>
+                        <button class="btn btn--ghost btn--sm account-cancel-btn">Annuler</button>
                       </div>
                     </div>
                   </article>
                   <% }) %>
                 <% } else { %>
-                  <div class="fav-empty">Aucune recette enregistrée pour le moment.</div>
+                  <p class="fav-empty account-empty">Aucune recette enregistrée pour le moment.</p>
                 <% } %>
               </div>
-              <p class="collections-section__no-results" style="display:none;">Aucun résultat.</p>
+              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
-            <!-- MES FILMS -->
+            <!-- ── FILMS ── -->
             <div class="creation-section">
               <div class="creation-section__head">
-                <div class="form-card__head" style="border:none;padding:0;">
-                  <span class="creation-section__title">MES FILMS</span>
-                  <span style="font-family:var(--f-display);font-size:.8rem;letter-spacing:1px;color:rgba(196,160,82,.42);"><%= userMovies.length %></span>
-                </div>
+                <span class="creation-section__title">MES FILMS (<%= userMovies.length %>)</span>
               </div>
               <div class="inline-filter">
-                <input
-                  class="if-input collections-section__search-input"
-                  type="search"
-                  placeholder="Rechercher un film…"
-                  data-list="movies-list"
-                />
-                <button type="button" class="collections-section__search-clear" aria-label="Effacer">×</button>
+                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes films…" />
               </div>
-              <div class="creation-list" id="movies-list">
+              <div class="creation-list collections-section__list" id="collections-movies-list">
                 <% if (userMovies && userMovies.length > 0) { %>
-                  <% userMovies.forEach(function(movie) { %>
+                  <% userMovies.forEach(movie => { %>
                   <article
-                    class="account-item"
+                    class="account-item ci-item"
                     data-type="movie"
                     data-id="<%= movie.id %>"
                     data-title="<%= movie.title %>"
@@ -934,93 +609,112 @@
                     data-genre="<%= movie.genre %>"
                     data-status="<%= movie.status === 'approved' ? 'validated' : 'draft' %>"
                   >
-                    <img
-                      src="<%= movie.cardPath || movie.picture || '/images/image-default-movie.jpg' %>"
-                      alt="<%= movie.title %>"
-                      loading="lazy"
-                    />
-                    <div class="account-item__content">
-                      <div class="account-item__header">
-                        <h4 class="account-item__title" title="<%= movie.title %>"><%= movie.title %></h4>
-                        <span class="account-item__status <%= movie.status === 'approved' ? 'is-approved' : movie.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                          <%= movie.status === 'approved' ? 'Validé' : movie.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                        </span>
+                    <div class="ci-top">
+                      <% if (movie.cardPath || movie.picture) { %>
+                      <img class="ci-thumb" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="ci-thumb ci-thumb--placeholder">🎬</div>
+                      <% } %>
+                      <div class="ci-info account-item__content">
+                        <div class="account-item__header">
+                          <span class="ci-title account-item__title"><%= movie.title %></span>
+                          <span class="ci-status ci-status--<%= movie.status === 'approved' ? 'ok' : movie.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= movie.status === 'approved' ? 'is-approved' : movie.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
+                            <%= movie.status === 'approved' ? 'Validé' : movie.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                          </span>
+                        </div>
+                        <div class="ci-meta account-item__meta">
+                          <%= movie.year %>
+                          <% if (movie.genre) { %><span class="ci-dot"></span><%= movie.genre %><% } %>
+                        </div>
                       </div>
-                      <p class="account-item__meta"><%= movie.year %> · <%= movie.genre %></p>
                     </div>
                   </article>
                   <% }) %>
                 <% } else { %>
-                  <div class="fav-empty">Aucun film enregistré pour le moment.</div>
+                  <p class="fav-empty account-empty">Aucun film enregistré pour le moment.</p>
                 <% } %>
               </div>
-              <p class="collections-section__no-results" style="display:none;">Aucun résultat.</p>
+              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
-            <!-- MES AVIS -->
+            <!-- ── AVIS ── -->
             <div class="creation-section">
               <div class="creation-section__head">
-                <div class="form-card__head" style="border:none;padding:0;">
-                  <span class="creation-section__title">MES AVIS</span>
-                  <span style="font-family:var(--f-display);font-size:.8rem;letter-spacing:1px;color:rgba(196,160,82,.42);"><%= userNoticesCount %></span>
-                </div>
+                <span class="creation-section__title">MES AVIS (<%= userNoticesCount %>)</span>
               </div>
               <div class="inline-filter">
-                <input
-                  class="if-input collections-section__search-input"
-                  type="search"
-                  placeholder="Rechercher un avis…"
-                  data-list="notices-list"
-                />
-                <button type="button" class="collections-section__search-clear" aria-label="Effacer">×</button>
+                <input type="search" class="if-input collections-section__search-input" placeholder="Filtrer mes avis…" />
               </div>
-              <div class="creation-list" id="notices-list">
+              <div class="creation-list collections-section__list" id="collections-notices-list">
                 <% if (userNotices && userNotices.length > 0) { %>
-                  <% userNotices.forEach(function(notice) { %>
+                  <% userNotices.forEach(notice => { %>
                   <article
-                    class="account-item account-item--notice"
+                    class="account-item account-item--notice ci-item"
                     data-type="notice"
                     data-id="<%= notice.id %>"
                     data-delete-request="<%= notice.delete_request_status || 'none' %>"
                   >
-                    <div class="account-item__content">
-                      <div class="account-item__header">
-                        <h4 class="account-item__title">Avis #<%= notice.id %></h4>
-                        <span class="account-item__status <%= notice.status === 'approved' ? 'is-approved' : notice.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
-                          <%= notice.status === 'approved' ? 'Validé' : notice.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                        </span>
-                      </div>
-                      <p class="account-item__meta">
-                        <%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %>
-                        · <%= notice.quote %>/5
-                      </p>
-                      <% if (notice.Recipe) { %>
+                    <div class="ci-top">
+                      <div class="ci-info account-item__content">
+                        <div class="account-item__header">
+                          <span class="ci-title account-item__title">Avis #<%= notice.id %></span>
+                          <span class="ci-status ci-status--<%= notice.status === 'approved' ? 'ok' : notice.status === 'rejected' ? 'refused' : 'pending' %> account-item__status <%= notice.status === 'approved' ? 'is-approved' : notice.status === 'rejected' ? 'is-rejected' : 'is-pending' %>">
+                            <%= notice.status === 'approved' ? 'Validé' : notice.status === 'rejected' ? 'Refusé' : 'En attente' %>
+                          </span>
+                        </div>
+                        <div class="ci-meta account-item__meta">
+                          <%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %>
+                          <span class="ci-dot"></span>
+                          <span class="ci-note"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <%= notice.quote %>/5</span>
+                        </div>
+                        <% if (notice.Recipe) { %>
                         <p class="account-item__hint">
                           Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a>
                           <% if (notice.Recipe.Movie) { %> · Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a><% } %>
                         </p>
-                      <% } %>
-                      <p class="account-item__text"><%= notice.content %></p>
-                      <% if (notice.delete_request_status === 'pending') { %>
+                        <% } %>
+                        <p class="account-item__text" style="font-size:.65rem;color:rgba(232,232,232,.5);margin-top:4px;line-height:1.5;"><%= notice.content %></p>
+                        <% if (notice.delete_request_status === 'pending') { %>
                         <p class="account-item__hint">Suppression en attente de validation admin.</p>
-                      <% } %>
-                      <div class="account-item__actions">
-                        <button class="btn btn--red btn--sm account-delete-btn" <%= notice.delete_request_status === 'pending' ? 'disabled' : '' %>>Supprimer</button>
+                        <% } %>
                       </div>
+                    </div>
+                    <div class="ci-actions account-item__actions">
+                      <button class="ci-btn ci-btn--del account-delete-btn" <%= notice.delete_request_status === 'pending' ? 'disabled' : '' %>>
+                        <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                        Supprimer
+                      </button>
                     </div>
                   </article>
                   <% }) %>
                 <% } else { %>
-                  <div class="fav-empty">Aucun avis enregistré pour le moment.</div>
+                  <p class="fav-empty account-empty">Aucun avis enregistré pour le moment.</p>
                 <% } %>
               </div>
-              <p class="collections-section__no-results" style="display:none;">Aucun résultat.</p>
+              <p class="collections-section__no-results" style="display:none;color:rgba(232,232,232,.35);font-size:.7rem;padding:16px;text-align:center;">Aucun résultat.</p>
             </div>
 
           </div><!-- /creations-grid -->
-
         </div><!-- /tab-pane#creations -->
 
+        <!-- ─────────────────────────────────── -->
+        <!-- TAB : CONTRIBUTIONS                -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane" id="contributions" role="tabpanel">
+          <div class="contrib-soon">
+            <div class="contrib-soon__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <h2 class="contrib-soon__title">Espace contributeur</h2>
+            <p class="contrib-soon__sub">À venir très prochainement</p>
+            <div class="contrib-soon__sep" aria-hidden="true"></div>
+            <p class="contrib-soon__desc">
+              Cet espace mettra en avant tes contributions à la communauté Ciné Délices —
+              recettes ajoutées, films proposés, avis partagés — et te permettra de suivre
+              ton impact sur la plateforme.
+            </p>
+          </div>
+        </div><!-- /tab-pane#contributions -->
 
       </div><!-- /profile-content -->
 
@@ -1029,13 +723,33 @@
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Toast notifications account.js -->
-    <div class="profile-toast" role="status" aria-live="polite"></div>
+    <!-- Toast global -->
+    <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
-    <!-- Scripts JS spécifiques -->
+    <!-- Modal confirmation suppression -->
+    <div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-box">
+        <div class="modal-stripe"></div>
+        <div class="modal-head">
+          <div class="modal-ico">⚠️</div>
+          <div class="modal-titles">
+            <div class="modal-title" id="modalTitle">SUPPRESSION</div>
+            <div class="modal-sub">Cette action est irréversible</div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <p>Vous êtes sur le point de supprimer définitivement :</p>
+          <div class="modal-target" id="modalTarget"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn--ghost btn--sm" id="modalCancel">Annuler</button>
+          <button class="btn btn--red btn--sm" id="modalConfirm">Confirmer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="/js/profile-tabs.js" defer></script>
     <script src="/js/account.js" defer></script>
-
-
   </body>
 </html>

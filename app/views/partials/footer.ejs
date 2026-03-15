@@ -5,52 +5,18 @@
  * Variables EJS disponibles (héritées de la vue parente) :
  *   role         {string|undefined}  Rôle de l'utilisateur connecté
  *   userId       {number|undefined}  ID de l'utilisateur connecté
- *   username     {string|undefined}  Pseudo de l'utilisateur
- *   userLevel    {string|undefined}  Code de niveau ('figurant'|'second-role'|'acteur'|'realisateur'|'legende')
- *   userPoints   {number|undefined}  Total de points de l'utilisateur connecté
- *   userBadges   {string[]|undefined} Codes des badges débloqués (['doctor-strange', ...])
  *   footerStats  {object|undefined}  { films, recipes, members } — données dynamiques
+ *   topContributors {array|undefined} Top contributeurs du mois
  *
  * Si ces variables ne sont pas définies, des valeurs de substitution sont utilisées.
  */
-const _isLoggedIn  = typeof role !== 'undefined' && role !== null;
-const _level       = typeof userLevel !== 'undefined' ? userLevel : null;
-const _badges      = typeof userBadges !== 'undefined' ? userBadges : [];
+const _isLoggedIn = typeof role !== 'undefined' && role !== null;
 const _stats = typeof footerStats !== 'undefined' ? footerStats : {
-  members: typeof totalUsers   !== 'undefined' ? totalUsers   : 1842,
-  recipes: typeof totalRecipes !== 'undefined' ? totalRecipes : 583,
-  films:   typeof totalMovies  !== 'undefined' ? totalMovies  : 247,
+  members: 0,
+  recipes: 0,
+  films:   0,
   year: 2025,
 };
-
-const _pts = typeof userPoints !== 'undefined' ? (userPoints || 0) : 0;
-
-/* Gamification — niveaux alignés sur gamification.service.js */
-const _gamLevels = [
-  { code: 'figurant',    label: 'Figurant',    emoji: '🎟️', min: 10,  nextMin: 25  },
-  { code: 'second-role', label: 'Second Rôle', emoji: '🎭', min: 25,  nextMin: 50  },
-  { code: 'acteur',      label: 'Acteur',      emoji: '🎬', min: 50,  nextMin: 100 },
-  { code: 'realisateur', label: 'Réalisateur', emoji: '🎥', min: 100, nextMin: 200 },
-  { code: 'legende',     label: 'Légende',     emoji: '👑', min: 200, nextMin: null },
-];
-const _curLvlObj  = _gamLevels.find(l => l.code === _level) || null;
-const _curLvlIdx  = _curLvlObj ? _gamLevels.indexOf(_curLvlObj) : -1;
-const _nextLvlObj = (_curLvlIdx >= 0 && _curLvlIdx < _gamLevels.length - 1) ? _gamLevels[_curLvlIdx + 1] : null;
-
-/* Pourcentage de progression RÉEL (basé sur les points) */
-let _realPct = 0, _ptsNeeded = null;
-if (_isLoggedIn) {
-  const p = _pts;
-  if (!_curLvlObj) {
-    _realPct   = Math.min(99, Math.round((p / 10) * 100));
-    _ptsNeeded = Math.max(0, 10 - p);
-  } else if (_nextLvlObj) {
-    _realPct   = Math.min(100, Math.round(((p - _curLvlObj.min) / (_nextLvlObj.min - _curLvlObj.min)) * 100));
-    _ptsNeeded = Math.max(0, _nextLvlObj.min - p);
-  } else {
-    _realPct = 100; /* Légende = rang max */
-  }
-}
 %>
 
 <%# ══════════════════════════════════════════════════════════════ %>
@@ -141,48 +107,13 @@ if (_isLoggedIn) {
         <% } %>
       </div>
 
-      <%# ── Carte 2 : Niveaux de progression ── %>
+      <%# ── Carte 2 : CTA Contribuer ── %>
       <div class="ft__widget-prog">
-        <% if (_isLoggedIn) { %>
-        <p class="ft__widget-prog-head">Votre progression</p>
-        <% } else { %>
-        <p class="ft__widget-prog-head">Niveaux — <a href="#" class="js-open-login" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Connectez-vous</a></p>
-        <% } %>
-
-        <%# Barre de progression RÉELLE (basée sur les points) %>
-        <% if (_isLoggedIn) { %>
-        <div class="ft__widget-level">
-          <div>
-            <div class="ft__widget-level-name"><%= _curLvlObj ? _curLvlObj.label.toUpperCase() : 'DÉBUTANT' %></div>
-            <div class="ft__widget-level-label"><%= _pts %> pts<% if (_ptsNeeded !== null && _nextLvlObj) { %> · encore <%= _ptsNeeded %> pts<% } %></div>
-          </div>
-          <div class="ft__widget-level-bar" title="Progression <%= _realPct %>%">
-            <div class="ft__widget-level-fill" style="width:<%= _realPct %>%"></div>
-          </div>
-        </div>
-        <% } %>
-
-        <%# 5 cartes de niveaux (noms réels du système) %>
-        <div class="ft__lvl-row">
-          <% _gamLevels.forEach(function(lv, idx) {
-            const _isActive = _curLvlObj && _curLvlObj.code === lv.code;
-            const _isPast   = _curLvlIdx > idx;
-            const _isLocked = !_isLoggedIn || (!_isActive && !_isPast);
-          %>
-          <div class="ft__lvl-card<%= _isActive ? ' ft__lvl-card--active' : '' %><%= _isLocked ? ' ft__lvl-card--locked' : '' %>">
-            <span class="ft__lvl-icon"><%= lv.emoji %></span>
-            <span class="ft__lvl-name"><%= lv.label %></span>
-          </div>
-          <% if (idx < _gamLevels.length - 1) { %><span class="ft__lvl-arrow">›</span><% } %>
-          <% }); %>
-        </div>
-
-        <%# CTA incitation %>
+        <p class="ft__widget-prog-head">Contribuer</p>
         <% if (_isLoggedIn) { %>
         <a href="/add-recipe-movie" class="ft__widget-cta-btn">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Créer une recette
-          <span class="ft__widget-cta-pts">+10 pts</span>
+          Ajouter une recette
         </a>
         <a href="/auth/profil/<%= userId %>" class="ft__widget-prog-link">Voir mon profil →</a>
         <% } else { %>
@@ -202,28 +133,6 @@ if (_isLoggedIn) {
 <%# ══════════════════════════════════════════════════════════════ %>
 <footer class="ft" role="contentinfo">
   <div class="ft__glow" aria-hidden="true"></div>
-
-  <%# ── CTA Newsletter ── %>
-  <div class="ft__cta">
-    <div class="ft__cta-inner">
-      <div>
-        <p class="ft__cta-label">Newsletter</p>
-        <h3 class="ft__cta-title">RESTEZ <em>DANS LE FILM</em></h3>
-        <p class="ft__cta-sub">Recettes inédites, sorties ciné et actualités de la communauté.</p>
-      </div>
-      <div class="ft__nl">
-        <label class="ft__nl-label" for="ft-email">Votre e-mail</label>
-        <div class="ft__nl-row">
-          <input class="ft__nl-input" id="ft-email" type="email" placeholder="prenom@exemple.com" autocomplete="email" />
-          <button class="ft__nl-btn" type="button" aria-label="S'inscrire à la newsletter">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            S'inscrire
-          </button>
-        </div>
-        <span class="ft__nl-note">Aucun spam. Désinscription à tout moment.</span>
-      </div>
-    </div>
-  </div>
 
   <%# ── Grille principale : brand + liens ── %>
   <div class="ft__main">
@@ -362,19 +271,6 @@ if (_isLoggedIn) {
     </a>
   </div>
 
-  <%# ── Filmstrip cinématographique ── %>
-  <div class="ft__film" aria-hidden="true">
-    <div class="ft__film-track">
-      <% ['RATATOUILLE','INTERSTELLAR','LE PARRAIN','MATRIX','AMÉLIE','STAR WARS','JOHN WICK','TITANIC','HARRY POTTER','FORREST GUMP','300','LOTR',
-          'RATATOUILLE','INTERSTELLAR','LE PARRAIN','MATRIX','AMÉLIE','STAR WARS','JOHN WICK','TITANIC','HARRY POTTER','FORREST GUMP','300','LOTR'].forEach(function(title) { %>
-      <div class="ft__film-frame">
-        <div class="ft__film-perf"></div>
-        <div class="ft__film-cell"><span class="ft__film-text"><%= title %></span></div>
-        <div class="ft__film-perf"></div>
-      </div>
-      <% }); %>
-    </div>
-  </div>
 </footer>
 
 <%# ══════════════════════════════════════════════════════════════ %>

@@ -2,7 +2,6 @@ import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
-import { addPoints, checkAndUnlockSignatureBadges, POINTS } from "../services/gamification.service.js";
 import sharp from "sharp";
 import fs from "fs";
 import slugify from "slugify";
@@ -87,9 +86,6 @@ const addRecipesMoviesController = {
       // Même sans image uploadée, les chemins sont préparés pour un futur upload
       const enrichedMovie = enrichMovieWithImagePaths(newMovie);
 
-      // Gamification — +5 pts pour la contribution d'un film manquant
-      await addPoints(req.userId, POINTS.film_contributed);
-
       // Rendre la page avec le film créé pour permettre l'ajout de la recette
       res.status(201).render("add-recipes-movies", {
         newMovie: enrichedMovie,
@@ -154,20 +150,10 @@ const addRecipesMoviesController = {
         picture: imagePath, // Chemin de l'image (null si aucune image)
       });
 
-      // Gamification — +10 pts pour la création d'une recette
-      // + vérification badge Signature si le film lié correspond
-      const recipeMovie = await Movie.findByPk(id_movie, { attributes: ["slug", "title"] });
-      const computedSlug = _movieSlug(recipeMovie);
-      const [, newBadges] = await Promise.all([
-        addPoints(req.userId, POINTS.recipe_created),
-        checkAndUnlockSignatureBadges(req.userId, computedSlug),
-      ]);
-
       // Rendre la page avec la recette créée
       res.status(201).render("add-recipes-movies", {
         newRecipe,
         role: req.userRole,
-        newBadges: newBadges || [],
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -246,24 +232,12 @@ const addRecipesMoviesController = {
 
       const enrichedMovie = enrichMovieWithImagePaths(movie);
 
-      // Gamification
-      // +5 pts si un nouveau film a été créé (filmId absent ou non trouvé)
-      // +10 pts pour la recette + vérification badge Signature
-      const isNewFilm = !filmId || !await Movie.findByPk(filmId, { attributes: ["id"] }).catch(() => null);
-      const computedSlugMAR = _movieSlug(movie);
-      const [, , newBadges] = await Promise.all([
-        addPoints(req.userId, POINTS.recipe_created),
-        isNewFilm ? addPoints(req.userId, POINTS.film_contributed) : Promise.resolve(),
-        checkAndUnlockSignatureBadges(req.userId, computedSlugMAR),
-      ]);
-
       return res.status(201).render("add-recipes-movies", {
         success: true,
         successMessage: "Film et recette envoyés pour validation.",
         newMovie: enrichedMovie,
         newRecipe,
         role: req.userRole,
-        newBadges: newBadges || [],
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);

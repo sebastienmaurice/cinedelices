@@ -10,7 +10,6 @@
  */
 
 import { Favorite, Movie, Recipe } from "../models/index.model.js";
-import { addPoints, POINTS } from "../services/gamification.service.js";
 
 /**
  * Vérifie qu'une entité existe dans sa table
@@ -98,8 +97,6 @@ const favoritesController = {
           entity_type: entityType,
           entity_id: entityId,
         });
-        // Gamification — +1 pt pour un nouveau favori
-        addPoints(userId, POINTS.favorite_added).catch(() => {});
         return res.json({
           success: true,
           isFavorite: true,

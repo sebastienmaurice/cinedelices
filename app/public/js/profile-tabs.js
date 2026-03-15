@@ -7,7 +7,7 @@
   'use strict';
 
   var DEFAULT_TAB = 'overview';
-  var VALID_TABS = ['overview', 'profil', 'palmares', 'favoris', 'creations'];
+  var VALID_TABS = ['overview', 'profil', 'favoris', 'creations', 'contributions'];
 
   function getActiveTab() {
     var hash = window.location.hash.replace('#', '');
@@ -26,36 +26,6 @@
     });
   }
 
-  function initBadgeZoom() {
-    var badge = document.querySelector('.badge-card.current .badge-card__img');
-    if (!badge) return;
-
-    var overlay = document.createElement('div');
-    overlay.className = 'badge-zoom-overlay';
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', badge.alt || 'Badge débloqué');
-
-    var img = document.createElement('img');
-    img.className = 'badge-zoom-overlay__img';
-    img.src = badge.src;
-    img.alt = badge.alt;
-    overlay.appendChild(img);
-    document.body.appendChild(overlay);
-
-    badge.addEventListener('click', function () {
-      overlay.classList.add('is-open');
-    });
-
-    overlay.addEventListener('click', function () {
-      overlay.classList.remove('is-open');
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') overlay.classList.remove('is-open');
-    });
-  }
-
   function init() {
     document.querySelectorAll('.ptab').forEach(function (link) {
       link.addEventListener('click', function (e) {
@@ -71,7 +41,6 @@
     });
 
     activateTab(getActiveTab());
-    initBadgeZoom();
   }
 
   /* exposer pour les liens inline type onclick="activateTab('creations')" */

@@ -14,7 +14,6 @@
 
 import { Rating, Movie, Recipe } from "../models/index.model.js";
 import sequelize from "../database/sequelize-client.js";
-import { addPoints, POINTS } from "../services/gamification.service.js";
 
 /**
  * Vérifie qu'une entité existe dans sa table
@@ -135,8 +134,6 @@ const ratingsController = {
           raw: true,
         });
 
-        // Gamification — +2 pts pour un nouvel avis
-        addPoints(userId, POINTS.review_posted).catch(() => {});
         return res.json({
           success: true,
           isNew: true,

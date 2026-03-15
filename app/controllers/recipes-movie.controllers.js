@@ -1,7 +1,6 @@
 import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
-import { getContributionBadge, buildContributorBadgesMap } from "../utils/contribution-badge.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 /**
@@ -151,14 +150,6 @@ const recipesController = {
       // Statut de la bannière (pour badge visible par l'auteur uniquement)
       const authorBannerStatus = authorUser?.banner_status || null;
 
-      // Badges de contribution
-      // buildContributorBadgesMap compte les recettes status:true déjà chargées → zéro requête extra
-      const contributorBadgesMap = buildContributorBadgesMap(enrichedRecipes);
-      // Badge de l'auteur filtré (total des recettes de sa page)
-      const authorBadge = authorUser
-        ? getContributionBadge(enrichedRecipes.length)
-        : null;
-
       res.render("recipes-movie", {
         movie: null,
         recipes: enrichedRecipes,
@@ -170,8 +161,6 @@ const recipesController = {
         authorBannerStatus,
         authorProfileImage,
         authorId: authorUser?.id || null,
-        authorBadge,
-        contributorBadgesMap,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);
@@ -218,8 +207,6 @@ const recipesController = {
       const userRatingsMap = await getUserRecipeRatings(req.userId);
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
       const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
-      const contributorBadgesMap = buildContributorBadgesMap(enrichedRecipes);
-
       res.render("recipes-movie", {
         movie: enrichedMovie,
         recipes: enrichedRecipes,
@@ -227,8 +214,6 @@ const recipesController = {
         userId: req.userId,
         authorDisplayName: "",
         isAuthorFiltered: false,
-        authorBadge: null,
-        contributorBadgesMap,
       });
     } catch (error) {
       return renderServerError(res, error, req.userRole);

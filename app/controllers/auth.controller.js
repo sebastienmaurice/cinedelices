@@ -5,7 +5,6 @@ import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
-import { claimWeeklyLoginBonus, unlockBadgeByCode } from "../services/gamification.service.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -75,9 +74,6 @@ const authController = {
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
 
-      // Gamification — bonus connexion hebdomadaire (silencieux)
-      claimWeeklyLoginBonus(user.id).catch(() => {});
-
       res.status(StatusCodes.OK).redirect("/");
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
@@ -123,9 +119,6 @@ const authController = {
         secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
       });
-
-      // Gamification — badge Bienvenue ! (silencieux)
-      unlockBadgeByCode(user.id, "BIENVENUE").catch(() => {});
 
       res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
@@ -255,11 +248,6 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
-      // Compter les recettes validées (pour indication UX bannière auteur)
-      const validatedRecipeCount = await Recipe.count({
-        where: { id_user: user.id, status: "approved" },
-      });
-
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
@@ -280,7 +268,6 @@ const authController = {
         ratedMoviesCount: ratedMoviesWithScores.length,
         ratedRecipesCount: ratedRecipesWithScores.length,
         avgUserRating,
-        validatedRecipeCount,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

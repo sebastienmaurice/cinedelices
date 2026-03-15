@@ -74,30 +74,17 @@
           aria-haspopup="true"
           title="Mon compte"
         >
-          <% if (user && user.picture) { %>
-          <div class="nav-avatar-wrap">
-            <img class="nav-avatar" src="<%= user.picture %>" alt="<%= user.pseudo || 'Mon compte' %>" />
-            <%- include('badges/_active-badge-overlay', {
-              badgeId:       'nav-overlay',
-              photoSrc:      user.picture || '',
-              userBadgesData: typeof userBadgesData !== 'undefined' ? userBadgesData : [],
-            }) %>
-          </div>
-          <% } else { %>
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <% } %>
         </button>
         <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
           <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Mon compte</span>
           </a>
-          <form method="POST" action="/auth/logout" style="margin:0">
-            <button type="submit" class="user-dropdown__item user-dropdown__item--logout">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-              <span>Se déconnecter</span>
-            </button>
-          </form>
+          <a href="/auth/logout" class="user-dropdown__item user-dropdown__item--logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            <span>Se déconnecter</span>
+          </a>
         </div>
       </div>
       <% } %>
@@ -143,9 +130,7 @@
       <button type="button" class="mobile-drawer__btn-connect js-open-login">✦ Se connecter</button>
       <% } else { %>
       <a href="/auth/profil/<%= userId %>" class="mobile-drawer__btn-connect">✦ Mon profil</a>
-      <form method="POST" action="/auth/logout" style="margin:0">
-        <button type="submit" class="mobile-drawer__link mobile-drawer__link--logout">Se déconnecter</button>
-      </form>
+      <a href="/auth/logout" class="mobile-drawer__link mobile-drawer__link--logout">Se déconnecter</a>
       <% } %>
     </div>
   </div>

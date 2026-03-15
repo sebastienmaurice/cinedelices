@@ -204,8 +204,6 @@
                     const authorAvatar = recipe.contributor.picture || null;
                     const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
                     const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
-                    const badgesMap = typeof contributorBadgesMap !== 'undefined' ? contributorBadgesMap : {};
-                    const cardBadge = badgesMap[recipe.contributor.id] || null;
                   %>
                   <article class="recipe-card">
                     <!-- Image paysage 3:2 -->
@@ -270,7 +268,7 @@
                       <p class="recipe-card__desc"><%= truncatedDescription %></p>
 
                       <div class="recipe-card__foot">
-                        <span class="author<%= cardBadge ? ' ' + cardBadge.cssClass : '' %>">
+                        <span class="author">
                           <span class="author__av">
                             <% if (authorAvatar) { %>
                             <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
@@ -280,9 +278,6 @@
                           </span>
                           <span class="author__info">
                             <span class="author__name"><%= authorName %></span>
-                            <% if (cardBadge) { %>
-                            <span class="author__lvl"><%= cardBadge.cssClass.includes('lvl1') ? '★' : cardBadge.cssClass.includes('lvl2') ? '★★' : cardBadge.cssClass.includes('lvl3') ? '★★★' : cardBadge.cssClass.includes('lvl4') ? '★★★★' : '★★★★★' %></span>
-                            <% } %>
                           </span>
                         </span>
                         <a class="btn btn--red btn--sm" href="/recipes-movie/details/<%= recipe.slug || recipe.id %>">
