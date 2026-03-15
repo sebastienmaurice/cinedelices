@@ -1,0 +1,67 @@
+<%
+/**
+ * _badge-grid.ejs — Grille 6 slots de badges Signature
+ *
+ * Params :
+ *   photoSrc    {string} — URL de l'avatar utilisateur (ex: user.picture)
+ *   photoAlt    {string} — texte alternatif
+ *   userBadges  {Array}  — codes des badges débloqués (ex: ['STRANGE', 'MATRIX'])
+ *                          depuis res.locals.userBadges (inject-locals.middleware)
+ *
+ * Ordre d'affichage (sort DB) :
+ *   1: STRANGE  2: HARRY  3: INDIANA  4: MATRIX  5: FREDDY  6: READY
+ */
+
+const _photo    = (typeof photoSrc  !== 'undefined' && photoSrc)  ? photoSrc  : '';
+const _alt      = (typeof photoAlt  !== 'undefined' && photoAlt)  ? photoAlt  : 'Avatar';
+const _badges   = (typeof userBadges !== 'undefined' && Array.isArray(userBadges)) ? userBadges : [];
+
+/* Map code → unlocked_at (depuis userBadgesData injecté par inject-locals) */
+const _rawBadgesData = (typeof userBadgesData !== 'undefined' && Array.isArray(userBadgesData)) ? userBadgesData : [];
+const _badgesMeta    = Object.fromEntries(_rawBadgesData.map(b => [b.code, b.unlocked_at]));
+
+/* Helper : formate une date ISO en "12 mars 2026" */
+function _fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/* Définition des 6 slots */
+/* Les chemins include sont relatifs au dossier de CE fichier (partials/badges/) */
+const _slots = [
+  { code: 'STRANGE',  partial: '_badge-strange',          dataType: 'strange',      emoji: '🔮', film: 'Doctor Strange' },
+  { code: 'HARRY',    partial: '_badge-harry-potter',      dataType: 'harry-potter', emoji: '🧙', film: 'Harry Potter' },
+  { code: 'INDIANA',  partial: '_badge-indiana-jones',     dataType: 'indiana-jones',emoji: '🎩', film: 'Indiana Jones' },
+  { code: 'MATRIX',   partial: '_badge-matrix',            dataType: 'matrix',       emoji: '💊', film: 'Matrix' },
+  { code: 'FREDDY',   partial: '_badge-freddy',            dataType: 'freddy',       emoji: '🔪', film: 'Freddy' },
+  { code: 'READY',    partial: '_badge-ready-player-one',  dataType: 'ready-player', emoji: '🕹️', film: 'Ready Player One' },
+];
+%>
+<div class="badge-grid">
+  <% _slots.forEach(function(slot, i) {
+    const isUnlocked  = _badges.includes(slot.code);
+    const unlockedAt  = isUnlocked ? _fmtDate(_badgesMeta[slot.code]) : null;
+  %>
+  <div class="badge-grid__slot">
+    <%- include(slot.partial, {
+      badgeId:  slot.dataType.replace(/-/g, '') + (i + 1),
+      size:     'sm',
+      photoSrc: _photo,
+      photoAlt: _alt,
+      locked:   !isUnlocked,
+    }) %>
+    <% if (!isUnlocked) { %>
+    <span class="badge-grid__slot-emoji" aria-hidden="true"><%= slot.emoji %></span>
+    <% } %>
+    <div class="badge-grid__slot-info">
+      <p class="badge-name"><%= slot.film %></p>
+      <% if (isUnlocked && unlockedAt) { %>
+      <p class="badge-unlocked-at">Débloqué le <%= unlockedAt %></p>
+      <% } else if (!isUnlocked) { %>
+      <p class="badge-condition">Créer une recette <%= slot.film %></p>
+      <% } %>
+    </div>
+  </div>
+  <% }); %>
+</div>

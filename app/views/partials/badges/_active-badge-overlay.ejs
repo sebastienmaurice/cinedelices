@@ -1,0 +1,47 @@
+<%
+/**
+ * _active-badge-overlay.ejs
+ * ─────────────────────────
+ * Badge actif en overlay sur une photo de profil.
+ * Rend le badge le plus récemment débloqué de l'utilisateur.
+ *
+ * Params :
+ *   badgeId        {string}  — ID unique pour éviter les conflits (ex: 'profile-overlay', 'nav-overlay')
+ *   photoSrc       {string}  — URL de la photo de profil
+ *   size           {string}  — 'md' (260px natif, page profil) | 'sm' (défaut, navbar, scale 0.343)
+ *   userBadgesData {Array}   — [{ code, label, film, unlocked_at }]
+ */
+const _bData  = (typeof userBadgesData !== 'undefined' && Array.isArray(userBadgesData)) ? userBadgesData : [];
+const _photo  = (typeof photoSrc !== 'undefined' && photoSrc) ? photoSrc : '';
+const _bid    = (typeof badgeId  !== 'undefined' && badgeId)  ? badgeId  : 'overlay';
+const _size   = (typeof size !== 'undefined' && size === 'md') ? 'md' : 'sm';
+const _wrapCls = _size === 'md' ? 'badge-active-overlay--md' : 'badge-active-overlay--sm';
+
+// Badge le plus récent (unlocked_at DESC)
+const _latest = _bData.slice()
+  .sort((a, b) => new Date(b.unlocked_at) - new Date(a.unlocked_at))[0];
+
+// Map code → partial
+const _partialMap = {
+  STRANGE:  '_badge-strange',
+  HARRY:    '_badge-harry-potter',
+  INDIANA:  '_badge-indiana-jones',
+  MATRIX:   '_badge-matrix',
+  FREDDY:   '_badge-freddy',
+  READY:    '_badge-ready-player-one',
+};
+%>
+<% if (_latest && _partialMap[_latest.code]) { %>
+<div
+  class="badge-active-overlay <%= _wrapCls %>"
+  aria-label="Badge débloqué : <%= _latest.label || _latest.code %>"
+>
+  <%- include(_partialMap[_latest.code], {
+    badgeId:  _bid,
+    size:     _size,
+    photoSrc: _photo,
+    photoAlt: _latest.label || _latest.code,
+    locked:   false,
+  }) %>
+</div>
+<% } %>

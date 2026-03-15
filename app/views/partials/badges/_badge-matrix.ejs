@@ -1,0 +1,78 @@
+<%
+/**
+ * _badge-matrix.ejs — Badge Matrix (Canvas RAF)
+ *
+ * Params :
+ *   badgeId  {string}  — suffixe unique pour les IDs canvas (ex: "mx1")
+ *   size     {string}  — 'lg'|'md'|'sm'  (défaut : 'md')
+ *   photoSrc {string}  — URL de l'avatar
+ *   photoAlt {string}  — alt de l'image
+ *   locked   {boolean} — true = badge verrouillé (pluie ralentie, pas d'éclair)
+ *
+ * Canvas IDs :
+ *   mc-${badgeId}  — canvas arrière-plan (z:1)
+ *   mco-${badgeId} — canvas over (z:15, omis si locked)
+ *
+ * Dimensions internes (badge--matrix.css) :
+ *   lg → photo-wrap 186×186 @97,97 ; photo-ring 190×190 @95,95 ; heat 224×250 @75,78
+ *   md → photo-wrap 126×126 @67,67 ; photo-ring 130×130 @65,65 ; heat 152×170 @50,54
+ *   sm → photo-wrap 68×68   @36,36 ; photo-ring 70×70   @35,35 ; heat 84×92   @26,28
+ */
+const _sz  = (typeof size    !== 'undefined' && size)    ? size    : 'md';
+const _bid = (typeof badgeId !== 'undefined' && badgeId) ? badgeId : 'mx1';
+const _lk  = (typeof locked  !== 'undefined' && locked);
+const _src = (typeof photoSrc !== 'undefined' && photoSrc) ? photoSrc : '';
+const _alt = (typeof photoAlt !== 'undefined' && photoAlt) ? photoAlt : 'Badge Matrix';
+const _lockedClass = _lk ? ' badge--locked' : '';
+
+const _szPx = _sz === 'lg' ? 380 : _sz === 'sm' ? 140 : 260;
+%>
+<div class="badge-wrap" data-badge="matrix" data-size="<%= _sz %>" data-badge-id="<%= _bid %>">
+  <div class="badge badge--matrix<%= _lockedClass %>" role="img" aria-label="<%= _alt %>">
+
+    <%# — Canvas arrière-plan (z:1) — %>
+    <canvas
+      class="badge__canvas"
+      id="mc-<%= _bid %>"
+      width="<%= _szPx %>"
+      height="<%= _szPx %>"
+      aria-hidden="true"
+    ></canvas>
+
+    <%# — Vignette fondu bords (z:3) — %>
+    <div class="badge__vignette" aria-hidden="true"></div>
+
+    <%# — Photo wrap + scanlines (z:10/11) — %>
+    <div class="badge__photo-wrap" aria-hidden="false">
+      <img
+        class="badge__photo"
+        src="<%= _src %>"
+        alt="<%= _alt %>"
+      />
+    </div>
+    <div class="badge__scanlines" aria-hidden="true"></div>
+
+    <%# — Vapeur rouge (z:8, visible au hover uniquement) — %>
+    <% if (!_lk) { %>
+    <div class="badge__heat" aria-hidden="true"></div>
+    <% } %>
+
+    <%# — Anneau photo (z:12) — %>
+    <div class="badge__photo-ring" aria-hidden="true"></div>
+
+    <%# — Canvas over : éclair devant photo (z:15, omis si locked) — %>
+    <% if (!_lk) { %>
+    <canvas
+      class="badge__canvas-over"
+      id="mco-<%= _bid %>"
+      width="<%= _szPx %>"
+      height="<%= _szPx %>"
+      aria-hidden="true"
+    ></canvas>
+    <% } %>
+
+    <%# — Icône verrou (visible si badge--locked) — %>
+    <span class="badge__lock-icon" aria-hidden="true">🔒</span>
+
+  </div>
+</div>

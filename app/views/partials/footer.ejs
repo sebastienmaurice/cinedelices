@@ -1,135 +1,401 @@
-<footer class="footer">
-  <div class="footer-main">
-    <!-- Colonne gauche : Logo et slogan -->
-    <div class="footer-left">
-      <div class="footer-logo-container">
-        <img
-          src="/images/logo-cine-delices-2025.png"
-          alt="Logo Ciné Délices"
-          class="footer-logo"
-        />
-        <h2 class="footer-logo-text">
-          <span class="cine">Ciné</span>
-          <span class="delices">Délices</span>
-        </h2>
+<%
+/**
+ * footer.ejs — Footer global Ciné Délices
+ *
+ * Variables EJS disponibles (héritées de la vue parente) :
+ *   role         {string|undefined}  Rôle de l'utilisateur connecté
+ *   userId       {number|undefined}  ID de l'utilisateur connecté
+ *   username     {string|undefined}  Pseudo de l'utilisateur
+ *   userLevel    {string|undefined}  Code de niveau ('figurant'|'second-role'|'acteur'|'realisateur'|'legende')
+ *   userPoints   {number|undefined}  Total de points de l'utilisateur connecté
+ *   userBadges   {string[]|undefined} Codes des badges débloqués (['doctor-strange', ...])
+ *   footerStats  {object|undefined}  { films, recipes, members } — données dynamiques
+ *
+ * Si ces variables ne sont pas définies, des valeurs de substitution sont utilisées.
+ */
+const _isLoggedIn  = typeof role !== 'undefined' && role !== null;
+const _level       = typeof userLevel !== 'undefined' ? userLevel : null;
+const _badges      = typeof userBadges !== 'undefined' ? userBadges : [];
+const _stats = typeof footerStats !== 'undefined' ? footerStats : {
+  members: typeof totalUsers   !== 'undefined' ? totalUsers   : 1842,
+  recipes: typeof totalRecipes !== 'undefined' ? totalRecipes : 583,
+  films:   typeof totalMovies  !== 'undefined' ? totalMovies  : 247,
+  year: 2025,
+};
+
+const _pts = typeof userPoints !== 'undefined' ? (userPoints || 0) : 0;
+
+/* Gamification — niveaux alignés sur gamification.service.js */
+const _gamLevels = [
+  { code: 'figurant',    label: 'Figurant',    emoji: '🎟️', min: 10,  nextMin: 25  },
+  { code: 'second-role', label: 'Second Rôle', emoji: '🎭', min: 25,  nextMin: 50  },
+  { code: 'acteur',      label: 'Acteur',      emoji: '🎬', min: 50,  nextMin: 100 },
+  { code: 'realisateur', label: 'Réalisateur', emoji: '🎥', min: 100, nextMin: 200 },
+  { code: 'legende',     label: 'Légende',     emoji: '👑', min: 200, nextMin: null },
+];
+const _curLvlObj  = _gamLevels.find(l => l.code === _level) || null;
+const _curLvlIdx  = _curLvlObj ? _gamLevels.indexOf(_curLvlObj) : -1;
+const _nextLvlObj = (_curLvlIdx >= 0 && _curLvlIdx < _gamLevels.length - 1) ? _gamLevels[_curLvlIdx + 1] : null;
+
+/* Pourcentage de progression RÉEL (basé sur les points) */
+let _realPct = 0, _ptsNeeded = null;
+if (_isLoggedIn) {
+  const p = _pts;
+  if (!_curLvlObj) {
+    _realPct   = Math.min(99, Math.round((p / 10) * 100));
+    _ptsNeeded = Math.max(0, 10 - p);
+  } else if (_nextLvlObj) {
+    _realPct   = Math.min(100, Math.round(((p - _curLvlObj.min) / (_nextLvlObj.min - _curLvlObj.min)) * 100));
+    _ptsNeeded = Math.max(0, _nextLvlObj.min - p);
+  } else {
+    _realPct = 100; /* Légende = rang max */
+  }
+}
+%>
+
+<%# ══════════════════════════════════════════════════════════════ %>
+<%# PRÉFOOTER : image de fond + texte gauche + widget droite       %>
+<%# ══════════════════════════════════════════════════════════════ %>
+<div class="ft__pre">
+  <div class="ft__pre-bg" aria-hidden="true"></div>
+  <div class="ft__pre-inner">
+
+    <%# ── Colonne gauche : texte + CTAs ── %>
+    <div>
+      <p class="ft__pre-label">Rejoignez-nous</p>
+      <h2 class="ft__pre-title">
+        CUISINEZ CE QUE<br />VOUS <em>REGARDEZ.</em>
+      </h2>
+      <p class="ft__pre-desc">
+        Ciné Délices, c'est un univers où chaque film devient une table dressée.
+        Partagez vos créations culinaires, découvrez celles des autres, et entrez dans une
+        <strong>communauté qui vit le cinéma avec tous ses sens.</strong>
+      </p>
+
+      <div class="ft__pre-stats">
+        <div class="ft__pre-stat">
+          <span class="ft__pre-stat-n"><%= _stats.members %></span>
+          <span class="ft__pre-stat-l">Membres</span>
+        </div>
+        <div class="ft__pre-divider" aria-hidden="true"></div>
+        <div class="ft__pre-stat">
+          <span class="ft__pre-stat-n"><%= _stats.recipes %></span>
+          <span class="ft__pre-stat-l">Recettes</span>
+        </div>
+        <div class="ft__pre-divider" aria-hidden="true"></div>
+        <div class="ft__pre-stat">
+          <span class="ft__pre-stat-n"><%= _stats.films %></span>
+          <span class="ft__pre-stat-l">Films liés</span>
+        </div>
       </div>
-      <p class="footer-slogan">Le goût du cinéma, et le cinéma du goût.</p>
+
+      <div class="ft__pre-ctas">
+        <% if (_isLoggedIn) { %>
+        <a href="/add-recipe-movie" class="ft__pre-btn-main">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter ma recette
+        </a>
+        <a href="/auth/profil/<%= userId %>" class="ft__pre-btn-sec">
+          Mon compte
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <% } else { %>
+        <a href="#" class="ft__pre-btn-main js-open-login">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Rejoindre la communauté
+        </a>
+        <a href="/contact-about/" class="ft__pre-btn-sec">
+          En savoir plus
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <% } %>
+      </div>
     </div>
 
-    <!-- Colonne; droite : Navigation et réseaux sociaux -->
-    <div class="footer-right">
-      <nav class="footer-menu">
-        <a href="/" class="footer-menu-link">Accueil</a>
-        <a href="/movies" class="footer-menu-link">Films</a>
-        <a href="#" class="footer-menu-link">Recettes</a>
-        <a href="#" class="footer-menu-link">A propos</a>
-        <a href="#" class="footer-menu-link">Mention légales</a>
-      </nav>
+    <%# ── Colonne droite : 2 cartes verre séparées ── %>
+    <div class="ft__widget" role="complementary" aria-label="Progression et communauté">
 
-      <nav class="social-links">
-        <a
-          href="#"
-          class="social-link social-link--facebook"
-          title="Facebook"
-          aria-label="Facebook"
-        >
-          <svg class="icon" viewBox="0 0 24 24">
-            <path
-              d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
-            />
+      <%# ── Carte 1 : Top Contributeurs ── %>
+      <div class="ft__widget-contrib">
+        <div class="ft__widget-head">
+          <svg class="ft__widget-head-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
           </svg>
+          <span class="ft__widget-head-title">Top Contributeurs</span>
+          <span class="ft__widget-head-sub">Ce mois-ci · recettes</span>
+        </div>
+        <% if (typeof topContributors !== 'undefined' && topContributors && topContributors.length > 0) { %>
+          <% topContributors.forEach(function(c, idx) { %>
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 0;<%= idx < topContributors.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.04)' : '' %>">
+            <span style="font-family:var(--ft-f-title);font-size:0.45rem;font-weight:700;letter-spacing:.08em;color:rgba(196,160,82,0.5);min-width:14px">#<%= idx + 1 %></span>
+            <span style="font-family:var(--ft-f-display);font-size:0.82rem;color:var(--ft-silver);line-height:1"><%= c.username %></span>
+            <span style="font-family:var(--ft-f-title);font-size:0.4rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(212,220,232,0.28);margin-left:auto"><%= c.count %> recette<%= c.count > 1 ? 's' : '' %></span>
+          </div>
+          <% }); %>
+        <% } else { %>
+        <p class="ft__widget-contrib-empty">Aucun contributeur pour le moment.</p>
+        <% } %>
+      </div>
+
+      <%# ── Carte 2 : Niveaux de progression ── %>
+      <div class="ft__widget-prog">
+        <% if (_isLoggedIn) { %>
+        <p class="ft__widget-prog-head">Votre progression</p>
+        <% } else { %>
+        <p class="ft__widget-prog-head">Niveaux — <a href="#" class="js-open-login" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Connectez-vous</a></p>
+        <% } %>
+
+        <%# Barre de progression RÉELLE (basée sur les points) %>
+        <% if (_isLoggedIn) { %>
+        <div class="ft__widget-level">
+          <div>
+            <div class="ft__widget-level-name"><%= _curLvlObj ? _curLvlObj.label.toUpperCase() : 'DÉBUTANT' %></div>
+            <div class="ft__widget-level-label"><%= _pts %> pts<% if (_ptsNeeded !== null && _nextLvlObj) { %> · encore <%= _ptsNeeded %> pts<% } %></div>
+          </div>
+          <div class="ft__widget-level-bar" title="Progression <%= _realPct %>%">
+            <div class="ft__widget-level-fill" style="width:<%= _realPct %>%"></div>
+          </div>
+        </div>
+        <% } %>
+
+        <%# 5 cartes de niveaux (noms réels du système) %>
+        <div class="ft__lvl-row">
+          <% _gamLevels.forEach(function(lv, idx) {
+            const _isActive = _curLvlObj && _curLvlObj.code === lv.code;
+            const _isPast   = _curLvlIdx > idx;
+            const _isLocked = !_isLoggedIn || (!_isActive && !_isPast);
+          %>
+          <div class="ft__lvl-card<%= _isActive ? ' ft__lvl-card--active' : '' %><%= _isLocked ? ' ft__lvl-card--locked' : '' %>">
+            <span class="ft__lvl-icon"><%= lv.emoji %></span>
+            <span class="ft__lvl-name"><%= lv.label %></span>
+          </div>
+          <% if (idx < _gamLevels.length - 1) { %><span class="ft__lvl-arrow">›</span><% } %>
+          <% }); %>
+        </div>
+
+        <%# CTA incitation %>
+        <% if (_isLoggedIn) { %>
+        <a href="/add-recipe-movie" class="ft__widget-cta-btn">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Créer une recette
+          <span class="ft__widget-cta-pts">+10 pts</span>
         </a>
-        <a
-          href="#"
-          class="social-link social-link--instagram"
-          title="Instagram"
-          aria-label="Instagram"
-        >
-          <svg class="icon" viewBox="0 0 24 24">
-            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-          </svg>
+        <a href="/auth/profil/<%= userId %>" class="ft__widget-prog-link">Voir mon profil →</a>
+        <% } else { %>
+        <a href="#" class="ft__widget-cta-btn js-open-login">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Rejoindre la communauté
         </a>
-        <a
-          href="#"
-          class="social-link social-link--github"
-          title="GitHub"
-          aria-label="GitHub"
-        >
-          <svg class="icon" viewBox="0 0 24 24">
-            <path
-              d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
-            />
-            <path d="M9 18c-4.51 2-5-2-7-2" />
-          </svg>
-        </a>
-        <a
-          href="#"
-          class="social-link social-link--linkedin"
-          title="LinkedIn"
-          aria-label="LinkedIn"
-        >
-          <svg class="icon" viewBox="0 0 24 24">
-            <path
-              d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-            />
-            <rect width="4" height="12" x="2" y="9" />
-            <circle cx="4" cy="4" r="2" />
-          </svg>
-        </a>
-      </nav>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<%# ══════════════════════════════════════════════════════════════ %>
+<%# FOOTER PRINCIPAL                                               %>
+<%# ══════════════════════════════════════════════════════════════ %>
+<footer class="ft" role="contentinfo">
+  <div class="ft__glow" aria-hidden="true"></div>
+
+  <%# ── CTA Newsletter ── %>
+  <div class="ft__cta">
+    <div class="ft__cta-inner">
+      <div>
+        <p class="ft__cta-label">Newsletter</p>
+        <h3 class="ft__cta-title">RESTEZ <em>DANS LE FILM</em></h3>
+        <p class="ft__cta-sub">Recettes inédites, sorties ciné et actualités de la communauté.</p>
+      </div>
+      <div class="ft__nl">
+        <label class="ft__nl-label" for="ft-email">Votre e-mail</label>
+        <div class="ft__nl-row">
+          <input class="ft__nl-input" id="ft-email" type="email" placeholder="prenom@exemple.com" autocomplete="email" />
+          <button class="ft__nl-btn" type="button" aria-label="S'inscrire à la newsletter">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            S'inscrire
+          </button>
+        </div>
+        <span class="ft__nl-note">Aucun spam. Désinscription à tout moment.</span>
+      </div>
     </div>
   </div>
 
-  <!-- Ligne de séparation cinématographique -->
-  <div class="footer-divider"></div>
+  <%# ── Grille principale : brand + liens ── %>
+  <div class="ft__main">
 
-  <!-- Copyright -->
-  <div class="footer-bottom">
-    <a href="#" class="back-to-top" aria-label="Remonter en haut de page"
-      >↑ Haut</a
-    >
-    <p class="footer-copyright">
-      &copy <%= new Date().getFullYear() %> Ciné Délices — Tous droits réservés
-    </p>
+    <%# Colonne marque %>
+    <div class="ft__col">
+      <div class="ft__brand">
+        <a href="/" class="ft__logo">
+          <div class="ft__logo-badge" aria-hidden="true">CD</div>
+          <div class="ft__brand-name">
+            <span class="ft__brand-title">CINÉ DÉLICES</span>
+            <span class="ft__brand-sub">Cuisine &amp; Cinéma</span>
+          </div>
+        </a>
+        <p class="ft__brand-desc">Une plateforme unique où cinéphiles et gourmets explorent les saveurs cachées du grand écran.</p>
+        <nav class="ft__socials" aria-label="Réseaux sociaux">
+          <a href="#" class="ft__soc" aria-label="Facebook">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" class="ft__soc" aria-label="Instagram">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="ft__soc" aria-label="YouTube">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+          </a>
+          <a href="#" class="ft__soc" aria-label="GitHub">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <%# Colonne Découvrir %>
+    <div class="ft__col">
+      <div class="ft__col-head">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Découvrir
+      </div>
+      <ul class="ft__links" role="list">
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Films cultes</a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>Recettes du jour<span class="ft__badge-new">New</span></a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Coups de cœur</a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Classements</a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Explorer par genre</a></li>
+      </ul>
+    </div>
+
+    <%# Colonne Communauté %>
+    <div class="ft__col">
+      <div class="ft__col-head">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Communauté
+      </div>
+      <ul class="ft__links" role="list">
+        <li><a href="/add-recipe-movie" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Contribuer</a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Classement</a></li>
+        <li><a href="/movies" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Avis &amp; critiques</a></li>
+        <li><a href="#" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Newsletter</a></li>
+        <li><a href="<% if (_isLoggedIn) { %>/auth/profil/<%= userId %>#favoris<% } else { %>#<% } %>" class="<% if (!_isLoggedIn) { %>js-open-login <% } %>ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Mes favoris</a></li>
+      </ul>
+    </div>
+
+    <%# Colonne À propos %>
+    <div class="ft__col">
+      <div class="ft__col-head">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        À propos
+      </div>
+      <ul class="ft__links" role="list">
+        <li><a href="/contact-about/" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>L'équipe</a></li>
+        <li><a href="/contact-about/" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Notre histoire</a></li>
+        <li><a href="/contact-about/" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Notre mission</a></li>
+        <li><a href="/contact-about/" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Presse<span class="ft__badge-new">Kit</span></a></li>
+        <li><a href="/contact-about/" class="ft__link"><svg class="ft__link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Nous contacter</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <%# ── Stats chiffres clés ── %>
+  <div class="ft__stats" aria-label="Chiffres clés">
+    <div class="ft__stats-inner">
+      <div class="ft__stat">
+        <div class="ft__stat-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <div class="ft__stat-body">
+          <span class="ft__stat-n"><%= _stats.films %></span>
+          <span class="ft__stat-l">Films référencés</span>
+        </div>
+      </div>
+      <div class="ft__stat">
+        <div class="ft__stat-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+        </div>
+        <div class="ft__stat-body">
+          <span class="ft__stat-n"><%= _stats.recipes %></span>
+          <span class="ft__stat-l">Recettes créées</span>
+        </div>
+      </div>
+      <div class="ft__stat">
+        <div class="ft__stat-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="ft__stat-body">
+          <span class="ft__stat-n"><%= _stats.members %></span>
+          <span class="ft__stat-l">Développeurs passionnés</span>
+        </div>
+      </div>
+      <div class="ft__stat">
+        <div class="ft__stat-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="ft__stat-body">
+          <span class="ft__stat-n"><%= _stats.year || 2025 %></span>
+          <span class="ft__stat-l">Année de fondation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Bottom bar ── %>
+  <div class="ft__bottom">
+    <span class="ft__copy">&copy; <%= new Date().getFullYear() %> Ciné Délices — Tous droits réservés. Projet réalisé dans le cadre de la formation O'clock.</span>
+    <nav class="ft__legal" aria-label="Liens légaux">
+      <a href="#">Mentions légales</a>
+      <div class="ft__legal-sep" aria-hidden="true"></div>
+      <a href="#">CGU</a>
+      <div class="ft__legal-sep" aria-hidden="true"></div>
+      <a href="#">Confidentialité</a>
+      <div class="ft__legal-sep" aria-hidden="true"></div>
+      <a href="#">Cookies</a>
+    </nav>
+    <a href="#" class="ft__top-btn" id="backToTop" aria-label="Revenir en haut de page">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+      Haut de page
+    </a>
+  </div>
+
+  <%# ── Filmstrip cinématographique ── %>
+  <div class="ft__film" aria-hidden="true">
+    <div class="ft__film-track">
+      <% ['RATATOUILLE','INTERSTELLAR','LE PARRAIN','MATRIX','AMÉLIE','STAR WARS','JOHN WICK','TITANIC','HARRY POTTER','FORREST GUMP','300','LOTR',
+          'RATATOUILLE','INTERSTELLAR','LE PARRAIN','MATRIX','AMÉLIE','STAR WARS','JOHN WICK','TITANIC','HARRY POTTER','FORREST GUMP','300','LOTR'].forEach(function(title) { %>
+      <div class="ft__film-frame">
+        <div class="ft__film-perf"></div>
+        <div class="ft__film-cell"><span class="ft__film-text"><%= title %></span></div>
+        <div class="ft__film-perf"></div>
+      </div>
+      <% }); %>
+    </div>
   </div>
 </footer>
 
+<%# ══════════════════════════════════════════════════════════════ %>
+<%# MODAL CONFIRMATION (inchangée)                                 %>
+<%# ══════════════════════════════════════════════════════════════ %>
 <div class="confirm-modal" data-confirm-modal aria-hidden="true">
   <div class="confirm-modal__backdrop" data-confirm-close></div>
   <div class="confirm-modal__dialog" role="dialog" aria-modal="true">
     <h3 class="confirm-modal__title">
       <span class="confirm-modal__icon" aria-hidden="true">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide-icon"
-        >
-          <path
-            d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
-          />
-          <path d="M12 9v4" />
-          <path d="M12 17h.01" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+          <path d="M12 9v4"/><path d="M12 17h.01"/>
         </svg>
       </span>
       <span class="confirm-modal__title-text">Confirmer l'action</span>
     </h3>
     <p class="confirm-modal__message"></p>
     <div class="confirm-modal__actions">
-      <button type="button" class="btn btn--ghost btn--sm" data-confirm-cancel>
-        Annuler
-      </button>
-      <button type="button" class="btn btn--primary btn--sm" data-confirm-accept>
-        Confirmer
-      </button>
+      <button type="button" class="btn btn--ghost btn--sm" data-confirm-cancel>Annuler</button>
+      <button type="button" class="btn btn--primary btn--sm" data-confirm-accept>Confirmer</button>
     </div>
   </div>
 </div>
@@ -137,7 +403,19 @@
 <script type="module" src="/js/confirm-actions.js"></script>
 <script src="/js/confirm-modal.js" defer></script>
 
-<!-- Fond scintillant cinématographique -->
+<%# Fond étoilé cinématographique %>
 <canvas id="cinedelices-bg" aria-hidden="true"></canvas>
 <div class="grain" aria-hidden="true"></div>
 <script src="/js/starfield.js" defer></script>
+
+<%# Back to top %>
+<script>
+(function() {
+  var btn = document.getElementById('backToTop');
+  if (!btn) return;
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>

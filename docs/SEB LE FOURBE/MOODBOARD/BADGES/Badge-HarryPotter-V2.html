@@ -1,0 +1,1718 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Badge Harry Potter — Patronus AAA — CSS Only</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #03050a;
+        background-image: radial-gradient(
+          ellipse 80% 55% at 50% 45%,
+          rgba(80, 160, 255, 0.055) 0%,
+          transparent 65%
+        );
+        display: flex;
+        flex-wrap: wrap;
+        gap: 90px;
+        justify-content: center;
+        align-items: center;
+        padding: 100px 60px;
+      }
+
+      .slot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .slot-label {
+        color: rgba(123, 211, 255, 0.18);
+        font: 7px/1 monospace;
+        letter-spacing: 0.55em;
+        text-transform: uppercase;
+      }
+
+      /* ══════════════════════════════════════════════════
+   BADGE
+══════════════════════════════════════════════════ */
+      .badge {
+        position: relative;
+        border-radius: 50%;
+        cursor: pointer;
+        isolation: isolate;
+
+        --sz: 340px;
+        --avatar-sz: 218px;
+        --R: 148px;
+        --orb-sz: 22px;
+        --T: 6.5s;
+        --T-pulse: 2.4s;
+        /* Halo interaction speed */
+        --T-halo: 3.2s;
+
+        width: var(--sz);
+        height: var(--sz);
+      }
+      .badge--lg {
+        --sz: 340px;
+        --avatar-sz: 218px;
+        --R: 148px;
+        --orb-sz: 22px;
+      }
+      .badge--md {
+        --sz: 230px;
+        --avatar-sz: 148px;
+        --R: 100px;
+        --orb-sz: 16px;
+      }
+      .badge--sm {
+        --sz: 130px;
+        --avatar-sz: 84px;
+        --R: 56px;
+        --orb-sz: 11px;
+      }
+
+      /* ══════════════════════════════════════════════════
+   AVATAR
+══════════════════════════════════════════════════ */
+      .avatar {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: var(--avatar-sz);
+        height: var(--avatar-sz);
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center top;
+        z-index: 10;
+        box-shadow:
+          0 0 0 1.5px rgba(180, 230, 255, 0.4),
+          0 0 20px rgba(100, 190, 255, 0.22),
+          inset 0 0 30px rgba(0, 5, 15, 0.6);
+        transition: box-shadow 0.3s ease;
+      }
+
+      /* ══════════════════════════════════════════════════
+   HALO AMBIANT — interagit avec la traînée
+   Il pulse EN PHASE avec l'orbite : quand l'orbe
+   passe devant (0°), le halo s'illumine légèrement
+   côté droit ; le reste du temps il respire doucement.
+   Technique : deux couches superposées.
+══════════════════════════════════════════════════ */
+      .halo {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        z-index: 2;
+        pointer-events: none;
+        /* Gradient légèrement asymétrique — réagit à l'orbe */
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(100, 190, 255, 0.1) 0%,
+          rgba(100, 190, 255, 0.04) 42%,
+          transparent 68%
+        );
+        animation:
+          halo-orb-sync var(--T) ease-in-out infinite,
+          halo-breathe var(--T-halo) ease-in-out infinite;
+      }
+      /* Le halo "suit" l'orbe : quand l'orbe est à droite
+   le centre lumineux se décale légèrement */
+      @keyframes halo-orb-sync {
+        0% {
+          background: radial-gradient(
+            circle at 76% 50%,
+            rgba(130, 210, 255, 0.18) 0%,
+            rgba(100, 190, 255, 0.06) 35%,
+            transparent 62%
+          );
+        }
+        25% {
+          background: radial-gradient(
+            circle at 50% 76%,
+            rgba(120, 205, 255, 0.13) 0%,
+            rgba(100, 190, 255, 0.05) 38%,
+            transparent 64%
+          );
+        }
+        50% {
+          background: radial-gradient(
+            circle at 24% 50%,
+            rgba(115, 200, 255, 0.16) 0%,
+            rgba(100, 190, 255, 0.05) 36%,
+            transparent 62%
+          );
+        }
+        75% {
+          background: radial-gradient(
+            circle at 50% 24%,
+            rgba(125, 208, 255, 0.13) 0%,
+            rgba(100, 190, 255, 0.05) 38%,
+            transparent 64%
+          );
+        }
+        100% {
+          background: radial-gradient(
+            circle at 76% 50%,
+            rgba(130, 210, 255, 0.18) 0%,
+            rgba(100, 190, 255, 0.06) 35%,
+            transparent 62%
+          );
+        }
+      }
+      @keyframes halo-breathe {
+        0%,
+        100% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.07);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   ANNEAUX SVG
+══════════════════════════════════════════════════ */
+      .rings {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 3;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      /* ══════════════════════════════════════════════════
+   SYSTÈME ORBITAL
+══════════════════════════════════════════════════ */
+      .orbital {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 22;
+        animation: spin var(--T) linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   ORBE — floue, aveuglante
+══════════════════════════════════════════════════ */
+      .orb {
+        position: absolute;
+        top: 50%;
+        left: calc(50% + var(--R));
+        transform: translate(-50%, -50%);
+        width: var(--orb-sz);
+        height: var(--orb-sz);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #ffffff 0%,
+          rgba(230, 248, 255, 0.9) 30%,
+          rgba(160, 225, 255, 0.5) 65%,
+          transparent 100%
+        );
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.4) calc(var(--orb-sz) * 0.6)
+            rgba(255, 255, 255, 1),
+          0 0 calc(var(--orb-sz) * 1.2) calc(var(--orb-sz) * 0.9)
+            rgba(220, 245, 255, 0.92),
+          0 0 calc(var(--orb-sz) * 2.8) calc(var(--orb-sz) * 1.1)
+            rgba(123, 211, 255, 0.78),
+          0 0 calc(var(--orb-sz) * 5) calc(var(--orb-sz) * 1.3)
+            rgba(100, 190, 255, 0.52),
+          0 0 calc(var(--orb-sz) * 9) calc(var(--orb-sz) * 1.5)
+            rgba(80, 170, 255, 0.25),
+          0 0 calc(var(--orb-sz) * 15) calc(var(--orb-sz) * 1.8)
+            rgba(60, 150, 255, 0.1);
+        filter: blur(calc(var(--orb-sz) * 0.32));
+        animation: orb-pulse var(--T-pulse) ease-in-out infinite;
+        z-index: 3;
+      }
+      @keyframes orb-pulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.35);
+          opacity: 0.85;
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   TRAÎNÉE DE FUMÉE
+   Nouvelle : oscillation légère sur les particules
+   du ventre (P4-P7) via animation translateY oscillante
+   superposée → donne un effet "brume vivante".
+══════════════════════════════════════════════════ */
+      .tp {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform-origin: 0 0;
+      }
+      .tp > span {
+        position: absolute;
+        border-radius: 50%;
+        top: 0;
+        left: var(--R);
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0;
+        transform-origin: center center;
+      }
+
+      .tp:nth-child(2) {
+        transform: rotate(-5deg);
+      }
+      .tp:nth-child(2) > span {
+        width: calc(var(--orb-sz) * 2.2);
+        height: calc(var(--orb-sz) * 2.2);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(220, 245, 255, 0.75) 35%,
+          rgba(180, 230, 255, 0.4) 65%,
+          transparent 85%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.3));
+        animation: t1 var(--T) linear infinite;
+      }
+      .tp:nth-child(3) {
+        transform: rotate(-11deg);
+      }
+      .tp:nth-child(3) > span {
+        width: calc(var(--orb-sz) * 3);
+        height: calc(var(--orb-sz) * 2.6);
+        background: radial-gradient(
+          ellipse,
+          rgba(245, 253, 255, 0.88) 0%,
+          rgba(200, 240, 255, 0.62) 38%,
+          rgba(150, 215, 255, 0.3) 65%,
+          transparent 82%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.38));
+        animation: t2 var(--T) linear infinite;
+      }
+      .tp:nth-child(4) {
+        transform: rotate(-19deg);
+      }
+      .tp:nth-child(4) > span {
+        width: calc(var(--orb-sz) * 4);
+        height: calc(var(--orb-sz) * 3.2);
+        background: radial-gradient(
+          ellipse,
+          rgba(235, 250, 255, 0.78) 0%,
+          rgba(185, 232, 255, 0.52) 40%,
+          rgba(135, 208, 255, 0.22) 65%,
+          transparent 80%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.48));
+        animation: t3 var(--T) linear infinite;
+      }
+      /* P4-P7 : ventre — oscillation légère */
+      .tp:nth-child(5) {
+        transform: rotate(-29deg);
+      }
+      .tp:nth-child(5) > span {
+        width: calc(var(--orb-sz) * 5.2);
+        height: calc(var(--orb-sz) * 3.8);
+        background: radial-gradient(
+          ellipse,
+          rgba(222, 246, 255, 0.68) 0%,
+          rgba(170, 225, 255, 0.42) 40%,
+          rgba(120, 200, 255, 0.16) 64%,
+          transparent 78%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.62));
+        animation:
+          t4 var(--T) linear infinite,
+          mist-wobble 2.1s ease-in-out infinite;
+      }
+      .tp:nth-child(6) {
+        transform: rotate(-41deg);
+      }
+      .tp:nth-child(6) > span {
+        width: calc(var(--orb-sz) * 6.5);
+        height: calc(var(--orb-sz) * 4.8);
+        background: radial-gradient(
+          ellipse,
+          rgba(208, 242, 255, 0.56) 0%,
+          rgba(155, 218, 255, 0.33) 40%,
+          rgba(110, 192, 255, 0.12) 63%,
+          transparent 76%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.78));
+        animation:
+          t5 var(--T) linear infinite,
+          mist-wobble 2.7s ease-in-out infinite 0.4s;
+      }
+      .tp:nth-child(7) {
+        transform: rotate(-53deg);
+      }
+      .tp:nth-child(7) > span {
+        width: calc(var(--orb-sz) * 7.5);
+        height: calc(var(--orb-sz) * 5.2);
+        background: radial-gradient(
+          ellipse,
+          rgba(192, 238, 255, 0.44) 0%,
+          rgba(140, 212, 255, 0.24) 40%,
+          rgba(100, 185, 255, 0.08) 62%,
+          transparent 74%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.95));
+        animation:
+          t6 var(--T) linear infinite,
+          mist-wobble 3.1s ease-in-out infinite 0.8s;
+      }
+      .tp:nth-child(8) {
+        transform: rotate(-65deg);
+      }
+      .tp:nth-child(8) > span {
+        width: calc(var(--orb-sz) * 7.2);
+        height: calc(var(--orb-sz) * 4.6);
+        background: radial-gradient(
+          ellipse,
+          rgba(175, 232, 255, 0.32) 0%,
+          rgba(125, 205, 255, 0.15) 40%,
+          transparent 68%
+        );
+        filter: blur(calc(var(--orb-sz) * 1.15));
+        animation:
+          t7 var(--T) linear infinite,
+          mist-wobble 2.5s ease-in-out infinite 1.2s;
+      }
+      .tp:nth-child(9) {
+        transform: rotate(-76deg);
+      }
+      .tp:nth-child(9) > span {
+        width: calc(var(--orb-sz) * 6);
+        height: calc(var(--orb-sz) * 3.6);
+        background: radial-gradient(
+          ellipse,
+          rgba(158, 226, 255, 0.22) 0%,
+          rgba(110, 196, 255, 0.09) 38%,
+          transparent 64%
+        );
+        filter: blur(calc(var(--orb-sz) * 1.4));
+        animation: t8 var(--T) linear infinite;
+      }
+      .tp:nth-child(10) {
+        transform: rotate(-86deg);
+      }
+      .tp:nth-child(10) > span {
+        width: calc(var(--orb-sz) * 4.5);
+        height: calc(var(--orb-sz) * 2.8);
+        background: radial-gradient(
+          ellipse,
+          rgba(140, 218, 255, 0.14) 0%,
+          transparent 58%
+        );
+        filter: blur(calc(var(--orb-sz) * 1.7));
+        animation: t9 var(--T) linear infinite;
+      }
+      /* P10-P14 : micro-points — BOOST visibilité */
+      .tp:nth-child(11) {
+        transform: rotate(-95deg);
+      }
+      .tp:nth-child(11) > span {
+        width: calc(var(--orb-sz) * 2);
+        height: calc(var(--orb-sz) * 2);
+        background: radial-gradient(
+          circle,
+          rgba(240, 252, 255, 0.92) 0%,
+          rgba(200, 240, 255, 0.6) 35%,
+          rgba(150, 220, 255, 0.25) 60%,
+          transparent 80%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.25));
+        animation: t10 var(--T) linear infinite;
+        box-shadow: 0 0 calc(var(--orb-sz) * 0.8) calc(var(--orb-sz) * 0.2)
+          rgba(200, 240, 255, 0.5);
+      }
+      .tp:nth-child(12) {
+        transform: rotate(-103deg);
+      }
+      .tp:nth-child(12) > span {
+        width: calc(var(--orb-sz) * 1.5);
+        height: calc(var(--orb-sz) * 1.5);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(210, 244, 255, 0.65) 40%,
+          rgba(160, 222, 255, 0.3) 65%,
+          transparent 82%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.2));
+        animation: t11 var(--T) linear infinite;
+        box-shadow: 0 0 calc(var(--orb-sz) * 0.7) calc(var(--orb-sz) * 0.2)
+          rgba(180, 235, 255, 0.55);
+      }
+      .tp:nth-child(13) {
+        transform: rotate(-110deg);
+      }
+      .tp:nth-child(13) > span {
+        width: calc(var(--orb-sz) * 1.1);
+        height: calc(var(--orb-sz) * 1.1);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.85) 0%,
+          rgba(220, 246, 255, 0.6) 42%,
+          transparent 78%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.18));
+        animation: t12 var(--T) linear infinite;
+        box-shadow: 0 0 calc(var(--orb-sz) * 0.6) calc(var(--orb-sz) * 0.18)
+          rgba(180, 235, 255, 0.5);
+      }
+      .tp:nth-child(14) {
+        transform: rotate(-116deg);
+      }
+      .tp:nth-child(14) > span {
+        width: calc(var(--orb-sz) * 0.8);
+        height: calc(var(--orb-sz) * 0.8);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.8) 0%,
+          rgba(220, 248, 255, 0.5) 45%,
+          transparent 80%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.14));
+        animation: t13 var(--T) linear infinite;
+        box-shadow: 0 0 calc(var(--orb-sz) * 0.5) calc(var(--orb-sz) * 0.15)
+          rgba(190, 238, 255, 0.5);
+      }
+      .tp:nth-child(15) {
+        transform: rotate(-121deg);
+      }
+      .tp:nth-child(15) > span {
+        width: calc(var(--orb-sz) * 0.55);
+        height: calc(var(--orb-sz) * 0.55);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.75) 0%,
+          rgba(220, 248, 255, 0.4) 50%,
+          transparent 80%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.12));
+        animation: t14 var(--T) linear infinite;
+        box-shadow: 0 0 calc(var(--orb-sz) * 0.4) calc(var(--orb-sz) * 0.12)
+          rgba(190, 238, 255, 0.45);
+      }
+
+      /* ══════════════════════════════════════════════════
+   ÉTINCELLES MAGIQUES dans la traînée
+   6 micro-étincelles à des angles dans la traînée,
+   chacune clignote à sa propre fréquence — elles
+   apparaissent, scintillent, disparaissent.
+   Elles sont sur le même .orbital donc elles tournent
+   avec la traînée.
+══════════════════════════════════════════════════ */
+      .sp {
+        position: absolute;
+        top: 0;
+        left: var(--R);
+        border-radius: 50%;
+        transform-origin: center center;
+        opacity: 0;
+        background: #ffffff;
+      }
+
+      /* Wrapper angulaire pour chaque étincelle */
+      .sw {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform-origin: 0 0;
+      }
+
+      /* 6 étincelles réparties sur l'arc de la traînée */
+      .sw:nth-child(16) {
+        transform: rotate(-14deg);
+      }
+      .sw:nth-child(16) > .sp {
+        width: calc(var(--orb-sz) * 0.28);
+        height: calc(var(--orb-sz) * 0.28);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.5) rgba(220, 248, 255, 0.95),
+          0 0 calc(var(--orb-sz) * 1) rgba(160, 225, 255, 0.6);
+        animation: sparkle-a 1.7s ease-in-out infinite;
+      }
+      .sw:nth-child(17) {
+        transform: rotate(-33deg);
+      }
+      .sw:nth-child(17) > .sp {
+        width: calc(var(--orb-sz) * 0.22);
+        height: calc(var(--orb-sz) * 0.22);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.45) rgba(200, 244, 255, 0.9),
+          0 0 calc(var(--orb-sz) * 0.9) rgba(150, 218, 255, 0.55);
+        animation: sparkle-b 2.3s ease-in-out infinite 0.4s;
+      }
+      .sw:nth-child(18) {
+        transform: rotate(-47deg);
+      }
+      .sw:nth-child(18) > .sp {
+        width: calc(var(--orb-sz) * 0.32);
+        height: calc(var(--orb-sz) * 0.32);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.55) rgba(230, 250, 255, 0.95),
+          0 0 calc(var(--orb-sz) * 1.1) rgba(170, 228, 255, 0.65);
+        animation: sparkle-a 1.9s ease-in-out infinite 0.7s;
+      }
+      .sw:nth-child(19) {
+        transform: rotate(-62deg);
+      }
+      .sw:nth-child(19) > .sp {
+        width: calc(var(--orb-sz) * 0.18);
+        height: calc(var(--orb-sz) * 0.18);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.4) rgba(215, 246, 255, 0.9),
+          0 0 calc(var(--orb-sz) * 0.8) rgba(155, 220, 255, 0.5);
+        animation: sparkle-c 2.6s ease-in-out infinite 0.2s;
+      }
+      .sw:nth-child(20) {
+        transform: rotate(-78deg);
+      }
+      .sw:nth-child(20) > .sp {
+        width: calc(var(--orb-sz) * 0.25);
+        height: calc(var(--orb-sz) * 0.25);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.48) rgba(225, 249, 255, 0.92),
+          0 0 calc(var(--orb-sz) * 1) rgba(165, 224, 255, 0.58);
+        animation: sparkle-b 2.1s ease-in-out infinite 1s;
+      }
+      .sw:nth-child(21) {
+        transform: rotate(-92deg);
+      }
+      .sw:nth-child(21) > .sp {
+        width: calc(var(--orb-sz) * 0.2);
+        height: calc(var(--orb-sz) * 0.2);
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 calc(var(--orb-sz) * 0.42) rgba(210, 245, 255, 0.88),
+          0 0 calc(var(--orb-sz) * 0.85) rgba(150, 216, 255, 0.52);
+        animation: sparkle-c 3s ease-in-out infinite 0.6s;
+      }
+
+      /* 3 courbes de scintillement différentes */
+      @keyframes sparkle-a {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+        15% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+        30% {
+          opacity: 0.95;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        45% {
+          opacity: 0.4;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        55% {
+          opacity: 0.9;
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+        70% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.3);
+        }
+      }
+      @keyframes sparkle-b {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.15);
+        }
+        20% {
+          opacity: 0.88;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        35% {
+          opacity: 0.2;
+          transform: translate(-50%, -50%) scale(0.5);
+        }
+        50% {
+          opacity: 0.82;
+          transform: translate(-50%, -50%) scale(1.15);
+        }
+        65% {
+          opacity: 0.1;
+          transform: translate(-50%, -50%) scale(0.4);
+        }
+        75% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.1);
+        }
+      }
+      @keyframes sparkle-c {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.1);
+        }
+        25% {
+          opacity: 0.92;
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+        40% {
+          opacity: 0.55;
+          transform: translate(-50%, -50%) scale(0.7);
+        }
+        58% {
+          opacity: 0.78;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        72% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   OSCILLATION DE LA BRUME — keyframe partagé
+   Décalages en Y très légers sur les blobs du ventre
+══════════════════════════════════════════════════ */
+      @keyframes mist-wobble {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) translateY(0) scale(1);
+        }
+        33% {
+          transform: translate(-50%, -50%) translateY(-3px) scale(1.02);
+        }
+        66% {
+          transform: translate(-50%, -50%) translateY(2px) scale(0.99);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   KEYFRAMES TRAÎNÉE (inchangés de V3.5)
+══════════════════════════════════════════════════ */
+      @keyframes t1 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.35);
+        }
+        3% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        55% {
+          opacity: 0.88;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        85% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.25);
+        }
+      }
+      @keyframes t2 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.3);
+        }
+        6% {
+          opacity: 0.94;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        58% {
+          opacity: 0.75;
+          transform: translate(-50%, -50%) scale(1.15);
+        }
+        84% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.3);
+        }
+      }
+      @keyframes t3 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.25);
+        }
+        9% {
+          opacity: 0.86;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        60% {
+          opacity: 0.62;
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+        83% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.4);
+        }
+      }
+      @keyframes t4 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+        12% {
+          opacity: 0.76;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        62% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(1.25);
+        }
+        82% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+      }
+      @keyframes t5 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.18);
+        }
+        16% {
+          opacity: 0.65;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        64% {
+          opacity: 0.4;
+          transform: translate(-50%, -50%) scale(1.3);
+        }
+        81% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.55);
+        }
+      }
+      @keyframes t6 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.15);
+        }
+        20% {
+          opacity: 0.54;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        65% {
+          opacity: 0.3;
+          transform: translate(-50%, -50%) scale(1.35);
+        }
+        80% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.62);
+        }
+      }
+      @keyframes t7 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.13);
+        }
+        24% {
+          opacity: 0.42;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        66% {
+          opacity: 0.2;
+          transform: translate(-50%, -50%) scale(1.4);
+        }
+        79% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.68);
+        }
+      }
+      @keyframes t8 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.1);
+        }
+        28% {
+          opacity: 0.3;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        67% {
+          opacity: 0.12;
+          transform: translate(-50%, -50%) scale(1.45);
+        }
+        78% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.75);
+        }
+      }
+      @keyframes t9 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.08);
+        }
+        33% {
+          opacity: 0.2;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        68% {
+          opacity: 0.07;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+        78% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.82);
+        }
+      }
+      /* P10-14 : micro-points lumineux scintillants */
+      @keyframes t10 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.25);
+        }
+        36% {
+          opacity: 0.9;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        50% {
+          opacity: 0.55;
+          transform: translate(-50%, -50%) scale(0.95);
+        }
+        68% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.6);
+        }
+      }
+      @keyframes t11 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.2);
+        }
+        42% {
+          opacity: 0.92;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        55% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(0.9);
+        }
+        72% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.55);
+        }
+      }
+      @keyframes t12 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.18);
+        }
+        47% {
+          opacity: 0.88;
+          transform: translate(-50%, -50%) scale(1.08);
+        }
+        59% {
+          opacity: 0.45;
+          transform: translate(-50%, -50%) scale(0.85);
+        }
+        74% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.5);
+        }
+      }
+      @keyframes t13 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.15);
+        }
+        52% {
+          opacity: 0.82;
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+        63% {
+          opacity: 0.38;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        75% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.45);
+        }
+      }
+      @keyframes t14 {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.12);
+        }
+        56% {
+          opacity: 0.75;
+          transform: translate(-50%, -50%) scale(1.02);
+        }
+        66% {
+          opacity: 0.32;
+          transform: translate(-50%, -50%) scale(0.75);
+        }
+        76% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.4);
+        }
+      }
+
+      /* ══════════════════════════════════════════════════
+   HOVER — L'ORBE GROSSIT SUR L'AVATAR ET S'ÉVAPORE
+══════════════════════════════════════════════════ */
+      .badge:hover {
+        --T: 1.4s;
+        --T-pulse: 0.7s;
+        --T-halo: 1.4s;
+      }
+
+      /* Halo hover : réagit encore plus fort à l'orbe accélérée */
+      .badge:hover .halo {
+        animation:
+          halo-orb-sync var(--T) ease-in-out infinite,
+          halo-impact-breathe var(--T) ease-in-out infinite;
+      }
+      @keyframes halo-impact-breathe {
+        0%,
+        100% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+        30% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+        55% {
+          opacity: 0.65;
+          transform: scale(1.08);
+        }
+      }
+
+      .orb-ghost {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        border-radius: 50%;
+        z-index: 35;
+        pointer-events: none;
+        opacity: 0;
+        width: var(--avatar-sz);
+        height: var(--avatar-sz);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(220, 245, 255, 0.8) 18%,
+          rgba(160, 225, 255, 0.55) 38%,
+          rgba(100, 195, 255, 0.25) 58%,
+          rgba(70, 170, 255, 0.08) 75%,
+          transparent 88%
+        );
+        filter: blur(calc(var(--orb-sz) * 0.9));
+      }
+      .badge:hover .orb-ghost {
+        animation: orb-impact var(--T) ease-out infinite;
+      }
+      @keyframes orb-impact {
+        0% {
+          transform: translate(-50%, -50%) scale(0.08);
+          opacity: 0;
+          filter: blur(calc(var(--orb-sz) * 0.9));
+        }
+        18% {
+          transform: translate(-50%, -50%) scale(0.55);
+          opacity: 1;
+          filter: blur(calc(var(--orb-sz) * 0.5));
+        }
+        32% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.92;
+          filter: blur(calc(var(--orb-sz) * 0.3));
+        }
+        52% {
+          transform: translate(-50%, -50%) scale(1.35);
+          opacity: 0.55;
+          filter: blur(calc(var(--orb-sz) * 1.2));
+        }
+        75% {
+          transform: translate(-50%, -50%) scale(1.7);
+          opacity: 0.18;
+          filter: blur(calc(var(--orb-sz) * 2.5));
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(2.1);
+          opacity: 0;
+          filter: blur(calc(var(--orb-sz) * 4));
+        }
+      }
+
+      .shockwave {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.1);
+        width: var(--avatar-sz);
+        height: var(--avatar-sz);
+        border-radius: 50%;
+        border: 2px solid rgba(234, 251, 255, 0);
+        z-index: 40;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .badge:hover .shockwave {
+        animation: shock var(--T) 0.28s ease-out infinite;
+      }
+      @keyframes shock {
+        0% {
+          transform: translate(-50%, -50%) scale(0.5);
+          border-color: rgba(234, 251, 255, 0.9);
+          box-shadow:
+            0 0 25px 8px rgba(123, 211, 255, 0.65),
+            inset 0 0 25px rgba(200, 242, 255, 0.35);
+          opacity: 1;
+        }
+        28% {
+          transform: translate(-50%, -50%) scale(1.1);
+          border-color: rgba(180, 232, 255, 0.5);
+          box-shadow: 0 0 45px 18px rgba(100, 190, 255, 0.3);
+        }
+        62% {
+          transform: translate(-50%, -50%) scale(1.75);
+          border-color: rgba(120, 200, 255, 0.15);
+          opacity: 0.28;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(2.4);
+          border-color: rgba(100, 180, 255, 0);
+          opacity: 0;
+        }
+      }
+
+      .shockwave2 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.1);
+        width: var(--avatar-sz);
+        height: var(--avatar-sz);
+        border-radius: 50%;
+        border: 1px solid rgba(180, 230, 255, 0);
+        z-index: 39;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .badge:hover .shockwave2 {
+        animation: shock var(--T) calc(var(--T) * 0.4) ease-out infinite;
+      }
+
+      .badge:hover .avatar {
+        animation: avatar-flash var(--T) ease-out infinite;
+      }
+      @keyframes avatar-flash {
+        0% {
+          box-shadow:
+            0 0 0 1.5px rgba(180, 230, 255, 0.4),
+            0 0 20px rgba(100, 190, 255, 0.22),
+            inset 0 0 30px rgba(0, 5, 15, 0.6);
+        }
+        30% {
+          box-shadow:
+            0 0 0 4px rgba(234, 251, 255, 0.95),
+            0 0 60px rgba(200, 242, 255, 0.85),
+            0 0 110px rgba(123, 211, 255, 0.55),
+            inset 0 0 55px rgba(180, 232, 255, 0.6);
+        }
+        55% {
+          box-shadow:
+            0 0 0 6px rgba(200, 240, 255, 0.5),
+            0 0 90px rgba(170, 228, 255, 0.4),
+            0 0 140px rgba(100, 190, 255, 0.25),
+            inset 0 0 40px rgba(140, 210, 255, 0.3);
+        }
+        100% {
+          box-shadow:
+            0 0 0 1.5px rgba(180, 230, 255, 0.4),
+            0 0 20px rgba(100, 190, 255, 0.22),
+            inset 0 0 30px rgba(0, 5, 15, 0.6);
+        }
+      }
+
+      .evap {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 34;
+        opacity: 0;
+        background: radial-gradient(
+          circle,
+          rgba(210, 245, 255, 0.7) 0%,
+          rgba(170, 228, 255, 0.4) 40%,
+          transparent 72%
+        );
+      }
+      .badge:hover .evap {
+        animation-play-state: running;
+      }
+      .evap:nth-child(1) {
+        width: calc(var(--orb-sz) * 3);
+        height: calc(var(--orb-sz) * 3);
+        filter: blur(calc(var(--orb-sz) * 0.7));
+        transform: translate(-50%, -50%);
+        animation: evap1 var(--T) ease-out infinite 0.32s;
+      }
+      .evap:nth-child(2) {
+        width: calc(var(--orb-sz) * 2.5);
+        height: calc(var(--orb-sz) * 2.5);
+        filter: blur(calc(var(--orb-sz) * 0.6));
+        transform: translate(-50%, -50%);
+        animation: evap2 var(--T) ease-out infinite 0.38s;
+      }
+      .evap:nth-child(3) {
+        width: calc(var(--orb-sz) * 2);
+        height: calc(var(--orb-sz) * 2);
+        filter: blur(calc(var(--orb-sz) * 0.5));
+        transform: translate(-50%, -50%);
+        animation: evap3 var(--T) ease-out infinite 0.44s;
+      }
+      .evap:nth-child(4) {
+        width: calc(var(--orb-sz) * 1.8);
+        height: calc(var(--orb-sz) * 1.8);
+        filter: blur(calc(var(--orb-sz) * 0.55));
+        transform: translate(-50%, -50%);
+        animation: evap4 var(--T) ease-out infinite 0.5s;
+      }
+      .evap:nth-child(5) {
+        width: calc(var(--orb-sz) * 2.2);
+        height: calc(var(--orb-sz) * 2.2);
+        filter: blur(calc(var(--orb-sz) * 0.65));
+        transform: translate(-50%, -50%);
+        animation: evap5 var(--T) ease-out infinite 0.42s;
+      }
+      .evap:nth-child(6) {
+        width: calc(var(--orb-sz) * 1.5);
+        height: calc(var(--orb-sz) * 1.5);
+        filter: blur(calc(var(--orb-sz) * 0.45));
+        transform: translate(-50%, -50%);
+        animation: evap6 var(--T) ease-out infinite 0.36s;
+      }
+      @keyframes evap1 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.85;
+          transform: translate(-50%, -50%) translate(-15px, -20px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(-35px, -65px) scale(2.2);
+        }
+      }
+      @keyframes evap2 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.78;
+          transform: translate(-50%, -50%) translate(18px, -22px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(42px, -70px) scale(2);
+        }
+      }
+      @keyframes evap3 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.72;
+          transform: translate(-50%, -50%) translate(-8px, -28px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(-18px, -80px) scale(1.8);
+        }
+      }
+      @keyframes evap4 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.65;
+          transform: translate(-50%, -50%) translate(25px, -18px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(65px, -55px) scale(1.9);
+        }
+      }
+      @keyframes evap5 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.7;
+          transform: translate(-50%, -50%) translate(-22px, -15px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(-58px, -48px) scale(2.1);
+        }
+      }
+      @keyframes evap6 {
+        0%,
+        30% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.3);
+        }
+        45% {
+          opacity: 0.8;
+          transform: translate(-50%, -50%) translate(5px, -32px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(12px, -90px) scale(2.3);
+        }
+      }
+
+      /* ── sm ── */
+      .badge--sm .tp:nth-child(n + 11) {
+        display: none;
+      }
+      .badge--sm .sw:nth-child(n + 19) {
+        display: none;
+      }
+      .badge--sm .evap:nth-child(n + 4) {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ════════════════════ LARGE ════════════════════ -->
+    <div class="slot">
+      <div
+        class="badge badge--lg"
+        role="img"
+        aria-label="Badge Patronus Harry Potter"
+      >
+        <div class="halo"></div>
+        <svg
+          class="rings"
+          viewBox="0 0 340 340"
+          xmlns="http://www.w3.org/2000/svg"
+          style="
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 50%;
+            overflow: hidden;
+          "
+        >
+          <defs>
+            <filter id="rf-lg">
+              <feGaussianBlur stdDeviation="1.3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="rg-lg">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <circle
+            cx="170"
+            cy="170"
+            r="163"
+            fill="none"
+            stroke="rgba(180,230,255,.18)"
+            stroke-width=".8"
+            stroke-dasharray="5 16"
+            style="
+              animation: spin 30s linear infinite reverse;
+              transform-origin: 170px 170px;
+            "
+          />
+          <circle
+            cx="170"
+            cy="170"
+            r="151"
+            fill="none"
+            stroke="rgba(123,211,255,.15)"
+            stroke-width="1"
+            stroke-dasharray="2.5 12"
+            filter="url(#rf-lg)"
+            style="
+              animation: spin 18s linear infinite;
+              transform-origin: 170px 170px;
+            "
+          />
+          <circle
+            cx="170"
+            cy="170"
+            r="112"
+            fill="none"
+            stroke="rgba(180,230,255,.1)"
+            stroke-width=".8"
+            filter="url(#rg-lg)"
+            style="
+              animation: spin 40s linear infinite reverse;
+              transform-origin: 170px 170px;
+            "
+          />
+          <g
+            fill="rgba(201,241,255,.45)"
+            style="
+              animation: spin 18s linear infinite;
+              transform-origin: 170px 170px;
+            "
+          >
+            <circle cx="170" cy="19" r="1.6" />
+            <circle cx="321" cy="170" r="1.6" />
+            <circle cx="170" cy="321" r="1.6" />
+            <circle cx="19" cy="170" r="1.6" />
+          </g>
+        </svg>
+        <img
+          class="avatar"
+          src="https://i.postimg.cc/gknGpzxf/11.jpg"
+          alt="Harry Potter"
+          onerror="
+            this.src =
+              'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22218%22 height=%22218%22%3E%3Crect fill=%22%2303050a%22 width=%22100%25%22 height=%22100%25%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 fill=%22%23EAFBFF%22 font-size=%2290%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%E2%9A%A1%3C/text%3E%3C/svg%3E'
+          "
+        />
+        <div class="orb-ghost"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="shockwave"></div>
+        <div class="shockwave2"></div>
+        <div class="orbital">
+          <div class="orb"></div>
+          <!-- Traînée P1-P14 -->
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <!-- Étincelles S1-S6 -->
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+        </div>
+      </div>
+      <span class="slot-label">Large · 340px · CSS Only</span>
+    </div>
+
+    <!-- ════════════════════ MEDIUM ════════════════════ -->
+    <div class="slot">
+      <div
+        class="badge badge--md"
+        role="img"
+        aria-label="Badge Patronus Harry Potter"
+      >
+        <div class="halo"></div>
+        <svg
+          class="rings"
+          viewBox="0 0 230 230"
+          xmlns="http://www.w3.org/2000/svg"
+          style="
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 50%;
+            overflow: hidden;
+          "
+        >
+          <defs>
+            <filter id="rf-md">
+              <feGaussianBlur stdDeviation="1" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="rg-md">
+              <feGaussianBlur stdDeviation="2.2" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <circle
+            cx="115"
+            cy="115"
+            r="110"
+            fill="none"
+            stroke="rgba(180,230,255,.18)"
+            stroke-width=".7"
+            stroke-dasharray="4 13"
+            style="
+              animation: spin 30s linear infinite reverse;
+              transform-origin: 115px 115px;
+            "
+          />
+          <circle
+            cx="115"
+            cy="115"
+            r="101"
+            fill="none"
+            stroke="rgba(123,211,255,.15)"
+            stroke-width=".9"
+            stroke-dasharray="2 10"
+            filter="url(#rf-md)"
+            style="
+              animation: spin 18s linear infinite;
+              transform-origin: 115px 115px;
+            "
+          />
+          <circle
+            cx="115"
+            cy="115"
+            r="76"
+            fill="none"
+            stroke="rgba(180,230,255,.1)"
+            stroke-width=".7"
+            filter="url(#rg-md)"
+            style="
+              animation: spin 40s linear infinite reverse;
+              transform-origin: 115px 115px;
+            "
+          />
+          <g
+            fill="rgba(201,241,255,.45)"
+            style="
+              animation: spin 18s linear infinite;
+              transform-origin: 115px 115px;
+            "
+          >
+            <circle cx="115" cy="14" r="1.2" />
+            <circle cx="216" cy="115" r="1.2" />
+            <circle cx="115" cy="216" r="1.2" />
+            <circle cx="14" cy="115" r="1.2" />
+          </g>
+        </svg>
+        <img
+          class="avatar"
+          src="https://i.postimg.cc/gknGpzxf/11.jpg"
+          alt="Harry Potter"
+          onerror="
+            this.src =
+              'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22148%22 height=%22148%22%3E%3Crect fill=%22%2303050a%22 width=%22100%25%22 height=%22100%25%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 fill=%22%23EAFBFF%22 font-size=%2260%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%E2%9A%A1%3C/text%3E%3C/svg%3E'
+          "
+        />
+        <div class="orb-ghost"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="shockwave"></div>
+        <div class="shockwave2"></div>
+        <div class="orbital">
+          <div class="orb"></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+        </div>
+      </div>
+      <span class="slot-label">Medium · 230px · CSS Only</span>
+    </div>
+
+    <!-- ════════════════════ SMALL ════════════════════ -->
+    <div class="slot">
+      <div
+        class="badge badge--sm"
+        role="img"
+        aria-label="Badge Patronus Harry Potter"
+      >
+        <div class="halo"></div>
+        <svg
+          class="rings"
+          viewBox="0 0 130 130"
+          xmlns="http://www.w3.org/2000/svg"
+          style="
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 50%;
+            overflow: hidden;
+          "
+        >
+          <defs>
+            <filter id="rg-sm">
+              <feGaussianBlur stdDeviation="1.5" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <circle
+            cx="65"
+            cy="65"
+            r="62"
+            fill="none"
+            stroke="rgba(180,230,255,.18)"
+            stroke-width=".6"
+            stroke-dasharray="3 10"
+            style="
+              animation: spin 30s linear infinite reverse;
+              transform-origin: 65px 65px;
+            "
+          />
+          <circle
+            cx="65"
+            cy="65"
+            r="57"
+            fill="none"
+            stroke="rgba(123,211,255,.15)"
+            stroke-width=".7"
+            stroke-dasharray="1.5 8"
+            style="
+              animation: spin 18s linear infinite;
+              transform-origin: 65px 65px;
+            "
+          />
+          <circle
+            cx="65"
+            cy="65"
+            r="43"
+            fill="none"
+            stroke="rgba(180,230,255,.1)"
+            stroke-width=".6"
+            filter="url(#rg-sm)"
+            style="
+              animation: spin 40s linear infinite reverse;
+              transform-origin: 65px 65px;
+            "
+          />
+        </svg>
+        <img
+          class="avatar"
+          src="https://i.postimg.cc/gknGpzxf/11.jpg"
+          alt="Harry Potter"
+          onerror="
+            this.src =
+              'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2284%22 height=%2284%22%3E%3Crect fill=%22%2303050a%22 width=%22100%25%22 height=%22100%25%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 fill=%22%23EAFBFF%22 font-size=%2234%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%E2%9A%A1%3C/text%3E%3C/svg%3E'
+          "
+        />
+        <div class="orb-ghost"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="evap"></div>
+        <div class="shockwave"></div>
+        <div class="shockwave2"></div>
+        <div class="orbital">
+          <div class="orb"></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="tp"><span></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+          <div class="sw"><span class="sp"></span></div>
+        </div>
+      </div>
+      <span class="slot-label">Small · 130px · CSS Only</span>
+    </div>
+  </body>
+</html>

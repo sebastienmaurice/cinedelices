@@ -1,6 +1,7 @@
 /**
  * profile-tabs.js — Navigation onglets premium Mon Compte
  * Vanilla JS — Hash URL — Transition opacity + translateY
+ * Moodboard v2 : classes .ptab / .tab-pane / .active
  */
 (function () {
   'use strict';
@@ -14,19 +15,19 @@
   }
 
   function activateTab(tabId) {
-    document.querySelectorAll('.profile-tabs__link').forEach(function (link) {
+    document.querySelectorAll('.ptab').forEach(function (link) {
       var isActive = link.dataset.tab === tabId;
-      link.classList.toggle('is-active', isActive);
+      link.classList.toggle('active', isActive);
       link.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
 
-    document.querySelectorAll('.profile-tab-panel').forEach(function (panel) {
-      panel.classList.toggle('is-active', panel.id === tabId);
+    document.querySelectorAll('.tab-pane').forEach(function (panel) {
+      panel.classList.toggle('active', panel.id === tabId);
     });
   }
 
   function initBadgeZoom() {
-    var badge = document.querySelector('.palmares-badge--current .palmares-badge__img');
+    var badge = document.querySelector('.badge-card.current .badge-card__img');
     if (!badge) return;
 
     var overlay = document.createElement('div');
@@ -56,7 +57,7 @@
   }
 
   function init() {
-    document.querySelectorAll('.profile-tabs__link').forEach(function (link) {
+    document.querySelectorAll('.ptab').forEach(function (link) {
       link.addEventListener('click', function (e) {
         e.preventDefault();
         var tabId = this.dataset.tab;
@@ -72,6 +73,9 @@
     activateTab(getActiveTab());
     initBadgeZoom();
   }
+
+  /* exposer pour les liens inline type onclick="activateTab('creations')" */
+  window.activateTab = activateTab;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

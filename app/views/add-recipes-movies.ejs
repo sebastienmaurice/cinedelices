@@ -124,6 +124,24 @@
       </div>
       <% } %>
 
+      <!-- ═══ TOAST badge débloqué ═══ -->
+      <% if (typeof newBadges !== 'undefined' && newBadges && newBadges.length > 0) {
+        const _badgeEmoji = { STRANGE: '🧙', HARRY: '⚡', INDIANA: '🎩', MATRIX: '💊', FREDDY: '🔪', READY: '🕹️' };
+        const _badgeLabel = { STRANGE: 'Doctor Strange', HARRY: 'Harry Potter', INDIANA: 'Indiana Jones', MATRIX: 'Matrix', FREDDY: 'Freddy', READY: 'Ready Player One' };
+        newBadges.forEach(function(b) {
+          const _code  = (b.code || '').toUpperCase();
+          const _emoji = _badgeEmoji[_code] || '🏆';
+          const _label = _badgeLabel[_code] || b.label || b.code;
+      %>
+      <div class="badge-unlock-toast" role="status" aria-live="polite">
+        <span class="badge-unlock-toast__icon" aria-hidden="true"><%= _emoji %></span>
+        <div class="badge-unlock-toast__body">
+          <strong>Badge débloqué !</strong>
+          <span>Tu as obtenu "<%= _label %>" <%= _emoji %></span>
+        </div>
+      </div>
+      <% }); } %>
+
       <!-- ══════════════════════════════════════════
          SECTION 1 — MON FILM
          Layout 2 colonnes : champs | poster preview

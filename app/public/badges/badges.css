@@ -1,0 +1,184 @@
+/**
+ * ======================================================
+ * BADGES.CSS — Système de badges Signature Ciné Délices
+ * ======================================================
+ *
+ * Usage dans EJS :
+ *   <div data-badge="strange" data-size="md" class="badge-wrap">
+ *     <img src="<%= user.avatar %>" alt="<%= user.username %>" />
+ *   </div>
+ *   <script src="/badges/badges.js"></script>
+ *
+ * Tailles disponibles :
+ *   data-size="lg"  → 380px
+ *   data-size="md"  → 260px  (défaut)
+ *   data-size="sm"  → 140px
+ *
+ * Badges disponibles (data-badge) :
+ *   strange       → Doctor Strange  (CSS only, vert mystique)
+ *   harry-potter  → Harry Potter    (CSS only, bleu Patronus)
+ *   matrix        → Matrix          (Canvas JS, vert terminal)
+ *   indiana-jones → Indiana Jones   (CSS only, caramel — à créer)
+ *   freddy        → Freddy          (CSS only, rouge sang — à créer)
+ *   ready-player  → Ready Player One (CSS only, cyan néon — à créer)
+ */
+
+/* ── Conteneur de base ── */
+.badge-wrap {
+  display: inline-block;
+  position: relative;
+}
+
+/* ── Tailles ── */
+.badge-wrap[data-size="lg"] { width: 380px; height: 380px; }
+.badge-wrap[data-size="md"] { width: 260px; height: 260px; }
+.badge-wrap[data-size="sm"] { width: 140px; height: 140px; }
+.badge-wrap:not([data-size]) { width: 260px; height: 260px; } /* défaut md */
+
+/* ── Badge racine — règles immuables ── */
+.badge {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;      /* verrou absolu — rien ne déborde */
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  /* Fond intégré dans le site */
+  background: #142234;
+}
+
+/* ── Vignette de fondu bords → fond de page ── */
+.badge__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% 85% at 50% 50%,
+    transparent 55%,
+    rgba(20,34,52,0.55) 75%,
+    #142234 100%
+  );
+}
+
+/* ── Photo avatar ── */
+.badge__photo-wrap {
+  position: absolute;
+  z-index: 10;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.badge__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* ── État verrouillé ── */
+.badge--locked {
+  pointer-events: none;
+}
+.badge--locked .badge__vignette {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(27,38,59,.45)  0%,
+    rgba(27,38,59,.55) 42%,
+    rgba(27,38,59,.72) 65%,
+    rgba(27,38,59,.88) 80%,
+    rgba(27,38,59,1)  100%
+  ) !important;
+}
+
+/* ── Icône 🔒 centrée (nouvelle classe, spec Matrix V2) ── */
+.badge__lock-icon {
+  display: none; /* masqué par défaut — visible uniquement sur badge--locked */
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(18px, 10%, 38px);
+  filter: drop-shadow(0 0 6px rgba(0,180,255,.55));
+  opacity: .85;
+  pointer-events: none;
+}
+.badge--locked .badge__lock-icon {
+  display: block;
+}
+.badge-wrap[data-size="lg"] .badge__lock-icon { font-size: 38px; }
+.badge-wrap[data-size="md"] .badge__lock-icon { font-size: 28px; }
+.badge-wrap[data-size="sm"] .badge__lock-icon { font-size: 18px; }
+
+/* ── Indicateur verrouillé (ancienne classe — rétrocompat) ── */
+.badge__lock-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── Scanlines CRT ── */
+.badge__scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0,0,0,0.045) 2px, rgba(0,0,0,0.045) 4px
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.badge:hover .badge__scanlines { opacity: 1; }
+
+/* ── Tailles internes photo (proportionnelles) ── */
+.badge-wrap[data-size="lg"] .badge__photo-wrap { width: 190px; height: 190px; top: 95px; left: 95px; }
+.badge-wrap[data-size="md"] .badge__photo-wrap { width: 130px; height: 130px; top: 65px;  left: 65px; }
+.badge-wrap[data-size="sm"] .badge__photo-wrap { width: 70px;  height: 70px;  top: 35px;  left: 35px; }
+.badge-wrap:not([data-size]) .badge__photo-wrap { width: 130px; height: 130px; top: 65px; left: 65px; }
+
+/* ── Grille 6 badges ── */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 140px);
+  gap: 1.25rem;
+  justify-content: center;
+  padding: 1.5rem 0 2rem;
+}
+@media (max-width: 980px) {
+  .badge-grid { grid-template-columns: repeat(3, 140px); }
+}
+@media (max-width: 520px) {
+  .badge-grid { grid-template-columns: repeat(2, 140px); gap: .75rem; }
+}
+
+.badge-grid__slot {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Placeholder badge (Indiana, Freddy, Ready) ── */
+.badge-wrap--placeholder .badge--locked {
+  cursor: default;
+}
+
+/* ── SVG layers (base z:5, over z:25) ── */
+.badge__svg-base,
+.badge__svg-over {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.badge__svg-base { z-index: 5; }
+.badge__svg-over { z-index: 25; }

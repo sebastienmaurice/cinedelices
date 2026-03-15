@@ -4002,3 +4002,49 @@ main { padding-top: var(--nav-h); }
   filter: brightness(1.08);
   color: var(--bleu-nuit);
 }
+
+/* ══════════════════════════════════════════════════════
+   BADGE OVERLAY — overlay sur photos de profil (navbar + hero profil)
+══════════════════════════════════════════════════════ */
+
+/* Photo de profil dans la navbar */
+.nav-avatar-wrap {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.nav-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 10%;
+  border: 1.5px solid rgba(200, 160, 82, 0.4);
+  display: block;
+  transition: border-color 0.25s;
+}
+.nav-avatar-wrap:hover .nav-avatar {
+  border-color: rgba(200, 160, 82, 0.75);
+}
+
+/* Badge actif navbar (--sm) : 140px scalé → 48px */
+.badge-active-overlay--sm {
+  position: absolute;
+  bottom: -16px;
+  right: -16px;
+  width: 140px;
+  height: 140px;
+  transform: scale(0.343);
+  transform-origin: bottom right;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Badge actif profil (--md) : 260px natif, sans scale */
+.badge-active-overlay--md {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  pointer-events: none;
+}

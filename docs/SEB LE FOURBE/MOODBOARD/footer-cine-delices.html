@@ -1,0 +1,4566 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Footer — Ciné Délices</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0a1220;
+        --deep: #06101a;
+        --surface: #162336;
+        --rim: rgba(255, 255, 255, 0.07);
+        --rim-gold: rgba(196, 160, 82, 0.22);
+        --rim-red: rgba(194, 48, 24, 0.25);
+        --gold: #c4a052;
+        --gold-hi: #f2c84b;
+        --gold-lo: #9a7832;
+        --red: #c23018;
+        --red-hi: #e84020;
+        --silver: #d4dce8;
+        --muted: rgba(212, 220, 232, 0.4);
+        --very-muted: rgba(212, 220, 232, 0.2);
+        --g-gold: linear-gradient(
+          135deg,
+          #9a7832 0%,
+          #c4a052 35%,
+          #f2c84b 60%,
+          #c4a052 100%
+        );
+        --g-gold-h: linear-gradient(
+          90deg,
+          #9a7832 0%,
+          #c4a052 35%,
+          #f2c84b 60%,
+          #c4a052 100%
+        );
+        --g-red: linear-gradient(135deg, #7a150e 0%, #c23018 50%, #d84020 100%);
+        --f-display: "Bebas Neue", cursive;
+        --f-title: "Cinzel", serif;
+        --f-prose: "Playfair Display", serif;
+        --f-body: "Lato", sans-serif;
+        --w: 1360px;
+        --px: 56px;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      body {
+        background: var(--ink);
+        font-family: var(--f-body);
+        color: var(--silver);
+        -webkit-font-smoothing: antialiased;
+        /* Simuler du contenu page au-dessus */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      /* Faux contenu au-dessus pour la démo */
+      .page-stub {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          180deg,
+          var(--ink) 0%,
+          rgba(6, 16, 26, 0.95) 100%
+        );
+        color: rgba(196, 160, 82, 0.2);
+        font-family: var(--f-display);
+        font-size: 1.2rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.06);
+        min-height: 200px;
+        user-select: none;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════
+   PRÉFOOTER — bg image + layout 2 colonnes
+════════════════════════════════════════════════════════════════════ */
+      .ft__pre {
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      /* Image de fond */
+      .ft__pre-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background:
+          linear-gradient(
+            to right,
+            rgba(10, 18, 32, 0.92) 0%,
+            rgba(10, 18, 32, 0.75) 45%,
+            rgba(10, 18, 32, 0.6) 100%
+          ),
+          url("https://i.postimg.cc/Y94r0ZFm/bg-6.png") center/cover no-repeat;
+      }
+      /* Grain */
+      .ft__pre-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.022;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 200px;
+      }
+      .ft__pre-inner {
+        position: relative;
+        z-index: 2;
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 72px var(--px);
+        display: grid;
+        grid-template-columns: 1fr 480px;
+        align-items: center;
+        gap: 60px;
+      }
+
+      /* ── Colonne gauche : texte ── */
+      .ft__pre-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--red-hi);
+        margin-bottom: 14px;
+      }
+      .ft__pre-label::before {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 1px;
+        background: var(--red-hi);
+      }
+      .ft__pre-title {
+        font-family: var(--f-display);
+        font-size: clamp(2.4rem, 4.5vw, 4rem);
+        letter-spacing: 0.06em;
+        line-height: 0.92;
+        color: #fff;
+        text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+        margin-bottom: 20px;
+      }
+      .ft__pre-title em {
+        color: var(--gold);
+        font-style: normal;
+      }
+      .ft__pre-desc {
+        font-size: 0.82rem;
+        font-weight: 300;
+        line-height: 1.72;
+        color: rgba(212, 220, 232, 0.55);
+        max-width: 460px;
+        margin-bottom: 28px;
+      }
+      .ft__pre-desc strong {
+        color: rgba(212, 220, 232, 0.8);
+        font-weight: 400;
+      }
+      /* Stats inline */
+      .ft__pre-stats {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        margin-bottom: 36px;
+      }
+      .ft__pre-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .ft__pre-stat-n {
+        font-family: var(--f-display);
+        font-size: 2rem;
+        letter-spacing: 0.06em;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .ft__pre-stat-l {
+        font-size: 0.5rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(212, 220, 232, 0.28);
+      }
+      .ft__pre-divider {
+        width: 1px;
+        height: 30px;
+        background: rgba(196, 160, 82, 0.15);
+      }
+      /* CTAs */
+      .ft__pre-ctas {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .ft__pre-btn-main {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 26px;
+        height: 46px;
+        border-radius: 9px;
+        background: var(--g-gold);
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+        text-decoration: none;
+        transition:
+          filter 0.22s,
+          transform 0.22s;
+        box-shadow: 0 4px 24px rgba(196, 160, 82, 0.3);
+      }
+      .ft__pre-btn-main:hover {
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+      }
+      .ft__pre-btn-sec {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 22px;
+        height: 46px;
+        border-radius: 9px;
+        background: transparent;
+        border: 1px solid rgba(212, 220, 232, 0.22);
+        font-family: var(--f-title);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(212, 220, 232, 0.6);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.22s;
+      }
+      .ft__pre-btn-sec:hover {
+        border-color: rgba(212, 220, 232, 0.55);
+        color: var(--silver);
+        background: rgba(255, 255, 255, 0.04);
+        transform: translateY(-2px);
+      }
+
+      /* ── Colonne droite : widget ── */
+      .ft__widget {
+        background: rgba(10, 18, 32, 0.82);
+        border: 1px solid rgba(65, 90, 119, 0.22);
+        border-radius: 18px;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.55),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      /* Top contributeurs */
+      .ft__widget-contrib {
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid rgba(65, 90, 119, 0.16);
+      }
+      .ft__widget-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .ft__widget-head-icon {
+        color: var(--gold);
+      }
+      .ft__widget-head-title {
+        font-family: var(--f-title);
+        font-size: 0.54rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.75);
+      }
+      .ft__widget-head-sub {
+        font-size: 0.62rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.28);
+        margin-left: auto;
+      }
+      .ft__widget-contrib-empty {
+        font-size: 0.72rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.28);
+        font-style: italic;
+        padding: 8px 0;
+        text-align: center;
+      }
+      /* Progression badges */
+      .ft__widget-prog {
+        padding: 16px 20px 20px;
+      }
+      .ft__widget-prog-head {
+        font-family: var(--f-title);
+        font-size: 0.48rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.4);
+        margin-bottom: 16px;
+      }
+      .ft__badges-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      /* Slot badge individuel */
+      .ft__badge-slot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+      }
+      .ft__badge-label {
+        font-family: var(--f-title);
+        font-size: 0.38rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(212, 220, 232, 0.35);
+        text-align: center;
+        transition: color 0.3s;
+      }
+      .ft__badge-slot:hover .ft__badge-label {
+        color: var(--gold);
+      }
+
+      /* ════════════════════════════════════════════════════════════════════
+   BADGES GAMIFICATION — extraits du système V8
+   Chaque badge = tokens CSS propres + structure SVG
+════════════════════════════════════════════════════════════════════ */
+      /* Keyframes partagés */
+      @keyframes cw {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes ccw {
+        to {
+          transform: rotate(-360deg);
+        }
+      }
+      @keyframes breathe-slow {
+        0%,
+        100% {
+          opacity: 0.92;
+        }
+        50% {
+          opacity: 0.55;
+        }
+      }
+      @keyframes breathe-fast {
+        0%,
+        100% {
+          opacity: 0.88;
+        }
+        50% {
+          opacity: 0.42;
+        }
+      }
+      @keyframes glyph-flicker {
+        0%,
+        100% {
+          opacity: 0.85;
+        }
+        14% {
+          opacity: 1;
+        }
+        19% {
+          opacity: 0.52;
+        }
+        37% {
+          opacity: 0.9;
+        }
+        54% {
+          opacity: 0.7;
+        }
+        69% {
+          opacity: 1;
+        }
+        81% {
+          opacity: 0.48;
+        }
+      }
+      @keyframes star-pulse-a {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      }
+      @keyframes star-pulse-b {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.85;
+        }
+      }
+      @keyframes fractal-pulse {
+        0%,
+        100% {
+          opacity: 0.72;
+          filter: drop-shadow(0 0 0.5px var(--c-ring));
+        }
+        40% {
+          opacity: 1;
+          filter: drop-shadow(0 0 1.5px var(--c-ring));
+        }
+        70% {
+          opacity: 0.82;
+        }
+      }
+      @keyframes time-ripple {
+        from {
+          stroke-dashoffset: 0;
+        }
+        to {
+          stroke-dashoffset: 60;
+        }
+      }
+      @keyframes spark-spawn {
+        0%,
+        8% {
+          opacity: 1;
+        }
+        80%,
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-1 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.9;
+        }
+        100% {
+          transform: translate(20px, -38px) scale(0.1);
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-2 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.85;
+        }
+        100% {
+          transform: translate(-16px, -42px) scale(0.1);
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-3 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.9;
+        }
+        100% {
+          transform: translate(38px, -6px) scale(0.1);
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-4 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(-36px, 14px) scale(0.1);
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-5 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.88;
+        }
+        100% {
+          transform: translate(14px, 40px) scale(0.1);
+          opacity: 0;
+        }
+      }
+      @keyframes spark-fly-6 {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 0.75;
+        }
+        100% {
+          transform: translate(-22px, -32px) scale(0.08);
+          opacity: 0;
+        }
+      }
+      @keyframes smoke-rise-1 {
+        0% {
+          transform: translate(-8px, 0) scale(0.6);
+          opacity: 0.22;
+        }
+        100% {
+          transform: translate(-12px, -32px) scale(1.4);
+          opacity: 0;
+        }
+      }
+      @keyframes smoke-rise-2 {
+        0% {
+          transform: translate(6px, 0) scale(0.5);
+          opacity: 0.18;
+        }
+        100% {
+          transform: translate(10px, -36px) scale(1.6);
+          opacity: 0;
+        }
+      }
+      @keyframes smoke-rise-3 {
+        0% {
+          transform: translate(-2px, 0) scale(0.7);
+          opacity: 0.25;
+        }
+        100% {
+          transform: translate(3px, -30px) scale(1.3);
+          opacity: 0;
+        }
+      }
+
+      /* Badge base */
+      .gm-badge {
+        position: relative;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+        /* tokens par défaut (Strange vert) */
+        --c-ring: #3fe0a1;
+        --c-ring-dim: #2bb673;
+        --c-glyph: #a6ffd8;
+        --c-star: #3fe0a1;
+        --c-photo-bdr: rgba(63, 224, 161, 0.6);
+        --c-halo: rgba(63, 224, 161, 0.12);
+        --c-smoke: rgba(63, 224, 161, 0.18);
+        --c-spark1: rgba(166, 255, 216, 0.9);
+        --c-spark2: rgba(63, 224, 161, 0.7);
+        --dur-r1: 18s;
+        --dur-r2: 11s;
+        --dur-rb: 36s;
+        --dur-r3: 14s;
+        --dur-r4: 26s;
+        --dur-sqa: 13s;
+        --dur-sqb: 18s;
+        transition: transform 0.3s var(--ease);
+      }
+      .gm-badge:hover {
+        transform: scale(1.12);
+        --dur-r1: 7s;
+        --dur-r2: 4s;
+        --dur-rb: 14s;
+        --dur-r3: 6s;
+        --dur-r4: 10s;
+        --dur-sqa: 5s;
+        --dur-sqb: 8s;
+      }
+
+      /* Thème Spectateur — bleu cinéma */
+      .gm-badge--spectateur {
+        --c-ring: #4a9eff;
+        --c-ring-dim: #2d6fc7;
+        --c-glyph: #a0d4ff;
+        --c-star: #4a9eff;
+        --c-photo-bdr: rgba(74, 158, 255, 0.6);
+        --c-halo: rgba(74, 158, 255, 0.14);
+        --c-smoke: rgba(74, 158, 255, 0.18);
+        --c-spark1: rgba(160, 212, 255, 0.9);
+        --c-spark2: rgba(74, 158, 255, 0.7);
+      }
+      .gm-badge--spectateur:hover {
+        --c-ring: #7bbfff;
+        --c-star: #7bbfff;
+      }
+      /* Thème Cinéphile — or/ambre */
+      .gm-badge--cinephile {
+        --c-ring: #f2c84b;
+        --c-ring-dim: #c4a052;
+        --c-glyph: #ffe9a0;
+        --c-star: #f2c84b;
+        --c-photo-bdr: rgba(242, 200, 75, 0.65);
+        --c-halo: rgba(242, 200, 75, 0.14);
+        --c-smoke: rgba(242, 200, 75, 0.2);
+        --c-spark1: rgba(255, 232, 140, 0.95);
+        --c-spark2: rgba(242, 200, 75, 0.8);
+      }
+      .gm-badge--cinephile:hover {
+        --c-ring: #ffe085;
+        --c-star: #ffe085;
+      }
+      /* Thème Critique — rouge */
+      .gm-badge--critique {
+        --c-ring: #e84020;
+        --c-ring-dim: #a02a10;
+        --c-glyph: #ffb09a;
+        --c-star: #e84020;
+        --c-photo-bdr: rgba(232, 64, 32, 0.65);
+        --c-halo: rgba(232, 64, 32, 0.14);
+        --c-smoke: rgba(232, 64, 32, 0.18);
+        --c-spark1: rgba(255, 180, 140, 0.95);
+        --c-spark2: rgba(232, 64, 32, 0.8);
+      }
+      .gm-badge--critique:hover {
+        --c-ring: #ff6b50;
+        --c-star: #ff6b50;
+      }
+      /* Thème Collectionneur — violet */
+      .gm-badge--collectionneur {
+        --c-ring: #9b7fd0;
+        --c-ring-dim: #6b4fa0;
+        --c-glyph: #d4beff;
+        --c-star: #9b7fd0;
+        --c-photo-bdr: rgba(155, 127, 208, 0.65);
+        --c-halo: rgba(155, 127, 208, 0.14);
+        --c-smoke: rgba(155, 127, 208, 0.18);
+        --c-spark1: rgba(210, 190, 255, 0.95);
+        --c-spark2: rgba(155, 127, 208, 0.8);
+      }
+      .gm-badge--collectionneur:hover {
+        --c-ring: #c0a8ff;
+        --c-star: #c0a8ff;
+      }
+      /* Thème Épique/Feu — orange Smaug */
+      .gm-badge--epique {
+        --c-ring: #ff6b20;
+        --c-ring-dim: #c44000;
+        --c-glyph: #ffc080;
+        --c-star: #ff6b20;
+        --c-photo-bdr: rgba(255, 107, 32, 0.65);
+        --c-halo: rgba(255, 107, 32, 0.14);
+        --c-smoke: rgba(255, 107, 32, 0.2);
+        --c-spark1: rgba(255, 180, 80, 0.95);
+        --c-spark2: rgba(255, 107, 32, 0.8);
+      }
+      .gm-badge--epique:hover {
+        --c-ring: #ffaa44;
+        --c-star: #ffaa44;
+      }
+
+      /* Thème Maître — or chaud, plus intense */
+      .gm-badge--maitre {
+        --c-ring: #ffa500;
+        --c-ring-dim: #cc7700;
+        --c-glyph: #ffe4a0;
+        --c-star: #ffa500;
+        --c-photo-bdr: rgba(255, 165, 0, 0.75);
+        --c-halo: rgba(255, 165, 0, 0.18);
+        --c-smoke: rgba(255, 165, 0, 0.24);
+        --c-spark1: rgba(255, 230, 120, 0.98);
+        --c-spark2: rgba(255, 165, 0, 0.85);
+      }
+      .gm-badge--maitre:hover {
+        --c-ring: #ffcc44;
+        --c-star: #ffcc44;
+      }
+
+      /* Sparks */
+      .gm-badge__sparks {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 8;
+      }
+      .gm-spark {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        background: var(--c-spark1);
+        box-shadow: 0 0 2px var(--c-spark2);
+        opacity: 0;
+      }
+      .gm-spark:nth-child(1) {
+        top: 8%;
+        left: 50%;
+        animation:
+          spark-spawn 2.1s 0s infinite,
+          spark-fly-1 2.1s 0s infinite;
+      }
+      .gm-spark:nth-child(2) {
+        top: 50%;
+        left: 92%;
+        animation:
+          spark-spawn 2.4s 0.3s infinite,
+          spark-fly-2 2.4s 0.3s infinite;
+      }
+      .gm-spark:nth-child(3) {
+        top: 92%;
+        left: 50%;
+        animation:
+          spark-spawn 1.9s 0.7s infinite,
+          spark-fly-3 1.9s 0.7s infinite;
+      }
+      .gm-spark:nth-child(4) {
+        top: 50%;
+        left: 8%;
+        animation:
+          spark-spawn 2.6s 1.1s infinite,
+          spark-fly-4 2.6s 1.1s infinite;
+      }
+      .gm-spark:nth-child(5) {
+        top: 17%;
+        left: 77%;
+        animation:
+          spark-spawn 2.2s 0.5s infinite,
+          spark-fly-5 2.2s 0.5s infinite;
+      }
+      .gm-spark:nth-child(6) {
+        top: 83%;
+        left: 23%;
+        animation:
+          spark-spawn 2.8s 0.9s infinite,
+          spark-fly-6 2.8s 0.9s infinite;
+      }
+      .gm-badge:hover .gm-spark {
+        width: 3px;
+        height: 3px;
+        animation-duration: 0.8s !important;
+      }
+
+      /* Smoke */
+      .gm-badge__smoke {
+        position: absolute;
+        pointer-events: none;
+        z-index: 9;
+        bottom: 55%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1px;
+        height: 1px;
+      }
+      .gm-smoke {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0;
+        background: radial-gradient(circle, var(--c-smoke) 0%, transparent 70%);
+      }
+      .gm-smoke:nth-child(1) {
+        width: 10px;
+        height: 10px;
+        margin: -5px;
+        animation: smoke-rise-1 4.2s 0s infinite ease-out;
+      }
+      .gm-smoke:nth-child(2) {
+        width: 9px;
+        height: 9px;
+        margin: -4.5px;
+        animation: smoke-rise-2 3.8s 0.8s infinite ease-out;
+      }
+      .gm-smoke:nth-child(3) {
+        width: 11px;
+        height: 11px;
+        margin: -5.5px;
+        animation: smoke-rise-3 4.6s 1.5s infinite ease-out;
+      }
+      .gm-badge:hover .gm-smoke {
+        animation-duration: 2s !important;
+      }
+
+      /* Photo */
+      .gm-badge__photo {
+        position: absolute;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center 10%;
+        z-index: 20;
+        border: 1.5px solid var(--c-photo-bdr);
+        box-shadow: inset 0 0 8px var(--c-halo);
+        transition:
+          border-color 0.5s,
+          box-shadow 0.5s;
+        /* centré dans 72px : photo = 40px, top/left = (72-40)/2 = 16px */
+        width: 40px;
+        height: 40px;
+        top: 16px;
+        left: 16px;
+      }
+      /* SVG layers */
+      .gm-badge__svg-base,
+      .gm-badge__svg-over {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .gm-badge__svg-base {
+        z-index: 5;
+      }
+      .gm-badge__svg-over {
+        z-index: 25;
+      }
+
+      /* Badge verrouillé */
+      .gm-badge--locked {
+        --c-ring: rgba(100, 120, 140, 0.4);
+        --c-ring-dim: rgba(80, 100, 120, 0.3);
+        --c-glyph: rgba(100, 120, 140, 0.35);
+        --c-star: rgba(100, 120, 140, 0.3);
+        --c-photo-bdr: rgba(100, 120, 140, 0.25);
+        --c-halo: rgba(0, 0, 0, 0.1);
+        --c-smoke: rgba(100, 120, 140, 0.08);
+        --c-spark1: rgba(120, 140, 160, 0.3);
+        --c-spark2: rgba(100, 120, 140, 0.2);
+        filter: saturate(0.15) brightness(0.7);
+        --dur-r1: 40s;
+        --dur-r2: 28s;
+        --dur-rb: 80s;
+        --dur-r3: 35s;
+        --dur-r4: 55s;
+      }
+      .gm-badge--locked:hover {
+        transform: scale(1.05);
+        filter: saturate(0.25) brightness(0.8);
+        --dur-r1: 28s;
+      }
+
+      /* Responsive préfooter */
+      @media (max-width: 1100px) {
+        .ft__pre-inner {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+        .ft__widget {
+          max-width: 480px;
+        }
+      }
+      @media (max-width: 768px) {
+        .ft__pre-inner {
+          padding: 48px var(--px);
+        }
+        .ft__pre-title {
+          font-size: 2rem;
+        }
+        .ft__badges-row {
+          gap: 4px;
+        }
+      }
+      @media (max-width: 520px) {
+        .ft__badges-row {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 12px;
+        }
+        .ft__badge-slot {
+          width: calc(33% - 8px);
+        }
+      }
+
+      /* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+      .ft {
+        position: relative;
+        background: var(--deep);
+        overflow: hidden;
+      }
+
+      /* Grain de fond */
+      .ft::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.018;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 200px;
+      }
+
+      /* Lueur radiale subtile centre-gauche */
+      .ft__glow {
+        position: absolute;
+        top: -60px;
+        left: -80px;
+        width: 600px;
+        height: 400px;
+        pointer-events: none;
+        z-index: 0;
+        background: radial-gradient(
+          ellipse at 30% 40%,
+          rgba(196, 160, 82, 0.055) 0%,
+          transparent 70%
+        );
+      }
+
+      /* ── CTA BAND ── */
+      .ft__cta {
+        position: relative;
+        z-index: 2;
+        border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      .ft__cta-inner {
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 52px var(--px);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 48px;
+      }
+      .ft__cta-label {
+        font-family: var(--f-title);
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.45);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ft__cta-label::before {
+        content: "";
+        display: inline-block;
+        width: 20px;
+        height: 1px;
+        background: var(--g-gold-h);
+      }
+      .ft__cta-title {
+        font-family: var(--f-display);
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        letter-spacing: 0.06em;
+        line-height: 0.95;
+        color: #fff;
+      }
+      .ft__cta-title em {
+        color: var(--gold);
+        font-style: normal;
+      }
+      .ft__cta-sub {
+        font-family: var(--f-prose);
+        font-style: italic;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--muted);
+        margin-top: 8px;
+        max-width: 480px;
+      }
+      /* Newsletter form */
+      .ft__nl {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+        flex-shrink: 0;
+      }
+      .ft__nl-label {
+        font-family: var(--f-title);
+        font-size: 0.48rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.45);
+        align-self: flex-start;
+      }
+      .ft__nl-row {
+        display: flex;
+        gap: 0;
+        align-items: stretch;
+      }
+      .ft__nl-input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(65, 90, 119, 0.3);
+        border-right: none;
+        border-radius: 9px 0 0 9px;
+        padding: 0 16px;
+        height: 42px;
+        width: 240px;
+        font-family: var(--f-body);
+        font-size: 0.82rem;
+        font-weight: 300;
+        color: var(--silver);
+        outline: none;
+        transition:
+          border-color 0.22s,
+          box-shadow 0.22s;
+      }
+      .ft__nl-input:focus {
+        border-color: rgba(196, 160, 82, 0.45);
+        box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.07);
+      }
+      .ft__nl-input::placeholder {
+        color: rgba(212, 220, 232, 0.2);
+      }
+      .ft__nl-btn {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 0 9px 9px 0;
+        background: var(--g-gold);
+        border: none;
+        cursor: pointer;
+        font-family: var(--f-title);
+        font-size: 0.56rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition:
+          filter 0.22s,
+          transform 0.22s;
+        flex-shrink: 0;
+      }
+      .ft__nl-btn:hover {
+        filter: brightness(1.1);
+        transform: translateX(1px);
+      }
+      .ft__nl-note {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.22);
+        align-self: flex-start;
+      }
+
+      /* ── MAIN GRID ── */
+      .ft__main {
+        position: relative;
+        z-index: 2;
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 48px var(--px) 40px;
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr 1fr;
+        gap: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      /* Séparateurs verticaux entre colonnes */
+      .ft__col {
+        padding: 0 36px;
+      }
+      .ft__col:first-child {
+        padding-left: 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .ft__col:not(:first-child):not(:last-child) {
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .ft__col:last-child {
+        padding-right: 0;
+      }
+
+      /* Colonne marque */
+      .ft__brand {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .ft__logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        text-decoration: none;
+        width: fit-content;
+      }
+      .ft__badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--g-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        color: var(--ink);
+        box-shadow: 0 0 20px rgba(196, 160, 82, 0.25);
+        flex-shrink: 0;
+      }
+      .ft__brand-name {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+        gap: 2px;
+      }
+      .ft__brand-title {
+        font-family: var(--f-display);
+        font-size: 1.1rem;
+        letter-spacing: 0.14em;
+        color: var(--gold);
+      }
+      .ft__brand-sub {
+        font-size: 0.42rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.38);
+      }
+      .ft__brand-desc {
+        font-size: 0.74rem;
+        font-weight: 300;
+        line-height: 1.72;
+        color: rgba(212, 220, 232, 0.32);
+        max-width: 220px;
+      }
+      /* Socials */
+      .ft__socials {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .ft__soc {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(212, 220, 232, 0.35);
+        text-decoration: none;
+        transition: all 0.25s var(--ease);
+        position: relative;
+        overflow: hidden;
+      }
+      .ft__soc::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--g-gold);
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+      .ft__soc:hover {
+        border-color: rgba(196, 160, 82, 0.4);
+        color: var(--ink);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(196, 160, 82, 0.2);
+      }
+      .ft__soc:hover::before {
+        opacity: 1;
+      }
+      .ft__soc svg {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Colonnes liens */
+      .ft__col-head {
+        font-family: var(--f-title);
+        font-size: 0.54rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(196, 160, 82, 0.55);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ft__col-head::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(196, 160, 82, 0.18),
+          transparent
+        );
+      }
+      .ft__links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .ft__links li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .ft__links li:last-child {
+        border-bottom: none;
+      }
+      .ft__link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0;
+        font-size: 0.72rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.38);
+        text-decoration: none;
+        transition: all 0.22s;
+        position: relative;
+      }
+      .ft__link-icon {
+        color: rgba(196, 160, 82, 0.3);
+        transition: color 0.22s;
+        flex-shrink: 0;
+      }
+      .ft__link:hover {
+        color: var(--silver);
+        padding-left: 4px;
+      }
+      .ft__link:hover .ft__link-icon {
+        color: var(--gold);
+      }
+      /* Badge "nouveau" */
+      .ft__badge-new {
+        display: inline-flex;
+        align-items: center;
+        padding: 1px 6px;
+        border-radius: 3px;
+        background: rgba(194, 48, 24, 0.15);
+        border: 1px solid rgba(194, 48, 24, 0.3);
+        font-family: var(--f-title);
+        font-size: 0.36rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--red-hi);
+        margin-left: auto;
+      }
+
+      /* ── STATS BAND ── */
+      .ft__stats {
+        position: relative;
+        z-index: 2;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.012);
+      }
+      .ft__stats-inner {
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 0 var(--px);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .ft__stat {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 22px 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        padding-right: 32px;
+        padding-left: 32px;
+        transition: background 0.25s;
+      }
+      .ft__stat:first-child {
+        padding-left: 0;
+      }
+      .ft__stat:last-child {
+        border-right: none;
+      }
+      .ft__stat:hover {
+        background: rgba(196, 160, 82, 0.03);
+      }
+      .ft__stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(196, 160, 82, 0.08);
+        border: 1px solid rgba(196, 160, 82, 0.14);
+        color: var(--gold);
+      }
+      .ft__stat-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .ft__stat-n {
+        font-family: var(--f-display);
+        font-size: 1.55rem;
+        letter-spacing: 0.06em;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .ft__stat-l {
+        font-size: 0.5rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--very-muted);
+      }
+
+      /* ── BOTTOM BAR ── */
+      .ft__bottom {
+        position: relative;
+        z-index: 2;
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 16px var(--px);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .ft__copy {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.22);
+        margin-right: auto;
+      }
+      .ft__legal {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .ft__legal a {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(212, 220, 232, 0.22);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .ft__legal a:hover {
+        color: rgba(212, 220, 232, 0.62);
+      }
+      .ft__legal-sep {
+        width: 1px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      /* Back-to-top inline */
+      .ft__top-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px;
+        height: 30px;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-family: var(--f-title);
+        font-size: 0.46rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(212, 220, 232, 0.35);
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.22s;
+      }
+      .ft__top-btn:hover {
+        background: rgba(196, 160, 82, 0.1);
+        border-color: rgba(196, 160, 82, 0.3);
+        color: var(--gold);
+        transform: translateY(-1px);
+      }
+
+      /* ── FILMSTRIP FINAL ── */
+      .ft__film {
+        position: relative;
+        z-index: 2;
+        height: 32px;
+        overflow: hidden;
+        background: rgba(4, 7, 14, 0.98);
+        border-top: 1px solid rgba(196, 160, 82, 0.06);
+        display: flex;
+        align-items: center;
+      }
+      .ft__film-track {
+        display: flex;
+        align-items: center;
+        width: max-content;
+        animation: filmroll 28s linear infinite;
+        gap: 0;
+      }
+      .ft__film-frame {
+        display: flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 3px;
+        gap: 3px;
+        flex-shrink: 0;
+      }
+      /* Perfo haut + bas */
+      .ft__film-perf {
+        width: 14px;
+        height: 10px;
+        border-radius: 2px;
+        background: rgba(196, 160, 82, 0.07);
+        border: 1px solid rgba(196, 160, 82, 0.1);
+      }
+      /* Frame photo simulée */
+      .ft__film-cell {
+        width: 44px;
+        height: 28px;
+        border-radius: 2px;
+        background: rgba(196, 160, 82, 0.04);
+        border: 1px solid rgba(196, 160, 82, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .ft__film-cell::before {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        background: linear-gradient(
+          135deg,
+          rgba(196, 160, 82, 0.06) 0%,
+          transparent 60%
+        );
+      }
+      /* Texte film simulé */
+      .ft__film-text {
+        font-family: var(--f-display);
+        font-size: 0.38rem;
+        letter-spacing: 0.1em;
+        color: rgba(196, 160, 82, 0.22);
+        white-space: nowrap;
+        position: relative;
+        z-index: 1;
+      }
+      @keyframes filmroll {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+      @media (max-width: 1100px) {
+        :root {
+          --px: 32px;
+        }
+        .ft__cta-inner {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        .ft__nl {
+          align-items: flex-start;
+        }
+        .ft__main {
+          grid-template-columns: 1fr 1fr;
+          gap: 0;
+        }
+        .ft__col:nth-child(2n) {
+          border-right: none;
+        }
+        .ft__col:nth-child(1),
+        .ft__col:nth-child(2) {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+          padding-bottom: 32px;
+          margin-bottom: 32px;
+        }
+        .ft__stats-inner {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .ft__stat:nth-child(2) {
+          border-right: none;
+        }
+        .ft__stat:nth-child(n + 3) {
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+      }
+      @media (max-width: 768px) {
+        :root {
+          --px: 18px;
+        }
+        .ft__main {
+          grid-template-columns: 1fr;
+        }
+        .ft__col {
+          border-right: none !important;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+          padding: 20px 0;
+        }
+        .ft__col:last-child {
+          border-bottom: none;
+        }
+        .ft__stats-inner {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .ft__bottom {
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .ft__copy {
+          order: 3;
+          width: 100%;
+          text-align: center;
+          margin-right: 0;
+        }
+        .ft__legal {
+          order: 1;
+          margin: 0 auto;
+        }
+        .ft__top-btn {
+          order: 2;
+        }
+      }
+      @media (max-width: 520px) {
+        .ft__stats-inner {
+          grid-template-columns: 1fr 1fr;
+        }
+        .ft__stat {
+          padding: 16px 12px;
+          gap: 10px;
+        }
+        .ft__film {
+          height: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-stub">↑ Contenu de la page</div>
+
+    <footer class="ft" role="contentinfo">
+      <div class="ft__glow" aria-hidden="true"></div>
+
+      <!-- ══ PRÉFOOTER CTA ══ -->
+      <div class="ft__pre">
+        <div class="ft__pre-bg" aria-hidden="true"></div>
+        <div class="ft__pre-inner">
+          <!-- Gauche : texte + CTAs -->
+          <div>
+            <p class="ft__pre-label">Rejoignez-nous</p>
+            <h2 class="ft__pre-title">
+              CUISINEZ CE QUE<br />VOUS <em>REGARDEZ.</em>
+            </h2>
+            <p class="ft__pre-desc">
+              Ciné Délices, c'est un univers où chaque film devient une table
+              dressée. Partagez vos créations culinaires, découvrez celles des
+              autres, et entrez dans une
+              <strong>communauté qui vit le cinéma avec tous ses sens.</strong>
+            </p>
+            <div class="ft__pre-stats">
+              <div class="ft__pre-stat">
+                <span class="ft__pre-stat-n">3</span>
+                <span class="ft__pre-stat-l">Membres</span>
+              </div>
+              <div class="ft__pre-divider" aria-hidden="true"></div>
+              <div class="ft__pre-stat">
+                <span class="ft__pre-stat-n">6</span>
+                <span class="ft__pre-stat-l">Recettes</span>
+              </div>
+              <div class="ft__pre-divider" aria-hidden="true"></div>
+              <div class="ft__pre-stat">
+                <span class="ft__pre-stat-n">5</span>
+                <span class="ft__pre-stat-l">Films liés</span>
+              </div>
+            </div>
+            <div class="ft__pre-ctas">
+              <a href="/recettes/nouvelle" class="ft__pre-btn-main">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Ajouter ma recette
+              </a>
+              <a href="/a-propos" class="ft__pre-btn-sec">
+                En savoir plus
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Droite : widget contributeurs + badges -->
+          <div
+            class="ft__widget"
+            role="complementary"
+            aria-label="Votre progression"
+          >
+            <!-- Top contributeurs -->
+            <div class="ft__widget-contrib">
+              <div class="ft__widget-head">
+                <svg
+                  class="ft__widget-head-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                  <path d="M4 22h16" />
+                  <path
+                    d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"
+                  />
+                  <path
+                    d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"
+                  />
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
+                </svg>
+                <span class="ft__widget-head-title">Top Contributeurs</span>
+                <span class="ft__widget-head-sub"
+                  >Ce mois-ci · recettes publiées</span
+                >
+              </div>
+              <p class="ft__widget-contrib-empty">
+                Aucun contributeur pour le moment.
+              </p>
+            </div>
+
+            <!-- Votre progression -->
+            <div class="ft__widget-prog">
+              <p class="ft__widget-prog-head">Votre progression</p>
+              <div class="ft__badges-row">
+                <div class="ft__badge-slot">
+                  <div
+                    class="gm-badge gm-badge--spectateur"
+                    role="img"
+                    aria-label="MAG-Doctor Strange — Découverte"
+                  >
+                    <div class="gm-badge__sparks" aria-hidden="true">
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                    </div>
+                    <div class="gm-badge__smoke" aria-hidden="true">
+                      <span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span>
+                    </div>
+                    <img
+                      class="gm-badge__photo"
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%231a2a3a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dominant-baseline='middle'%3E🎬%3C/text%3E%3C/svg%3E"
+                      alt="Spectateur"
+                    />
+                    <div
+                      class="gm-badge__svg-base"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gf-b1"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1.4" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gg-b1"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gs-b1"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cp-b1">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                          <path
+                            id="gp-b1"
+                            d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"
+                          />
+                        </defs>
+                        <g clip-path="url(#cp-b1)">
+                          <circle
+                            cx="160"
+                            cy="160"
+                            r="85"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="0.5"
+                            opacity="0.18"
+                            stroke-dasharray="3 6"
+                            style="
+                              color: var(--c-ring);
+                              animation: time-ripple 6s linear infinite;
+                            "
+                          />
+                          <g
+                            style="
+                              animation: cw var(--dur-r1)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="92"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              filter="url(#gf-b1)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 5.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g
+                              style="color: var(--c-ring); stroke: currentColor"
+                            >
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(90,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(180,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(270,160,160)"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r2)
+                                cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b1)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 6.3s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g style="color: var(--c-ring); fill: currentColor">
+                              <polygon
+                                points="160,100.5 164,104 160,107.5 156,104"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="264,160 267.5,164 264,167.5 260.5,164"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="160,212.5 164,216 160,219.5 156,216"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="56,160 59.5,164 56,167.5 52.5,164"
+                                opacity=".88"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-rb) linear infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="123.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <text
+                              fill="currentColor"
+                              font-family="Georgia,serif"
+                              font-size="14"
+                              filter="url(#gg-b1)"
+                              style="
+                                color: var(--c-glyph);
+                                animation: glyph-flicker 4.2s ease-in-out
+                                  infinite;
+                              "
+                            >
+                              <textPath
+                                href="#gp-b1"
+                                startOffset="0%"
+                                textLength="672"
+                                lengthAdjust="spacing"
+                              >
+                                ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ
+                              </textPath>
+                            </text>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r3)
+                                cubic-bezier(0.4, 0.1, 0.6, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="124"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b1)"
+                              style="
+                                color: var(--c-ring);
+                                animation: fractal-pulse 3.5s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-r4)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="136"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".9"
+                              stroke-dasharray="3 8"
+                              opacity=".4"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-fast 6.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b1)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b1)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      class="gm-badge__svg-over"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gso-b1"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cpo-b1">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                        </defs>
+                        <g clip-path="url(#cpo-b1)">
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b1)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b1)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <span
+                    class="ft__badge-label"
+                    title="MAG-Dr Strange · Découverte"
+                    >Magie</span
+                  >
+                </div>
+                <div class="ft__badge-slot">
+                  <div
+                    class="gm-badge gm-badge--cinephile"
+                    role="img"
+                    aria-label="SCI-Matrix — Découverte"
+                  >
+                    <div class="gm-badge__sparks" aria-hidden="true">
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                    </div>
+                    <div class="gm-badge__smoke" aria-hidden="true">
+                      <span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span>
+                    </div>
+                    <img
+                      class="gm-badge__photo"
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%232a1e0a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dominant-baseline='middle'%3E🍿%3C/text%3E%3C/svg%3E"
+                      alt="Cinéphile"
+                    />
+                    <div
+                      class="gm-badge__svg-base"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gf-b2"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1.4" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gg-b2"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gs-b2"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cp-b2">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                          <path
+                            id="gp-b2"
+                            d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"
+                          />
+                        </defs>
+                        <g clip-path="url(#cp-b2)">
+                          <circle
+                            cx="160"
+                            cy="160"
+                            r="85"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="0.5"
+                            opacity="0.18"
+                            stroke-dasharray="3 6"
+                            style="
+                              color: var(--c-ring);
+                              animation: time-ripple 6s linear infinite;
+                            "
+                          />
+                          <g
+                            style="
+                              animation: cw var(--dur-r1)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="92"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              filter="url(#gf-b2)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 5.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g
+                              style="color: var(--c-ring); stroke: currentColor"
+                            >
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(90,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(180,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(270,160,160)"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r2)
+                                cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b2)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 6.3s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g style="color: var(--c-ring); fill: currentColor">
+                              <polygon
+                                points="160,100.5 164,104 160,107.5 156,104"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="264,160 267.5,164 264,167.5 260.5,164"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="160,212.5 164,216 160,219.5 156,216"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="56,160 59.5,164 56,167.5 52.5,164"
+                                opacity=".88"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-rb) linear infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="123.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <text
+                              fill="currentColor"
+                              font-family="Georgia,serif"
+                              font-size="14"
+                              filter="url(#gg-b2)"
+                              style="
+                                color: var(--c-glyph);
+                                animation: glyph-flicker 4.2s ease-in-out
+                                  infinite;
+                              "
+                            >
+                              <textPath
+                                href="#gp-b2"
+                                startOffset="0%"
+                                textLength="672"
+                                lengthAdjust="spacing"
+                              >
+                                ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ
+                              </textPath>
+                            </text>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r3)
+                                cubic-bezier(0.4, 0.1, 0.6, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="124"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b2)"
+                              style="
+                                color: var(--c-ring);
+                                animation: fractal-pulse 3.5s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-r4)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="136"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".9"
+                              stroke-dasharray="3 8"
+                              opacity=".4"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-fast 6.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b2)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b2)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      class="gm-badge__svg-over"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gso-b2"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cpo-b2">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                        </defs>
+                        <g clip-path="url(#cpo-b2)">
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b2)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b2)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <span class="ft__badge-label" title="SCI-Matrix · Découverte"
+                    >Sci-Fi</span
+                  >
+                </div>
+                <div class="ft__badge-slot">
+                  <div
+                    class="gm-badge gm-badge--critique"
+                    role="img"
+                    aria-label="ACT-Batman — Découverte"
+                  >
+                    <div class="gm-badge__sparks" aria-hidden="true">
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                    </div>
+                    <div class="gm-badge__smoke" aria-hidden="true">
+                      <span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span>
+                    </div>
+                    <img
+                      class="gm-badge__photo"
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%232a0a0a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dominant-baseline='middle'%3E✍️%3C/text%3E%3C/svg%3E"
+                      alt="Critique"
+                    />
+                    <div
+                      class="gm-badge__svg-base"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gf-b3"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1.4" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gg-b3"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gs-b3"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cp-b3">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                          <path
+                            id="gp-b3"
+                            d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"
+                          />
+                        </defs>
+                        <g clip-path="url(#cp-b3)">
+                          <circle
+                            cx="160"
+                            cy="160"
+                            r="85"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="0.5"
+                            opacity="0.18"
+                            stroke-dasharray="3 6"
+                            style="
+                              color: var(--c-ring);
+                              animation: time-ripple 6s linear infinite;
+                            "
+                          />
+                          <g
+                            style="
+                              animation: cw var(--dur-r1)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="92"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              filter="url(#gf-b3)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 5.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g
+                              style="color: var(--c-ring); stroke: currentColor"
+                            >
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(90,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(180,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(270,160,160)"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r2)
+                                cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b3)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 6.3s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g style="color: var(--c-ring); fill: currentColor">
+                              <polygon
+                                points="160,100.5 164,104 160,107.5 156,104"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="264,160 267.5,164 264,167.5 260.5,164"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="160,212.5 164,216 160,219.5 156,216"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="56,160 59.5,164 56,167.5 52.5,164"
+                                opacity=".88"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-rb) linear infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="123.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <text
+                              fill="currentColor"
+                              font-family="Georgia,serif"
+                              font-size="14"
+                              filter="url(#gg-b3)"
+                              style="
+                                color: var(--c-glyph);
+                                animation: glyph-flicker 4.2s ease-in-out
+                                  infinite;
+                              "
+                            >
+                              <textPath
+                                href="#gp-b3"
+                                startOffset="0%"
+                                textLength="672"
+                                lengthAdjust="spacing"
+                              >
+                                ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ
+                              </textPath>
+                            </text>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r3)
+                                cubic-bezier(0.4, 0.1, 0.6, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="124"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b3)"
+                              style="
+                                color: var(--c-ring);
+                                animation: fractal-pulse 3.5s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-r4)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="136"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".9"
+                              stroke-dasharray="3 8"
+                              opacity=".4"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-fast 6.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b3)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b3)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      class="gm-badge__svg-over"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gso-b3"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cpo-b3">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                        </defs>
+                        <g clip-path="url(#cpo-b3)">
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b3)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b3)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <span class="ft__badge-label" title="ACT-Batman · Découverte"
+                    >Action</span
+                  >
+                </div>
+                <div class="ft__badge-slot">
+                  <div
+                    class="gm-badge gm-badge--epique gm-badge--locked"
+                    role="img"
+                    aria-label="EPI-Smaug — Initié (verrouillé)"
+                  >
+                    <div class="gm-badge__sparks" aria-hidden="true">
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                    </div>
+                    <div class="gm-badge__smoke" aria-hidden="true">
+                      <span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span>
+                    </div>
+                    <img
+                      class="gm-badge__photo"
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%231a0a2a' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dominant-baseline='middle'%3E📚%3C/text%3E%3C/svg%3E"
+                      alt="Collectionneur"
+                    />
+                    <div
+                      class="gm-badge__svg-base"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gf-b4"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1.4" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gg-b4"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gs-b4"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cp-b4">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                          <path
+                            id="gp-b4"
+                            d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"
+                          />
+                        </defs>
+                        <g clip-path="url(#cp-b4)">
+                          <circle
+                            cx="160"
+                            cy="160"
+                            r="85"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="0.5"
+                            opacity="0.18"
+                            stroke-dasharray="3 6"
+                            style="
+                              color: var(--c-ring);
+                              animation: time-ripple 6s linear infinite;
+                            "
+                          />
+                          <g
+                            style="
+                              animation: cw var(--dur-r1)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="92"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              filter="url(#gf-b4)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 5.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g
+                              style="color: var(--c-ring); stroke: currentColor"
+                            >
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(90,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(180,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(270,160,160)"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r2)
+                                cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b4)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 6.3s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g style="color: var(--c-ring); fill: currentColor">
+                              <polygon
+                                points="160,100.5 164,104 160,107.5 156,104"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="264,160 267.5,164 264,167.5 260.5,164"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="160,212.5 164,216 160,219.5 156,216"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="56,160 59.5,164 56,167.5 52.5,164"
+                                opacity=".88"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-rb) linear infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="123.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <text
+                              fill="currentColor"
+                              font-family="Georgia,serif"
+                              font-size="14"
+                              filter="url(#gg-b4)"
+                              style="
+                                color: var(--c-glyph);
+                                animation: glyph-flicker 4.2s ease-in-out
+                                  infinite;
+                              "
+                            >
+                              <textPath
+                                href="#gp-b4"
+                                startOffset="0%"
+                                textLength="672"
+                                lengthAdjust="spacing"
+                              >
+                                ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ
+                              </textPath>
+                            </text>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r3)
+                                cubic-bezier(0.4, 0.1, 0.6, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="124"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b4)"
+                              style="
+                                color: var(--c-ring);
+                                animation: fractal-pulse 3.5s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-r4)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="136"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".9"
+                              stroke-dasharray="3 8"
+                              opacity=".4"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-fast 6.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b4)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b4)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      class="gm-badge__svg-over"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gso-b4"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cpo-b4">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                        </defs>
+                        <g clip-path="url(#cpo-b4)">
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b4)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b4)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <span
+                    class="ft__badge-label"
+                    title="EPI-Smaug · Initié — Verrouillé"
+                    ><svg
+                      width="9"
+                      height="9"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      style="opacity: 0.5"
+                    >
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Épique</span
+                  >
+                </div>
+                <div class="ft__badge-slot">
+                  <div
+                    class="gm-badge gm-badge--maitre gm-badge--locked"
+                    role="img"
+                    aria-label="Grand Maître Ciné Délices (verrouillé)"
+                  >
+                    <div class="gm-badge__sparks" aria-hidden="true">
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                      <span class="gm-spark"></span
+                      ><span class="gm-spark"></span>
+                    </div>
+                    <div class="gm-badge__smoke" aria-hidden="true">
+                      <span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span
+                      ><span class="gm-smoke"></span>
+                    </div>
+                    <img
+                      class="gm-badge__photo"
+                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%232a1800' width='100%25' height='100%25'/%3E%3Ctext x='50%25' y='50%25' font-size='20' text-anchor='middle' dominant-baseline='middle'%3E👑%3C/text%3E%3C/svg%3E"
+                      alt="Maître"
+                    />
+                    <div
+                      class="gm-badge__svg-base"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gf-b5"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1.4" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gg-b5"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <filter
+                            id="gs-b5"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cp-b5">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                          <path
+                            id="gp-b5"
+                            d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"
+                          />
+                        </defs>
+                        <g clip-path="url(#cp-b5)">
+                          <circle
+                            cx="160"
+                            cy="160"
+                            r="85"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="0.5"
+                            opacity="0.18"
+                            stroke-dasharray="3 6"
+                            style="
+                              color: var(--c-ring);
+                              animation: time-ripple 6s linear infinite;
+                            "
+                          />
+                          <g
+                            style="
+                              animation: cw var(--dur-r1)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="92"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              filter="url(#gf-b5)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 5.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g
+                              style="color: var(--c-ring); stroke: currentColor"
+                            >
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(90,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(180,160,160)"
+                              />
+                              <line
+                                x1="160"
+                                y1="68"
+                                x2="160"
+                                y2="76"
+                                stroke-width="1.5"
+                                opacity=".95"
+                                transform="rotate(270,160,160)"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r2)
+                                cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b5)"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-slow 6.3s ease-in-out
+                                  infinite;
+                              "
+                            />
+                            <g style="color: var(--c-ring); fill: currentColor">
+                              <polygon
+                                points="160,100.5 164,104 160,107.5 156,104"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="264,160 267.5,164 264,167.5 260.5,164"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="160,212.5 164,216 160,219.5 156,216"
+                                opacity=".88"
+                              />
+                              <polygon
+                                points="56,160 59.5,164 56,167.5 52.5,164"
+                                opacity=".88"
+                              />
+                            </g>
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-rb) linear infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="104.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="123.5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".6"
+                              opacity=".5"
+                              style="color: var(--c-ring)"
+                            />
+                            <text
+                              fill="currentColor"
+                              font-family="Georgia,serif"
+                              font-size="14"
+                              filter="url(#gg-b5)"
+                              style="
+                                color: var(--c-glyph);
+                                animation: glyph-flicker 4.2s ease-in-out
+                                  infinite;
+                              "
+                            >
+                              <textPath
+                                href="#gp-b5"
+                                startOffset="0%"
+                                textLength="672"
+                                lengthAdjust="spacing"
+                              >
+                                ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ
+                              </textPath>
+                            </text>
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-r3)
+                                cubic-bezier(0.4, 0.1, 0.6, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="124"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              filter="url(#gf-b5)"
+                              style="
+                                color: var(--c-ring);
+                                animation: fractal-pulse 3.5s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-r4)
+                                cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                          >
+                            <circle
+                              cx="160"
+                              cy="160"
+                              r="136"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width=".9"
+                              stroke-dasharray="3 8"
+                              opacity=".4"
+                              style="
+                                color: var(--c-ring);
+                                animation: breathe-fast 6.2s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b5)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gs-b5)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      class="gm-badge__svg-over"
+                      style="width: 72px; height: 72px"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 320 320"
+                        width="72"
+                        height="72"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="overflow: hidden; display: block"
+                      >
+                        <defs>
+                          <filter
+                            id="gso-b5"
+                            x="0%"
+                            y="0%"
+                            width="100%"
+                            height="100%"
+                          >
+                            <feGaussianBlur stdDeviation="1" result="b" />
+                            <feMerge>
+                              <feMergeNode in="b" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                          <clipPath id="cpo-b5">
+                            <circle cx="160" cy="160" r="136" />
+                          </clipPath>
+                        </defs>
+                        <g clip-path="url(#cpo-b5)">
+                          <g
+                            style="
+                              animation: cw var(--dur-sqa)
+                                cubic-bezier(0.3, 0.1, 0.7, 0.9) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b5)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-a 3.8s ease-in-out
+                                  infinite;
+                              "
+                            />
+                          </g>
+                          <g
+                            style="
+                              animation: ccw var(--dur-sqb)
+                                cubic-bezier(0.6, 0, 0.4, 1) infinite;
+                              transform-origin: 160px 160px;
+                            "
+                            filter="url(#gso-b5)"
+                          >
+                            <rect
+                              x="92.1"
+                              y="92.1"
+                              width="135.8"
+                              height="135.8"
+                              fill="none"
+                              stroke="currentColor"
+                              transform="rotate(22.5,160,160)"
+                              style="
+                                color: var(--c-star);
+                                animation: star-pulse-b 5.1s ease-in-out
+                                  infinite 0.9s;
+                              "
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                  <span
+                    class="ft__badge-label"
+                    title="Grand Maître Ciné Délices — Verrouillé"
+                    ><svg
+                      width="9"
+                      height="9"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      style="opacity: 0.5"
+                    >
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Maître</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MAIN GRID ══ -->
+      <div class="ft__main">
+        <!-- Colonne marque -->
+        <div class="ft__col">
+          <div class="ft__brand">
+            <a href="/" class="ft__logo">
+              <div class="ft__badge">CD</div>
+              <div class="ft__brand-name">
+                <span class="ft__brand-title">CINÉ DÉLICES</span>
+                <span class="ft__brand-sub">Cuisine &amp; Cinéma</span>
+              </div>
+            </a>
+            <p class="ft__brand-desc">
+              Une plateforme unique où cinéphiles et gourmets se retrouvent pour
+              explorer les saveurs cachées du grand écran.
+            </p>
+            <div class="ft__socials">
+              <a href="#" class="ft__soc" aria-label="Facebook">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
+                  />
+                </svg>
+              </a>
+              <a href="#" class="ft__soc" aria-label="Instagram">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a href="#" class="ft__soc" aria-label="YouTube">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"
+                  />
+                  <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+                </svg>
+              </a>
+              <a href="#" class="ft__soc" aria-label="LinkedIn">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                  />
+                  <rect x="2" y="9" width="4" height="12" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+              <a href="#" class="ft__soc" aria-label="GitHub">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Colonne Découvrir -->
+        <div class="ft__col">
+          <div class="ft__col-head">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              style="flex-shrink: 0"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Découvrir
+          </div>
+          <ul class="ft__links" role="list">
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+                Films cultes
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                  <path d="M7 2v20" />
+                  <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                </svg>
+                Recettes du jour
+                <span class="ft__badge-new">New</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                  />
+                </svg>
+                Coups de cœur
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                Classements
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                Explorer par genre
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Colonne Communauté -->
+        <div class="ft__col">
+          <div class="ft__col-head">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              style="flex-shrink: 0"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            Communauté
+          </div>
+          <ul class="ft__links" role="list">
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                  />
+                </svg>
+                Contribuer
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
+                </svg>
+                Classement
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                  />
+                </svg>
+                Avis &amp; critiques
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                Newsletter
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  />
+                </svg>
+                Mes favoris
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Colonne À propos -->
+        <div class="ft__col">
+          <div class="ft__col-head">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              style="flex-shrink: 0"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            À propos
+          </div>
+          <ul class="ft__links" role="list">
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                L'équipe
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Notre histoire
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                Mission
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Presse
+                <span class="ft__badge-new">Kit</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="ft__link">
+                <svg
+                  class="ft__link-icon"
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                Nous contacter
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- /ft__main -->
+
+      <!-- ══ STATS BAND ══ -->
+      <div class="ft__stats" aria-label="Chiffres clés">
+        <div class="ft__stats-inner">
+          <div class="ft__stat">
+            <div class="ft__stat-icon" aria-hidden="true">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+            </div>
+            <div class="ft__stat-body">
+              <span class="ft__stat-n">247</span>
+              <span class="ft__stat-l">Films référencés</span>
+            </div>
+          </div>
+          <div class="ft__stat">
+            <div class="ft__stat-icon" aria-hidden="true">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                <path d="M7 2v20" />
+                <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+              </svg>
+            </div>
+            <div class="ft__stat-body">
+              <span class="ft__stat-n">583</span>
+              <span class="ft__stat-l">Recettes créées</span>
+            </div>
+          </div>
+          <div class="ft__stat">
+            <div class="ft__stat-icon" aria-hidden="true">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <div class="ft__stat-body">
+              <span class="ft__stat-n">4</span>
+              <span class="ft__stat-l">Développeurs passionnés</span>
+            </div>
+          </div>
+          <div class="ft__stat">
+            <div class="ft__stat-icon" aria-hidden="true">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                />
+              </svg>
+            </div>
+            <div class="ft__stat-body">
+              <span class="ft__stat-n">2025</span>
+              <span class="ft__stat-l">Année de fondation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ BOTTOM BAR ══ -->
+      <div class="ft__bottom">
+        <span class="ft__copy"
+          >© 2025 Ciné Délices — Tous droits réservés. Projet réalisé dans le
+          cadre de la formation O'clock.</span
+        >
+        <nav class="ft__legal" aria-label="Liens légaux">
+          <a href="#">Mentions légales</a>
+          <div class="ft__legal-sep" aria-hidden="true"></div>
+          <a href="#">CGU</a>
+          <div class="ft__legal-sep" aria-hidden="true"></div>
+          <a href="#">Confidentialité</a>
+          <div class="ft__legal-sep" aria-hidden="true"></div>
+          <a href="#">Cookies</a>
+        </nav>
+        <a
+          href="#"
+          class="ft__top-btn"
+          id="backTop"
+          aria-label="Revenir en haut"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+          Haut de page
+        </a>
+      </div>
+
+      <!-- ══ FILMSTRIP ══ -->
+      <div class="ft__film" aria-hidden="true">
+        <div class="ft__film-track">
+          <!-- 16 frames × 2 pour boucle seamless -->
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">RATATOUILLE</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">INTERSTELLAR</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">LE PARRAIN</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">MATRIX</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">AMÉLIE</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">STAR WARS</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">JOHN WICK</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">TITANIC</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">HARRY POTTER</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">FORREST GUMP</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">300</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">LOTR</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">RATATOUILLE</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">INTERSTELLAR</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">LE PARRAIN</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">MATRIX</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">AMÉLIE</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">STAR WARS</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">JOHN WICK</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">TITANIC</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">HARRY POTTER</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">FORREST GUMP</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">300</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+          <div class="ft__film-frame">
+            <div class="ft__film-perf"></div>
+            <div class="ft__film-cell">
+              <span class="ft__film-text">LOTR</span>
+            </div>
+            <div class="ft__film-perf"></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      /* ── Scroll to top ── */
+      const backTopBtn = document.getElementById("backTop");
+      if (backTopBtn) {
+        backTopBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      /* ── Afficher/masquer scroll-top au scroll ── */
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (backTopBtn)
+            backTopBtn.classList.toggle("is-vis", window.scrollY > 300);
+        },
+        { passive: true },
+      );
+    </script>
+  </body>
+</html>

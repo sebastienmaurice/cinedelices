@@ -33,7 +33,7 @@ body.arm-full-bleed {
 ══════════════════════════════════════════════════════ */
 .arm-hero {
   position: relative;
-  margin-top: var(--nav-height, 68px);
+  margin-top: var(--nav-h);
   width: 100%;
   height: 310px;
   background: linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%);
@@ -1720,3 +1720,51 @@ body.arm-full-bleed {
   .arm-upload-grid { grid-template-columns: 1fr; }
   .arm-step__label { display: none; }
 }
+
+/* ══════════════════════════════════════════════════════
+   TOAST — Badge Signature débloqué
+══════════════════════════════════════════════════════ */
+@keyframes badge-toast-in  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes badge-toast-out { from { opacity:1; } to { opacity:0; } }
+
+.badge-unlock-toast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(27,38,59,.92) 0%, rgba(20,34,52,.96) 100%);
+  border: 1px solid rgba(255,210,80,.25);
+  box-shadow: 0 4px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,210,80,.08) inset;
+  animation:
+    badge-toast-in  .4s cubic-bezier(.22,1,.36,1) both,
+    badge-toast-out .5s ease 3.6s forwards;
+}
+
+.badge-unlock-toast__icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(255,200,60,.5));
+}
+
+.badge-unlock-toast__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.badge-unlock-toast__body strong {
+  font-size: .85rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,210,80,.9);
+}
+
+.badge-unlock-toast__body span {
+  font-size: .95rem;
+  color: rgba(255,255,255,.88);
+}
+

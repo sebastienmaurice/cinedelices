@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero Design System — Ciné Délices</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ════════════════════════════════════════════
+   RESET & ROOT
+════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        /* ── Couleurs de base ── */
+        --ink:        #0a1220;
+        --bleu-nuit:  #142234;
+        --deep:       #111d2e;
+        --surface:    #162336;
+        --panel:      #1c2d42;
+        --html-bg:    #0d1b2a;
+
+        --rim:        rgba(255,255,255,0.07);
+        --rim-gold:   rgba(196,160,82,0.22);
+        --rim-red:    rgba(194,48,24,0.25);
+
+        --gold:       #c4a052;
+        --gold-hi:    #f2c84b;
+        --gold-lo:    #9a7832;
+        --red:        #c23018;
+        --red-hi:     #e84020;
+        --silver:     #d4dce8;
+        --muted:      rgba(212,220,232,0.4);
+        --very-muted: rgba(212,220,232,0.2);
+
+        --g-gold:   linear-gradient(135deg, #9a7832 0%, #c4a052 35%, #f2c84b 60%, #c4a052 100%);
+        --g-gold-h: linear-gradient(90deg,  #9a7832 0%, #c4a052 35%, #f2c84b 60%, #c4a052 100%);
+        --g-red:    linear-gradient(135deg, #7a150e 0%, #c23018 50%, #d84020 100%);
+
+        --f-display: "Bebas Neue", cursive;
+        --f-title:   "Cinzel", serif;
+        --f-prose:   "Playfair Display", serif;
+        --f-body:    "Lato", sans-serif;
+
+        --w:    1360px;
+        --px:   56px;
+        --nav:  70px;
+        --r:    14px;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      html { background: var(--html-bg); }
+
+      body {
+        min-height: 100vh;
+        background: transparent;
+        font-family: var(--f-body);
+        color: var(--silver);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ════════════════════════════════════════════
+   NAV (simulée)
+════════════════════════════════════════════ */
+      .nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 300;
+        height: var(--nav);
+        display: flex;
+        align-items: center;
+        padding: 0 var(--px);
+        background: rgba(10,18,32,0.75);
+        backdrop-filter: blur(24px) saturate(1.6);
+        border-bottom: 1px solid var(--rim);
+      }
+      .nav__badge {
+        width: 34px; height: 34px; border-radius: 8px;
+        background: var(--g-gold);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--f-display); font-size: 1rem; color: var(--ink);
+        box-shadow: 0 0 16px rgba(196,160,82,0.28);
+        margin-right: 10px; flex-shrink: 0;
+      }
+      .nav__brand { display: flex; flex-direction: column; line-height: 1; margin-right: 44px; }
+      .nav__name  { font-family: var(--f-display); font-size: 1.1rem; letter-spacing: 0.14em; color: var(--gold); }
+      .nav__sub   { font-size: 0.42rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(196,160,82,0.4); margin-top: 1px; }
+      .nav__links { display: flex; align-items: center; gap: 2px; flex: 1; }
+      .nav__link  {
+        padding: 5px 14px; border-radius: 6px;
+        font-family: var(--f-title); font-size: 0.62rem; font-weight: 600;
+        letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+        color: var(--muted); transition: color 0.22s, background 0.22s;
+      }
+      .nav__link:hover  { color: var(--silver); background: rgba(255,255,255,0.04); }
+      .nav__link--on    { color: var(--gold); }
+      .nav__pill {
+        margin-left: auto;
+        padding: 6px 16px; border-radius: 20px;
+        font-family: var(--f-title); font-size: 0.6rem; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+        background: rgba(196,160,82,0.1); border: 1px solid rgba(196,160,82,0.28);
+        color: var(--gold); transition: background 0.2s, border-color 0.2s;
+      }
+      .nav__pill:hover { background: rgba(196,160,82,0.18); border-color: rgba(196,160,82,0.5); }
+
+      /* ════════════════════════════════════════════
+   HERO TYPE 1 — GRADIENT (référence : movies)
+════════════════════════════════════════════ */
+      .hero-gradient {
+        position: relative;
+        width: 100%;
+        height: 440px;
+        margin-top: var(--nav);
+        background: linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%);
+      }
+
+      /* Couche déco clippée */
+      .hero__deco {
+        position: absolute; inset: 0;
+        overflow: hidden; pointer-events: none; z-index: 0;
+      }
+
+      /* Fond dégradés radials */
+      .hero__bg {
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse 80% 60%  at 72% 55%, rgba(194,48,24,0.16)   0%, transparent 60%),
+          radial-gradient(ellipse 55% 80%  at 18% 28%, rgba(196,160,82,0.11)  0%, transparent 55%),
+          radial-gradient(ellipse 100% 80% at 50% 105%, rgba(20,34,52,0.98)   0%, transparent 55%);
+      }
+
+      /* Bobines filmiques */
+      .hero__reel {
+        position: absolute; border-radius: 50%;
+        border: 3px solid rgba(196,160,82,0.1);
+        animation: spin linear infinite;
+        pointer-events: none;
+      }
+      .hero__reel::before {
+        content: ""; position: absolute; inset: 22px; border-radius: 50%;
+        border: 1.5px solid rgba(196,160,82,0.06);
+      }
+      .hero__reel::after {
+        content: ""; position: absolute; inset: 44px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(196,160,82,0.05) 0%, transparent 70%);
+      }
+      .hero__reel--1 { width: 200px; height: 200px; right: -55px; top: -55px; animation-duration: 30s; }
+      .hero__reel--2 { width: 280px; height: 280px; left: -90px;  bottom: -90px; animation-direction: reverse; animation-duration: 48s; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* Scanlines */
+      .hero__scan {
+        position: absolute; inset: 0; pointer-events: none; z-index: 4;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent, transparent 2px,
+          rgba(0,0,0,0.032) 2px, rgba(0,0,0,0.032) 4px
+        );
+      }
+
+      /* Vignette standard ← LA CLÉ de la continuité visuelle */
+      .hero__vignette {
+        position: absolute; inset: 0; pointer-events: none; z-index: 3;
+        background: radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,0.55) 35%, transparent 65%);
+      }
+
+      /* Contenu */
+      .hero__content {
+        position: relative; z-index: 5; height: 100%;
+        display: flex; align-items: center;
+        padding: 0 var(--px);
+        max-width: var(--w); margin: 0 auto;
+      }
+      .hero__text { display: flex; flex-direction: column; gap: 12px; max-width: 600px; }
+
+      .hero__eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: var(--f-title); font-size: 0.56rem; font-weight: 600;
+        letter-spacing: 0.24em; text-transform: uppercase;
+        color: rgba(196,160,82,0.55);
+      }
+      .hero__eyebrow-line {
+        display: block; width: 24px; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(196,160,82,0.5));
+      }
+
+      .hero__title {
+        font-family: var(--f-display);
+        font-size: clamp(2.8rem, 5vw, 4.2rem);
+        letter-spacing: 0.06em;
+        line-height: 1;
+        color: var(--silver);
+      }
+      .hero__title em { font-style: normal; color: var(--gold); }
+
+      .hero__sub {
+        font-family: var(--f-title); font-size: 0.62rem; font-weight: 400;
+        letter-spacing: 0.08em;
+        color: rgba(196,160,82,0.45);
+      }
+
+      .hero__stats {
+        display: flex; gap: 28px; margin-top: 8px;
+      }
+      .hstat__n { font-family: var(--f-display); font-size: 2rem; color: var(--gold-hi); line-height: 1; }
+      .hstat__l { font-family: var(--f-title); font-size: 0.44rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(212,220,232,0.35); }
+
+      /* ════════════════════════════════════════════
+   HERO TYPE 2 — IMAGE (référence : recipe-detail / recipes-movie)
+════════════════════════════════════════════ */
+      .hero-image {
+        position: relative;
+        width: 100%;
+        height: 440px;
+        background: #0b1522;
+        overflow: hidden; /* sur le hero image : ok, pas de dropdown intérieur */
+      }
+
+      .hero-image__bg {
+        position: absolute; inset: 0;
+        background-image: url('/images/image-home-dessert-backtothefuture.jpg');
+        background-size: cover;
+        background-position: center 30%;
+        filter: saturate(0.7) brightness(0.55);
+        transition: transform 8s ease, filter 8s ease;
+      }
+
+      /* Dégradé directionnel gauche → droite (lisibilité du texte) */
+      .hero-image__overlay {
+        position: absolute; inset: 0; pointer-events: none; z-index: 2;
+        background:
+          linear-gradient(90deg, rgba(8,14,24,0.88) 0%, rgba(8,14,24,0.55) 45%, rgba(8,14,24,0.1) 75%, transparent 100%),
+          linear-gradient(to bottom, rgba(6,10,18,0.45) 0%, transparent 25%, transparent 70%, rgba(6,10,18,0.55) 100%);
+      }
+
+      /* Liseré doré en bas */
+      .hero-image__lisere {
+        position: absolute; bottom: 0; left: 0; right: 0; height: 2px; z-index: 5;
+        background: var(--g-gold-h); opacity: 0.45;
+      }
+
+      /* Scanlines (identiques) */
+      .hero-image__scan {
+        position: absolute; inset: 0; pointer-events: none; z-index: 4;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent, transparent 2px,
+          rgba(0,0,0,0.032) 2px, rgba(0,0,0,0.032) 4px
+        );
+      }
+
+      /* Vignette standard ← MÊME vignette que Type 1 */
+      .hero-image__vignette {
+        position: absolute; inset: 0; pointer-events: none; z-index: 3;
+        background: radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,0.55) 35%, transparent 65%);
+      }
+
+      /* ════════════════════════════════════════════
+   CONTENU PAGE (doc)
+════════════════════════════════════════════ */
+      .page-content {
+        max-width: var(--w);
+        margin: 0 auto;
+        padding: 60px var(--px) 100px;
+      }
+
+      /* ── Section header ── */
+      .sh {
+        display: flex; align-items: center; gap: 18px;
+        margin-bottom: 40px;
+      }
+      .sh__num {
+        font-family: var(--f-display); font-size: 3.5rem;
+        line-height: 1; color: rgba(196,160,82,0.08);
+        letter-spacing: 0.06em; flex-shrink: 0;
+      }
+      .sh__body { display: flex; flex-direction: column; gap: 2px; }
+      .sh__eye {
+        font-family: var(--f-title); font-size: 0.46rem; font-weight: 600;
+        letter-spacing: 0.24em; text-transform: uppercase;
+        color: rgba(196,160,82,0.35);
+      }
+      .sh__title { font-family: var(--f-display); font-size: 2rem; letter-spacing: 0.08em; color: var(--gold); line-height: 1; }
+      .sh__rule  { flex: 1; min-width: 20px; height: 1px; background: linear-gradient(90deg, rgba(196,160,82,0.18), transparent); }
+
+      /* ── Grilles ── */
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 32px; }
+
+      /* ── Panel générique ── */
+      .panel {
+        background: rgba(14,24,38,0.8);
+        border: 1px solid rgba(65,90,119,0.2);
+        border-radius: var(--r);
+        padding: 28px;
+      }
+      .panel--gold { border-color: rgba(196,160,82,0.2); }
+      .panel--red  { border-color: rgba(194,48,24,0.2); }
+
+      .panel__label {
+        font-family: var(--f-title); font-size: 0.5rem; font-weight: 600;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: rgba(196,160,82,0.4);
+        margin-bottom: 12px;
+      }
+      .panel__title {
+        font-family: var(--f-display); font-size: 1.3rem;
+        letter-spacing: 0.08em; color: var(--silver);
+        margin-bottom: 6px;
+      }
+      .panel__body {
+        font-size: 0.8rem; line-height: 1.65;
+        color: rgba(212,220,232,0.55);
+      }
+      .panel__body strong { color: var(--gold); font-weight: 600; }
+
+      /* ── Anatomy diagram ── */
+      .anatomy {
+        background: rgba(8,14,24,0.9);
+        border: 1px solid rgba(65,90,119,0.2);
+        border-radius: var(--r);
+        overflow: hidden;
+        position: relative;
+        height: 320px;
+      }
+      .anatomy__layer {
+        position: absolute; left: 0; right: 0;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 24px;
+        border-top: 1px dashed;
+        font-family: var(--f-title); font-size: 0.52rem; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase;
+      }
+      .anatomy__layer--bg      { bottom: 0; height: 100%; border: none; background: linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%); align-items: flex-start; padding-top: 20px; border-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
+      .anatomy__layer--radials { bottom: 0; height: 100%; border: none; background: radial-gradient(ellipse 80% 60% at 72% 55%, rgba(194,48,24,0.16) 0%, transparent 60%), radial-gradient(ellipse 55% 80% at 18% 28%, rgba(196,160,82,0.11) 0%, transparent 55%); pointer-events: none; }
+      .anatomy__layer--reels   { bottom: 0; height: 100%; border: none; pointer-events: none; }
+      .anatomy__layer--vignette{ bottom: 0; height: 100%; border: none; background: radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,0.55) 35%, transparent 65%); pointer-events: none; }
+      .anatomy__layer--scan    { bottom: 0; height: 100%; border: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.032) 2px, rgba(0,0,0,0.032) 4px); pointer-events: none; }
+      .anatomy__layer--content { bottom: 0; height: 100%; border: none; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; pointer-events: none; }
+
+      .anatomy__badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 3px 10px; border-radius: 4px;
+        font-family: var(--f-title); font-size: 0.45rem; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        background: rgba(8,14,24,0.75); border: 1px solid;
+        white-space: nowrap;
+      }
+      .anatomy__badge--bg       { border-color: rgba(65,90,119,0.4); color: rgba(100,130,170,0.8); }
+      .anatomy__badge--radials  { border-color: rgba(196,160,82,0.3); color: rgba(196,160,82,0.7); }
+      .anatomy__badge--reels    { border-color: rgba(196,160,82,0.25); color: rgba(196,160,82,0.6); }
+      .anatomy__badge--vignette { border-color: rgba(20,34,52,0.8); color: rgba(100,150,200,0.9); background: rgba(20,34,52,0.85); }
+      .anatomy__badge--scan     { border-color: rgba(255,255,255,0.1); color: rgba(200,200,200,0.5); }
+      .anatomy__badge--content  { border-color: rgba(196,160,82,0.4); color: var(--gold); }
+
+      .anatomy__z {
+        font-family: var(--f-title); font-size: 0.38rem;
+        color: rgba(255,255,255,0.18); margin-left: 6px;
+      }
+
+      /* Mini reel pour anatomy */
+      .mini-reel {
+        position: absolute; border-radius: 50%;
+        border: 2px solid rgba(196,160,82,0.12);
+        animation: spin linear infinite;
+      }
+      .mini-reel::before {
+        content: ""; position: absolute; inset: 12px; border-radius: 50%;
+        border: 1px solid rgba(196,160,82,0.06);
+      }
+      .mini-reel--1 { width: 100px; height: 100px; right: -28px; top: -28px; animation-duration: 30s; }
+      .mini-reel--2 { width: 140px; height: 140px; left: -45px; bottom: -45px; animation-direction: reverse; animation-duration: 48s; }
+
+      /* ── Token chips ── */
+      .token-grid { display: flex; flex-direction: column; gap: 8px; }
+      .token {
+        display: grid; grid-template-columns: 160px 1fr;
+        align-items: center; gap: 16px;
+        padding: 10px 16px;
+        background: rgba(10,18,30,0.6);
+        border: 1px solid rgba(65,90,119,0.15);
+        border-radius: 8px;
+      }
+      .token__name {
+        font-family: "Courier New", monospace; font-size: 0.7rem;
+        color: var(--gold-hi);
+      }
+      .token__value {
+        font-family: "Courier New", monospace; font-size: 0.65rem;
+        color: rgba(212,220,232,0.5);
+        word-break: break-all;
+      }
+      .token__swatch {
+        width: 18px; height: 18px; border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.1);
+        flex-shrink: 0;
+      }
+      .token--with-swatch { grid-template-columns: 160px auto 1fr; }
+
+      /* ── Layer stack (pile visuelle) ── */
+      .stack { display: flex; flex-direction: column; gap: 4px; }
+      .stack__item {
+        display: flex; align-items: center; gap: 14px;
+        padding: 10px 16px; border-radius: 8px;
+        background: rgba(10,18,30,0.5);
+        border: 1px solid rgba(65,90,119,0.15);
+        transition: background 0.2s;
+      }
+      .stack__item:hover { background: rgba(14,24,40,0.8); }
+      .stack__z {
+        font-family: var(--f-display); font-size: 1.2rem;
+        color: rgba(196,160,82,0.25); min-width: 32px; text-align: right;
+      }
+      .stack__name {
+        font-family: var(--f-title); font-size: 0.6rem; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--silver); flex: 1;
+      }
+      .stack__desc {
+        font-size: 0.72rem; color: rgba(212,220,232,0.38);
+      }
+      .stack__tag {
+        padding: 2px 8px; border-radius: 4px;
+        font-family: var(--f-title); font-size: 0.38rem; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase;
+      }
+      .stack__tag--shared { background: rgba(196,160,82,0.1); border: 1px solid rgba(196,160,82,0.3); color: var(--gold); }
+      .stack__tag--type1  { background: rgba(65,90,119,0.15); border: 1px solid rgba(65,90,119,0.3); color: rgba(100,140,200,0.8); }
+      .stack__tag--type2  { background: rgba(194,48,24,0.1);  border: 1px solid rgba(194,48,24,0.3); color: var(--red-hi); }
+
+      /* ── Pages usage ── */
+      .page-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .page-card {
+        padding: 18px 20px;
+        background: rgba(10,18,30,0.6);
+        border: 1px solid rgba(65,90,119,0.15);
+        border-radius: 10px;
+        transition: border-color 0.25s;
+      }
+      .page-card:hover { border-color: rgba(196,160,82,0.3); }
+      .page-card__route {
+        font-family: "Courier New", monospace; font-size: 0.68rem;
+        color: var(--gold); margin-bottom: 6px;
+      }
+      .page-card__name {
+        font-family: var(--f-title); font-size: 0.62rem; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--silver); margin-bottom: 8px;
+      }
+      .page-card__type {
+        display: inline-flex; padding: 2px 8px; border-radius: 4px;
+        font-family: var(--f-title); font-size: 0.38rem; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .page-card__type--g { background: rgba(65,90,119,0.15); border: 1px solid rgba(65,90,119,0.3); color: rgba(100,140,200,0.8); }
+      .page-card__type--i { background: rgba(194,48,24,0.1);  border: 1px solid rgba(194,48,24,0.3); color: var(--red-hi); }
+      .page-card__type--n { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(212,220,232,0.4); }
+      .page-card__note {
+        font-size: 0.7rem; line-height: 1.55;
+        color: rgba(212,220,232,0.35);
+      }
+
+      /* ── Comparaison couleurs ── */
+      .color-compare {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .color-block {
+        border-radius: 10px; overflow: hidden;
+        border: 1px solid rgba(65,90,119,0.2);
+      }
+      .color-block__swatch {
+        height: 80px;
+      }
+      .color-block__meta {
+        padding: 14px 16px;
+        background: rgba(10,18,30,0.8);
+      }
+      .color-block__name { font-family: var(--f-title); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--silver); margin-bottom: 4px; }
+      .color-block__hex  { font-family: "Courier New", monospace; font-size: 0.72rem; color: var(--gold); margin-bottom: 4px; }
+      .color-block__note { font-size: 0.68rem; color: rgba(212,220,232,0.38); line-height: 1.5; }
+      .color-block--ok   .color-block__name::after { content: " ✓ CORRECT"; color: rgba(80,200,120,0.7); font-size: 0.45rem; }
+      .color-block--bad  .color-block__name::after { content: " ✗ ÉVITER"; color: rgba(220,80,60,0.7); font-size: 0.45rem; }
+
+      /* ── Séparateur ── */
+      .sep {
+        height: 1px; margin: 64px 0;
+        background: linear-gradient(90deg, transparent, rgba(196,160,82,0.15) 30%, rgba(196,160,82,0.15) 70%, transparent);
+      }
+
+      /* ── Intro badge ── */
+      .intro-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 4px 14px; border-radius: 20px;
+        background: rgba(196,160,82,0.08); border: 1px solid rgba(196,160,82,0.2);
+        font-family: var(--f-title); font-size: 0.5rem; font-weight: 600;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: rgba(196,160,82,0.6);
+        margin-bottom: 16px;
+      }
+      .intro-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); opacity: 0.5; }
+
+      .intro-title {
+        font-family: var(--f-display); font-size: clamp(2rem, 4vw, 3.2rem);
+        letter-spacing: 0.08em; color: var(--silver);
+        margin-bottom: 16px; line-height: 1;
+      }
+      .intro-title em { font-style: normal; color: var(--gold); }
+
+      .intro-sub {
+        font-size: 0.9rem; line-height: 1.7;
+        color: rgba(212,220,232,0.5); max-width: 680px;
+        margin-bottom: 32px;
+      }
+
+      /* ── Note callout ── */
+      .callout {
+        display: flex; gap: 16px; align-items: flex-start;
+        padding: 18px 22px;
+        background: rgba(196,160,82,0.05);
+        border: 1px solid rgba(196,160,82,0.2);
+        border-left: 3px solid var(--gold);
+        border-radius: 8px;
+      }
+      .callout__icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+      .callout__text { font-size: 0.8rem; line-height: 1.6; color: rgba(212,220,232,0.65); }
+      .callout__text strong { color: var(--gold); }
+
+      .callout--red {
+        background: rgba(194,48,24,0.05);
+        border-color: rgba(194,48,24,0.2);
+        border-left-color: var(--red-hi);
+      }
+      .callout--red .callout__text strong { color: var(--red-hi); }
+
+      /* ── Spacing ── */
+      .mb-8  { margin-bottom: 8px; }
+      .mb-16 { margin-bottom: 16px; }
+      .mb-24 { margin-bottom: 24px; }
+      .mb-32 { margin-bottom: 32px; }
+      .mb-40 { margin-bottom: 40px; }
+      .mt-24 { margin-top: 24px; }
+      .mt-32 { margin-top: 32px; }
+
+      /* ── Label de section hero ── */
+      .hero-label {
+        position: absolute; bottom: 16px; right: 20px; z-index: 10;
+        padding: 4px 12px; border-radius: 4px;
+        font-family: var(--f-title); font-size: 0.46rem; font-weight: 700;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        background: rgba(8,14,24,0.75); backdrop-filter: blur(8px);
+        border: 1px solid rgba(196,160,82,0.25); color: rgba(196,160,82,0.7);
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+    <nav class="nav" aria-label="Navigation principale">
+      <div class="nav__badge" aria-hidden="true">CD</div>
+      <div class="nav__brand">
+        <span class="nav__name">CINÉ DÉLICES</span>
+        <span class="nav__sub">Hero Design System</span>
+      </div>
+      <div class="nav__links">
+        <a href="#hero-gradient" class="nav__link nav__link--on">Type 1 — Gradient</a>
+        <a href="#hero-image"    class="nav__link">Type 2 — Image</a>
+        <a href="#anatomie"      class="nav__link">Anatomie</a>
+        <a href="#tokens"        class="nav__link">Tokens</a>
+        <a href="#pages"         class="nav__link">Pages</a>
+      </div>
+      <a href="#" class="nav__pill">Moodboard</a>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         HERO TYPE 1 — GRADIENT (sans image de fond)
+         Référence : page Movies · contact-about · add-recipes-movies
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section id="hero-gradient" class="hero-gradient" aria-label="Démo Hero Type 1 — Gradient">
+      <div class="hero__deco" aria-hidden="true">
+        <div class="hero__bg"></div>
+        <div class="hero__reel hero__reel--1"></div>
+        <div class="hero__reel hero__reel--2"></div>
+        <div class="hero__scan"></div>
+        <div class="hero__vignette"></div>
+      </div>
+
+      <div class="hero__content">
+        <div class="hero__text">
+          <p class="hero__eyebrow">
+            <span class="hero__eyebrow-line" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+            Hero · Type 1 · Gradient
+          </p>
+          <h1 class="hero__title">CINÉ <em>DÉLICES</em></h1>
+          <p class="hero__sub">Films · Recettes · Émotions</p>
+          <div class="hero__stats">
+            <div>
+              <div class="hstat__n">420px</div>
+              <div class="hstat__l">Hauteur</div>
+            </div>
+            <div>
+              <div class="hstat__n">6</div>
+              <div class="hstat__l">Layers</div>
+            </div>
+            <div>
+              <div class="hstat__n">70px</div>
+              <div class="hstat__l">Nav offset</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-label" aria-hidden="true">TYPE 1 — GRADIENT · Référence Movies</div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         HERO TYPE 2 — IMAGE (avec photo de fond)
+         Référence : recipe-detail · recipes-movie · user-profile
+    ══════════════════════════════════════════════════════════════════════ -->
+    <section id="hero-image" class="hero-image" aria-label="Démo Hero Type 2 — Image" style="margin-top:80px;">
+      <!-- Layer 1 : photo de fond -->
+      <div class="hero-image__bg" aria-hidden="true"></div>
+      <!-- Layer 2 : dégradé directionnel (lisibilité) -->
+      <div class="hero-image__overlay" aria-hidden="true"></div>
+      <!-- Layer 3 : scanlines -->
+      <div class="hero-image__scan" aria-hidden="true"></div>
+      <!-- Layer 4 : vignette standard (identique Type 1) -->
+      <div class="hero-image__vignette" aria-hidden="true"></div>
+      <!-- Layer 5 : liseré doré bas de hero -->
+      <div class="hero-image__lisere" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <div class="hero__text">
+          <p class="hero__eyebrow">
+            <span class="hero__eyebrow-line" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 3 9-3 9 19-9Z"/><path d="M6 12h16"/></svg>
+            Hero · Type 2 · Image
+          </p>
+          <h1 class="hero__title">RETOUR VERS <em>LE FUTUR</em></h1>
+          <p class="hero__sub">1985 · Robert Zemeckis · Aventure / Sci-Fi</p>
+          <div class="hero__stats">
+            <div>
+              <div class="hstat__n">440px</div>
+              <div class="hstat__l">Hauteur</div>
+            </div>
+            <div>
+              <div class="hstat__n">5</div>
+              <div class="hstat__l">Layers</div>
+            </div>
+            <div>
+              <div class="hstat__n">70px</div>
+              <div class="hstat__l">Nav offset</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-label" aria-hidden="true">TYPE 2 — IMAGE · Référence Recipe-detail</div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         DOCUMENTATION
+    ══════════════════════════════════════════════════════════════════════ -->
+    <main class="page-content">
+
+      <!-- INTRO -->
+      <div class="mb-40">
+        <div class="intro-badge"><span></span>Design System · Heroes</div>
+        <h2 class="intro-title">HERO <em>DESIGN SYSTEM</em></h2>
+        <p class="intro-sub">
+          Référentiel visuel des composants hero utilisés sur Ciné Délices. Deux variantes partagent la même
+          <strong style="color:var(--gold)">vignette standard</strong> pour assurer la continuité visuelle entre le bas du hero et le fond de page.
+          La page <em>Movies</em> est la référence de design — toutes les autres pages y sont alignées.
+        </p>
+        <div class="callout">
+          <div class="callout__icon">⚡</div>
+          <div class="callout__text">
+            <strong>Principe clé :</strong> la vignette
+            <code style="color:var(--gold-hi); font-size:0.75em;">radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,.55) 35%, transparent 65%)</code>
+            est identique sur tous les heroes. Elle assure le fondu vers <code style="color:var(--gold-hi); font-size:0.75em;">--bleu-nuit (#142234)</code>
+            qui se fond naturellement dans la couleur html <code style="color:var(--gold-hi); font-size:0.75em;">#0d1b2a</code>.
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- ── SECTION 01 : ANATOMIE ── -->
+      <section id="anatomie">
+        <div class="sh">
+          <span class="sh__num" aria-hidden="true">01</span>
+          <div class="sh__body">
+            <span class="sh__eye">Architecture visuelle</span>
+            <span class="sh__title">ANATOMIE DES LAYERS</span>
+          </div>
+          <div class="sh__rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="grid-2 mb-40">
+
+          <!-- Anatomy Type 1 -->
+          <div>
+            <p class="panel__label mb-16">Type 1 — Hero Gradient (Movies, Contact, Add-recipe)</p>
+            <div class="anatomy">
+              <!-- Layers visuels -->
+              <div class="anatomy__layer anatomy__layer--bg">
+                <div class="anatomy__badge anatomy__badge--bg">
+                  z: 0 · Fond HTML bg (#0d1b2a)
+                </div>
+              </div>
+              <div class="anatomy__layer anatomy__layer--radials" aria-hidden="true"></div>
+              <div class="anatomy__layer anatomy__layer--vignette" aria-hidden="true"></div>
+              <div class="anatomy__layer anatomy__layer--scan"    aria-hidden="true"></div>
+              <div class="mini-reel mini-reel--1" aria-hidden="true"></div>
+              <div class="mini-reel mini-reel--2" aria-hidden="true"></div>
+              <div class="anatomy__layer anatomy__layer--content">
+                <div style="display:inline-flex;flex-direction:column;gap:6px;max-width:260px;">
+                  <div class="anatomy__badge anatomy__badge--content">z: 5 · Content (texte + stats)</div>
+                  <div class="anatomy__badge anatomy__badge--scan">z: 4 · Scanlines</div>
+                  <div class="anatomy__badge anatomy__badge--vignette">z: 3 · Vignette ← STANDARD</div>
+                  <div class="anatomy__badge anatomy__badge--reels">z: 1 · Bobines (deco wrapper)</div>
+                  <div class="anatomy__badge anatomy__badge--radials">z: 0 · Bg radials (rouge + or)</div>
+                  <div class="anatomy__badge anatomy__badge--bg">z: 0 · linear-gradient(135deg…)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Anatomy Type 2 -->
+          <div>
+            <p class="panel__label mb-16">Type 2 — Hero Image (Recipe-detail, Recipes-movie, Profile)</p>
+            <div class="anatomy" style="background-image:url('/images/image-home-dessert-backtothefuture.jpg');background-size:cover;background-position:center 30%;filter:saturate(0.7) brightness(0.55);">
+              <div style="position:absolute;inset:0;background-image:url('/images/image-home-dessert-backtothefuture.jpg');background-size:cover;background-position:center 30%;filter:saturate(0.7) brightness(0.55);"></div>
+              <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,14,24,0.85) 0%,rgba(8,14,24,0.5) 45%,transparent 80%),linear-gradient(to bottom,rgba(6,10,18,0.45) 0%,transparent 25%,transparent 70%,rgba(6,10,18,0.55) 100%);pointer-events:none;z-index:2;" aria-hidden="true"></div>
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.032) 2px,rgba(0,0,0,0.032) 4px);pointer-events:none;z-index:4;" aria-hidden="true"></div>
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse 100% 110% at 50% 105%,var(--bleu-nuit) 0%,rgba(20,34,52,0.55) 35%,transparent 65%);pointer-events:none;z-index:3;" aria-hidden="true"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--g-gold-h);opacity:0.45;z-index:5;" aria-hidden="true"></div>
+              <div style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;justify-content:center;padding:0 28px;">
+                <div style="display:inline-flex;flex-direction:column;gap:6px;max-width:280px;">
+                  <div class="anatomy__badge anatomy__badge--content">z: 6 · Content</div>
+                  <div class="anatomy__badge anatomy__badge--bg" style="border-color:rgba(196,160,82,0.3);color:rgba(196,160,82,0.7);">z: 5 · Liseré doré bas</div>
+                  <div class="anatomy__badge anatomy__badge--scan">z: 4 · Scanlines</div>
+                  <div class="anatomy__badge anatomy__badge--vignette">z: 3 · Vignette ← STANDARD</div>
+                  <div class="anatomy__badge anatomy__badge--radials">z: 2 · Overlay directionnel</div>
+                  <div class="anatomy__badge anatomy__badge--bg">z: 0 · Photo de fond (CSS bg)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stack legend -->
+        <p class="panel__label mb-16">Pile des layers — comparaison Type 1 vs Type 2</p>
+        <div class="stack mb-40">
+          <div class="stack__item">
+            <div class="stack__z">5–6</div>
+            <div class="stack__name">Contenu</div>
+            <div class="stack__desc">Titre, eyebrow, stats, CTA — z-index: 5</div>
+            <span class="stack__tag stack__tag--shared">Commun</span>
+          </div>
+          <div class="stack__item">
+            <div class="stack__z">5</div>
+            <div class="stack__name">Liseré bas</div>
+            <div class="stack__desc">Gradient horizontal doré 2px en bas — opacity 0.45</div>
+            <span class="stack__tag stack__tag--type2">Type 2 seul</span>
+          </div>
+          <div class="stack__item">
+            <div class="stack__z">4</div>
+            <div class="stack__name">Scanlines</div>
+            <div class="stack__desc">repeating-linear-gradient · pas 4px · opacité 0.032</div>
+            <span class="stack__tag stack__tag--shared">Commun</span>
+          </div>
+          <div class="stack__item" style="border-color:rgba(20,34,52,0.6);background:rgba(20,34,52,0.25);">
+            <div class="stack__z" style="color:rgba(100,150,200,0.6);">3</div>
+            <div class="stack__name" style="color:var(--gold);">Vignette standard ★</div>
+            <div class="stack__desc">radial-gradient bleu-nuit → transition vers fond page</div>
+            <span class="stack__tag stack__tag--shared">Commun</span>
+          </div>
+          <div class="stack__item">
+            <div class="stack__z">2</div>
+            <div class="stack__name">Overlay directionnel</div>
+            <div class="stack__desc">Gradient gauche→droite pour lisibilité du texte</div>
+            <span class="stack__tag stack__tag--type2">Type 2 seul</span>
+          </div>
+          <div class="stack__item">
+            <div class="stack__z">1</div>
+            <div class="stack__name">Bobines décoratives</div>
+            <div class="stack__desc">2 cercles rotatifs — dans .hero__deco (overflow:hidden)</div>
+            <span class="stack__tag stack__tag--type1">Type 1 seul</span>
+          </div>
+          <div class="stack__item">
+            <div class="stack__z">0</div>
+            <div class="stack__name">Fond de hero</div>
+            <div class="stack__desc">Type 1 : linear-gradient · Type 2 : background-image CSS</div>
+            <span class="stack__tag stack__tag--shared">Commun</span>
+          </div>
+        </div>
+
+        <div class="callout callout--red">
+          <div class="callout__icon">⚠️</div>
+          <div class="callout__text">
+            <strong>overflow:hidden sur le hero :</strong> Type 1 utilise un wrapper <code>.hero__deco { overflow: hidden }</code>
+            pour clipper les bobines, mais le hero lui-même n'a PAS <code>overflow:hidden</code>
+            (sinon les dropdowns du nav seraient clippés). Type 2 peut avoir <code>overflow:hidden</code> sur le hero car
+            il n'a pas de bobines débordantes ni de dropdowns problématiques.
+          </div>
+        </div>
+      </section>
+
+      <div class="sep"></div>
+
+      <!-- ── SECTION 02 : TOKENS ── -->
+      <section id="tokens">
+        <div class="sh">
+          <span class="sh__num" aria-hidden="true">02</span>
+          <div class="sh__body">
+            <span class="sh__eye">Valeurs de référence</span>
+            <span class="sh__title">CSS TOKENS</span>
+          </div>
+          <div class="sh__rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="grid-2 mb-40">
+
+          <!-- Couleurs fondamentales -->
+          <div>
+            <p class="panel__label mb-16">Couleurs fondamentales</p>
+            <div class="token-grid">
+              <div class="token token--with-swatch">
+                <span class="token__name">html background</span>
+                <div class="token__swatch" style="background:#0d1b2a;"></div>
+                <span class="token__value">#0d1b2a — fond global de la page</span>
+              </div>
+              <div class="token token--with-swatch">
+                <span class="token__name">--bleu-nuit</span>
+                <div class="token__swatch" style="background:#142234;"></div>
+                <span class="token__value">#142234 — couleur cible de la vignette</span>
+              </div>
+              <div class="token token--with-swatch">
+                <span class="token__name">--ink (local)</span>
+                <div class="token__swatch" style="background:#0a1220;"></div>
+                <span class="token__value">#0a1220 — NE PAS utiliser pour la vignette</span>
+              </div>
+              <div class="token token--with-swatch">
+                <span class="token__name">hero gradient start</span>
+                <div class="token__swatch" style="background:#08101a;"></div>
+                <span class="token__value">#08101a — coin dark du hero</span>
+              </div>
+              <div class="token token--with-swatch">
+                <span class="token__name">hero gradient mid</span>
+                <div class="token__swatch" style="background:#142234;"></div>
+                <span class="token__value">#142234 — milieu (= bleu-nuit)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gradients clés -->
+          <div>
+            <p class="panel__label mb-16">Gradients clés</p>
+            <div class="token-grid">
+              <div class="token" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                <span class="token__name" style="color:var(--gold-hi);">Hero background (Type 1)</span>
+                <span class="token__value" style="font-size:0.6rem;">linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%)</span>
+                <div style="height:28px;border-radius:6px;margin-top:4px;width:100%;background:linear-gradient(135deg,#08101a 0%,#142234 50%,#0b1522 100%);border:1px solid rgba(255,255,255,0.08);"></div>
+              </div>
+              <div class="token" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                <span class="token__name" style="color:var(--gold-hi);">Vignette standard ★</span>
+                <span class="token__value" style="font-size:0.6rem;">radial-gradient(ellipse 100% 110% at 50% 105%, var(--bleu-nuit) 0%, rgba(20,34,52,.55) 35%, transparent 65%)</span>
+                <div style="height:28px;border-radius:6px;margin-top:4px;width:100%;background:radial-gradient(ellipse 100% 110% at 50% 105%,#142234 0%,rgba(20,34,52,.55) 35%,transparent 65%);background-color:#142234;border:1px solid rgba(255,255,255,0.08);"></div>
+              </div>
+              <div class="token" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                <span class="token__name" style="color:var(--gold-hi);">Scanlines</span>
+                <span class="token__value" style="font-size:0.6rem;">repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.032) 2px, rgba(0,0,0,.032) 4px)</span>
+              </div>
+              <div class="token" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                <span class="token__name" style="color:var(--gold-hi);">Liseré bas (Type 2)</span>
+                <span class="token__value" style="font-size:0.6rem;">var(--g-gold-h) · opacity: 0.45 · height: 2px</span>
+                <div style="height:2px;border-radius:2px;margin-top:4px;width:100%;background:linear-gradient(90deg,#9a7832 0%,#c4a052 35%,#f2c84b 60%,#c4a052 100%);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dimensions -->
+        <p class="panel__label mb-16">Dimensions & variables de layout</p>
+        <div class="grid-3 mb-32">
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">--nav-h</span>
+            <span class="token__value">70px — hauteur de la navbar (base.css)</span>
+          </div>
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">Hero height</span>
+            <span class="token__value">420–440px standard · auto sur mobile (&lt;900px)</span>
+          </div>
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">--ca-px / --px</span>
+            <span class="token__value">56px desktop · 32px à 1100px · 18px à 768px</span>
+          </div>
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">--ca-w / --w</span>
+            <span class="token__value">1360px — max-width du contenu hero</span>
+          </div>
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">Nav offset méthode</span>
+            <span class="token__value">margin-top: var(--nav-h) · OU · body padding-top: 0 + main padding-top: var(--nav-h)</span>
+          </div>
+          <div class="token" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span class="token__name">Bobines</span>
+            <span class="token__value">Reel 1 : 200×200px · Reel 2 : 280×280px (reverse)</span>
+          </div>
+        </div>
+
+        <!-- Comparaison vignette -->
+        <p class="panel__label mb-16">Comparaison couleurs vignette — pourquoi bleu-nuit ?</p>
+        <div class="color-compare mb-40">
+          <div class="color-block color-block--ok">
+            <div class="color-block__swatch" style="background:radial-gradient(ellipse 100% 110% at 50% 105%,#142234 0%,rgba(20,34,52,.55) 35%,transparent 65%),linear-gradient(135deg,#08101a 0%,#142234 50%,#0b1522 100%);"></div>
+            <div class="color-block__meta">
+              <div class="color-block__name">Bleu Nuit (#142234)</div>
+              <div class="color-block__hex">var(--bleu-nuit) = #142234</div>
+              <div class="color-block__note">Correspond au gradient mid du hero. Le fondu est imperceptible car la couleur de la vignette ≈ la couleur du hero. L'html bg (#0d1b2a) complète la transition vers le fond page.</div>
+            </div>
+          </div>
+          <div class="color-block color-block--bad">
+            <div class="color-block__swatch" style="background:radial-gradient(ellipse 100% 110% at 50% 105%,#0a1220 0%,rgba(10,18,32,.55) 35%,transparent 65%),linear-gradient(135deg,#08101a 0%,#142234 50%,#0b1522 100%);"></div>
+            <div class="color-block__meta">
+              <div class="color-block__name">Ink (#0a1220)</div>
+              <div class="color-block__hex">var(--ink) / --ca-ink = #0a1220</div>
+              <div class="color-block__note">Trop sombre / quasi-noir. Crée une bande visible entre le bleu du hero (#142234) et cette couleur (#0a1220). Le seam est perceptible à l'œil nu — à éviter.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="sep"></div>
+
+      <!-- ── SECTION 03 : PAGES ── -->
+      <section id="pages">
+        <div class="sh">
+          <span class="sh__num" aria-hidden="true">03</span>
+          <div class="sh__body">
+            <span class="sh__eye">Application par page</span>
+            <span class="sh__title">PAGES & VARIANTES</span>
+          </div>
+          <div class="sh__rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="page-cards mb-40">
+          <div class="page-card">
+            <div class="page-card__route">/movies</div>
+            <div class="page-card__name">Films</div>
+            <span class="page-card__type page-card__type--g">Type 1 · Référence</span>
+            <div class="page-card__note">
+              Page mère du design system hero. Toutes les autres pages sont alignées sur celle-ci.
+              Bobines animées + fond dégradé radial rouge/or + vignette bleu-nuit.
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/contact-about</div>
+            <div class="page-card__name">Contact & À propos</div>
+            <span class="page-card__type page-card__type--g">Type 1 · Gradient</span>
+            <div class="page-card__note">
+              Même architecture que movies. Hero contient en plus : tabs navigation (Équipe / À propos / Contact)
+              et cards portraits. Utilise ses propres classes <code>.ca-*</code>.
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/add-recipes-movies</div>
+            <div class="page-card__name">Ajout recette/film</div>
+            <span class="page-card__type page-card__type--g">Type 1 · Gradient</span>
+            <div class="page-card__note">
+              Classes <code>.arm-hero</code>. Utilise <code>margin-top: var(--nav-h)</code>
+              (variable correcte — <code>--nav-height</code> était un bug avec fallback 68px).
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/recipes/:slug</div>
+            <div class="page-card__name">Fiche Film</div>
+            <span class="page-card__type page-card__type--i">Type 2 · Image</span>
+            <div class="page-card__note">
+              Photo affiche du film en fond. Overlay directionnel gauche/droite pour lisibilité.
+              Vignette standard ajoutée (couche supplémentaire sur l'existant).
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/recipe/:id</div>
+            <div class="page-card__name">Détail Recette</div>
+            <span class="page-card__type page-card__type--i">Type 2 · Image</span>
+            <div class="page-card__note">
+              Photo du plat en fond. Mêmes layers que fiche-film.
+              Classe <code>.recipe-hero__vignette</code> ajoutée en + des overlays existants.
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/profil</div>
+            <div class="page-card__name">Profil Utilisateur</div>
+            <span class="page-card__type page-card__type--i">Type 2 · Image</span>
+            <div class="page-card__note">
+              Bannière personnalisée de l'utilisateur. Vignette alignée avec movies
+              (<code>50% 105%</code> / <code>.55</code> au lieu des anciennes valeurs).
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/</div>
+            <div class="page-card__name">Accueil</div>
+            <span class="page-card__type page-card__type--n">Pas de hero</span>
+            <div class="page-card__note">
+              Slider plein-écran à la place du hero. Ne fait pas partie du design system hero.
+            </div>
+          </div>
+
+          <div class="page-card">
+            <div class="page-card__route">/admin/*</div>
+            <div class="page-card__name">Administration</div>
+            <span class="page-card__type page-card__type--n">Pas de hero</span>
+            <div class="page-card__note">
+              Interface backoffice avec son propre système de design (tableaux, modales).
+              Exclu du référentiel hero.
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout__icon">📐</div>
+          <div class="callout__text">
+            <strong>Full-bleed pattern :</strong> toutes les pages hero ont
+            <code>body.xxx-page { padding-top: 0 }</code> + hero en premier enfant du <code>&lt;main&gt;</code>
+            (ou avec <code>margin-top: var(--nav-h)</code>), ce qui permet au hero d'occuper toute la largeur viewport
+            sans être contraint par les paddings de <code>base.css</code>.
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <script>
+      /* Nav solid on scroll */
+      var nav = document.querySelector('.nav');
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('is-solid', window.scrollY > 20);
+      }, { passive: true });
+    </script>
+
+  </body>
+</html>

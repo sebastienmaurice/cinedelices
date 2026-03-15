@@ -8,6 +8,11 @@ import UsersRecipes from './users_recipes.model.js';
 import Favorite from './favorite.model.js';
 import Rating from './rating.model.js';
 
+// Gamification — Système 1 (points) + Système 2 (badges Signature)
+import UserPoints from './userPoints.model.js';
+import SignatureBadge from './signatureBadge.model.js';
+import UserSignatureBadge from './userSignatureBadge.model.js';
+
 
 
 // Définition des relations entre les modèles
@@ -59,8 +64,21 @@ Rating.belongsTo(User, { foreignKey: 'id_user' });
 // Note : Pas d'association directe avec Movie/Recipe car structure polymorphique
 // Les requêtes utilisent entity_type + entity_id pour le filtrage
 
+// Relations gamification
+// Un utilisateur a une ligne de points (1-1)
+User.hasOne(UserPoints, { foreignKey: 'id_user', as: 'userPoints' });
+UserPoints.belongsTo(User, { foreignKey: 'id_user' });
+
+// Un utilisateur peut débloquer plusieurs badges Signature
+User.hasMany(UserSignatureBadge, { foreignKey: 'id_user', as: 'signatureBadges' });
+UserSignatureBadge.belongsTo(User, { foreignKey: 'id_user' });
+
+// Un badge Signature peut être débloqué par plusieurs utilisateurs
+SignatureBadge.hasMany(UserSignatureBadge, { foreignKey: 'id_badge' });
+UserSignatureBadge.belongsTo(SignatureBadge, { foreignKey: 'id_badge', as: 'badge' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, SignatureBadge, UserSignatureBadge };
 
 
 
