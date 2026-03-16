@@ -1,0 +1,210 @@
+<%
+/* ============================================================
+   DONNÉES DE CONFIGURATION DES GENRES
+   ============================================================
+   Chaque genre a un thème visuel :
+   - glow  : couleur principale (utilisée en CSS pour les lueurs)
+   - accent: couleur d'accentuation légèrement plus claire
+   - rgb   : la même couleur en format R,G,B séparé — nécessaire
+             pour écrire rgba(var(--glow-rgb), 0.5) en CSS
+   - anim  : le nom de l'animation de bordure jouée au hover
+   ============================================================ */
+const GENRE_THEMES = {
+  'Action':          { glow: '#FF6622', accent: '#FF8844', rgb: '255,102,34',  anim: 'bullet'     },
+  'Horreur':         { glow: '#C23018', accent: '#E84020', rgb: '194,48,24',   anim: 'blood'      },
+  'Aventure':        { glow: '#D4A843', accent: '#F2C84B', rgb: '212,168,67',  anim: 'fuse'       },
+  'Comédie':         { glow: '#FFE085', accent: '#F2C84B', rgb: '255,224,133', anim: 'confetti'   },
+  'Animation':       { glow: '#F2C84B', accent: '#FFE085', rgb: '242,200,75',  anim: 'brush'      },
+  'Romance':         { glow: '#FF6B8A', accent: '#FF8FA3', rgb: '255,107,138', anim: 'heart'      },
+  'Science-Fiction': { glow: '#00FF88', accent: '#00FFCC', rgb: '0,255,136',   anim: 'scan'       },
+  'Drame':           { glow: '#7899BB', accent: '#9AB8D4', rgb: '120,153,187', anim: 'tear'       },
+  'Thriller':        { glow: '#8899BB', accent: '#AABBDD', rgb: '136,153,187', anim: 'strobe'     },
+  'Fantastique':     { glow: '#C084FC', accent: '#A855F7', rgb: '192,132,252', anim: 'magic'      },
+  'Policier':        { glow: '#A8B8C8', accent: '#C8D8E8', rgb: '168,184,200', anim: 'siren'      },
+  'Documentaire':    { glow: '#7BA7BC', accent: '#A8C8D8', rgb: '123,167,188', anim: 'viewfinder' },
+  'Biopic':          { glow: '#B8882A', accent: '#C4A052', rgb: '184,136,42',  anim: 'torch'      },
+  'Guerre':          { glow: '#778899', accent: '#99AABB', rgb: '119,136,153', anim: 'radar'      },
+  'Western':         { glow: '#A07840', accent: '#C09858', rgb: '160,120,64',  anim: 'torch'      },
+  'Musical':         { glow: '#C4A052', accent: '#FFE085', rgb: '196,160,82',  anim: 'notes'      },
+  'Sci-Fi':          { glow: '#00FF88', accent: '#00FFCC', rgb: '0,255,136',   anim: 'scan'       },
+  'Historique':      { glow: '#B8882A', accent: '#C4A052', rgb: '184,136,42',  anim: 'torch'      },
+};
+
+/* Thème de secours si le genre n'est pas dans la liste */
+const DEFAULT_GENRE_THEME = { glow: '#C4A052', accent: '#F2C84B', rgb: '196,160,82', anim: 'fuse' };
+
+/*
+  genreSlug() — transforme un nom de genre en slug pour trouver son image
+  Exemple : "Science-Fiction" → "science-fiction"
+            "Comédie"         → "comedie"
+  Le slug sert de nom de fichier : /images/categories/comedie.webp
+*/
+function genreSlug(name) {
+  return name.toLowerCase()
+    .replace(/[éèêë]/g, 'e')
+    .replace(/[àâ]/g, 'a')
+    .replace(/[ôö]/g, 'o')
+    .replace(/[îï]/g, 'i')
+    .replace(/[ùûü]/g, 'u')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+%>
+
+<%# ============================================================
+     TOOLTIP GLOBAL
+     Div vide au chargement. Le JS l'injecte dans le <body>
+     puis le remplit et le positionne quand on clique un badge.
+     L'attribut id="global-tooltip" est obligatoire pour le JS.
+     ============================================================ %>
+<div id="global-tooltip"></div>
+
+<%# ============================================================
+     SECTION GENRES
+     aria-label : description pour les lecteurs d'écran
+     ============================================================ %>
+<section class="genres-section" aria-label="Explorer par genre">
+
+  <%# En-tête centré dans la largeur max de la page %>
+  <div class="section-header-wrap">
+    <div class="genres-header">
+
+      <div class="genres-header__left">
+        <p class="section-label" data-reveal="left">Explorer par Genre</p>
+
+        <%#
+          Le compteur "01 / 15" se met à jour dynamiquement côté JS
+          selon quel badge est au centre de l'écran (système spotlight).
+          La valeur total est calculée par EJS au rendu serveur.
+        %>
+        <h2 class="section-title" data-reveal="left">
+          Le goût du Cinéma
+          <span class="film-counter">
+            <span class="film-counter__idx">01</span>
+            <span class="film-counter__sep"> / </span>
+            <span class="film-counter__total"><%= genreStats ? genreStats.length : '00' %></span>
+          </span>
+        </h2>
+
+        <%# Sous-titre qui change selon le genre en spotlight — mis à jour par le JS %>
+        <p class="section-sub" id="section-reactive-sub">
+          Le goût du cinéma se décline en mille saveurs
+        </p>
+      </div>
+
+      <a href="/movies" class="genres-see-all" data-reveal="right">Tous les films</a>
+
+    </div>
+  </div>
+
+
+  <%# ============================================================
+       CAROUSEL
+       carousel-outer : boîte avec overflow-x coupé + masques de
+                        fondu sur les bords gauche et droite
+       carousel-track : la rangée de badges. Le JS la déplace avec
+                        transform: translateX() pour faire défiler
+       ============================================================ %>
+  <div class="carousel-outer" id="carouselOuter">
+    <div class="carousel-track" id="track">
+
+      <% if (genreStats && genreStats.length > 0) { %>
+        <% genreStats.forEach(function(stat) { %>
+
+          <%
+            const theme = GENRE_THEMES[stat.genre] || DEFAULT_GENRE_THEME;
+            const slug  = genreSlug(stat.genre);
+          %>
+
+          <%#
+            <article> est sémantiquement correct ici : chaque badge
+            est un contenu autonome et indépendant (genre + nb de films).
+
+            style="--glow: ...; --glow-rgb: ...;"
+            → Variables CSS injectées directement sur l'élément.
+              Chaque badge a sa propre couleur sans règle CSS dédiée.
+
+            data-anim : lu par le JS pour choisir l'animation de bordure.
+            data-films : tableau JSON des films à afficher dans le tooltip.
+                         Pour le remplir, passer les films depuis le contrôleur.
+          %>
+          <article
+            class="badge"
+            style="
+              --glow:     <%- theme.glow %>;
+              --accent:   <%- theme.accent %>;
+              --glow-rgb: <%- theme.rgb %>;
+            "
+            data-count="<%- stat.count %>"
+            data-genre="<%- stat.genre %>"
+            data-anim="<%- theme.anim %>"
+            data-films='[]'
+          >
+
+            <%# Canvas invisible par défaut. Le JS le rend visible
+                 au hover et y dessine la bordure animée. %>
+            <canvas class="badge__border-canvas"></canvas>
+
+            <%# Zone image %>
+            <div class="badge__img-wrap">
+              <img
+                class="badge__img"
+                src="/images/categories/<%- slug %>.webp"
+                alt="Genre <%- stat.genre %>"
+                <%#
+                  Fallback en deux étapes :
+                  1. .webp introuvable → bascule sur .png
+                  2. .png introuvable  → cache l'image (this.onerror = null
+                     coupe la récursion infinie)
+                %>
+                onerror="
+                  if (this.src.endsWith('.webp')) {
+                    this.src = this.src.slice(0, -5) + '.png';
+                  } else {
+                    this.onerror = null;
+                    this.style.display = 'none';
+                  }
+                "
+              />
+              <div class="badge__fade"></div>    <%# dégradé sombre sur les bords %>
+              <div class="badge__img-tint"></div> <%# teinte colorée au hover (JS) %>
+            </div>
+
+            <%# Texte du badge %>
+            <div class="badge__text">
+              <span class="badge__category"><%- stat.genre %></span>
+              <div class="badge__divider"></div>
+              <p class="badge__count">
+                <%#
+                  data-target = vraie valeur numérique.
+                  Au hover, le JS anime le chiffre de 0 → data-target.
+                  Valeur initiale "0" dans le DOM pour ne pas afficher
+                  le chiffre avant l'animation.
+                %>
+                <strong data-target="<%- stat.count %>">0</strong>
+                <span>Film<%= stat.count > 1 ? 's' : '' %></span>
+              </p>
+            </div>
+
+          </article>
+
+        <% }); %>
+      <% } %>
+
+    </div><%# /carousel-track %>
+  </div><%# /carousel-outer %>
+
+
+  <%# Séparateur décoratif en bas de la section %>
+  <div class="genres-separator">
+    <div class="genres-separator__line"></div>
+    <div class="genres-separator__content">
+      <span class="genres-separator__text">Vous avez trouvé votre genre&nbsp;?</span>
+      <span class="genres-separator__arrow">↓</span>
+      <span class="genres-separator__text">Voici les recettes que nos membres adorent</span>
+    </div>
+    <div class="genres-separator__line"></div>
+  </div>
+
+</section>

@@ -1,54 +1,45 @@
 /**
  * ======================================================
- * HOME.CSS — Styles de la page d'accueil
+ * HOME.CSS - Styles de la page d'accueil
  * ======================================================
  *
- * Sections dans ce fichier (dans l'ordre) :
+ * Rôle : Styles spécifiques à la page d'accueil uniquement.
+ *        Gère le hero slider, le carousel genres, le duo du jour,
+ *        la participez-banner, le top 3 recettes et la communauté.
  *
- *  1. RESET BODY / MAIN
- *  2. HERO SLIDER
- *  3. GENRES CAROUSEL V3 (spotlight cinématographique)
- *  4. SECTION HEADERS (labels, titres, séparateurs)
- *  5. GENRES SECTION (wrapper)
- *  6. DUO DU JOUR
- *  7. BANNIÈRE PARTICIPEZ
- *  8. TOP 3 RECETTES
- *  9. COMMUNAUTÉ BAND
- * 10. SECTION BRIDGE
- * 11. RESPONSIVE GLOBAL
+ * Pages concernées : / (page d'accueil uniquement)
  *
- * Chargé APRÈS base.css.
- * Les styles communs (reset, typo, header, footer, boutons)
- * sont dans base.css.
- * ======================================================
+ * Ordre de chargement : Chargé APRÈS base.css
+ *                       Les styles communs (reset, typo, header, footer, boutons)
+ *                       sont définis dans base.css
+ *
+ * Nettoyage 2026-03 : suppression ~1100 lignes de code mort (V1),
+ *                     suppression :root conflictuel, ajout @keyframes filmImgZoom.
  */
 
+/* ====================================================== */
 /* ======================================================
-   1. RESET BODY / MAIN
+   HERO — version maquette V2 (hero__* classes)
+   Remplace l'ancien hero-slider__*
    ====================================================== */
 
-/* Annule le max-width et le padding de base.css
-   pour que le hero et le carousel soient pleine largeur */
+/* ═══ Full-bleed : supprime la contrainte body héritée de base.css ═══ */
 body {
   max-width: unset;
   padding: 0;
 }
 
+/* ═══════════════════════ HERO ═══════════════════════ */
+/* Home annule le padding-top global — le hero-wrapper gère lui-même son offset */
 main {
   padding-top: 0;
 }
-
 .hero-wrapper {
   width: 100%;
   margin: var(--nav-h) auto 0;
   overflow: hidden;
   position: relative;
 }
-
-/* ======================================================
-   2. HERO SLIDER
-   ====================================================== */
-
 .hero {
   position: relative;
   width: 100%;
@@ -56,8 +47,6 @@ main {
   overflow: hidden;
   background: var(--bleu-nuit);
 }
-
-/* Ligne dorée en haut du hero */
 .hero::before {
   content: "";
   position: absolute;
@@ -77,8 +66,6 @@ main {
     transparent 100%
   );
 }
-
-/* Ligne dorée en bas du hero */
 .hero::after {
   content: "";
   position: absolute;
@@ -96,8 +83,6 @@ main {
     transparent 100%
   );
 }
-
-/* Slide — invisible par défaut, visible quand .active */
 .hero__slide {
   position: absolute;
   inset: 0;
@@ -109,8 +94,6 @@ main {
   opacity: 1;
   pointer-events: auto;
 }
-
-/* Image de fond — effet Ken Burns (zoom lent) */
 .hero__bg {
   position: absolute;
   inset: -12%;
@@ -124,8 +107,6 @@ main {
 .hero__slide.active .hero__bg {
   scale: 0.96;
 }
-
-/* Overlay dégradé sombre sur le fond */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -147,7 +128,6 @@ main {
     ),
     linear-gradient(to bottom, rgba(10, 18, 30, 0.5) 0%, transparent 22%);
 }
-
 .hero__vignette {
   position: absolute;
   inset: 0;
@@ -158,8 +138,6 @@ main {
     rgba(8, 15, 26, 0.4) 100%
   );
 }
-
-/* Fondus sur les bords gauche et droit */
 .hero__fade-left,
 .hero__fade-right {
   position: absolute;
@@ -189,8 +167,6 @@ main {
     transparent 100%
   );
 }
-
-/* Image de personnage au premier plan */
 .hero__fg {
   position: absolute;
   bottom: -130%;
@@ -214,8 +190,6 @@ main {
   bottom: -16%;
   transform: scale(1.18) translateY(0);
 }
-
-/* Zone de contenu (titre, description, boutons) */
 .hero__content {
   position: absolute;
   inset: 0;
@@ -226,8 +200,6 @@ main {
   max-width: calc(640px + max((100% - 1408px) / 2, 0px));
   z-index: 15;
 }
-
-/* Barre eyebrow (ligne dorée + labels) */
 .hero__eyebrow-bar {
   display: flex;
   align-items: center;
@@ -243,7 +215,6 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
-
 .hero__eyebrow-line {
   width: 3px;
   height: 38px;
@@ -272,8 +243,6 @@ main {
   text-transform: uppercase;
   color: rgba(232, 232, 232, 0.38);
 }
-
-/* Titre principal */
 .hero__title {
   font-family: var(--f-display);
   font-size: clamp(3.4rem, 6vw, 5.6rem);
@@ -301,7 +270,6 @@ main {
   font-style: normal;
   display: block;
 }
-
 .hero__sub {
   font-family: var(--f-editorial);
   font-size: 1.08rem;
@@ -320,7 +288,6 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
-
 .hero__desc {
   font-size: 0.82rem;
   font-weight: 300;
@@ -339,8 +306,6 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
-
-/* Boutons du hero */
 .hero__actions {
   display: flex;
   align-items: center;
@@ -355,7 +320,6 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
-
 .hero__btn-primary {
   display: inline-flex;
   align-items: center;
@@ -384,7 +348,6 @@ main {
   box-shadow: 0 0 28px rgba(212, 168, 67, 0.5);
   transform: translateY(-2px);
 }
-
 .hero__btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -411,8 +374,6 @@ main {
   color: var(--dore-clair);
   transform: translateY(-2px);
 }
-
-/* Stats (note, nb recettes, année) */
 .hero__stats {
   position: absolute;
   bottom: 52px;
@@ -431,7 +392,6 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
-
 .hero__stat {
   display: flex;
   flex-direction: column;
@@ -458,8 +418,6 @@ main {
   background: rgba(196, 160, 82, 0.2);
   flex-shrink: 0;
 }
-
-/* Badge "Film du moment" */
 .hero__slide-badge {
   position: absolute;
   top: 28px;
@@ -504,8 +462,6 @@ main {
     transform: scale(1.3);
   }
 }
-
-/* Watermark */
 .hero__watermark {
   position: absolute;
   bottom: -18px;
@@ -520,8 +476,6 @@ main {
   user-select: none;
   white-space: nowrap;
 }
-
-/* Grain de film */
 .hero__grain {
   position: absolute;
   inset: 0;
@@ -531,8 +485,6 @@ main {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px;
 }
-
-/* Flash de transition entre slides */
 .hero__cut-flash {
   position: absolute;
   inset: 0;
@@ -556,8 +508,6 @@ main {
     opacity: 0;
   }
 }
-
-/* Navigation (points + compteur) */
 .hero__nav {
   position: absolute;
   bottom: 28px;
@@ -586,7 +536,6 @@ main {
   height: 4px;
   border-radius: 2px;
 }
-
 .hero__counter {
   display: flex;
   align-items: baseline;
@@ -613,8 +562,6 @@ main {
   color: rgba(255, 255, 255, 0.38);
   letter-spacing: 0.04em;
 }
-
-/* Flèches prev / next */
 .hero__arrow {
   position: absolute;
   top: 50%;
@@ -645,8 +592,6 @@ main {
 .hero__arrow--next {
   right: 24px;
 }
-
-/* Hero responsive */
 @media (max-width: 800px) {
   .hero {
     height: 520px;
@@ -692,157 +637,114 @@ main {
   }
 }
 
-/* ======================================================
-   3. GENRES CAROUSEL V3 — spotlight cinématographique
-   ======================================================
-   Utilise des variables CSS (--glow-rgb, --spot, etc.)
-   modifiées en temps réel par category-badges.js pour
-   créer les effets de spotlight et de hover.
-   ====================================================== */
+/* ====================================================== */
+/* ====================================================
+   GENRES CAROUSEL — .carousel-outer .badge (scoped)
+   Évite les conflits avec les pill-badges de base.css
+   ==================================================== */
 
-/* --- Outer — clip horizontal / débordement vertical pour spotlight --- */
-/*
-  overflow-x: clip  → coupe le contenu qui dépasse horizontalement
-  overflow-y: visible → laisse les badges remonter au hover sans être coupés
-  padding + margin négatif → les badges hover (qui montent) ne sont pas coupés
-*/
+/* Outer — clip horizontal / visible vertical pour tooltips & particules */
+/* mask-image : fondu transparent → opaque → transparent — révèle le fond réel sans
+   correspondance de couleur. Indépendant du canvas animé derrière. */
 .carousel-outer {
   position: relative;
   width: 100%;
-  padding: 120px 0;
-  margin: -120px 0;
+  margin: -72px 0;
+  padding: 72px 0;
   overflow-x: clip;
   overflow-y: visible;
   touch-action: pan-x;
   z-index: 10;
-  /* Fondu transparent → visible → transparent sur les bords */
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0px,
-    black 220px,
-    black calc(100% - 220px),
+    black 200px,
+    black calc(100% - 200px),
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
     transparent 0px,
-    black 220px,
-    black calc(100% - 220px),
+    black 200px,
+    black calc(100% - 200px),
     transparent 100%
   );
 }
-.carousel-outer::before,
-.carousel-outer::after {
-  display: none;
-}
 
-/* --- Track — la rangée de badges déplacée par JS --- */
+/* Track — flex row, translateX animé par JS */
 .carousel-track {
   display: flex;
-  gap: 32px;
-  padding: 0 80px;
+  gap: 28px;
+  padding: 0 40px;
   width: max-content;
-  will-change: transform; /* Indique au navigateur que transform changera souvent → GPU */
+  will-change: transform;
 }
 
-/* --- Badge --- */
-/*
-  Variables CSS modifiées par le JS :
-  --spot     : 0→1 intensité du spotlight (badge au centre = 1)
-  --tx       : décalage vertical lié au spotlight (monte quand --spot augmente)
-  --hover-tx : décalage vertical au hover CSS pur
-  --ts, --hover-ts : scale du spotlight et du hover
-*/
+/* ════ BADGE GENRE CAROUSEL ════
+   Scoped .carousel-outer .badge pour éviter les conflits
+   avec les pill-badges (.badge--film-dk etc.) de base.css */
 .carousel-outer .badge {
   position: relative;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  padding: 9px 20px 9px 9px;
-  border-radius: 24px;
+  gap: 16px;
+  padding: 10px 20px 10px 10px;
+  border-radius: 26px;
   cursor: pointer;
   overflow: visible;
-
-  /* Valeurs initiales */
-  --spot: 0;
-  --tx: 0px;
-  --hover-tx: 0px;
-  --ts: 1;
-  --hover-ts: 1;
-  --glow-x: 50%;
-  --glow-y: 50%;
-  --glow-intensity: 0;
-
-  /* combine les deux sources de déplacement vertical */
-  transform: translateY(calc(var(--tx) + var(--hover-tx)))
-    scale(calc(var(--ts) * var(--hover-ts)));
-
-  /* Les badges loin du spotlight sont semi-transparents */
-  opacity: calc(0.28 + var(--spot) * 0.72);
-
   background: linear-gradient(
     135deg,
-    rgba(22, 36, 58, 0.98) 0%,
-    rgba(10, 20, 36, 1) 100%
+    rgba(27, 38, 59, 0.95) 0%,
+    rgba(15, 30, 48, 0.98) 100%
   );
-
-  /* Bordure dont l'intensité grandit avec le spotlight */
-  border: 1px solid rgba(var(--glow-rgb), calc(0.1 + var(--spot) * 0.48));
-
+  border: 1px solid rgba(65, 90, 119, 0.35);
   box-shadow:
-    0 calc(6px + var(--spot) * 18px) calc(22px + var(--spot) * 32px)
-      rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, calc(0.05 + var(--spot) * 0.09)),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
-    0 0 calc(12px + var(--spot) * 52px)
-      rgba(var(--glow-rgb), calc(var(--spot) * 0.30));
-
+    0 8px 28px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition:
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.7s ease,
-    border-color 0.7s ease,
-    background 0.7s ease;
-
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.55s ease,
+    border-color 0.55s ease,
+    background 0.55s ease;
   user-select: none;
   text-decoration: none;
   color: inherit;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
 }
 
-.carousel-outer .badge:hover {
-  --hover-tx: -7px; /* Monte de 7px au hover */
-  --hover-ts: 1.04; /* Grossit de 4% au hover */
-  opacity: 1;
-  border-color: rgba(var(--glow-rgb), 0.6);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--glow-rgb), 0.15) 0%,
-    rgba(10, 20, 36, 0.97) 100%
-  );
-  box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.85),
-    0 0 65px rgba(var(--glow-rgb), 0.32),
-    0 0 130px rgba(var(--glow-rgb), 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
-}
-
-.carousel-outer .badge.tooltip-open {
-  opacity: 1;
-}
 .carousel-outer .badge:hover,
 .carousel-outer .badge.tooltip-open {
   z-index: 25;
 }
 
-/* Glow radial interne qui suit la tête de l'animation */
+/* Tooltip portail sur body — z-index géré par .tooltip { z-index: 9000 } */
+
+.carousel-outer .badge:hover {
+  transform: translateY(-6px) scale(1.04);
+  border-color: rgba(var(--glow-rgb), 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--glow-rgb), 0.12) 0%,
+    rgba(15, 30, 48, 0.96) 100%
+  );
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.75),
+    0 0 50px rgba(var(--glow-rgb), 0.22),
+    0 0 90px rgba(var(--glow-rgb), 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glow ambiant directionnel — mis à jour par JS via --glow-x/--glow-y/--glow-intensity */
 .carousel-outer .badge::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 24px;
+  border-radius: 22px;
   background: radial-gradient(
-    ellipse 110px 85px at var(--glow-x) var(--glow-y),
+    ellipse 90px 70px at var(--glow-x) var(--glow-y),
     rgba(var(--glow-rgb), calc(var(--glow-intensity) * 0.28)) 0%,
     rgba(var(--glow-rgb), calc(var(--glow-intensity) * 0.1)) 40%,
     transparent 75%
@@ -851,39 +753,44 @@ main {
   z-index: 3;
 }
 
-/* Reflet spéculaire en haut du badge */
+/* Reflet spéculaire haut */
 .carousel-outer .badge::after {
   content: "";
   position: absolute;
   top: -1px;
-  right: 22px;
-  width: 60px;
+  right: 18px;
+  width: 55px;
   height: 2px;
   border-radius: 2px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(var(--glow-rgb), calc(0.2 + var(--spot) * 0.6)) 50%,
+    rgba(200, 220, 255, 0.22) 40%,
+    rgba(200, 220, 255, 0.45) 62%,
+    rgba(200, 220, 255, 0.18) 80%,
     transparent
   );
   pointer-events: none;
   z-index: 11;
-  opacity: calc(0.4 + var(--spot) * 0.6);
+  opacity: 0.5;
   transition:
-    opacity 0.7s ease,
-    background 0.7s ease;
+    opacity 0.55s ease,
+    background 0.55s ease;
 }
+
 .carousel-outer .badge:hover::after {
   opacity: 1;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(var(--glow-rgb), 0.8) 50%,
+    rgba(var(--glow-rgb), 0.4) 42%,
+    rgba(var(--glow-rgb), 0.8) 62%,
+    rgba(var(--glow-rgb), 0.35) 80%,
     transparent
   );
 }
 
-/* Teinte colorée sur l'image (color-dodge = effet lumière colorée) */
+/* Tint coloré sur l'image (color-dodge) */
 .badge__img-tint {
   position: absolute;
   inset: 0;
@@ -900,19 +807,21 @@ main {
   opacity: 0;
   transition: opacity 0.5s ease;
 }
+
 .carousel-outer .badge:hover .badge__img-tint {
   opacity: 1;
 }
 
-/* Canvas de bordure animée (dessinée par JS au hover) */
+/* Canvas de bordure animé (par JS) */
 .badge__border-canvas {
   position: absolute;
   pointer-events: none;
   z-index: 12;
   opacity: 0;
   transition: opacity 0.3s ease;
-  border-radius: 48px;
+  border-radius: 42px;
 }
+
 .carousel-outer .badge:hover .badge__border-canvas {
   opacity: 1;
 }
@@ -921,72 +830,12 @@ main {
 .badge__img-wrap {
   position: relative;
   flex-shrink: 0;
-  width: 92px;
-  height: 92px;
+  width: 96px;
+  height: 96px;
   border-radius: 16px;
   overflow: hidden;
 }
 
-/* Coins de pellicule dans les 4 coins de l'image */
-.badge__img-wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      circle 2px at 9px 9px,
-      rgba(196, 160, 82, 0.4) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 2px at calc(100% - 9px) 9px,
-      rgba(196, 160, 82, 0.4) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 2px at 9px calc(100% - 9px),
-      rgba(196, 160, 82, 0.4) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 2px at calc(100% - 9px) calc(100% - 9px),
-      rgba(196, 160, 82, 0.4) 0%,
-      transparent 100%
-    );
-}
-
-/* Cadre pellicule (assombrit les 4 bords de l'image) */
-.badge__img-wrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(
-      to right,
-      rgba(8, 16, 28, 0.55) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(8, 16, 28, 0.55) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(8, 16, 28, 0.6) 0%,
-      transparent 22%,
-      transparent 78%,
-      rgba(8, 16, 28, 0.6) 100%
-    );
-}
-
-/*
-  Filtre image "cinéma" contrôlé par le spotlight.
-  Par défaut : quasi silhouette (sat=0, bri=.20).
-  Spotlight à fond : couleurs vives (sat=1.55, bri=1.15).
-*/
 .badge__img {
   position: relative;
   z-index: 1;
@@ -995,19 +844,19 @@ main {
   object-fit: cover;
   object-position: center top;
   display: block;
-  filter: saturate(var(--img-sat, 0)) brightness(var(--img-bri, 0.2))
-    contrast(var(--img-con, 1.14)) sepia(var(--img-sep, 0.5))
-    hue-rotate(var(--img-hue, 215deg));
+  filter: saturate(0) brightness(0.42) contrast(1.05) sepia(0.25)
+    hue-rotate(190deg);
   transition:
-    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease,
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 .carousel-outer .badge:hover .badge__img {
   filter: saturate(1.45) brightness(1.08) contrast(1.12);
   transform: scale(1.08);
 }
 
-/* Dégradé sombre sur les bords de l'image */
+/* Vignette directionnelle sur l'image */
 .badge__fade {
   position: absolute;
   inset: 0;
@@ -1041,111 +890,90 @@ main {
     );
   transition: opacity 0.55s ease;
 }
+
 .carousel-outer .badge:hover .badge__fade {
   opacity: 0.42;
 }
 
-/* Halo coloré au sol sous le badge (créé en JS) */
-.badge__floor-glow {
-  position: absolute;
-  bottom: -14px;
-  left: 8%;
-  right: 8%;
-  height: 18px;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 75% 100% at 50% 0%,
-    rgba(var(--glow-rgb), calc(var(--spot) * 0.55)) 0%,
-    transparent 78%
-  );
-  filter: blur(7px);
-}
-
-/* Texte du badge */
+/* Texte */
 .badge__text {
-  width: 100px;
+  width: 110px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 5px;
+  gap: 4px;
 }
 
-/* Nom du genre */
 .badge__category {
   font-family: var(--f-display, "Bebas Neue", sans-serif);
-  font-size: 1.65rem;
+  font-size: 1.5rem;
   letter-spacing: 0.05em;
   line-height: 1;
-  color: var(--argent, #e8e8e8);
-  opacity: calc(0.78 + var(--spot) * 0.22);
-  text-shadow: 0 0 calc(var(--spot) * 18px)
-    rgba(var(--glow-rgb), calc(var(--spot) * 0.6));
+  color: var(--bleu-secondaire, #5a7391);
+  white-space: normal;
+  overflow-wrap: break-word;
   transition:
     color 0.55s ease,
-    text-shadow 0.55s ease,
-    opacity 0.55s ease;
+    text-shadow 0.55s ease;
 }
+
 .carousel-outer .badge:hover .badge__category {
   color: var(--glow);
-  opacity: 1;
   text-shadow:
     0 0 18px rgba(var(--glow-rgb), 0.85),
     0 0 40px rgba(var(--glow-rgb), 0.4);
 }
 
-/* Ligne décorative entre le nom et le compteur */
 .badge__divider {
-  width: 30px;
+  width: 28px;
   height: 1.5px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(196, 160, 82, 0.5),
-    transparent
-  );
+  background: var(--bleu-clair, #415a77);
   border-radius: 2px;
-  opacity: 0.65;
+  opacity: 0.4;
   transition:
     width 0.5s ease,
     opacity 0.5s ease,
     background 0.55s ease;
 }
+
 .carousel-outer .badge:hover .badge__divider {
-  width: 58px;
+  width: 52px;
   opacity: 1;
   background: linear-gradient(90deg, transparent, var(--glow), transparent);
 }
 
-/* Compteur de films */
 .badge__count {
   display: flex;
   align-items: baseline;
   gap: 4px;
 }
+
 .badge__count strong {
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   line-height: 1;
-  color: var(--argent, #e8e8e8);
-  opacity: 0.6;
+  color: var(--argent, #a8b8c8);
+  opacity: 0.42;
   transition:
     color 0.55s ease,
     opacity 0.55s ease;
   font-variant-numeric: tabular-nums;
 }
+
 .badge__count span {
   font-weight: 300;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(196, 160, 82, 0.6);
-  opacity: 0.8;
+  color: var(--bleu-clair, #415a77);
+  opacity: 0.5;
   transition:
     color 0.55s ease,
     opacity 0.55s ease;
 }
+
 .carousel-outer .badge:hover .badge__count strong {
   color: #fff;
   opacity: 0.92;
@@ -1155,32 +983,33 @@ main {
   opacity: 1;
 }
 
-/* --- Tooltip global (#global-tooltip dans le HTML) ---
-   Affiché/caché via la classe .is-open ajoutée par le JS */
-#global-tooltip {
+/* ── TOOLTIP PORTAIL — appendé au <body> via JS, hors de tout overflow/mask ── */
+.tooltip {
   position: fixed;
-  width: 230px;
-  background: rgba(14, 24, 40, 0.55);
-  backdrop-filter: blur(28px) saturate(2) brightness(0.92);
-  -webkit-backdrop-filter: blur(28px) saturate(2) brightness(0.92);
-  border: 1px solid rgba(196, 160, 82, 0.28);
-  border-radius: 16px;
-  padding: 13px 16px 12px;
-  z-index: 9999;
+  bottom: 100px;
+  left: 50%; /* positions de fallback, overridées par JS */
+  transform: translateX(-50%) translateY(8px) scale(0.96);
+  width: 210px;
+  background: rgba(8, 16, 28, 0.3);
+  backdrop-filter: blur(24px) saturate(1.8) brightness(0.95);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) brightness(0.95);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  border-radius: 14px;
+  padding: 11px 14px 10px;
+  z-index: 9000;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(-100%) scale(0.96);
   transition:
     opacity 0.2s ease,
     transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
   overflow: hidden;
-  --tt-rgb: 196, 160, 82;
 }
-/* Ligne colorée en haut du tooltip */
-#global-tooltip::before {
+
+.tooltip::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1190,372 +1019,135 @@ main {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(var(--tt-rgb), 0.65),
+    rgba(196, 160, 82, 0.5),
     transparent
   );
+  opacity: 0;
+  transition: opacity 0.25s ease 0.08s;
 }
-/* Petite flèche pointant vers le badge */
-#global-tooltip::after {
+
+.tooltip::after {
   content: "";
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: rgba(196, 160, 82, 0.3);
+  border-top-color: rgba(196, 160, 82, 0.22);
 }
-#global-tooltip.is-open {
+
+.tooltip.tooltip-open {
   opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
 }
-#global-tooltip .tooltip__genre {
-  font-family: var(--f-display);
-  font-size: 0.9rem;
+
+.tooltip.tooltip-open::before {
+  opacity: 1;
+}
+
+.tooltip__genre {
+  font-family: var(--f-display, "Bebas Neue", sans-serif);
+  font-size: 0.85rem;
   letter-spacing: 0.14em;
-  color: var(--or-titre);
+  color: var(--or-titre, #c4a052);
   text-shadow: 0 0 10px rgba(196, 160, 82, 0.35);
-  margin-bottom: 8px;
-  padding-bottom: 7px;
-  border-bottom: 1px solid rgba(196, 160, 82, 0.18);
+  margin-bottom: 7px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.15);
   opacity: 0;
   transform: translateY(-4px);
   transition:
     opacity 0.18s ease 0.04s,
     transform 0.22s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
 }
-#global-tooltip.is-open .tooltip__genre {
+
+.tooltip.tooltip-open .tooltip__genre {
   opacity: 1;
   transform: translateY(0);
 }
-#global-tooltip .tooltip__films {
+
+.tooltip__films {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 9px;
+  gap: 4px 8px;
 }
-#global-tooltip .tooltip__film {
+
+.tooltip__film {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   opacity: 0;
   transform: translateY(4px);
   transition:
     opacity 0.16s ease,
     transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-#global-tooltip.is-open .tooltip__film:nth-child(1) {
+
+.tooltip.tooltip-open .tooltip__film:nth-child(1) {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.08s;
 }
-#global-tooltip.is-open .tooltip__film:nth-child(2) {
+.tooltip.tooltip-open .tooltip__film:nth-child(2) {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.13s;
 }
-#global-tooltip.is-open .tooltip__film:nth-child(3) {
+.tooltip.tooltip-open .tooltip__film:nth-child(3) {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.18s;
 }
-#global-tooltip.is-open .tooltip__film:nth-child(4) {
+.tooltip.tooltip-open .tooltip__film:nth-child(4) {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.23s;
 }
-#global-tooltip .tooltip__film-title {
-  font-size: 0.64rem;
+
+.tooltip__film-title {
+  font-size: 0.62rem;
   font-weight: 400;
-  color: rgba(232, 232, 232, 0.82);
+  color: rgba(232, 232, 232, 0.78);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
 }
-#global-tooltip .tooltip__film-note {
-  font-size: 0.6rem;
+
+.tooltip__film-note {
+  font-size: 0.58rem;
   font-weight: 700;
-  color: var(--dore-clair);
-  opacity: 0.85;
+  color: var(--dore-clair, #f2c84b);
+  opacity: 0.8;
   letter-spacing: 0.04em;
 }
-#global-tooltip .tooltip__hint {
-  display: block;
-  margin-top: 9px;
-  font-size: 0.58rem;
+
+.tooltip__hint {
+  margin-top: 8px;
+  font-size: 0.56rem;
   font-weight: 300;
   font-style: italic;
   letter-spacing: 0.1em;
-  color: rgba(196, 160, 82, 0.5);
+  color: rgba(196, 160, 82, 0.4);
   text-align: center;
-  text-decoration: none;
   opacity: 0;
   transition: opacity 0.16s ease 0.28s;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 6px;
+  display: block;
 }
-#global-tooltip.is-open .tooltip__hint {
+
+.tooltip.tooltip-open .tooltip__hint {
   opacity: 1;
 }
 
-/* Canvas des rings au clic (plein écran fixe) */
+/* Canvas burst global (fixed) */
 #burst-canvas {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 999;
-}
-
-/* --- Éléments cinématographiques injectés par le JS --- */
-
-/* Wash coloré en fond de section selon le genre en spotlight */
-.genres-section {
-  --wash-rgb: 196, 160, 82;
-  --wash-alpha: 0;
-}
-.genres-section::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 58% 88% at 50% 50%,
-    rgba(var(--wash-rgb), var(--wash-alpha)) 0%,
-    transparent 68%
-  );
-  transition: background 2.8s ease;
-}
-
-/* Bandes perforées de pellicule en haut et bas */
-.film-perfs {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 22px;
-  z-index: 3;
-  pointer-events: none;
-  overflow: hidden;
-}
-.film-perfs--top {
-  top: 0;
-}
-.film-perfs::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 10px;
-  border-top: 1px solid rgba(196, 160, 82, 0.07);
-  border-bottom: 1px solid rgba(196, 160, 82, 0.07);
-  background: repeating-linear-gradient(
-    to right,
-    rgba(196, 160, 82, 0.07) 0px,
-    rgba(196, 160, 82, 0.07) 14px,
-    transparent 14px,
-    transparent 24px
-  );
-}
-
-/* Label "NOW SHOWING" au-dessus du badge en spotlight */
-.now-showing {
-  position: absolute;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-family: var(--f-title, "Cinzel", serif);
-  font-size: 0.46rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(196, 160, 82, 0.88);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  z-index: 30;
-  pointer-events: none;
-  transition:
-    opacity 0.45s ease,
-    left 0.18s ease-out;
-}
-.now-showing__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--or-titre);
-  box-shadow:
-    0 0 7px rgba(196, 160, 82, 0.9),
-    0 0 14px rgba(196, 160, 82, 0.5);
-  animation: nsDot 1.5s ease-in-out infinite;
-}
-@keyframes nsDot {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow:
-      0 0 7px rgba(196, 160, 82, 0.9),
-      0 0 14px rgba(196, 160, 82, 0.5);
-  }
-  50% {
-    opacity: 0.3;
-    box-shadow: 0 0 2px rgba(196, 160, 82, 0.3);
-  }
-}
-
-/* Compteur de genres "01 / 15" */
-.film-counter {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--f-display);
-  font-size: 1rem;
-  letter-spacing: 0.14em;
-  color: rgba(196, 160, 82, 0.2);
-  margin-left: 14px;
-  vertical-align: middle;
-}
-.film-counter__idx {
-  color: rgba(196, 160, 82, 0.5);
-  min-width: 2ch;
-  display: inline-block;
-  transition: color 0.5s ease;
-}
-.film-counter__sep {
-  opacity: 0.3;
-}
-
-/* Sous-titre qui change selon le genre en spotlight */
-.section-sub {
-  font-size: 0.8rem;
-  font-weight: 300;
-  font-style: italic;
-  letter-spacing: 0.1em;
-  color: rgba(232, 232, 232, 0.4);
-  margin-top: 3px;
-  min-height: 1.3em;
-  transition: opacity 0.3s ease;
-}
-.section-sub.fading {
-  opacity: 0;
-}
-
-/* Faisceau de projecteur cinéma */
-.spotlight-beam {
-  display: none;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 700px;
-  pointer-events: none;
-  transform: translateX(-50%);
-  z-index: 0;
-  will-change: left, opacity;
-  transition:
-    left 0.18s ease-out,
-    opacity 0.55s ease;
-  background:
-    radial-gradient(
-      ellipse 52% 55% at 50% 55%,
-      rgba(var(--beam-rgb, 196, 160, 82), 0.13) 0%,
-      rgba(var(--beam-rgb, 196, 160, 82), 0.055) 42%,
-      transparent 70%
-    );
-}
-/* Particules de poussière dans le faisceau */
-.spotlight-beam::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle 1.5px at 28% 38%,
-      rgba(255, 255, 255, 0.22) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 1px at 62% 55%,
-      rgba(255, 255, 255, 0.18) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 1px at 44% 72%,
-      rgba(255, 255, 255, 0.15) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 2px at 55% 42%,
-      rgba(255, 255, 255, 0.12) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 1px at 35% 63%,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 100%
-    );
-  opacity: var(--beam-dust, 0);
-  transition: opacity 0.8s ease;
-}
-.spotlight-beam::after {
-  display: none;
-}
-
-/* --- Séparateur bas de carousel --- */
-.genres-separator {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: var(--max-w, 1408px);
-  margin: 40px auto 0;
-  padding: 0 var(--page-px, 64px);
-}
-.genres-separator__line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(196, 160, 82, 0.12) 30%,
-    rgba(196, 160, 82, 0.28) 100%
-  );
-}
-.genres-separator__line:last-child {
-  background: linear-gradient(
-    90deg,
-    rgba(196, 160, 82, 0.28) 0%,
-    rgba(196, 160, 82, 0.12) 70%,
-    transparent 100%
-  );
-}
-.genres-separator__content {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 28px;
-  white-space: nowrap;
-}
-.genres-separator__text {
-  font-family: var(--f-body);
-  font-size: 0.72rem;
-  font-weight: 300;
-  font-style: italic;
-  letter-spacing: 0.1em;
-  color: rgba(196, 160, 82, 0.4);
-}
-.genres-separator__arrow {
-  font-size: 0.8rem;
-  color: rgba(196, 160, 82, 0.3);
-  line-height: 1;
-  animation: arrowBob 2.2s ease-in-out infinite;
-}
-@keyframes arrowBob {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translateY(3px);
-    opacity: 0.55;
-  }
 }
 
 /* Accessibilité — réduit les animations */
@@ -1575,12 +1167,12 @@ main {
   .carousel-outer .badge::before {
     display: none;
   }
-  #global-tooltip {
+  .tooltip {
     transition: none;
   }
-  #global-tooltip .tooltip__genre,
-  #global-tooltip .tooltip__film,
-  #global-tooltip .tooltip__hint {
+  .tooltip__genre,
+  .tooltip__film,
+  .tooltip__hint {
     transition: none;
     opacity: 1;
     transform: none;
@@ -1590,97 +1182,41 @@ main {
   }
 }
 
-/* Carousel responsive */
-@media (max-width: 900px) {
-  .section-header-wrap {
-    padding: 0 32px;
-  }
-  .carousel-track {
-    gap: 18px;
-    padding: 0 32px;
-  }
-  .carousel-outer {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0px,
-      black 80px,
-      black calc(100% - 80px),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0px,
-      black 80px,
-      black calc(100% - 80px),
-      transparent 100%
-    );
-  }
-  .carousel-outer .badge {
-    gap: 10px;
-    padding: 7px 14px 7px 7px;
-  }
+/* ── Genres carousel — responsive ── */
+@media (max-width: 800px) {
   .badge__img-wrap {
     width: 72px;
     height: 72px;
   }
-  .badge__text {
-    width: 82px;
-  }
   .badge__category {
-    font-size: 1.38rem;
+    font-size: 1.35rem;
   }
-  .badge__count strong {
-    font-size: 1.05rem;
-  }
-  .film-counter {
-    display: none;
+  .badge__text {
+    width: 92px;
   }
 }
-@media (max-width: 600px) {
-  .section-header-wrap {
-    padding: 0 20px;
-    margin-bottom: 22px;
-  }
-  .genres-section {
-    padding: 36px 0 40px;
-  }
-  .genres-separator {
-    padding: 0 20px;
-  }
-  .carousel-outer .badge {
-    gap: 8px;
-    padding: 6px 12px 6px 6px;
-    border-radius: 18px;
-  }
+@media (max-width: 500px) {
   .badge__img-wrap {
-    width: 58px;
-    height: 58px;
-    border-radius: 12px;
-  }
-  .badge__text {
-    width: 70px;
+    width: 62px;
+    height: 62px;
   }
   .badge__category {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
-  .badge__count strong {
-    font-size: 0.9rem;
-  }
-  .badge__count span {
-    font-size: 0.52rem;
-  }
-  .badge__divider {
-    width: 22px;
-  }
-  .now-showing {
-    font-size: 0.38rem;
+  .badge__text {
+    width: 80px;
   }
 }
 
-/* ======================================================
-   4. SECTION HEADERS
-   ====================================================== */
+/* ══════════════════════════════════════════════════════════════════
+   HOME v2 — Alignement maquette homepage-cine_delices_v2.html
+   CSS extrait directement de la maquette (global CSS + embedded CSS)
+   Sections : section-headers · genres · duo-jour (djc-*) ·
+              participe-banner · top3 · communauté · section-bridge
+   ══════════════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════ SECTION HEADERS ═══════════════════════ */
+/* maquette global CSS lines 200-204 */
 .section-label {
   display: inline-flex;
   align-items: center;
@@ -1710,6 +1246,15 @@ main {
   text-shadow: 0 0 28px rgba(196, 160, 82, 0.28);
   margin-bottom: 6px;
 }
+.section-sub {
+  font-size: 0.76rem;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.1em;
+  color: rgba(232, 232, 232, 0.52);
+  margin-top: 6px;
+  margin-bottom: 28px;
+}
 .section-divider {
   width: 100%;
   height: 1px;
@@ -1724,33 +1269,13 @@ main {
   margin: 0;
 }
 
-/* ======================================================
-   5. GENRES SECTION (wrapper)
-   ====================================================== */
-
+/* ═══════════════════════ GENRES SECTION ═══════════════════════ */
+/* maquette global CSS lines 207-212 */
 .genres-section {
-  padding: 52px 0 72px;
+  padding: 52px 0 36px;
   position: relative;
   z-index: 30;
-  isolation: isolate;
 }
-.genres-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(196, 160, 82, 0.22) 20%,
-    rgba(196, 160, 82, 0.42) 50%,
-    rgba(196, 160, 82, 0.22) 80%,
-    transparent
-  );
-}
-
 .genres-header {
   display: flex;
   align-items: center;
@@ -1762,14 +1287,6 @@ main {
   flex-direction: column;
   gap: 2px;
 }
-
-.section-header-wrap {
-  width: 100%;
-  max-width: var(--max-w, 1408px);
-  margin: 0 auto 36px;
-  padding: 0 var(--page-px, 64px);
-}
-
 .genres-see-all {
   font-family: var(--f-title);
   font-size: 0.6rem;
@@ -1796,10 +1313,8 @@ main {
   transform: translateX(4px);
 }
 
-/* ======================================================
-   6. DUO DU JOUR
-   ====================================================== */
-
+/* ═══════════════════════ DUO DU JOUR ═══════════════════════ */
+/* maquette embedded CSS lines 1187-1544 */
 .duo-jour-section {
   padding: 8px 0 44px;
 }
@@ -1834,7 +1349,7 @@ main {
   align-items: flex-start;
 }
 
-/* Film */
+/* Film column */
 .djc-film {
   position: relative;
   height: auto;
@@ -2010,7 +1525,7 @@ main {
   margin-bottom: 12px;
 }
 
-/* CTA doré */
+/* CTA column */
 .djc-cta {
   position: relative;
   height: 412px;
@@ -2060,6 +1575,8 @@ main {
   position: relative;
   z-index: 1;
 }
+
+/* Eyebrow — label au-dessus de la CTA dorée */
 .djc-cta-col {
   display: flex;
   flex-direction: column;
@@ -2120,6 +1637,7 @@ main {
     transparent
   );
   transform: translateX(-120%) skewX(-18deg);
+  transition: none;
 }
 .djc-cta:hover .djc-cta__shimmer::after {
   animation: ctaShimmer 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -2262,7 +1780,7 @@ main {
   margin-left: 4px;
 }
 
-/* Recette */
+/* Recette column */
 .djc-recette {
   position: relative;
   height: auto;
@@ -2520,10 +2038,12 @@ main {
   box-shadow: 0 0 28px rgba(212, 168, 67, 0.45);
 }
 
-/* Duo responsive */
+/* DUO responsive */
 @media (max-width: 960px) {
   .duo-jour-grid {
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
   }
   .djc-film {
     height: 400px;
@@ -2532,6 +2052,9 @@ main {
     height: auto;
     grid-column: 1 / -1;
     order: 3;
+  }
+  .djc-recette {
+    height: auto;
   }
 }
 @media (max-width: 580px) {
@@ -2543,10 +2066,8 @@ main {
   }
 }
 
-/* ======================================================
-   7. BANNIÈRE PARTICIPEZ
-   ====================================================== */
-
+/* ═══════════════════════ BANNIERE PARTICIPEZ — REDESIGN ═══════════════════════ */
+/* maquette global CSS lines 526-748 */
 .participe-section {
   padding: 0;
 }
@@ -2588,6 +2109,7 @@ main {
   align-items: center;
   padding: 16px 0;
   z-index: 2;
+  gap: 0;
 }
 .participe-banner__holes--left {
   left: 0;
@@ -2810,10 +2332,8 @@ main {
   white-space: nowrap;
 }
 
-/* ======================================================
-   8. TOP 3 RECETTES
-   ====================================================== */
-
+/* ═══════════════════════ TOP 3 RECETTES ═══════════════════════ */
+/* maquette global CSS line 751 + embedded CSS lines 1739-1975 */
 .top-recettes-section {
   padding: 72px 0 80px;
 }
@@ -3236,6 +2756,8 @@ main {
 .top3-card__btn::after {
   content: "\2192";
 }
+
+/* TOP3 — description compacte cards droite */
 .top3-card__desc {
   font-size: 0.65rem;
   color: rgba(232, 232, 232, 0.48);
@@ -3247,7 +2769,7 @@ main {
   overflow: hidden;
 }
 
-/* Niveaux contributeur */
+/* TOP3 — Niveaux contributeur (moodboard section 06) */
 .lvl-badge {
   display: inline-flex;
   align-items: center;
@@ -3305,8 +2827,9 @@ main {
 .lvl-badge--sm .lvl-title {
   font-size: 0.42rem;
 }
+/* .lvl--1 à .lvl--legend définis dans base.css */
 
-/* CTA doré dans top3 */
+/* TOP3 — CTA banner card (participe-banner · couleurs Golden Ticket djc-cta) */
 .top3-cta {
   background: linear-gradient(
     145deg,
@@ -3426,6 +2949,11 @@ main {
 .top3-cta__title span {
   color: rgba(20, 10, 0, 0.6);
 }
+.top3-cta__desc {
+  font-size: 0.61rem;
+  line-height: 1.5;
+  color: rgba(20, 10, 0, 0.52);
+}
 .top3-cta__stats {
   display: flex;
   align-items: center;
@@ -3466,6 +2994,27 @@ main {
   padding-top: 8px;
   border-top: 1px solid rgba(20, 10, 0, 0.12);
 }
+.top3-cta__membres {
+  display: flex;
+  align-items: center;
+}
+.top3-cta__av {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(20, 10, 0, 0.18);
+  margin-left: -6px;
+}
+.top3-cta__av:first-child {
+  margin-left: 0;
+}
+.top3-cta__av-label {
+  font-size: 0.46rem;
+  color: rgba(20, 10, 0, 0.48);
+  margin-left: 6px;
+  white-space: nowrap;
+}
 .top3-cta__btn {
   display: inline-flex;
   align-items: center;
@@ -3492,7 +3041,7 @@ main {
   color: var(--dore-clair);
 }
 
-/* Top3 responsive */
+/* TOP3 responsive */
 @media (max-width: 900px) {
   .top3-layout {
     flex-direction: column;
@@ -3514,10 +3063,8 @@ main {
   }
 }
 
-/* ======================================================
-   9. COMMUNAUTÉ BAND
-   ====================================================== */
-
+/* ═══════════════════════ COMMUNAUTE BAND ═══════════════════════ */
+/* maquette global CSS lines 786-813 */
 .communaute-band {
   position: relative;
   overflow: hidden;
@@ -3733,6 +3280,9 @@ main {
   flex-direction: column;
   gap: 0;
 }
+
+/* Contributeurs + mini gamification */
+/* maquette embedded COMMUNAUTE CSS lines 2107-2176 */
 .contrib-block {
   display: flex;
   flex-direction: column;
@@ -3807,6 +3357,8 @@ main {
   border: 1.5px solid rgba(196, 160, 82, 0.22);
   flex-shrink: 0;
 }
+
+/* ── Top contributeur #1 ── */
 .contrib-item--first {
   border-color: rgba(196, 160, 82, 0.28);
   background: rgba(196, 160, 82, 0.04);
@@ -3833,7 +3385,7 @@ main {
   animation: crownFloat 2.4s ease-in-out infinite;
 }
 .contrib-item--first .contrib-item__avatar {
-  border: 2px solid var(--or-titre);
+  border: 2px solid var(--or-titre, #c4a052);
   box-shadow:
     0 0 0 2px rgba(196, 160, 82, 0.22),
     0 0 14px rgba(196, 160, 82, 0.25);
@@ -3971,10 +3523,8 @@ main {
   flex-shrink: 0;
 }
 
-/* ======================================================
-   10. SECTION BRIDGE
-   ====================================================== */
-
+/* ═══════════════════════ SECTION BRIDGE ═══════════════════════ */
+/* maquette global CSS lines 816-823 */
 .section-bridge {
   padding: 16px 0 44px;
 }
@@ -4029,10 +3579,7 @@ main {
   }
 }
 
-/* ======================================================
-   11. RESPONSIVE GLOBAL
-   ====================================================== */
-
+/* ── Responsive global ── */
 @media (max-width: 1100px) {
   .communaute-inner {
     grid-template-columns: 1fr;
