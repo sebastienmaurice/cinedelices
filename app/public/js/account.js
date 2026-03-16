@@ -549,12 +549,17 @@
     );
     const listContainer = section.querySelector(".collections-section__list");
 
+    let activeStatus = "all";
+
     const filterItems = () => {
       const query = input.value.trim().toLowerCase();
       const sectionItems = listContainer.querySelectorAll(".account-item");
       let visibleCount = 0;
 
       sectionItems.forEach((item) => {
+        const statusMatch =
+          activeStatus === "all" || item.dataset.status === activeStatus;
+
         const searchable = [
           item.dataset.name || "",
           item.dataset.title || "",
@@ -577,7 +582,9 @@
           " " +
           hintContent.toLowerCase();
 
-        if (!query || fullHaystack.includes(query)) {
+        const textMatch = !query || fullHaystack.includes(query);
+
+        if (statusMatch && textMatch) {
           item.classList.remove("is-filtered-out");
           visibleCount++;
         } else {
@@ -587,7 +594,7 @@
 
       if (noResultsMsg) {
         noResultsMsg.style.display =
-          query && visibleCount === 0 ? "" : "none";
+          visibleCount === 0 ? "" : "none";
       }
 
       if (clearBtn) {
@@ -604,5 +611,14 @@
         input.focus();
       });
     }
+
+    section.querySelectorAll(".filter-pill").forEach((pill) => {
+      pill.addEventListener("click", () => {
+        section.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        activeStatus = pill.dataset.filter || "all";
+        filterItems();
+      });
+    });
   });
 })();
