@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Démo — Top 3 Recettes · Ciné Délices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ======================================================
+       VARIABLES (extrait de base.css)
+    ====================================================== */
+    :root {
+      --bleu-nuit:          #142234;
+      --surface-card:       #0f1e30;
+      --or-titre:           #C4A052;
+      --or-200:             #B8882A;
+      --dore-clair:         #F2C84B;
+      --rouge-cta:          #C23018;
+      --argent:             #e8e8e8;
+      --gold-gradient:      linear-gradient(135deg, #B8882A 0%, #D4A843 30%, #F2C84B 55%, #FFE085 80%, #D4A843 100%);
+      --rouge-gradient:     linear-gradient(135deg, #8B1C13 0%, #C23018 55%, #D43A20 100%);
+      --f-display:          'Bebas Neue', cursive;
+      --f-title:            'Cinzel', serif;
+      --f-editorial:        'Playfair Display', serif;
+      --f-body:             'Lato', sans-serif;
+      --max-w:              1440px;
+      --page-px:            64px;
+    }
+
+    /* ======================================================
+       RESET MINIMAL
+    ====================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1b2a;
+      color: #e8e8e8;
+      font-family: var(--f-body);
+      min-height: 100vh;
+    }
+    button { background: none; border: none; cursor: pointer; }
+    a { color: inherit; }
+
+    /* ======================================================
+       WRAP
+    ====================================================== */
+    .wrap {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--page-px);
+    }
+
+    /* ======================================================
+       SECTION HEADER (section-label / section-title / section-sub)
+    ====================================================== */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(196, 160, 82, 0.48);
+      margin-bottom: 5px;
+    }
+    .section-label::before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--or-200), var(--or-titre));
+      vertical-align: middle;
+    }
+    .section-title {
+      font-family: var(--f-display);
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      color: var(--or-titre);
+      text-shadow: 0 0 28px rgba(196, 160, 82, 0.28);
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 0.8rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.1em;
+      color: rgba(232, 232, 232, 0.4);
+      margin-top: 3px;
+    }
+    .genres-see-all {
+      font-family: var(--f-title);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(196, 160, 82, 0.55);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.25s;
+      white-space: nowrap;
+      padding-bottom: 4px;
+    }
+    .genres-see-all:hover { color: var(--dore-clair); }
+    .genres-see-all::after { content: "\2192"; transition: transform 0.25s; }
+    .genres-see-all:hover::after { transform: translateX(4px); }
+
+    /* ======================================================
+       TAGS PARTAGÉS (djc-recette__tag)
+    ====================================================== */
+    .djc-recette__tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: var(--f-title);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .djc-recette__tag--or {
+      background: rgba(196, 160, 82, 0.12);
+      border: 1.5px solid rgba(196, 160, 82, 0.55);
+      color: var(--or-titre);
+    }
+    .djc-recette__tag--bleu {
+      background: rgba(65, 90, 119, 0.18);
+      border: 1.5px solid rgba(65, 90, 119, 0.55);
+      color: rgba(232, 232, 232, 0.7);
+    }
+    .top3-tag--sm { font-size: 0.46rem; padding: 4px 11px; }
+    .top3-tag--xs { font-size: 0.43rem; padding: 3px 9px; }
+
+    /* ======================================================
+       KEYFRAMES
+    ====================================================== */
+    @keyframes filmImgZoom {
+      0%   { transform: scale(1); }
+      100% { transform: scale(1.08); }
+    }
+    @keyframes ctaShimmer {
+      0%   { transform: translateX(-120%) skewX(-18deg); }
+      100% { transform: translateX(320%) skewX(-18deg); }
+    }
+
+    /* ======================================================
+       SECTION TOP RECETTES
+    ====================================================== */
+    .top-recettes-section {
+      padding: 72px 0 80px;
+    }
+
+    .top3-layout {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+    }
+    .top3-col-left {
+      flex: 0 0 56%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .top3-col-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    /* --- Featured card #1 --- */
+    .top3-featured {
+      position: relative;
+      flex: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--surface-card);
+      border: 1px solid rgba(65, 90, 119, 0.28);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s, box-shadow 0.4s;
+    }
+    .top3-featured:hover {
+      transform: translateY(-6px);
+      border-color: rgba(196, 160, 82, 0.3);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65);
+    }
+    .top3-featured__img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/2;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .top3-featured__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      animation: filmImgZoom 12s ease-in-out infinite alternate;
+    }
+    .top3-featured:hover .top3-featured__img { animation-duration: 7s; }
+    .top3-featured__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(5, 12, 22, 0.8) 100%);
+    }
+    .top3-featured__medal {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 3;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--f-display);
+      font-size: 2.4rem;
+      color: var(--bleu-nuit);
+      box-shadow: 0 6px 28px rgba(184, 136, 42, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .top3-featured__film-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 6px;
+      background: rgba(10, 18, 30, 0.82);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(196, 160, 82, 0.28);
+      font-family: var(--f-title);
+      font-size: 0.44rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--or-titre);
+    }
+    .top3-featured__fav {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(10, 18, 30, 0.72);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(232, 232, 232, 0.45);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .top3-featured__fav:hover {
+      background: rgba(194, 48, 24, 0.22);
+      border-color: rgba(194, 48, 24, 0.55);
+      color: var(--rouge-cta);
+    }
+    .top3-featured__body {
+      padding: 16px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .top3-featured__eyebrow {
+      font-family: var(--f-title);
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(196, 160, 82, 0.55);
+    }
+    .top3-featured__title {
+      font-family: var(--f-editorial);
+      font-size: 1.1rem;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--or-titre);
+      line-height: 1.15;
+    }
+    .top3-featured__tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .top3-featured__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .top3-featured__stars {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.82rem;
+    }
+    .top3-featured__stars span { color: var(--dore-clair); }
+    .top3-featured__infos {
+      font-size: 0.63rem;
+      color: rgba(232, 232, 232, 0.42);
+      display: flex;
+      gap: 12px;
+    }
+    .top3-featured__desc {
+      font-size: 0.73rem;
+      color: rgba(232, 232, 232, 0.58);
+      line-height: 1.7;
+    }
+    .top3-featured__foot {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .top3-featured__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 20px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--rouge-gradient);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: var(--f-body);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(194, 48, 24, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: all 0.28s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .top3-featured__btn:hover {
+      background: var(--gold-gradient);
+      color: var(--bleu-nuit);
+    }
+
+    /* --- Cards #2 & #3 --- */
+    .top3-card {
+      position: relative;
+      flex: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface-card);
+      border: 1px solid rgba(65, 90, 119, 0.25);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s, box-shadow 0.35s;
+    }
+    .top3-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(196, 160, 82, 0.28);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    }
+    .top3-card__img-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: 40%;
+      overflow: hidden;
+      border-radius: 14px 0 0 14px;
+      align-self: stretch;
+    }
+    .top3-card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 8s cubic-bezier(0.12, 0, 0.18, 1);
+    }
+    .top3-card:hover .top3-card__img { transform: scale(1.06); }
+    .top3-card__medal {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 3;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--f-display);
+      font-size: 0.95rem;
+    }
+    .top3-card__medal--2 {
+      background: linear-gradient(135deg, #9ba4b5, #c8d0de);
+      color: #1a2030;
+      box-shadow: 0 3px 12px rgba(150, 160, 180, 0.45);
+    }
+    .top3-card__medal--3 {
+      background: linear-gradient(135deg, #8b5e3c, #c4854a);
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(139, 94, 60, 0.45);
+    }
+    .top3-card__body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+    .top3-card__film-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--f-title);
+      font-size: 0.43rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 160, 82, 0.55);
+    }
+    .top3-card__title {
+      font-family: var(--f-editorial);
+      font-size: 0.96rem;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--or-titre);
+      line-height: 1.25;
+    }
+    .top3-card__tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .top3-card__meta { display: flex; align-items: center; gap: 5px; }
+    .top3-card__stars { display: flex; gap: 1px; font-size: 0.68rem; }
+    .top3-card__stars span { color: var(--dore-clair); }
+    .top3-card__stars .star-e { color: rgba(196, 160, 82, 0.22); }
+    .top3-card__foot {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .top3-card__desc {
+      font-size: 0.65rem;
+      color: rgba(232, 232, 232, 0.48);
+      line-height: 1.55;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .top3-card__btn {
+      font-family: var(--f-title);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 160, 82, 0.65);
+      text-decoration: none;
+      transition: color 0.22s, gap 0.22s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .top3-card__btn:hover { color: var(--or-titre); gap: 7px; }
+    .top3-card__btn::after { content: "\2192"; }
+
+    /* --- Niveaux contributeur --- */
+    .lvl-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      background: rgba(13, 27, 42, 0.75);
+    }
+    .lvl-badge--sm { padding: 4px 9px; gap: 5px; }
+    .lvl-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(196, 160, 82, 0.08);
+      border: 1.5px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .lvl-av img { width: 100%; height: 100%; object-fit: cover; }
+    .lvl-badge--sm .lvl-av { width: 22px; height: 22px; }
+    .lvl-info { display: flex; flex-direction: column; gap: 1px; }
+    .lvl-name {
+      font-family: var(--f-title);
+      font-size: 0.56rem;
+      font-weight: 600;
+      color: var(--argent);
+    }
+    .lvl-badge--sm .lvl-name { font-size: 0.49rem; }
+    .lvl-title {
+      font-size: 0.46rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+    .lvl-badge--sm .lvl-title { font-size: 0.42rem; }
+    /* Couleurs niveaux */
+    .lvl--legend {
+      border-color: rgba(196, 160, 82, 0.38);
+      background: rgba(196, 160, 82, 0.06);
+    }
+    .lvl--legend .lvl-title { color: var(--or-titre); }
+    .lvl--legend .lvl-av { border-color: rgba(196, 160, 82, 0.45); }
+    .lvl--1 {
+      border-color: rgba(65, 90, 119, 0.3);
+    }
+    .lvl--1 .lvl-title { color: rgba(196, 160, 82, 0.52); }
+
+    /* --- CTA doré dans top3 --- */
+    .top3-cta {
+      background: linear-gradient(145deg, #8b6914 0%, #b8882a 22%, #c4a052 42%, #d4a843 55%, #f2c84b 68%, #d4a843 80%, #b8882a 100%);
+      border: 1px solid rgba(196, 160, 82, 0.4);
+      box-shadow: 0 8px 30px rgba(184, 136, 42, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .top3-cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+    .top3-cta:hover {
+      border-color: rgba(196, 160, 82, 0.65);
+      box-shadow: 0 18px 50px rgba(184, 136, 42, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .top3-cta__shimmer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    .top3-cta__shimmer::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+      transform: translateX(-120%) skewX(-18deg);
+    }
+    .top3-cta:hover .top3-cta__shimmer::after {
+      animation: ctaShimmer 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .top3-cta__icon-col {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+      width: 40%;
+      overflow: hidden;
+    }
+    .top3-cta__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .top3-cta__icon-col::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(to right, rgba(140, 100, 20, 0.15) 0%, rgba(196, 160, 52, 0.82) 100%);
+    }
+    .top3-cta__body {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .top3-cta__eyebrow {
+      font-family: var(--f-title);
+      font-size: 0.46rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(20, 10, 0, 0.42);
+    }
+    .top3-cta__title {
+      font-family: var(--f-display);
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      line-height: 0.96;
+      color: var(--bleu-nuit);
+    }
+    .top3-cta__title span { color: rgba(20, 10, 0, 0.6); }
+    .top3-cta__stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .top3-cta__stat { display: flex; flex-direction: column; align-items: center; }
+    .top3-cta__stat-val {
+      font-family: var(--f-display);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      color: var(--bleu-nuit);
+      line-height: 1;
+    }
+    .top3-cta__stat-lbl {
+      font-size: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(20, 10, 0, 0.45);
+      margin-top: 2px;
+    }
+    .top3-cta__stat-sep {
+      width: 1px;
+      height: 22px;
+      background: rgba(20, 10, 0, 0.18);
+      flex-shrink: 0;
+    }
+    .top3-cta__foot {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(20, 10, 0, 0.12);
+    }
+    .top3-cta__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 14px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--bleu-nuit);
+      text-decoration: none;
+      font-family: var(--f-title);
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--or-titre);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+      transition: all 0.28s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .top3-cta__btn:hover {
+      background: #0a1520;
+      transform: translateY(-2px);
+      color: var(--dore-clair);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 900px) {
+      :root { --page-px: 32px; }
+      .top3-layout { flex-direction: column; }
+      .top3-col-left { flex: none; width: 100%; }
+      .top3-col-right { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      :root { --page-px: 20px; }
+    }
+    @media (max-width: 540px) {
+      .top3-card { flex-direction: column; }
+      .top3-card__img-wrap { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="top-recettes-section" id="films">
+    <div class="wrap">
+
+      <!-- En-tête -->
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px">
+        <div>
+          <div class="section-label">Les incontournables</div>
+          <h2 class="section-title">Top 3 Recettes</h2>
+          <p class="section-sub">Les meilleures recettes inspirées du grand écran</p>
+        </div>
+        <a href="#" class="genres-see-all">Voir toutes les recettes</a>
+      </div>
+
+      <div class="top3-layout">
+
+        <!-- ① FEATURED — Recette #1 -->
+        <div class="top3-col-left">
+          <div class="top3-featured">
+            <div class="top3-featured__img-wrap">
+              <img class="top3-featured__img"
+                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&q=80"
+                alt="Apple Pie" loading="lazy">
+              <div class="top3-featured__overlay"></div>
+              <div class="top3-featured__medal">1</div>
+              <button class="top3-featured__fav" aria-label="Favoris">♡</button>
+              <span class="top3-featured__film-badge">🎬 American Pie</span>
+            </div>
+            <div class="top3-featured__body">
+              <span class="top3-featured__eyebrow">🏆 Recette n°1 de la communauté</span>
+              <h3 class="top3-featured__title">Apple Pie façon American Pie</h3>
+              <div class="top3-featured__tags">
+                <span class="djc-recette__tag djc-recette__tag--or top3-tag--sm">Facile</span>
+                <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--sm">Dessert</span>
+              </div>
+              <div class="top3-featured__meta">
+                <div class="top3-featured__stars">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <div class="top3-featured__infos">
+                  <span>⏱ 75 min</span>
+                  <span>👥 8 pers.</span>
+                </div>
+              </div>
+              <p class="top3-featured__desc">
+                La tarte aux pommes iconique du film culte, avec sa garniture caramélisée à la cannelle et sa pâte sablée dorée. Un classique américain qui sent bon l'été...
+              </p>
+              <div class="top3-featured__foot">
+                <div class="lvl-badge lvl--legend">
+                  <div class="lvl-av">
+                    <img src="https://i.pravatar.cc/68?img=47" alt="" loading="lazy">
+                  </div>
+                  <div class="lvl-info">
+                    <span class="lvl-name">Chef Ciné Délices</span>
+                    <span class="lvl-title">★★★★★ Légende</span>
+                  </div>
+                </div>
+                <a href="#" class="top3-featured__btn">Voir la recette →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② COLONNE DROITE -->
+        <div class="top3-col-right">
+
+          <!-- Recette #2 -->
+          <div class="top3-card">
+            <div class="top3-card__img-wrap">
+              <img class="top3-card__img"
+                src="https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80"
+                alt="Ratatouille" loading="lazy">
+              <div class="top3-card__medal top3-card__medal--2">2</div>
+            </div>
+            <div class="top3-card__body">
+              <span class="top3-card__film-badge">🎬 Ratatouille</span>
+              <h3 class="top3-card__title">Ratatouille de Remy</h3>
+              <div class="top3-card__tags">
+                <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs">Moyen</span>
+                <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs">Plat principal</span>
+              </div>
+              <div class="top3-card__meta">
+                <div class="top3-card__stars">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span class="star-e">★</span>
+                </div>
+              </div>
+              <p class="top3-card__desc">La tian provençale qui a ému le critique Ego. Courgettes, tomates et poivrons en fines lamelles...</p>
+              <div class="top3-card__foot">
+                <div class="lvl-badge lvl-badge--sm lvl--1">
+                  <div class="lvl-av">
+                    <img src="https://i.pravatar.cc/68?img=12" alt="" loading="lazy">
+                  </div>
+                  <div class="lvl-info">
+                    <span class="lvl-name">MarieCook</span>
+                    <span class="lvl-title">★ Popcorn Rookie</span>
+                  </div>
+                </div>
+                <a href="#" class="top3-card__btn">Voir</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recette #3 -->
+          <div class="top3-card">
+            <div class="top3-card__img-wrap">
+              <img class="top3-card__img"
+                src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80"
+                alt="Tiramisu" loading="lazy">
+              <div class="top3-card__medal top3-card__medal--3">3</div>
+            </div>
+            <div class="top3-card__body">
+              <span class="top3-card__film-badge">🎬 Le Parrain</span>
+              <h3 class="top3-card__title">Tiramisu du Parrain</h3>
+              <div class="top3-card__tags">
+                <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs">Difficile</span>
+                <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs">Dessert</span>
+              </div>
+              <div class="top3-card__meta">
+                <div class="top3-card__stars">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+              </div>
+              <p class="top3-card__desc">Un tiramisu sicilien à la manière de Don Corleone, avec une touche d'amaretto et de café serré...</p>
+              <div class="top3-card__foot">
+                <div class="lvl-badge lvl-badge--sm lvl--1">
+                  <div class="lvl-av">
+                    <img src="https://i.pravatar.cc/68?img=33" alt="" loading="lazy">
+                  </div>
+                  <div class="lvl-info">
+                    <span class="lvl-name">PastaCinema</span>
+                    <span class="lvl-title">★ Popcorn Rookie</span>
+                  </div>
+                </div>
+                <a href="#" class="top3-card__btn">Voir</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA doré -->
+          <div class="top3-card top3-cta">
+            <div class="top3-cta__shimmer"></div>
+            <div class="top3-cta__icon-col">
+              <img class="top3-cta__img"
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80"
+                alt="" loading="lazy">
+            </div>
+            <div class="top3-cta__body">
+              <span class="top3-cta__eyebrow">Contribuez</span>
+              <h3 class="top3-cta__title">Partagez<br><span>votre recette</span></h3>
+              <div class="top3-cta__stats">
+                <div class="top3-cta__stat">
+                  <span class="top3-cta__stat-val">3</span>
+                  <span class="top3-cta__stat-lbl">Membres</span>
+                </div>
+                <div class="top3-cta__stat-sep"></div>
+                <div class="top3-cta__stat">
+                  <span class="top3-cta__stat-val">6</span>
+                  <span class="top3-cta__stat-lbl">Recettes</span>
+                </div>
+                <div class="top3-cta__stat-sep"></div>
+                <div class="top3-cta__stat">
+                  <span class="top3-cta__stat-val">5</span>
+                  <span class="top3-cta__stat-lbl">Films</span>
+                </div>
+              </div>
+              <div class="top3-cta__foot">
+                <a href="#" class="top3-cta__btn">✦ Ajouter ma recette</a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.top3-col-right -->
+      </div><!-- /.top3-layout -->
+
+    </div><!-- /.wrap -->
+  </section>
+
+</body>
+</html>

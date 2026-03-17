@@ -1,51 +1,67 @@
 /**
  * Script pour charger l'image d'un film existant dans la BDD
  * quand la page est chargée avec un film pré-sélectionné (via URL /add-recipes-movies/:id)
+ *
+ * Si le film a une image locale (cardPath ≠ default), l'affiche directement.
+ * Sinon, si le film a un tmdb_id, récupère le poster depuis l'API TMDB.
  */
 (function () {
   "use strict";
 
+  const DEFAULT_IMG = "/images/image-default-movie.jpg";
+
   document.addEventListener("DOMContentLoaded", async () => {
-    // Vérifier si un filmId est présent dans le champ hidden
     const filmIdHidden = document.getElementById("filmId-hidden");
-    if (!filmIdHidden || !filmIdHidden.value) {
-      return; // Pas de film existant sélectionné
-    }
+    if (!filmIdHidden || !filmIdHidden.value) return;
 
     const filmId = filmIdHidden.value.trim();
-    if (!filmId || isNaN(parseInt(filmId))) {
-      return; // ID invalide
-    }
+    if (!filmId || isNaN(parseInt(filmId))) return;
 
-    // Récupérer les informations complètes du film pour obtenir son image
+    const filmSelectedImage = document.querySelector(".film-selected-image img");
+    if (!filmSelectedImage) return;
+
     try {
+      // 1. Récupérer les données du film depuis la BDD
       const response = await fetch(`/movies/api/get/${filmId}`);
+      if (!response.ok) return;
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+      if (!data.success || !data.movie) return;
 
-        // Si le film existe avec une image, l'afficher (utiliser cardPath si disponible)
-        const imagePath = data.movie?.cardPath || data.movie?.picture;
-        if (data.success && data.movie && imagePath) {
-          const filmSelectedImage = document.querySelector(
-            ".film-selected-image img"
+      let imagePath = data.movie?.cardPath || data.movie?.picture;
+
+      // 2. Si pas d'image locale, tenter de récupérer le poster TMDB
+      if ((!imagePath || imagePath === DEFAULT_IMG) && data.movie.tmdb_id) {
+        const type = data.movie.type || "film";
+        try {
+          const tmdbRes = await fetch(
+            `/movies/get-tmdb-info/${data.movie.tmdb_id}?type=${type}`
           );
-
-          if (filmSelectedImage) {
-            filmSelectedImage.src = imagePath.startsWith("/")
-              ? imagePath
-              : `/${imagePath}`;
-            filmSelectedImage.alt = `Affiche du film ${data.movie.title || ""}`;
-
-            // Cacher le message "* L'image de votre film sera intégrée..."
-            const filmImageNote = document.querySelector(".film-image-note");
-            if (filmImageNote) {
-              filmImageNote.style.display = "none";
+          if (tmdbRes.ok) {
+            const tmdbData = await tmdbRes.json();
+            if (tmdbData.success && tmdbData.movie?.poster) {
+              imagePath = tmdbData.movie.poster;
             }
-
-            console.log("✅ Image du film chargée:", imagePath);
           }
+        } catch (_) {
+          // TMDB indisponible : on garde l'image par défaut
         }
+      }
+
+      // 3. Appliquer l'image si elle n'est pas le fallback par défaut
+      if (imagePath && imagePath !== DEFAULT_IMG) {
+        // Gère les URLs absolues (https://image.tmdb.org/...) ET les chemins locaux (/images/...)
+        filmSelectedImage.src = imagePath.startsWith("http")
+          ? imagePath
+          : imagePath.startsWith("/")
+          ? imagePath
+          : `/${imagePath}`;
+        filmSelectedImage.alt = `Affiche du film ${data.movie.title || ""}`;
+
+        const filmImageNote = document.querySelector(".film-image-note");
+        if (filmImageNote) filmImageNote.style.display = "none";
+
+        console.log("✅ Image du film chargée:", imagePath);
       }
     } catch (error) {
       console.error("❌ Erreur lors du chargement de l'image du film:", error);

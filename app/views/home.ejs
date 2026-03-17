@@ -343,40 +343,37 @@ function genreSlug(name) {
 
           <div class="duo-jour-grid">
 
-            <!-- ① FILM — affiche 2:3 cadrée — topMovies[0] -->
-            <% if (topMovies && topMovies[0]) { %>
-            <a href="/recipes-movie/<%= topMovies[0].slug || topMovies[0].id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= topMovies[0].title %>">
-              <img class="djc-film__img" src="<%= topMovies[0].cardPath || topMovies[0].picture %>" alt="Affiche <%= topMovies[0].title %>" loading="lazy">
+            <!-- ① FILM — affiche 2:3 cadrée — film du duo (lié à topRecipe) -->
+            <% if (duoFilm) { %>
+            <a href="/recipes-movie/<%= duoFilm.slug || duoFilm.id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= duoFilm.title %>">
+              <img class="djc-film__img" src="<%= duoFilm.cardPath || duoFilm.picture %>" alt="Affiche <%= duoFilm.title %>" loading="lazy">
               <div class="djc-film__overlay"></div>
               <div class="djc-film__top">
                 <span class="djc-film__badge">🎬 Film</span>
-                <button class="djc-film__fav btn-fav" data-id="<%= topMovies[0].id %>" data-type="movie" aria-label="Ajouter aux favoris">♡</button>
+                <button class="djc-film__fav btn-fav" data-id="<%= duoFilm.id %>" data-type="movie" aria-label="Ajouter aux favoris">♡</button>
               </div>
               <div class="djc-film__bottom">
                 <div class="djc-film__tags">
-                  <% if (topMovies[0].genre) { %>
-                  <span class="film-badge film-badge--genre"><%= topMovies[0].genre.split(',')[0].trim() %></span>
+                  <% if (duoFilm.genre) { %>
+                  <span class="film-badge film-badge--genre"><%= duoFilm.genre.split(',')[0].trim() %></span>
                   <% } %>
                 </div>
-                <span class="djc-film__title"><%= topMovies[0].title %></span>
-                <% if (topMovies[0].year) { %><span class="djc-film__sub"><%= topMovies[0].year %></span><% } %>
+                <span class="djc-film__title"><%= duoFilm.title %></span>
+                <% if (duoFilm.year) { %><span class="djc-film__sub"><%= duoFilm.year %></span><% } %>
                 <div class="djc-film__meta">
                   <div class="djc-film__stars">
                     <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                   </div>
-                  <% if (topMovies[0].recipeCount) { %>
-                  <span class="djc-film__count">🍴 <%= topMovies[0].recipeCount %> recette<%= topMovies[0].recipeCount > 1 ? 's' : '' %></span>
+                  <% if (duoFilm.recipeCount) { %>
+                  <span class="djc-film__count">🍴 <%= duoFilm.recipeCount %> recette<%= duoFilm.recipeCount > 1 ? 's' : '' %></span>
                   <% } %>
                 </div>
               </div>
             </a>
             <% } %>
 
-            <!-- ② CTA DORÉ — wrapper colonne : eyebrow + Golden Ticket -->
+            <!-- ② CTA DORÉ — wrapper colonne : Golden Ticket + texte explicatif -->
             <div class="djc-cta-col">
-
-              <!-- Eyebrow dynamique au-dessus de la CTA -->
-              <div class="djc-eyebrow">🎬&nbsp;<%= totalMovies %> FILMS VOUS ATTENDENT</div>
 
               <!-- Golden Ticket -->
               <div class="djc-cta" data-reveal="up">
@@ -415,6 +412,17 @@ function genreSlug(name) {
                 </div>
               </div>
             </div><!-- /.djc-cta -->
+
+              <!-- Texte explicatif sous la card dorée -->
+              <div class="djc-explain">
+                <div class="djc-explain__label">Comment ça marche ?</div>
+                <p class="djc-explain__text">
+                  Chaque jour, Ciné Délices sélectionne un film et une recette qui s'accordent parfaitement.
+                  Le duo est renouvelé quotidiennement pour vous proposer de nouvelles associations culinaires inspirées du grand écran.
+                </p>
+                <a href="/movies" class="djc-explain__link">Explorer tous les films →</a>
+              </div>
+
             </div><!-- /.djc-cta-col -->
 
             <!-- ③ RECETTE — format 3:2 — topRecipe — maquette lines 1626-1668 -->
@@ -484,12 +492,11 @@ function genreSlug(name) {
           </div>
 
           <% if (recipes && recipes.length > 0) { %>
-          <div class="top3-layout" data-reveal-stagger>
+          <div class="top3-layout bento" data-reveal-stagger>
 
-            <!-- COLONNE GAUCHE : featured #1 — recipes[0] -->
-            <div class="top3-col-left">
+            <!-- ① HERO : featured #1 — col 1, row 1+2 -->
               <% if (recipes[0]) { %>
-              <div class="top3-featured">
+              <div class="top3-featured bento__cell cell--hero">
                 <div class="top3-featured__img-wrap">
                   <img class="top3-featured__img" src="<%= recipes[0].picture %>" alt="<%= recipes[0].name %>" loading="lazy">
                   <div class="top3-featured__overlay"></div>
@@ -538,20 +545,17 @@ function genreSlug(name) {
                 </div>
               </div>
               <% } %>
-            </div>
 
-            <!-- COLONNE DROITE : cards #2 & #3 empilées -->
-            <div class="top3-col-right">
-
-              <!-- #2 — recipes[1] -->
+            <!-- ② VERTICAL : card #2 — col 2, row 1 -->
               <% if (recipes[1]) { %>
-              <div class="top3-card">
+              <div class="top3-card bento__cell cell--vertical">
                 <div class="top3-card__img-wrap">
                   <img class="top3-card__img" src="<%= recipes[1].picture %>" alt="<%= recipes[1].name %>" loading="lazy">
+                  <div class="top3-card__overlay"></div>
                   <div class="top3-card__medal top3-card__medal--2">2</div>
+                  <span class="top3-card__film-badge">🎬 <%= recipes[1].Movie.title %></span>
                 </div>
                 <div class="top3-card__body">
-                  <span class="top3-card__film-badge">🎬 <%= recipes[1].Movie.title %></span>
                   <h3 class="top3-card__title"><%= recipes[1].name %></h3>
                   <div class="top3-card__tags">
                     <% if (recipes[1].difficulty) { %>
@@ -586,15 +590,16 @@ function genreSlug(name) {
               </div>
               <% } %>
 
-              <!-- #3 — recipes[2] -->
+              <!-- ③ VERTICAL : card #3 — col 3, row 1 -->
               <% if (recipes[2]) { %>
-              <div class="top3-card">
+              <div class="top3-card bento__cell cell--vertical">
                 <div class="top3-card__img-wrap">
                   <img class="top3-card__img" src="<%= recipes[2].picture %>" alt="<%= recipes[2].name %>" loading="lazy">
+                  <div class="top3-card__overlay"></div>
                   <div class="top3-card__medal top3-card__medal--3">3</div>
+                  <span class="top3-card__film-badge">🎬 <%= recipes[2].Movie.title %></span>
                 </div>
                 <div class="top3-card__body">
-                  <span class="top3-card__film-badge">🎬 <%= recipes[2].Movie.title %></span>
                   <h3 class="top3-card__title"><%= recipes[2].name %></h3>
                   <div class="top3-card__tags">
                     <% if (recipes[2].difficulty) { %>
@@ -629,11 +634,12 @@ function genreSlug(name) {
               </div>
               <% } %>
 
-              <!-- CTA participe-banner — intégrée comme card du grid -->
-              <div class="top3-card top3-cta">
+              <!-- ④ CTA DORÉ — col 2-3, row 2 -->
+              <div class="top3-card top3-cta bento__cell cell--cta">
                 <div class="top3-cta__shimmer"></div>
                 <div class="top3-cta__icon-col">
-                  <div class="top3-cta__icon">🎬</div>
+                  <img class="top3-cta__img" src="/images/top3-cta-img-card-gold.jpg" alt="" loading="lazy">
+                  <div class="top3-cta__img-overlay"></div>
                 </div>
                 <div class="top3-cta__body">
                   <span class="top3-cta__eyebrow">Contribuez</span>
@@ -660,7 +666,6 @@ function genreSlug(name) {
                 </div>
               </div>
 
-            </div>
           </div>
           <% } %>
 

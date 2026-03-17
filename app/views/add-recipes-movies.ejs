@@ -68,14 +68,18 @@
     <!-- ═══════════ STEPPER STICKY ═══════════ -->
     <div class="arm-stepper-wrap">
       <nav class="arm-stepper" aria-label="Progression du formulaire">
-        <a class="arm-step arm-step--active" href="#arm-s1">
-          <div class="arm-step__bubble">1</div>
+        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--done<% } else { %>arm-step--active<% } %>" href="#arm-s1">
+          <div class="arm-step__bubble">
+            <% if (typeof newMovie !== 'undefined' && newMovie) { %>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <% } else { %>1<% } %>
+          </div>
           <div class="arm-step__info">
             <span class="arm-step__label">Étape 1 / 3</span>
             <span class="arm-step__name">Mon film ou ma série</span>
           </div>
         </a>
-        <a class="arm-step" href="#arm-s2">
+        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--active<% } %>" href="#arm-s2">
           <div class="arm-step__bubble">2</div>
           <div class="arm-step__info">
             <span class="arm-step__label">Étape 2 / 3</span>
@@ -146,10 +150,47 @@
          SECTION 1 — MON FILM
          Layout 2 colonnes : champs | poster preview
       ══════════════════════════════════════════ -->
-      <article class="arm-card" id="arm-s1" aria-labelledby="arm-s1-title">
+      <article class="arm-card <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-card--confirmed<% } %>" id="arm-s1" aria-labelledby="arm-s1-title">
         <span class="arm-card__num" aria-hidden="true">01</span>
         <div class="arm-body">
 
+        <% if (typeof newMovie !== 'undefined' && newMovie) { %>
+          <!-- ── Film existant : résumé compact ── -->
+          <div class="arm-film-confirmed">
+            <div class="arm-film-confirmed__poster film-selected-image">
+              <img
+                src="<%= newMovie.cardPath || newMovie.picture || '/images/image-default-movie.jpg' %>"
+                alt="Affiche <%= newMovie.title %>"
+                onerror="this.onerror=null;this.src='/images/image-default-movie.jpg'"
+              />
+            </div>
+            <div class="arm-film-confirmed__info">
+              <span class="arm-film-confirmed__check">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                Film sélectionné
+              </span>
+              <h2 class="arm-film-confirmed__title" id="arm-s1-title"><%= newMovie.title %></h2>
+              <div class="arm-film-confirmed__meta">
+                <% if (newMovie.year) { %><span class="arm-film-confirmed__year"><%= newMovie.year %></span><% } %>
+                <% if (newMovie.genre) { %><span class="arm-film-confirmed__genre"><%= newMovie.genre %></span><% } %>
+              </div>
+              <% if (newMovie.synopsis) { %>
+              <p class="arm-film-confirmed__synopsis"><%= newMovie.synopsis.length > 140 ? newMovie.synopsis.slice(0, 140) + '…' : newMovie.synopsis %></p>
+              <% } %>
+            </div>
+            <a href="/add-recipes-movies/" class="arm-film-confirmed__change">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Changer de film
+            </a>
+          </div>
+          <!-- Champ caché pour les JS qui lisent #film-preview-form -->
+          <form id="film-preview-form" method="post" onsubmit="return false;" style="display:none">
+            <input type="text" id="film-name" value="<%= newMovie.title %>" />
+            <input type="number" id="film-year" value="<%= newMovie.year %>" />
+            <select id="film-genre"><option value="<%= newMovie.genre %>" selected><%= newMovie.genre %></option></select>
+            <textarea id="film-synopsis"><%= newMovie.synopsis || '' %></textarea>
+          </form>
+        <% } else { %>
           <form id="film-preview-form" method="post" onsubmit="return false;">
             <div class="arm-s1-layout">
 
@@ -190,10 +231,11 @@
                         autocomplete="off"
                         <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                         placeholder="Ex: Retour vers le futur, Breaking Bad..."
+                        value=""
                         <% } else { %>
                         placeholder="<%= newMovie.title %>"
+                        value="<%= newMovie.title %>"
                         <% } %>
-                        value=""
                       />
                       <div
                         id="film-search-results"
@@ -223,10 +265,11 @@
                       max="<%= new Date().getFullYear() + 5 %>"
                       <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                       placeholder="Ex: 1985"
+                      value=""
                       <% } else { %>
                       placeholder="<%= newMovie.year %>"
+                      value="<%= newMovie.year %>"
                       <% } %>
-                      value=""
                     />
                   </div>
 
@@ -241,7 +284,7 @@
                       <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                       <option value="" disabled selected>Choisir…</option>
                       <% } else { %>
-                      <option value=""><%= newMovie.genre %></option>
+                      <option value="<%= newMovie.genre %>" selected><%= newMovie.genre %></option>
                       <% } %>
                       <option value="action">Action</option>
                       <option value="animation">Animation</option>
@@ -318,6 +361,7 @@
                     <img
                       src="<%= newMovie.cardPath || newMovie.picture %>"
                       alt="Affiche du film ajouté"
+                      onerror="this.onerror=null;this.src='/images/image-default-movie.jpg'"
                     />
                     <% } else { %>
                     <img
@@ -363,6 +407,7 @@
 
             </div><!-- /arm-s1-layout -->
           </form>
+        <% } %>
 
         </div>
       </article>

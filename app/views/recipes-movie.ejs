@@ -118,9 +118,12 @@
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
                   Voir les recettes
                 </a>
-                <a class="btn btn--outline-silver" href="/add-recipes-movies/<%= movie.id %>">
-                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                  Ajouter ma recette
+                <a class="fh-btn-add" href="/add-recipes-movies/<%= movie.id %>">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  <span class="fh-btn-add__label">
+                    <span class="fh-btn-add__main">Ajouter ma recette</span>
+                    <span class="fh-btn-add__film">pour « <%= movie.title.length > 26 ? movie.title.slice(0, 26) + '…' : movie.title %> »</span>
+                  </span>
                 </a>
               </div>
             </div>
@@ -186,7 +189,10 @@
                   <a class="btn btn--primary" href="/add-recipes-movies/<%= movie.id %>">
                     <span class="btn__shimmer"></span>
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                    <span class="btn__text">Ajouter ma recette</span>
+                    <span class="btn__text">
+                      Ma recette pour ce film
+                      <span class="btn__subtext"><%= movie.title.length > 28 ? movie.title.slice(0, 28) + '…' : movie.title %></span>
+                    </span>
                   </a>
                 </div>
               </div>
@@ -324,7 +330,7 @@
                   <div class="gcc-actions">
                     <a href="/add-recipes-movies/<%= movie.id %>" class="btn-gcc">
                       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                      Ajouter ma recette
+                      Partager ma recette
                     </a>
                   </div>
                 </div>

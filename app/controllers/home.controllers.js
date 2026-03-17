@@ -43,6 +43,16 @@ const homeController = {
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
 
+      // Duo du Jour : enrichir le film lié à topRecipe (garantit film ↔ recette cohérents)
+      let duoFilm = null;
+      if (topRecipe && topRecipe.Movie) {
+        const [enriched] = enrichMoviesWithImagePaths([topRecipe.Movie]);
+        const duoRecipeCount = await Recipe.count({
+          where: { status: "approved", id_movie: topRecipe.Movie.id },
+        });
+        duoFilm = { ...enriched, recipeCount: duoRecipeCount };
+      }
+
       // afficher 4 films aléatoirement sur la page d'accueil
       const topMovies = await Movie.findAll({
         where: { status: "approved" },
@@ -130,6 +140,7 @@ const homeController = {
       res.render("home", {
         recipes,
         topRecipe,
+        duoFilm,
         topMovies: enrichedTopMovies,
         recipeImages,
         genreStats,

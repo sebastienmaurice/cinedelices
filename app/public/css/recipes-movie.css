@@ -616,6 +616,54 @@ body.film-page main {
   min-width: 200px;
 }
 
+/* Bouton "Ajouter ma recette" dans fh-actions */
+.fh-btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(196, 160, 82, 0.38);
+  background: transparent;
+  color: rgba(212, 220, 232, 0.85);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+.fh-btn-add:hover {
+  border-color: rgba(196, 160, 82, 0.65);
+  color: rgba(240, 240, 248, 1);
+  background: rgba(196, 160, 82, 0.06);
+  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.08);
+}
+
+/* Sous-label film dans fh-btn-add */
+.fh-btn-add__label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.fh-btn-add__main {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.fh-btn-add__film {
+  font-size: 0.65rem;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(196, 160, 82, 0.55);
+  line-height: 1.1;
+  transition: color 0.25s;
+}
+.fh-btn-add:hover .fh-btn-add__film {
+  color: rgba(196, 160, 82, 0.8);
+}
+
 /* Toolbar : filtre catégorie + bouton ajouter */
 .fh-toolbar {
   display: flex;
@@ -631,24 +679,60 @@ body.film-page main {
   white-space: nowrap;
 }
 
+/* Bouton toolbar : sous-label film */
+.fh-toolbar .btn__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.fh-toolbar .btn__subtext {
+  font-size: 0.6rem;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.68;
+  line-height: 1.1;
+}
+
 /* Override du select dans la toolbar cinématographique */
 .fh-toolbar .search__select__film {
+  appearance: none;
+  -webkit-appearance: none;
   background-color: rgba(15, 30, 48, 0.92);
-  border: 1px solid rgba(65, 90, 119, 0.4);
-  color: var(--argent, #e8e8e8);
+  border: 1px solid rgba(65, 90, 119, 0.38);
+  color: rgba(212, 220, 232, 0.88);
   padding: 0.5rem 2rem 0.5rem 0.85rem;
   border-radius: 8px;
   font-size: 0.72rem;
   height: 36px;
+  /* Chevron fin argenté — constant, pas de changement au hover */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23a0b0c8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 L6 6.5 L11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 10px;
+  transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
 }
-
-.fh-toolbar .search__select__film:hover,
+.fh-toolbar .search__select__film:hover {
+  background-color: rgba(22, 42, 66, 0.98);
+  border-color: rgba(196, 160, 82, 0.32);
+  color: rgba(228, 235, 245, 0.95);
+  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.07);
+}
 .fh-toolbar .search__select__film:focus {
-  background-color: rgba(196, 160, 82, 0.08);
-  border-color: rgba(196, 160, 82, 0.4);
-  color: var(--argent, #e8e8e8);
+  background-color: rgba(22, 42, 66, 0.98);
+  border-color: rgba(196, 160, 82, 0.45);
+  color: rgba(228, 235, 245, 0.95);
+  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.1);
   outline: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23C4A052' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+/* Dropdown panel — fond sombre, texte clair */
+.fh-toolbar .search__select__film option {
+  background-color: #0e1d2f;
+  color: #c8d4e4;
+}
+.fh-toolbar .search__select__film option:checked {
+  background-color: #1a2d46;
+  color: #f2c84b;
 }
 
 /* ====================================================== */
@@ -2424,22 +2508,6 @@ body.film-page main {
   border-top: 1px solid rgba(236, 239, 241, 0.1);
 }
 
-.btn--outline-silver {
-  background: transparent;
-  border: 1px solid rgba(236, 239, 241, 0.25);
-  color: var(--argent-ecran);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn--outline-silver:hover {
-  border-color: rgba(236, 239, 241, 0.5);
-  background: rgba(236, 239, 241, 0.05);
-}
 
 /* Toast notification */
 .banner-toast {
