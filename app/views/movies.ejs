@@ -255,11 +255,12 @@
 
               <!-- Synopsis -->
               <p class="fcard__desc"><%= movieSynopsis %></p>
+              <button class="fcard__desc-toggle" aria-expanded="false">voir plus</button>
 
               <!-- Footer : étoiles + lien visible en vue liste & mobile -->
               <div class="fcard__footer">
-                <span class="fcard__foot-label">Note</span>
                 <div class="fcard__stars" data-entity-id="<%= movie.id %>" data-entity-type="movie" data-average="<%= displayRating %>">
+                  <span class="fcard__foot-label">Note</span>
                   <% for (let i = 1; i <= 5; i++) { %>
                   <span class="<%= i <= starsRounded ? 's' : 'se' %>">★</span>
                   <% } %>
@@ -383,6 +384,31 @@
           vList.setAttribute('aria-pressed', 'true');
           vGrid.classList.remove('active');
           vGrid.setAttribute('aria-pressed', 'false');
+          updateSynopsisToggles(true);
+        });
+        vGrid.addEventListener('click', function() {
+          updateSynopsisToggles(false);
+        });
+
+        function updateSynopsisToggles(isListView) {
+          if (!isListView) {
+            document.querySelectorAll('.fcard__desc').forEach(function(desc) {
+              desc.classList.remove('is-expanded');
+            });
+            document.querySelectorAll('.fcard__desc-toggle').forEach(function(btn) {
+              btn.textContent = 'voir plus';
+              btn.setAttribute('aria-expanded', 'false');
+            });
+          }
+        }
+
+        document.getElementById('movies__list').addEventListener('click', function(e) {
+          const btn = e.target.closest('.fcard__desc-toggle');
+          if (!btn) return;
+          const desc = btn.previousElementSibling;
+          const expanded = desc.classList.toggle('is-expanded');
+          btn.textContent = expanded ? 'voir moins' : 'voir plus';
+          btn.setAttribute('aria-expanded', String(expanded));
         });
       })();
     </script>

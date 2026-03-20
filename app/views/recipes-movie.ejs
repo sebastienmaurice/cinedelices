@@ -387,6 +387,16 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+    <script>
+      (function() {
+        const h1 = document.getElementById('filmTitle');
+        if (!h1) return;
+        const words = h1.textContent.trim().split(/\s+/);
+        if (words.length < 2) return;
+        const mid = Math.ceil(words.length / 2);
+        h1.innerHTML = words.slice(0, mid).join(' ') + ' <em>' + words.slice(mid).join(' ') + '</em>';
+      })();
+    </script>
 
   </body>
 </html>

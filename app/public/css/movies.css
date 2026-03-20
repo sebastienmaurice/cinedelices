@@ -606,8 +606,20 @@ body.movies-page main {
   padding: 13px 18px; justify-content: center; gap: 5px;
 }
 .films-grid.list-view .fcard__desc {
-  -webkit-line-clamp: 1; margin-bottom: 0;
+  -webkit-line-clamp: 2; margin-bottom: 0;
 }
+.films-grid.list-view .fcard__desc.is-expanded {
+  -webkit-line-clamp: unset; overflow: visible;
+}
+.fcard__desc-toggle {
+  display: none;
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-size: 0.65rem; color: rgba(196,160,82,.65);
+  font-family: var(--f-title); letter-spacing: 0.06em;
+  transition: color 0.2s;
+}
+.fcard__desc-toggle:hover { color: var(--dore-clair); }
+.films-grid.list-view .fcard__desc-toggle { display: inline-block; }
 
 /* Poster 2:3 */
 .fcard__poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
@@ -692,7 +704,7 @@ body.movies-page main {
 
 /* Stars */
 .fcard__stars {
-  display: flex; align-items: center; gap: 3px; font-size: 0.78rem;
+  display: flex; align-items: center; gap: 6px; font-size: 0.78rem;
 }
 
 /* Label "Note" — moodboard film-card__foot-label */

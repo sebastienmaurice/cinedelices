@@ -103,62 +103,40 @@ function enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsM
 }
 
 const recipesController = {
-  // Afficher toutes les recettes (filtre optionnel par auteur)
+  // Afficher toutes les recettes (filtre catégorie + recherche)
   async allRecipes(req, res) {
     try {
-      const rawAuthor = (req.query.author || "").trim();
-      let authorUser = null;
-      let authorDisplayName = "";
+      const category = (req.query.category || "all").trim().toLowerCase();
+      const q = (req.query.q || "").trim();
 
-      if (rawAuthor) {
-        authorUser = await User.findOne({
-          where: { pseudo: { [Op.iLike]: rawAuthor } },
-          attributes: ["id", "pseudo", "picture", "banner_image", "banner_status"],
-        });
+      const whereClause = { status: "approved" };
+      if (category !== "all") whereClause.category = category;
+      if (q) whereClause.name = { [Op.iLike]: `%${q}%` };
 
-        authorDisplayName = authorUser ? authorUser.pseudo : rawAuthor;
-      }
-
-      // Jointure User via alias "contributor" : récupère pseudo + avatar de l'auteur
+      // Jointure User (contributor) + Movie pour le badge film sur chaque card
       const recipes = await Recipe.findAll({
-        where: {
-          status: "approved",
-          ...(authorUser ? { id_user: authorUser.id } : {}),
-        },
+        where: whereClause,
         include: [
-          {
-            model: User,
-            as: "contributor",
-            attributes: ["id", "pseudo", "picture"],
-          },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
+          { model: Movie, attributes: ["id", "title", "slug"], required: false },
         ],
+        order: [["validated_at", "DESC"]],
       });
 
-      // Récupérer les favoris et notes de l'utilisateur connecté
       const recipeIds = recipes.map((r) => r.id);
       const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
       const userRatingsMap = await getUserRecipeRatings(req.userId);
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
       const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
 
-      // Image de profil de l'auteur pour le badge
-      const authorProfileImage = authorUser?.picture || null;
-      // Bannière custom de l'auteur (uniquement si validée pour l'affichage public)
-      const authorBannerImage = (authorUser?.banner_image && authorUser?.banner_status === "approved")
-        ? authorUser.banner_image
-        : null;
-      // Statut de la bannière (pour badge visible par l'auteur uniquement)
-      const authorBannerStatus = authorUser?.banner_status || null;
+      const distinctMovies = new Set(recipes.filter((r) => r.Movie).map((r) => r.Movie.id));
 
-      res.render("recipes-movie", {
-        movie: null,
+      res.render("all-recipes", {
         recipes: enrichedRecipes,
-        authorDisplayName,
-        isAuthorFiltered: Boolean(rawAuthor),
-        authorBannerImage,
-        authorBannerStatus,
-        authorProfileImage,
-        authorId: authorUser?.id || null,
+        totalCount: enrichedRecipes.length,
+        movieCount: distinctMovies.size,
+        categoryFilter: category,
+        searchQuery: q,
       });
     } catch (error) {
       return renderServerError(res, error);

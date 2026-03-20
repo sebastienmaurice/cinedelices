@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Ciné Délices — Toutes les recettes inspirées du cinéma, à découvrir et à cuisiner" />
+    <title>Recettes — Ciné Délices</title>
+
+    <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
+    <%- include("partials/head-resources") %>
+
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/movies.css" />
+    <link rel="stylesheet" href="/css/recipes-movie.css" />
+    <link rel="stylesheet" href="/css/all-recipes.css" />
+
+    <!-- scripts -->
+    <script src="/js/more-views.js" defer></script>
+  </head>
+
+  <body class="all-recipes-page">
+    <%- include("partials/header") %>
+
+    <main>
+
+      <!-- ╔╔ HERO ╔╔ -->
+      <section class="ar-hero" aria-labelledby="arTitle">
+        <div class="ar-hero__deco" aria-hidden="true">
+          <div class="ar-hero__bg"></div>
+          <div class="ar-hero__scanlines"></div>
+          <div class="ar-hero__vignette"></div>
+        </div>
+        <div class="ar-hero__content">
+
+          <!-- Colonne gauche : titre, stats, filtres catégorie -->
+          <div class="ar-hero__left">
+            <p class="ar-hero__eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+              Recettes Ciné Délices
+            </p>
+            <h1 class="ar-hero__title" id="arTitle">LES <em>RECETTES</em></h1>
+            <p class="ar-hero__sub">Toutes les recettes inspirées du cinéma, à cuisiner chez vous</p>
+
+            <!-- Stats + filtres catégorie — structure identique à movies -->
+            <div class="page-hero__meta-row">
+              <div class="page-hero__stats" aria-label="Statistiques des recettes">
+                <div class="hero-stat">
+                  <span class="hero-stat__num"><%= totalCount %></span>
+                  <span class="hero-stat__label">Recettes</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                  <span class="hero-stat__num"><%= movieCount %></span>
+                  <span class="hero-stat__label">Films représentés</span>
+                </div>
+              </div>
+              <div class="quick-tags-row">
+                <span class="qt-label">Catégorie :</span>
+                <a href="/recipes-movie/" class="qtag qtag-or <%= categoryFilter === 'all' ? 'active' : '' %>">Toutes</a>
+                <a href="/recipes-movie/?category=entr%C3%A9e" class="qtag qtag-or <%= categoryFilter === 'entrée' ? 'active' : '' %>">Entrée</a>
+                <a href="/recipes-movie/?category=plat" class="qtag qtag-or <%= categoryFilter === 'plat' ? 'active' : '' %>">Plat</a>
+                <a href="/recipes-movie/?category=dessert" class="qtag qtag-or <%= categoryFilter === 'dessert' ? 'active' : '' %>">Dessert</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Colonne droite : recherche -->
+          <div class="ar-hero__right" aria-label="Recherche de recettes">
+            <p class="ar-search-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Trouver une recette
+            </p>
+            <form class="ar-search-row" action="/recipes-movie/" method="GET" role="search">
+              <% if (categoryFilter !== 'all') { %>
+              <input type="hidden" name="category" value="<%= categoryFilter %>" />
+              <% } %>
+              <input
+                type="text"
+                id="ar-search-input"
+                name="q"
+                class="ar-search-input"
+                placeholder="Rechercher une recette..."
+                value="<%= searchQuery %>"
+                autocomplete="off"
+                aria-label="Rechercher une recette"
+              />
+              <button type="submit" class="ar-search-btn" aria-label="Lancer la recherche">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </button>
+            </form>
+            <% if (searchQuery) { %>
+            <p class="ar-search-info">Résultats pour « <strong><%= searchQuery %></strong> » — <a href="/recipes-movie/<%= categoryFilter !== 'all' ? '?category=' + encodeURIComponent(categoryFilter) : '' %>">Effacer</a></p>
+            <% } %>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ╔╔ SECTION RECETTES ╔╔ -->
+      <section class="ar-section">
+
+        <!-- Toolbar — identique à la page /movies -->
+        <div class="films-toolbar">
+          <div class="tb-left">
+            <div class="tb-label">Cuisine du cinéma</div>
+            <h2 class="tb-title">
+              <% if (searchQuery) { %>
+                RÉSULTATS POUR « <%= searchQuery.toUpperCase() %> »
+              <% } else if (categoryFilter !== 'all') { %>
+                RECETTES — <%= categoryFilter.toUpperCase() %>
+              <% } else { %>
+                TOUTES NOS RECETTES
+              <% } %>
+            </h2>
+          </div>
+          <a class="btn btn--primary btn--sm" href="/movies">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            Voir les films
+          </a>
+        </div>
+
+        <!-- Grille + CTA -->
+        <div class="ar-grid-wrap">
+
+          <% if (!recipes || recipes.length === 0) { %>
+          <p class="ar-empty">Aucune recette trouvée<% if (searchQuery) { %> pour « <%= searchQuery %> »<% } %>.</p>
+          <% } else { %>
+
+          <div id="recipes__list" class="recipes-grid only__display__9__recipes">
+            <% recipes.forEach(recipe => { %>
+            <%
+              const displayRating = recipe.avgRating || recipe.quote || '0';
+              const authorName = recipe.contributor ? recipe.contributor.pseudo : '—';
+              const authorAvatar = recipe.contributor ? recipe.contributor.picture : null;
+              const movieTitle = recipe.Movie ? recipe.Movie.title : null;
+              const movieSlug = recipe.Movie ? recipe.Movie.slug : null;
+            %>
+            <article class="ar-recipe-card">
+              <!-- Image 16:9 -->
+              <div class="ar-recipe-card__img">
+                <img
+                  src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
+                  alt="<%= recipe.name %>"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <!-- Overlay top : badge catégorie + favori -->
+                <div class="ar-recipe-card__ot">
+                  <span class="badge badge--type-b"><%= recipe.category %></span>
+                  <button
+                    class="btn-fav"
+                    data-entity-id="<%= recipe.id %>"
+                    data-entity-type="recipe"
+                    data-is-favorite="<%= recipe.isFavorite || false %>"
+                    aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                    title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+                  >
+                    <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </button>
+                </div>
+                <!-- Badge film en bas à gauche -->
+                <% if (movieTitle) { %>
+                <div class="ar-recipe-card__ob">
+                  <a class="badge badge--film-dk" href="/recipes-movie/<%= movieSlug %>">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                    <%= movieTitle.length > 22 ? movieTitle.slice(0, 22) + '…' : movieTitle %>
+                  </a>
+                </div>
+                <% } %>
+              </div>
+
+              <!-- Corps -->
+              <div class="ar-recipe-card__body">
+                <h3 class="ar-recipe-card__title"><%= recipe.name %></h3>
+
+                <div class="ar-recipe-card__meta">
+                  <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
+                  <% if (recipe.isNew) { %><span class="badge-new badge-new--new">Nouveau</span><% } %>
+                  <span class="ar-recipe-card__time">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <%= recipe.duration || recipe.time %> min
+                  </span>
+                </div>
+
+                <div class="ar-recipe-card__foot">
+                  <span class="author">
+                    <span class="author__av">
+                      <% if (authorAvatar) { %>
+                      <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
+                      <% } else { %>
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+                      <% } %>
+                    </span>
+                    <span class="author__name"><%= authorName %></span>
+                  </span>
+                  <a class="btn btn--red btn--sm" href="/recipes-movie/details/<%= recipe.slug || recipe.id %>">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Voir →
+                  </a>
+                </div>
+              </div>
+            </article>
+            <% }) %>
+          </div><!-- /#recipes__list -->
+
+          <!-- FCARD CTA : partager une recette — full-width banner -->
+          <%
+            const ctaRecipes = recipes.filter(r => r.picture).slice(0, 12);
+            const ctaRecipesRev = ctaRecipes.slice().reverse();
+          %>
+          <article class="fcard fcard--cta" aria-label="Partagez votre recette inspirée du cinéma">
+            <a href="/movies" class="fcard--cta__link">
+              <div class="fcard--cta__shimmer" aria-hidden="true"></div>
+              <div class="fcard--cta__body">
+                <p class="fcard--cta__eyebrow">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+                  Communauté · Ciné Délices
+                </p>
+                <h2 class="fcard--cta__title">UN FILM,<em>UNE RECETTE CULTE.</em></h2>
+                <p class="fcard--cta__desc">Vous avez cuisiné une recette inspirée d'un film ? Partagez-la avec des milliers de cinéphiles gourmands.</p>
+                <span class="fcard--cta__action">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  Partager ma recette
+                </span>
+              </div>
+              <% if (ctaRecipes.length > 0) { %>
+              <div class="fcard--cta__deco" aria-hidden="true">
+                <!-- Rangée 1 : glisse vers la gauche -->
+                <div class="fcard--cta__poster-row fcard--cta__poster-row--left">
+                  <div class="fcard--cta__poster-track">
+                    <% ctaRecipes.forEach(r => { %>
+                    <div class="fcard--cta__mini">
+                      <img src="<%= r.picture %>" alt="" loading="lazy" decoding="async">
+                    </div>
+                    <% }) %>
+                    <% ctaRecipes.forEach(r => { %>
+                    <div class="fcard--cta__mini">
+                      <img src="<%= r.picture %>" alt="" loading="lazy" decoding="async">
+                    </div>
+                    <% }) %>
+                  </div>
+                </div>
+                <!-- Rangée 2 : glisse vers la droite -->
+                <div class="fcard--cta__poster-row fcard--cta__poster-row--right">
+                  <div class="fcard--cta__poster-track">
+                    <% ctaRecipesRev.forEach(r => { %>
+                    <div class="fcard--cta__mini">
+                      <img src="<%= r.picture %>" alt="" loading="lazy" decoding="async">
+                    </div>
+                    <% }) %>
+                    <% ctaRecipesRev.forEach(r => { %>
+                    <div class="fcard--cta__mini">
+                      <img src="<%= r.picture %>" alt="" loading="lazy" decoding="async">
+                    </div>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+            </a>
+          </article>
+
+          <% if (recipes.length > 9) { %>
+          <div class="center-button">
+            <button
+              id="see__all__recipes__button"
+              class="btn btn--red"
+              aria-label="Voir plus de recettes"
+            >
+              <span class="btn__shimmer"></span>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              <span class="btn__text">Voir plus</span>
+            </button>
+          </div>
+          <% } %>
+
+          <% } %>
+
+        </div><!-- /.ar-grid-wrap -->
+
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <%- include("partials/footer") %>
+
+    <!-- Scripts JS globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+
+    <!-- Configuration favoris -->
+    <script>
+      window.CINEDELICES = {
+        isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
+        userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
+      };
+    </script>
+    <script src="/js/favorites.js" defer></script>
+
+  </body>
+</html>
