@@ -943,13 +943,25 @@ body.movies-page main {
 
 /* ── FCARD CTA (proposer un film — full-width banner, style djc-cta) ── */
 .fcard.fcard--cta {
-  grid-column: 1 / -1;
+  grid-column: 1 / -1; /* garde la compatibilité si jamais dans une grille */
   margin-top: 20px;
   background: none;
   border: none;
   box-shadow: none;
   border-radius: 20px;
   overflow: visible;
+}
+
+/* Banner indépendante (hors grille) sur la page movies */
+.movies-cta {
+  grid-column: unset;
+  max-width: var(--max-width);
+  margin: 56px auto 80px;
+  padding: 0 var(--page-px);
+  box-sizing: border-box;
+}
+.fcard.fcard--cta::before {
+  display: none;
 }
 .fcard.fcard--cta:hover {
   transform: none;

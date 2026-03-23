@@ -108,26 +108,37 @@ const recipesController = {
     try {
       const category = (req.query.category || "all").trim().toLowerCase();
       const q = (req.query.q || "").trim();
+      const sort = req.query.sort || "recent";
 
       const whereClause = { status: "approved" };
       if (category !== "all") whereClause.category = category;
       if (q) whereClause.name = { [Op.iLike]: `%${q}%` };
 
-      // Jointure User (contributor) + Movie pour le badge film sur chaque card
+      // Tri Sequelize (sauf "rating" calculé après enrichissement)
+      let order;
+      if (sort === "oldest") order = [["validated_at", "ASC"]];
+      else if (sort === "duration") order = [["duration", "ASC"]];
+      else order = [["validated_at", "DESC"]]; // "recent" par défaut
+
       const recipes = await Recipe.findAll({
         where: whereClause,
         include: [
           { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
         ],
-        order: [["validated_at", "DESC"]],
+        order,
       });
 
       const recipeIds = recipes.map((r) => r.id);
       const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
       const userRatingsMap = await getUserRecipeRatings(req.userId);
       const avgRatingsMap = await getRecipeAverageRatings(recipeIds);
-      const enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+      let enrichedRecipes = enrichRecipesWithData(recipes, favoriteIds, userRatingsMap, avgRatingsMap);
+
+      // Tri par note (en mémoire, avgRating calculé après enrichissement)
+      if (sort === "rating") {
+        enrichedRecipes = enrichedRecipes.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
+      }
 
       const distinctMovies = new Set(recipes.filter((r) => r.Movie).map((r) => r.Movie.id));
 
@@ -137,6 +148,7 @@ const recipesController = {
         movieCount: distinctMovies.size,
         categoryFilter: category,
         searchQuery: q,
+        sortBy: sort,
       });
     } catch (error) {
       return renderServerError(res, error);

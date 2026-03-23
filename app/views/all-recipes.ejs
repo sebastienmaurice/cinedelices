@@ -24,25 +24,27 @@
 
     <main>
 
-      <!-- ╔╔ HERO ╔╔ -->
-      <section class="ar-hero" aria-labelledby="arTitle">
-        <div class="ar-hero__deco" aria-hidden="true">
-          <div class="ar-hero__bg"></div>
-          <div class="ar-hero__scanlines"></div>
-          <div class="ar-hero__vignette"></div>
+      <!-- ╔╔ HERO — identique à movies.ejs ╔╔ -->
+      <section class="page-hero" aria-labelledby="arTitle">
+        <div class="page-hero__deco" aria-hidden="true">
+          <div class="page-hero__bg"></div>
+          <div class="page-hero__reel page-hero__reel--1"></div>
+          <div class="page-hero__reel page-hero__reel--2"></div>
+          <div class="page-hero__scanlines"></div>
+          <div class="page-hero__vignette"></div>
         </div>
-        <div class="ar-hero__content">
+        <div class="page-hero__content">
 
           <!-- Colonne gauche : titre, stats, filtres catégorie -->
-          <div class="ar-hero__left">
-            <p class="ar-hero__eyebrow">
+          <div class="page-hero__left">
+            <p class="page-hero__eyebrow">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
               Recettes Ciné Délices
             </p>
-            <h1 class="ar-hero__title" id="arTitle">LES <em>RECETTES</em></h1>
-            <p class="ar-hero__sub">Toutes les recettes inspirées du cinéma, à cuisiner chez vous</p>
+            <h1 class="page-hero__title" id="arTitle">LES <em>RECETTES</em></h1>
+            <p class="page-hero__sub">Toutes les recettes inspirées du cinéma, à cuisiner chez vous</p>
 
-            <!-- Stats + filtres catégorie — structure identique à movies -->
+            <!-- Stats + filtres catégorie -->
             <div class="page-hero__meta-row">
               <div class="page-hero__stats" aria-label="Statistiques des recettes">
                 <div class="hero-stat">
@@ -58,35 +60,37 @@
               <div class="quick-tags-row">
                 <span class="qt-label">Catégorie :</span>
                 <a href="/recipes-movie/" class="qtag qtag-or <%= categoryFilter === 'all' ? 'active' : '' %>">Toutes</a>
-                <a href="/recipes-movie/?category=entr%C3%A9e" class="qtag qtag-or <%= categoryFilter === 'entrée' ? 'active' : '' %>">Entrée</a>
-                <a href="/recipes-movie/?category=plat" class="qtag qtag-or <%= categoryFilter === 'plat' ? 'active' : '' %>">Plat</a>
-                <a href="/recipes-movie/?category=dessert" class="qtag qtag-or <%= categoryFilter === 'dessert' ? 'active' : '' %>">Dessert</a>
+                <a href="/recipes-movie/?category=entr%C3%A9e" class="qtag qtag-vert <%= categoryFilter === 'entrée' ? 'active' : '' %>">Entrée</a>
+                <a href="/recipes-movie/?category=plat" class="qtag qtag-bleu <%= categoryFilter === 'plat' ? 'active' : '' %>">Plat</a>
+                <a href="/recipes-movie/?category=dessert" class="qtag qtag-rouge <%= categoryFilter === 'dessert' ? 'active' : '' %>">Dessert</a>
               </div>
             </div>
           </div>
 
-          <!-- Colonne droite : recherche -->
-          <div class="ar-hero__right" aria-label="Recherche de recettes">
-            <p class="ar-search-label">
+          <!-- Colonne droite : recherche simplifiée -->
+          <div class="page-hero__search-col" aria-label="Recherche de recettes">
+            <p class="page-hero__search-label">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               Trouver une recette
             </p>
-            <form class="ar-search-row" action="/recipes-movie/" method="GET" role="search">
+            <form class="search-main-row" action="/recipes-movie/" method="GET" role="search">
               <% if (categoryFilter !== 'all') { %>
               <input type="hidden" name="category" value="<%= categoryFilter %>" />
               <% } %>
-              <input
-                type="text"
-                id="ar-search-input"
-                name="q"
-                class="ar-search-input"
-                placeholder="Rechercher une recette..."
-                value="<%= searchQuery %>"
-                autocomplete="off"
-                aria-label="Rechercher une recette"
-              />
-              <button type="submit" class="ar-search-btn" aria-label="Lancer la recherche">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <div class="search-input-wrap">
+                <input
+                  type="text"
+                  id="ar-search-input"
+                  name="q"
+                  class="search__input__film"
+                  placeholder="Rechercher une recette..."
+                  value="<%= searchQuery %>"
+                  autocomplete="off"
+                  aria-label="Rechercher une recette"
+                />
+              </div>
+              <button type="submit" class="btn-search-boost" aria-label="Lancer la recherche">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               </button>
             </form>
             <% if (searchQuery) { %>
@@ -114,10 +118,19 @@
               <% } %>
             </h2>
           </div>
-          <a class="btn btn--primary btn--sm" href="/movies">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-            Voir les films
-          </a>
+          <div class="toolbar-right">
+            <!-- Sélecteur de tri -->
+            <select id="ar-sort-select" class="ar-sort-select" aria-label="Trier les recettes">
+              <option value="recent"   <%= sortBy === 'recent'   ? 'selected' : '' %>>Plus récentes</option>
+              <option value="oldest"   <%= sortBy === 'oldest'   ? 'selected' : '' %>>Plus anciennes</option>
+              <option value="duration" <%= sortBy === 'duration' ? 'selected' : '' %>>Durée (+ rapide)</option>
+              <option value="rating"   <%= sortBy === 'rating'   ? 'selected' : '' %>>Mieux notées</option>
+            </select>
+            <a class="btn btn--primary btn--sm" href="/movies">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+              Voir les films
+            </a>
+          </div>
         </div>
 
         <!-- Grille + CTA -->
@@ -297,6 +310,15 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+
+    <!-- Tri des recettes : préserve category + q dans l'URL -->
+    <script>
+      document.getElementById('ar-sort-select')?.addEventListener('change', function () {
+        const params = new URLSearchParams(window.location.search);
+        params.set('sort', this.value);
+        window.location.href = '/recipes-movie/?' + params.toString();
+      });
+    </script>
 
   </body>
 </html>
