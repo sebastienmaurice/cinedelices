@@ -11,6 +11,7 @@ import contactAboutRouter from "./contact-about.route.js";
 import tmdbRouter from "./tmdb.route.js";
 import favoritesRouter from "./favorites.route.js";
 import ratingsRouter from "./ratings.route.js";
+import authorRouter from "./author.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
@@ -27,5 +28,6 @@ router.use("/contact-about", contactAboutRouter); // Route pour la page de conta
 router.use("/api/tmdb", isLogged, tmdbRouter); // Route API pour TMDB (protégée par authentification)
 router.use("/api/favorites", favoritesRouter); // Route API pour les favoris
 router.use("/api/ratings", ratingsRouter); // Route API pour les notes
+router.use("/auteur", authorRouter); // Page publique auteur (gamification)
 
 export default router;

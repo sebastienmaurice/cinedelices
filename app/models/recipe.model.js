@@ -29,6 +29,8 @@ Recipe.init({
   pending_time: { type: DataTypes.INTEGER, allowNull: true },
   pending_difficulty: { type: DataTypes.STRING(50), allowNull: true },
   edit_requested_at: { type: DataTypes.DATE, allowNull: true },
+  delete_request_status: { type: DataTypes.STRING(20), defaultValue: 'none' },
+  delete_request_at: { type: DataTypes.DATE, allowNull: true },
   // Auteur obligatoire : chaque recette est créée par un utilisateur connecté
   id_user: { type: DataTypes.INTEGER, allowNull: false },
   },

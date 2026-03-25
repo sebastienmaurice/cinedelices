@@ -46,6 +46,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -69,6 +70,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -95,6 +97,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -117,6 +120,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -143,6 +147,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -170,6 +175,7 @@ const adminController = {
         pendingRecipeEdits,
         pendingNoticeEdits,
         pendingNoticeDeleteRequests,
+        pendingRecipeDeleteRequests,
         validatedMovies,
         validatedRecipes,
         validatedNotices,
@@ -432,7 +438,7 @@ const adminController = {
       }
 
       const updateData = {
-        edit_status: "none",
+        edit_status: "approved",
         pending_name: null,
         pending_description: null,
         pending_picture: null,
@@ -512,6 +518,49 @@ const adminController = {
         error,
         "Erreur lors du refus de modification de la recette."
       );
+    }
+  },
+
+  async approveRecipeDelete(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=recipe_delete_rejected");
+      }
+
+      const recipe = await Recipe.findByPk(recipeId, {
+        attributes: ["id", "picture", "pending_picture", "delete_request_status"],
+      });
+      if (!recipe || recipe.delete_request_status !== "pending") {
+        return res.redirect("/admin?success=recipe_delete_rejected");
+      }
+
+      unlinkIfExists(recipe.picture);
+      unlinkIfExists(recipe.pending_picture);
+      await Notice.destroy({ where: { id_recipe: recipeId } });
+      await UsersRecipes.destroy({ where: { id_recipe: recipeId } });
+      await Recipe.destroy({ where: { id: recipeId } });
+      searchCache.clear();
+      return res.redirect("/admin?success=recipe_delete_approved");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la suppression de la recette.");
+    }
+  },
+
+  async rejectRecipeDelete(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        return res.redirect("/admin?success=recipe_delete_rejected");
+      }
+
+      await Recipe.update(
+        { delete_request_status: "none", delete_request_at: null },
+        { where: { id: recipeId } }
+      );
+      return res.redirect("/admin?success=recipe_delete_rejected");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors du refus de suppression de la recette.");
     }
   },
 

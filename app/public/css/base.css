@@ -724,6 +724,55 @@ a:not([class*="btn"]):not(.author):not(.header-icon):not(.nav-link):not(.nav-log
   box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
 }
 
+/* ── Nav badge-static (cadre gamification 64px) ── */
+.nav-badge-trigger.header-icon--account:has(.nav-badge-static) {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.nav-badge-trigger.header-icon--account:has(.nav-badge-static):hover {
+  background: transparent;
+  border: none;
+  transform: none;
+  box-shadow: none;
+}
+.nav-badge-static {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: block;
+  transition: transform 0.2s ease;
+}
+.nav-badge-trigger:hover .nav-badge-static {
+  transform: scale(1.1);
+}
+.nav-badge-trigger:active .nav-badge-static {
+  transform: scale(0.96);
+}
+.nav-badge-static__photo {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+}
+.nav-badge-static__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* Icône Connexion (mobile uniquement) - Style doré */
 .header-icon--login {
   background: linear-gradient(
@@ -1051,11 +1100,18 @@ a:not([class*="btn"]):not(.author):not(.header-icon):not(.nav-link):not(.nav-log
 }
 
 /* Animation de l'icône trigger quand ouvert (style rouge par défaut) */
-.user-dropdown.is-open .user-dropdown__trigger {
+.user-dropdown.is-open .user-dropdown__trigger:not(:has(.nav-badge-static)) {
   background: var(--rouge-projecteur);
   border-color: var(--rouge-projecteur);
   color: white;
   box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+}
+
+/* Quand le badge gamification est affiché : aucun effet à l'ouverture */
+.user-dropdown.is-open .user-dropdown__trigger:has(.nav-badge-static) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* Variante dorée (legacy - utilisée uniquement si header-icon--login appliqué) */

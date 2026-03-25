@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authController from "../controllers/auth.controller.js";
+import gamificationController from "../controllers/gamification.controller.js";
 import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
 import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../validators/user.validator.js";
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
@@ -80,6 +81,9 @@ authRouter.post(
   injectId,
   authController.deleteUserNotice
 );
+
+// Gamification
+authRouter.post("/equip-frame", isLogged, injectId, gamificationController.equipFrame);
 
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.post("/register", validateUserRegister, authController.register);

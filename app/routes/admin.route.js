@@ -76,6 +76,10 @@ adminRouter.post(
 );
 adminRouter.post("/recipes/:id/edit/reject", adminController.rejectRecipeEdit);
 
+// Suppressions recettes (demande utilisateur)
+adminRouter.post("/recipes/:id/delete/approve", adminController.approveRecipeDelete);
+adminRouter.post("/recipes/:id/delete/reject", adminController.rejectRecipeDelete);
+
 // Modifications avis
 adminRouter.post(
   "/notices/:id/edit/approve",

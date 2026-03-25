@@ -39,9 +39,9 @@
         <div class="hero-vignette" aria-hidden="true"></div>
 
         <!-- Page auteur (top-left) -->
-        <% if (userRecipes && userRecipes.length > 0) { %>
+        <% if (userRecipes && userRecipes.filter(r => r.status === 'approved').length > 0) { %>
         <div class="hero-author-link">
-          <a href="/movies" class="author-link">
+          <a href="/auteur/<%= user.id %>" class="author-link" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
             Ma page auteur
           </a>
@@ -66,21 +66,38 @@
         <!-- Contenu hero bas -->
         <form id="profileAvatarForm" class="hero-content">
 
+          <div class="hero-row">
+
           <!-- Avatar -->
           <div class="avatar-block">
-            <div class="avatar-frame">
-              <div class="avatar-frame__ring"></div>
+            <div class="profile-badge-hero"
+               id="profileBadgeHero"
+               data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
+               data-photo-src="<%= user.picture || '/images/image-default-profile.jpg' %>">
+
+              <!-- Photo statique (remplacée par BadgeEngine si frame animée) -->
               <img
+                id="pbhPhoto"
+                class="pbh-photo"
                 src="<%= user.picture || '/images/image-default-profile.jpg' %>"
                 alt="Avatar de <%= user.pseudo %>"
-                class="avatar-img"
               />
+              <!-- Cadre PNG overlay -->
+              <% if (typeof userActiveFrame !== 'undefined' && userActiveFrame) { %>
+              <img class="pbh-frame" src="<%= userActiveFrame %>" alt="" aria-hidden="true" />
+              <% } else { %>
+              <div class="pbh-ring"></div>
+              <% } %>
+
+              <!-- Statut photo -->
               <% if (user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
               <span class="avatar-photo-status avatar-photo-status--<%= user.picture_status === 'pending' ? 'pending' : 'rejected' %>">
                 <span class="b-dot"></span>
                 <%= user.picture_status === 'pending' ? 'En attente' : 'Refusée' %>
               </span>
               <% } %>
+
+              <!-- Actions -->
               <div class="avatar-actions">
                 <label for="avatar" class="av-btn av-btn--upload" title="Changer la photo">
                   <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -96,8 +113,14 @@
           <!-- Identité -->
           <div class="hero-identity">
             <div class="hero-pseudo-row">
+              <%
+                const _up = user.pseudo.trim().split(' ');
+                const _upLast = _up.pop();
+                const _upRest = _up.join(' ');
+              %>
+              <span id="pseudoDisplay" class="hero-pseudo hero-pseudo--display"><% if (_upRest) { %><%= _upRest %> <% } %><em><%= _upLast %></em></span>
               <input
-                class="hero-pseudo"
+                class="hero-pseudo hero-pseudo--input"
                 id="username"
                 name="pseudo"
                 type="text"
@@ -110,7 +133,16 @@
               </button>
               <button type="button" class="hero-pseudo-save" id="savePseudoBtn">Sauvegarder</button>
             </div>
-            <p class="hero-sub">Membre Ciné Délices</p>
+            <p class="hero-sub">
+              <%
+                const _heroRanks = ['Spectateur Curieux','Cinéphile Amateur','Fin Palais','Analyste du Goût','Connaisseur','Explorateur Cuisinier','Détective des Saveurs','Critique Éclairé','Maître Cinéaste','Grand Gastronome','Virtuose Cinéphile','Légende de Ciné Délices','Ambassadeur','Visionnaire','Architecte des Saveurs','Maître des Écrans','Gardien du Temple','Élu de Ciné Délices','Mythe Vivant'];
+                const _heroLvl   = (typeof userLevel !== 'undefined' && userLevel) ? parseInt(userLevel) : 1;
+                const _heroRank  = _heroRanks[Math.min(_heroLvl - 1, _heroRanks.length - 1)];
+              %>
+              <span class="hero-sub__rank"><%= _heroRank %></span>
+              <span class="hero-sub__sep" aria-hidden="true">·</span>
+              <span class="hero-sub__lvl">Niv. <%= _heroLvl %></span>
+            </p>
 
             <div class="hero-stats-row">
               <div class="h-stat">
@@ -134,6 +166,8 @@
               </div>
             </div>
           </div>
+
+          </div><!-- /hero-row -->
 
         </form>
       </section>
@@ -179,49 +213,289 @@
         <!-- ─────────────────────────────────── -->
         <div class="tab-pane active" id="overview" role="tabpanel">
 
-          <div class="section-head">
-            <span class="section-eyebrow">Mon compte</span>
-            <span class="section-title">VUE D'ENSEMBLE</span>
-            <span class="section-rule"></span>
-          </div>
-
-          <div class="overview-grid">
-            <div class="ov-card ov-card--recettes">
-              <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24"><path d="M15 11h.01"/><path d="M11 15h.01"/><path d="M16 16h.01"/><path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/><path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"/></svg>
+          <!-- BANDEAU IMPACT -->
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--recipe">
+                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
               </div>
-              <div class="ov-val"><%= userRecipes.length %></div>
-              <div class="ov-label">Recettes publiées</div>
-            </div>
-            <div class="ov-card ov-card--films">
-              <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" data-ov-target="<%= userRecipes.length %>">0</div>
+                <div class="impact-cell__lbl">Recettes créées</div>
               </div>
-              <div class="ov-val"><%= userMovies.length %></div>
-              <div class="ov-label">Films ajoutés</div>
             </div>
-            <div class="ov-card ov-card--avis">
-              <div class="ov-card__icon">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film">
+                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" data-ov-target="<%= userMovies.length %>">0</div>
+                <div class="impact-cell__lbl">Films proposés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--avis">
                 <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               </div>
-              <div class="ov-val"><%= userNoticesCount %></div>
-              <div class="ov-label">Avis rédigés</div>
-            </div>
-            <div class="ov-card ov-card--favoris">
-              <div class="ov-card__icon">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" data-ov-target="<%= userNoticesCount %>">0</div>
+                <div class="impact-cell__lbl">Avis rédigés</div>
               </div>
-              <div class="ov-val"><%= (favoriteMoviesCount || 0) + (favoriteRecipesCount || 0) %></div>
-              <div class="ov-label">Favoris totaux</div>
             </div>
-            <div class="ov-card ov-card--note">
-              <div class="ov-card__icon">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--note">
                 <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               </div>
-              <div class="ov-val"><%= avgUserRating || '—' %></div>
-              <div class="ov-label">Note moyenne</div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= avgUserRating || '—' %></div>
+                <div class="impact-cell__lbl">Note moyenne</div>
+              </div>
             </div>
           </div>
+
+          <!-- LAYOUT 2 COLONNES -->
+          <div class="crea-layout">
+
+            <!-- ── SIDEBAR ── -->
+            <aside class="crea-sidebar">
+
+              <!-- Ma progression -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Ma progression</span>
+                  <span class="widget-head__extra" onclick="document.querySelector('[data-tab=\'contributions\']').click()">Détails →</span>
+                </div>
+                <%
+                  const _ovTotal      = userRecipes.length + userMovies.length;
+                  const _ovApproved   = userRecipes.filter(r => r.status === 'approved').length + userMovies.filter(m => m.status === 'approved').length;
+                  const _ovValPct     = _ovTotal > 0 ? Math.round((_ovApproved / _ovTotal) * 100) : 0;
+                  const _ovXP         = (typeof userXP !== 'undefined' && userXP) ? parseInt(userXP) : 0;
+                  const _ovLvl        = (typeof userLevel !== 'undefined' && userLevel) ? parseInt(userLevel) : 1;
+                  const _ovXpTable    = [0,100,300,600,1100,1800,2800,4200,6000,8500,11500,15000,20000,26000,33000,41000,50000,60000,72000];
+                  const _ovXpFloor    = _ovXpTable[_ovLvl - 1] || 0;
+                  const _ovXpCeil     = _ovXpTable[_ovLvl] || (_ovLvl * 1500);
+                  const _ovXpPct      = Math.min(100, Math.round(((_ovXP - _ovXpFloor) / (_ovXpCeil - _ovXpFloor)) * 100));
+                  const _ovSince      = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }) : null;
+                %>
+                <div class="ov-progress-body">
+
+                  <!-- Taux de validation -->
+                  <div class="ov-prog-row">
+                    <div class="ov-prog-labels">
+                      <span class="ov-prog-label">Taux de validation</span>
+                      <span class="ov-prog-val"><%= _ovApproved %> / <%= _ovTotal %> contenus</span>
+                    </div>
+                    <div class="ov-prog-bar-wrap">
+                      <div class="ov-prog-bar ov-prog-bar--valide" style="width:<%= _ovValPct %>%"></div>
+                    </div>
+                    <span class="ov-prog-pct"><%= _ovValPct %>%</span>
+                  </div>
+
+                  <!-- Barre XP niveau -->
+                  <div class="ov-prog-row">
+                    <div class="ov-prog-labels">
+                      <span class="ov-prog-label">Niveau <%= _ovLvl %> — <%= _ovXP.toLocaleString('fr-FR') %> XP</span>
+                      <span class="ov-prog-val"><%= Math.max(0, _ovXpCeil - _ovXP).toLocaleString('fr-FR') %> XP pour niv. <%= _ovLvl + 1 %></span>
+                    </div>
+                    <div class="ov-prog-bar-wrap">
+                      <div class="ov-prog-bar ov-prog-bar--xp" style="width:<%= _ovXpPct %>%"></div>
+                    </div>
+                    <span class="ov-prog-pct"><%= _ovXpPct %>%</span>
+                  </div>
+
+                  <!-- Membre depuis -->
+                  <% if (_ovSince) { %>
+                  <div class="ov-member-since">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Membre depuis <%= _ovSince %>
+                  </div>
+                  <% } %>
+
+                </div>
+              </div>
+
+              <!-- Raccourcis -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Navigation rapide</span>
+                </div>
+                <div class="quick-actions">
+                  <button class="qa-btn qa-btn--gold" onclick="document.querySelector('[data-tab=\'creations\']').click()">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Mes créations</div><div class="qa-sub">Recettes, films et avis</div></div>
+                  </button>
+                  <button class="qa-btn qa-btn--violet" onclick="document.querySelector('[data-tab=\'favoris\']').click()">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
+                  </button>
+                  <button class="qa-btn qa-btn--vert" onclick="document.querySelector('[data-tab=\'contributions\']').click()">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Contributions</div><div class="qa-sub">XP, niveaux et cadres</div></div>
+                  </button>
+                </div>
+              </div>
+
+            </aside>
+
+            <!-- ── COLONNE PRINCIPALE ── -->
+            <div class="crea-main">
+
+              <!-- DERNIÈRES RECETTES -->
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Mes créations culinaires</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">DERNIÈRES RECETTES</div>
+                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
+                </div>
+                <div class="list-grid">
+                  <% if (userRecipes && userRecipes.length > 0) { %>
+                    <% userRecipes.slice(0, 3).forEach(function(recipe) {
+                      const _rsCls = recipe.status === 'approved' ? 'lrs--valide' : recipe.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
+                      const _rsTxt = recipe.status === 'approved' ? 'Validée' : recipe.status === 'pending' ? 'En attente' : 'Refusée';
+                    %>
+                    <div class="list-row list-row--recette">
+                      <% if (recipe.picture) { %>
+                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= recipe.name %></span>
+                          <span class="lr-status <%= _rsCls %>">
+                            <% if (recipe.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
+                            <%= _rsTxt %>
+                          </span>
+                        </div>
+                        <div class="list-row__tags">
+                          <span class="lr-tag lr-tag--cat"><%= recipe.category %></span>
+                          <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
+                        </div>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <%= recipe.time %> min · <%= recipe.difficulty %>
+                        </div>
+                      </div>
+                      <% if (recipe.status === 'approved') { %>
+                      <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                      </a>
+                      <% } %>
+                    </div>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">🍽️</div>
+                    <div class="crea-empty__title">Aucune recette</div>
+                    <div class="crea-empty__sub">Partagez votre première création</div>
+                  </div>
+                  <% } %>
+                </div>
+              </section>
+
+              <!-- FILMS RÉCENTS -->
+              <% if (userMovies && userMovies.length > 0) { %>
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Films suggérés à la communauté</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">FILMS RÉCENTS</div>
+                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
+                </div>
+                <div class="list-grid">
+                  <% userMovies.slice(0, 3).forEach(function(movie) {
+                    const _msCls = movie.status === 'approved' ? 'lrs--valide' : movie.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
+                    const _msTxt = movie.status === 'approved' ? 'Validé' : movie.status === 'pending' ? 'En attente' : 'Refusé';
+                  %>
+                  <div class="list-row list-row--film">
+                    <% if (movie.cardPath || movie.picture) { %>
+                    <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                    <% } %>
+                    <div class="list-row__body">
+                      <div class="list-row__top">
+                        <span class="list-row__name"><%= movie.title %></span>
+                        <span class="lr-status <%= _msCls %>">
+                          <% if (movie.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
+                          <%= _msTxt %>
+                        </span>
+                      </div>
+                      <% if (movie.genre) { %><div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div><% } %>
+                      <div class="list-row__sub">
+                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                        <%= movie.year %>
+                      </div>
+                    </div>
+                    <% if (movie.status === 'approved') { %>
+                    <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                    </a>
+                    <% } %>
+                  </div>
+                  <% }) %>
+                </div>
+              </section>
+              <% } %>
+
+              <!-- DERNIERS AVIS -->
+              <% if (userNotices && userNotices.length > 0) { %>
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Critiques &amp; évaluations</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">DERNIERS AVIS</div>
+                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
+                </div>
+                <div class="avis-grid">
+                  <% userNotices.slice(0, 2).forEach(function(notice) { %>
+                  <div class="avis-card">
+                    <div class="avis-icon">
+                      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="avis-body">
+                      <div class="avis-top">
+                        <div class="avis-titles">
+                          <% if (notice.Recipe) { %>
+                          <div class="avis-recipe-name">Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a></div>
+                          <% if (notice.Recipe.Movie) { %><div class="avis-film-link">Film : <%= notice.Recipe.Movie.title %></div><% } %>
+                          <% } %>
+                        </div>
+                        <div class="avis-stars-row">
+                          <div class="avis-score">
+                            <% for (let _ai = 1; _ai <= 5; _ai++) { %><span class="star<%= _ai <= parseInt(notice.quote) ? ' star--on' : '' %>">★</span><% } %>
+                          </div>
+                          <span class="avis-score-val"><%= notice.quote %>/5</span>
+                        </div>
+                      </div>
+                      <% if (notice.content) { %><div class="avis-quote"><%= notice.content %></div><% } %>
+                      <div class="avis-footer">
+                        <% if (notice.status === 'approved') { %>
+                        <span class="avis-status-badge ab--valide">✓ Validé</span>
+                        <% } else { %>
+                        <span class="avis-status-badge ab--attente">⏳ En attente</span>
+                        <% } %>
+                        <span class="avis-date"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
+                      </div>
+                    </div>
+                  </div>
+                  <% }) %>
+                </div>
+              </section>
+              <% } %>
+
+            </div><!-- /crea-main -->
+
+          </div><!-- /crea-layout -->
 
         </div><!-- /tab-pane#overview -->
 
@@ -231,124 +505,195 @@
         <!-- ─────────────────────────────────── -->
         <div class="tab-pane" id="profil" role="tabpanel">
 
-          <div class="section-head">
-            <span class="section-eyebrow">Mon compte</span>
-            <span class="section-title">MON PROFIL</span>
-            <span class="section-rule"></span>
+          <!-- BANDEAU IMPACT -->
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--recipe">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= user.pseudo %></div>
+                <div class="impact-cell__lbl">Pseudo</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--avis">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= userNoticesCount %></div>
+                <div class="impact-cell__lbl">Avis publiés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--note">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= avgUserRating || '—' %></div>
+                <div class="impact-cell__lbl">Note moyenne</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film">
+                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= userRecipes.length %></div>
+                <div class="impact-cell__lbl">Recettes créées</div>
+              </div>
+            </div>
           </div>
 
-          <div class="profil-grid">
+          <!-- LAYOUT 2 COLONNES -->
+          <div class="crea-layout">
 
-            <div class="profil-left">
-              <div class="form-card">
-                <div class="form-card__head">
-                  <span class="form-card__title">INFORMATIONS</span>
-                  <button type="button" class="btn btn--ghost btn--sm" id="editProfileBtn">Éditer</button>
+            <!-- ── COLONNE PRINCIPALE ── -->
+            <div class="crea-main" style="grid-column: 1 / 2;">
+
+              <!-- INFORMATIONS -->
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Paramètres du compte</span>
                 </div>
-                <div class="form-card__body">
-                  <form id="profileInfoForm">
-                    <div class="form-row">
-                      <div class="form-group">
-                        <label class="form-label" for="firstname">Prénom</label>
-                        <input class="form-input" type="text" id="firstname" name="first_name" value="<%= user.first_name %>" disabled />
+                <div class="sec-header">
+                  <div class="sec-title">INFORMATIONS</div>
+                  <button type="button" class="sec-link" id="editProfileBtn">Éditer →</button>
+                </div>
+                <div class="widget">
+                  <div class="widget__form-body">
+                    <form id="profileInfoForm">
+                      <div class="pf-row">
+                        <div class="pf-group">
+                          <label class="pf-label" for="firstname">Prénom</label>
+                          <input class="pf-input" type="text" id="firstname" name="first_name" value="<%= user.first_name %>" disabled />
+                        </div>
+                        <div class="pf-group">
+                          <label class="pf-label" for="lastname">Nom</label>
+                          <input class="pf-input" type="text" id="lastname" name="last_name" value="<%= user.last_name %>" disabled />
+                        </div>
                       </div>
-                      <div class="form-group">
-                        <label class="form-label" for="lastname">Nom</label>
-                        <input class="form-input" type="text" id="lastname" name="last_name" value="<%= user.last_name %>" disabled />
+                      <div class="pf-row">
+                        <div class="pf-group pf-group--full">
+                          <label class="pf-label" for="email">Adresse e-mail</label>
+                          <input class="pf-input" type="email" id="email" name="email" value="<%= user.email %>" disabled />
+                        </div>
                       </div>
-                    </div>
-                    <div class="form-row form-row--full">
-                      <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input class="form-input" type="email" id="email" name="email" value="<%= user.email %>" disabled />
+                      <div class="pf-row">
+                        <div class="pf-group pf-group--full">
+                          <label class="pf-label" for="password">Mot de passe</label>
+                          <input class="pf-input" type="password" id="password" name="password" placeholder="••••••••" disabled />
+                          <a href="/auth/forgot-password" class="pf-link">Mot de passe oublié ?</a>
+                        </div>
                       </div>
-                    </div>
-                    <div class="form-row form-row--full">
-                      <div class="form-group">
-                        <label class="form-label" for="password">Mot de passe</label>
-                        <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" disabled />
-                        <a href="/auth/forgot-password" class="form-pwd-link">Mot de passe oublié ?</a>
+                      <div class="pf-actions">
+                        <button type="submit" class="lr-btn lr-btn--edit" id="saveProfileBtn" style="display:none;height:32px;padding:0 16px;">Enregistrer</button>
+                        <button type="button" class="lr-btn lr-btn--view" id="cancelProfileBtn" style="display:none;height:32px;padding:0 16px;">Annuler</button>
                       </div>
-                    </div>
-                    <div class="form-actions">
-                      <button type="submit" class="btn btn--primary btn--sm" id="saveProfileBtn" style="display:none;">Enregistrer</button>
-                      <button type="button" class="btn btn--ghost btn--sm" id="cancelProfileBtn" style="display:none;">Annuler</button>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
+                </div>
+              </section>
 
-                  <form id="profilePrefsForm">
-                    <div class="notif-block">
-                      <div class="notif-row">
-                        <div class="notif-info">
-                          <span class="notif-label">Notifications recettes</span>
-                          <span class="notif-sub">Nouvelles recettes sur vos films favoris</span>
+              <!-- PRÉFÉRENCES NOTIFICATIONS -->
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Notifications</span>
+                </div>
+                <div class="sec-title" style="font-family:var(--f-display);font-size:1.4rem;letter-spacing:.08em;color:#fff;margin-bottom:12px;">PRÉFÉRENCES</div>
+                <div class="widget">
+                  <div class="widget__form-body">
+                    <form id="profilePrefsForm">
+                      <div class="pf-notif-row">
+                        <div class="pf-notif-info">
+                          <span class="pf-notif-label">Nouvelles recettes</span>
+                          <span class="pf-notif-sub">Nouvelles recettes sur vos films favoris</span>
                         </div>
                         <label class="toggle">
                           <input type="checkbox" name="notify_recipes" <%= user.notify_recipes ? 'checked' : '' %> disabled />
                           <span class="toggle-slider"></span>
                         </label>
                       </div>
-                      <div class="notif-row">
-                        <div class="notif-info">
-                          <span class="notif-label">Notifications cinéma</span>
-                          <span class="notif-sub">Nouveaux films ajoutés à la collection</span>
+                      <div class="pf-notif-row">
+                        <div class="pf-notif-info">
+                          <span class="pf-notif-label">Nouveaux films</span>
+                          <span class="pf-notif-sub">Nouveaux films ajoutés à la collection</span>
                         </div>
                         <label class="toggle">
                           <input type="checkbox" name="notify_cinema" <%= user.notify_cinema ? 'checked' : '' %> disabled />
                           <span class="toggle-slider"></span>
                         </label>
                       </div>
+                    </form>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- ── SIDEBAR ── -->
+            <aside class="crea-sidebar">
+
+              <!-- MON COMPTE -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Mon compte</span>
+                </div>
+                <div class="stats-grid">
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= userNoticesCount %></div>
+                      <div class="stat-lbl">Avis</div>
                     </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div class="side-stats">
-                <div class="side-stats__head">
-                  <div class="side-stats__title">MON COMPTE</div>
-                </div>
-                <div class="side-stats__rows">
-                  <div class="ss-row">
-                    <span class="ss-label">
-                      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      Pseudo
-                    </span>
-                    <span class="ss-val" style="color:var(--or-titre);font-size:.75rem"><%= user.pseudo %></span>
                   </div>
-                  <div class="ss-row">
-                    <span class="ss-label">
-                      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                      Avis publiés
-                    </span>
-                    <span class="ss-val"><%= userNoticesCount %></span>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= avgUserRating || '—' %></div>
+                      <div class="stat-lbl">Note moy.</div>
+                    </div>
                   </div>
-                  <div class="ss-row">
-                    <span class="ss-label">
-                      <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      Note moyenne
-                    </span>
-                    <span class="ss-val" style="color:var(--dore-clair)"><%= avgUserRating || '—' %></span>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= userRecipes.length %></div>
+                      <div class="stat-lbl">Recettes</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= userMovies.length %></div>
+                      <div class="stat-lbl">Films</div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="danger-zone">
-                <div class="danger-zone__head">
-                  <span class="danger-zone__icon">⚠️</span>
-                  <span class="danger-zone__title">Zone Danger</span>
+              <!-- ZONE DANGER -->
+              <div class="widget widget--danger">
+                <div class="widget-head widget-head--danger">
+                  <div class="widget-head__line" style="background:#e84020;"></div>
+                  <span class="widget-head__title" style="color:rgba(232,100,65,.7);">Zone Danger</span>
+                  <span style="font-size:1rem;">⚠️</span>
                 </div>
-                <div class="danger-zone__body">
-                  <p class="danger-zone__sub">La suppression de votre compte est irréversible. Toutes vos données, recettes, avis et favoris seront définitivement effacés.</p>
-                  <div class="danger-zone__actions">
-                    <button class="btn btn--red btn--sm" id="deleteAccountBtn" style="width:100%;">Supprimer mon compte</button>
-                  </div>
+                <div class="widget__form-body">
+                  <p class="pf-danger-sub">La suppression de votre compte est irréversible. Toutes vos données, recettes, avis et favoris seront définitivement effacés.</p>
+                  <button class="lr-btn lr-btn--del" id="deleteAccountBtn" style="width:100%;height:34px;justify-content:center;margin-top:4px;">
+                    <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    Supprimer mon compte
+                  </button>
                 </div>
               </div>
-            </div>
 
-          </div>
+            </aside>
+
+          </div><!-- /crea-layout -->
+
         </div><!-- /tab-pane#profil -->
 
 
@@ -357,127 +702,293 @@
         <!-- ─────────────────────────────────── -->
         <div class="tab-pane" id="favoris" role="tabpanel">
 
-          <div class="section-head">
-            <span class="section-eyebrow">Mon compte</span>
-            <span class="section-title">FAVORIS &amp; NOTES</span>
-            <span class="section-rule"></span>
+          <!-- BANDEAU IMPACT -->
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film">
+                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= favoriteMoviesCount || 0 %></div>
+                <div class="impact-cell__lbl">Films favoris</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--recipe">
+                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= favoriteRecipesCount || 0 %></div>
+                <div class="impact-cell__lbl">Recettes favorites</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--note">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= ratedMoviesCount || 0 %></div>
+                <div class="impact-cell__lbl">Films notés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--valide">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= ratedRecipesCount || 0 %></div>
+                <div class="impact-cell__lbl">Recettes notées</div>
+              </div>
+            </div>
           </div>
 
-          <div class="fav-cols">
+          <!-- LAYOUT 2 COLONNES -->
+          <div class="crea-layout">
 
-            <div class="fav-section">
-              <div class="fav-section__head">
-                <span class="fav-section__title">FILMS FAVORIS</span>
-                <span class="fav-section__count"><%= favoriteMoviesCount || 0 %></span>
-              </div>
-              <div class="fav-list">
-                <% if (favoriteMovies && favoriteMovies.length > 0) { %>
-                  <% favoriteMovies.slice(0, 8).forEach(movie => { %>
-                  <a href="/recipes-movie/<%= movie.id %>" class="fav-item">
-                    <% if (movie.cardPath || movie.picture) { %>
-                    <img class="fav-item__thumb fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="fav-item__thumb fav-item__thumb--poster fav-item__thumb--placeholder">🎬</div>
-                    <% } %>
-                    <div class="fav-item__info">
-                      <span class="fav-item__title"><%= movie.title %></span>
-                      <span class="fav-item__sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></span>
+            <!-- ── SIDEBAR ── -->
+            <aside class="crea-sidebar">
+
+              <!-- Résumé -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Mes collections</span>
+                </div>
+                <div class="stats-grid">
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= favoriteMoviesCount || 0 %></div>
+                      <div class="stat-lbl">Films fav.</div>
                     </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= favoriteRecipesCount || 0 %></div>
+                      <div class="stat-lbl">Recettes fav.</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= ratedMoviesCount || 0 %></div>
+                      <div class="stat-lbl">Films notés</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num"><%= ratedRecipesCount || 0 %></div>
+                      <div class="stat-lbl">Recettes notées</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation sections -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Accès rapide</span>
+                </div>
+                <div class="quick-actions">
+                  <a href="#favFilmsSection" class="qa-btn qa-btn--violet" onclick="document.getElementById('favFilmsSection').scrollIntoView({behavior:'smooth'});return false;">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Films favoris</div><div class="qa-sub"><%= favoriteMoviesCount || 0 %> film<%= (favoriteMoviesCount || 0) > 1 ? 's' : '' %></div></div>
                   </a>
-                  <% }) %>
-                  <% if (favoriteMoviesCount > 8) { %>
-                  <span class="fav-more">Voir tous les <%= favoriteMoviesCount %> films favoris →</span>
+                  <a href="#favRecettesSection" class="qa-btn qa-btn--gold" onclick="document.getElementById('favRecettesSection').scrollIntoView({behavior:'smooth'});return false;">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Recettes favorites</div><div class="qa-sub"><%= favoriteRecipesCount || 0 %> recette<%= (favoriteRecipesCount || 0) > 1 ? 's' : '' %></div></div>
+                  </a>
+                  <a href="#notedFilmsSection" class="qa-btn qa-btn--vert" onclick="document.getElementById('notedFilmsSection').scrollIntoView({behavior:'smooth'});return false;">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="qa-text"><div class="qa-title">Mes notes</div><div class="qa-sub"><%= (ratedMoviesCount || 0) + (ratedRecipesCount || 0) %> évaluation<%= ((ratedMoviesCount || 0) + (ratedRecipesCount || 0)) > 1 ? 's' : '' %></div></div>
+                  </a>
+                </div>
+              </div>
+
+            </aside>
+
+            <!-- ── COLONNE PRINCIPALE ── -->
+            <div class="crea-main">
+
+              <!-- FILMS FAVORIS -->
+              <section id="favFilmsSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Ma collection cinéma</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">FILMS FAVORIS</div>
+                  <span class="sec-link" style="cursor:default;"><%= favoriteMoviesCount || 0 %> film<%= (favoriteMoviesCount || 0) > 1 ? 's' : '' %></span>
+                </div>
+                <div class="list-grid">
+                  <% if (favoriteMovies && favoriteMovies.length > 0) { %>
+                    <% favoriteMovies.slice(0, 8).forEach(function(movie) { %>
+                    <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="list-row list-row--film list-row--link">
+                      <% if (movie.cardPath || movie.picture) { %>
+                      <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= movie.title %></span>
+                          <span class="lr-tag lr-tag--genre" style="flex-shrink:0"><% if (movie.genre) { %><%= movie.genre %><% } %></span>
+                        </div>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <%= movie.year %><% if (!movie.genre) { %> · Voir les recettes<% } %>
+                        </div>
+                      </div>
+                      <svg class="fav-row-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <% }) %>
+                    <% if (favoriteMoviesCount > 8) { %>
+                    <div class="crea-empty" style="padding:14px;"><div class="crea-empty__sub">+ <%= favoriteMoviesCount - 8 %> autre<%= (favoriteMoviesCount - 8) > 1 ? 's' : '' %> film<%= (favoriteMoviesCount - 8) > 1 ? 's' : '' %> favoris</div></div>
+                    <% } %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">🎬</div>
+                    <div class="crea-empty__title">Aucun film favori</div>
+                    <div class="crea-empty__sub">Explorez la collection et ajoutez vos films préférés</div>
+                  </div>
                   <% } %>
-                <% } else { %>
-                  <p class="fav-empty">Aucun film en favoris pour l'instant.</p>
-                <% } %>
-              </div>
-            </div>
+                </div>
+              </section>
 
-            <div class="fav-section">
-              <div class="fav-section__head">
-                <span class="fav-section__title">RECETTES FAVORITES</span>
-                <span class="fav-section__count"><%= favoriteRecipesCount || 0 %></span>
-              </div>
-              <div class="fav-list">
-                <% if (favoriteRecipes && favoriteRecipes.length > 0) { %>
-                  <% favoriteRecipes.slice(0, 8).forEach(recipe => { %>
-                  <a href="/recipes-movie/details/<%= recipe.id %>" class="fav-item">
-                    <% if (recipe.picture) { %>
-                    <img class="fav-item__thumb fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="fav-item__thumb fav-item__thumb--recipe fav-item__thumb--placeholder">🍽️</div>
+              <!-- RECETTES FAVORITES -->
+              <section id="favRecettesSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Mes recettes préférées</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">RECETTES FAVORITES</div>
+                  <span class="sec-link" style="cursor:default;"><%= favoriteRecipesCount || 0 %> recette<%= (favoriteRecipesCount || 0) > 1 ? 's' : '' %></span>
+                </div>
+                <div class="list-grid">
+                  <% if (favoriteRecipes && favoriteRecipes.length > 0) { %>
+                    <% favoriteRecipes.slice(0, 8).forEach(function(recipe) { %>
+                    <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="list-row list-row--recette list-row--link">
+                      <% if (recipe.picture) { %>
+                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= recipe.name %></span>
+                          <span class="lr-tag lr-tag--cat" style="flex-shrink:0"><%= recipe.category %></span>
+                        </div>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <%= recipe.time %> min<% if (recipe.Movie) { %> · <%= recipe.Movie.title %><% } %>
+                        </div>
+                      </div>
+                      <svg class="fav-row-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <% }) %>
+                    <% if (favoriteRecipesCount > 8) { %>
+                    <div class="crea-empty" style="padding:14px;"><div class="crea-empty__sub">+ <%= favoriteRecipesCount - 8 %> autre<%= (favoriteRecipesCount - 8) > 1 ? 's' : '' %> recette<%= (favoriteRecipesCount - 8) > 1 ? 's' : '' %> favorite<%= (favoriteRecipesCount - 8) > 1 ? 's' : '' %></div></div>
                     <% } %>
-                    <div class="fav-item__info">
-                      <span class="fav-item__title"><%= recipe.name %></span>
-                      <span class="fav-item__sub"><%= recipe.category %> · <%= recipe.time %> min<% if (recipe.Movie) { %> · <%= recipe.Movie.title %><% } %></span>
-                    </div>
-                  </a>
-                  <% }) %>
-                  <% if (favoriteRecipesCount > 8) { %>
-                  <span class="fav-more">Voir toutes les <%= favoriteRecipesCount %> recettes favorites →</span>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">🍽️</div>
+                    <div class="crea-empty__title">Aucune recette favorite</div>
+                    <div class="crea-empty__sub">Découvrez les recettes et sauvegardez vos préférées</div>
+                  </div>
                   <% } %>
-                <% } else { %>
-                  <p class="fav-empty">Aucune recette en favoris pour l'instant.</p>
-                <% } %>
-              </div>
-            </div>
+                </div>
+              </section>
 
-            <div class="fav-section">
-              <div class="fav-section__head">
-                <span class="fav-section__title">FILMS NOTÉS</span>
-                <span class="fav-section__count"><%= ratedMoviesCount || 0 %></span>
-              </div>
-              <div class="fav-list">
-                <% if (ratedMovies && ratedMovies.length > 0) { %>
-                  <% ratedMovies.slice(0, 8).forEach(movie => { %>
-                  <a href="/recipes-movie/<%= movie.id %>" class="fav-item">
-                    <% if (movie.cardPath || movie.picture) { %>
-                    <img class="fav-item__thumb fav-item__thumb--poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="fav-item__thumb fav-item__thumb--poster fav-item__thumb--placeholder">🎬</div>
-                    <% } %>
-                    <div class="fav-item__info">
-                      <span class="fav-item__title"><%= movie.title %></span>
-                      <span class="fav-item__sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></span>
-                    </div>
-                    <span class="fav-item__note">★ <%= movie.userScore %></span>
-                  </a>
-                  <% }) %>
-                <% } else { %>
-                  <p class="fav-empty">Aucun film noté pour l'instant.</p>
-                <% } %>
-              </div>
-            </div>
+              <!-- FILMS NOTÉS -->
+              <section id="notedFilmsSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Mes évaluations cinéma</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">FILMS NOTÉS</div>
+                  <span class="sec-link" style="cursor:default;"><%= ratedMoviesCount || 0 %> noté<%= (ratedMoviesCount || 0) > 1 ? 's' : '' %></span>
+                </div>
+                <div class="list-grid">
+                  <% if (ratedMovies && ratedMovies.length > 0) { %>
+                    <% ratedMovies.slice(0, 8).forEach(function(movie) { %>
+                    <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="list-row list-row--film list-row--link">
+                      <% if (movie.cardPath || movie.picture) { %>
+                      <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= movie.title %></span>
+                        </div>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %>
+                        </div>
+                      </div>
+                      <span class="fav-score-badge">★ <%= movie.userScore %></span>
+                    </a>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">⭐</div>
+                    <div class="crea-empty__title">Aucun film noté</div>
+                    <div class="crea-empty__sub">Notez les films de votre collection</div>
+                  </div>
+                  <% } %>
+                </div>
+              </section>
 
-            <div class="fav-section">
-              <div class="fav-section__head">
-                <span class="fav-section__title">RECETTES NOTÉES</span>
-                <span class="fav-section__count"><%= ratedRecipesCount || 0 %></span>
-              </div>
-              <div class="fav-list">
-                <% if (ratedRecipes && ratedRecipes.length > 0) { %>
-                  <% ratedRecipes.slice(0, 8).forEach(recipe => { %>
-                  <a href="/recipes-movie/details/<%= recipe.id %>" class="fav-item">
-                    <% if (recipe.picture) { %>
-                    <img class="fav-item__thumb fav-item__thumb--recipe" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="fav-item__thumb fav-item__thumb--recipe fav-item__thumb--placeholder">🍽️</div>
-                    <% } %>
-                    <div class="fav-item__info">
-                      <span class="fav-item__title"><%= recipe.name %></span>
-                      <span class="fav-item__sub"><%= recipe.category %> · <%= recipe.time %> min</span>
-                    </div>
-                    <span class="fav-item__note">★ <%= recipe.userScore %></span>
-                  </a>
-                  <% }) %>
-                <% } else { %>
-                  <p class="fav-empty">Aucune recette notée pour l'instant.</p>
-                <% } %>
-              </div>
-            </div>
+              <!-- RECETTES NOTÉES -->
+              <section>
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Mes évaluations culinaires</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">RECETTES NOTÉES</div>
+                  <span class="sec-link" style="cursor:default;"><%= ratedRecipesCount || 0 %> notée<%= (ratedRecipesCount || 0) > 1 ? 's' : '' %></span>
+                </div>
+                <div class="list-grid">
+                  <% if (ratedRecipes && ratedRecipes.length > 0) { %>
+                    <% ratedRecipes.slice(0, 8).forEach(function(recipe) { %>
+                    <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="list-row list-row--recette list-row--link">
+                      <% if (recipe.picture) { %>
+                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= recipe.name %></span>
+                        </div>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <%= recipe.category %> · <%= recipe.time %> min
+                        </div>
+                      </div>
+                      <span class="fav-score-badge">★ <%= recipe.userScore %></span>
+                    </a>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">⭐</div>
+                    <div class="crea-empty__title">Aucune recette notée</div>
+                    <div class="crea-empty__sub">Notez vos recettes préférées</div>
+                  </div>
+                  <% } %>
+                </div>
+              </section>
 
-          </div>
+            </div><!-- /crea-main -->
+
+          </div><!-- /crea-layout -->
+
         </div><!-- /tab-pane#favoris -->
 
 
@@ -486,195 +997,468 @@
         <!-- ─────────────────────────────────── -->
         <div class="tab-pane" id="creations" role="tabpanel">
 
-          <div class="section-head">
-            <span class="section-eyebrow">Mon compte</span>
-            <span class="section-title">MES CRÉATIONS</span>
-            <span class="section-rule"></span>
+          <%
+            /* ── Stats créations ── */
+            const _cr = (userRecipes || []);
+            const _cm = (userMovies || []);
+            const _cn = (userNotices || []);
+            const _crApproved  = _cr.filter(r => r.status === 'approved').length;
+            const _crPending   = _cr.filter(r => r.status === 'pending').length;
+            const _crRejected  = _cr.filter(r => r.status === 'rejected').length;
+            const _cmApproved  = _cm.filter(m => m.status === 'approved').length;
+            const _cnApproved  = _cn.filter(n => n.status === 'approved').length;
+            const _crValidated = _crApproved + _cmApproved + _cnApproved;
+            const _crTotal     = _cr.length;
+            const _cmTotal     = _cm.length;
+            const _cnTotal     = (typeof userNoticesCount !== 'undefined' ? userNoticesCount : null) || _cn.length;
+            const _crMax       = Math.max(_crTotal, 1);
+          %>
+
+          <!-- ═══ BANDEAU IMPACT ═══ -->
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--recipe">
+                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" id="creaStatRecettes"><%= _crTotal %></div>
+                <div class="impact-cell__lbl">Recettes créées</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film">
+                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" id="creaStatFilms"><%= _cmTotal %></div>
+                <div class="impact-cell__lbl">Films proposés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--avis">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" id="creaStatAvis"><%= _cnTotal %></div>
+                <div class="impact-cell__lbl">Avis rédigés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--valide">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val" id="creaStatValide"><%= _crValidated %></div>
+                <div class="impact-cell__lbl">Contenus validés</div>
+              </div>
+            </div>
           </div>
 
-          <div class="creations-grid">
+          <!-- ═══ LAYOUT 2 COLONNES ═══ -->
+          <div class="crea-layout">
 
-            <div class="col">
-              <div class="col__head">
-                <div class="col__title-wrap">
-                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
-                  <span class="col__title">Mes Recettes</span>
-                </div>
-                <span class="col__count"><%= userRecipes.length %></span>
-              </div>
-              <div class="col__search">
-                <div class="search-wrap">
-                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes recettes…" />
-                </div>
-              </div>
-              <div class="col__filters">
-                <button class="filter-pill active" data-filter="all">Toutes</button>
-                <button class="filter-pill" data-filter="approved"><span class="filter-pill__dot" style="background:var(--vert-clair)"></span>Validées</button>
-                <button class="filter-pill" data-filter="pending"><span class="filter-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
-                <button class="filter-pill" data-filter="rejected"><span class="filter-pill__dot" style="background:#e84020"></span>Refusées</button>
-              </div>
-              <div class="col__body collections-section__list" id="collections-recipes-list">
-                <% if (userRecipes && userRecipes.length > 0) { %>
-                  <% userRecipes.forEach(recipe => { %>
-                  <article
-                    class="item-card account-item ci-item"
-                    data-type="recipe"
-                    data-id="<%= recipe.id %>"
-                    data-name="<%= recipe.name %>"
-                    data-category="<%= recipe.category %>"
-                    data-time="<%= recipe.time %>"
-                    data-difficulty="<%= recipe.difficulty %>"
-                    data-status="<%= recipe.status %>"
-                    data-edit-status="<%= recipe.edit_status || 'none' %>"
-                    data-description="<%= recipe.description || '' %>"
-                    data-ingredients="<%= recipe.ingredients || '' %>"
-                    data-preparation="<%= recipe.preparation || '' %>"
-                  >
-                    <div class="item-card__thumb">
-                      <% if (recipe.picture) { %>
-                      <img src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
-                      <% } else { %>
-                      <div class="item-card__thumb--placeholder">🍽️</div>
-                      <% } %>
-                    </div>
-                    <div class="item-card__body">
-                      <div class="item-card__status-row account-item__header">
-                        <span class="badge-status badge-status--<%= recipe.status %> account-item__status is-<%= recipe.status %>">
-                          <%= recipe.status === 'approved' ? 'Validé' : recipe.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                        </span>
-                        <span class="tag-cat"><%= recipe.category %></span>
-                      </div>
-                      <div class="item-card__title account-item__title"><%= recipe.name %></div>
-                      <div class="item-card__meta account-item__meta"><%= recipe.time %> min · <%= recipe.difficulty %></div>
-                      <% if (recipe.Movie) { %><div class="item-card__film account-item__hint">🎬 <%= recipe.Movie.title %></div><% } %>
-                      <% if (recipe.edit_status === 'pending') { %><p class="account-item__hint">Modification en attente de validation.</p><% } %>
-                      <div class="item-card__actions">
-                        <button class="btn-action btn-action--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>Éditer</button>
-                        <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
-                      </div>
-                    </div>
-                  </article>
-                  <% }) %>
-                <% } else { %>
-                  <p class="fav-empty account-empty">Aucune recette enregistrée pour le moment.</p>
-                <% } %>
-                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
-              </div>
-            </div>
+            <!-- ── SIDEBAR ── -->
+            <aside class="crea-sidebar">
 
-            <div class="col">
-              <div class="col__head">
-                <div class="col__title-wrap">
-                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
-                  <span class="col__title">Mes Films</span>
+              <!-- STATISTIQUES -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Mes chiffres</span>
                 </div>
-                <span class="col__count"><%= userMovies.length %></span>
-              </div>
-              <div class="col__search">
-                <div class="search-wrap">
-                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes films…" />
+                <div class="stats-grid">
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num" data-crea-target="<%= _crTotal %>">0</div>
+                      <div class="stat-lbl">Recettes</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num" data-crea-target="<%= _cmTotal %>">0</div>
+                      <div class="stat-lbl">Films</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num" data-crea-target="<%= _cnTotal %>">0</div>
+                      <div class="stat-lbl">Avis</div>
+                    </div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="stat-text">
+                      <div class="stat-num" data-crea-target="<%= _crValidated %>">0</div>
+                      <div class="stat-lbl">Validés</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col__filters">
-                <button class="filter-pill active" data-filter="all">Tous</button>
-                <button class="filter-pill" data-filter="approved"><span class="filter-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
-                <button class="filter-pill" data-filter="pending"><span class="filter-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
-                <button class="filter-pill" data-filter="rejected"><span class="filter-pill__dot" style="background:#e84020"></span>Refusés</button>
-              </div>
-              <div class="col__body collections-section__list" id="collections-movies-list">
-                <% if (userMovies && userMovies.length > 0) { %>
-                  <% userMovies.forEach(movie => { %>
-                  <article
-                    class="item-film account-item ci-item"
-                    data-type="movie"
-                    data-id="<%= movie.id %>"
-                    data-title="<%= movie.title %>"
-                    data-year="<%= movie.year %>"
-                    data-genre="<%= movie.genre %>"
-                    data-status="<%= movie.status %>"
-                  >
-                    <div class="item-film__poster">
-                      <% if (movie.cardPath || movie.picture) { %>
-                      <img src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                      <% } else { %>
-                      <div class="item-film__poster--placeholder">🎬</div>
-                      <% } %>
-                    </div>
-                    <div class="item-film__body">
-                      <div class="item-film__status-row account-item__header">
-                        <span class="badge-status badge-status--<%= movie.status %> account-item__status is-<%= movie.status %>">
-                          <%= movie.status === 'approved' ? 'Validé' : movie.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                        </span>
-                      </div>
-                      <div class="item-film__title account-item__title"><%= movie.title %></div>
-                      <div class="item-film__meta account-item__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></div>
-                      <div class="item-film__actions">
-                        <a href="/recipes-movie/<%= movie.id %>" class="btn-action btn-action--view">Voir</a>
-                        <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
-                      </div>
-                    </div>
-                  </article>
-                  <% }) %>
-                <% } else { %>
-                  <p class="fav-empty account-empty">Aucun film enregistré pour le moment.</p>
-                <% } %>
-                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
-              </div>
-            </div>
 
-            <div class="col">
-              <div class="col__head">
-                <div class="col__title-wrap">
-                  <div class="col__icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-                  <span class="col__title">Mes Avis</span>
+              <!-- STATUT DES RECETTES -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Statut des recettes</span>
                 </div>
-                <span class="col__count"><%= userNoticesCount %></span>
-              </div>
-              <div class="col__search">
-                <div class="search-wrap">
-                  <input class="search-input collections-section__search-input" type="text" placeholder="Filtrer mes avis…" />
+                <%
+                  const _sbValide  = _crTotal > 0 ? Math.round((_crApproved / _crTotal) * 100) : 0;
+                  const _sbAttente = _crTotal > 0 ? Math.round((_crPending  / _crTotal) * 100) : 0;
+                  const _sbRefuse  = _crTotal > 0 ? Math.round((_crRejected / _crTotal) * 100) : 0;
+                %>
+                <div class="status-bars">
+                  <div class="status-bar-row sb--valide">
+                    <span class="sb-label">Validées</span>
+                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbValide %>" style="width:0%"></div></div>
+                    <span class="sb-count"><%= _crApproved %></span>
+                  </div>
+                  <div class="status-bar-row sb--attente">
+                    <span class="sb-label">En attente</span>
+                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbAttente %>" style="width:0%"></div></div>
+                    <span class="sb-count"><%= _crPending %></span>
+                  </div>
+                  <div class="status-bar-row sb--refuse">
+                    <span class="sb-label">Refusées</span>
+                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbRefuse %>" style="width:0%"></div></div>
+                    <span class="sb-count"><%= _crRejected %></span>
+                  </div>
                 </div>
               </div>
-              <div class="col__body collections-section__list" id="collections-notices-list">
-                <% if (userNotices && userNotices.length > 0) { %>
-                  <% userNotices.forEach(notice => { %>
-                  <article
-                    class="item-avis account-item account-item--notice ci-item"
-                    data-type="notice"
-                    data-id="<%= notice.id %>"
-                    data-delete-request="<%= notice.delete_request_status || 'none' %>"
-                  >
-                    <div class="item-avis__head account-item__header">
-                      <span class="badge-status badge-status--<%= notice.status %> account-item__status is-<%= notice.status %>">
-                        <%= notice.status === 'approved' ? 'Validé' : notice.status === 'rejected' ? 'Refusé' : 'En attente' %>
-                      </span>
-                      <span class="item-avis__stars"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <%= notice.quote %>/5</span>
+
+              <!-- ACTIONS RAPIDES -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Actions rapides</span>
+                </div>
+                <div class="quick-actions">
+                  <a href="/add-recipes-movies" class="qa-btn qa-btn--gold">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="qa-text">
+                      <div class="qa-title">Nouvelle recette</div>
+                      <div class="qa-sub">Partager une création culinaire</div>
                     </div>
-                    <% if (notice.Recipe) { %>
-                    <div class="item-avis__recette account-item__hint">
-                      Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a>
-                      <% if (notice.Recipe.Movie) { %> · Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a><% } %>
+                  </a>
+                  <a href="/add-recipes-movies" class="qa-btn qa-btn--violet">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="qa-text">
+                      <div class="qa-title">Proposer un film</div>
+                      <div class="qa-sub">Suggérer un film à la communauté</div>
                     </div>
+                  </a>
+                  <a href="/all-recipes" class="qa-btn qa-btn--vert">
+                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="qa-text">
+                      <div class="qa-title">Rédiger un avis</div>
+                      <div class="qa-sub">Évaluer une recette existante</div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <!-- FILMS PROPOSÉS -->
+              <% if (_cm.length > 0) { %>
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Films proposés</span>
+                  <% if (_cm.length > 3) { %>
+                  <span class="widget-head__extra" onclick="document.getElementById('creaFilmsSection').scrollIntoView({behavior:'smooth'})">Voir tout →</span>
+                  <% } %>
+                </div>
+                <div class="film-pending-list">
+                  <% _cm.slice(0, 3).forEach(function(movie) { %>
+                  <div class="fpl-item">
+                    <% if (movie.cardPath || movie.picture) { %>
+                    <img class="fpl-poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                    <% } else { %>
+                    <div class="fpl-poster fpl-poster--ph"></div>
                     <% } %>
-                    <p class="item-avis__comment account-item__text"><%= notice.content %></p>
-                    <div class="item-avis__foot">
-                      <span class="item-avis__date account-item__meta"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
-                      <% if (notice.delete_request_status === 'pending') { %>
-                      <span class="account-item__hint">Suppression en attente.</span>
-                      <% } else { %>
-                      <button class="btn-action btn-action--delete account-delete-btn">Supprimer</button>
-                      <% } %>
+                    <div class="fpl-info">
+                      <div class="fpl-title"><%= movie.title %></div>
+                      <div class="fpl-sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></div>
                     </div>
-                  </article>
+                    <% if (movie.status === 'approved') { %>
+                    <span class="fpl-status fpl-status--valide">Validé</span>
+                    <% } else if (movie.status === 'rejected') { %>
+                    <span class="fpl-status fpl-status--refuse">Refusé</span>
+                    <% } else { %>
+                    <span class="fpl-status fpl-status--pending">En attente</span>
+                    <% } %>
+                  </div>
                   <% }) %>
-                <% } else { %>
-                  <p class="fav-empty account-empty">Aucun avis enregistré pour le moment.</p>
-                <% } %>
-                <p class="collections-section__no-results col__no-results" style="display:none">Aucun résultat.</p>
+                </div>
               </div>
-            </div>
+              <% } %>
 
-          </div>
+            </aside>
+
+            <!-- ── COLONNE PRINCIPALE ── -->
+            <div class="crea-main">
+
+              <!-- ═══ MES RECETTES ═══ -->
+              <section id="creaRecettesSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Mes créations culinaires</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">MES RECETTES</div>
+                  <a href="/add-recipes-movies" class="sec-link">+ Ajouter</a>
+                </div>
+                <div class="filter-bar" id="creaRecetteFilters">
+                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Toutes</button>
+                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validées</button>
+                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
+                  <button class="f-pill fp--refuse" data-crea-filter="rejected" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:#e84020"></span>Refusées</button>
+                  <div class="filter-sep"></div>
+                  <div class="crea-search-wrap">
+                    <svg class="crea-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input class="crea-search-input" type="text" placeholder="Filtrer mes recettes…" data-crea-search="creaRecettesGrid" />
+                  </div>
+                </div>
+                <div class="list-grid" id="creaRecettesGrid">
+                  <% if (_cr.length > 0) { %>
+                    <% _cr.forEach(function(recipe) {
+                      const rsCls = recipe.status === 'approved' ? 'lrs--valide' : recipe.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
+                      const rsTxt = recipe.status === 'approved' ? 'Validée' : recipe.status === 'pending' ? 'En attente' : 'Refusée';
+                      const diffCls = recipe.difficulty === 'Facile' ? 'lr-tag--diff' : recipe.difficulty === 'Difficile' ? 'lr-tag--diff-h' : 'lr-tag--diff-m';
+                    %>
+                    <div class="list-row list-row--recette account-item"
+                      data-type="recipe"
+                      data-id="<%= recipe.id %>"
+                      data-name="<%= recipe.name %>"
+                      data-crea-name="<%= recipe.name.toLowerCase() %>"
+                      data-crea-status="<%= recipe.status %>"
+                      data-status="<%= recipe.status %>"
+                      data-edit-status="<%= recipe.edit_status || 'none' %>"
+                      data-delete-request="<%= recipe.delete_request_status || 'none' %>"
+                      data-category="<%= recipe.category %>"
+                      data-time="<%= recipe.time %>"
+                      data-difficulty="<%= recipe.difficulty %>"
+                      data-description="<%= encodeURIComponent(recipe.description || '') %>"
+                      data-ingredients="<%= encodeURIComponent(recipe.ingredients || '') %>"
+                      data-preparation="<%= encodeURIComponent(recipe.preparation || '') %>"
+                    >
+                      <% if (recipe.picture) { %>
+                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name account-item__title"><%= recipe.name %></span>
+                          <span class="lr-status <%= rsCls %>">
+                            <% if (recipe.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
+                            <%= rsTxt %>
+                          </span>
+                        </div>
+                        <div class="list-row__tags">
+                          <span class="lr-tag lr-tag--cat"><%= recipe.category %></span>
+                          <span class="lr-tag <%= diffCls %>"><%= recipe.difficulty %></span>
+                          <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
+                        </div>
+                        <div class="list-row__sub account-item__meta">
+                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <%= recipe.time %> min<% if (recipe.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
+                        </div>
+                        <% if (recipe.edit_status === 'pending') { %>
+                        <p class="account-item__hint account-item__hint--pending">⏳ Modification en attente de validation.</p>
+                        <% } else if (recipe.edit_status === 'approved') { %>
+                        <p class="account-item__hint account-item__hint--approved">✓ Modification approuvée.</p>
+                        <% } else if (recipe.edit_status === 'rejected') { %>
+                        <p class="account-item__hint account-item__hint--rejected">✕ Modification refusée. Vous pouvez soumettre une nouvelle modification.</p>
+                        <% } %>
+                      </div>
+                      <div class="list-row__actions">
+                        <% if (recipe.status === 'approved') { %>
+                        <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
+                          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                        </a>
+                        <% } %>
+                        <button class="lr-btn lr-btn--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>
+                          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 1 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Éditer</span>
+                        </button>
+                        <% if (recipe.delete_request_status === 'pending') { %>
+                        <button class="lr-btn lr-btn--del account-delete-btn" disabled>
+                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Suppr.</span>
+                        </button>
+                        <% } else { %>
+                        <button class="lr-btn lr-btn--del account-delete-btn">
+                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Suppr.</span>
+                        </button>
+                        <% } %>
+                      </div>
+                    </div>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">🍽️</div>
+                    <div class="crea-empty__title">Aucune recette</div>
+                    <div class="crea-empty__sub">Partagez votre première création culinaire</div>
+                  </div>
+                  <% } %>
+                  <div class="crea-no-results" style="display:none">Aucun résultat pour cette recherche.</div>
+                </div>
+              </section>
+
+              <!-- ═══ MES FILMS ═══ -->
+              <section id="creaFilmsSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Films suggérés à la communauté</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">MES FILMS</div>
+                  <a href="/add-recipes-movies" class="sec-link">+ Proposer</a>
+                </div>
+                <div class="filter-bar" id="creaFilmFilters">
+                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--violet-clair)"></span>Tous</button>
+                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
+                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
+                  <div class="filter-sep"></div>
+                  <div class="crea-search-wrap">
+                    <svg class="crea-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input class="crea-search-input" type="text" placeholder="Filtrer mes films…" data-crea-search="creaFilmsGrid" />
+                  </div>
+                </div>
+                <div class="list-grid" id="creaFilmsGrid">
+                  <% if (_cm.length > 0) { %>
+                    <% _cm.forEach(function(movie) {
+                      const msCls = movie.status === 'approved' ? 'lrs--valide' : movie.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
+                      const msTxt = movie.status === 'approved' ? 'Validé' : movie.status === 'pending' ? 'En attente' : 'Refusé';
+                    %>
+                    <div class="list-row list-row--film account-item"
+                      data-type="movie"
+                      data-id="<%= movie.id %>"
+                      data-title="<%= movie.title %>"
+                      data-year="<%= movie.year %>"
+                      data-genre="<%= movie.genre %>"
+                      data-status="<%= movie.status %>"
+                      data-crea-name="<%= movie.title.toLowerCase() %>"
+                      data-crea-status="<%= movie.status %>"
+                    >
+                      <% if (movie.cardPath || movie.picture) { %>
+                      <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
+                      <% } else { %>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <% } %>
+                      <div class="list-row__body">
+                        <div class="list-row__top">
+                          <span class="list-row__name"><%= movie.title %></span>
+                          <span class="lr-status <%= msCls %>">
+                            <% if (movie.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
+                            <%= msTxt %>
+                          </span>
+                        </div>
+                        <% if (movie.genre) { %>
+                        <div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div>
+                        <% } %>
+                        <div class="list-row__sub">
+                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <%= movie.year %><% if (movie.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
+                        </div>
+                      </div>
+                      <div class="list-row__actions">
+                        <% if (movie.status === 'approved') { %>
+                        <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
+                          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                        </a>
+                        <% } %>
+                        <button class="lr-btn lr-btn--del account-delete-btn">
+                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Retirer</span>
+                        </button>
+                      </div>
+                    </div>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">🎬</div>
+                    <div class="crea-empty__title">Aucun film proposé</div>
+                    <div class="crea-empty__sub">Suggérez un film à la communauté</div>
+                  </div>
+                  <% } %>
+                  <div class="crea-no-results" style="display:none">Aucun résultat pour cette recherche.</div>
+                </div>
+              </section>
+
+              <!-- ═══ MES AVIS ═══ -->
+              <section id="creaAvisSection">
+                <div class="sec-eyebrow">
+                  <div class="sec-eyebrow__line"></div>
+                  <span class="sec-eyebrow__label">Critiques &amp; évaluations</span>
+                </div>
+                <div class="sec-header">
+                  <div class="sec-title">MES AVIS</div>
+                </div>
+                <div class="filter-bar" id="creaAvisFilters">
+                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--dore-clair)"></span>Tous</button>
+                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
+                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
+                </div>
+                <div class="avis-grid" id="creaAvisGrid">
+                  <% if (_cn.length > 0) { %>
+                    <% _cn.forEach(function(notice) { %>
+                    <div class="avis-card account-item account-item--notice"
+                      data-type="notice"
+                      data-id="<%= notice.id %>"
+                      data-delete-request="<%= notice.delete_request_status || 'none' %>"
+                      data-crea-status="<%= notice.status %>"
+                    >
+                      <div class="avis-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      </div>
+                      <div class="avis-body">
+                        <div class="avis-top">
+                          <div class="avis-titles">
+                            <% if (notice.Recipe) { %>
+                            <div class="avis-recipe-name">Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a></div>
+                            <% if (notice.Recipe.Movie) { %><div class="avis-film-link">Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a></div><% } %>
+                            <% } %>
+                          </div>
+                          <div class="avis-stars-row">
+                            <div class="avis-score">
+                              <% for (let _i = 1; _i <= 5; _i++) { %><span class="star<%= _i <= parseInt(notice.quote) ? ' star--on' : '' %>">★</span><% } %>
+                            </div>
+                            <span class="avis-score-val"><%= notice.quote %>/5</span>
+                          </div>
+                        </div>
+                        <% if (notice.content) { %><div class="avis-quote"><%= notice.content %></div><% } %>
+                        <div class="avis-footer">
+                          <% if (notice.status === 'approved') { %>
+                          <span class="avis-status-badge ab--valide">✓ Validé</span>
+                          <% } else { %>
+                          <span class="avis-status-badge ab--attente">⏳ En attente</span>
+                          <% } %>
+                          <span class="avis-date"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
+                          <% if (notice.delete_request_status === 'pending') { %>
+                          <span class="account-item__hint">Suppression en attente.</span>
+                          <% } else { %>
+                          <button class="avis-del-btn account-delete-btn">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>Supprimer
+                          </button>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                    <% }) %>
+                  <% } else { %>
+                  <div class="crea-empty">
+                    <div class="crea-empty__icon">💬</div>
+                    <div class="crea-empty__title">Aucun avis</div>
+                    <div class="crea-empty__sub">Rédigez votre premier avis sur une recette</div>
+                  </div>
+                  <% } %>
+                </div>
+              </section>
+
+            </div><!-- /crea-main -->
+
+          </div><!-- /crea-layout -->
+
         </div><!-- /tab-pane#creations -->
 
 
@@ -706,15 +1490,14 @@
 
             /* ── Cadres ── */
             const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
-              ? userFrames.map(f => f.id || f) : [];
+              ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
             const _allFrames = [
-              { id:'aventure', label:'Indiana Jones',    theme:'Aventure',        icon:'🎩', minLvl:2,  bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:false },
-              { id:'action',   label:'Last Action Hero', theme:'Action',          icon:'🎬', minLvl:3,  bg:'rgba(194,48,24,.22)',  border:'rgba(220,80,45,.5)',   hasRealFrame:false },
-              { id:'magie',    label:'Harry Potter',     theme:'Magie',           icon:'⚡', minLvl:5,  bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true  },
-              { id:'horreur',  label:'Conjuring',        theme:'Horreur',         icon:'👁️', minLvl:9,  bg:'rgba(120,8,28,.22)',   border:'rgba(185,25,45,.4)',   hasRealFrame:false },
-              { id:'thriller', label:'Silence Agneaux',  theme:'Thriller',        icon:'🦋', minLvl:12, bg:'rgba(38,80,88,.22)',   border:'rgba(58,125,135,.4)', hasRealFrame:false },
-              { id:'scifi',    label:'Matrix',           theme:'Science-Fiction',  icon:'🟢', minLvl:15, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:false },
-              { id:'policier', label:'Sherlock Holmes',  theme:'Policier',         icon:'🔍', minLvl:18, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)',hasRealFrame:false },
+              { id:'none',    label:'Sans cadre',      theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
+              { id:'cine',    label:'Ciné Délices',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Cin\u00e9 D\u00e9lices/img/cadre-cine-delices-2.png' },
+              { id:'sherlock',label:'Sherlock Holmes',theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png' },
+              { id:'matrix',  label:'Matrix',         theme:'Science-Fiction',  icon:'🟢', minLvl:4, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
+              { id:'indiana', label:'Indiana Jones',  theme:'Aventure',         icon:'🎩', minLvl:6, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
+              { id:'harry',   label:'Harry Potter',   theme:'Magie',            icon:'⚡', minLvl:8, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
             ];
             const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
             const _locked      = _allFrames.filter(f => _lvl < f.minLvl  && !_unlockedIds.includes(f.id));
@@ -831,7 +1614,11 @@
                   <span class="widget-head__extra" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth'})">Changer →</span>
                 </div>
                 <div class="active-frame-body">
-                  <% if (_activeFrame.hasRealFrame && _frameUrl) { %>
+                  <% if (_activeFrame.id === 'none') { %>
+                  <div class="active-frame-preview active-frame-preview--noframe">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
+                  </div>
+                  <% } else if (_activeFrame.hasRealFrame && _frameUrl) { %>
                   <div class="active-frame-preview">
                     <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
                     <img class="bsf" src="<%= _frameUrl %>" alt="Cadre <%= _activeFrame.label %>" />
@@ -868,10 +1655,14 @@
                     data-frame-id="<%= fr.id %>"
                     data-unlocked="true"
                   >
-                    <% if (fr.hasRealFrame && _frameUrl) { %>
+                    <% if (fr.id === 'none') { %>
+                    <div class="frame-row-badge-static frame-row-badge-static--noframe">
+                      <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    </div>
+                    <% } else if (fr.hasRealFrame && fr.pngUrl) { %>
                     <div class="frame-row-badge-static">
                       <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
-                      <img class="bsf" src="<%= _frameUrl %>" alt="" />
+                      <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
                     </div>
                     <% } else { %>
                     <div class="frame-row-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;"><%= fr.icon %></div>
@@ -909,6 +1700,40 @@
                   <% }); %>
                   <% } %>
 
+                </div>
+              </div>
+
+              <!-- GUIDE XP -->
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Comment progresser</span>
+                </div>
+                <div class="xp-guide">
+                  <div class="xp-guide-row">
+                    <div class="xp-guide-icon xp-guide-icon--recipe"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="xp-guide-body">
+                      <div class="xp-guide-label">Recette publiée</div>
+                      <div class="xp-guide-sub">Validée par la modération</div>
+                    </div>
+                    <span class="xp-guide-pts">+50 XP</span>
+                  </div>
+                  <div class="xp-guide-row">
+                    <div class="xp-guide-icon xp-guide-icon--movie"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="xp-guide-body">
+                      <div class="xp-guide-label">Film accepté</div>
+                      <div class="xp-guide-sub">Suggestion validée par l'équipe</div>
+                    </div>
+                    <span class="xp-guide-pts">+25 XP</span>
+                  </div>
+                  <div class="xp-guide-row">
+                    <div class="xp-guide-icon xp-guide-icon--avis"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="xp-guide-body">
+                      <div class="xp-guide-label">Avis approuvé</div>
+                      <div class="xp-guide-sub">Critique publiée sur une recette</div>
+                    </div>
+                    <span class="xp-guide-pts">+10 XP</span>
+                  </div>
                 </div>
               </div>
 
@@ -1065,18 +1890,37 @@
         <div class="modal-body modal-body--form">
           <div class="ci-ef-row">
             <div><label class="ci-ef-label">Titre</label><input class="ci-ef-input" id="editField-name" type="text" name="name" /></div>
-            <div><label class="ci-ef-label">Catégorie</label><input class="ci-ef-input" id="editField-category" type="text" name="category" /></div>
+            <div>
+              <label class="ci-ef-label">Catégorie</label>
+              <select class="ci-ef-input ci-ef-select" id="editField-category" name="category">
+                <option value="">Choisir…</option>
+                <option value="entrée">Entrée</option>
+                <option value="plat">Plat</option>
+                <option value="dessert">Dessert</option>
+              </select>
+            </div>
           </div>
           <div class="ci-ef-row">
-            <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" id="editField-time" type="number" name="time" /></div>
-            <div><label class="ci-ef-label">Difficulté</label><input class="ci-ef-input" id="editField-difficulty" type="text" name="difficulty" /></div>
+            <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" id="editField-time" type="number" name="time" min="1" /></div>
+            <div>
+              <label class="ci-ef-label">Difficulté</label>
+              <select class="ci-ef-input ci-ef-select" id="editField-difficulty" name="difficulty">
+                <option value="">Choisir…</option>
+                <option value="Facile">Facile</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Difficile">Difficile</option>
+              </select>
+            </div>
           </div>
           <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" id="editField-description" name="description" rows="2"></textarea></div>
           <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" id="editField-ingredients" name="ingredients" rows="3"></textarea></div>
           <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" id="editField-preparation" name="preparation" rows="4"></textarea></div>
           <div class="ci-ef-full">
             <label class="ci-ef-label">Photo de la recette</label>
-            <input class="ci-ef-file" type="file" id="editField-recipeImage" name="recipeImage" accept="image/*" />
+            <div class="ci-ef-img-wrap">
+              <img id="editField-preview" class="ci-ef-img-preview" src="" alt="Prévisualisation" />
+              <input class="ci-ef-file" type="file" id="editField-recipeImage" name="recipeImage" accept="image/*" />
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -1089,6 +1933,56 @@
     <!-- Scripts -->
     <script src="/js/profile-tabs.js" defer></script>
     <script src="/js/account.js" defer></script>
+
+    <!-- Upload bannière -->
+    <script>
+      (function () {
+        const input = document.getElementById('bannerInput');
+        if (!input) return;
+        const userId = '<%= user.id %>';
+
+        input.addEventListener('change', async function () {
+          const file = input.files[0];
+          if (!file) return;
+          if (!file.type.startsWith('image/')) return;
+
+          const formData = new FormData();
+          formData.append('banner', file);
+
+          try {
+            const res  = await fetch('/auth/profil/' + userId + '/banner', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur upload.');
+
+            // Prévisualisation
+            const bannerImg = document.querySelector('.hero-banner img');
+            if (bannerImg) {
+              bannerImg.src = data.banner_image;
+            } else {
+              const heroDiv = document.querySelector('.hero-banner');
+              if (heroDiv) {
+                const img = document.createElement('img');
+                img.src = data.banner_image;
+                heroDiv.prepend(img);
+              }
+            }
+
+            // Remplacer le bouton par le badge "en attente"
+            const wrap = document.querySelector('.hero-banner-status');
+            if (wrap) {
+              wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
+            }
+          } catch (err) {
+            console.error('Banner upload error:', err);
+          }
+
+          input.value = '';
+        });
+      })();
+    </script>
+    <script src="/js/sherlock-badge.js" defer></script>
+    <script src="/js/badge-engine.js" defer></script>
+    <script src="/js/contributions.js" defer></script>
     <script>
       /* ── Init onglet Contributions ── */
       (function () {
@@ -1124,17 +2018,7 @@
             });
           });
 
-          /* Équiper un cadre — UI seulement, brancher l'API ensuite */
-          const framesList = document.getElementById('contrib-frames-list');
-          if (framesList) {
-            framesList.addEventListener('click', function (e) {
-              const row = e.target.closest('.frame-row');
-              if (!row || row.dataset.unlocked !== 'true' || row.classList.contains('frame-row--active')) return;
-              framesList.querySelectorAll('.frame-row--active').forEach(function (r) { r.classList.remove('frame-row--active'); });
-              row.classList.add('frame-row--active');
-              /* TODO : fetch('/api/user/equip-frame', { method: 'PATCH', body: JSON.stringify({ frameId: row.dataset.frameId }) }) */
-            });
-          }
+          /* Équiper un cadre — géré par contributions.js (POST /auth/equip-frame) */
         }
 
         /* Déclencher au clic sur l'onglet */
@@ -1143,6 +2027,109 @@
 
         /* Ou si on arrive directement via #contributions */
         if (window.location.hash === '#contributions') setTimeout(initContrib, 250);
+      })();
+    </script>
+    <script>
+      /* ── Init onglet Vue d'ensemble ── */
+      (function () {
+        function initOverview() {
+          /* Count-up sur les impact-cell__val[data-ov-target] */
+          document.querySelectorAll('#overview .impact-cell__val[data-ov-target]').forEach(function (el) {
+            const target = parseInt(el.dataset.ovTarget) || 0;
+            if (target === 0) { el.textContent = '0'; return; }
+            const dur = 800, start = performance.now();
+            (function step(now) {
+              const p = Math.min((now - start) / dur, 1);
+              el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+              if (p < 1) requestAnimationFrame(step);
+            })(performance.now());
+          });
+
+          /* Barres de progression du widget "Ma progression" */
+          setTimeout(function () {
+            document.querySelectorAll('#overview .ov-prog-bar').forEach(function (bar) {
+              const w = bar.style.width;
+              bar.style.width = '0%';
+              requestAnimationFrame(function () { bar.style.width = w; });
+            });
+          }, 200);
+        }
+
+        /* Vue d'ensemble est l'onglet actif par défaut → lancer au chargement */
+        if (document.getElementById('overview')?.classList.contains('active')) {
+          setTimeout(initOverview, 150);
+        }
+        /* Aussi si on revient sur l'onglet */
+        const tabOv = document.querySelector('[data-tab="overview"]');
+        if (tabOv) tabOv.addEventListener('click', function () { setTimeout(initOverview, 80); });
+      })();
+    </script>
+    <script>
+      /* ── Init onglet Créations v2 ── */
+      (function () {
+        function initCreations() {
+          /* Count-up stats */
+          document.querySelectorAll('#creations .stat-num[data-crea-target]').forEach(function (el) {
+            const target = parseInt(el.dataset.creaTarget) || 0;
+            if (target === 0) { el.textContent = '0'; return; }
+            const dur = 900, start = performance.now();
+            (function step(now) {
+              const p = Math.min((now - start) / dur, 1);
+              el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+              if (p < 1) requestAnimationFrame(step);
+            })(performance.now());
+          });
+
+          /* Barres de statut */
+          setTimeout(function () {
+            document.querySelectorAll('#creations .sb-fill[data-sb-w]').forEach(function (el) {
+              el.style.width = (el.dataset.sbW || '0') + '%';
+            });
+          }, 350);
+
+          /* Filtres */
+          document.querySelectorAll('#creations .f-pill').forEach(function (pill) {
+            if (pill._creaInit) return;
+            pill._creaInit = true;
+            pill.addEventListener('click', function () {
+              const gridId = pill.dataset.creaGrid;
+              const grid   = document.getElementById(gridId);
+              if (!grid) return;
+              pill.closest('.filter-bar').querySelectorAll('.f-pill').forEach(function (p) { p.classList.remove('active'); });
+              pill.classList.add('active');
+              const filter = pill.dataset.creaFilter;
+              let visible = 0;
+              grid.querySelectorAll('[data-crea-status]').forEach(function (item) {
+                const show = filter === 'all' || item.dataset.creaStatus === filter;
+                item.style.display = show ? '' : 'none';
+                if (show) visible++;
+              });
+              const noRes = grid.querySelector('.crea-no-results');
+              if (noRes) noRes.style.display = visible === 0 ? '' : 'none';
+            });
+          });
+
+          /* Recherche */
+          document.querySelectorAll('#creations .crea-search-input').forEach(function (input) {
+            if (input._creaInit) return;
+            input._creaInit = true;
+            input.addEventListener('input', function () {
+              const grid = document.getElementById(input.dataset.creaSearch);
+              if (!grid) return;
+              const q = input.value.toLowerCase().trim();
+              grid.querySelectorAll('[data-crea-name]').forEach(function (item) {
+                item.style.display = (!q || item.dataset.creaName.includes(q)) ? '' : 'none';
+              });
+            });
+          });
+        }
+
+        /* Déclencher au clic sur l'onglet */
+        const tab = document.querySelector('[data-tab="creations"]');
+        if (tab) tab.addEventListener('click', function () { setTimeout(initCreations, 80); });
+
+        /* Ou si on arrive directement via #creations */
+        if (window.location.hash === '#creations') setTimeout(initCreations, 250);
       })();
     </script>
   </body>

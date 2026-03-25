@@ -16,8 +16,8 @@
       <a href="/movies" class="nav-link">Films</a>
       <a href="/recipes-movie/" class="nav-link">Recettes</a>
       <a href="/contact-about/" class="nav-link">Contact</a>
-      <% if (role === "admin") { %>
-      <a href="/admin/" class="nav-link nav-link--admin">Admin</a>
+      <% if (role === "admin" || role === "super_admin") { %>
+      <a href="/admin/" class="nav-link nav-link--admin" target="_blank" rel="noopener">Admin</a>
       <% } %>
     </nav>
 
@@ -69,19 +69,32 @@
       <% if (typeof role !== "undefined") { %>
       <div class="user-dropdown" id="userDropdown">
         <button
-          class="header-icon header-icon--account user-dropdown__trigger"
+          class="header-icon header-icon--account user-dropdown__trigger nav-badge-trigger"
           id="userDropdownTrigger"
           aria-expanded="false"
           aria-haspopup="true"
           title="Mon compte"
         >
+          <% if (typeof navFrameUrl !== 'undefined' && navFrameUrl) { %>
+          <div class="nav-badge-static" aria-hidden="true">
+            <img class="nav-badge-static__photo" src="<%= navAvatar || '/images/image-default-profile.jpg' %>" alt="" />
+            <img class="nav-badge-static__frame" src="<%= navFrameUrl %>" alt="" />
+          </div>
+          <% } else { %>
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <% } %>
         </button>
         <div class="user-dropdown__menu" id="userDropdownMenu" aria-hidden="true">
           <a href="/auth/profil/<%= userId %>" class="user-dropdown__item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Mon compte</span>
           </a>
+          <% if (hasAuthorPage) { %>
+          <a href="/auteur/<%= userId %>" class="user-dropdown__item" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            <span>Ma page auteur</span>
+          </a>
+          <% } %>
           <form action="/auth/logout" method="POST" style="margin:0">
             <button type="submit" class="user-dropdown__item user-dropdown__item--logout">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>

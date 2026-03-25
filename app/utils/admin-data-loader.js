@@ -85,6 +85,15 @@ export async function loadAdminData() {
     order: [["delete_request_at", "DESC"]],
   });
 
+  const pendingRecipeDeleteRequests = await Recipe.findAll({
+    where: { delete_request_status: "pending" },
+    include: [
+      { model: Movie, attributes: ["id", "title"] },
+      { model: User, as: "contributor", attributes: ["id", "pseudo", "email"] },
+    ],
+    order: [["delete_request_at", "DESC"]],
+  });
+
   const validatedMovies = await Movie.findAll({
     where: { status: "approved" },
     order: [["id", "DESC"]],
@@ -137,6 +146,7 @@ export async function loadAdminData() {
     pendingRecipeEdits,
     pendingNoticeEdits,
     pendingNoticeDeleteRequests,
+    pendingRecipeDeleteRequests,
     validatedMovies: enrichMoviesWithImagePaths(validatedMovies),
     validatedRecipes,
     validatedNotices,

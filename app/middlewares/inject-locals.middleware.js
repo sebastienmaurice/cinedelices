@@ -14,6 +14,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { User, Recipe, Movie } from "../models/index.model.js";
+import { FRAME_UNLOCKS } from "../utils/xp.js";
 
 /* ──────────────────────────────────────────────────────────────
    Cache en mémoire — évite de refaire les COUNT à chaque requête
@@ -24,6 +25,15 @@ let _statsCache      = null;
 let _statsCacheTime  = 0;
 let _contribCache    = null;
 let _contribCacheTime = 0;
+
+// Cache nav frame par userId (TTL court — 2 min)
+const _navCache    = new Map();
+const NAV_TTL      = 2 * 60 * 1000;
+
+function _frameUrl(code) {
+  const f = FRAME_UNLOCKS.find(f => f.code === (code || "cine"));
+  return f ? f.pngUrl : FRAME_UNLOCKS[0].pngUrl;
+}
 
 async function getGlobalStats() {
   if (_statsCache && Date.now() - _statsCacheTime < CACHE_TTL) {
@@ -45,17 +55,47 @@ async function getTopContributors() {
   }
   const rows = await sequelize.query(
     `SELECT u.id, u.pseudo AS username, u.picture,
-            COUNT(r.id)::int AS count
+            COUNT(r.id)::int AS count,
+            COALESCE(up.active_frame_code, 'cine') AS active_frame_code
      FROM   users u
      JOIN   recipes r ON r.id_user = u.id AND r.status = 'approved'
-     GROUP  BY u.id, u.pseudo, u.picture
+     LEFT JOIN user_points up ON up.id_user = u.id
+     GROUP  BY u.id, u.pseudo, u.picture, up.active_frame_code
      ORDER  BY COUNT(r.id) DESC
      LIMIT  3`,
     { type: QueryTypes.SELECT }
   );
-  _contribCache     = rows;
+  const enriched = rows.map(r => ({ ...r, frameUrl: _frameUrl(r.active_frame_code) }));
+  _contribCache     = enriched;
   _contribCacheTime = Date.now();
   return _contribCache;
+}
+
+async function getNavData(userId) {
+  const cached = _navCache.get(userId);
+  if (cached && Date.now() - cached.t < NAV_TTL) return cached;
+
+  const [[row], [{ count }]] = await Promise.all([
+    sequelize.query(
+      `SELECT u.picture, COALESCE(up.active_frame_code, 'cine') AS active_frame_code
+       FROM users u
+       LEFT JOIN user_points up ON up.id_user = u.id
+       WHERE u.id = :userId`,
+      { replacements: { userId }, type: QueryTypes.SELECT }
+    ),
+    sequelize.query(
+      `SELECT COUNT(*)::int AS count FROM recipes WHERE id_user = :userId AND status = 'approved'`,
+      { replacements: { userId }, type: QueryTypes.SELECT }
+    ),
+  ]);
+  const data = {
+    navAvatar:      row?.picture || null,
+    navFrameUrl:    _frameUrl(row?.active_frame_code),
+    hasAuthorPage:  count > 0,
+    t: Date.now(),
+  };
+  _navCache.set(userId, data);
+  return data;
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -68,12 +108,18 @@ async function injectLocals(req, res, next) {
 
   // Données asynchrones — silencieuses en cas d'erreur
   try {
-    const [stats, contributors] = await Promise.all([
-      getGlobalStats(),
-      getTopContributors(),
-    ]);
+    const userId = req.userId || null;
+    const tasks  = [getGlobalStats(), getTopContributors()];
+    if (userId) tasks.push(getNavData(userId));
+
+    const [stats, contributors, navData] = await Promise.all(tasks);
     res.locals.footerStats     = stats;
     res.locals.topContributors = contributors;
+    if (navData) {
+      res.locals.navAvatar      = navData.navAvatar;
+      res.locals.navFrameUrl    = navData.navFrameUrl;
+      res.locals.hasAuthorPage  = navData.hasAuthorPage;
+    }
   } catch {
     /* Stats indisponibles — le footer utilisera les valeurs par défaut EJS */
   }
@@ -81,4 +127,8 @@ async function injectLocals(req, res, next) {
   next();
 }
 
-export { injectLocals };
+function clearNavCache(userId) {
+  if (userId) _navCache.delete(userId);
+}
+
+export { injectLocals, clearNavCache };

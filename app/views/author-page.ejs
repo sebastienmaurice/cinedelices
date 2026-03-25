@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="<%= author.pseudo %> — Auteur sur Ciné Délices · <%= recipesCount %> recette<%= recipesCount > 1 ? 's' : '' %> cinéphiles"
+    />
+    <title><%= author.pseudo %> — Page Auteur · Ciné Délices</title>
+
+    <%- include("partials/head-resources") %>
+
+    <!-- Styles : hero profil + cards recettes + surcharges auteur -->
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/user-profile.css" />
+    <link rel="stylesheet" href="/css/recipes-movie.css" />
+    <link rel="stylesheet" href="/css/all-recipes.css" />
+    <link rel="stylesheet" href="/css/author-page.css" />
+
+    <!-- Scripts -->
+    <script src="/js/filtred-category.js" defer></script>
+  </head>
+
+  <body class="author-page">
+    <%- include("partials/header") %>
+
+    <%
+      /* Sur la page publique, on n'affiche la bannière que si elle est approuvée par un admin */
+      const bannerUrl = (author.banner_status === 'approved' && (author.banner || author.banner_image))
+        ? (author.banner || author.banner_image)
+        : null;
+    %>
+
+    <main data-author-id="<%= author.id %>">
+
+      <!-- ══════════════════════════════════════════
+           BREADCRUMB
+      ══════════════════════════════════════════ -->
+      <div class="bc-bar">
+        <nav class="bc" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a>
+          <span class="bc-sep" aria-hidden="true">›</span>
+          <span class="bc-cur">Page auteur · <%= author.pseudo %></span>
+        </nav>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           HERO AUTEUR (même structure que profile-hero)
+      ══════════════════════════════════════════ -->
+      <section class="profile-hero" aria-labelledby="authorName">
+
+        <!-- Bannière -->
+        <div class="hero-banner">
+          <% if (bannerUrl) { %>
+          <img src="<%= bannerUrl %>" alt="Bannière de <%= author.pseudo %>" />
+          <% } %>
+          <div class="hero-banner-grad"></div>
+        </div>
+
+        <!-- Déco cinématographique -->
+        <div class="hero-reel hero-reel--1" aria-hidden="true"></div>
+        <div class="hero-reel hero-reel--2" aria-hidden="true"></div>
+        <div class="hero-scanlines" aria-hidden="true"></div>
+        <div class="hero-vignette" aria-hidden="true"></div>
+
+        <!-- Modifier la bannière (propriétaire uniquement) -->
+        <% if (isOwner) { %>
+        <div class="hero-banner-status">
+          <% if (author.banner_status === 'pending') { %>
+            <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
+          <% } else if (author.banner_status === 'rejected') { %>
+            <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
+          <% } else { %>
+            <button class="banner-btn banner-btn--upload" type="button" id="authorBannerBtn">
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Modifier la bannière
+            </button>
+          <% } %>
+        </div>
+        <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
+        <% } %>
+
+        <!-- Contenu hero bas -->
+        <div class="hero-content">
+          <div class="hero-row">
+
+          <!-- Avatar badge + cadre gamification -->
+          <div class="avatar-block">
+            <div class="profile-badge-hero"
+                 id="authorBadgeHero"
+                 data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
+                 data-photo-src="<%= author.picture || '/images/image-default-profile.jpg' %>">
+
+              <img
+                class="pbh-photo"
+                src="<%= author.picture || '/images/image-default-profile.jpg' %>"
+                alt="Avatar de <%= author.pseudo %>"
+              />
+              <% if (typeof userActiveFrame !== 'undefined' && userActiveFrame) { %>
+              <img class="pbh-frame" src="<%= userActiveFrame %>" alt="" aria-hidden="true" />
+              <% } else { %>
+              <div class="pbh-ring"></div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Identité -->
+          <div class="hero-identity">
+
+            <!-- Badge rang / niveau -->
+            <div class="hero-rank-badge">
+              <svg viewBox="0 0 24 24" width="12" height="12"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" stroke="none"/></svg>
+              Niveau <%= userLevel %>
+            </div>
+
+            <!-- Pseudo : dernier mot en doré (style page-hero__title movies) -->
+            <%
+              const _pp    = author.pseudo.trim().split(' ');
+              const _pLast = _pp.pop();
+              const _pRest = _pp.join(' ');
+            %>
+            <h1 class="hero-pseudo hero-pseudo--static" id="authorName"><% if (_pRest) { %><%= _pRest %> <% } %><em><%= _pLast %></em></h1>
+
+            <!-- Titre rang -->
+            <p class="hero-rank-title"><%= userRank %></p>
+
+            <!-- Stats -->
+            <div class="hero-stats-row">
+              <div class="h-stat">
+                <span class="h-stat__num"><%= recipesCount %></span>
+                <span class="h-stat__lbl">Recettes</span>
+              </div>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= userXP %></span>
+                <span class="h-stat__lbl">XP</span>
+              </div>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= userLevel %></span>
+                <span class="h-stat__lbl">Niveau</span>
+              </div>
+            </div>
+
+            <!-- Barre XP -->
+            <div class="hero-xp">
+              <div class="hero-xp__header">
+                <span class="hero-xp__lbl">Progression</span>
+                <span class="hero-xp__val"><%= userXP %> XP</span>
+              </div>
+              <div class="hero-xp__track">
+                <div class="hero-xp__fill" data-pct="<%= xpPct %>" style="width:0"></div>
+              </div>
+              <span class="hero-xp__remain">
+                <% if (xpNeeded > 0) { %>
+                  <%= xpNeeded %> XP jusqu'au prochain niveau
+                <% } else { %>
+                  Niveau maximum atteint
+                <% } %>
+              </span>
+            </div>
+
+          </div>
+          </div><!-- /.hero-row -->
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           SECTION RECETTES
+      ══════════════════════════════════════════ -->
+      <section class="author-recipes-section" aria-labelledby="authorRecipesTitle">
+
+        <%
+          /* Films et catégories uniques pour les quick-tags */
+          const _filmMap  = new Map();
+          recipes.forEach(r => {
+            if (r.Movie && r.Movie.title && !_filmMap.has(r.Movie.title))
+              _filmMap.set(r.Movie.title, r.Movie.slug || r.Movie.id);
+          });
+          const _uniqueMovies = [..._filmMap.entries()].map(([title, slug]) => ({ title, slug }));
+          const _uniqueCats   = [...new Set(
+            recipes.filter(r => r.category).map(r => r.category.toLowerCase())
+          )];
+        %>
+
+        <!-- ── Toolbar (style films-toolbar /movies) ── -->
+        <div class="author-films-toolbar">
+          <div class="tb-left">
+            <div class="tb-label">Créations de <%= author.pseudo %></div>
+            <h2 class="tb-title" id="authorRecipesTitle">SES RECETTES</h2>
+          </div>
+          <div class="tb-right"></div>
+        </div>
+
+        <!-- ── Filtres : film + catégorie ── -->
+        <% if (_uniqueMovies.length > 0 || _uniqueCats.length > 0) { %>
+        <div class="author-filters">
+          <span class="af-label">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filtrer
+          </span>
+          <% if (_uniqueMovies.length > 0) { %>
+          <div class="af-select-wrap">
+            <label class="af-select-label" for="filterFilm">Film</label>
+            <select id="filterFilm" class="af-select" data-filter="film">
+              <option value="all">Tous les films</option>
+              <% _uniqueMovies.forEach(m => { %>
+              <option value="<%= m.title.toLowerCase() %>"><%= m.title %></option>
+              <% }) %>
+            </select>
+            <svg class="af-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <% } %>
+          <% if (_uniqueCats.length > 0) { %>
+          <div class="af-select-wrap">
+            <label class="af-select-label" for="filterCat">Type de plat</label>
+            <select id="filterCat" class="af-select" data-filter="cat">
+              <option value="all">Toutes les catégories</option>
+              <% _uniqueCats.forEach(cat => { %>
+              <option value="<%= cat %>"><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
+              <% }) %>
+            </select>
+            <svg class="af-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <% } %>
+          <span class="af-count" id="afCount"><%= recipes.length %> recette<%= recipes.length > 1 ? 's' : '' %></span>
+        </div>
+        <% } %>
+
+        <!-- Grille de recettes + CTA -->
+        <div class="ar-grid-wrap">
+
+          <% if (!recipes || recipes.length === 0) { %>
+          <p class="author-no-recipes">Aucune recette publiée pour le moment.</p>
+          <% } else { %>
+
+          <div id="recipes__list" class="recipes-grid only__display__9__recipes">
+            <% recipes.forEach(recipe => { %>
+            <%
+              const authorName   = recipe.contributor ? recipe.contributor.pseudo : author.pseudo;
+              const authorAvatar = recipe.contributor ? recipe.contributor.picture : author.picture;
+              const movieTitle   = recipe.Movie ? recipe.Movie.title : null;
+              const movieSlug    = recipe.Movie ? (recipe.Movie.slug || recipe.Movie.id) : null;
+            %>
+            <article class="ar-recipe-card"
+              data-film="<%= movieTitle ? movieTitle.toLowerCase() : '' %>"
+              data-cat="<%= (recipe.category || '').toLowerCase() %>">
+              <!-- Image 16:9 -->
+              <div class="ar-recipe-card__img">
+                <img
+                  src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
+                  alt="<%= recipe.name %>"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <!-- Overlay top : badge catégorie + favori -->
+                <div class="ar-recipe-card__ot">
+                  <span class="badge badge--type-b"><%= recipe.category %></span>
+                  <button
+                    class="btn-fav"
+                    data-entity-id="<%= recipe.id %>"
+                    data-entity-type="recipe"
+                    data-is-favorite="<%= recipe.isFavorite || false %>"
+                    aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                    title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+                  >
+                    <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  </button>
+                </div>
+                <!-- Badge film bas-gauche -->
+                <% if (movieTitle) { %>
+                <div class="ar-recipe-card__ob">
+                  <a class="badge badge--film-dk" href="/recipes-movie/<%= movieSlug %>">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                    <%= movieTitle.length > 22 ? movieTitle.slice(0, 22) + '…' : movieTitle %>
+                  </a>
+                </div>
+                <% } %>
+              </div>
+
+              <!-- Corps -->
+              <div class="ar-recipe-card__body">
+                <h3 class="ar-recipe-card__title"><%= recipe.name %></h3>
+
+                <div class="ar-recipe-card__meta">
+                  <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
+                  <% if (recipe.isNew) { %><span class="badge-new badge-new--new">Nouveau</span><% } %>
+                  <span class="ar-recipe-card__time">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <%= recipe.duration || recipe.time %> min
+                  </span>
+                </div>
+
+                <div class="ar-recipe-card__foot">
+                  <span class="author">
+                    <span class="author__av">
+                      <% if (authorAvatar) { %>
+                      <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
+                      <% } else { %>
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
+                      <% } %>
+                    </span>
+                    <span class="author__name"><%= authorName %></span>
+                  </span>
+                  <a class="btn btn--red btn--sm" href="/recipes-movie/details/<%= recipe.slug || recipe.id %>">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Voir →
+                  </a>
+                </div>
+              </div>
+            </article>
+            <% }) %>
+          </div><!-- /#recipes__list -->
+
+          <% if (recipes && recipes.length > 9) { %>
+          <div class="center-button">
+            <button id="see__all__recipes__button" class="btn btn--red" aria-label="Voir plus de recettes">
+              <span class="btn__shimmer"></span>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              <span class="btn__text">Voir plus</span>
+            </button>
+          </div>
+          <% } %>
+
+          <% } %>
+
+        </div><!-- /.ar-grid-wrap -->
+
+      </section>
+
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <!-- Scripts globaux -->
+    <script src="/js/burger-menu.js" defer></script>
+
+    <!-- Badge gamification -->
+    <script src="/js/sherlock-badge.js" defer></script>
+    <script src="/js/badge-engine.js" defer></script>
+
+    <!-- Favoris -->
+    <script>
+      window.CINEDELICES = {
+        isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
+        userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
+      };
+    </script>
+    <script src="/js/favorites.js" defer></script>
+
+    <!-- Filtrage selects : film + catégorie combinés -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('.af-select');
+        if (!selects.length) return;
+
+        let activeFilm = 'all';
+        let activeCat  = 'all';
+        const countEl  = document.getElementById('afCount');
+
+        function applyFilters() {
+          const cards = document.querySelectorAll('#recipes__list .ar-recipe-card');
+          let visible = 0;
+          cards.forEach(function (card) {
+            const filmOk = activeFilm === 'all' || (card.dataset.film || '') === activeFilm;
+            const catOk  = activeCat  === 'all' || (card.dataset.cat  || '') === activeCat;
+            const show   = filmOk && catOk;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+          });
+          if (countEl) countEl.textContent = visible + (visible > 1 ? ' recettes' : ' recette');
+        }
+
+        selects.forEach(function (sel) {
+          sel.addEventListener('change', function () {
+            if (this.dataset.filter === 'film') activeFilm = this.value;
+            else activeCat = this.value;
+            applyFilters();
+          });
+        });
+      });
+    </script>
+
+    <!-- XP bar animation -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const fill = document.querySelector('.hero-xp__fill');
+        if (fill) {
+          const pct = parseInt(fill.dataset.pct) || 0;
+          setTimeout(function () { fill.style.width = pct + '%'; }, 400);
+        }
+      });
+    </script>
+
+    <!-- Init BadgeEngine sur le hero auteur -->
+    <script>
+      window.addEventListener('load', function () {
+        const hero = document.getElementById('authorBadgeHero');
+        if (!hero || typeof window.BadgeEngine === 'undefined') return;
+        const frameCode = hero.dataset.frameCode || 'cine';
+        const photoSrc  = hero.dataset.photoSrc  || '/images/image-default-profile.jpg';
+        const ANIMATED  = ['sherlock', 'matrix', 'indiana', 'harry'];
+        if (!ANIMATED.includes(frameCode)) return;
+        hero.querySelector('.pbh-photo')?.remove();
+        hero.querySelector('.pbh-frame')?.remove();
+        hero.querySelector('.pbh-ring')?.remove();
+        const inner = document.createElement('div');
+        inner.style.cssText = 'position:absolute;inset:0;width:260px;height:260px;overflow:visible;';
+        hero.appendChild(inner);
+        new window.BadgeEngine(inner, frameCode, photoSrc);
+      });
+    </script>
+
+    <% if (isOwner) { %>
+    <!-- Upload bannière (propriétaire) -->
+    <script>
+      (function () {
+        const btn   = document.getElementById('authorBannerBtn');
+        const input = document.getElementById('authorBannerInput');
+        const authorId = '<%= author.id %>';
+
+        if (!btn || !input) return;
+
+        btn.addEventListener('click', function () { input.click(); });
+
+        input.addEventListener('change', async function () {
+          const file = input.files[0];
+          if (!file) return;
+          if (!file.type.startsWith('image/')) {
+            alert('Veuillez sélectionner une image.');
+            return;
+          }
+
+          btn.disabled = true;
+          btn.textContent = 'Envoi en cours…';
+
+          const formData = new FormData();
+          formData.append('banner', file);
+
+          try {
+            const res  = await fetch('/auth/profil/' + authorId + '/banner', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur upload.');
+
+            // Prévisualisation immédiate
+            const bannerImg = document.querySelector('.hero-banner img');
+            if (bannerImg) {
+              bannerImg.src = data.banner_image;
+            } else {
+              const heroDiv = document.querySelector('.hero-banner');
+              if (heroDiv) {
+                const img = document.createElement('img');
+                img.src = data.banner_image;
+                img.alt = 'Bannière';
+                heroDiv.prepend(img);
+              }
+            }
+
+            // Remplacer le bouton par le badge "en attente"
+            const wrap = btn.closest('.hero-banner-status');
+            if (wrap) {
+              wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
+            }
+          } catch (err) {
+            alert('Erreur : ' + err.message);
+            btn.disabled = false;
+            btn.textContent = 'Modifier la bannière';
+          }
+
+          input.value = '';
+        });
+      })();
+    </script>
+    <% } %>
+
+  </body>
+</html>

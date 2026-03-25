@@ -30,10 +30,9 @@ INSERT INTO users (first_name, last_name, pseudo, email, password, picture, role
     ('Ludovic', 'Trichereau', 'Ludo', 'ludo.trich@gmail.com', '****', null, 'admin'),
     ('Richard', 'François', 'Riri', 'rich.franc@gmail.com', '***', null, 'admin'),
     ('Denis', 'Faucon', 'La malice', 'den.fau@gmail.com', '****', null, 'admin'),
-    ('Sebastien', 'Maurice', 'Le fourbe', 'seb.mau@gmail.com', '****', null, 'admin'),
     ('admin2', 'test2', 'admin2_2025', 'admin2@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$z/u9bVWrzHucKTXQYsxXFQ$/pW7Z7KlCrsC1W/xW/NJ1bdeo+Ci5oFsHd+rtO8Fi5I', null, 'admin'),
     ('pi', 'pou', 'pipou', 'pi@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$4E0hz9IgK5N70B3BlijyFQ$envgJnqFUewcMi7Zda10T85NXUpo6pUoBq9s2EURUQE', null, 'admin'),
-    ('Seb', 'Mauri', 'Semauri', 'overseb75@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU', null, 'admin');
+    ('Sébastien', 'Maurice', 'Seb le Fourbe', 'overseb75@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$3zh+6NKeKdSjoq2490C8DA$nMfhF31LKrJPIOtzlGoOzIHHKG3x867pWq/KTv/RUeU', null, 'super_admin');
 
 
 
@@ -102,6 +101,8 @@ CREATE TABLE IF NOT EXISTS "recipes" (
     "pending_time" INT,
     "pending_difficulty" VARCHAR(50),
     "edit_requested_at" TIMESTAMP,
+    "delete_request_status" VARCHAR(20) DEFAULT 'none',
+    "delete_request_at" TIMESTAMP,
     "id_movie" INT REFERENCES "movies" ("id"),
     "id_user" INT REFERENCES "users" ("id")
 );

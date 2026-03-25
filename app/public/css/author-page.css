@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUTHOR PAGE — Page publique de l'auteur (gamification hero +
+   liste de recettes inspirée de recipes-movie.css)
+═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+   BODY : lever la contrainte max-width de base.css
+   (même traitement que .profile-page dans user-profile.css)
+   → hero, pre-footer et footer passent en full width
+───────────────────────────────────────────────────── */
+body.author-page {
+  max-width: unset;
+  padding: 0;          /* annule le padding: 2rem 1rem 0 de base.css */
+}
+
+body.author-page main {
+  padding-top: var(--nav-h); /* compense la nav fixe (identique à body.film-page) */
+}
+
+/* ─────────────────────────────────────────────────────
+   OVERRIDES hero : read-only (pas de formulaire)
+───────────────────────────────────────────────────── */
+.author-page .profile-hero {
+  margin-bottom: 0;
+}
+
+/* Positionnement bas du hero */
+.author-page .hero-content {
+  padding-bottom: 36px;
+}
+
+/* Gap réduit entre avatar et identité */
+.author-page .hero-row {
+  gap: 28px;
+}
+
+/* Le pseudo est un <h1> statique — style page-hero__title (Movies) */
+.author-page .hero-pseudo--static {
+  font-family: var(--font-display, "Bebas Neue", cursive);
+  font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+  letter-spacing: 0.08em;
+  line-height: 0.95;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+  margin: 0 0 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Dernier mot en doré (identique à .page-hero__title em) */
+.author-page .hero-pseudo--static em {
+  color: var(--or-titre, #c4a052);
+  font-style: normal;
+}
+
+/* Rang / niveau */
+.author-page .hero-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background: rgba(80, 130, 255, 0.10);
+  border: 1px solid rgba(120, 190, 255, 0.22);
+  font-family: var(--font-title, "Cinzel", serif);
+  font-size: 0.46rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(120, 190, 255, 0.88);
+}
+
+.author-page .hero-rank-badge svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* Titre rang (ex: "Explorateur Cuisinier") */
+.author-page .hero-rank-title {
+  font-family: var(--font-editorial, "Playfair Display", serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: rgba(196, 160, 82, 0.7);
+  margin-bottom: 14px;
+}
+
+/* Stats row */
+.author-page .hero-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+/* XP bar dans le hero */
+.author-page .hero-xp {
+  max-width: 300px;
+}
+
+.author-page .hero-xp__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.author-page .hero-xp__lbl {
+  font-size: 0.5rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.38);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.author-page .hero-xp__val {
+  font-family: var(--font-display, "Bebas Neue", cursive);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--dore-clair, #f2c84b);
+}
+
+.author-page .hero-xp__track {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(65, 90, 119, 0.3);
+  overflow: hidden;
+}
+
+.author-page .hero-xp__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--or-200, #b8882a), var(--dore-clair, #f2c84b));
+  width: 0;
+  transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.author-page .hero-xp__fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  animation: xpPulse 2s ease-in-out infinite;
+}
+
+@keyframes xpPulse {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.9; }
+}
+
+.author-page .hero-xp__remain {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.5rem;
+  font-weight: 300;
+  color: rgba(232, 232, 232, 0.3);
+  letter-spacing: 0.04em;
+}
+
+/* ─────────────────────────────────────────────────────
+   SECTION RECETTES
+───────────────────────────────────────────────────── */
+.author-recipes-section {
+  max-width: var(--max-w, 1440px);
+  margin: 0 auto;
+  padding: 40px var(--page-px, 64px) 0;
+}
+
+/* Grille 4 colonnes — surcharge recipes-movie.css (3 col) */
+.author-page .recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ─── Toolbar (style films-toolbar de /movies) ─── */
+.author-films-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.author-films-toolbar .tb-right:empty {
+  display: none;
+}
+.author-films-toolbar .tb-label {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.48);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.author-films-toolbar .tb-label::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--or-titre, #c4a052);
+}
+.author-films-toolbar .tb-title {
+  font-family: var(--font-display, "Bebas Neue", cursive);
+  font-size: 2.4rem;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: var(--or-titre, #c4a052);
+  text-shadow: 0 0 28px rgba(196, 160, 82, 0.28);
+  margin: 0;
+}
+.author-recipe-count {
+  font-family: var(--font-display, "Bebas Neue", cursive);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: rgba(196, 160, 82, 0.38);
+}
+
+/* ─── Barre de filtres (selects) ─── */
+.author-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0 20px;
+  border-top: 1px solid rgba(65, 90, 119, 0.15);
+  margin-top: 10px;
+}
+
+/* Icône + label "Filtrer" */
+.af-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title, "Cinzel", serif);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.45);
+  margin-right: 4px;
+}
+.af-label svg {
+  color: rgba(196, 160, 82, 0.45);
+}
+
+/* Wrapper select */
+.af-select-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.af-select-label {
+  font-family: var(--font-title, "Cinzel", serif);
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.38);
+  padding-left: 2px;
+}
+
+.af-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(10, 18, 32, 0.7);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  border-radius: 6px;
+  color: rgba(232, 232, 232, 0.82);
+  font-family: var(--font-title, "Cinzel", serif);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 7px 34px 7px 12px;
+  cursor: pointer;
+  min-width: 180px;
+  max-width: 260px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.af-select:hover,
+.af-select:focus {
+  border-color: rgba(196, 160, 82, 0.55);
+  background: rgba(10, 18, 32, 0.9);
+}
+.af-select option {
+  background: #0e1c2e;
+  color: rgba(232, 232, 232, 0.85);
+}
+
+/* Chevron custom */
+.af-chevron {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  pointer-events: none;
+  color: rgba(196, 160, 82, 0.5);
+}
+
+/* Compteur résultats */
+.af-count {
+  margin-left: auto;
+  font-family: var(--font-display, "Bebas Neue", cursive);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: rgba(196, 160, 82, 0.38);
+}
+
+/* Message vide */
+.author-no-recipes {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(232, 232, 232, 0.35);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .author-page .recipes-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1100px) {
+  .author-recipes-section {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (max-width: 860px) {
+  .author-page .recipes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .author-recipes-section {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 24px;
+  }
+
+  .author-films-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .author-films-toolbar .tb-title { font-size: 1.8rem; }
+  .author-quick-tags .quick-tags-row { gap: 6px; padding-bottom: 6px; }
+}
+
+@media (max-width: 540px) {
+  .author-page .recipes-grid { grid-template-columns: 1fr; }
+}

@@ -1,4 +1,5 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating } from "../models/index.model.js";
+import { getUserGamificationData } from "../services/xpService.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
@@ -244,6 +245,14 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
+      // Gamification — calcul XP + cadres + activité
+      const gamif = await getUserGamificationData(user.id, {
+        recipes:      userRecipes,
+        movies:       userMovies,
+        notices:      userNotices,
+        isSuperAdmin: req.userRole === "super_admin",
+      });
+
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
@@ -262,6 +271,15 @@ const authController = {
         ratedMoviesCount: ratedMoviesWithScores.length,
         ratedRecipesCount: ratedRecipesWithScores.length,
         avgUserRating,
+        // Gamification
+        userXP:           gamif.xp,
+        userLevel:        gamif.level,
+        userStreak:       0,
+        userActiveFrame:  gamif.activeFrameUrl,
+        userActiveFrameId:gamif.activeFrameCode,
+        userFrames:       gamif.frames,
+        userActivity:     gamif.activity,
+        userCommentsCount:0,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -818,6 +836,27 @@ const authController = {
         });
       }
 
+      // Recette approuvée : demande de suppression admin (ne pas supprimer directement)
+      if (req.userRole !== "admin" && recipe.status === "approved") {
+        if (recipe.delete_request_status === "pending") {
+          return res.status(StatusCodes.OK).json({
+            success: true,
+            request: true,
+            message: "Une demande de suppression est déjà en attente de validation.",
+          });
+        }
+        await Recipe.update(
+          { delete_request_status: "pending", delete_request_at: new Date() },
+          { where: { id: recipeId } }
+        );
+        return res.status(StatusCodes.OK).json({
+          success: true,
+          request: true,
+          message: "Demande de suppression envoyée à l'équipe Ciné Délices.",
+        });
+      }
+
+      // Recette non approuvée (pending/rejected) ou action admin : suppression directe
       unlinkIfExists(recipe.picture);
       unlinkIfExists(recipe.pending_picture);
 

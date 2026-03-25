@@ -7,6 +7,7 @@ import Notice from './notice.model.js';
 import UsersRecipes from './users_recipes.model.js';
 import Favorite from './favorite.model.js';
 import Rating from './rating.model.js';
+import UserPoints from './UserPoints.model.js';
 
 
 // Définition des relations entre les modèles
@@ -58,8 +59,12 @@ Rating.belongsTo(User, { foreignKey: 'id_user' });
 // Note : Pas d'association directe avec Movie/Recipe car structure polymorphique
 // Les requêtes utilisent entity_type + entity_id pour le filtrage
 
+// Relations gamification
+UserPoints.belongsTo(User, { foreignKey: 'id_user' });
+User.hasOne(UserPoints, { foreignKey: 'id_user' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints };
 
 
 

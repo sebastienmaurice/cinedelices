@@ -2,7 +2,7 @@
   const profilePage = document.querySelector(".profile-page");
   if (!profilePage) return;
 
-  const userId = profilePage.dataset.userId;
+  const userId = document.querySelector("main[data-user-id]")?.dataset.userId || profilePage.dataset.userId;
   const editButton = document.getElementById("editProfileBtn");
   const saveButton = document.getElementById("saveProfileBtn");
   const toastContainer = document.querySelector(".profile-toast");
@@ -13,6 +13,7 @@
   const editPseudoBtn = document.getElementById("editPseudoBtn");
   const savePseudoBtn = document.getElementById("savePseudoBtn");
   const pseudoInput = document.getElementById("username");
+  const pseudoDisplay = document.getElementById("pseudoDisplay");
 
   const editableInputs = profilePage.querySelectorAll(
     "#profileInfoForm input, #profileAvatarForm input[type='text'], #profilePrefsForm input"
@@ -114,6 +115,8 @@
   // ── PSEUDO EDIT ──────────────────────────────────
   editPseudoBtn?.addEventListener("click", () => {
     if (!pseudoInput) return;
+    if (pseudoDisplay) pseudoDisplay.style.display = "none";
+    pseudoInput.style.display = "";
     pseudoInput.disabled = false;
     pseudoInput.focus();
     pseudoInput.select();
@@ -135,6 +138,15 @@
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Erreur lors de la mise à jour.");
       pseudoInput.disabled = true;
+      pseudoInput.style.display = "none";
+      if (pseudoDisplay) {
+        const words = pseudo.split(' ');
+        const last = words.pop();
+        const rest = words.join(' ');
+        const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        pseudoDisplay.innerHTML = (rest ? esc(rest) + ' ' : '') + '<em>' + esc(last) + '</em>';
+        pseudoDisplay.style.display = "";
+      }
       if (savePseudoBtn) savePseudoBtn.style.display = "none";
       if (editPseudoBtn) editPseudoBtn.style.display = "";
       showToast("Pseudo mis à jour.", "success");
@@ -343,9 +355,9 @@
     document.getElementById("editField-category").value = item.dataset.category || "";
     document.getElementById("editField-time").value = item.dataset.time || "";
     document.getElementById("editField-difficulty").value = item.dataset.difficulty || "";
-    document.getElementById("editField-description").value = item.dataset.description || "";
-    document.getElementById("editField-ingredients").value = item.dataset.ingredients || "";
-    document.getElementById("editField-preparation").value = item.dataset.preparation || "";
+    document.getElementById("editField-description").value = decodeURIComponent(item.dataset.description || "");
+    document.getElementById("editField-ingredients").value = decodeURIComponent(item.dataset.ingredients || "");
+    document.getElementById("editField-preparation").value = decodeURIComponent(item.dataset.preparation || "");
     document.getElementById("editField-recipeImage").value = "";
     editRecipeModal.classList.add("open");
   };
@@ -353,7 +365,19 @@
   const closeEditModal = () => {
     editRecipeModal?.classList.remove("open");
     activeEditItem = null;
+    const prev = document.getElementById("editField-preview");
+    if (prev) { prev.src = ""; prev.classList.remove("is-visible"); }
   };
+
+  // Prévisualisation image dans le modal
+  document.getElementById("editField-recipeImage")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    const prev = document.getElementById("editField-preview");
+    if (!file || !prev) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { prev.src = ev.target.result; prev.classList.add("is-visible"); };
+    reader.readAsDataURL(file);
+  });
 
   editModalCancel?.addEventListener("click", closeEditModal);
   editRecipeModal?.addEventListener("click", (e) => {
@@ -362,6 +386,28 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && editRecipeModal?.classList.contains("open")) closeEditModal();
   });
+
+  const _hintMessages = {
+    pending:  { cls: "account-item__hint--pending",  text: "⏳ Modification en attente de validation." },
+    approved: { cls: "account-item__hint--approved", text: "✓ Modification approuvée." },
+    rejected: { cls: "account-item__hint--rejected", text: "✕ Modification refusée. Vous pouvez soumettre une nouvelle modification." },
+  };
+
+  const _setEditHint = (item, state) => {
+    const body = item.querySelector(".item-card__body");
+    if (!body) return;
+    let hint = body.querySelector(".account-item__hint");
+    if (state === "none") { hint?.remove(); return; }
+    const cfg = _hintMessages[state];
+    if (!cfg) return;
+    if (!hint) {
+      hint = document.createElement("p");
+      const actions = body.querySelector(".item-card__actions");
+      actions ? body.insertBefore(hint, actions) : body.appendChild(hint);
+    }
+    hint.className = `account-item__hint ${cfg.cls}`;
+    hint.textContent = cfg.text;
+  };
 
   editModalSave?.addEventListener("click", async () => {
     if (!activeEditItem) return;
@@ -373,11 +419,26 @@
 
     const payload = {};
     const formData = new FormData();
-    ["name", "category", "time", "difficulty", "description", "ingredients", "preparation"].forEach((name) => {
+    // Champs courts : comparer directement avec le dataset
+    ["name", "category", "time", "difficulty"].forEach((name) => {
       const el = document.getElementById(`editField-${name}`);
-      if (el && el.value.trim()) {
-        payload[name] = el.value.trim();
-        formData.append(name, el.value.trim());
+      if (!el) return;
+      const val = el.value.trim();
+      const original = (item.dataset[name] || "").trim();
+      if (val && val !== original) {
+        payload[name] = val;
+        formData.append(name, val);
+      }
+    });
+    // Champs longs : le dataset est encodé en URI, décoder pour comparer
+    ["description", "ingredients", "preparation"].forEach((name) => {
+      const el = document.getElementById(`editField-${name}`);
+      if (!el) return;
+      const val = el.value.trim();
+      const original = decodeURIComponent(item.dataset[name] || "").trim();
+      if (val && val !== original) {
+        payload[name] = val;
+        formData.append(name, val);
       }
     });
     const imgInput = document.getElementById("editField-recipeImage");
@@ -398,13 +459,10 @@
         item.dataset.editStatus = "pending";
         const editBtn = item.querySelector(".account-edit-btn");
         if (editBtn) editBtn.disabled = true;
-        const statusEl = item.querySelector(".account-item__header .account-item__status");
-        if (statusEl) {
-          statusEl.textContent = "Modif en attente";
-          statusEl.className = "account-item__status is-pending";
-        }
+        // Mettre à jour le hint banner
+        _setEditHint(item, "pending");
         closeEditModal();
-        showToast(data.message || "Modification envoyée.", "warning");
+        showToast(data.message || "Modification envoyée pour validation.", "warning");
         return;
       }
 
@@ -417,8 +475,11 @@
         const difficulty = payload.difficulty || item.dataset.difficulty;
         metaEl.textContent = `${category} · ${time} min · ${difficulty}`;
       }
-      ["name", "category", "time", "difficulty", "description", "ingredients", "preparation"].forEach((k) => {
+      ["name", "category", "time", "difficulty"].forEach((k) => {
         if (payload[k]) item.dataset[k] = payload[k];
+      });
+      ["description", "ingredients", "preparation"].forEach((k) => {
+        if (payload[k]) item.dataset[k] = encodeURIComponent(payload[k]);
       });
       closeEditModal();
       showToast(data.message || "Mise à jour effectuée.", "success");
@@ -465,8 +526,8 @@
     });
 
     deleteBtn?.addEventListener("click", async () => {
-      if (type === "notice" && getDeleteStatus() === "pending") {
-        showToast("Suppression déjà en attente.", "warning");
+      if ((type === "notice" || type === "recipe") && getDeleteStatus() === "pending") {
+        showToast("Suppression déjà en attente de validation.", "warning");
         return;
       }
       const actionKey = type === "recipe" ? "account.deleteRecipe" : "account.deleteNotice";

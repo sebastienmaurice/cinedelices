@@ -49,7 +49,7 @@
         <button class="nav-item" data-nav-view="demandes">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span>Demandes</span>
-          <% const totalDemandes = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0); %>
+          <% const totalDemandes = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0); %>
           <% if (totalDemandes > 0) { %><span class="nav-badge"><%= totalDemandes %></span><% } %>
         </button>
 
@@ -232,7 +232,7 @@
                 </li>
                 <li class="qs-item">
                   <span class="qs-label">Suppressions en attente</span>
-                  <span class="qs-value qs-value--rouge"><%= (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0) %></span>
+                  <span class="qs-value qs-value--rouge"><%= (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0) %></span>
                 </li>
               </ul>
             </div>
@@ -649,6 +649,10 @@
               Suppr. Films
               <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingMovieDeleteRequests.length %></span><% } %>
             </button>
+            <button class="queue-tab" data-sub-tab="demandes-recipe-deletes" role="tab">
+              Suppr. Recettes
+              <% if (pendingRecipeDeleteRequests && pendingRecipeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingRecipeDeleteRequests.length %></span><% } %>
+            </button>
             <button class="queue-tab" data-sub-tab="demandes-notice-deletes" role="tab">
               Suppr. Avis
               <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingNoticeDeleteRequests.length %></span><% } %>
@@ -665,22 +669,24 @@
               <div class="mod-row">
                 <div class="mod-row__info">
                   <span class="s-badge s-badge--modif">Modification</span>
-                  <strong class="mod-row__title"><%= req.title || req.movieTitle || (req.movie && req.movie.title) || 'Film inconnu' %></strong>
-                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
-                  <% if (req.changes && Object.keys(req.changes).length > 0) { %>
+                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                   <ul class="mod-row__changes">
-                    <% Object.entries(req.changes).forEach(function([key, val]) { %>
-                    <li><em><%= key %> :</em> <%= val %></li>
-                    <% }) %>
+                    <% if (req.pending_title && req.pending_title !== req.title) { %><li><em>Titre :</em> <s class="mod-old"><%= req.title %></s> → <strong class="mod-new"><%= req.pending_title %></strong></li><% } %>
+                    <% if (req.pending_year && req.pending_year !== req.year) { %><li><em>Année :</em> <s class="mod-old"><%= req.year %></s> → <strong class="mod-new"><%= req.pending_year %></strong></li><% } %>
+                    <% if (req.pending_genre && req.pending_genre !== req.genre) { %><li><em>Genre :</em> <s class="mod-old"><%= req.genre %></s> → <strong class="mod-new"><%= req.pending_genre %></strong></li><% } %>
                   </ul>
-                  <% } %>
                 </div>
-                <div class="mod-row__actions">
-                  <form action="/admin/movies/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                <div class="actions-cell">
+                  <form action="/admin/movies/<%= req.id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Approuver la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
                   </form>
-                  <form action="/admin/movies/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  <form action="/admin/movies/<%= req.id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -699,15 +705,29 @@
               <div class="mod-row">
                 <div class="mod-row__info">
                   <span class="s-badge s-badge--modif">Modification</span>
-                  <strong class="mod-row__title"><%= req.name || req.recipeName || (req.recipe && req.recipe.name) || 'Recette inconnue' %></strong>
-                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
+                  <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
+                  <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
+                  <ul class="mod-row__changes">
+                    <% if (req.pending_name && req.pending_name !== req.name) { %><li><em>Nom :</em> <s class="mod-old"><%= req.name %></s> → <strong class="mod-new"><%= req.pending_name %></strong></li><% } %>
+                    <% if (req.pending_category && req.pending_category !== req.category) { %><li><em>Catégorie :</em> <s class="mod-old"><%= req.category %></s> → <strong class="mod-new"><%= req.pending_category %></strong></li><% } %>
+                    <% if (req.pending_difficulty && req.pending_difficulty !== req.difficulty) { %><li><em>Difficulté :</em> <s class="mod-old"><%= req.difficulty %></s> → <strong class="mod-new"><%= req.pending_difficulty %></strong></li><% } %>
+                    <% if (req.pending_time && req.pending_time !== req.time) { %><li><em>Temps :</em> <s class="mod-old"><%= req.time %> min</s> → <strong class="mod-new"><%= req.pending_time %> min</strong></li><% } %>
+                    <% if (req.pending_description) { %><li><em>Description :</em> <s class="mod-old">"<%= req.description.substring(0, 60) %>…"</s> → <strong class="mod-new">"<%= req.pending_description.substring(0, 60) %>…"</strong></li><% } %>
+                    <% if (req.pending_ingredients) { %><li><em>Ingrédients :</em><br><s class="mod-old mod-block">"<%= req.ingredients.substring(0, 120) %>…"</s><br>→ <strong class="mod-new mod-block">"<%= req.pending_ingredients.substring(0, 120) %>…"</strong></li><% } %>
+                    <% if (req.pending_preparation) { %><li><em>Préparation :</em><br><s class="mod-old mod-block">"<%= req.preparation.substring(0, 120) %>…"</s><br>→ <strong class="mod-new mod-block">"<%= req.pending_preparation.substring(0, 120) %>…"</strong></li><% } %>
+                    <% if (req.pending_picture) { %><li><em>Photo :</em> <img src="<%= req.picture %>" alt="Actuelle" style="width:48px;height:34px;object-fit:cover;border-radius:3px;vertical-align:middle;opacity:.5;" /> → <img src="<%= req.pending_picture %>" alt="Nouvelle" style="width:56px;height:38px;object-fit:cover;border-radius:4px;vertical-align:middle;border:1px solid rgba(100,210,120,.4);" /></li><% } %>
+                  </ul>
                 </div>
-                <div class="mod-row__actions">
-                  <form action="/admin/recipes/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                <div class="actions-cell">
+                  <form action="/admin/recipes/<%= req.id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Approuver la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
                   </form>
-                  <form action="/admin/recipes/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  <form action="/admin/recipes/<%= req.id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -726,16 +746,20 @@
               <div class="mod-row">
                 <div class="mod-row__info">
                   <span class="s-badge s-badge--modif">Modification</span>
-                  <strong class="mod-row__title">Avis #<%= req._id %></strong>
-                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
-                  <% if (req.content || req.newContent) { %><p class="mod-row__excerpt">"<%= (req.content || req.newContent || '').substring(0, 120) %>…"</p><% } %>
+                  <strong class="mod-row__title">Avis sur "<%= req.Recipe ? req.Recipe.name : 'recette inconnue' %>"</strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
+                  <% if (req.pending_content) { %><p class="mod-row__excerpt">"<%= req.pending_content.substring(0, 120) %>…"</p><% } %>
                 </div>
-                <div class="mod-row__actions">
-                  <form action="/admin/notices/<%= req._id %>/edit/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve act-btn--sm">Approuver</button>
+                <div class="actions-cell">
+                  <form action="/admin/notices/<%= req.id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Approuver la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
                   </form>
-                  <form action="/admin/notices/<%= req._id %>/edit/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  <form action="/admin/notices/<%= req.id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -754,16 +778,51 @@
               <div class="mod-row">
                 <div class="mod-row__info">
                   <span class="s-badge s-badge--delete">Suppression</span>
-                  <strong class="mod-row__title"><%= req.title || req.movieTitle || (req.movie && req.movie.title) || 'Film inconnu' %></strong>
-                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
-                  <% if (req.reason) { %><p class="mod-row__excerpt">Motif : <%= req.reason %></p><% } %>
+                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                 </div>
-                <div class="mod-row__actions">
-                  <form action="/admin/movies/<%= req._id %>/delete/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm">Approuver</button>
+                <div class="actions-cell">
+                  <form action="/admin/movies/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
                   </form>
-                  <form action="/admin/movies/<%= req._id %>/delete/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  <form action="/admin/movies/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Suppressions Recettes -->
+          <div class="sub-panel" id="demandes-recipe-deletes" style="display:none;">
+            <% if (!pendingRecipeDeleteRequests || pendingRecipeDeleteRequests.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de suppression de recette.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingRecipeDeleteRequests.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
+                  <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
+                  <% if (req.Movie) { %><p class="mod-row__excerpt">Film : <%= req.Movie.title %></p><% } %>
+                </div>
+                <div class="actions-cell">
+                  <form action="/admin/recipes/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </form>
+                  <form action="/admin/recipes/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -782,16 +841,20 @@
               <div class="mod-row">
                 <div class="mod-row__info">
                   <span class="s-badge s-badge--delete">Suppression</span>
-                  <strong class="mod-row__title">Avis #<%= req._id %></strong>
-                  <% if (req.requestedBy || req.user) { %><span class="mod-row__user">par <%= req.requestedBy || req.user %></span><% } %>
-                  <% if (req.reason) { %><p class="mod-row__excerpt">Motif : <%= req.reason %></p><% } %>
+                  <strong class="mod-row__title">Avis sur "<%= req.Recipe ? req.Recipe.name : 'recette inconnue' %>"</strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
+                  <% if (req.content) { %><p class="mod-row__excerpt">"<%= req.content.substring(0, 120) %>…"</p><% } %>
                 </div>
-                <div class="mod-row__actions">
-                  <form action="/admin/notices/<%= req._id %>/delete/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm">Approuver</button>
+                <div class="actions-cell">
+                  <form action="/admin/notices/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
                   </form>
-                  <form action="/admin/notices/<%= req._id %>/delete/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm">Refuser</button>
+                  <form action="/admin/notices/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -870,7 +933,7 @@
                 <img src="<%= banner.banner_image %>" alt="Bannière" class="media-card__img" />
               </div>
               <div class="media-card__body">
-                <p class="media-card__user"><%= banner.username || 'Utilisateur inconnu' %></p>
+                <p class="media-card__user"><%= banner.pseudo || 'Utilisateur inconnu' %></p>
                 <span class="s-badge s-badge--pending">En attente</span>
               </div>
               <div class="media-card__actions">
