@@ -218,16 +218,31 @@
 
 /* Brand */
 .ft__brand { display: flex; flex-direction: column; gap: 18px; }
-.ft__logo  { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; width: fit-content; }
-.ft__logo-badge {
-  width: 38px; height: 38px; border-radius: 10px; background: var(--ft-g-gold);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--ft-f-display); font-size: 1.1rem; color: var(--ft-ink);
-  box-shadow: 0 0 20px rgba(196,160,82,0.25); flex-shrink: 0;
+.ft__logo  { display: inline-block; text-decoration: none; width: fit-content; }
+
+/* Logo animé canvas — footer */
+.ft__logo-scene {
+  position: relative;
+  width: 140px;
+  height: 80px;
+  cursor: pointer;
+  overflow: visible;
 }
-.ft__brand-name  { display: flex; flex-direction: column; line-height: 1; gap: 2px; }
-.ft__brand-title { font-family: var(--ft-f-display); font-size: 1.1rem; letter-spacing: 0.14em; color: var(--ft-gold); }
-.ft__brand-sub   { font-size: 0.42rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(196,160,82,0.38); }
+.ft__logo-fx {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.ft__logo-fx--under { z-index: 0; }
+.ft__logo-fx--over  { z-index: 2; }
+.ft__logo-img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
 .ft__brand-desc  {
   font-size: 0.74rem; font-weight: 300; line-height: 1.72;
   color: rgba(212,220,232,0.32); max-width: 220px;
