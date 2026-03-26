@@ -1959,7 +1959,7 @@
 
   function applySpotlight(ts) {
     const viewportCenter = window.innerWidth / 2;
-    const RADIUS = 400; /* Rayon d'influence du spotlight en px */
+    const RADIUS = window.innerWidth * 0.66; /* Rayon d'influence du spotlight en px */
     const LERP_SPEED = 0.075;
 
     let beamX = viewportCenter;
@@ -1998,14 +1998,15 @@
 
       /* Applique les variables CSS directement sur le badge */
       badge.style.setProperty("--spot", sp.toFixed(4));
+      badge.style.setProperty("--tx", (-sp * 8).toFixed(2) + "px"); /* monte de 8px au centre */
       badge.style.setProperty(
         "--ts",
-        (1 + sp * 0.16).toFixed(4),
-      ); /* grossit de 16% au centre */
+        (1 + sp * 0.05).toFixed(4),
+      ); /* grossit de 5% au centre — valeur réduite pour éviter l'écartement visuel */
 
       /* Filtres image contrôlés par le spotlight */
       badge.style.setProperty("--img-sat", (sp * 1.55).toFixed(3));
-      badge.style.setProperty("--img-bri", (0.2 + sp * 0.95).toFixed(3));
+      badge.style.setProperty("--img-bri", (0.10 + sp * 1.05).toFixed(3));
       badge.style.setProperty("--img-con", (1.14 - sp * 0.06).toFixed(3));
       badge.style.setProperty("--img-sep", (0.5 * (1 - sp)).toFixed(3));
       badge.style.setProperty("--img-hue", (215 * (1 - sp)).toFixed(1) + "deg");
