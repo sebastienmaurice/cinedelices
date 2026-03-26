@@ -1242,6 +1242,8 @@
                       data-description="<%= encodeURIComponent(recipe.description || '') %>"
                       data-ingredients="<%= encodeURIComponent(recipe.ingredients || '') %>"
                       data-preparation="<%= encodeURIComponent(recipe.preparation || '') %>"
+                      data-picture="<%= recipe.picture || '' %>"
+                      data-pictures="<%= encodeURIComponent(JSON.stringify((recipe.RecipePictures || []).sort((a,b)=>a.position-b.position).map(p=>p.file_path))) %>"
                     >
                       <% if (recipe.picture) { %>
                       <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
@@ -1884,7 +1886,7 @@
           <div class="modal-ico modal-ico--edit">✏️</div>
           <div class="modal-titles">
             <div class="modal-title" id="editModalTitle">ÉDITER LA RECETTE</div>
-            <div class="modal-sub">Les modifications sont soumises à validation</div>
+            <div class="modal-sub" id="editModalSub">Les modifications sont soumises à validation</div>
           </div>
         </div>
         <div class="modal-body modal-body--form">
@@ -1916,10 +1918,18 @@
           <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" id="editField-ingredients" name="ingredients" rows="3"></textarea></div>
           <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" id="editField-preparation" name="preparation" rows="4"></textarea></div>
           <div class="ci-ef-full">
-            <label class="ci-ef-label">Photo de la recette</label>
-            <div class="ci-ef-img-wrap">
-              <img id="editField-preview" class="ci-ef-img-preview" src="" alt="Prévisualisation" />
-              <input class="ci-ef-file" type="file" id="editField-recipeImage" name="recipeImage" accept="image/*" />
+            <label class="ci-ef-label">Photos <span class="ci-ef-label-hint">max 3 · ratio 3:2 · 2 Mo par photo · remplace les photos actuelles si modifiées</span></label>
+            <div class="ci-ef-photo-slots" id="editPhotoSlots">
+              <% for (var ps = 1; ps <= 3; ps++) { %>
+              <div class="ci-ef-ps" id="edit-ps-<%= ps %>">
+                <div class="ci-ef-ps__prev" id="edit-ps-prev-<%= ps %>"></div>
+                <span class="ci-ef-ps__n"><%= ps === 1 ? '01 PRINC.' : '0' + ps %></span>
+                <input type="file" name="pictures" id="edit-ps-input-<%= ps %>"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  class="ci-ef-ps__file" />
+                <button type="button" class="ci-ef-ps__del" id="edit-ps-del-<%= ps %>" title="Retirer">×</button>
+              </div>
+              <% } %>
             </div>
           </div>
         </div>

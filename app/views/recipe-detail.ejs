@@ -195,8 +195,8 @@
                 <div class="rd-author-row">
                   <a
                     class="rd-author-badge"
-                    href="/movies"
-                    aria-label="Voir les films sur Ciné Délices"
+                    href="/auteur/<%= contributor.id %>"
+                    aria-label="Voir le profil de <%= contributorName %>"
                   >
                     <div class="rd-author-avatar">
                       <img src="<%= contributorImage %>" alt="<%= contributorName %>" loading="lazy" />
@@ -481,7 +481,8 @@
                 </div>
               </div>
               <% if (typeof userId !== 'undefined' && userId) { %>
-              <form action="#" method="post" novalidate>
+              <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
+                <input type="hidden" id="avisQuoteInput" name="quote" value="" />
                 <div class="star-picker">
                   <span class="star-picker__lbl">Note :</span>
                   <span class="star-pick" data-v="1">★</span>
@@ -494,9 +495,11 @@
                   <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
                   <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…"></textarea>
                 </div>
+                <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
+                <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
                 <div class="form-actions">
                   <span class="form-hint-global">Votre avis sera relu avant publication.</span>
-                  <button class="btn-submit-avis" type="submit">✦ Publier mon avis</button>
+                  <button class="btn-submit-avis" type="submit" id="avisSubmitBtn">✦ Publier mon avis</button>
                 </div>
               </form>
               <% } else { %>

@@ -147,7 +147,7 @@
               const authorName = recipe.contributor ? recipe.contributor.pseudo : '—';
               const authorAvatar = recipe.contributor ? recipe.contributor.picture : null;
               const movieTitle = recipe.Movie ? recipe.Movie.title : null;
-              const movieSlug = recipe.Movie ? recipe.Movie.slug : null;
+              const movieSlug = recipe.Movie ? (recipe.Movie.slug || recipe.Movie.id) : null;
             %>
             <article class="ar-recipe-card">
               <!-- Image 16:9 -->
@@ -192,7 +192,7 @@
                   <% if (recipe.isNew) { %><span class="badge-new badge-new--new">Nouveau</span><% } %>
                   <span class="ar-recipe-card__time">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <%= recipe.duration || recipe.time %> min
+                    <%= recipe.time %> min
                   </span>
                 </div>
 
@@ -223,7 +223,7 @@
             const ctaRecipesRev = ctaRecipes.slice().reverse();
           %>
           <article class="fcard fcard--cta" aria-label="Partagez votre recette inspirée du cinéma">
-            <a href="/movies" class="fcard--cta__link">
+            <a href="/add-recipes-movies/" class="fcard--cta__link">
               <div class="fcard--cta__shimmer" aria-hidden="true"></div>
               <div class="fcard--cta__body">
                 <p class="fcard--cta__eyebrow">

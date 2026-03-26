@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Vérification de la taille du fichier (max 5 MB)
-    const maxSize = 5 * 1024 * 1024; // 5 MB en octets
+    // Vérification de la taille du fichier (max 2 MB)
+    const maxSize = 2 * 1024 * 1024; // 2 MB en octets
     if (file.size > maxSize) {
       alert(
-        "Le fichier est trop volumineux. La taille maximale est de 5 MB."
+        "Le fichier est trop volumineux. La taille maximale est de 2 MB par photo."
       );
       recipeImageInput.value = ""; // Réinitialiser l'input
       return;

@@ -12,7 +12,7 @@
  * - Code plus lisible dans le controller admin
  */
 
-import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, RecipePicture } from "../models/index.model.js";
 import { enrichMoviesWithImagePaths } from "./movie-image-helper.js";
 
 /**
@@ -30,7 +30,10 @@ export async function loadAdminData() {
   // Récupérer les recettes en attente de validation (status: 'pending')
   const recipes = await Recipe.findAll({
     where: { status: "pending" },
-    include: [{ model: Movie, attributes: ["title", "picture", "year", "genre"] }],
+    include: [
+      { model: Movie, attributes: ["title", "picture", "year", "genre"] },
+      { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"] },
+    ],
   });
 
   // Récupérer les films en attente de validation (status: 'pending')
@@ -101,7 +104,10 @@ export async function loadAdminData() {
 
   const validatedRecipes = await Recipe.findAll({
     where: { status: "approved" },
-    include: [{ model: Movie, attributes: ["id", "title"] }],
+    include: [
+      { model: Movie, attributes: ["id", "title"] },
+      { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"] },
+    ],
     order: [["id", "DESC"]],
   });
 

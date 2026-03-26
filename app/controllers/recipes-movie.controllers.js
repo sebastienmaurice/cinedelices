@@ -328,11 +328,11 @@ const recipesController = {
 
       // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
       const notices = await Notice.findAll({
-        where: { id_recipe: plainRecipe.id },
+        where: { id_recipe: plainRecipe.id, status: "approved" },
         include: [
           {
             model: User,
-            attributes: ["id", "first_name", "last_name"],
+            attributes: ["id", "pseudo", "first_name", "last_name", "picture", "role"],
           },
         ],
         order: [["id", "DESC"]], // Plus récents en premier
@@ -438,5 +438,41 @@ function formatPreparationBlocks(preparation) {
     .map((step) => step.trim())
     .filter(Boolean); // Retirer les chaînes vides
 }
+
+// Ajouter submitNotice dans l'objet recipesController
+recipesController.submitNotice = async function submitNotice(req, res) {
+  try {
+    const param = req.params.id;
+    const { comment, quote } = req.body;
+    const parsedQuote = parseInt(quote, 10);
+
+    if (!comment || !comment.trim()) {
+      return res.status(400).json({ success: false, message: "Le contenu de l'avis est obligatoire." });
+    }
+    if (!parsedQuote || parsedQuote < 1 || parsedQuote > 5) {
+      return res.status(400).json({ success: false, message: "La note doit être comprise entre 1 et 5." });
+    }
+
+    let recipe;
+    if (/^\d+$/.test(param)) {
+      recipe = await Recipe.findOne({ where: { id: param, status: "approved" } });
+    } else {
+      recipe = await Recipe.findOne({ where: { slug: param, status: "approved" } });
+    }
+    if (!recipe) return res.status(404).json({ success: false, message: "Recette introuvable." });
+
+    await Notice.create({
+      content: comment.trim(),
+      quote: parsedQuote,
+      id_user: req.userId,
+      id_recipe: recipe.id,
+      status: "pending",
+    });
+
+    return res.json({ success: true, message: "Votre avis a été envoyé et sera publié après modération." });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Erreur serveur." });
+  }
+};
 
 export default recipesController;

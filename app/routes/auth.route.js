@@ -5,7 +5,7 @@ import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
 import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../validators/user.validator.js";
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
 import uploadBanner from "../middlewares/upload-banner.middleware.js";
-import uploadRecipe from "../middlewares/upload.middleware.js";
+import uploadRecipe, { uploadRecipePhotos } from "../middlewares/upload.middleware.js";
 
 const authRouter = Router();
 //route pour savoir qui est connecté
@@ -48,7 +48,7 @@ authRouter.post(
   "/profil/:id/recipes/:recipeId/update",
   isLogged,
   injectId,
-  uploadRecipe.single("recipeImage"),
+  uploadRecipePhotos,
   authController.updateUserRecipe
 );
 authRouter.post(

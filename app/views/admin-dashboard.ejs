@@ -428,12 +428,26 @@
                     <% if (recipe.submittedBy) { %><span class="tag tag--user">Par : <%= recipe.submittedBy %></span><% } %>
                   </div>
                 </div>
-                <span class="s-badge s-badge--pending">En attente</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                  <span class="s-badge s-badge--pending">En attente</span>
+                  <% if (recipe.edit_requested_at && recipe.edit_status !== 'pending') { %>
+                  <span class="s-badge" style="background:rgba(80,80,180,.18);border:1px solid rgba(120,120,220,.35);color:rgba(160,160,255,.9);font-size:.55rem;">
+                    🔄 Resoumission — <%= new Date(recipe.edit_requested_at).toLocaleDateString('fr-FR') %>
+                  </span>
+                  <% } %>
+                </div>
               </div>
 
-              <% if (recipe.image) { %>
+              <% const rPics = (recipe.RecipePictures || []).slice().sort((a,b)=>a.position-b.position); %>
+              <% if (rPics.length > 0) { %>
+              <div class="recipe-val-panel__img-wrap" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <% rPics.forEach(function(pic) { %>
+                  <img src="<%= pic.file_path %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" style="flex:1;min-width:0;max-width:calc(33% - 4px);" data-lightbox-trigger data-lightbox-src="<%= pic.file_path %>" data-lightbox-alt="<%= recipe.name %>" />
+                <% }) %>
+              </div>
+              <% } else if (recipe.picture) { %>
               <div class="recipe-val-panel__img-wrap">
-                <img src="<%= recipe.image %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" data-lightbox-trigger data-lightbox-src="<%= recipe.image %>" data-lightbox-alt="<%= recipe.name %>" />
+                <img src="<%= recipe.picture %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" data-lightbox-trigger data-lightbox-src="<%= recipe.picture %>" data-lightbox-alt="<%= recipe.name %>" />
               </div>
               <% } %>
 
@@ -510,7 +524,8 @@
                 <% validatedRecipes.forEach(function(recipe) { %>
                 <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
                   <td class="cell-media">
-                    <% if (recipe.image) { %><img src="<%= recipe.image %>" alt="" class="cell-media__thumb" /><% } %>
+                    <% const thumb = (recipe.RecipePictures && recipe.RecipePictures.length > 0) ? recipe.RecipePictures[0].file_path : recipe.picture; %>
+                    <% if (thumb) { %><img src="<%= thumb %>" alt="" class="cell-media__thumb" /><% } %>
                     <span class="cell-media__title"><%= recipe.name %></span>
                   </td>
                   <td><span class="tag"><%= recipe.category || '—' %></span></td>
@@ -1148,7 +1163,8 @@
                   <% validatedRecipes.forEach(function(recipe) { %>
                   <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
                     <td class="cell-media">
-                      <% if (recipe.image) { %><img src="<%= recipe.image %>" alt="" class="cell-media__thumb" /><% } %>
+                      <% const vThumb = (recipe.RecipePictures && recipe.RecipePictures.length > 0) ? recipe.RecipePictures[0].file_path : recipe.picture; %>
+                      <% if (vThumb) { %><img src="<%= vThumb %>" alt="" class="cell-media__thumb" /><% } %>
                       <span class="cell-media__title"><%= recipe.name %></span>
                     </td>
                     <td><span class="tag"><%= recipe.category || '—' %></span></td>

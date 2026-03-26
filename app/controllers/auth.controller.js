@@ -1,4 +1,5 @@
-import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
+import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { getUserGamificationData } from "../services/xpService.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
@@ -132,24 +133,35 @@ const authController = {
 
   //page profil
   async profil(req, res) {
-    //recuperation info user
     if (!req.params.id) {
       return res.status(400).render("ID utilisateur manquant");
     }
+
+    // Seul le propriétaire du compte (ou un admin/super_admin) peut accéder au profil
+    const isOwner = String(req.userId) === String(req.params.id);
+    const isAdmin = req.userRole === "admin" || req.userRole === "super_admin";
+    if (!isOwner && !isAdmin) {
+      return res.status(403).render("error", {
+        error: "403",
+        message: "Vous n'êtes pas autorisé à accéder à ce profil.",
+      });
+    }
+
     try {
-      // Refactoring : suppression du console.log de debug
       const user = await User.findByPk(req.params.id, {
         attributes: { exclude: ["password"] },
       });
 
-      // Refactoring : utilisation du helper centralisé renderNotFound()
       if (!user) {
         return renderNotFound(res, "Utilisateur");
       }
 
       const userRecipes = await Recipe.findAll({
         where: { id_user: user.id },
-        include: [{ model: Movie, attributes: ["title"] }],
+        include: [
+          { model: Movie, attributes: ["title"] },
+          { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"] },
+        ],
         order: [["id", "DESC"]],
       });
 
@@ -747,8 +759,24 @@ const authController = {
       if (ingredients) updateData.ingredients = ingredients.trim();
       if (preparation) updateData.preparation = preparation.trim();
 
-      if (req.file) {
-        updateData.picture = `/images/recipes/${req.file.filename}`;
+      // Multi-photos : req.files (array) ou req.file (single legacy)
+      const uploadedFiles = req.files && req.files.length > 0
+        ? req.files
+        : req.file ? [req.file] : [];
+      let newPictures = [];
+      if (uploadedFiles.length > 0) {
+        try {
+          newPictures = await processRecipeImages(uploadedFiles);
+          updateData.picture = newPictures[0].relPath;
+        } catch (err) {
+          cleanupFiles(uploadedFiles.filter((f) => fs.existsSync(f.path)));
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            success: false,
+            message: err.message === "ratio"
+              ? `L'image "${err.filename}" doit avoir un ratio 3:2 (${err.w}×${err.h} px).`
+              : "Erreur lors du traitement des photos.",
+          });
+        }
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -774,7 +802,9 @@ const authController = {
         if (updateData.name) pendingData.pending_name = updateData.name;
         if (updateData.description)
           pendingData.pending_description = updateData.description;
-        if (updateData.picture) pendingData.pending_picture = updateData.picture;
+        if (updateData.picture) {
+          pendingData.pending_picture = updateData.picture;
+        }
         if (updateData.category) pendingData.pending_category = updateData.category;
         if (updateData.ingredients)
           pendingData.pending_ingredients = updateData.ingredients;
@@ -792,14 +822,42 @@ const authController = {
         });
       }
 
-      // Recette non encore approuvée : mise à jour directe → supprimer l'ancienne image
+      // Recette rejetée modifiée → repasse en pending (resoumission pour revalidation)
+      const isResubmission = recipe.status === "rejected";
+      if (isResubmission) {
+        updateData.status = "pending";
+        updateData.edit_requested_at = new Date(); // timestamp de resoumission pour l'admin
+        console.log(
+          `[Revalidation] Recipe resubmitted for review — recipe_id:${recipeId} user_id:${req.userId} timestamp:${new Date().toISOString()}`
+        );
+      }
+
+      // Recette non encore approuvée : mise à jour directe
       if (updateData.picture && recipe.picture) unlinkIfExists(recipe.picture);
 
       await Recipe.update(updateData, { where: { id: recipeId } });
+
+      // Mise à jour de recipe_pictures si de nouvelles photos ont été uploadées
+      if (newPictures.length > 0) {
+        const oldPics = await RecipePicture.findAll({ where: { recipe_id: recipeId } });
+        oldPics.forEach((p) => unlinkIfExists(p.file_path));
+        await RecipePicture.destroy({ where: { recipe_id: recipeId } });
+        await RecipePicture.bulkCreate(
+          newPictures.map(({ relPath, position }) => ({
+            recipe_id: recipeId,
+            file_path: relPath,
+            position,
+          }))
+        );
+      }
+
       return res.status(StatusCodes.OK).json({
         success: true,
-        message: "Recette mise à jour.",
+        message: isResubmission
+          ? "Recette modifiée et renvoyée pour validation."
+          : "Recette mise à jour.",
         applied: true,
+        resubmitted: isResubmission,
       });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -860,9 +918,13 @@ const authController = {
       unlinkIfExists(recipe.picture);
       unlinkIfExists(recipe.pending_picture);
 
+      // Supprimer les fichiers des photos secondaires (recipe_pictures)
+      const recipePictures = await RecipePicture.findAll({ where: { recipe_id: recipeId } });
+      recipePictures.forEach((p) => unlinkIfExists(p.file_path));
+
       await Notice.destroy({ where: { id_recipe: recipeId } });
       await UsersRecipes.destroy({ where: { id_recipe: recipeId } });
-      await Recipe.destroy({ where: { id: recipeId } });
+      await Recipe.destroy({ where: { id: recipeId } }); // ON DELETE CASCADE supprime recipe_pictures en BDD
 
       return res.status(StatusCodes.OK).json({
         success: true,

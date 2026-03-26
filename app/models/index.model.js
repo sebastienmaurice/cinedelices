@@ -8,6 +8,7 @@ import UsersRecipes from './users_recipes.model.js';
 import Favorite from './favorite.model.js';
 import Rating from './rating.model.js';
 import UserPoints from './UserPoints.model.js';
+import RecipePicture from './RecipePicture.model.js';
 
 
 // Définition des relations entre les modèles
@@ -63,8 +64,12 @@ Rating.belongsTo(User, { foreignKey: 'id_user' });
 UserPoints.belongsTo(User, { foreignKey: 'id_user' });
 User.hasOne(UserPoints, { foreignKey: 'id_user' });
 
+// Relations photos de recettes (multi-photos)
+Recipe.hasMany(RecipePicture, { foreignKey: 'recipe_id', as: 'RecipePictures' });
+RecipePicture.belongsTo(Recipe, { foreignKey: 'recipe_id' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture };
 
 
 

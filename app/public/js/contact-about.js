@@ -220,16 +220,21 @@
 
     /* Soumettre via fetch pour rester sur la page */
     var form = $('caContactForm');
-    var data = new FormData(form);
+    var data = new URLSearchParams(new FormData(form));
     fetch(form.action, {
       method: 'POST',
-      headers: { 'Accept': 'application/json' },
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
       body: data,
     })
-      .then(function () {
-        /* Le serveur répond 200 ou 302 — on considère toujours succès */
-        form.style.display = 'none';
-        $('caFormSuccess').classList.add('is-on');
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        if (json.success) {
+          form.style.display = 'none';
+          $('caFormSuccess').classList.add('is-on');
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Envoyer le message';
+        }
       })
       .catch(function () {
         /* En cas d'erreur réseau, fallback : soumettre normalement */

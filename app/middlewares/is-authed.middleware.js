@@ -36,23 +36,30 @@ function verifyToken(req, res, next) {
     next();
     
   } catch (error) {
-    // Si une erreur se produit (token invalide, expiré, ou corrompu)
-    
-    // On log l'erreur dans la console pour le debug
     console.error("Token invalide:", error.message);
-    
-    // On supprime le cookie invalide du navigateur
     res.clearCookie("token");
-    
-    // On vérifie si c'est une erreur d'expiration
+
+    // Pour les requêtes AJAX/API, retourner du JSON au lieu de HTML
+    const isAjax = req.headers.accept?.includes("application/json") ||
+                   req.headers["x-requested-with"] === "XMLHttpRequest" ||
+                   req.path.startsWith("/api/");
+
+    if (isAjax) {
+      return res.status(401).json({
+        success: false,
+        message: error.name === "TokenExpiredError"
+          ? "Session expirée. Veuillez vous reconnecter"
+          : "Session invalide. Veuillez vous reconnecter",
+        code: "AUTH_EXPIRED",
+      });
+    }
+
     if (error.name === "TokenExpiredError") {
-      // Token expiré : message spécifique
       return res.status(401).render("error", {
-        error: "401",  // Code d'erreur HTTP
+        error: "401",
         message: "Session expirée. Veuillez vous reconnecter",
       });
     } else {
-      // Autre erreur (token modifié, signature invalide, etc.)
       return res.status(401).render("error", {
         error: "401",
         message: "Session invalide. Veuillez vous reconnecter",

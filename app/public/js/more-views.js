@@ -22,7 +22,6 @@ function initButtonHidden() {
         };
 
         updateMoviesButtonVisibility();
-        moviesButton.textContent = "Voir plus";
         // au clic sur le bouton
         moviesButton.addEventListener('click', () => {
             moviesList.classList.remove('only__display__9__films');
@@ -55,7 +54,6 @@ function initButtonHidden() {
         };
 
         updateRecipesButtonVisibility();
-        recipesButton.textContent = "Voir plus";
         // au clic sur le bouton
         recipesButton.addEventListener('click', () => {
             recipesList.classList.remove('only__display__9__recipes');

@@ -34,4 +34,7 @@ const upload = multer({
   },
 });
 
+// Upload multi-photos pour la création de recette (max 3 fichiers, champ "pictures")
+export const uploadRecipePhotos = upload.array("pictures", 3);
+
 export default upload;

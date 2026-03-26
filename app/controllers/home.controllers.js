@@ -39,7 +39,10 @@ const homeController = {
       // recette du jour en aléatoire
       const topRecipe = await Recipe.findOne({
         where: { status: "approved" },
-        include: [{ model: Movie, where: { status: "approved" } }],
+        include: [
+          { model: Movie, where: { status: "approved" } },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
+        ],
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
 

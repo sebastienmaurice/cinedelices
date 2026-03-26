@@ -2,10 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── Star picker (avis-form-block) ──
   let selectedStars = 0;
   const starPicks = document.querySelectorAll(".star-pick");
+  const quoteInput = document.getElementById("avisQuoteInput");
   if (starPicks.length) {
     starPicks.forEach((el) => {
       el.addEventListener("click", () => {
         selectedStars = parseInt(el.dataset.v);
+        if (quoteInput) quoteInput.value = selectedStars;
         starPicks.forEach((s) => s.classList.toggle("on", parseInt(s.dataset.v) <= selectedStars));
       });
       el.addEventListener("mouseenter", () => {
@@ -155,6 +157,61 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && lightbox.classList.contains("is-visible")) {
       closeLightbox();
+    }
+  });
+});
+
+// ── Soumission du formulaire d'avis via fetch ──
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("avisForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl   = document.getElementById("avisFormError");
+    const successEl = document.getElementById("avisFormSuccess");
+    const submitBtn = document.getElementById("avisSubmitBtn");
+
+    errorEl.style.display = "none";
+    successEl.style.display = "none";
+
+    const comment = form.querySelector("#avisTexte")?.value?.trim();
+    const quote   = form.querySelector("#avisQuoteInput")?.value;
+
+    if (!quote || quote < 1) {
+      errorEl.textContent = "Veuillez sélectionner une note avant de publier.";
+      errorEl.style.display = "block";
+      return;
+    }
+    if (!comment) {
+      errorEl.textContent = "Veuillez rédiger votre avis avant de publier.";
+      errorEl.style.display = "block";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ comment, quote }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        successEl.textContent = data.message;
+        successEl.style.display = "block";
+        form.reset();
+        document.querySelectorAll(".star-pick").forEach((s) => s.classList.remove("on"));
+        if (document.getElementById("avisQuoteInput")) document.getElementById("avisQuoteInput").value = "";
+      } else {
+        errorEl.textContent = data.message || "Une erreur est survenue.";
+        errorEl.style.display = "block";
+        submitBtn.disabled = false;
+      }
+    } catch {
+      errorEl.textContent = "Erreur de connexion. Veuillez réessayer.";
+      errorEl.style.display = "block";
+      submitBtn.disabled = false;
     }
   });
 });

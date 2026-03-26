@@ -349,6 +349,59 @@
   const editModalSave = document.getElementById("editModalSave");
   let activeEditItem = null;
 
+  // ── Gestion des 3 slots photo dans le modal édition ──
+  const _photoSlots = [1, 2, 3].map((n) => ({
+    n,
+    slot:  () => document.getElementById(`edit-ps-${n}`),
+    prev:  () => document.getElementById(`edit-ps-prev-${n}`),
+    input: () => document.getElementById(`edit-ps-input-${n}`),
+    del:   () => document.getElementById(`edit-ps-del-${n}`),
+  }));
+
+  const _setSlotPhoto = (n, url) => {
+    const s = _photoSlots[n - 1];
+    if (!s) return;
+    const slotEl = s.slot();
+    const prevEl = s.prev();
+    if (!slotEl || !prevEl) return;
+    if (url) {
+      prevEl.style.backgroundImage = `url("${url}")`;
+      slotEl.classList.add("has-photo");
+    } else {
+      prevEl.style.backgroundImage = "";
+      slotEl.classList.remove("has-photo");
+      const inp = s.input();
+      if (inp) inp.value = "";
+    }
+  };
+
+  const _clearAllSlots = () => [1, 2, 3].forEach((n) => _setSlotPhoto(n, null));
+
+  // Brancher les slots
+  _photoSlots.forEach(({ n, slot, input, del }) => {
+    // Clic sur le slot (hors bouton del) → ouvrir fichier
+    slot()?.addEventListener("click", (e) => {
+      const delEl = del();
+      if (delEl && (e.target === delEl || delEl.contains(e.target))) return;
+      input()?.click();
+    });
+    // Sélection de fichier
+    input()?.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        showToast("Photo trop volumineuse (max 2 Mo).", "error");
+        e.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => _setSlotPhoto(n, ev.target.result);
+      reader.readAsDataURL(file);
+    });
+    // Bouton supprimer
+    del()?.addEventListener("click", (e) => { e.stopPropagation(); _setSlotPhoto(n, null); });
+  });
+
   const openEditModal = (item) => {
     activeEditItem = item;
     document.getElementById("editField-name").value = item.dataset.name || "";
@@ -358,26 +411,36 @@
     document.getElementById("editField-description").value = decodeURIComponent(item.dataset.description || "");
     document.getElementById("editField-ingredients").value = decodeURIComponent(item.dataset.ingredients || "");
     document.getElementById("editField-preparation").value = decodeURIComponent(item.dataset.preparation || "");
-    document.getElementById("editField-recipeImage").value = "";
+
+    // Pré-remplir les slots avec les photos actuelles
+    _clearAllSlots();
+    try {
+      const pics = JSON.parse(decodeURIComponent(item.dataset.pictures || "[]"));
+      pics.slice(0, 3).forEach((url, i) => { if (url) _setSlotPhoto(i + 1, url); });
+    } catch (_) {
+      const mainPic = item.dataset.picture;
+      if (mainPic) _setSlotPhoto(1, mainPic);
+    }
+
+    // Adapter le sous-titre selon le statut
+    const subEl = document.getElementById("editModalSub");
+    if (subEl) {
+      subEl.textContent = item.dataset.status === "rejected"
+        ? "⚠️ Recette refusée — une modification la renverra pour revalidation"
+        : "Les modifications sont soumises à validation";
+      subEl.style.color = item.dataset.status === "rejected"
+        ? "rgba(232,100,60,.9)"
+        : "";
+    }
+
     editRecipeModal.classList.add("open");
   };
 
   const closeEditModal = () => {
     editRecipeModal?.classList.remove("open");
     activeEditItem = null;
-    const prev = document.getElementById("editField-preview");
-    if (prev) { prev.src = ""; prev.classList.remove("is-visible"); }
+    _clearAllSlots();
   };
-
-  // Prévisualisation image dans le modal
-  document.getElementById("editField-recipeImage")?.addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    const prev = document.getElementById("editField-preview");
-    if (!file || !prev) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => { prev.src = ev.target.result; prev.classList.add("is-visible"); };
-    reader.readAsDataURL(file);
-  });
 
   editModalCancel?.addEventListener("click", closeEditModal);
   editRecipeModal?.addEventListener("click", (e) => {
@@ -441,10 +504,17 @@
         formData.append(name, val);
       }
     });
-    const imgInput = document.getElementById("editField-recipeImage");
-    if (imgInput?.files?.[0]) formData.append("recipeImage", imgInput.files[0]);
+    // Collecter les fichiers des 3 slots photo
+    let hasNewPhotos = false;
+    [1, 2, 3].forEach((n) => {
+      const inp = document.getElementById(`edit-ps-input-${n}`);
+      if (inp?.files?.[0]) {
+        formData.append("pictures", inp.files[0]);
+        hasNewPhotos = true;
+      }
+    });
 
-    if (Object.keys(payload).length === 0 && !imgInput?.files?.[0]) {
+    if (Object.keys(payload).length === 0 && !hasNewPhotos) {
       showToast("Aucune modification détectée.", "warning");
       return;
     }
@@ -459,10 +529,31 @@
         item.dataset.editStatus = "pending";
         const editBtn = item.querySelector(".account-edit-btn");
         if (editBtn) editBtn.disabled = true;
-        // Mettre à jour le hint banner
         _setEditHint(item, "pending");
         closeEditModal();
         showToast(data.message || "Modification envoyée pour validation.", "warning");
+        return;
+      }
+
+      // Recette rejetée resoumise → statut visuel → pending
+      if (data.resubmitted) {
+        item.dataset.status = "pending";
+        item.dataset.creaStatus = "pending";
+        const badge = item.querySelector(".lr-status");
+        if (badge) {
+          badge.className = "lr-status lrs--attente";
+          badge.innerHTML = '<span class="lr-status-dot"></span> En attente';
+        }
+        const subEl = item.querySelector(".list-row__sub");
+        if (subEl) {
+          const muted = subEl.querySelector(".lr-sub-muted");
+          if (!muted) {
+            subEl.insertAdjacentHTML("beforeend", ' <span class="lr-sub-muted">· En cours de modération…</span>');
+          }
+        }
+        _setEditHint(item, "none");
+        closeEditModal();
+        showToast(data.message || "Recette renvoyée pour validation.", "success");
         return;
       }
 

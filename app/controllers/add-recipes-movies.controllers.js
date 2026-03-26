@@ -1,8 +1,8 @@
-import { Recipe, Movie, Notice, User } from "../models/index.model.js";
+import { Recipe, Movie, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
-import sharp from "sharp";
+import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import fs from "fs";
 import slugify from "slugify";
 
@@ -16,11 +16,8 @@ const addRecipesMoviesController = {
   // Page d'ajout de film et recette
   addRecipesMovies(req, res) {
     try {
-      // ajout gestion du role
       res.render("add-recipes-movies");
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
-      // Note : loginPopup: false retiré car non utilisé dans la vue error
       return renderServerError(res, error);
     }
   },
@@ -29,77 +26,57 @@ const addRecipesMoviesController = {
   async addRecipeToMovies(req, res) {
     try {
       const id = req.params.id;
-
       const newMovie = await Movie.findByPk(id);
-
-      // Refactoring : utilisation du helper centralisé renderNotFound()
-      if (!newMovie) {
-        return renderNotFound(res, "Film");
-      }
-
-      // Enrichir le movie avec les chemins d'images (card pour la prévisualisation)
+      if (!newMovie) return renderNotFound(res, "Film");
       const enrichedMovie = enrichMovieWithImagePaths(newMovie);
-
-      // Rendu de la vue pour le pre-remplissage du film
-      res.render("add-recipes-movies", {
-        newMovie: enrichedMovie,
-      });
+      res.render("add-recipes-movies", { newMovie: enrichedMovie });
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
       return renderServerError(res, error);
     }
   },
 
   /**
-   * POST - Ajout d'un nouveau film dans la base de données
    * POST /add-recipes-movies/movie
-   *
-   * Processus :
-   * 1. Récupère les données du formulaire (title, year, genre, synopsis)
-   * 2. Crée le film en BDD
-   * 3. Enrichit le film avec les chemins d'images (pour affichage)
-   * 4. Rend la page avec le film créé pour permettre l'ajout de la recette
+   * Ajout d'un nouveau film en base.
    */
   async addMovie(req, res) {
     try {
       const { title, year, genre, synopsis, tmdb_id, type } = req.body;
 
-      // Auto-import affiche TMDB (avant création en BDD pour stocker le chemin directement)
       let picturePath = null;
       if (tmdb_id) {
         picturePath = await downloadTmdbPoster(parseInt(tmdb_id), type, title);
       }
 
-      // Création du film en base de données
       const newMovie = await Movie.create({
-        title: title,
-        year: year,
-        genre: genre,
+        title,
+        year,
+        genre,
         synopsis: synopsis || null,
         id_user: req.userId,
         tmdb_id: tmdb_id ? parseInt(tmdb_id) : null,
         picture: picturePath,
       });
 
-      // Enrichir le film avec les chemins d'images (banner/card)
-      // Même sans image uploadée, les chemins sont préparés pour un futur upload
       const enrichedMovie = enrichMovieWithImagePaths(newMovie);
-
-      // Rendre la page avec le film créé pour permettre l'ajout de la recette
-      res.status(201).render("add-recipes-movies", {
-        newMovie: enrichedMovie,
-      });
+      res.status(201).render("add-recipes-movies", { newMovie: enrichedMovie });
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
-      // Code commenté supprimé (loginPopup: false)
       return renderServerError(res, error);
     }
   },
 
-  // POST - Ajout de la recette
+  /**
+   * POST /add-recipes-movies/recipe
+   * Ajout d'une recette avec upload de 1 à 3 photos.
+   * - req.files : tableau de fichiers (champ "pictures", max 3)
+   * - Validation ratio 3:2 pour chaque photo
+   * - Compression / conversion WebP selon NODE_ENV
+   * - recipe.picture = première photo (rétro-compat)
+   * - RecipePictures : toutes les photos ordonnées par position
+   */
   async addRecipe(req, res) {
+    const files = req.files || [];
     try {
-      // Récupération des données du formulaire
       const {
         name,
         description,
@@ -112,53 +89,64 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      // Récupération et validation de l'image uploadée (si présente)
-      let imagePath = null;
-      if (req.file) {
-        // Vérification du ratio 3:2 (tolérance ±15%)
-        const metadata = await sharp(req.file.path).metadata();
-        const ratio = metadata.width / metadata.height;
-        const TARGET_RATIO = 3 / 2;
-        const TOLERANCE = 0.15;
-        if (Math.abs(ratio - TARGET_RATIO) > TOLERANCE) {
-          fs.unlinkSync(req.file.path); // Supprimer le fichier non conforme
-          return res.status(400).render("add-recipes-movies", {
-                error: true,
-            errorMessage: `L'image doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${metadata.width}×${metadata.height} px.`,
-          });
+      // Traitement des photos uploadées
+      let processed = [];
+      if (files.length > 0) {
+        try {
+          processed = await processRecipeImages(files);
+        } catch (err) {
+          // Nettoyer les fichiers restants si un ratio est invalide
+          cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
+          if (err.message === "ratio") {
+            return res.status(400).render("add-recipes-movies", {
+              error: true,
+              errorMessage: `L'image "${err.filename}" doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${err.w}×${err.h} px.`,
+            });
+          }
+          throw err;
         }
-        // Chemin relatif pour l'affichage dans le HTML
-        imagePath = `/images/recipes/${req.file.filename}`;
       }
 
-      // Ajout de la recette à la base de données (simulation)
+      const mainPicture = processed.length > 0 ? processed[0].relPath : null;
 
       const newRecipe = await Recipe.create({
-        name: name,
-        description: description,
-        category: category,
-        ingredients: ingredients,
-        preparation: preparation,
-        time: time,
+        name,
+        description,
+        category,
+        ingredients,
+        preparation,
+        time,
         servings: servings || null,
-        difficulty: difficulty,
-        id_movie: id_movie,
+        difficulty,
+        id_movie,
         id_user: req.userId,
-        picture: imagePath, // Chemin de l'image (null si aucune image)
+        picture: mainPicture,
       });
 
-      // Rendre la page avec la recette créée
-      res.status(201).render("add-recipes-movies", {
-        newRecipe,
-      });
+      // Enregistrer toutes les photos dans recipe_pictures
+      if (processed.length > 0) {
+        await RecipePicture.bulkCreate(
+          processed.map(({ relPath, position }) => ({
+            recipe_id: newRecipe.id,
+            file_path: relPath,
+            position,
+          }))
+        );
+      }
+
+      res.status(201).render("add-recipes-movies", { newRecipe });
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
+      cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
       return renderServerError(res, error);
     }
   },
 
-  // POST - Ajout film + recette via formulaire unifié
+  /**
+   * POST /add-recipes-movies/movie-and-recipe
+   * Formulaire unifié film + recette.
+   */
   async addMovieAndRecipe(req, res) {
+    const files = req.files || [];
     try {
       const {
         filmId,
@@ -177,25 +165,25 @@ const addRecipesMoviesController = {
       } = req.body;
 
       if (!name || !description || !category || !ingredients || !preparation || !time || !difficulty) {
+        cleanupFiles(files);
         return res.status(400).render("add-recipes-movies", {
           error: true,
           errorMessage: "Merci de compléter tous les champs de la recette.",
-          });
+        });
       }
 
+      // Film : existant ou nouveau
       let movie = null;
-      if (filmId) {
-        movie = await Movie.findByPk(filmId);
-      }
+      if (filmId) movie = await Movie.findByPk(filmId);
 
       if (!movie) {
         if (!title || !year || !genre) {
+          cleanupFiles(files);
           return res.status(400).render("add-recipes-movies", {
             error: true,
             errorMessage: "Merci de compléter les informations du film.",
-              });
+          });
         }
-
         movie = await Movie.create({
           title,
           year,
@@ -205,10 +193,24 @@ const addRecipesMoviesController = {
         });
       }
 
-      let imagePath = null;
-      if (req.file) {
-        imagePath = `/images/recipes/${req.file.filename}`;
+      // Traitement des photos uploadées
+      let processed = [];
+      if (files.length > 0) {
+        try {
+          processed = await processRecipeImages(files);
+        } catch (err) {
+          cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
+          if (err.message === "ratio") {
+            return res.status(400).render("add-recipes-movies", {
+              error: true,
+              errorMessage: `L'image "${err.filename}" doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${err.w}×${err.h} px.`,
+            });
+          }
+          throw err;
+        }
       }
+
+      const mainPicture = processed.length > 0 ? processed[0].relPath : null;
 
       const newRecipe = await Recipe.create({
         name,
@@ -221,11 +223,21 @@ const addRecipesMoviesController = {
         difficulty,
         id_movie: movie.id,
         id_user: req.userId,
-        picture: imagePath,
+        picture: mainPicture,
       });
 
-      const enrichedMovie = enrichMovieWithImagePaths(movie);
+      // Enregistrer toutes les photos dans recipe_pictures
+      if (processed.length > 0) {
+        await RecipePicture.bulkCreate(
+          processed.map(({ relPath, position }) => ({
+            recipe_id: newRecipe.id,
+            file_path: relPath,
+            position,
+          }))
+        );
+      }
 
+      const enrichedMovie = enrichMovieWithImagePaths(movie);
       return res.status(201).render("add-recipes-movies", {
         success: true,
         successMessage: "Film et recette envoyés pour validation.",
@@ -233,8 +245,10 @@ const addRecipesMoviesController = {
         newRecipe,
       });
     } catch (error) {
+      cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
       return renderServerError(res, error);
     }
   },
 };
+
 export default addRecipesMoviesController;

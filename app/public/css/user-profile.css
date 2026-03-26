@@ -3757,7 +3757,70 @@ body.profile-page {
 .ci-ef-img-preview.is-visible {
   display: block;
 }
-/* Bouton effacer dans la barre de recherche */
+/* ── Slots photo 3:2 dans le modal édition recette ── */
+.ci-ef-label-hint {
+  font-size: .58em;
+  font-weight: 400;
+  opacity: .55;
+  margin-left: 6px;
+}
+.ci-ef-photo-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.ci-ef-ps {
+  position: relative;
+  aspect-ratio: 3/2;
+  border-radius: 7px;
+  border: 1.5px dashed rgba(196,160,82,.3);
+  background: rgba(15,26,42,.55);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.ci-ef-ps:hover { border-color: rgba(196,160,82,.6); }
+.ci-ef-ps.has-photo { border-style: solid; border-color: rgba(196,160,82,.5); }
+.ci-ef-ps__prev {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: .9;
+}
+.ci-ef-ps__n {
+  position: absolute;
+  top: 5px; left: 6px;
+  font-size: .5rem;
+  font-family: var(--f-title);
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: rgba(232,232,232,.7);
+  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+  pointer-events: none;
+}
+.ci-ef-ps__file {
+  position: absolute; inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%; height: 100%;
+}
+.ci-ef-ps__del {
+  display: none;
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(194,48,24,.85);
+  color: #fff;
+  font-size: .65rem;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.ci-ef-ps.has-photo .ci-ef-ps__del { display: flex; }
+/* ── Bouton effacer dans la barre de recherche ── */
 .collections-section__search-clear {
   display: none;
   position: absolute;

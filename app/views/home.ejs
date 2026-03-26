@@ -75,7 +75,7 @@
                 <span class="hero__eyebrow-genre">Drame · Thriller</span>
               </div>
             </div>
-            <h1 class="hero__title">BREAKING<em>BAD</em></h1>
+            <h2 class="hero__title">BREAKING<em>BAD</em></h2>
             <p class="hero__sub">La chimie au service des sens</p>
             <p class="hero__desc">Walter White transformait le danger en art. Nous, on transforme ses recettes en chef-d'œuvres culinaires. Say my name.</p>
             <div class="hero__actions">
@@ -350,7 +350,7 @@ function genreSlug(name) {
               <div class="djc-film__overlay"></div>
               <div class="djc-film__top">
                 <span class="djc-film__badge">🎬 Film</span>
-                <button class="djc-film__fav btn-fav" data-id="<%= duoFilm.id %>" data-type="movie" aria-label="Ajouter aux favoris">♡</button>
+                <button class="djc-film__fav btn-fav" data-entity-id="<%= duoFilm.id %>" data-entity-type="movie" aria-label="Ajouter aux favoris">♡</button>
               </div>
               <div class="djc-film__bottom">
                 <div class="djc-film__tags">
@@ -433,7 +433,7 @@ function genreSlug(name) {
                 <div class="djc-recette__img-overlay"></div>
                 <div class="djc-recette__img-top">
                   <span class="djc-recette__type"><%= topRecipe.difficulty || 'Recette' %></span>
-                  <button class="djc-recette__fav btn-fav" data-id="<%= topRecipe.id %>" data-type="recipe" aria-label="Ajouter aux favoris">♡</button>
+                  <button class="djc-recette__fav btn-fav" data-entity-id="<%= topRecipe.id %>" data-entity-type="recipe" aria-label="Ajouter aux favoris">♡</button>
                 </div>
                 <div class="djc-recette__img-bottom">
                   <span class="djc-recette__film-badge">🎞 <%= topRecipe.Movie.title %></span>
@@ -458,9 +458,9 @@ function genreSlug(name) {
                 </div>
                 <div class="djc-recette__foot">
                   <div class="djc-recette__author">
-                    <img class="djc-recette__avatar" src="<%= topRecipe.User && topRecipe.User.avatar ? topRecipe.User.avatar : 'https://i.pravatar.cc/68?img=47' %>" alt="<%= topRecipe.User ? topRecipe.User.username : 'Chef' %>" loading="lazy">
+                    <img class="djc-recette__avatar" src="<%= topRecipe.contributor && topRecipe.contributor.picture ? topRecipe.contributor.picture : '/images/image-default-profile.jpg' %>" alt="<%= topRecipe.contributor ? topRecipe.contributor.pseudo : 'Chef' %>" loading="lazy">
                     <div>
-                      <div class="djc-recette__author-name"><%= topRecipe.User ? topRecipe.User.username : 'Chef Ciné Délices' %></div>
+                      <div class="djc-recette__author-name"><%= topRecipe.contributor ? topRecipe.contributor.pseudo : 'Chef Ciné Délices' %></div>
                       <div class="djc-recette__author-rank">★★ Studio Bronze</div>
                     </div>
                   </div>
@@ -501,7 +501,7 @@ function genreSlug(name) {
                   <img class="top3-featured__img" src="<%= recipes[0].picture %>" alt="<%= recipes[0].name %>" loading="lazy">
                   <div class="top3-featured__overlay"></div>
                   <div class="top3-featured__medal">1</div>
-                  <button class="top3-featured__fav btn-fav" data-id="<%= recipes[0].id %>" data-type="recipe" aria-label="Favoris">♡</button>
+                  <button class="top3-featured__fav btn-fav" data-entity-id="<%= recipes[0].id %>" data-entity-type="recipe" aria-label="Favoris">♡</button>
                   <span class="top3-featured__film-badge">🎬 <%= recipes[0].Movie.title %></span>
                 </div>
                 <div class="top3-featured__body">
@@ -678,6 +678,12 @@ function genreSlug(name) {
 
     <!-- Scripts JS spécifiques à la page home -->
     <script src="/js/category-badges.js" defer></script>
+    <script>
+      window.CINEDELICES = {
+        isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
+        userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
+      };
+    </script>
     <script src="/js/favorites.js" defer></script>
     <script src="/js/hero-slider.js" defer></script>
   </body>

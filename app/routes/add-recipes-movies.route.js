@@ -2,8 +2,7 @@ import { Router } from "express";
 import addRecipesMoviesController from "../controllers/add-recipes-movies.controllers.js";
 import { validateRecipeCreate } from "../validators/recipe.validator.js";
 import { validateMovieCreate } from "../validators/movie.validator.js";
-//! ajout import upload middleware
-import upload from "../middlewares/upload.middleware.js";
+import upload, { uploadRecipePhotos } from "../middlewares/upload.middleware.js";
 
 const addRecipesMoviesRouter = Router();
 
@@ -24,10 +23,10 @@ addRecipesMoviesRouter.post(
   addRecipesMoviesController.addMovie
 );
 
-//! Route pour l'ajout d'une recette avec upload d'image
+// Route pour l'ajout d'une recette avec upload multi-photos (max 3)
 addRecipesMoviesRouter.post(
   "/recipe",
-  upload.single("recipeImage"),
+  uploadRecipePhotos,
   validateRecipeCreate,
   addRecipesMoviesController.addRecipe
 );
@@ -35,7 +34,7 @@ addRecipesMoviesRouter.post(
 // Route unifiée film + recette
 addRecipesMoviesRouter.post(
   "/movie-and-recipe",
-  upload.single("recipeImage"),
+  uploadRecipePhotos,
   addRecipesMoviesController.addMovieAndRecipe
 );
 
