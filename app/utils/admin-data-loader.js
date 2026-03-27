@@ -33,12 +33,14 @@ export async function loadAdminData() {
     include: [
       { model: Movie, attributes: ["title", "picture", "year", "genre"] },
       { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"] },
+      { model: User, as: "contributor", attributes: ["id", "pseudo"] },
     ],
   });
 
   // Récupérer les films en attente de validation (status: 'pending')
   const movies = await Movie.findAll({
     where: { status: "pending" },
+    include: [{ model: User, attributes: ["id", "pseudo"] }],
   });
 
   const pendingMovieDeleteRequests = await Movie.findAll({
@@ -99,6 +101,7 @@ export async function loadAdminData() {
 
   const validatedMovies = await Movie.findAll({
     where: { status: "approved" },
+    include: [{ model: User, attributes: ["id", "pseudo"] }],
     order: [["id", "DESC"]],
   });
 
@@ -107,6 +110,7 @@ export async function loadAdminData() {
     include: [
       { model: Movie, attributes: ["id", "title"] },
       { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"] },
+      { model: User, as: "contributor", attributes: ["id", "pseudo"] },
     ],
     order: [["id", "DESC"]],
   });

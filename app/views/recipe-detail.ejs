@@ -3,15 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Découvrez les détails de la recette cultissime <%= recipe.name %>"
-    />
+    <%
+      const _rdDesc  = (recipe.description || recipe.anecdote || `Recette inspirée du film ${(movie && movie.title) || 'cinéma'} — à cuisiner sur Ciné Délices.`).slice(0, 155);
+      const _rdImg   = recipe.picture || '/images/image-default-recipe-1.jpg';
+      const _rdSlug  = recipe.slug || recipe.id;
+      const _rdAuthor = (typeof contributor !== 'undefined' && contributor) ? contributor.pseudo : 'Ciné Délices';
+    %>
+    <meta name="description" content="<%= _rdDesc %>" />
     <title><%= recipe.name %> - Ciné Délices</title>
 
     <%- include("partials/head-resources") %>
+    <!-- SEO — Open Graph -->
+    <meta property="og:type"        content="article" />
+    <meta property="og:site_name"   content="Ciné Délices" />
+    <meta property="og:locale"      content="fr_FR" />
+    <meta property="og:title"       content="<%= recipe.name %> — Ciné Délices" />
+    <meta property="og:description" content="<%= _rdDesc %>" />
+    <meta property="og:image"       content="<%= siteUrl %><%= _rdImg %>" />
+    <meta property="og:url"         content="<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="<%= recipe.name %> — Ciné Délices" />
+    <meta name="twitter:description" content="<%= _rdDesc %>" />
+    <meta name="twitter:image"       content="<%= siteUrl %><%= _rdImg %>" />
+    <!-- Canonical -->
+    <link rel="canonical" href="<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>" />
+    <!-- JSON-LD Recipe Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Recipe",
+      "name": "<%- (recipe.name || '').replace(/"/g, '&quot;') %>",
+      "description": "<%- _rdDesc.replace(/"/g, '&quot;') %>",
+      "image": "<%= siteUrl %><%= _rdImg %>",
+      "author": {
+        "@type": "Person",
+        "name": "<%- _rdAuthor.replace(/"/g, '&quot;') %>"
+      },
+      "datePublished": "<%= recipe.createdAt ? new Date(recipe.createdAt).toISOString().split('T')[0] : '' %>",
+      <% if (recipe.time) { %>"totalTime": "PT<%= recipe.time %>M",<% } %>
+      <% if (recipe.servings) { %>"recipeYield": "<%= recipe.servings %> portion<%= recipe.servings > 1 ? 's' : '' %>",<% } %>
+      <% if (recipe.category) { %>"recipeCategory": "<%= recipe.category %>",<% } %>
+      <% if (recipe.difficulty) { %>"keywords": "<%= recipe.difficulty %>",<% } %>
+      <% if (typeof averageQuote !== 'undefined' && averageQuote && totalAvis > 0) { %>
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "<%= averageQuote %>",
+        "ratingCount": "<%= totalAvis %>",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      <% } %>
+      "url": "<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>"
+    }
+    </script>
 
-    <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/recipe-detail.css?v=20260310" />
   </head>
 
@@ -91,13 +137,13 @@
               <div
                 class="rh-meta__item"
                 data-rating-container
-                data-current-rating="<%= averageQuote %>"
+                data-current-rating="<%= averageQuote || 0 %>"
                 data-readonly="true"
               >
                 <span class="rh-meta__label">Note</span>
                 <span class="rh-meta__val rh-meta__val--gold">
                   <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" width="12" height="12"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <strong id="banner-rating-output" data-rating-output><%= averageQuote %></strong>/5
+                  <strong id="banner-rating-output" data-rating-output><%= averageQuote || 0 %></strong>/5
                 </span>
               </div>
             </div>
@@ -151,7 +197,7 @@
                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" width="20" height="20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               </div>
               <div class="rh-ps-text">
-                <span class="rh-ps-num"><%= averageQuote %></span>
+                <span class="rh-ps-num"><%= averageQuote || 0 %></span>
                 <span class="rh-ps-label">Note / 5</span>
               </div>
             </div>
@@ -365,17 +411,17 @@
                   </div>
                   <div class="avis-stat-sep"></div>
                   <div class="avis-stat">
-                    <span class="avis-stat__num"><%= averageQuote %></span>
+                    <span class="avis-stat__num"><%= averageQuote || 0 %></span>
                     <span class="avis-stat__lbl">Note moyenne</span>
                   </div>
                 </div>
 
                 <div class="avis-banner__note">
                   <div class="global-stars">
-                    <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote) ? 's' : 'sh' %>">★</span><% } %>
+                    <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
                   </div>
                   <div style="display:flex;align-items:baseline;gap:3px">
-                    <span class="global-note"><%= averageQuote %></span>
+                    <span class="global-note"><%= averageQuote || 0 %></span>
                     <span class="global-note__max">/ 5</span>
                   </div>
                   <span class="global-note__lbl">Note moyenne</span>
@@ -472,7 +518,7 @@
             <% } %>
 
             <!-- Formulaire / état non connecté -->
-            <div class="avis-form-block" id="avisForm">
+            <div class="avis-form-block" id="avisFormBlock">
               <div class="avis-form-block__head">
                 <div class="avis-form-block__icon">✍️</div>
                 <div>
@@ -493,7 +539,7 @@
                 </div>
                 <div class="form-g">
                   <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
-                  <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…"></textarea>
+                  <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
                 </div>
                 <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
                 <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
@@ -564,14 +610,14 @@
               <div
                 class="rd-rating-summary rating-stars"
                 data-rating-container
-                data-current-rating="<%= averageQuote %>"
+                data-current-rating="<%= averageQuote || 0 %>"
                 data-readonly="true"
               >
-                <div class="rd-rating-big"><%= averageQuote %></div>
+                <div class="rd-rating-big"><%= averageQuote || 0 %></div>
                 <div class="rd-rating-stars-row">
                   <% for (let i = 1; i <= 5; i++) { %>
                   <span
-                    class="rating-star<%= i <= Math.round(averageQuote) ? ' is-active' : '' %>"
+                    class="rating-star<%= i <= Math.round(averageQuote || 0) ? ' is-active' : '' %>"
                     data-value="<%= i %>"
                   >★</span>
                   <% } %>
@@ -640,7 +686,6 @@
 
     <%- include("partials/footer") %>
 
-    <script src="/js/burger-menu.js" defer></script>
     <script src="/js/recipe-detail.js" defer></script>
 
     <!-- Configuration pour les favoris -->

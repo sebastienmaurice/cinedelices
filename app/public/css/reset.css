@@ -63,10 +63,18 @@ body {
 img,
 picture,
 video,
-canvas,
 svg {
   display: block;
   max-width: 100%;
+}
+
+/* canvas : display:block uniquement — max-width:100% est exclu car les canvas
+   animés (badge-engine, category-badges) ont des dimensions intentionnellement
+   supérieures à leur conteneur avec des offsets négatifs. Appliquer max-width
+   les réduit visuellement tout en gardant le buffer interne, ce qui cause
+   un décalage de l'animation. */
+canvas {
+  display: block;
 }
 
 /**

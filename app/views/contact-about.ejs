@@ -53,17 +53,17 @@
           </p>
           <div class="ca-hero__stats">
             <div class="ca-hstat">
-              <span class="ca-hstat__n"><%= userCount %></span>
+              <span class="ca-hstat__n"><%= typeof userCount !== 'undefined' ? userCount : '0' %></span>
               <span class="ca-hstat__l">Membres</span>
             </div>
             <div class="ca-hdivider" aria-hidden="true"></div>
             <div class="ca-hstat">
-              <span class="ca-hstat__n"><%= movieCount %></span>
+              <span class="ca-hstat__n"><%= typeof movieCount !== 'undefined' ? movieCount : '0' %></span>
               <span class="ca-hstat__l">Films</span>
             </div>
             <div class="ca-hdivider" aria-hidden="true"></div>
             <div class="ca-hstat">
-              <span class="ca-hstat__n"><%= recipeCount %></span>
+              <span class="ca-hstat__n"><%= typeof recipeCount !== 'undefined' ? recipeCount : '0' %></span>
               <span class="ca-hstat__l">Recettes</span>
             </div>
           </div>
@@ -253,24 +253,24 @@
                   <div class="ca-frow" style="margin-bottom:12px">
                     <div class="ca-fg">
                       <label for="caFn">Nom</label>
-                      <input class="ca-fi" type="text" id="caFn" name="name" placeholder="Votre nom" autocomplete="family-name" />
-                      <span class="ca-fi-err">Veuillez renseigner votre nom</span>
+                      <input class="ca-fi" type="text" id="caFn" name="name" placeholder="Votre nom" autocomplete="family-name" required aria-describedby="caFnErr" />
+                      <span class="ca-fi-err" id="caFnErr">Veuillez renseigner votre nom</span>
                     </div>
                     <div class="ca-fg">
                       <label for="caFp">Prénom</label>
-                      <input class="ca-fi" type="text" id="caFp" name="prenom" placeholder="Votre prénom" autocomplete="given-name" />
-                      <span class="ca-fi-err">Veuillez renseigner votre prénom</span>
+                      <input class="ca-fi" type="text" id="caFp" name="prenom" placeholder="Votre prénom" autocomplete="given-name" required aria-describedby="caFpErr" />
+                      <span class="ca-fi-err" id="caFpErr">Veuillez renseigner votre prénom</span>
                     </div>
                   </div>
                   <div class="ca-fg" style="margin-bottom:12px">
                     <label for="caFe">Adresse e-mail</label>
-                    <input class="ca-fi" type="email" id="caFe" name="email" placeholder="votre@email.com" autocomplete="email" />
-                    <span class="ca-fi-err">Adresse e-mail invalide</span>
+                    <input class="ca-fi" type="email" id="caFe" name="email" placeholder="votre@email.com" autocomplete="email" required aria-describedby="caFeErr" />
+                    <span class="ca-fi-err" id="caFeErr">Adresse e-mail invalide</span>
                   </div>
                   <div class="ca-fg" style="margin-bottom:14px">
                     <label for="caFm">Message</label>
-                    <textarea class="ca-fi" id="caFm" name="message" rows="4" placeholder="Écrivez votre message…"></textarea>
-                    <span class="ca-fi-err">Veuillez écrire un message</span>
+                    <textarea class="ca-fi" id="caFm" name="message" rows="4" placeholder="Écrivez votre message…" required aria-describedby="caFmErr"></textarea>
+                    <span class="ca-fi-err" id="caFmErr">Veuillez écrire un message</span>
                   </div>
                   <button type="submit" class="ca-btn-send" id="caBtnSend">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 3 9-3 9 19-9Z"/><path d="M6 12h16"/></svg>
@@ -342,11 +342,11 @@
                   <span class="ca-about-stat__l">Créateurs</span>
                 </div>
                 <div class="ca-about-stat">
-                  <span class="ca-about-stat__n"><%= typeof recipeCount !== 'undefined' ? recipeCount : '583' %></span>
+                  <span class="ca-about-stat__n"><%= typeof recipeCount !== 'undefined' ? recipeCount : '0' %></span>
                   <span class="ca-about-stat__l">Recettes</span>
                 </div>
                 <div class="ca-about-stat">
-                  <span class="ca-about-stat__n"><%= typeof movieCount !== 'undefined' ? movieCount : '247' %></span>
+                  <span class="ca-about-stat__n"><%= typeof movieCount !== 'undefined' ? movieCount : '0' %></span>
                   <span class="ca-about-stat__l">Films</span>
                 </div>
               </div>
@@ -414,7 +414,6 @@
     </button>
 
     <!-- Scripts -->
-    <script src="/js/burger-menu.js" defer></script>
     <script src="/js/contact-about.js" defer></script>
   </body>
 </html>

@@ -292,7 +292,7 @@
                   <% if (movie.year) { %><span class="tag"><%= movie.year %></span><% } %>
                   <% if (movie.genre) { %><span class="tag"><%= movie.genre %></span><% } %>
                   <% if (movie.director) { %><span class="tag">Réal. <%= movie.director %></span><% } %>
-                  <% if (movie.submittedBy) { %><span class="tag tag--user">Par : <%= movie.submittedBy %></span><% } %>
+                  <% if (movie.User?.pseudo) { %><span class="tag tag--user">Par : <%= movie.User.pseudo %></span><% } %>
                 </div>
                 <% if (movie.synopsis) { %>
                 <p class="movie-val-panel__synopsis"><%= movie.synopsis.substring(0, 240) %><%= movie.synopsis.length > 240 ? '…' : '' %></p>
@@ -357,7 +357,7 @@
                   </td>
                   <td><%= movie.year || '—' %></td>
                   <td><span class="tag"><%= movie.genre || '—' %></span></td>
-                  <td class="user-cell"><%= movie.submittedBy || '—' %></td>
+                  <td class="user-cell"><%= movie.User?.pseudo || '—' %></td>
                   <td class="actions-cell">
                     <button type="button" class="act-btn act-btn--edit act-btn--sm"
                       data-edit-btn
@@ -423,9 +423,9 @@
                   <h3 class="recipe-val-panel__title"><%= recipe.name %></h3>
                   <div class="recipe-val-panel__meta">
                     <% if (recipe.category) { %><span class="tag"><%= recipe.category %></span><% } %>
-                    <% if (recipe.preparationTime) { %><span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <%= recipe.preparationTime %> min</span><% } %>
+                    <% if (recipe.time) { %><span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <%= recipe.time %> min</span><% } %>
                     <% if (recipe.difficulty) { %><span class="tag"><%= recipe.difficulty %></span><% } %>
-                    <% if (recipe.submittedBy) { %><span class="tag tag--user">Par : <%= recipe.submittedBy %></span><% } %>
+                    <% if (recipe.contributor?.pseudo) { %><span class="tag tag--user">Par : <%= recipe.contributor.pseudo %></span><% } %>
                   </div>
                 </div>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
@@ -488,7 +488,7 @@
                   data-edit-id="<%= recipe.id %>"
                   data-edit-name="<%= recipe.name %>"
                   data-edit-category="<%= recipe.category || '' %>"
-                  data-edit-time="<%= recipe.preparationTime || '' %>"
+                  data-edit-time="<%= recipe.time || '' %>"
                   data-edit-difficulty="<%= recipe.difficulty || '' %>"
                   data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
                   data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
@@ -530,7 +530,7 @@
                   </td>
                   <td><span class="tag"><%= recipe.category || '—' %></span></td>
                   <td><%= recipe.difficulty || '—' %></td>
-                  <td class="user-cell"><%= recipe.submittedBy || '—' %></td>
+                  <td class="user-cell"><%= recipe.contributor?.pseudo || '—' %></td>
                   <td class="actions-cell">
                     <button type="button" class="act-btn act-btn--edit act-btn--sm"
                       data-edit-btn
@@ -538,7 +538,7 @@
                       data-edit-id="<%= recipe.id %>"
                       data-edit-name="<%= recipe.name %>"
                       data-edit-category="<%= recipe.category || '' %>"
-                      data-edit-time="<%= recipe.preparationTime || '' %>"
+                      data-edit-time="<%= recipe.time || '' %>"
                       data-edit-difficulty="<%= recipe.difficulty || '' %>"
                       data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
                       data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
@@ -1361,7 +1361,7 @@
               </div>
               <div class="admin-modal__field">
                 <label class="admin-modal__label" for="edit-recipe-time">Temps (min)</label>
-                <input type="number" id="edit-recipe-time" name="preparationTime" class="admin-modal__input" min="1" />
+                <input type="number" id="edit-recipe-time" name="time" class="admin-modal__input" min="1" />
               </div>
               <div class="admin-modal__field">
                 <label class="admin-modal__label" for="edit-recipe-difficulty">Difficulté</label>
@@ -1400,8 +1400,8 @@
               </div>
             </div>
             <div class="admin-modal__field">
-              <label class="admin-modal__label" for="edit-notice-quote">Citation courte</label>
-              <input type="text" id="edit-notice-quote" name="quote" class="admin-modal__input" />
+              <label class="admin-modal__label" for="edit-notice-quote">Note (1 à 5)</label>
+              <input type="number" id="edit-notice-quote" name="quote" class="admin-modal__input" min="1" max="5" />
             </div>
             <div class="admin-modal__field">
               <label class="admin-modal__label" for="edit-notice-content">Commentaire</label>

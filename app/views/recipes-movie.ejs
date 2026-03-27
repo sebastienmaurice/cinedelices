@@ -5,15 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes"
+      content="<%= movie ? `${movie.title} — Recettes inspirées du cinéma · Ciné Délices` : 'Ciné Délices — Découvrez tous les films et séries cultes et leurs recettes' %>"
     />
     <title><%= movie ? `${movie.title} — Recettes · Ciné Délices` : 'Recettes - Ciné Délices' %></title>
 
     <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
+    <% if (movie) { %>
+    <% const _ogImg = movie.bannerPath || movie.cardPath || movie.picture || '/images/image-banner-movie-default.jpg'; %>
+    <% const _ogDesc = movie.synopsis ? movie.synopsis.slice(0, 155) : `Découvrez les recettes inspirées de ${movie.title} sur Ciné Délices.`; %>
+    <!-- SEO — Open Graph -->
+    <meta property="og:type"        content="video.movie" />
+    <meta property="og:site_name"   content="Ciné Délices" />
+    <meta property="og:locale"      content="fr_FR" />
+    <meta property="og:title"       content="<%= movie.title %> — Recettes · Ciné Délices" />
+    <meta property="og:description" content="<%= _ogDesc %>" />
+    <meta property="og:image"       content="<%= siteUrl %><%= _ogImg %>" />
+    <meta property="og:url"         content="<%= siteUrl %>/recipes-movie/<%= movie.slug || movie.id %>" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="<%= movie.title %> — Recettes · Ciné Délices" />
+    <meta name="twitter:description" content="<%= _ogDesc %>" />
+    <meta name="twitter:image"       content="<%= siteUrl %><%= _ogImg %>" />
+    <!-- Canonical -->
+    <link rel="canonical" href="<%= siteUrl %>/recipes-movie/<%= movie.slug || movie.id %>" />
+    <% } else { %>
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="Ciné Délices" />
+    <meta property="og:locale"      content="fr_FR" />
+    <meta property="og:title"       content="Recettes de cinéma — Ciné Délices" />
+    <meta property="og:description" content="Découvrez toutes les recettes inspirées des films et séries cultes." />
+    <meta property="og:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
+    <meta property="og:url"         content="<%= siteUrl %>/recipes" />
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Recettes de cinéma — Ciné Délices" />
+    <meta name="twitter:description" content="Découvrez toutes les recettes inspirées des films et séries cultes." />
+    <meta name="twitter:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
+    <link rel="canonical" href="<%= siteUrl %>/recipes" />
+    <% } %>
 
     <!-- styles-->
-    <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
 
     <!-- scripts -->
@@ -21,7 +52,7 @@
     <script src="/js/more-views.js" defer></script>
   </head>
 
-  <body class="<%= movie ? 'film-page' : '' %>">
+  <% if (movie) { %><body class="film-page"><% } else { %><body><% } %>
     <!-- HEADER -->
     <%- include("partials/header") %>
 
@@ -44,7 +75,7 @@
         <!-- ID film (caché) — nécessaire pour filtred-category.js -->
         <div id="movie" data-id="<%= movie.id %>" style="display:none" aria-hidden="true"></div>
 
-        <!-- â”€â”€ BREADCRUMB â”€â”€ -->
+        <!-- ── BREADCRUMB ── -->
         <div class="bc-bar">
           <nav class="bc" aria-label="Fil d'Ariane">
             <a href="/">Accueil</a>
@@ -206,8 +237,8 @@
                   <% recipes.forEach(recipe => { %>
                   <%
                     const displayRating = recipe.avgRating || recipe.quote || '0';
-                    const authorName = recipe.contributor.pseudo;
-                    const authorAvatar = recipe.contributor.picture || null;
+                    const authorName = recipe.contributor?.pseudo || 'Anonyme';
+                    const authorAvatar = recipe.contributor?.picture || null;
                     const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
                     const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
                   %>
@@ -363,7 +394,6 @@
     <%- include("partials/footer") %>
 
     <!-- Scripts JS globaux -->
-    <script src="/js/burger-menu.js" defer></script>
 
     <!-- Synopsis toggle (vue film) -->
     <script>

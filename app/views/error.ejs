@@ -3,86 +3,99 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Ciné Délices — Le goût du cinéma : découvrez des recettes inspirées des films cultes !"
-    />
-    <title>Ciné Délices - Le goût du cinéma</title>
+    <meta name="description" content="Ciné Délices — Une erreur est survenue" />
+    <title>Erreur | Ciné Délices</title>
 
     <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
 
-    <!-- Styles spécifiques à la page -->
-    <link rel="stylesheet" href="/css/home.css" />
-
-
+    <style>
+      body.error-page {
+        max-width: unset;
+        padding: 0;
+      }
+      body.error-page main {
+        padding-top: var(--nav-h);
+        min-height: calc(100vh - var(--nav-h));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .err-block {
+        text-align: center;
+        padding: 80px 24px;
+        max-width: 520px;
+      }
+      .err-code {
+        font-family: var(--f-title);
+        font-size: 6rem;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        color: transparent;
+        -webkit-text-stroke: 1.5px rgba(196,160,82,0.4);
+        margin: 0 0 12px;
+      }
+      .err-title {
+        font-family: var(--f-title);
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--argent-ecran, #e8e8e8);
+        margin: 0 0 8px;
+      }
+      .err-msg {
+        font-size: 0.82rem;
+        color: rgba(232,232,232,0.5);
+        line-height: 1.6;
+        margin: 0 0 32px;
+      }
+      .err-sep {
+        width: 40px;
+        height: 1px;
+        background: rgba(196,160,82,0.35);
+        margin: 0 auto 28px;
+      }
+    </style>
   </head>
 
-  <body>
-
-  
+  <body class="error-page">
     <!-- HEADER -->
     <%- include("partials/header") %>
 
     <!-- MAIN -->
     <main>
-      <section style="padding: 2rem; text-align: center">
-        <h1>Oups ! Une erreur est survenue 😢</h1>
-
-      <% if (typeof error === "undefined") { %> 
-        <p>route invalide</p>
-        <p>recuperation Ip: terminée ✅ </p>
-        <h3>adresse ip public: 81.278.125.900</h3>
-        <p> Si tu recommence, <br>
-          je te retrouverai et  <br> 
-          "j'enfoncerai tes dents si loin dans ta gorge <br>
-          que tu te mettras une brosse à dents dans le cul pour les brosser".</p> 
-          <br><br>
-        <img src="https://www.pngplay.com/wp-content/uploads/13/WWE-The-Rock-Transparent-File.png" alt="" height="400">
-          <br><br>
-      <% } else if (error !== "" ) { %>
-        <h3>erreur <%= error %></h3>
-        <p><%- message %></p>
-        <br><br>
-      <% } else { %>
-        <h3>erreur </h3>
-        <p>erreur inconnue</p>
-        <br><br>
-
-      <% } %>
-         
-
-        <a href="/" class="btn btn--red btn--sm">Retour </a>
-      </section>
+      <div class="err-block">
+        <% const _errCode = (typeof error !== 'undefined' && error) ? error : 404; %>
+        <div class="err-code" aria-hidden="true"><%= _errCode %></div>
+        <h1 class="err-title">
+          <% if (_errCode == 404) { %>Page introuvable
+          <% } else if (_errCode == 403) { %>Accès refusé
+          <% } else if (_errCode == 500) { %>Erreur serveur
+          <% } else { %>Une erreur est survenue<% } %>
+        </h1>
+        <div class="err-sep" aria-hidden="true"></div>
+        <p class="err-msg">
+          <% if (typeof message !== 'undefined' && message) { %><%= message %><% } else if (_errCode == 404) { %>Cette page n'existe pas ou a été déplacée.<% } else { %>Quelque chose s'est mal passé. Revenez à l'accueil.<% } %>
+        </p>
+        <a href="/" class="btn btn--red btn--sm">Retour à l'accueil</a>
+      </div>
     </main>
 
     <!-- FOOTER -->
     <%- include("partials/footer") %>
 
-    <!-- Scripts JS globaux -->
-    <script src="/js/burger-menu.js" defer></script>
 
-    <!-- Scripts JS spécifiques à la page -->
-
-    <!-- Script pour ouvrir automatiquement le popup de connexion -->
     <% if (typeof openLoginPopup !== 'undefined' && openLoginPopup) { %>
     <script>
-      // On attend que le DOM soit chargé (popup-connexion.js est déjà chargé dans le header)
       window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
           const modal = document.getElementById("authModal");
-          if (modal && typeof openModal === 'function') {
-            openModal("login");
-          }
+          if (modal && typeof openModal === 'function') openModal("login");
         }, 100);
       });
     </script>
     <% } %>
-
-    <!-- Scripts JS spécifiques à la page -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-    ></script>
   </body>
 </html>

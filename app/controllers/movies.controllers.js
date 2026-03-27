@@ -134,42 +134,11 @@ const moviesController = {
    * 4. Rend la vue avec les films filtrés
    */
   async filtredMovies(req, res) {
-    try {
-      const { genre } = req.params;
-
-      // Charger tous les films ou filtrer par genre
-      // Si genre est "all", "tous" ou non défini → charger tous les films
-      const movies =
-        !genre || genre === "all" || genre === "tous"
-          ? await Movie.findAll({ where: { status: "approved" } })
-          : await Movie.findAll({ where: { genre: genre, status: "approved" } });
-
-      const recipeCountsByMovieId = await getRecipeCountsByMovieIds(
-        movies.map((movie) => movie.id)
-      );
-      const moviesWithCounts = movies.map((movie) => {
-        const plainMovie = movie.toJSON ? movie.toJSON() : movie;
-        return {
-          ...plainMovie,
-          recipeCount: recipeCountsByMovieId[plainMovie.id] || 0,
-        };
-      });
-
-      // Enrichir les films avec les chemins d'images (banner/card)
-      const enrichedMovies = enrichMoviesWithImagePaths(moviesWithCounts);
-
-      // Rendre la vue avec les films filtrés
-      res.render("movies", {
-        movies: enrichedMovies,
-        selectedGenre: genre || "tous",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).render("error", {
-        error: "500",
-        message: "Erreur serveur.",
-      });
+    const { genre } = req.params;
+    if (!genre || genre === "all" || genre === "tous") {
+      return res.redirect("/movies");
     }
+    return res.redirect(`/movies?genre=${encodeURIComponent(genre)}`);
   },
 
   /**

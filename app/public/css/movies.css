@@ -23,8 +23,12 @@ body.movies-page main {
 .page-hero {
   position: relative;
   width: 100%;
-  height: 380px;
+  min-height: 380px;
   background: linear-gradient(135deg, #08101a 0%, #142234 50%, #0b1522 100%);
+  /* Flex container so page-hero__content can fill the full height
+     and align-items:center on it actually centers content vertically */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Couche décorative clippée — le hero lui-même n'a plus overflow:hidden pour laisser passer le dropdown */
@@ -83,10 +87,11 @@ body.movies-page main {
 }
 
 .page-hero__content {
-  position: relative; z-index: 5; height: 100%;
+  position: relative; z-index: 5; flex: 1;
   display: flex; flex-direction: row; align-items: center; gap: 48px;
   padding: 0 var(--page-px);
   max-width: var(--max-width); margin: 0 auto;
+  width: 100%;
 }
 
 /* Colonne gauche du hero */
@@ -104,7 +109,7 @@ body.movies-page main {
 }
 .page-hero__search-label {
   display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--f-title); font-size: 0.52rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.65rem; font-weight: 700;
   letter-spacing: 0.2em; text-transform: uppercase;
   color: rgba(196, 160, 82, 0.55);
   margin-bottom: 12px;
@@ -169,17 +174,6 @@ body.movies-page main {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── SEARCH SECTION (supprimée — recherche intégrée dans le hero) ── */
-.search-section { display: none; }
-
-/* ── Styles partagés search-box (conservés pour les dropdowns, etc.) ── */
-.search-box {
-  background: linear-gradient(135deg, rgba(15,30,48,.96) 0%, rgba(20,38,58,.98) 100%);
-  border: 1px solid rgba(196, 160, 82, 0.18);
-  border-radius: 20px; padding: 28px 32px;
-  box-shadow: 0 24px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter: blur(20px);
-}
 .search-main-row {
   display: flex; align-items: center; gap: 12px; margin-bottom: 0;
 }
@@ -239,13 +233,13 @@ body.movies-page main {
   padding-top: 18px; border-top: 1px solid rgba(65, 90, 119, 0.15); margin-top: 18px;
 }
 .qt-label {
-  font-family: var(--f-title); font-size: 0.5rem; letter-spacing: 0.14em;
+  font-family: var(--f-title); font-size: 0.62rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: rgba(196, 160, 82, 0.35); flex-shrink: 0;
 }
 .qtag {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 4px 11px; border-radius: 5px;
-  font-family: var(--f-title); font-size: 0.5rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   border: 1.5px solid; cursor: pointer; transition: all 0.2s ease; user-select: none;
   text-decoration: none;
@@ -316,7 +310,7 @@ body.movies-page main {
 .search-result-card-badge {
   display: inline-flex; align-items: center;
   padding: 1px 6px; border-radius: 4px;
-  font-family: var(--f-title); font-size: 0.42rem; font-weight: 700; letter-spacing: 0.1em;
+  font-family: var(--f-title); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase;
   background: rgba(196, 160, 82, 0.15); border: 1px solid rgba(196,160,82,.35);
   color: var(--or-titre); white-space: nowrap;
@@ -324,7 +318,7 @@ body.movies-page main {
 .search-result-card-type {
   display: inline-flex; align-items: center;
   padding: 2px 7px; border-radius: 4px;
-  font-family: var(--f-title); font-size: 0.42rem; font-weight: 700; letter-spacing: 0.1em;
+  font-family: var(--f-title); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
 }
 .search-result-card-type--film {
@@ -391,104 +385,6 @@ body.movies-page main {
   font-size: 0.62rem; padding: 0 16px; height: 32px;
 }
 
-/* ── FILM CTA SECTION (ex add-film-banner, redesigné) ── */
-.film-cta-section {
-  width: 100%; max-width: var(--max-width);
-  margin: 0 auto 40px; padding: 0 var(--page-px);
-}
-.film-cta-wrap {
-  position: relative; overflow: hidden;
-  display: flex; align-items: center; gap: 40px;
-  padding: 36px 44px; border-radius: 20px;
-  background: linear-gradient(120deg, rgba(194,48,24,.16) 0%, rgba(90,16,10,.22) 45%, rgba(8,16,26,.96) 100%);
-  border: 1px solid rgba(194, 48, 24, 0.32);
-  box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
-  transition: border-color 0.35s ease, box-shadow 0.35s ease;
-}
-/* Liseré lumineux en haut */
-.film-cta-wrap::before {
-  content: "";
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent 0%, rgba(194,48,24,.7) 25%, rgba(196,160,82,.55) 50%, rgba(194,48,24,.7) 75%, transparent 100%);
-}
-/* Lueur de fond à droite */
-.film-cta-wrap::after {
-  content: "";
-  position: absolute; right: -60px; top: 50%; transform: translateY(-50%);
-  width: 300px; height: 300px; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle, rgba(194,48,24,.12) 0%, transparent 70%);
-}
-.film-cta-wrap:hover {
-  border-color: rgba(194, 48, 24, 0.55);
-  box-shadow: 0 28px 80px rgba(0,0,0,.6), 0 0 60px rgba(194,48,24,.08), inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-/* Décoration : bobine de film */
-.film-cta-deco { flex-shrink: 0; position: relative; z-index: 1; }
-.film-cta-reel {
-  width: 88px; height: 88px; border-radius: 50%;
-  border: 2.5px solid rgba(194,48,24,.38);
-  position: relative;
-  animation: rotateReel 18s linear infinite;
-  box-shadow: 0 0 24px rgba(194,48,24,.2);
-}
-.film-cta-reel::before {
-  content: "";
-  position: absolute; inset: 18px; border-radius: 50%;
-  border: 1.5px solid rgba(196,160,82,.18);
-}
-.film-cta-reel__hub {
-  position: absolute; inset: 34px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(194,48,24,.25) 0%, rgba(139,28,19,.18) 60%, transparent 100%);
-  border: 1px solid rgba(194,48,24,.22);
-}
-
-/* Corps textuel */
-.film-cta-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
-.film-cta-eyebrow {
-  font-family: var(--f-title); font-size: 0.54rem; font-weight: 700;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(194, 48, 24, 0.65); margin-bottom: 8px;
-}
-.film-cta-title {
-  font-family: var(--f-display); font-size: 1.9rem; letter-spacing: 0.06em; line-height: 1.1;
-  color: #fff; margin-bottom: 8px;
-  text-shadow: 0 2px 20px rgba(0,0,0,.4);
-}
-.film-cta-sub {
-  font-size: 0.78rem; font-weight: 300; font-style: italic;
-  color: rgba(232,232,232,.4); line-height: 1.55;
-}
-
-/* Bouton CTA */
-.btn-film-cta {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 0 28px; height: 52px; border-radius: 12px;
-  background: linear-gradient(135deg, #8b1c13 0%, #c23018 60%, #d43a20 100%);
-  border: 1px solid rgba(194,48,24,.3);
-  cursor: pointer; text-decoration: none; flex-shrink: 0; position: relative; z-index: 1;
-  font-family: var(--f-title); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
-  box-shadow: 0 0 28px rgba(194,48,24,.42), 0 8px 28px rgba(0,0,0,.3);
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.btn-film-cta:hover {
-  background: var(--gold-gradient); color: var(--bleu-nuit);
-  border-color: rgba(212,168,67,.4);
-  box-shadow: 0 0 40px rgba(196,160,82,.35), 0 12px 40px rgba(0,0,0,.4);
-  transform: translateY(-3px);
-}
-.btn-film-cta__icon {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(255,255,255,.15);
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.3s ease;
-}
-.btn-film-cta:hover .btn-film-cta__icon { background: rgba(0,0,0,.15); }
-.btn-film-cta__arrow {
-  opacity: 0.65; transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.btn-film-cta:hover .btn-film-cta__arrow { transform: translateX(4px); opacity: 1; }
 
 /* ── FILMS TOOLBAR ── */
 .films-toolbar {
@@ -496,7 +392,6 @@ body.movies-page main {
   margin: 0 auto 28px; padding: 52px var(--page-px) 0;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-.tb-left {}
 .tb-label {
   font-size: 0.62rem; font-weight: 300; letter-spacing: 0.28em; text-transform: uppercase;
   color: rgba(196, 160, 82, 0.48);
@@ -596,7 +491,6 @@ body.movies-page main {
   aspect-ratio: unset;
   border-radius: 14px 0 0 14px;
 }
-.films-grid.list-view .fcard__lbox,
 .films-grid.list-view .fcard__title-area { display: none; }
 .films-grid.list-view .fcard__overlay {
   background: linear-gradient(to right, transparent 55%, rgba(10,18,30,.92) 100%);
@@ -623,19 +517,6 @@ body.movies-page main {
 
 /* Poster 2:3 */
 .fcard__poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
-
-/* Letterbox perforations */
-.fcard__lbox {
-  position: absolute; left: 0; right: 0; height: 18px;
-  background: rgba(5,10,18,.95);
-  display: flex; align-items: center; justify-content: space-around; z-index: 5;
-}
-.fcard__lbox-top { top: 0; }
-.fcard__lbox-bot { bottom: 0; }
-.fcard__perf {
-  width: 10px; height: 8px; border-radius: 2px;
-  background: rgba(196,160,82,.1); border: 1px solid rgba(196,160,82,.07);
-}
 
 .fcard__img {
   width: 100%; height: 100%; object-fit: cover; object-position: center top;
@@ -674,7 +555,7 @@ body.movies-page main {
 .fcard__title-area {
   position: absolute; bottom: 14px; left: 14px; right: 85px; z-index: 5;
 }
-.fcard__year, .fcard__director {
+.fcard__director {
   font-size: 0.56rem; font-weight: 400; font-style: italic; letter-spacing: 1px;
   color: rgba(196,160,82,.68); margin-bottom: 3px;
 }
@@ -691,7 +572,7 @@ body.movies-page main {
 .fgt {
   display: inline-flex; align-items: center;
   padding: 2px 8px; border-radius: 4px;
-  font-family: var(--f-title); font-size: 0.47rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
 }
 .fgt-a { background: rgba(212,168,67,.12); border: 1px solid rgba(212,168,67,.35); color: var(--or-100); }
@@ -709,7 +590,7 @@ body.movies-page main {
 
 /* Label "Note" — moodboard film-card__foot-label */
 .fcard__foot-label {
-  font-family: var(--f-title); font-size: 0.42rem;
+  font-family: var(--f-title); font-size: 0.6rem;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(196, 160, 82, 0.32);
 }
@@ -735,12 +616,6 @@ body.movies-page main {
 /* Spécificité renforcée (0,2,0) pour écraser .btn-vr (0,1,0) qui vient après dans la cascade */
 .fcard .fcard__btn-mobile { display: none; }
 .films-grid.list-view .fcard__btn-mobile { display: inline-flex; }
-.fcard__recipes {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 0.6rem; font-weight: 300; color: rgba(196,160,82,.5);
-}
-.fcard__recipes svg { width: 12px; height: 12px; }
-
 /* Bouton voir les recettes (dans fcard) */
 .btn-vr {
   display: inline-flex; align-items: center; gap: 5px;
@@ -748,58 +623,11 @@ body.movies-page main {
   background: linear-gradient(135deg, rgba(139,28,19,.7), rgba(194,48,24,.8));
   border: 1px solid rgba(194,48,24,.42);
   cursor: pointer; text-decoration: none;
-  font-family: var(--f-title); font-size: 0.5rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase; color: #fff; white-space: nowrap;
   transition: all 0.25s ease; box-shadow: 0 0 10px rgba(194,48,24,.22);
 }
 .btn-vr:hover { background: var(--gold-gradient); color: var(--bleu-nuit); border-color: rgba(212,168,67,.5); }
-
-/* ── HCARD (vue liste) ── */
-.hcard {
-  border-radius: 14px; overflow: hidden;
-  background: linear-gradient(135deg, rgba(13,26,42,.98) 0%, rgba(27,38,59,.96) 100%);
-  border: 1px solid rgba(65, 90, 119, 0.22); cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-}
-.films-grid.list-view .hcard {
-  display: grid; grid-template-columns: 100px 1fr auto; gap: 0; min-height: 115px;
-}
-.hcard:hover {
-  transform: translateX(6px); border-color: rgba(196,160,82,.28);
-  box-shadow: 0 16px 48px rgba(0,0,0,.6), -4px 0 20px rgba(196,160,82,.07);
-}
-.hcard__img-wrap { position: relative; overflow: hidden; }
-.hcard__img {
-  width: 100%; height: 100%; object-fit: cover; object-position: center top;
-  filter: saturate(0.78) brightness(0.85);
-  transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.hcard:hover .hcard__img { filter: saturate(1.15) brightness(1); transform: scale(1.05); }
-.hcard__img-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to right, transparent 55%, rgba(10,18,30,.92) 100%);
-}
-.hcard__body { padding: 13px 18px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-.hcard__top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.hcard__title {
-  font-family: var(--f-title); font-size: 0.92rem; font-weight: 700; letter-spacing: 0.04em;
-  color: rgba(232,232,232,.92);
-}
-.hcard__year { font-size: 0.6rem; color: rgba(196,160,82,.48); font-weight: 300; letter-spacing: 0.12em; }
-.hcard__meta { display: flex; align-items: center; gap: 10px; }
-.hcard__stars { display: flex; align-items: center; gap: 3px; font-size: 0.7rem; }
-.hcard__stars .s  { color: var(--dore-clair); }
-.hcard__stars .se { color: rgba(196,160,82,.25); }
-.hcard__rating {
-  font-family: var(--f-title); font-size: 0.65rem; font-weight: 700;
-  color: var(--argent); opacity: 0.6; margin-left: 2px;
-}
-.hcard__recipes-lbl { font-size: 0.6rem; color: rgba(196,160,82,.48); }
-.hcard__desc {
-  font-size: 0.73rem; font-weight: 300; line-height: 1.55; color: rgba(232,232,232,.4);
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
-}
-.hcard__action { display: flex; align-items: center; padding: 14px 20px; flex-shrink: 0; }
 
 /* ── ONLY__DISPLAY__9__FILMS (more-views.js) ── */
 .only__display__9__films article:nth-child(n+10) { display: none !important; }
@@ -850,7 +678,7 @@ body.movies-page main {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1100px) {
-  .page-hero { height: auto; min-height: 380px; }
+  .page-hero { min-height: 340px; }
   .page-hero__search-panel,
   .page-hero__search-col { flex: 0 0 360px; }
   .films-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -858,7 +686,7 @@ body.movies-page main {
 }
 
 @media (max-width: 900px) {
-  .page-hero { height: auto; min-height: unset; padding: 40px 0; }
+  .page-hero { min-height: unset; padding: 40px 0; }
   .page-hero__content { flex-direction: column; align-items: stretch; gap: 28px; }
   .page-hero__left { text-align: center; align-items: center; }
   .page-hero__meta-row { justify-content: center; }
@@ -877,7 +705,6 @@ body.movies-page main {
   .films-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
   .films-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .films-grid.list-view { grid-template-columns: 1fr; }
-  .film-cta-title { font-size: 1.5rem; }
 }
 
 @media (max-width: 480px) {
@@ -886,8 +713,6 @@ body.movies-page main {
   .films-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .films-grid.list-view { grid-template-columns: 1fr; }
   .fcard__desc { display: none; }
-  .btn-film-cta { width: 100%; justify-content: center; }
-  .film-cta-wrap { padding: 24px 20px; }
   /* Bouton visible sur mobile (l'overlay poster est invisible) */
   .fcard__btn-mobile { display: inline-flex; }
   .fcard__hover-overlay { display: none; }
@@ -903,7 +728,12 @@ body.movies-page main {
   transition: opacity .3s ease;
   border-radius: 0; /* clipped by fcard overflow:hidden */
 }
-.fcard:hover .fcard__hover-overlay { opacity: 1; }
+.fcard:hover .fcard__hover-overlay,
+.fcard__hover-overlay:focus-visible { opacity: 1; outline: none; }
+.fcard__hover-overlay:focus-visible .fcard__cta-pill {
+  transform: translateY(0) scale(1); opacity: 1;
+  outline: 2px solid rgba(196,160,82,.8); outline-offset: 3px;
+}
 /* Invisible en vue liste (le btn-vr est dans le footer) */
 .films-grid.list-view .fcard__hover-overlay { display: none; }
 
@@ -923,7 +753,7 @@ body.movies-page main {
 
 .fcard__cta-label {
   font-family: var(--f-title);
-  font-size: .48rem; font-weight: 600;
+  font-size: .62rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--or-titre); white-space: nowrap;
 }
@@ -1009,7 +839,7 @@ body.movies-page main {
 }
 .fcard--cta__eyebrow {
   display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--f-title); font-size: 0.50rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.22em; text-transform: uppercase;
   color: rgba(255,255,255,.40);
 }
@@ -1124,7 +954,7 @@ body.movies-page main {
 }
 .add-film-card-inject-body { display: flex; flex-direction: column; gap: 6px; }
 .add-film-card-inject-hint {
-  font-family: var(--f-title); font-size: 0.5rem; font-weight: 700;
+  font-family: var(--f-title); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.18em; text-transform: uppercase;
   color: rgba(194, 48, 24, 0.65);
 }

@@ -103,8 +103,9 @@ async function getNavData(userId) {
 ────────────────────────────────────────────────────────────── */
 async function injectLocals(req, res, next) {
   // Données synchrones — toujours définies en premier
-  res.locals.role   = req.userRole || undefined;
-  res.locals.userId = req.userId   || null;
+  res.locals.role    = req.userRole || undefined;
+  res.locals.userId  = req.userId   || null;
+  res.locals.siteUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
 
   // Données asynchrones — silencieuses en cas d'erreur
   try {

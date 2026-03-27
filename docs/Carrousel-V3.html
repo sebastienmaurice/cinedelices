@@ -114,8 +114,8 @@
       position:relative;width:100%;padding:120px 0;margin:-120px 0;
       overflow-x:clip;overflow-y:visible;z-index:10;
       cursor:grab;touch-action:pan-y;
-      -webkit-mask-image:linear-gradient(to right,transparent 0,black 20px,black calc(100% - 20px),transparent 100%);
-      mask-image:linear-gradient(to right,transparent 0,black 20px,black calc(100% - 20px),transparent 100%);
+      -webkit-mask-image:linear-gradient(to right,transparent 0,black 220px,black calc(100% - 220px),transparent 100%);
+      mask-image:linear-gradient(to right,transparent 0,black 220px,black calc(100% - 220px),transparent 100%);
       /* Prevent text selection during drag */
       user-select:none;-webkit-user-select:none;
     }
@@ -143,7 +143,7 @@
       --spot:0;--tx:0px;--hover-tx:0px;--ts:1;--hover-ts:1;
       transform:translateY(calc(var(--tx) + var(--hover-tx))) scale(calc(var(--ts)*var(--hover-ts)));
       --glow-x:50%;--glow-y:50%;--glow-intensity:0;
-      opacity:calc(.08 + var(--spot)*.92);
+      opacity:calc(.52 + var(--spot)*.48);
       background:linear-gradient(135deg,rgba(22,36,58,.98) 0%,rgba(10,20,36,1) 100%);
       border:1px solid rgba(var(--glow-rgb),calc(.1 + var(--spot)*.48));
       box-shadow:
@@ -161,7 +161,7 @@
     }
     @keyframes badgeIn{
       from{opacity:0;transform:translateY(22px) scale(.92) translateZ(0)}
-      to{opacity:calc(.08 + var(--spot)*.92);transform:translateY(calc(var(--tx)+var(--hover-tx))) scale(calc(var(--ts)*var(--hover-ts))) translateZ(0)}
+      to{opacity:calc(.52 + var(--spot)*.48);transform:translateY(calc(var(--tx)+var(--hover-tx))) scale(calc(var(--ts)*var(--hover-ts))) translateZ(0)}
     }
     .badge:hover{
       --hover-tx:-7px;--hover-ts:1.04;opacity:1;
@@ -275,10 +275,10 @@
     .badge__fade{
       position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
       background:
-        linear-gradient(to right,rgba(10,14,24,.35) 0%,rgba(10,14,24,.15) 28%,transparent 60%),
-        linear-gradient(to left,rgba(10,14,24,.30) 0%,rgba(10,14,24,.12) 24%,transparent 55%),
-        linear-gradient(to bottom,rgba(10,14,24,.28) 0%,rgba(10,14,24,.10) 20%,transparent 50%),
-        linear-gradient(to top,rgba(10,14,24,.30) 0%,rgba(10,14,24,.12) 22%,transparent 52%);
+        linear-gradient(to right,rgba(10,14,24,.95) 0%,rgba(10,14,24,.5) 28%,transparent 60%),
+        linear-gradient(to left,rgba(10,14,24,.9) 0%,rgba(10,14,24,.42) 24%,transparent 55%),
+        linear-gradient(to bottom,rgba(10,14,24,.85) 0%,rgba(10,14,24,.35) 20%,transparent 50%),
+        linear-gradient(to top,rgba(10,14,24,.9) 0%,rgba(10,14,24,.42) 22%,transparent 52%);
       transition:opacity .55s ease;
     }
     .badge:hover .badge__fade{opacity:.42}
@@ -1737,7 +1737,7 @@ let spotPauseActive = false, lastPauseTime = -9999;
 
 // Batch rects for layout-thrash avoidance
 function applySpotlight() {
-  const vCX = window.innerWidth / 2, R = window.innerWidth * 0.66, LERP = .062;
+  const vCX = window.innerWidth / 2, R = 340, LERP = .062;
   let beamX = vCX, maxSpot = 0, beamRGB = "196,160,82";
   let dominantBadge = null, dominantGenre = "", dominantIdx = -1;
 
@@ -1765,7 +1765,7 @@ function applySpotlight() {
     badge.style.setProperty("--tx", (-sp * 8).toFixed(2) + "px");
     badge.style.setProperty("--ts", (1 + sp * .052).toFixed(4));
     badge.style.setProperty("--img-sat", (sp * 1.55).toFixed(3));
-    badge.style.setProperty("--img-bri", (.10 + sp * 1.05).toFixed(3));
+    badge.style.setProperty("--img-bri", (.2 + sp * .95).toFixed(3));
     badge.style.setProperty("--img-con", (1.14 - sp * .06).toFixed(3));
     badge.style.setProperty("--img-sep", (.5 * (1 - sp)).toFixed(3));
     badge.style.setProperty("--img-hue", (215 * (1 - sp)).toFixed(1) + "deg");

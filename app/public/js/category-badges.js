@@ -567,6 +567,7 @@
     const canvas = badge.querySelector(".badge__border-canvas");
     const imgWrap = badge.querySelector(".badge__img-wrap");
     if (!canvas) return null;
+    const isClone = !!badge.dataset.cloneOf;
 
     const state = {
       badge,
@@ -626,44 +627,56 @@
 
       /* Adapte la taille du canvas à celle du badge */
       resizeCanvas() {
-        const bW = badge.offsetWidth;
-        const bH = badge.offsetHeight;
-        canvas.width = bW + 2 * PAD;
-        canvas.height = bH + 2 * PAD;
-        canvas.style.position = "absolute";
-        canvas.style.top = -PAD + "px";
-        canvas.style.left = -PAD + "px";
-        canvas.style.width = bW + 2 * PAD + "px";
-        canvas.style.height = bH + 2 * PAD + "px";
+        const bW = badge.offsetWidth,
+          bH = badge.offsetHeight;
+        if (!bW || !bH) return;
+        const cW = bW + 2 * PAD,
+          cH = bH + 2 * PAD;
+        if (canvas.width !== cW || canvas.height !== cH) {
+          canvas.width = cW;
+          canvas.height = cH;
+        }
+        canvas.style.cssText = `position:absolute;top:${-PAD}px;left:${-PAD}px;width:${cW}px;height:${cH}px;`;
       },
     };
 
     state.resizeCanvas();
 
+    /* Marque l'image comme chargée pour masquer le skeleton */
+    if (imgWrap) {
+      const img = imgWrap.querySelector(".badge__img");
+      if (img) {
+        if (img.complete && img.naturalWidth > 0) {
+          imgWrap.classList.add("img-loaded");
+        } else {
+          img.addEventListener("load", () => imgWrap.classList.add("img-loaded"), { once: true });
+        }
+      }
+    }
+
     /* Active l'animation quand la souris entre */
     badge.addEventListener("mouseenter", () => {
       state.hovered = true;
       state.glowIntensityTarget = 1;
+      if (!isClone) badgeHovered = true;
     });
 
     /* Réinitialise tout quand la souris sort */
     badge.addEventListener("mouseleave", () => {
       state.hovered = false;
       state.glowIntensityTarget = 0;
+      if (!isClone) badgeHovered = false;
 
       /* Efface le canvas */
       canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 
-      /* Vide tous les pools de particules */
-      state.bloodDrops = [];
-      state.fuseSmoke = [];
-      state.magicOrbs = [];
-      state.confetti = [];
-      state.torchEmbers = [];
-      state.noteParticles = [];
-      state.tearDrops = [];
-      state.heartParticles = [];
-      state.scanGlitch = 0;
+      /* Remet les timers et particules à zéro (conformément au prototype) */
+      Object.assign(state, {
+        fuseT: 0,
+        bloodDrops: [], fuseSmoke: [], magicOrbs: [], confetti: [],
+        torchEmbers: [], noteParticles: [], tearDrops: [], heartParticles: [],
+        scanGlitch: 0,
+      });
     });
 
     return state;
@@ -679,6 +692,7 @@
   function updateAmbientGlow(state, headT, dt) {
     const W = state.canvas.width;
     const H = state.canvas.height;
+    if (!W || !H) return;
     const badgeW = W - 2 * PAD;
     const badgeH = H - 2 * PAD;
 
@@ -1857,9 +1871,9 @@
      13. INITIALISATION DES ÉTATS DES BADGES
      ============================================================ */
 
-  /* Crée un état pour chaque badge original (pas les clones) */
+  /* Crée un état pour TOUS les badges (originaux + clones) — comme le prototype */
   const badgeStates = [];
-  track.querySelectorAll(".badge:not([data-clone-of])").forEach((badge) => {
+  track.querySelectorAll(".badge").forEach((badge) => {
     const state = makeBadgeState(badge);
     if (state) badgeStates.push(state);
   });
@@ -1959,7 +1973,8 @@
 
   function applySpotlight(ts) {
     const viewportCenter = window.innerWidth / 2;
-    const RADIUS = window.innerWidth * 0.66; /* Rayon d'influence du spotlight en px */
+    const RADIUS =
+      window.innerWidth * 0.66; /* Rayon d'influence du spotlight en px */
     const LERP_SPEED = 0.075;
 
     let beamX = viewportCenter;
@@ -1998,7 +2013,10 @@
 
       /* Applique les variables CSS directement sur le badge */
       badge.style.setProperty("--spot", sp.toFixed(4));
-      badge.style.setProperty("--tx", (-sp * 8).toFixed(2) + "px"); /* monte de 8px au centre */
+      badge.style.setProperty(
+        "--tx",
+        (-sp * 8).toFixed(2) + "px",
+      ); /* monte de 8px au centre */
       badge.style.setProperty(
         "--ts",
         (1 + sp * 0.05).toFixed(4),
@@ -2006,7 +2024,7 @@
 
       /* Filtres image contrôlés par le spotlight */
       badge.style.setProperty("--img-sat", (sp * 1.55).toFixed(3));
-      badge.style.setProperty("--img-bri", (0.10 + sp * 1.05).toFixed(3));
+      badge.style.setProperty("--img-bri", (0.1 + sp * 1.05).toFixed(3));
       badge.style.setProperty("--img-con", (1.14 - sp * 0.06).toFixed(3));
       badge.style.setProperty("--img-sep", (0.5 * (1 - sp)).toFixed(3));
       badge.style.setProperty("--img-hue", (215 * (1 - sp)).toFixed(1) + "deg");
@@ -2086,6 +2104,7 @@
   let currentSpeed = BASE_SPEED;
   let targetSpeed = BASE_SPEED;
   let mouseProx = 0; /* 1 si la souris est sur le carousel */
+  let badgeHovered = false; /* true si la souris est sur un badge (stop complet) */
   let isDragging = false;
   let touchLastX = 0;
   let touchVel = 0; /* Vélocité du swipe (inertie) */
@@ -2167,7 +2186,7 @@
     /* --- Gestion de la vitesse ---
        Priorité : tooltip ouvert > auto-pause > hover souris > normal */
     const targetSpeedCalc =
-      openBadge || spotPauseActive ? 0 : mouseProx ? SLOW_SPEED : BASE_SPEED;
+      openBadge || spotPauseActive || badgeHovered ? 0 : mouseProx ? SLOW_SPEED : BASE_SPEED;
 
     targetSpeed = targetSpeedCalc;
     /* Lerp vers la cible → accélération/décélération progressive */

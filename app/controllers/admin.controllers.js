@@ -4,6 +4,7 @@ import {
   Notice,
   User,
   UsersRecipes,
+  RecipePicture,
 } from "../models/index.model.js";
 import { Op } from "sequelize";
 import {
@@ -530,6 +531,7 @@ const adminController = {
 
       const recipe = await Recipe.findByPk(recipeId, {
         attributes: ["id", "picture", "pending_picture", "delete_request_status"],
+        include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["file_path"] }],
       });
       if (!recipe || recipe.delete_request_status !== "pending") {
         return res.redirect("/admin?success=recipe_delete_rejected");
@@ -537,6 +539,7 @@ const adminController = {
 
       unlinkIfExists(recipe.picture);
       unlinkIfExists(recipe.pending_picture);
+      (recipe.RecipePictures || []).forEach((pic) => unlinkIfExists(pic.file_path));
       await Notice.destroy({ where: { id_recipe: recipeId } });
       await UsersRecipes.destroy({ where: { id_recipe: recipeId } });
       await Recipe.destroy({ where: { id: recipeId } });
@@ -997,10 +1000,14 @@ const adminController = {
         return res.redirect("/admin?success=admin_recipe_delete_error");
       }
 
-      const recipe = await Recipe.findByPk(recipeId, { attributes: ["id", "picture", "pending_picture"] });
+      const recipe = await Recipe.findByPk(recipeId, {
+        attributes: ["id", "picture", "pending_picture"],
+        include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["file_path"] }],
+      });
       if (recipe) {
         unlinkIfExists(recipe.picture);
         unlinkIfExists(recipe.pending_picture);
+        (recipe.RecipePictures || []).forEach((pic) => unlinkIfExists(pic.file_path));
       }
 
       await Notice.destroy({ where: { id_recipe: recipeId } });

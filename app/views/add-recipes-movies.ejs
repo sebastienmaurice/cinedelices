@@ -13,8 +13,6 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/reset.css" />
-    <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/add-recipes-movies.css" />
   </head>
   <body class="arm-full-bleed">
@@ -130,8 +128,8 @@
 
       <!-- ═══ TOAST badge débloqué ═══ -->
       <% if (typeof newBadges !== 'undefined' && newBadges && newBadges.length > 0) {
-        const _badgeEmoji = { STRANGE: '🧙', HARRY: '⚡', INDIANA: '🎩', MATRIX: '💊', FREDDY: '🔪', READY: '🕹️' };
-        const _badgeLabel = { STRANGE: 'Doctor Strange', HARRY: 'Harry Potter', INDIANA: 'Indiana Jones', MATRIX: 'Matrix', FREDDY: 'Freddy', READY: 'Ready Player One' };
+        const _badgeEmoji = { STRANGE: '🧙', HARRY: '⚡', INDIANA: '🎩', MATRIX: '💊' };
+        const _badgeLabel = { STRANGE: 'Doctor Strange', HARRY: 'Harry Potter', INDIANA: 'Indiana Jones', MATRIX: 'Matrix' };
         newBadges.forEach(function(b) {
           const _code  = (b.code || '').toUpperCase();
           const _emoji = _badgeEmoji[_code] || '🏆';
@@ -229,6 +227,7 @@
                         spellcheck="true"
                         lang="fr en"
                         autocomplete="off"
+                        required
                         <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                         placeholder="Ex: Retour vers le futur, Breaking Bad..."
                         value=""
@@ -263,6 +262,7 @@
                       class="arm-input"
                       min="1888"
                       max="<%= new Date().getFullYear() + 5 %>"
+                      required
                       <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                       placeholder="Ex: 1985"
                       value=""
@@ -280,7 +280,7 @@
                       <span class="arm-req">*</span>
                       <span class="arm-label__source">TMDB</span>
                     </label>
-                    <select name="genre" id="film-genre" class="arm-select">
+                    <select name="genre" id="film-genre" class="arm-select" required>
                       <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
                       <option value="" disabled selected>Choisir…</option>
                       <% } else { %>
@@ -471,6 +471,7 @@
                 value=""
                 spellcheck="true"
                 lang="fr"
+                required
               />
               <span class="arm-hint">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
@@ -482,7 +483,7 @@
             <div class="arm-row arm-row--meta">
 
               <div class="arm-field">
-                <label class="arm-label">
+                <label class="arm-label" for="recipe-servings">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                   Portions
                 </label>
@@ -833,7 +834,6 @@
     <%- include("partials/footer") %>
 
     <!-- Scripts JS -->
-    <script src="/js/burger-menu.js" defer></script>
     <script src="/js/glowy-container.js" defer></script>
     <script src="/js/recipe-image-upload.js" defer></script>
     <script src="/js/utils/film-image-utils.js" defer></script>

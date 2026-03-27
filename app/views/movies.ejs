@@ -8,9 +8,23 @@
 
     <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
     <%- include("partials/head-resources") %>
+    <!-- SEO — Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="Ciné Délices" />
+    <meta property="og:locale"      content="fr_FR" />
+    <meta property="og:title"       content="Films &amp; Séries — Ciné Délices" />
+    <meta property="og:description" content="Parcourez tous les films et séries cultes et leurs recettes inspirées du cinéma." />
+    <meta property="og:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
+    <meta property="og:url"         content="<%= siteUrl %>/movies" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Films &amp; Séries — Ciné Délices" />
+    <meta name="twitter:description" content="Parcourez tous les films et séries cultes et leurs recettes inspirées du cinéma." />
+    <meta name="twitter:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
+    <!-- Canonical -->
+    <link rel="canonical" href="<%= siteUrl %>/movies" />
 
     <!-- styles -->
-    <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/movies.css" />
 
     <!-- scripts -->
@@ -226,7 +240,7 @@
               </button>
 
               <!-- Overlay hover → lien "Voir les recettes" -->
-              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="fcard__hover-overlay" tabindex="-1" aria-label="Voir les recettes de <%= movie.title %>">
+              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="fcard__hover-overlay" aria-label="Voir les recettes de <%= movie.title %>">
                 <div class="fcard__cta-pill">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                   <span class="fcard__cta-label">Voir les recettes</span>
@@ -266,9 +280,9 @@
                   <% } %>
                   <span class="fcard__rating"><%= displayRating %></span>
                 </div>
-                <a class="btn-vr fcard__btn-mobile" href="/recipes-movie/<%= movie.slug || movie.id %>">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                  Voir les recettes
+                <a class="btn-vr fcard__btn-mobile" href="/recipes-movie/<%= movie.slug || movie.id %>" aria-label="Voir les recettes de <%= movie.title %>">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  <span aria-hidden="true">Voir les recettes</span>
                 </a>
               </div>
             </div>
@@ -343,7 +357,6 @@
     <%- include("partials/footer") %>
 
     <!-- Scripts globaux -->
-    <script src="/js/burger-menu.js" defer></script>
 
     <!-- Config favoris -->
     <script>
@@ -368,6 +381,7 @@
           vGrid.setAttribute('aria-pressed', 'true');
           vList.classList.remove('active');
           vList.setAttribute('aria-pressed', 'false');
+          updateSynopsisToggles(false);
         });
         vList.addEventListener('click', function() {
           grid.classList.add('list-view');
@@ -376,9 +390,6 @@
           vGrid.classList.remove('active');
           vGrid.setAttribute('aria-pressed', 'false');
           updateSynopsisToggles(true);
-        });
-        vGrid.addEventListener('click', function() {
-          updateSynopsisToggles(false);
         });
 
         function updateSynopsisToggles(isListView) {
