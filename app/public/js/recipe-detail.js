@@ -1,3 +1,18 @@
+// ── Contexte hero — Lire plus / Lire moins ──
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById('rh-ctx-toggle');
+  const lead   = document.querySelector('.rh-ctx-lead');
+  const extra  = document.getElementById('rh-ctx-extra');
+  if (!toggle || !lead) return;
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    lead.classList.toggle('is-open', !open);
+    if (extra) extra.hidden = open;
+    toggle.querySelector('span').textContent = open ? 'Lire plus' : 'Lire moins';
+  });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   // ── Star picker (avis-form-block) ──
   let selectedStars = 0;
@@ -102,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     } else {
-      // lecture seule: désactive tab et interactions
       stars.forEach((star) => {
         star.setAttribute("tabindex", "-1");
         star.style.pointerEvents = "none";
@@ -216,31 +230,38 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Align recipe image height with the context card on wide screens
+// ── Carrousel poster hero ──
 document.addEventListener("DOMContentLoaded", () => {
-  const overviewCard = document.querySelector(".overview-card");
-  const recipeMedia = document.querySelector(".recipe-aside__media");
+  const track   = document.getElementById('rh-poster-track');
+  if (!track) return;
+  const slides  = Array.from(track.querySelectorAll('.rh-poster__img-btn'));
+  if (slides.length <= 1) return;
 
-  if (!overviewCard || !recipeMedia) return;
+  const btnPrev = document.getElementById('rh-nav-prev');
+  const btnNext = document.getElementById('rh-nav-next');
+  const dots    = Array.from(document.querySelectorAll('.rh-poster__dot'));
+  const curEl   = document.getElementById('rh-poster-cur');
+  let current   = 0;
 
-  const shouldSync = () => window.innerWidth >= 901;
+  function goTo(idx) {
+    current = Math.max(0, Math.min(slides.length - 1, idx));
+    track.scrollTo({ left: current * track.offsetWidth, behavior: 'smooth' });
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
+    if (curEl) curEl.textContent = current + 1;
+    if (btnPrev) btnPrev.disabled = current === 0;
+    if (btnNext) btnNext.disabled = current === slides.length - 1;
+  }
 
-  const syncHeight = () => {
-    if (!shouldSync()) {
-      recipeMedia.style.height = "";
-      return;
-    }
-    const cardHeight = overviewCard.getBoundingClientRect().height;
-    if (cardHeight > 0) {
-      recipeMedia.style.height = `${cardHeight}px`;
-    }
-  };
+  btnPrev && btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
+  btnNext && btnNext.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
+  dots.forEach((d) => d.addEventListener('click', () => goTo(parseInt(d.dataset.idx, 10))));
 
-  syncHeight();
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    if (idx !== current) goTo(idx);
+  }, { passive: true });
 
-  const resizeObserver = new ResizeObserver(syncHeight);
-  resizeObserver.observe(overviewCard);
-  window.addEventListener("resize", syncHeight);
+  goTo(0);
 });
 
 // ── "Charger plus" avis ──
@@ -258,42 +279,142 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Ajustement automatique de la hauteur des textarea pour s'adapter au contenu
+// ── Portions control ──
 document.addEventListener("DOMContentLoaded", () => {
-  /**
-   * Ajuste la hauteur d'un textarea pour qu'elle corresponde à son contenu
-   * @param {HTMLTextAreaElement} textarea - L'élément textarea à ajuster
-   */
-  function adjustTextareaHeight(textarea) {
-    // Réinitialiser la hauteur pour obtenir le scrollHeight correct
-    textarea.style.height = "auto";
-    // Définir la hauteur en fonction du contenu (scrollHeight inclut le padding)
-    textarea.style.height = `${textarea.scrollHeight}px`;
+  const BASE = parseInt(document.getElementById('rd-ing-portions-val')?.dataset.base || '4', 10);
+  let current = BASE;
+
+  const btnMinus2 = document.getElementById('rd-srv-minus2');
+  const btnPlus2  = document.getElementById('rd-srv-plus2');
+  const portEl    = document.getElementById('rd-ing-portions-val');
+  const ingEls    = Array.from(document.querySelectorAll('.rd-ing-text'));
+  ingEls.forEach(el => { el.dataset.original = el.textContent; });
+
+  function fmtQty(n) {
+    const r = Math.round(n * 100) / 100;
+    return r % 1 === 0 ? String(r) : String(r).replace('.', ',');
   }
-
-  // Sélectionner tous les textarea de recette (description, ingrédients, préparation)
-  const recipeTextareas = document.querySelectorAll(".recipe-textarea");
-
-  if (recipeTextareas.length === 0) {
-    return;
-  }
-
-  // Ajuster la hauteur de chaque textarea au chargement
-  recipeTextareas.forEach((textarea) => {
-    adjustTextareaHeight(textarea);
-  });
-
-  // Observer les changements de contenu (pour les cas dynamiques)
-  const resizeObserver = new ResizeObserver((entries) => {
-    entries.forEach((entry) => {
-      const textarea = entry.target;
-      if (textarea.classList.contains("recipe-textarea")) {
-        adjustTextareaHeight(textarea);
+  function updateIngredients() {
+    const ratio = current / BASE;
+    ingEls.forEach(el => {
+      const txt = el.dataset.original;
+      const m = txt.match(/^(\d+(?:[.,]\d+)?)(.*)/);
+      if (m) {
+        const orig = parseFloat(m[1].replace(',', '.'));
+        el.textContent = fmtQty(orig * ratio) + m[2];
       }
     });
-  });
+  }
+  function updateDisplay() {
+    if (portEl) portEl.textContent = current + ' pers.';
+    if (btnMinus2) btnMinus2.disabled = current <= 1;
+    updateIngredients();
+  }
 
-  recipeTextareas.forEach((textarea) => {
-    resizeObserver.observe(textarea);
+  if (btnMinus2) btnMinus2.addEventListener('click', () => { if (current > 1) { current--; updateDisplay(); } });
+  if (btnPlus2)  btnPlus2.addEventListener('click',  () => { current++; updateDisplay(); });
+});
+
+// ── Ingredient checkboxes ──
+document.addEventListener("DOMContentLoaded", () => {
+  const ingItems = document.querySelectorAll('.rd-ing-item');
+  const ingTotal = ingItems.length;
+  const progressFill  = document.getElementById('ing-progress-fill');
+  const progressLabel = document.getElementById('ing-progress-label');
+
+  function updateIngProgress() {
+    const checked = document.querySelectorAll('.rd-ing-item.is-checked').length;
+    const pct = ingTotal > 0 ? Math.round((checked / ingTotal) * 100) : 0;
+    if (progressFill)  progressFill.style.width = pct + '%';
+    if (progressLabel) progressLabel.textContent = checked + ' / ' + ingTotal;
+  }
+
+  ingItems.forEach(item => {
+    const btn = item.querySelector('.rd-ing-chk');
+    function toggle() {
+      item.classList.toggle('is-checked');
+      btn && btn.setAttribute('aria-pressed', item.classList.contains('is-checked'));
+      updateIngProgress();
+    }
+    item.addEventListener('click', toggle);
   });
+});
+
+// ── Step checkboxes + progress ──
+document.addEventListener("DOMContentLoaded", () => {
+  const stepsEl    = document.querySelectorAll('.rd-step-item');
+  const stepsTotal = stepsEl.length;
+  const stepsProgressEl = document.getElementById('steps-progress');
+
+  function updateStepsProgress() {
+    const done = document.querySelectorAll('.rd-step-item.is-done').length;
+    if (stepsProgressEl) stepsProgressEl.textContent = done + ' / ' + stepsTotal + ' étapes';
+  }
+
+  stepsEl.forEach(item => {
+    const btn = item.querySelector('.rd-step-check');
+    btn && btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      item.classList.toggle('is-done');
+      btn.setAttribute('aria-pressed', item.classList.contains('is-done'));
+      updateStepsProgress();
+    });
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.rd-step-check')) return;
+      item.classList.toggle('is-done');
+      updateStepsProgress();
+    });
+  });
+});
+
+// ── Hero parallax ──
+document.addEventListener("DOMContentLoaded", () => {
+  const heroBg = document.querySelector('.recipe-hero__bg');
+  if (!heroBg) return;
+  window.addEventListener('scroll', () => {
+    heroBg.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+  }, { passive: true });
+});
+
+// ── IntersectionObserver : steps + gallery reveal ──
+document.addEventListener("DOMContentLoaded", () => {
+  if (!('IntersectionObserver' in window)) return;
+
+  const steps = document.querySelectorAll('.rd-step-item');
+  if (steps.length) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateX(0)';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    steps.forEach((s, i) => {
+      s.style.opacity = '0';
+      s.style.transform = 'translateX(-8px)';
+      s.style.transition = `opacity .45s ease ${i * 0.08}s, transform .45s cubic-bezier(.22,1,.36,1) ${i * 0.08}s`;
+      obs.observe(s);
+    });
+  }
+
+  const galleryItems = document.querySelectorAll('.rd-gallery__main, .rd-gallery__secondary, .rd-gallery__detail');
+  if (galleryItems.length) {
+    const gObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          gObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    galleryItems.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(14px)';
+      el.style.transition = `opacity .5s ease ${i * 0.1}s, transform .5s cubic-bezier(.22,1,.36,1) ${i * 0.1}s`;
+      gObs.observe(el);
+    });
+  }
 });

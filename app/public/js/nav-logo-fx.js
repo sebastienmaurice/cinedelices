@@ -69,6 +69,18 @@
       this.isHovered = false;
       this.hoverIntensity = 0;
 
+      /* Film sweep */
+      this.sweepX         = 0;
+      this.sweepActive    = false;
+      this.sweepLoopTimer = 0;   // 0 = prêt à démarrer immédiatement
+      this._wasHovered    = false;
+
+      /* Canvas offscreen pour masquage du sweep sur le lettrage */
+      this._sweepCanvas        = document.createElement('canvas');
+      this._sweepCanvas.width  = this.W;
+      this._sweepCanvas.height = this.H;
+      this._sweepCtx           = this._sweepCanvas.getContext('2d');
+
       scene.addEventListener('mouseenter', () => this.isHovered = true);
       scene.addEventListener('mouseleave', () => this.isHovered = false);
 
@@ -296,12 +308,55 @@
       ctxO.restore();
     }
 
+    drawFilmSweep() {
+      if (!this.sweepActive) return;
+      const W = this.W, H = this.H;
+      const sweepW = W * 0.32;
+
+      this.sweepX += 5 + this.hoverIntensity * 4;
+
+      if (this.sweepX > W + sweepW) {
+        this.sweepActive    = false;
+        this.sweepLoopTimer = 90 + Math.random() * 50;
+        return;
+      }
+
+      const offCtx = this._sweepCtx;
+      offCtx.clearRect(0, 0, W, H);
+
+      /* 1 — Dessiner le rayon lumineux sur le canvas offscreen */
+      offCtx.save();
+      offCtx.translate(this.sweepX, H * 0.5);
+      offCtx.rotate(0.20); // ~11.5°
+
+      const a = this.hoverIntensity * 0.55;
+      const grad = offCtx.createLinearGradient(-sweepW / 2, 0, sweepW / 2, 0);
+      grad.addColorStop(0,    'rgba(255,255,255,0)');
+      grad.addColorStop(0.25, `rgba(255,248,210,${(a * 0.75).toFixed(3)})`);
+      grad.addColorStop(0.5,  `rgba(255,255,255,${a.toFixed(3)})`);
+      grad.addColorStop(0.75, `rgba(255,248,210,${(a * 0.75).toFixed(3)})`);
+      grad.addColorStop(1,    'rgba(255,255,255,0)');
+      offCtx.fillStyle = grad;
+      offCtx.fillRect(-sweepW / 2, -H * 3, sweepW, H * 6);
+      offCtx.restore();
+
+      /* 2 — Masquer avec le PNG du logo : ne garde que les pixels du lettrage */
+      offCtx.globalCompositeOperation = 'destination-in';
+      offCtx.drawImage(this.logoImg, 0, 0, W, H);
+      offCtx.globalCompositeOperation = 'source-over';
+
+      /* 3 — Composer sur l'over-canvas */
+      this.ctxO.drawImage(this._sweepCanvas, 0, 0);
+    }
+
     updateHoverGlow() {
       const h = this.hoverIntensity, s = this.s;
       if (h > 0.04) {
-        this.logoImg.style.filter = `drop-shadow(0 0 ${sc(8+18*h,s).toFixed(1)}px rgba(255,55,20,${(0.22+0.30*h).toFixed(2)})) drop-shadow(0 0 ${sc(22+32*h,s).toFixed(1)}px rgba(255,70,20,${(0.08+0.14*h).toFixed(2)})) brightness(${(1+0.20*h).toFixed(2)})`;
+        this.logoImg.style.filter    = `drop-shadow(0 0 ${sc(8+18*h,s).toFixed(1)}px rgba(255,55,20,${(0.22+0.30*h).toFixed(2)})) drop-shadow(0 0 ${sc(22+32*h,s).toFixed(1)}px rgba(255,70,20,${(0.08+0.14*h).toFixed(2)})) brightness(${(1+0.20*h).toFixed(2)})`;
+        this.logoImg.style.transform = `scale(${(1 + h * 0.055).toFixed(3)}) translateY(${(-h * 2).toFixed(1)}px)`;
       } else {
-        this.logoImg.style.filter = `drop-shadow(0 0 ${sc(6,s).toFixed(1)}px rgba(255,45,15,0.10)) brightness(1)`;
+        this.logoImg.style.filter    = `drop-shadow(0 0 ${sc(6,s).toFixed(1)}px rgba(255,45,15,0.10)) brightness(1)`;
+        this.logoImg.style.transform = '';
       }
     }
 
@@ -330,6 +385,24 @@
       this.drawShootingStars();
       this.goldStars.forEach(s  => this.drawStar4(s.x, s.y, s.alpha, s.scale, true));
       this.whiteStars.forEach(s => this.drawStar4(s.x, s.y, s.alpha, s.scale, false));
+
+      /* Film sweep — front montant → départ immédiat */
+      if (this.isHovered && !this._wasHovered) this.sweepLoopTimer = 0;
+      this._wasHovered = this.isHovered;
+
+      if (this.isHovered) {
+        if (!this.sweepActive) {
+          if (this.sweepLoopTimer <= 0) {
+            this.sweepActive = true;
+            this.sweepX      = -this.W * 0.25;
+          } else {
+            this.sweepLoopTimer--;
+          }
+        }
+      } else {
+        this.sweepActive = false;
+      }
+      this.drawFilmSweep();
 
       this.updateHoverGlow();
       this.t++;

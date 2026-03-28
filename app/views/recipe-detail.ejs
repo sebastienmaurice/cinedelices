@@ -58,21 +58,29 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260310" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260328" />
   </head>
 
   <body class="recipe-page">
     <%- include("partials/header") %>
 
     <main>
-      <% const recipeImage = recipe.picture || "/images/image-default-recipe-1.jpg"; %>
-      <% const movieImage = movie ? (movie.bannerPath || movie.cardPath || movie.picture || "/images/image-default-film.jpg") : "/images/image-default-film.jpg"; %>
-      <%/* L'auteur est toujours présent (id_user NOT NULL côté backend) */ %>
-      <% const contributorName = contributor.pseudo; %>
-      <% const contributorImage = contributor.picture || "/images/image-default-profile.jpg"; %>
-      <% const contributorQuery = contributorName ? encodeURIComponent(contributorName.toLowerCase()) : ""; %>
-      <% const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.length : 0; %>
-      <% const preparationCount = preparationBlocks ? preparationBlocks.length : 0; %>
+      <%
+        const recipeImage     = recipe.picture || "/images/image-default-recipe-1.jpg";
+        const movieImage      = movie ? (movie.bannerPath || movie.cardPath || movie.picture || "/images/image-default-film.jpg") : "/images/image-default-film.jpg";
+        const contributorName  = contributor.pseudo;
+        const contributorImage = contributor.picture || "/images/image-default-profile.jpg";
+        const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.length : 0;
+        const preparationCount = preparationBlocks ? preparationBlocks.length : 0;
+        const displayServings  = recipe.servings || 4;
+
+        /* Photos de la galerie : position 1 = principale, 2 = secondaire, 3 = détail */
+        const allPics = recipePictures || [];
+        const galPic1 = allPics.find(p => p.position === 1) || null;
+        const galPic2 = allPics.find(p => p.position === 2) || null;
+        const galPic3 = allPics.find(p => p.position === 3) || null;
+        const mainGalSrc = galPic1 ? galPic1.file_path : recipeImage;
+      %>
 
       <!-- ══ BREADCRUMB ══ -->
       <div class="bc-bar">
@@ -86,40 +94,50 @@
         </nav>
       </div>
 
-      <!-- ══ HERO CINÉMATOGRAPHIQUE ══ -->
+      <!-- ═══════════════════════════════════════
+           RECIPE HERO + INFO-BAR INTÉGRÉE
+      ════════════════════════════════════════ -->
       <section class="recipe-hero" aria-labelledby="recipe-title">
-        <div
-          class="recipe-hero__bg"
-          style="background-image: url('<%= movieImage %>')"
-        ></div>
-        <div class="recipe-hero__overlay"></div>
-        <div class="recipe-hero__lisere" aria-hidden="true"></div>
+        <div class="recipe-hero__bg" style="background-image: url('<%= movieImage %>')" aria-hidden="true"></div>
+        <div class="recipe-hero__overlay" aria-hidden="true"></div>
+
         <div class="recipe-hero__scanlines" aria-hidden="true"></div>
         <div class="recipe-hero__vignette" aria-hidden="true"></div>
 
-        <!-- Favori — positionné en haut à droite du hero -->
-        <button
-          class="btn-fav btn-fav--banner"
-          data-entity-id="<%= recipe.id %>"
-          data-entity-type="recipe"
-          data-is-favorite="<%= recipe.isFavorite || false %>"
-          aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-          title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        </button>
-
         <div class="recipe-hero__content">
-          <!-- Colonne infos -->
+          <!-- Colonne infos gauche -->
           <div class="rh-info">
             <% if (movie) { %>
             <div class="rh-badge-film">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"/></svg>
               <%= movie.title %><% if (movie.year) { %> — <%= movie.year %><% } %>
             </div>
             <% } %>
-            <p class="rh-eyebrow">Recette inspirée du film</p>
             <h1 class="rh-title" id="recipe-title"><%= recipe.name %></h1>
+            <% if (descriptionBlocks && descriptionBlocks.length) { %>
+            <%
+              const ctxNeedsToggle = descriptionBlocks.length > 1 || descriptionBlocks[0].length > 140;
+            %>
+            <div class="rh-context-preview">
+              <p class="rh-ctx-label">Contexte de la recette</p>
+              <div class="rh-ctx-body" id="rh-ctx-body">
+                <p class="rh-ctx-text rh-ctx-lead"><%= descriptionBlocks[0] %></p>
+                <% if (descriptionBlocks.length > 1) { %>
+                <div class="rh-ctx-extra" id="rh-ctx-extra" hidden>
+                  <% descriptionBlocks.slice(1).forEach(p => { %>
+                  <p class="rh-ctx-text"><%= p %></p>
+                  <% }) %>
+                </div>
+                <% } %>
+              </div>
+              <% if (ctxNeedsToggle) { %>
+              <button class="rh-ctx-toggle" id="rh-ctx-toggle" aria-expanded="false">
+                <span>Lire plus</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <% } %>
+            </div>
+            <% } %>
             <div class="rh-tags">
               <span class="rh-tag rh-tag--or"><%= recipe.category %></span>
               <span class="rh-tag rh-tag--bleu"><%= recipe.difficulty %></span>
@@ -127,472 +145,561 @@
               <% if (recipe.servings) { %>
               <span class="rh-tag rh-tag--violet"><%= recipe.servings %> pers.</span>
               <% } %>
+              <span class="rh-tag rh-tag--or"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></span>
             </div>
             <div class="rh-actions">
               <a href="#preparation" class="btn btn--red">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/><path d="m9 11 1 9"/><path d="M4.5 15.5h15"/><path d="m15 11-1 9"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/></svg>
                 Voir la recette
               </a>
-              <a href="#avis" class="btn btn--outline">
-                Donner mon avis
-              </a>
+              <a href="#avis" class="btn btn--outline">Donner mon avis</a>
+              <button
+                class="btn-fav"
+                data-entity-id="<%= recipe.id %>"
+                data-entity-type="recipe"
+                data-is-favorite="<%= recipe.isFavorite || false %>"
+                aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? '#fff' : 'none' %>" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
             </div>
           </div>
 
-          <!-- Colonne poster / image recette -->
+          <!-- Poster — carrousel jusqu'à 3 photos -->
+          <%
+            const posterPhotos = [{ src: recipeImage, alt: recipe.name }];
+            if (galPic2) posterPhotos.push({ src: galPic2.file_path, alt: 'Photo 2 — ' + recipe.name });
+            if (galPic3) posterPhotos.push({ src: galPic3.file_path, alt: 'Photo 3 — ' + recipe.name });
+            const multiPoster = posterPhotos.length > 1;
+          %>
           <div class="rh-poster-wrap">
             <div class="rh-poster">
-              <div class="rh-poster__lbox rh-poster__lbox--t" aria-hidden="true">
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
+              <div class="rh-poster__film rh-poster__film--t" aria-hidden="true">
+                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
+                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
               </div>
-              <button
-                type="button"
-                class="rh-poster__img-btn"
-                data-lightbox-trigger
-                data-lightbox-image="<%= recipeImage %>"
-                data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
-                aria-label="Voir l'image de <%= recipe.name %> en plein écran"
-              >
-                <img
-                  src="<%= recipeImage %>"
-                  alt="Présentation de la recette <%= recipe.name %>"
-                  loading="lazy"
-                />
-              </button>
-              <div class="rh-poster__lbox rh-poster__lbox--b" aria-hidden="true">
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
+
+              <div class="rh-poster__track" id="rh-poster-track" role="region" aria-label="Photos de la recette">
+                <% posterPhotos.forEach((photo, i) => { %>
+                <button
+                  type="button"
+                  class="rh-poster__img-btn"
+                  data-lightbox-trigger
+                  data-lightbox-image="<%= photo.src %>"
+                  data-lightbox-alt="<%= photo.alt %>"
+                  aria-label="Voir <%= photo.alt %> en plein écran"
+                >
+                  <img src="<%= photo.src %>" alt="<%= photo.alt %>" loading="<%= i === 0 ? 'eager' : 'lazy' %>" />
+                </button>
+                <% }) %>
+              </div>
+
+              <% if (multiPoster) { %>
+              <button class="rh-poster__nav rh-poster__nav--prev" id="rh-nav-prev" aria-label="Photo précédente">‹</button>
+              <button class="rh-poster__nav rh-poster__nav--next" id="rh-nav-next" aria-label="Photo suivante">›</button>
+              <div class="rh-poster__counter" aria-live="polite">
+                <span id="rh-poster-cur">1</span>/<%= posterPhotos.length %>
+              </div>
+              <div class="rh-poster__dots" aria-hidden="true">
+                <% posterPhotos.forEach((_, i) => { %>
+                <span class="rh-poster__dot<%= i === 0 ? ' is-active' : '' %>" data-idx="<%= i %>"></span>
+                <% }) %>
+              </div>
+              <% } %>
+
+              <div class="rh-poster__film rh-poster__film--b" aria-hidden="true">
+                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
+                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
               </div>
             </div>
+
+            <!-- Stat dorée — Golden Ticket -->
             <div class="rh-poster__stat">
-              <div class="rh-ps-icon">
-                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" width="20" height="20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <div class="rh-poster__stat-inner">
+                <div class="rh-ps-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <circle cx="12" cy="5"  r="1.2" fill="currentColor" stroke="none"/>
+                    <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+                    <circle cx="5"  cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                    <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                  </svg>
+                </div>
+                <div class="rh-ps-text">
+                  <span class="rh-ps-num"><%= averageQuote || 0 %><span style="font-size:.6em;opacity:.5">/5</span></span>
+                  <span class="rh-ps-label">Note</span>
+                </div>
               </div>
-              <div class="rh-ps-text">
-                <span class="rh-ps-num"><%= averageQuote || 0 %></span>
-                <span class="rh-ps-label">Note / 5</span>
-              </div>
+              <span class="rh-ps-watermark" aria-hidden="true">★</span>
             </div>
           </div>
         </div>
+
+        <div class="rd-hero-footer" aria-hidden="true"></div>
       </section>
 
-      <!-- ══ MAIN LAYOUT ══ -->
+      <!-- ═══════════════════════════════════════
+           MAIN LAYOUT
+      ════════════════════════════════════════ -->
       <div class="recipe-main">
         <div class="recipe-main-grid">
 
-          <!-- ═══ COLONNE GAUCHE ═══ -->
+          <!-- ═══ COLONNE PRINCIPALE ═══ -->
           <div class="recipe-main-col">
 
-            <!-- Contexte ciné : image + auteur + description -->
-            <div class="rd-context">
-              <%
-                /* Photos complémentaires : positions 2 et 3 uniquement */
-                const extraPics = (recipePictures || []).filter(p => p.position >= 2).slice(0, 2);
-              %>
-
-              <% if (extraPics.length >= 2) { %>
-              <!-- Carousel CSS-only — 2 photos complémentaires -->
-              <div class="rd-media-carousel" aria-label="Photos complémentaires de la recette">
-                <div class="rd-media-carousel__track" id="rdmc-track">
-                  <% extraPics.forEach(function(pic, i) { %>
-                  <div class="rd-media-carousel__slide">
-                    <button
-                      type="button"
-                      class="rd-context__img-btn"
-                      data-lightbox-trigger
-                      data-lightbox-image="<%= pic.file_path %>"
-                      data-lightbox-alt="Photo <%= i + 2 %> — <%= recipe.name %>"
-                      aria-label="Voir la photo <%= i + 2 %> en plein écran"
-                    >
-                      <img src="<%= pic.file_path %>" alt="Photo <%= i + 2 %> de la recette <%= recipe.name %>" loading="lazy" />
-                      <span class="rd-context__zoom" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                      </span>
-                    </button>
-                  </div>
-                  <% }); %>
-                </div>
-                <div class="rd-media-carousel__dots" aria-hidden="true">
-                  <span class="rd-mc-dot rd-mc-dot--active"></span>
-                  <span class="rd-mc-dot"></span>
-                </div>
-              </div>
-
-              <% } else if (extraPics.length === 1) { %>
-              <!-- Photo complémentaire unique — affichage statique -->
-              <div class="rd-context__media">
-                <button
-                  type="button"
-                  class="rd-context__img-btn"
-                  data-lightbox-trigger
-                  data-lightbox-image="<%= extraPics[0].file_path %>"
-                  data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
-                  aria-label="Voir l'image en plein écran"
+            <!-- ── PRÉPARATION ── -->
+            <section id="preparation" class="rd-steps-section" aria-label="Étapes de préparation">
+              <div class="rd-sec-h">
+                <p class="rd-sec-h__eye">Recette complète</p>
+                <h2 class="rd-sec-h__title"><span>Préparation</span></h2>
+                <div class="rd-sec-h__rule"></div>
+                <% if (contributor) { %>
+                <a
+                  class="rd-author-badge rd-author-badge--sec-h"
+                  href="/auteur/<%= contributor.id %>"
+                  aria-label="Voir le profil de <%= contributorName %>"
                 >
-                  <img src="<%= extraPics[0].file_path %>" alt="Présentation de la recette <%= recipe.name %>" loading="lazy" />
-                  <span class="rd-context__zoom" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                  </span>
-                </button>
+                  <div class="rd-author-avatar">
+                    <img src="<%= contributorImage %>" alt="<%= contributorName %>" loading="lazy" />
+                  </div>
+                  <div class="rd-author-info">
+                    <span class="rd-author-label">Recette proposée par</span>
+                    <span class="rd-author-name">
+                      <%= contributorName %>
+                      <% if (contributor.role === "admin") { %>
+                      <span class="rd-author-official">Officiel</span>
+                      <% } %>
+                    </span>
+                  </div>
+                  <span class="rd-author-arrow">›</span>
+                </a>
+                <% } %>
               </div>
 
-              <% } %>
-              <%/* Si aucune photo complémentaire : rd-context__media masqué (pas de rendu) */%>
-
-              <!-- Colonne droite : auteur + description -->
-              <div class="rd-context__aside">
-                <!-- Badge auteur -->
-                <div class="rd-author-row">
-                  <a
-                    class="rd-author-badge"
-                    href="/auteur/<%= contributor.id %>"
-                    aria-label="Voir le profil de <%= contributorName %>"
-                  >
-                    <div class="rd-author-avatar">
-                      <img src="<%= contributorImage %>" alt="<%= contributorName %>" loading="lazy" />
-                    </div>
-                    <div class="rd-author-info">
-                      <span class="rd-author-label">Recette proposée par</span>
-                      <span class="rd-author-name">
-                        <%= contributorName %>
-                        <% if (contributor && contributor.role === "admin") { %>
-                        <span class="rd-author-official">Officiel</span>
-                        <% } %>
-                      </span>
-                    </div>
-                    <span class="rd-author-arrow">›</span>
-                  </a>
+              <div class="rd-steps-header-row">
+                <div class="rd-steps-count">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <%= preparationCount %> étape<%= preparationCount > 1 ? 's' : '' %><% if (recipe.time) { %> · <%= recipe.time %> min<% } %>
                 </div>
+                <div class="rd-steps-progress" id="steps-progress">0 / <%= preparationCount %> étapes</div>
+              </div>
 
-                <!-- Description -->
-                <div class="rd-context__body">
-                  <h3 class="rd-context__title">Le contexte cinématographique</h3>
-                  <% if (descriptionBlocks && descriptionBlocks.length) { %>
-                    <% descriptionBlocks.forEach((paragraph, index) => { %>
-                    <p class="rd-context__text<%= index === 0 ? ' rd-context__text--lead' : '' %>"><%= paragraph %></p>
-                    <% }) %>
+              <div class="rd-steps-card">
+                <div class="rd-steps-list">
+                  <% if (preparationBlocks && preparationBlocks.length) { %>
+                  <% preparationBlocks.forEach((step, index) => { %>
+                  <div class="rd-step-item" data-step="<%= index + 1 %>">
+                    <div class="rd-step-num-wrap">
+                      <div class="rd-step-num" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></div>
+                    </div>
+                    <div class="rd-step-body">
+                      <p class="rd-step-title">
+                        Étape <%= index + 1 %>
+                        <button class="rd-step-check" aria-label="Marquer l'étape comme faite" aria-pressed="false">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>
+                        </button>
+                      </p>
+                      <p class="rd-step-text"><%= step %></p>
+                    </div>
+                  </div>
+                  <% }) %>
                   <% } else { %>
-                    <p class="rd-context__text rd-context__text--lead">Aucune description détaillée n'a encore été partagée pour cette recette.</p>
+                  <div class="rd-step-item" data-step="1">
+                    <div class="rd-step-num-wrap"><div class="rd-step-num" aria-hidden="true">1</div></div>
+                    <div class="rd-step-body">
+                      <p class="rd-step-text">Le détail de cette préparation arrive bientôt.</p>
+                    </div>
+                  </div>
                   <% } %>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <!-- Info bar -->
-            <div class="rd-info-bar" role="list" aria-label="Informations de la recette">
-              <div class="rd-ib-item" role="listitem">
-                <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
-                <span class="rd-ib-val"><%= recipe.category %></span>
-                <span class="rd-ib-label">Catégorie</span>
-              </div>
-              <div class="rd-ib-item" role="listitem">
-                <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span class="rd-ib-val"><%= recipe.time %> min</span>
-                <span class="rd-ib-label">Temps</span>
-              </div>
-              <% const displayServings = recipe.servings || 4; %>
-              <div class="rd-ib-item rd-ib-item--servings" role="listitem" data-base-servings="<%= displayServings %>">
-                <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <div class="rd-ib-servings-ctrl">
-                  <button class="rd-srv-btn" id="rd-srv-minus" aria-label="Moins de portions">−</button>
-                  <span class="rd-ib-val" id="rd-srv-val"><%= displayServings %></span>
-                  <button class="rd-srv-btn" id="rd-srv-plus" aria-label="Plus de portions">+</button>
-                </div>
-                <span class="rd-ib-label">Personnes</span>
-              </div>
-              <div class="rd-ib-item" role="listitem">
-                <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
-                <span class="rd-ib-val"><%= recipe.difficulty %></span>
-                <span class="rd-ib-label">Difficulté</span>
-              </div>
-              <div class="rd-ib-item" role="listitem">
-                <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/><path d="m9 11 1 9"/><path d="M4.5 15.5h15"/><path d="m15 11-1 9"/></svg>
-                <span class="rd-ib-val"><%= ingredientsCount %></span>
-                <span class="rd-ib-label">Ingrédient<%= ingredientsCount > 1 ? 's' : '' %></span>
-              </div>
-            </div>
-
-            <!-- Préparation -->
-            <div id="preparation" class="rd-steps-section">
+            <!-- ── GALERIE PHOTOS ── -->
+            <div class="rd-gallery-section">
               <div class="rd-sec-h">
-                <span class="rd-sec-h__eye">Étapes</span>
-                <h2 class="rd-sec-h__title">PRÉPARATION</h2>
+                <p class="rd-sec-h__eye">Médias de la recette</p>
+                <h2 class="rd-sec-h__title">La <span>Galerie</span></h2>
+                <div class="rd-sec-h__rule"></div>
               </div>
-              <p class="rd-steps-count">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
-                <%= preparationCount %> étape<%= preparationCount > 1 ? 's' : '' %>
-              </p>
-              <% if (preparationBlocks && preparationBlocks.length) { %>
-              <% preparationBlocks.forEach((step, index) => { %>
-              <div class="rd-step-item">
-                <div class="rd-step-num-wrap">
-                  <div class="rd-step-num"><%= index + 1 %></div>
+
+              <%
+                const galCount = [galPic1, galPic2, galPic3].filter(Boolean).length || 1;
+              %>
+              <div class="rd-gallery rd-gallery--<%= galCount %>">
+                <!-- Photo principale -->
+                <div
+                  class="rd-gallery__main"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Agrandir la photo principale"
+                  data-lightbox-trigger
+                  data-lightbox-image="<%= mainGalSrc %>"
+                  data-lightbox-alt="Photo principale — <%= recipe.name %>"
+                >
+                  <img src="<%= mainGalSrc %>" alt="Photo principale — <%= recipe.name %>" loading="lazy" />
+                  <div class="rd-gallery__label">
+                    <div class="rd-gallery__label-text">
+                      <span class="rd-gallery__label-num">01</span>
+                      <span class="rd-gallery__label-name">Photo principale</span>
+                    </div>
+                    <button class="rd-gallery__zoom" aria-label="Agrandir">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    </button>
+                  </div>
                 </div>
-                <div class="rd-step-body">
-                  <p class="rd-step-title">Étape <%= index + 1 %></p>
-                  <p class="rd-step-text"><%= step %></p>
+
+                <!-- Photo secondaire -->
+                <% if (galPic2) { %>
+                <div
+                  class="rd-gallery__secondary"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Agrandir la photo secondaire"
+                  data-lightbox-trigger
+                  data-lightbox-image="<%= galPic2.file_path %>"
+                  data-lightbox-alt="Photo secondaire — <%= recipe.name %>"
+                >
+                  <img src="<%= galPic2.file_path %>" alt="Photo secondaire — <%= recipe.name %>" loading="lazy" />
+                  <div class="rd-gallery__label">
+                    <div class="rd-gallery__label-text">
+                      <span class="rd-gallery__label-num">02</span>
+                      <span class="rd-gallery__label-name">Photo secondaire</span>
+                    </div>
+                    <button class="rd-gallery__zoom" aria-label="Agrandir">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    </button>
+                  </div>
                 </div>
+                <% } %>
+
+                <!-- Photo détail -->
+                <% if (galPic3) { %>
+                <div
+                  class="rd-gallery__detail"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Agrandir la photo détail"
+                  data-lightbox-trigger
+                  data-lightbox-image="<%= galPic3.file_path %>"
+                  data-lightbox-alt="Photo détail — <%= recipe.name %>"
+                >
+                  <img src="<%= galPic3.file_path %>" alt="Photo détail — <%= recipe.name %>" loading="lazy" />
+                  <div class="rd-gallery__label">
+                    <div class="rd-gallery__label-text">
+                      <span class="rd-gallery__label-num">03</span>
+                      <span class="rd-gallery__label-name">Photo détail</span>
+                    </div>
+                    <button class="rd-gallery__zoom" aria-label="Agrandir">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <% } %>
               </div>
-              <% }) %>
-              <% } else { %>
-              <div class="rd-step-item">
-                <div class="rd-step-num-wrap"><div class="rd-step-num">1</div></div>
-                <div class="rd-step-body">
-                  <p class="rd-step-text">Le détail de cette préparation arrive bientôt.</p>
-                </div>
-              </div>
-              <% } %>
             </div>
 
-            <!-- Actions de navigation -->
+            <!-- ── NAV RECETTES ── -->
             <div class="rd-nav-actions">
               <a class="btn btn--outline" href="/recipes-movie/<%= movie ? (movie.slug || movie.id) : recipe.id_movie %>">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m15 18-6-6 6-6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m15 18-6-6 6-6"/></svg>
                 Recettes du film
               </a>
               <a class="btn btn--red" href="/add-recipes-movies/">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                 Je crée ma recette
               </a>
             </div>
 
-          <!-- ══ SECTION AVIS ══ -->
-          <%
-            const starCounts = [0,0,0,0,0];
-            if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
-            const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
-          %>
-          <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
+            <!-- ══ SECTION AVIS ══ -->
+            <%
+              const starCounts = [0,0,0,0,0];
+              if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
+              const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
+            %>
+            <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
 
-            <!-- Bannière dorée Golden Ticket -->
-            <div class="avis-banner">
-              <div class="avis-banner__tear"></div>
-              <div class="avis-banner__stamp">
-                <div class="avis-banner__stamp-inner">CINÉ<br/>DÉLICES<br/>✦</div>
-              </div>
-              <div class="avis-banner__shimmer"></div>
-              <div class="avis-banner__inner">
-
-                <div class="avis-banner__reel">
-                  <span class="avis-banner__reel-icon">💬</span>
+              <!-- Bannière dorée Golden Ticket -->
+              <div class="avis-banner">
+                <div class="avis-banner__tear"></div>
+                <div class="avis-banner__stamp">
+                  <div class="avis-banner__stamp-inner">CINÉ<br/>DÉLICES<br/>✦</div>
                 </div>
-
-                <div class="avis-banner__text">
-                  <p class="avis-banner__eyebrow">Communauté · Critiques &amp; Impressions</p>
-                  <h2 class="avis-banner__title" id="avis-section-title">AVIS DE LA COMMUNAUTÉ</h2>
-                  <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
-                  <div class="avis-distrib">
-                    <div class="distrib-row">
-                      <span class="distrib-label"><span class="fs">★</span> 5</span>
-                      <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
-                      <span class="distrib-count"><%= starCounts[4] %></span>
-                    </div>
-                    <div class="distrib-row">
-                      <span class="distrib-label"><span class="fs">★</span> 4</span>
-                      <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
-                      <span class="distrib-count"><%= starCounts[3] %></span>
-                    </div>
-                    <div class="distrib-row">
-                      <span class="distrib-label"><span class="fs">★</span> 3</span>
-                      <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
-                      <span class="distrib-count"><%= starCounts[2] %></span>
-                    </div>
-                    <div class="distrib-row">
-                      <span class="distrib-label"><span class="fs">★</span> 2</span>
-                      <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
-                      <span class="distrib-count"><%= starCounts[1] %></span>
-                    </div>
-                    <div class="distrib-row">
-                      <span class="distrib-label"><span class="fs">★</span> 1</span>
-                      <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
-                      <span class="distrib-count"><%= starCounts[0] %></span>
+                <div class="avis-banner__shimmer"></div>
+                <div class="avis-banner__inner">
+                  <div class="avis-banner__reel">
+                    <span class="avis-banner__reel-icon">💬</span>
+                  </div>
+                  <div class="avis-banner__text">
+                    <p class="avis-banner__eyebrow">Communauté · Critiques &amp; Impressions</p>
+                    <h2 class="avis-banner__title" id="avis-section-title">AVIS DE LA COMMUNAUTÉ</h2>
+                    <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
+                    <div class="avis-distrib">
+                      <div class="distrib-row">
+                        <span class="distrib-label"><span class="fs">★</span> 5</span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
+                        <span class="distrib-count"><%= starCounts[4] %></span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label"><span class="fs">★</span> 4</span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
+                        <span class="distrib-count"><%= starCounts[3] %></span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label"><span class="fs">★</span> 3</span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
+                        <span class="distrib-count"><%= starCounts[2] %></span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label"><span class="fs">★</span> 2</span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
+                        <span class="distrib-count"><%= starCounts[1] %></span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label"><span class="fs">★</span> 1</span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
+                        <span class="distrib-count"><%= starCounts[0] %></span>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div class="avis-banner__stats">
-                  <div class="avis-stat">
-                    <span class="avis-stat__num"><%= totalAvis %></span>
-                    <span class="avis-stat__lbl">Avis publiés</span>
-                  </div>
-                  <div class="avis-stat-sep"></div>
-                  <div class="avis-stat">
-                    <span class="avis-stat__num"><%= averageQuote || 0 %></span>
-                    <span class="avis-stat__lbl">Note moyenne</span>
-                  </div>
-                </div>
-
-                <div class="avis-banner__note">
-                  <div class="global-stars">
-                    <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
-                  </div>
-                  <div style="display:flex;align-items:baseline;gap:3px">
-                    <span class="global-note"><%= averageQuote || 0 %></span>
-                    <span class="global-note__max">/ 5</span>
-                  </div>
-                  <span class="global-note__lbl">Note moyenne</span>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Grille des avis -->
-            <% if (notices && notices.length > 0) { %>
-            <div class="avis-grid" id="avisGrid">
-              <% notices.slice(0, 6).forEach((notice, i) => {
-                const avatarSrc = notice.User && notice.User.picture ? notice.User.picture : null;
-                const userName = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
-                const isAdmin = notice.User && notice.User.role === 'admin';
-                const nd = notice.createdAt ? new Date(notice.createdAt) : null;
-                const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-              %>
-              <article class="avis-card<%= i === 0 ? ' avis-card--featured' : '' %>" data-rating="<%= notice.quote %>">
-                <div class="avis-card__head">
-                  <div class="avis-card__user">
-                    <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
-                      <% if (avatarSrc) { %>
-                      <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                      <% } else { %>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <% } %>
+                  <div class="avis-banner__stats">
+                    <div class="avis-stat">
+                      <span class="avis-stat__num"><%= totalAvis %></span>
+                      <span class="avis-stat__lbl">Avis publiés</span>
                     </div>
-                    <div>
-                      <p class="avis-user__name"><%= userName %></p>
-                      <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend">✦ Équipe Ciné Délices</p><% } %>
+                    <div class="avis-stat-sep"></div>
+                    <div class="avis-stat">
+                      <span class="avis-stat__num"><%= averageQuote || 0 %></span>
+                      <span class="avis-stat__lbl">Note moyenne</span>
                     </div>
                   </div>
-                  <% if (i === 0) { %><span class="avis-featured-badge">✦ Coup de cœur</span><% } %>
-                </div>
-                <div class="avis-stars">
-                  <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
-                </div>
-                <div class="avis-card__quote">
-                  <span class="avis-quote-mark">"</span>
-                  <p class="avis-card__text"><%= notice.content %></p>
-                </div>
-                <div class="avis-card__foot">
-                  <span class="avis-date"><%= noticeDate %></span>
-                </div>
-              </article>
-              <% }) %>
-            </div>
-
-            <% if (notices.length > 6) { %>
-            <div class="avis-loadmore" id="avisLoadmore">
-              <div class="load-bar"></div>
-              <p class="load-info" id="avisLoadInfo">6 avis affichés sur <%= notices.length %></p>
-              <button class="btn-more" id="seeMoreAvis" type="button">↓ Charger plus d'avis</button>
-            </div>
-            <div class="avis-grid" id="avisGridExtra" hidden>
-              <% notices.slice(6).forEach((notice) => {
-                const avatarSrc = notice.User && notice.User.picture ? notice.User.picture : null;
-                const userName = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
-                const isAdmin = notice.User && notice.User.role === 'admin';
-                const nd = notice.createdAt ? new Date(notice.createdAt) : null;
-                const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-              %>
-              <article class="avis-card" data-rating="<%= notice.quote %>">
-                <div class="avis-card__head">
-                  <div class="avis-card__user">
-                    <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
-                      <% if (avatarSrc) { %>
-                      <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                      <% } else { %>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <% } %>
+                  <div class="avis-banner__note">
+                    <div class="global-stars">
+                      <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
                     </div>
-                    <div>
-                      <p class="avis-user__name"><%= userName %></p>
-                      <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend">✦ Équipe Ciné Délices</p><% } %>
+                    <div style="display:flex;align-items:baseline;gap:3px">
+                      <span class="global-note"><%= averageQuote || 0 %></span>
+                      <span class="global-note__max">/ 5</span>
                     </div>
+                    <span class="global-note__lbl">Note moyenne</span>
                   </div>
-                </div>
-                <div class="avis-stars">
-                  <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
-                </div>
-                <div class="avis-card__quote">
-                  <span class="avis-quote-mark">"</span>
-                  <p class="avis-card__text"><%= notice.content %></p>
-                </div>
-                <div class="avis-card__foot">
-                  <span class="avis-date"><%= noticeDate %></span>
-                </div>
-              </article>
-              <% }) %>
-            </div>
-            <% } %>
-            <% } %>
-
-            <!-- Formulaire / état non connecté -->
-            <div class="avis-form-block" id="avisFormBlock">
-              <div class="avis-form-block__head">
-                <div class="avis-form-block__icon">✍️</div>
-                <div>
-                  <h3 class="avis-form-block__title">LAISSER UN AVIS</h3>
-                  <p class="avis-form-block__sub">Partagez votre expérience avec la communauté</p>
                 </div>
               </div>
-              <% if (typeof userId !== 'undefined' && userId) { %>
-              <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
-                <input type="hidden" id="avisQuoteInput" name="quote" value="" />
-                <div class="star-picker">
-                  <span class="star-picker__lbl">Note :</span>
-                  <span class="star-pick" data-v="1">★</span>
-                  <span class="star-pick" data-v="2">★</span>
-                  <span class="star-pick" data-v="3">★</span>
-                  <span class="star-pick" data-v="4">★</span>
-                  <span class="star-pick" data-v="5">★</span>
-                </div>
-                <div class="form-g">
-                  <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
-                  <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
-                </div>
-                <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
-                <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
-                <div class="form-actions">
-                  <span class="form-hint-global">Votre avis sera relu avant publication.</span>
-                  <button class="btn-submit-avis" type="submit" id="avisSubmitBtn">✦ Publier mon avis</button>
-                </div>
-              </form>
-              <% } else { %>
-              <div class="avis-locked">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.35"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <p class="avis-locked__text">Connectez-vous pour partager votre avis,<br>une suggestion ou une variante de cette recette.</p>
-                <div class="avis-locked__actions">
-                  <a href="#" class="btn btn--red js-open-login">Se connecter</a>
-                  <a href="#" class="btn btn--outline js-open-register">Créer un compte</a>
-                </div>
+
+              <!-- Grille des avis -->
+              <% if (notices && notices.length > 0) { %>
+              <div class="avis-grid" id="avisGrid">
+                <% notices.slice(0, 6).forEach((notice, i) => {
+                  const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
+                  const userName   = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
+                  const isAdmin    = notice.User && notice.User.role === 'admin';
+                  const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
+                  const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                  const isFeatured = i === 0;
+                %>
+                <article class="avis-card<%= isFeatured ? ' avis-card--featured' : '' %>" data-rating="<%= notice.quote %>">
+                  <% if (isFeatured) { %>
+                  <!-- Card vedette : 2 colonnes -->
+                  <div class="avis-card__left">
+                    <div class="avis-card__head">
+                      <div class="avis-card__user">
+                        <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
+                          <% if (avatarSrc) { %>
+                          <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
+                          <% } else { %>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                          <% } %>
+                        </div>
+                        <div>
+                          <p class="avis-user__name"><%= userName %></p>
+                          <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend">✦ Équipe Ciné Délices</p><% } %>
+                        </div>
+                      </div>
+                      <span class="avis-featured-badge">✦ Coup de cœur</span>
+                    </div>
+                    <div class="avis-stars">
+                      <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
+                    </div>
+                  </div>
+                  <div class="avis-card__right">
+                    <div class="avis-card__quote">
+                      <span class="avis-quote-mark">"</span>
+                      <p class="avis-card__text"><%= notice.content %></p>
+                    </div>
+                    <div class="avis-card__foot">
+                      <span class="avis-date"><%= noticeDate %></span>
+                    </div>
+                  </div>
+                  <% } else { %>
+                  <!-- Cards normales -->
+                  <div class="avis-card__head">
+                    <div class="avis-card__user">
+                      <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
+                        <% if (avatarSrc) { %>
+                        <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
+                        <% } else { %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <% } %>
+                      </div>
+                      <div>
+                        <p class="avis-user__name"><%= userName %></p>
+                        <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend">✦ Équipe Ciné Délices</p><% } %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="avis-stars">
+                    <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
+                  </div>
+                  <div class="avis-card__quote">
+                    <span class="avis-quote-mark">"</span>
+                    <p class="avis-card__text"><%= notice.content %></p>
+                  </div>
+                  <div class="avis-card__foot">
+                    <span class="avis-date"><%= noticeDate %></span>
+                  </div>
+                  <% } %>
+                </article>
+                <% }) %>
+              </div>
+
+              <% if (notices.length > 6) { %>
+              <div class="avis-loadmore" id="avisLoadmore">
+                <div class="load-bar"></div>
+                <p class="load-info" id="avisLoadInfo">6 avis affichés sur <%= notices.length %></p>
+                <button class="btn-more" id="seeMoreAvis" type="button">↓ Charger plus d'avis</button>
+              </div>
+              <div class="avis-grid" id="avisGridExtra" hidden>
+                <% notices.slice(6).forEach((notice) => {
+                  const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
+                  const userName   = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
+                  const isAdmin    = notice.User && notice.User.role === 'admin';
+                  const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
+                  const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                %>
+                <article class="avis-card" data-rating="<%= notice.quote %>">
+                  <div class="avis-card__head">
+                    <div class="avis-card__user">
+                      <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
+                        <% if (avatarSrc) { %>
+                        <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
+                        <% } else { %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <% } %>
+                      </div>
+                      <div>
+                        <p class="avis-user__name"><%= userName %></p>
+                        <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend">✦ Équipe Ciné Délices</p><% } %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="avis-stars">
+                    <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
+                  </div>
+                  <div class="avis-card__quote">
+                    <span class="avis-quote-mark">"</span>
+                    <p class="avis-card__text"><%= notice.content %></p>
+                  </div>
+                  <div class="avis-card__foot">
+                    <span class="avis-date"><%= noticeDate %></span>
+                  </div>
+                </article>
+                <% }) %>
               </div>
               <% } %>
-            </div>
+              <% } %>
 
-          </section>
+              <!-- Formulaire / état non connecté -->
+              <div class="avis-form-block" id="avisFormBlock">
+                <div class="avis-form-block__inner">
+                  <div class="avis-form-block__head">
+                    <div class="avis-form-block__icon">✍️</div>
+                    <div>
+                      <h3 class="avis-form-block__title">LAISSER UN AVIS</h3>
+                      <p class="avis-form-block__sub">Partagez votre expérience avec la communauté</p>
+                    </div>
+                  </div>
+                  <% if (typeof userId !== 'undefined' && userId) { %>
+                  <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
+                    <input type="hidden" id="avisQuoteInput" name="quote" value="" />
+                    <div class="star-picker">
+                      <span class="star-picker__lbl">Note :</span>
+                      <span class="star-pick" data-v="1">★</span>
+                      <span class="star-pick" data-v="2">★</span>
+                      <span class="star-pick" data-v="3">★</span>
+                      <span class="star-pick" data-v="4">★</span>
+                      <span class="star-pick" data-v="5">★</span>
+                    </div>
+                    <div class="form-g">
+                      <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
+                      <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
+                    </div>
+                    <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
+                    <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
+                    <div class="form-actions">
+                      <span class="form-hint-global">Votre avis sera relu avant publication.</span>
+                      <button class="btn-submit-avis" type="submit" id="avisSubmitBtn">✦ Publier mon avis</button>
+                    </div>
+                  </form>
+                  <% } else { %>
+                  <div class="avis-locked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <p class="avis-locked__text">Connectez-vous pour partager votre avis,<br>une suggestion ou une variante de cette recette.</p>
+                    <div class="avis-locked__actions">
+                      <a href="#" class="btn btn--red js-open-login">Se connecter</a>
+                      <a href="#" class="btn btn--outline js-open-register">Créer un compte</a>
+                    </div>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+
+            </section>
 
           </div><!-- /recipe-main-col -->
 
           <!-- ═══ SIDEBAR DROITE ═══ -->
           <aside class="rd-sidebar">
 
-            <!-- Ingrédients — card dorée -->
+            <!-- Ingrédients — card dorée avec checkboxes -->
             <div class="rd-ingredients">
               <div class="rd-ingredients__inner">
                 <div class="rd-ingredients__header">
                   <div class="rd-ingredients__icon">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/><path d="m9 11 1 9"/><path d="M4.5 15.5h15"/><path d="m15 11-1 9"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/></svg>
                   </div>
                   <div>
                     <div class="rd-ingredients__title">INGRÉDIENTS</div>
                     <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
                   </div>
                 </div>
-                <div class="rd-ing-portions">
-                  <span class="rd-ing-portions__label">Pour</span>
-                  <span class="rd-ing-portions__val" id="rd-ing-portions-val"><%= displayServings %> personne<%= displayServings > 1 ? 's' : '' %></span>
+
+                <!-- Contrôle portions -->
+                <div class="rd-ing-portions-ctrl">
+                  <span class="rd-ing-portions-ctrl__label">Portions</span>
+                  <div class="rd-ing-portions-ctrl__inner">
+                    <button class="rd-srv-btn" id="rd-srv-minus2" aria-label="Moins de portions" type="button">−</button>
+                    <span class="rd-ing-portions-ctrl__val" id="rd-ing-portions-val" data-base="<%= displayServings %>"><%= displayServings %> pers.</span>
+                    <button class="rd-srv-btn" id="rd-srv-plus2" aria-label="Plus de portions" type="button">+</button>
+                  </div>
                 </div>
+
+                <!-- Barre de progression ingrédients -->
+                <div class="rd-ing-progress">
+                  <div class="rd-ing-progress__bar">
+                    <div class="rd-ing-progress__fill" id="ing-progress-fill"></div>
+                  </div>
+                  <span class="rd-ing-progress__label" id="ing-progress-label">0 / <%= ingredientsCount %></span>
+                </div>
+
                 <div class="rd-ing-list">
                   <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
                   <% ingredientsBlocks.forEach((ingredient) => { %>
-                  <div class="rd-ing-item">
+                  <div class="rd-ing-item" role="checkbox" aria-checked="false" tabindex="0">
+                    <div class="rd-ing-chk" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
                     <span class="rd-ing-text"><%= ingredient %></span>
                   </div>
                   <% }) %>
@@ -608,30 +715,24 @@
             <!-- Note communauté -->
             <div class="rd-sidebar-card">
               <h3 class="rd-sc-title">
-                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 Note communauté
               </h3>
-              <div
-                class="rd-rating-summary rating-stars"
-                data-rating-container
-                data-current-rating="<%= averageQuote || 0 %>"
-                data-readonly="true"
-              >
+              <div class="rd-rating-summary" aria-label="Note communauté : <%= averageQuote || 0 %> sur 5">
                 <div class="rd-rating-big"><%= averageQuote || 0 %></div>
-                <div class="rd-rating-stars-row">
-                  <% for (let i = 1; i <= 5; i++) { %>
-                  <span
-                    class="rating-star<%= i <= Math.round(averageQuote || 0) ? ' is-active' : '' %>"
-                    data-value="<%= i %>"
-                  >★</span>
-                  <% } %>
+                <div class="rd-rating-right">
+                  <div class="rd-rating-stars-row">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                    <span class="rating-star<%= i <= Math.round(averageQuote || 0) ? ' is-active' : '' %>">★</span>
+                    <% } %>
+                  </div>
+                  <p class="rd-rating-sub">
+                    <%= notices && notices.length > 0 ? notices.length + ' avis' : 'Soyez le premier !' %>
+                  </p>
                 </div>
-                <p class="rd-rating-sub">
-                  <%= notices && notices.length > 0 ? notices.length + (notices.length > 1 ? ' avis' : ' avis') : 'Soyez le premier !' %>
-                </p>
               </div>
               <a href="#avis" class="btn btn--primary btn--sm rd-rating-cta">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
                 Donner mon avis
               </a>
             </div>
@@ -640,19 +741,17 @@
             <% if (movie) { %>
             <div class="rd-sidebar-card rd-movie-card">
               <h3 class="rd-sc-title">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M17 7.5h4M3 12h18M3 16.5h4M17 16.5h4"/></svg>
                 Film associé
               </h3>
               <div class="rd-movie-media">
                 <img src="<%= movieImage %>" alt="Affiche du film <%= movie.title %>" loading="lazy" />
               </div>
-              <div class="rd-movie-info">
-                <p class="rd-movie-title"><%= movie.title %></p>
-                <p class="rd-movie-meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
-                <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="btn btn--primary btn--sm rd-movie-link">
-                  Voir les recettes
-                </a>
-              </div>
+              <p class="rd-movie-title"><%= movie.title %></p>
+              <p class="rd-movie-meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
+              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="btn btn--primary btn--sm rd-movie-link">
+                Voir les recettes
+              </a>
             </div>
             <% } %>
 
@@ -663,26 +762,10 @@
 
       <!-- ══ LIGHTBOX ══ -->
       <div class="recipe-lightbox" id="recipe-lightbox" aria-hidden="true">
-        <div
-          class="recipe-lightbox__backdrop"
-          data-lightbox-close
-          aria-hidden="true"
-        ></div>
+        <div class="recipe-lightbox__backdrop" data-lightbox-close aria-hidden="true"></div>
         <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
-          <button
-            type="button"
-            class="recipe-lightbox__close"
-            aria-label="Fermer l'aperçu"
-            data-lightbox-close
-          >
-            &times;
-          </button>
-          <img
-            src=""
-            alt="Recette Ciné Délices"
-            class="recipe-lightbox__image"
-            loading="lazy"
-          />
+          <button type="button" class="recipe-lightbox__close" aria-label="Fermer l'aperçu" data-lightbox-close>&times;</button>
+          <img src="" alt="Recette Ciné Délices" class="recipe-lightbox__image" loading="lazy" />
         </div>
       </div>
 
@@ -690,84 +773,14 @@
 
     <%- include("partials/footer") %>
 
-    <script src="/js/recipe-detail.js" defer></script>
-
-    <% if (extraPics && extraPics.length >= 2) { %>
-    <script>
-      /* Carousel photos complémentaires — mise à jour des dots au scroll */
-      (function () {
-        const track = document.getElementById('rdmc-track');
-        const dots  = document.querySelectorAll('.rd-mc-dot');
-        if (!track || !dots.length) return;
-        track.addEventListener('scroll', function () {
-          const idx = Math.round(track.scrollLeft / track.offsetWidth);
-          dots.forEach(function (d, i) {
-            d.classList.toggle('rd-mc-dot--active', i === idx);
-          });
-        }, { passive: true });
-        /* Clic sur dot → scroll vers la slide correspondante */
-        dots.forEach(function (d, i) {
-          d.style.cursor = 'pointer';
-          d.addEventListener('click', function () {
-            track.scrollTo({ left: i * track.offsetWidth, behavior: 'smooth' });
-          });
-        });
-      })();
-    </script>
-    <% } %>
-
-    <!-- Ajusteur portions -->
-    <script>
-    (function () {
-      const BASE = <%= recipe.servings || 4 %>;
-      let current = BASE;
-      const btnMinus = document.getElementById('rd-srv-minus');
-      const btnPlus  = document.getElementById('rd-srv-plus');
-      const valEl    = document.getElementById('rd-srv-val');
-      const portEl   = document.getElementById('rd-ing-portions-val');
-
-      /* Stocker les textes originaux des ingrédients */
-      const ingEls = Array.from(document.querySelectorAll('.rd-ing-text'));
-      ingEls.forEach(el => { el.dataset.original = el.textContent; });
-
-      function fmtQty(n) {
-        /* Arrondi à 2 décimales, supprime le .0 inutile */
-        const r = Math.round(n * 100) / 100;
-        return r % 1 === 0 ? String(r) : String(r).replace('.', ',');
-      }
-
-      function updateIngredients() {
-        const ratio = current / BASE;
-        ingEls.forEach(el => {
-          /* Cherche un nombre (entier ou décimal ,/.) en début de texte ou après espace */
-          const txt = el.dataset.original;
-          const m = txt.match(/^(\d+(?:[.,]\d+)?)(.*)/);
-          if (m) {
-            const orig = parseFloat(m[1].replace(',', '.'));
-            el.textContent = fmtQty(orig * ratio) + m[2];
-          }
-        });
-      }
-
-      function updateDisplay() {
-        valEl.textContent = current;
-        if (portEl) portEl.textContent = current + ' personne' + (current > 1 ? 's' : '');
-        btnMinus.disabled = current <= 1;
-        updateIngredients();
-      }
-
-      btnMinus.addEventListener('click', () => { if (current > 1) { current--; updateDisplay(); } });
-      btnPlus.addEventListener('click',  () => { current++; updateDisplay(); });
-    })();
-    </script>
-
-    <!-- Configuration pour les favoris -->
+    <!-- Configuration favoris -->
     <script>
       window.CINEDELICES = {
         isLoggedIn: <%= typeof userId !== 'undefined' && userId !== null %>,
         userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
       };
     </script>
+    <script src="/js/recipe-detail.js" defer></script>
     <script src="/js/favorites.js" defer></script>
   </body>
 </html>
