@@ -1,5 +1,5 @@
 import { Op, fn, col } from "sequelize";
-import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
@@ -357,6 +357,13 @@ const recipesController = {
       const userRating = userRatingsMap[plainRecipe.id] || null;
       const avgData = avgRatingsMap[plainRecipe.id];
 
+      // Photos complémentaires (positions 2 et 3) pour le carousel de la page détail
+      const recipePictures = await RecipePicture.findAll({
+        where: { recipe_id: plainRecipe.id },
+        order: [["position", "ASC"]],
+        raw: true,
+      });
+
       res.render("recipe-detail", {
         recipe: {
           ...plainRecipe,
@@ -370,7 +377,9 @@ const recipesController = {
         ingredientsBlocks,
         preparationBlocks,
         averageQuote,
+        totalAvis: plainNotices.length,
         notices: plainNotices,
+        recipePictures,
         // Auteur toujours présent (id_user NOT NULL)
         contributor: {
           ...(contributor.get ? contributor.get({ plain: true }) : contributor),

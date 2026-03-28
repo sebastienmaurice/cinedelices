@@ -810,12 +810,32 @@ const adminController = {
 
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
-      return renderServerError(
-        res,
-        error,
-        "Erreur lors du refus de la recette"
-      );
+      return renderServerError(res, error, "Erreur lors du refus de la recette");
+    }
+  },
+
+  /**
+   * POST /admin/recipe-pictures/:pictureId/delete
+   * Supprime une photo complémentaire individuelle (position >= 2) sans rejeter toute la recette.
+   * Utilisé quand une photo 2 ou 3 contient du contenu non approprié.
+   */
+  async deleteRecipePicture(req, res) {
+    try {
+      const pictureId = parseInt(req.params.pictureId, 10);
+
+      const pic = await RecipePicture.findByPk(pictureId);
+      if (!pic) return res.redirect("/admin?success=recipe_picture_not_found");
+
+      // Sécurité : on ne peut supprimer que les photos complémentaires (position >= 2)
+      // La photo principale (position 1) est gérée via le flux recette complet
+      if (pic.position < 2) return res.redirect("/admin?success=recipe_picture_protected");
+
+      unlinkIfExists(pic.file_path);
+      await RecipePicture.destroy({ where: { id: pictureId } });
+
+      res.redirect("/admin?success=recipe_picture_deleted");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la suppression de la photo.");
     }
   },
 

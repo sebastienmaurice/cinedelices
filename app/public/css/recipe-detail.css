@@ -418,7 +418,14 @@ body.recipe-page main {
   color: rgba(232, 232, 232, 0.35);
 }
 
-/* Bouton favori — zone hero */
+/* Bouton favori — positionné en haut à droite du hero */
+.recipe-hero > .btn-fav--banner {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 10;
+}
+
 .btn-fav--banner {
   width: 42px;
   height: 42px;
@@ -529,6 +536,57 @@ body.recipe-page main {
   width: 280px;
   flex-shrink: 0;
   aspect-ratio: 3 / 2;
+}
+
+/* ── Carousel photos complémentaires (positions 2 & 3) ── */
+.rd-media-carousel {
+  position: relative;
+  width: 280px;
+  flex-shrink: 0;
+  aspect-ratio: 3 / 2;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.rd-media-carousel__track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.rd-media-carousel__track::-webkit-scrollbar { display: none; }
+.rd-media-carousel__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  position: relative;
+}
+.rd-media-carousel__slide .rd-context__img-btn {
+  border-radius: 0;
+}
+/* Dots */
+.rd-media-carousel__dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+.rd-mc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transition: background 0.25s, transform 0.25s;
+}
+.rd-mc-dot--active {
+  background: rgba(196, 160, 82, 0.95);
+  transform: scale(1.3);
 }
 
 .rd-context__aside {
@@ -744,6 +802,39 @@ body.recipe-page main {
 
 .rd-ib-item + .rd-ib-item {
   border-left: 1px solid rgba(65, 90, 119, 0.18);
+}
+
+.rd-ib-servings-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rd-srv-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 160, 82, 0.35);
+  background: rgba(196, 160, 82, 0.08);
+  color: rgba(196, 160, 82, 0.85);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.rd-srv-btn:hover:not(:disabled) {
+  background: rgba(196, 160, 82, 0.2);
+  border-color: rgba(196, 160, 82, 0.7);
+}
+
+.rd-srv-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 .rd-ib-icon {
@@ -2317,6 +2408,11 @@ body.lightbox-open {
   }
 
   .rd-context__media {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+  }
+
+  .rd-media-carousel {
     width: 100%;
     aspect-ratio: 3 / 2;
   }

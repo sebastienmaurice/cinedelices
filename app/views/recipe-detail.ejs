@@ -97,6 +97,18 @@
         <div class="recipe-hero__scanlines" aria-hidden="true"></div>
         <div class="recipe-hero__vignette" aria-hidden="true"></div>
 
+        <!-- Favori — positionné en haut à droite du hero -->
+        <button
+          class="btn-fav btn-fav--banner"
+          data-entity-id="<%= recipe.id %>"
+          data-entity-type="recipe"
+          data-is-favorite="<%= recipe.isFavorite || false %>"
+          aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+          title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+
         <div class="recipe-hero__content">
           <!-- Colonne infos -->
           <div class="rh-info">
@@ -116,53 +128,12 @@
               <span class="rh-tag rh-tag--violet"><%= recipe.servings %> pers.</span>
               <% } %>
             </div>
-            <div class="rh-meta">
-              <div class="rh-meta__item">
-                <span class="rh-meta__label">Temps</span>
-                <span class="rh-meta__val"><%= recipe.time %> min</span>
-              </div>
-              <% if (recipe.servings) { %>
-              <div class="rh-meta__sep"></div>
-              <div class="rh-meta__item">
-                <span class="rh-meta__label">Personnes</span>
-                <span class="rh-meta__val"><%= recipe.servings %></span>
-              </div>
-              <% } %>
-              <div class="rh-meta__sep"></div>
-              <div class="rh-meta__item">
-                <span class="rh-meta__label">Difficulté</span>
-                <span class="rh-meta__val"><%= recipe.difficulty %></span>
-              </div>
-              <div class="rh-meta__sep"></div>
-              <div
-                class="rh-meta__item"
-                data-rating-container
-                data-current-rating="<%= averageQuote || 0 %>"
-                data-readonly="true"
-              >
-                <span class="rh-meta__label">Note</span>
-                <span class="rh-meta__val rh-meta__val--gold">
-                  <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" width="12" height="12"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <strong id="banner-rating-output" data-rating-output><%= averageQuote || 0 %></strong>/5
-                </span>
-              </div>
-            </div>
             <div class="rh-actions">
               <a href="#preparation" class="btn btn--red">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m5 11 4-7"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8c.9 0 1.8-.7 2-1.6l1.7-7.4"/><path d="m9 11 1 9"/><path d="M4.5 15.5h15"/><path d="m15 11-1 9"/></svg>
                 Voir la recette
               </a>
-              <button
-                class="btn-fav btn-fav--banner"
-                data-entity-id="<%= recipe.id %>"
-                data-entity-type="recipe"
-                data-is-favorite="<%= recipe.isFavorite || false %>"
-                aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-                title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-              </button>
-              <a href="#avis" class="btn btn--outline btn--sm">
+              <a href="#avis" class="btn btn--outline">
                 Donner mon avis
               </a>
             </div>
@@ -214,26 +185,59 @@
 
             <!-- Contexte ciné : image + auteur + description -->
             <div class="rd-context">
-              <!-- Image cliquable -->
+              <%
+                /* Photos complémentaires : positions 2 et 3 uniquement */
+                const extraPics = (recipePictures || []).filter(p => p.position >= 2).slice(0, 2);
+              %>
+
+              <% if (extraPics.length >= 2) { %>
+              <!-- Carousel CSS-only — 2 photos complémentaires -->
+              <div class="rd-media-carousel" aria-label="Photos complémentaires de la recette">
+                <div class="rd-media-carousel__track" id="rdmc-track">
+                  <% extraPics.forEach(function(pic, i) { %>
+                  <div class="rd-media-carousel__slide">
+                    <button
+                      type="button"
+                      class="rd-context__img-btn"
+                      data-lightbox-trigger
+                      data-lightbox-image="<%= pic.file_path %>"
+                      data-lightbox-alt="Photo <%= i + 2 %> — <%= recipe.name %>"
+                      aria-label="Voir la photo <%= i + 2 %> en plein écran"
+                    >
+                      <img src="<%= pic.file_path %>" alt="Photo <%= i + 2 %> de la recette <%= recipe.name %>" loading="lazy" />
+                      <span class="rd-context__zoom" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                      </span>
+                    </button>
+                  </div>
+                  <% }); %>
+                </div>
+                <div class="rd-media-carousel__dots" aria-hidden="true">
+                  <span class="rd-mc-dot rd-mc-dot--active"></span>
+                  <span class="rd-mc-dot"></span>
+                </div>
+              </div>
+
+              <% } else if (extraPics.length === 1) { %>
+              <!-- Photo complémentaire unique — affichage statique -->
               <div class="rd-context__media">
                 <button
                   type="button"
                   class="rd-context__img-btn"
                   data-lightbox-trigger
-                  data-lightbox-image="<%= recipeImage %>"
+                  data-lightbox-image="<%= extraPics[0].file_path %>"
                   data-lightbox-alt="Présentation de la recette <%= recipe.name %>"
                   aria-label="Voir l'image en plein écran"
                 >
-                  <img
-                    src="<%= recipeImage %>"
-                    alt="Présentation de la recette <%= recipe.name %>"
-                    loading="lazy"
-                  />
+                  <img src="<%= extraPics[0].file_path %>" alt="Présentation de la recette <%= recipe.name %>" loading="lazy" />
                   <span class="rd-context__zoom" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                   </span>
                 </button>
               </div>
+
+              <% } %>
+              <%/* Si aucune photo complémentaire : rd-context__media masqué (pas de rendu) */%>
 
               <!-- Colonne droite : auteur + description -->
               <div class="rd-context__aside">
@@ -286,13 +290,16 @@
                 <span class="rd-ib-val"><%= recipe.time %> min</span>
                 <span class="rd-ib-label">Temps</span>
               </div>
-              <% if (recipe.servings) { %>
-              <div class="rd-ib-item" role="listitem">
+              <% const displayServings = recipe.servings || 4; %>
+              <div class="rd-ib-item rd-ib-item--servings" role="listitem" data-base-servings="<%= displayServings %>">
                 <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span class="rd-ib-val"><%= recipe.servings %></span>
+                <div class="rd-ib-servings-ctrl">
+                  <button class="rd-srv-btn" id="rd-srv-minus" aria-label="Moins de portions">−</button>
+                  <span class="rd-ib-val" id="rd-srv-val"><%= displayServings %></span>
+                  <button class="rd-srv-btn" id="rd-srv-plus" aria-label="Plus de portions">+</button>
+                </div>
                 <span class="rd-ib-label">Personnes</span>
               </div>
-              <% } %>
               <div class="rd-ib-item" role="listitem">
                 <svg class="rd-ib-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
                 <span class="rd-ib-val"><%= recipe.difficulty %></span>
@@ -351,7 +358,6 @@
 
           <!-- ══ SECTION AVIS ══ -->
           <%
-            const totalAvis = notices ? notices.length : 0;
             const starCounts = [0,0,0,0,0];
             if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
             const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
@@ -579,12 +585,10 @@
                     <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
                   </div>
                 </div>
-                <% if (recipe.servings) { %>
                 <div class="rd-ing-portions">
                   <span class="rd-ing-portions__label">Pour</span>
-                  <span class="rd-ing-portions__val"><%= recipe.servings %> personne<%= recipe.servings > 1 ? 's' : '' %></span>
+                  <span class="rd-ing-portions__val" id="rd-ing-portions-val"><%= displayServings %> personne<%= displayServings > 1 ? 's' : '' %></span>
                 </div>
-                <% } %>
                 <div class="rd-ing-list">
                   <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
                   <% ingredientsBlocks.forEach((ingredient) => { %>
@@ -687,6 +691,75 @@
     <%- include("partials/footer") %>
 
     <script src="/js/recipe-detail.js" defer></script>
+
+    <% if (extraPics && extraPics.length >= 2) { %>
+    <script>
+      /* Carousel photos complémentaires — mise à jour des dots au scroll */
+      (function () {
+        const track = document.getElementById('rdmc-track');
+        const dots  = document.querySelectorAll('.rd-mc-dot');
+        if (!track || !dots.length) return;
+        track.addEventListener('scroll', function () {
+          const idx = Math.round(track.scrollLeft / track.offsetWidth);
+          dots.forEach(function (d, i) {
+            d.classList.toggle('rd-mc-dot--active', i === idx);
+          });
+        }, { passive: true });
+        /* Clic sur dot → scroll vers la slide correspondante */
+        dots.forEach(function (d, i) {
+          d.style.cursor = 'pointer';
+          d.addEventListener('click', function () {
+            track.scrollTo({ left: i * track.offsetWidth, behavior: 'smooth' });
+          });
+        });
+      })();
+    </script>
+    <% } %>
+
+    <!-- Ajusteur portions -->
+    <script>
+    (function () {
+      const BASE = <%= recipe.servings || 4 %>;
+      let current = BASE;
+      const btnMinus = document.getElementById('rd-srv-minus');
+      const btnPlus  = document.getElementById('rd-srv-plus');
+      const valEl    = document.getElementById('rd-srv-val');
+      const portEl   = document.getElementById('rd-ing-portions-val');
+
+      /* Stocker les textes originaux des ingrédients */
+      const ingEls = Array.from(document.querySelectorAll('.rd-ing-text'));
+      ingEls.forEach(el => { el.dataset.original = el.textContent; });
+
+      function fmtQty(n) {
+        /* Arrondi à 2 décimales, supprime le .0 inutile */
+        const r = Math.round(n * 100) / 100;
+        return r % 1 === 0 ? String(r) : String(r).replace('.', ',');
+      }
+
+      function updateIngredients() {
+        const ratio = current / BASE;
+        ingEls.forEach(el => {
+          /* Cherche un nombre (entier ou décimal ,/.) en début de texte ou après espace */
+          const txt = el.dataset.original;
+          const m = txt.match(/^(\d+(?:[.,]\d+)?)(.*)/);
+          if (m) {
+            const orig = parseFloat(m[1].replace(',', '.'));
+            el.textContent = fmtQty(orig * ratio) + m[2];
+          }
+        });
+      }
+
+      function updateDisplay() {
+        valEl.textContent = current;
+        if (portEl) portEl.textContent = current + ' personne' + (current > 1 ? 's' : '');
+        btnMinus.disabled = current <= 1;
+        updateIngredients();
+      }
+
+      btnMinus.addEventListener('click', () => { if (current > 1) { current--; updateDisplay(); } });
+      btnPlus.addEventListener('click',  () => { current++; updateDisplay(); });
+    })();
+    </script>
 
     <!-- Configuration pour les favoris -->
     <script>

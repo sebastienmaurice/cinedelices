@@ -440,9 +440,17 @@
 
               <% const rPics = (recipe.RecipePictures || []).slice().sort((a,b)=>a.position-b.position); %>
               <% if (rPics.length > 0) { %>
-              <div class="recipe-val-panel__img-wrap" style="display:flex;gap:6px;flex-wrap:wrap;">
+              <div class="recipe-val-panel__img-wrap" style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;">
                 <% rPics.forEach(function(pic) { %>
-                  <img src="<%= pic.file_path %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" style="flex:1;min-width:0;max-width:calc(33% - 4px);" data-lightbox-trigger data-lightbox-src="<%= pic.file_path %>" data-lightbox-alt="<%= recipe.name %>" />
+                <div style="position:relative;flex:1;min-width:0;max-width:calc(33% - 4px);">
+                  <img src="<%= pic.file_path %>" alt="<%= recipe.name %>" class="recipe-val-panel__img" style="width:100%;display:block;" data-lightbox-trigger data-lightbox-src="<%= pic.file_path %>" data-lightbox-alt="<%= recipe.name %>" />
+                  <span class="rpic-label" style="position:absolute;top:4px;left:4px;background:rgba(5,10,18,.75);color:rgba(232,232,232,.6);font-size:.42rem;font-weight:700;letter-spacing:.08em;padding:2px 6px;border-radius:4px;text-transform:uppercase;">Photo <%= pic.position %></span>
+                  <% if (pic.position >= 2 && pic.id) { %>
+                  <form action="/admin/recipe-pictures/<%= pic.id %>/delete" method="POST" style="position:absolute;top:4px;right:4px;" onsubmit="return confirm('Supprimer cette photo complémentaire ?')">
+                    <button type="submit" title="Refuser cette photo" style="background:rgba(180,30,20,.82);border:none;border-radius:4px;padding:3px 7px;color:#fff;font-size:.55rem;font-weight:700;cursor:pointer;line-height:1.2;">✕ Refuser</button>
+                  </form>
+                  <% } %>
+                </div>
                 <% }) %>
               </div>
               <% } else if (recipe.picture) { %>
