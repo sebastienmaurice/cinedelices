@@ -6,6 +6,8 @@ import {
   UsersRecipes,
   RecipePicture,
 } from "../models/index.model.js";
+import { checkAndAwardSignatureBadges } from "../services/badgeService.js";
+import * as argon2 from "argon2";
 import { Op } from "sequelize";
 import {
   enrichMovieWithImagePaths,
@@ -13,6 +15,7 @@ import {
 } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
+import { logAdminAction } from "../utils/admin-logger.js";
 import searchCache from "../utils/search-cache.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import fs from "fs";
@@ -51,6 +54,8 @@ const adminController = {
         validatedMovies,
         validatedRecipes,
         validatedNotices,
+        pendingRecipePictures,
+        pendingRecipePicturesCount,
       } = await loadAdminData();
       const pendingProfilePhotos = users.filter(
         (user) => user.pending_picture && user.picture_status === "pending"
@@ -75,6 +80,8 @@ const adminController = {
         validatedMovies,
         validatedRecipes,
         validatedNotices,
+        pendingRecipePictures,
+        pendingRecipePicturesCount,
         success: req.query.success,
       });
     } catch (error) {
@@ -701,6 +708,17 @@ const adminController = {
       // Mise à jour en BDD : status → 'approved' + horodatage validated_at
       await Recipe.update(updateData, { where: { id: recipeId } });
 
+      // Badges signature : vérifier si le film associé débloque un badge
+      const recipe = await Recipe.findByPk(recipeId, {
+        include: [{ model: Movie, as: undefined, attributes: ["slug"] }],
+      });
+      if (recipe?.id_user && recipe?.Movie?.slug) {
+        checkAndAwardSignatureBadges(recipe.id_user, recipe.Movie.slug).catch(
+          (err) => console.error("[validateRecipe] badges:", err)
+        );
+      }
+
+      logAdminAction({ adminId: req.userId, action: "approve_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
@@ -808,6 +826,7 @@ const adminController = {
       // Marquer la recette comme refusée (status: 'rejected') sans la supprimer
       await Recipe.update({ status: "rejected" }, { where: { id: recipeId } });
 
+      logAdminAction({ adminId: req.userId, action: "reject_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {
       return renderServerError(res, error, "Erreur lors du refus de la recette");
@@ -841,6 +860,9 @@ const adminController = {
 
   //! Supprimer un utilisateur
   async deleteUser(req, res) {
+    if (req.userRole !== "superadmin") {
+      return res.status(403).json({ error: "Permission insuffisante" });
+    }
     try {
       const userId = req.params.id;
 
@@ -848,6 +870,9 @@ const adminController = {
       const user = await User.findByPk(userId);
       if (!user) {
         return renderNotFound(res, "Utilisateur");
+      }
+      if (user.role === "superadmin") {
+        return res.status(403).json({ error: "Impossible de supprimer un super administrateur." });
       }
 
       // Suppression en cascade des données associées (ordre important)
@@ -858,6 +883,7 @@ const adminController = {
       // 3. Enfin, supprimer l'utilisateur lui-même
       await User.destroy({ where: { id: userId } });
 
+      logAdminAction({ adminId: req.userId, action: "delete_user", targetType: "user", targetId: userId, detail: user.pseudo });
       res.redirect("/admin?success=user_deleted");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
@@ -883,6 +909,7 @@ const adminController = {
         { picture: user.pending_picture, pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
       );
+      logAdminAction({ adminId: req.userId, action: "approve_user_photo", targetType: "user", targetId: userId });
       res.redirect("/admin?success=user_photo_approved");
     } catch (error) {
       return renderServerError(
@@ -905,6 +932,7 @@ const adminController = {
         { pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
       );
+      logAdminAction({ adminId: req.userId, action: "reject_user_photo", targetType: "user", targetId: userId });
       res.redirect("/admin?success=user_photo_rejected");
     } catch (error) {
       return renderServerError(
@@ -922,6 +950,7 @@ const adminController = {
         { banner_status: "approved" },
         { where: { id: userId } }
       );
+      logAdminAction({ adminId: req.userId, action: "approve_user_banner", targetType: "user", targetId: userId });
       res.redirect("/admin?success=user_banner_approved");
     } catch (error) {
       return renderServerError(
@@ -946,6 +975,7 @@ const adminController = {
         { banner_image: null, banner_status: "rejected" },
         { where: { id: userId } }
       );
+      logAdminAction({ adminId: req.userId, action: "reject_user_banner", targetType: "user", targetId: userId });
       res.redirect("/admin?success=user_banner_rejected");
     } catch (error) {
       return renderServerError(
@@ -960,6 +990,7 @@ const adminController = {
     try {
       const noticeId = parseInt(req.params.id, 10);
       await Notice.update({ status: "approved", validated_at: new Date() }, { where: { id: noticeId } });
+      logAdminAction({ adminId: req.userId, action: "approve_notice", targetType: "notice", targetId: noticeId });
       res.redirect("/admin?success=notice_validated");
     } catch (error) {
       return renderServerError(
@@ -975,6 +1006,7 @@ const adminController = {
       const noticeId = parseInt(req.params.id, 10);
       // Marquer l'avis comme refusé (status: 'rejected') sans le supprimer
       await Notice.update({ status: "rejected" }, { where: { id: noticeId } });
+      logAdminAction({ adminId: req.userId, action: "reject_notice", targetType: "notice", targetId: noticeId });
       res.redirect("/admin?success=notice_rejected");
     } catch (error) {
       return renderServerError(
@@ -1007,6 +1039,7 @@ const adminController = {
       unlinkIfExists(movie.picture);
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
+      logAdminAction({ adminId: req.userId, action: "delete_movie_direct", targetType: "movie", targetId: movieId, detail: movie.title });
       return res.redirect("/admin?success=admin_movie_deleted");
     } catch (error) {
       return res.redirect("/admin?success=admin_movie_delete_error");
@@ -1152,25 +1185,45 @@ const adminController = {
         description,
         category,
         time,
+        servings,
         difficulty,
         ingredients,
         preparation,
       } = req.body;
       const updateData = {};
 
-      if (name) updateData.name = name.trim();
+      if (name) {
+        const trimmedName = name.trim();
+        if (!trimmedName) return res.redirect("/admin?success=admin_recipe_update_error");
+        updateData.name = trimmedName;
+      }
       if (description) updateData.description = description.trim();
       if (category) updateData.category = category.trim();
-      if (time) {
+      if (time !== undefined && time !== "") {
         const timeValue = parseInt(time, 10);
-        if (Number.isNaN(timeValue) || timeValue < 1) {
+        if (Number.isNaN(timeValue) || timeValue < 0) {
           return res.redirect("/admin?success=admin_recipe_update_error");
         }
         updateData.time = timeValue;
       }
+      if (servings !== undefined && servings !== "") {
+        const servingsValue = parseInt(servings, 10);
+        if (Number.isNaN(servingsValue) || servingsValue < 1) {
+          return res.redirect("/admin?success=admin_recipe_update_error");
+        }
+        updateData.servings = servingsValue;
+      }
       if (difficulty) updateData.difficulty = difficulty.trim();
-      if (ingredients) updateData.ingredients = ingredients.trim();
-      if (preparation) updateData.preparation = preparation.trim();
+      if (ingredients) {
+        const trimmedIng = ingredients.trim();
+        if (!trimmedIng) return res.redirect("/admin?success=admin_recipe_update_error");
+        updateData.ingredients = trimmedIng;
+      }
+      if (preparation) {
+        const trimmedPrep = preparation.trim();
+        if (!trimmedPrep) return res.redirect("/admin?success=admin_recipe_update_error");
+        updateData.preparation = trimmedPrep;
+      }
 
       // Photo uploadée par l'admin — supprime l'ancienne si elle existe
       if (req.file) {
@@ -1186,7 +1239,9 @@ const adminController = {
         return res.redirect("/admin?success=admin_recipe_update_error");
       }
 
+      // Le status n'est jamais modifié — une recette approuvée reste approuvée
       await Recipe.update(updateData, { where: { id: recipeId } });
+      logAdminAction({ adminId: req.userId, action: "edit_recipe", targetType: "recipe", targetId: recipeId });
       return res.redirect("/admin?success=admin_recipe_updated");
     } catch (error) {
       return res.redirect("/admin?success=admin_recipe_update_error");
@@ -1225,6 +1280,360 @@ const adminController = {
       return res.redirect("/admin?success=admin_notice_updated");
     } catch (error) {
       return res.redirect("/admin?success=admin_notice_update_error");
+    }
+  },
+
+  // POST /admin/recipe-pictures/:id/approve
+  async approveRecipePicture(req, res) {
+    try {
+      const pictureId = parseInt(req.params.id, 10);
+      if (!pictureId || Number.isNaN(pictureId)) {
+        return res.redirect("/admin?success=recipe_picture_not_found");
+      }
+
+      const pic = await RecipePicture.findByPk(pictureId);
+      if (!pic) return res.redirect("/admin?success=recipe_picture_not_found");
+
+      await RecipePicture.update(
+        { status: "approved", approved_at: new Date() },
+        { where: { id: pictureId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "approve_recipe_picture", targetType: "photo", targetId: pictureId });
+      return res.redirect("/admin?success=recipe_picture_approved");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de l'approbation de la photo.");
+    }
+  },
+
+  // POST /admin/movies/:id/hide
+  async hideMovie(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=admin_movie_hide_error");
+      }
+
+      await Movie.update({ hidden: true }, { where: { id: movieId } });
+      searchCache.clear();
+      logAdminAction({ adminId: req.userId, action: "hide_movie", targetType: "movie", targetId: movieId });
+      return res.redirect("/admin?success=admin_movie_hidden");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors du masquage du film.");
+    }
+  },
+
+  // POST /admin/movies/:id/unhide
+  async unhideMovie(req, res) {
+    try {
+      const movieId = parseInt(req.params.id, 10);
+      if (!movieId || Number.isNaN(movieId)) {
+        return res.redirect("/admin?success=admin_movie_unhide_error");
+      }
+
+      await Movie.update({ hidden: false }, { where: { id: movieId } });
+      searchCache.clear();
+      logAdminAction({ adminId: req.userId, action: "unhide_movie", targetType: "movie", targetId: movieId });
+      return res.redirect("/admin?success=admin_movie_unhidden");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la remise en ligne du film.");
+    }
+  },
+
+  // POST /admin/users/:id/suspend
+  async suspendUser(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(400).json({ success: false, message: "ID invalide." });
+      }
+
+      // Un superadmin ne peut pas être suspendu
+      const target = await User.findByPk(userId, { attributes: ["id", "role"] });
+      if (!target) return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
+      if (target.role === "superadmin") {
+        return res.status(403).json({ success: false, message: "Impossible de suspendre un super administrateur." });
+      }
+
+      const { reason, days } = req.body;
+      const suspendedUntil = days
+        ? new Date(Date.now() + parseInt(days, 10) * 24 * 60 * 60 * 1000)
+        : null;
+
+      await User.update(
+        {
+          suspended: true,
+          suspended_until: suspendedUntil,
+          suspension_reason: reason || null,
+        },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "suspend_user", targetType: "user", targetId: userId, detail: reason || null });
+      return res.redirect("/admin?success=user_suspended");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la suspension de l'utilisateur.");
+    }
+  },
+
+  // POST /admin/users/:id/unsuspend
+  async unsuspendUser(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || Number.isNaN(userId)) {
+        return res.redirect("/admin?success=user_unsuspend_error");
+      }
+
+      await User.update(
+        { suspended: false, suspended_until: null, suspension_reason: null },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "unsuspend_user", targetType: "user", targetId: userId });
+      return res.redirect("/admin?success=user_unsuspended");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la levée de suspension.");
+    }
+  },
+
+  // POST /admin/users/create — JSON
+  async createUser(req, res) {
+    if (req.userRole !== "superadmin") {
+      return res.status(403).json({ error: "Permission insuffisante" });
+    }
+    try {
+      const { pseudo, email, password, role } = req.body;
+      if (!pseudo?.trim() || !email?.trim() || !password) {
+        return res.json({ success: false, message: "Champs obligatoires manquants." });
+      }
+      if (password.length < 8) {
+        return res.json({ success: false, message: "Le mot de passe doit contenir au moins 8 caractères." });
+      }
+      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+      const userRole = ALLOWED_ROLES.includes(role) ? role : "user";
+
+      const existing = await User.findOne({
+        where: { [Op.or]: [{ email: email.trim().toLowerCase() }, { pseudo: pseudo.trim() }] },
+      });
+      if (existing) return res.json({ success: false, message: "Email ou pseudo déjà utilisé." });
+
+      const hash = await argon2.hash(password);
+      const newUser = await User.create({
+        first_name: pseudo.trim(),
+        last_name: "",
+        pseudo: pseudo.trim(),
+        email: email.trim().toLowerCase(),
+        password: hash,
+        role: userRole,
+      });
+
+      logAdminAction({ adminId: req.userId, action: "create_user", targetType: "user", targetId: newUser.id, detail: `${pseudo.trim()} (${userRole})` });
+      return res.json({ success: true, userId: newUser.id });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/users/:id/edit — JSON
+  async editUser(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || Number.isNaN(userId)) return res.json({ success: false, message: "ID invalide." });
+
+      const user = await User.findByPk(userId);
+      if (!user) return res.json({ success: false, message: "Utilisateur introuvable." });
+
+      const { pseudo, email, password, role } = req.body;
+      const updateData = {};
+
+      if (pseudo?.trim()) updateData.pseudo = pseudo.trim();
+      if (email?.trim()) {
+        const emailLower = email.trim().toLowerCase();
+        const conflict = await User.findOne({ where: { email: emailLower, id: { [Op.ne]: userId } } });
+        if (conflict) return res.json({ success: false, message: "Email déjà utilisé." });
+        updateData.email = emailLower;
+      }
+      if (password) {
+        if (password.length < 8) return res.json({ success: false, message: "Le mot de passe doit contenir au moins 8 caractères." });
+        updateData.password = await argon2.hash(password);
+      }
+      if (role) {
+        const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+        if (ALLOWED_ROLES.includes(role)) updateData.role = role;
+      }
+
+      if (Object.keys(updateData).length === 0) return res.json({ success: false, message: "Aucune modification." });
+
+      await User.update(updateData, { where: { id: userId } });
+      logAdminAction({ adminId: req.userId, action: "edit_user", targetType: "user", targetId: userId });
+      return res.json({ success: true });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/users/:id/role — JSON
+  async changeUserRole(req, res) {
+    if (req.userRole !== "superadmin") {
+      return res.status(403).json({ error: "Permission insuffisante" });
+    }
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || Number.isNaN(userId)) return res.json({ success: false, message: "ID invalide." });
+
+      const { role } = req.body;
+      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+      if (!ALLOWED_ROLES.includes(role)) return res.json({ success: false, message: "Rôle invalide." });
+
+      await User.update({ role }, { where: { id: userId } });
+      logAdminAction({ adminId: req.userId, action: "change_role", targetType: "user", targetId: userId, detail: role });
+      return res.json({ success: true });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // GET /admin/recipes/:id/pictures — JSON
+  async getRecipePictures(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) return res.json({ success: false });
+
+      const pictures = await RecipePicture.findAll({
+        where: { recipe_id: recipeId },
+        order: [["position", "ASC"]],
+      });
+      return res.json({ success: true, pictures });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/recipes/:id/pictures/add — JSON, multer single "picture"
+  async addRecipePicture(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      if (!recipeId || Number.isNaN(recipeId)) {
+        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        return res.json({ success: false, message: "ID invalide" });
+      }
+
+      const count = await RecipePicture.count({ where: { recipe_id: recipeId } });
+      if (count >= 3) {
+        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        return res.json({ success: false, message: "Limite de 3 photos atteinte" });
+      }
+
+      if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
+
+      const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId } });
+      const nextPosition = (maxPos || 0) + 1;
+
+      const pic = await RecipePicture.create({
+        recipe_id: recipeId,
+        file_path: `/images/recipes/${req.file.filename}`,
+        position: nextPosition,
+        status: "approved",
+        approved_at: new Date(),
+        created_at: new Date(),
+      });
+
+      logAdminAction({ adminId: req.userId, action: "add_recipe_picture", targetType: "photo", targetId: pic.id, detail: `recipe #${recipeId}` });
+      return res.json({ success: true, picture: pic });
+    } catch (error) {
+      if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/recipe-pictures/:id/delete-json — JSON
+  async deleteRecipePictureJson(req, res) {
+    try {
+      const pictureId = parseInt(req.params.id, 10);
+      if (!pictureId || Number.isNaN(pictureId)) return res.json({ success: false });
+
+      const pic = await RecipePicture.findByPk(pictureId);
+      if (!pic) return res.json({ success: false, message: "Photo introuvable" });
+      if (pic.position < 2) return res.json({ success: false, message: "La photo principale ne peut pas être supprimée ici" });
+
+      unlinkIfExists(pic.file_path);
+      await RecipePicture.destroy({ where: { id: pictureId } });
+      logAdminAction({ adminId: req.userId, action: "delete_recipe_picture", targetType: "photo", targetId: pictureId });
+      return res.json({ success: true });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/recipe-pictures/:id/approve-json — JSON
+  async approveRecipePictureJson(req, res) {
+    try {
+      const pictureId = parseInt(req.params.id, 10);
+      if (!pictureId || Number.isNaN(pictureId)) return res.json({ success: false });
+
+      const pic = await RecipePicture.findByPk(pictureId);
+      if (!pic) return res.json({ success: false, message: "Photo introuvable" });
+
+      await RecipePicture.update(
+        { status: "approved", approved_at: new Date() },
+        { where: { id: pictureId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "approve_recipe_picture", targetType: "photo", targetId: pictureId });
+      return res.json({ success: true });
+    } catch (error) {
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // POST /admin/recipe-pictures/:id/replace — JSON, multer single "picture"
+  async replaceRecipePicture(req, res) {
+    try {
+      const pictureId = parseInt(req.params.id, 10);
+      if (!pictureId || Number.isNaN(pictureId)) {
+        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        return res.json({ success: false, message: "ID invalide" });
+      }
+
+      const pic = await RecipePicture.findByPk(pictureId);
+      if (!pic) {
+        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        return res.json({ success: false, message: "Photo introuvable" });
+      }
+      if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
+
+      unlinkIfExists(pic.file_path);
+      const newPath = `/images/recipes/${req.file.filename}`;
+      await RecipePicture.update(
+        { file_path: newPath, status: "approved", approved_at: new Date() },
+        { where: { id: pictureId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "replace_recipe_picture", targetType: "photo", targetId: pictureId });
+      return res.json({ success: true, file_path: newPath });
+    } catch (error) {
+      if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+      return res.json({ success: false, message: error.message });
+    }
+  },
+
+  // GET /admin/logs
+  async getAdminLogs(req, res) {
+    if (req.userRole !== "superadmin") {
+      return res.status(403).json({ error: "Permission insuffisante" });
+    }
+    try {
+      const { QueryTypes } = await import("sequelize");
+      const sequelize = (await import("../database/sequelize-client.js")).default;
+
+      const logs = await sequelize.query(
+        `SELECT al.id, al.action, al.target_type, al.target_id, al.detail, al.created_at,
+                u.pseudo AS admin_pseudo
+         FROM admin_logs al
+         LEFT JOIN users u ON u.id = al.admin_id
+         ORDER BY al.created_at DESC
+         LIMIT 200`,
+        { type: QueryTypes.SELECT }
+      );
+
+      return res.json({ success: true, logs });
+    } catch (error) {
+      return renderServerError(res, error, "Erreur lors de la récupération des logs.");
     }
   },
 };

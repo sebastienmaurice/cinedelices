@@ -297,9 +297,9 @@ body.profile-page main {
     #d4a843 80%,
     #b8882a 100%
   );
-  /* anneau 3 px au bord extérieur de l'élément (r_max = 75px) */
-  mask: radial-gradient(circle at 50% 50%, transparent 71px, black 72px);
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 71px, black 72px);
+  /* anneau ~12 px au bord extérieur de l'élément (r_max = 75px) */
+  mask: radial-gradient(circle at 50% 50%, transparent 62px, black 63px);
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 62px, black 63px);
   filter: drop-shadow(0 0 10px rgba(184, 136, 42, 0.38));
   z-index: 2;
 }
@@ -4209,4 +4209,52 @@ body.profile-page main {
   .lr-btn { padding: 0 8px; }
   .crea-search-wrap { min-width: 120px; }
   .pf-row { flex-direction: column; }
+}
+
+/* ── Badges Signature ── */
+.sig-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  padding: 4px 0 8px;
+}
+.sig-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(196,160,82,.15);
+  background: rgba(196,160,82,.04);
+  position: relative;
+  transition: border-color .2s, background .2s;
+  cursor: default;
+}
+.sig-badge--unlocked {
+  border-color: rgba(196,160,82,.45);
+  background: rgba(196,160,82,.1);
+}
+.sig-badge--unlocked:hover {
+  background: rgba(196,160,82,.16);
+  border-color: rgba(196,160,82,.65);
+}
+.sig-badge__icon { font-size: 1.5rem; line-height: 1; }
+.sig-badge--locked .sig-badge__icon { filter: grayscale(1); opacity: .35; }
+.sig-badge__label {
+  font-size: .52rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: rgba(232,232,232,.45);
+  text-align: center;
+  line-height: 1.2;
+}
+.sig-badge--unlocked .sig-badge__label { color: rgba(196,160,82,.85); }
+.sig-badge__lock {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: .6rem;
+  opacity: .35;
 }

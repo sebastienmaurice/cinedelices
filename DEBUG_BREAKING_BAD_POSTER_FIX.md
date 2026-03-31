@@ -17,6 +17,7 @@
 ## 📋 Code Affecté
 
 ### ❌ AVANT :
+
 ```javascript
 // app/controllers/add-recipes-movies.controllers.js:346-354
 if (!movie) {
@@ -35,6 +36,7 @@ if (!movie) {
 ```
 
 ### ✅ APRÈS :
+
 ```javascript
 if (!movie) {
   // ... validations ...
@@ -63,6 +65,7 @@ if (!movie) {
 ## 🔍 Analyse Comparative
 
 **Route 1 : Créer un film seul** (`/add-recipes-movies/movie` - POST)
+
 ```javascript
 async addMovie(req, res) {
   const { title, year, genre, synopsis, tmdb_id, type } = req.body;
@@ -77,6 +80,7 @@ async addMovie(req, res) {
 ```
 
 **Route 2 : Créer film + recette** (`/add-recipes-movies/movie-and-recipe` - POST)
+
 ```javascript
 async addMovieAndRecipe(req, res) {
   // ... code ...
@@ -104,11 +108,13 @@ async addMovieAndRecipe(req, res) {
 ## 💥 Impact
 
 **Films affectés** : Tous les films TMDB créés via le formulaire unifié `film + recette`:
+
 - Breaking Bad ✓
 - Ratatouille ✗ (lui, créé via `/movies/get-tmdb-info/`)
 - Et tout nouveau film créé via ce formulaire
 
 **Conséquence** :
+
 - Film créé ✓
 - Status = 'approved' ✓
 - tmdb_id enregistré ✓
@@ -122,6 +128,7 @@ async addMovieAndRecipe(req, res) {
 **Commit** : `fix: download TMDB poster when creating movie with recipe`
 
 **Changements** :
+
 1. ✅ Appeler `downloadTmdbPoster()` avant `Movie.create()`
 2. ✅ Passer `req.body.type` (film ou série) au downloader
 3. ✅ Sauvegarder `picturePath` dans la BD
@@ -132,13 +139,13 @@ async addMovieAndRecipe(req, res) {
 
 ## 📊 État Après Correction
 
-| Aspect | Avant | Après |
-|--------|-------|-------|
-| Créer film seul | ✅ Affiche OK | ✅ Idem |
+| Aspect               | Avant            | Après             |
+| -------------------- | ---------------- | ----------------- |
+| Créer film seul      | ✅ Affiche OK    | ✅ Idem           |
 | Créer film + recette | ❌ Pas d'affiche | ✅ **Affiche OK** |
-| Affiche sur /movies | ❌ Manquante | ✅ **Visible** |
-| TMDB API appelée | ✗ | ✅ |
-| Dossier crée | ✗ | ✅ |
+| Affiche sur /movies  | ❌ Manquante     | ✅ **Visible**    |
+| TMDB API appelée     | ✗                | ✅                |
+| Dossier crée         | ✗                | ✅                |
 
 ---
 
@@ -151,6 +158,7 @@ async addMovieAndRecipe(req, res) {
 2. **Vérifier les autres films** TMDB créés du même formulaire
 
 3. **Ajouter logging** pour déboguer les futurs problèmes de téléc :
+
    ```javascript
    console.log(`📥 Téléchargement affiche: ${title} (TMDB: ${tmdb_id})`);
    ```
@@ -168,4 +176,3 @@ async addMovieAndRecipe(req, res) {
 - [x] Documenter pour future référence
 - [ ] Tester sur Breaking Bad (attendre que recette soit approuvée)
 - [ ] Vérifier autres films TMDB de ce formulaire
-

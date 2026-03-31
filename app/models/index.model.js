@@ -9,6 +9,8 @@ import Favorite from './favorite.model.js';
 import Rating from './rating.model.js';
 import UserPoints from './UserPoints.model.js';
 import RecipePicture from './RecipePicture.model.js';
+import SignatureBadge from './SignatureBadge.model.js';
+import UserSignatureBadge from './UserSignatureBadge.model.js';
 
 
 // Définition des relations entre les modèles
@@ -64,12 +66,18 @@ Rating.belongsTo(User, { foreignKey: 'id_user' });
 UserPoints.belongsTo(User, { foreignKey: 'id_user' });
 User.hasOne(UserPoints, { foreignKey: 'id_user' });
 
+// Relations badges signature
+UserSignatureBadge.belongsTo(User, { foreignKey: 'id_user' });
+UserSignatureBadge.belongsTo(SignatureBadge, { foreignKey: 'id_badge', as: 'badge' });
+User.hasMany(UserSignatureBadge, { foreignKey: 'id_user' });
+SignatureBadge.hasMany(UserSignatureBadge, { foreignKey: 'id_badge' });
+
 // Relations photos de recettes (multi-photos)
 Recipe.hasMany(RecipePicture, { foreignKey: 'recipe_id', as: 'RecipePictures' });
 RecipePicture.belongsTo(Recipe, { foreignKey: 'recipe_id' });
 
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, SignatureBadge, UserSignatureBadge };
 
 
 

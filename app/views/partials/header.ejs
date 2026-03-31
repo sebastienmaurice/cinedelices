@@ -18,7 +18,7 @@
       <a href="/movies" class="nav-link">Films</a>
       <a href="/recipes-movie/" class="nav-link">Recettes</a>
       <a href="/contact-about/" class="nav-link">Contact</a>
-      <% if (role === "admin" || role === "super_admin") { %>
+      <% if (role === "admin" || role === "superadmin" || role === "super_admin") { %>
       <a href="/admin/" class="nav-link nav-link--admin" target="_blank" rel="noopener">Admin</a>
       <% } %>
     </nav>
@@ -76,11 +76,14 @@
           aria-expanded="false"
           aria-haspopup="true"
           title="Mon compte"
+          data-nav-avatar="<%= navAvatar || '/images/image-default-profile.jpg' %>"
         >
-          <% if (typeof navFrameUrl !== 'undefined' && navFrameUrl) { %>
+          <% if (typeof navAvatar !== 'undefined' && navAvatar) { %>
           <div class="nav-badge-static" aria-hidden="true">
-            <img class="nav-badge-static__photo" src="<%= navAvatar || '/images/image-default-profile.jpg' %>" alt="" />
+            <img class="nav-badge-static__photo" src="<%= navAvatar %>" alt="" />
+            <% if (typeof navFrameUrl !== 'undefined' && navFrameUrl) { %>
             <img class="nav-badge-static__frame" src="<%= navFrameUrl %>" alt="" />
+            <% } %>
           </div>
           <% } else { %>
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -136,7 +139,7 @@
       <a href="/movies" class="mobile-drawer__link">Films</a>
       <a href="/recipes-movie/" class="mobile-drawer__link">Recettes</a>
       <a href="/contact-about/" class="mobile-drawer__link">Contact</a>
-      <% if (role === "admin" || role === "super_admin") { %>
+      <% if (role === "admin" || role === "superadmin" || role === "super_admin") { %>
       <a href="/admin/" class="mobile-drawer__link mobile-drawer__link--admin">Admin</a>
       <% } %>
       <% if (typeof role !== "undefined") { %>
@@ -188,6 +191,7 @@
     <!-- ===== Connexion ===== -->
     <div id="loginForm" class="auth-form active">
       <h2>Connexion</h2>
+      <p id="loginModalHint" class="auth-form__hint" style="display:none"></p>
       <form method="POST" action="/auth/login">
         <input name="pseudo" placeholder="Pseudo ou adresse e-mail" required />
         <input
@@ -392,22 +396,26 @@
     if (e.key === "Escape" && searchOverlay?.classList.contains("is-open")) closeSearch();
   });
 
-  /* ── Boutons js-open-login / js-open-register ── */
-  document.querySelectorAll(".js-open-login").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+  /* ── Boutons js-open-login / js-open-register (délégation globale) ── */
+  document.addEventListener("click", (e) => {
+    const loginBtn    = e.target.closest(".js-open-login");
+    const registerBtn = e.target.closest(".js-open-register");
+    if (loginBtn) {
       e.preventDefault();
       authDropdown?.closeDropdown();
       closeDrawer();
+      const hint    = loginBtn.dataset.loginHint || "";
+      const hintEl  = document.getElementById("loginModalHint");
+      if (hintEl) { hintEl.textContent = hint; hintEl.style.display = hint ? "" : "none"; }
       if (typeof openModal === "function") openModal("login");
-    });
-  });
-  document.querySelectorAll(".js-open-register").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+    } else if (registerBtn) {
       e.preventDefault();
       authDropdown?.closeDropdown();
       closeDrawer();
+      const hintEl = document.getElementById("loginModalHint");
+      if (hintEl) { hintEl.style.display = "none"; }
       if (typeof openModal === "function") openModal("register");
-    });
+    }
   });
 })();
 </script>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Badges — Ciné Délices</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════════
+   DESIGN TOKENS — Ciné Délices
+══════════════════════════════════════════ */
+:root {
+  --argent:    #e8e8e8;
+  --or-titre:  #C4A052;
+  --rouge-gradient-full: linear-gradient(135deg, #8C1C13 0%, #C23018 45%, #E84020 75%, #C23018 100%);
+  --violet-gradient:     linear-gradient(135deg, #2a1850 0%, #4a2e80 45%, #6b4fa0 100%);
+  --f-display: 'Bebas Neue', cursive;
+  --f-title:   'Cinzel', serif;
+  --f-body:    'Lato', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ══════════════════════════════════════════
+   SCÈNE
+══════════════════════════════════════════ */
+body {
+  background: radial-gradient(ellipse at 50% 55%, #0d1d2e 0%, #060c14 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.8rem;
+  padding: 3rem 2rem;
+  font-family: var(--f-body);
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.divider {
+  width: 320px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,160,82,.12), transparent);
+}
+
+/* ══════════════════════════════════════════
+   BADGE — base (h 48 px)
+══════════════════════════════════════════ */
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  border-radius: 999px;
+  padding: 0 16px 0 6px;
+  overflow: hidden;
+  cursor: default;
+  transition: transform .25s ease, box-shadow .3s ease;
+}
+.badge:hover { transform: translateY(-2px); }
+.badge::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── avatar ── */
+.badge .av { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; position: relative; z-index: 2; }
+.badge .av img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block; }
+
+/* ── texte stack ── */
+.badge .info { display: flex; flex-direction: column; gap: 3px; min-width: 0; z-index: 2; }
+.badge .pseudo {
+  font-family: var(--f-title);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--argent);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   BADGE — small (110 × 30 px)
+══════════════════════════════════════════ */
+.badge--sm {
+  height: 30px;
+  width: 110px;
+  gap: 5px;
+  padding: 0 10px 0 4px;
+}
+.badge--sm .av,
+.badge--sm .av img { width: 22px; height: 22px; }
+.badge--sm .info { gap: 2px; }
+.badge--sm .pseudo { font-size: 0.44rem; letter-spacing: 0.3px; }
+.badge--sm .pill { font-size: 0.25rem; letter-spacing: 0.8px; padding: 1px 5px; }
+.badge--sm .pill-dot { width: 3px; height: 3px; }
+
+/* ══════════════════════════════════════════
+   PILL
+══════════════════════════════════════════ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--f-title);
+  font-size: 0.38rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.pill-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+
+/* pill bleu */
+.pill--bleu {
+  background: linear-gradient(135deg, #0a2540 0%, #0e3a5e 45%, #1560a0 100%);
+  border: 1px solid rgba(60, 140, 200, .55);
+  color: rgba(160, 215, 255, .95);
+  box-shadow: 0 0 8px rgba(30,100,180,.35), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.pill--bleu .pill-dot { background: rgba(140,200,255,.75); }
+
+/* pill rose */
+.pill--rose {
+  background: linear-gradient(135deg, #2a0820 0%, #4a1438 45%, #7a2460 100%);
+  border: 1px solid rgba(180, 80, 148, .55);
+  color: rgba(255, 185, 230, .95);
+  box-shadow: 0 0 8px rgba(180,80,148,.3), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.pill--rose .pill-dot { background: rgba(255,170,220,.75); }
+
+/* ══════════════════════════════════════════
+   BADGE ADMIN — bleu nuit
+══════════════════════════════════════════ */
+.badge--admin {
+  background: rgba(8, 28, 46, .58);
+  box-shadow:
+    0 0 0 1.5px rgba(60,140,200,.35),
+    0 0 0 3px   rgba(60,140,200,.06),
+    0 6px 28px  rgba(60,140,200,.18),
+    0 2px 8px   rgba(0,0,0,.65);
+}
+.badge--admin:hover {
+  box-shadow:
+    0 0 0 1.5px rgba(60,140,200,.6),
+    0 0 0 4px   rgba(60,140,200,.1),
+    0 10px 36px rgba(60,140,200,.28),
+    0 2px 8px   rgba(0,0,0,.7);
+}
+.badge--admin .pseudo { color: rgba(115,185,240,.92); }
+.badge--admin .av img {
+  box-shadow: 0 0 0 1.5px rgba(60,140,200,.7), 0 0 10px rgba(60,140,200,.35);
+}
+
+/* ══════════════════════════════════════════
+   BADGE MEMBRE — prune
+══════════════════════════════════════════ */
+.badge--membre {
+  background: rgba(38, 14, 32, .62);
+  box-shadow:
+    0 0 0 1.5px rgba(180,80,148,.38),
+    0 0 0 3px   rgba(180,80,148,.07),
+    0 6px 28px  rgba(180,80,148,.18),
+    0 2px 8px   rgba(0,0,0,.6);
+}
+.badge--membre:hover {
+  box-shadow:
+    0 0 0 1.5px rgba(180,80,148,.65),
+    0 0 0 4px   rgba(180,80,148,.12),
+    0 10px 36px rgba(180,80,148,.28),
+    0 2px 8px   rgba(0,0,0,.7);
+}
+.badge--membre .pseudo { color: rgba(218,130,190,.92); }
+.badge--membre .av img {
+  box-shadow: 0 0 0 1.5px rgba(180,80,148,.7), 0 0 10px rgba(180,80,148,.38);
+}
+
+/* ══════════════════════════════════════════
+   WRAPPER + LABELS
+══════════════════════════════════════════ */
+.wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.caption {
+  font-family: var(--f-display);
+  font-size: 0.72rem;
+  letter-spacing: 3.5px;
+  color: rgba(196,160,82,.28);
+  text-transform: uppercase;
+}
+
+.dim {
+  font-family: var(--f-body);
+  font-size: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 1.6px;
+  color: rgba(196,160,82,.18);
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+</style>
+</head>
+<body>
+
+  <!-- ══ ROW 1 — h 48 px ══ -->
+  <div class="row">
+
+    <div class="wrap">
+      <div class="badge badge--admin">
+        <div class="av"><img src="https://i.pravatar.cc/72?img=59" alt="Seb le Fourbe"></div>
+        <div class="info">
+          <span class="pseudo">Seb le Fourbe</span>
+          <span class="pill pill--bleu"><span class="pill-dot"></span>Ciné Délices</span>
+        </div>
+      </div>
+      <span class="caption">Admin</span>
+      <span class="dim">h 48 px</span>
+    </div>
+
+    <div class="wrap">
+      <div class="badge badge--membre">
+        <div class="av"><img src="https://i.pravatar.cc/72?img=44" alt="Sara M."></div>
+        <div class="info">
+          <span class="pseudo">Sara M.</span>
+          <span class="pill pill--rose"><span class="pill-dot"></span>Critique en Herbe</span>
+        </div>
+      </div>
+      <span class="caption">Membre</span>
+      <span class="dim">h 48 px</span>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ ROW 2 — 110 × 30 px ══ -->
+  <div class="row">
+
+    <div class="wrap">
+      <div class="badge badge--admin badge--sm">
+        <div class="av"><img src="https://i.pravatar.cc/72?img=59" alt="Seb le Fourbe"></div>
+        <div class="info">
+          <span class="pseudo">Seb le Fourbe</span>
+          <span class="pill pill--bleu"><span class="pill-dot"></span>Ciné Délices</span>
+        </div>
+      </div>
+      <span class="caption">Admin</span>
+      <span class="dim">110 × 30 px</span>
+    </div>
+
+    <div class="wrap">
+      <div class="badge badge--membre badge--sm">
+        <div class="av"><img src="https://i.pravatar.cc/72?img=44" alt="Sara M."></div>
+        <div class="info">
+          <span class="pseudo">Sara M.</span>
+          <span class="pill pill--rose"><span class="pill-dot"></span>Critique en Herbe</span>
+        </div>
+      </div>
+      <span class="caption">Membre</span>
+      <span class="dim">110 × 30 px</span>
+    </div>
+
+  </div>
+
+</body>
+</html>

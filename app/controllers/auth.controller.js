@@ -1,6 +1,7 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
-import { getUserGamificationData } from "../services/xpService.js";
+import { getUserGamificationData, awardWeeklyLoginXP } from "../services/xpService.js";
+import { awardWelcomeBadge, getBadgesForProfile } from "../services/badgeService.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
@@ -28,12 +29,12 @@ const authController = {
 
     try {
       // Recherche par pseudo (lowercase) ou par email (lowercase)
-      const identifier = pseudo.trim().toLowerCase();
+      const identifier = pseudo.trim();
       const user = await User.findOne({
         where: {
           [Op.or]: [
-            { pseudo: identifier },
-            { email: identifier },
+            { pseudo: { [Op.iLike]: identifier } },
+            { email: { [Op.iLike]: identifier } },
           ],
         },
       });
@@ -73,6 +74,11 @@ const authController = {
         secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
+
+      // XP hebdomadaire — réservé aux membres classiques uniquement
+      if (user.role !== "admin" && user.role !== "superadmin") {
+        awardWeeklyLoginXP(user.id).catch((e) => console.error("Weekly XP login:", e.message));
+      }
 
       res.status(StatusCodes.OK).redirect("/");
     } catch (error) {
@@ -118,6 +124,11 @@ const authController = {
         secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
       });
+
+      // Badge Bienvenue accordé à chaque nouvel inscrit (fire & forget)
+      awardWelcomeBadge(user.id).catch((err) =>
+        console.error("[register] awardWelcomeBadge:", err)
+      );
 
       res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
@@ -257,13 +268,16 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
-      // Gamification — calcul XP + cadres + activité
-      const gamif = await getUserGamificationData(user.id, {
-        recipes:      userRecipes,
-        movies:       userMovies,
-        notices:      userNotices,
-        isSuperAdmin: req.userRole === "super_admin",
-      });
+      // Gamification — calcul XP + cadres + activité + badges
+      const [gamif, userBadges] = await Promise.all([
+        getUserGamificationData(user.id, {
+          recipes:      userRecipes,
+          movies:       userMovies,
+          notices:      userNotices,
+          isSuperAdmin: req.userRole === "superadmin" || req.userRole === "super_admin",
+        }),
+        getBadgesForProfile(user.id),
+      ]);
 
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
@@ -292,6 +306,7 @@ const authController = {
         userFrames:       gamif.frames,
         userActivity:     gamif.activity,
         userCommentsCount:0,
+        userBadges,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
@@ -773,7 +788,9 @@ const authController = {
           return res.status(StatusCodes.BAD_REQUEST).json({
             success: false,
             message: err.message === "ratio"
-              ? `L'image "${err.filename}" doit avoir un ratio 3:2 (${err.w}×${err.h} px).`
+              ? (err.type === "extreme"
+                ? `L'image "${err.filename}" est trop panoramique (${err.w}×${err.h} px). Ratio max 2:1.`
+                : `L'image "${err.filename}" est en portrait ou carré (${err.w}×${err.h} px). Utilisez une image en paysage (ratio ≥ 1,3).`)
               : "Erreur lors du traitement des photos.",
           });
         }

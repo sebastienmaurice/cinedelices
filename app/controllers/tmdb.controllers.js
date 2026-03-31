@@ -75,98 +75,73 @@ async function searchMovie(req, res) {
     // Extraire les mots-clés pour améliorer la recherche (tolérance aux fautes)
     const searchTerms = extractKeywords(query.trim());
 
-    // Appeler l'API TMDB avec la query originale (TMDB gère bien les fautes)
-    // Si aucun résultat, on peut essayer avec les mots-clés extraits
-    let searchUrl = `${TMDB_API_URL}/search/movie?api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(
-      query.trim()
-    )}`;
+    // Appeler films ET séries en parallèle
+    const baseParams = `api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(query.trim())}`;
+    const [movieRes, tvRes] = await Promise.all([
+      fetch(`${TMDB_API_URL}/search/movie?${baseParams}`),
+      fetch(`${TMDB_API_URL}/search/tv?${baseParams}`),
+    ]);
 
-    let response = await fetch(searchUrl);
-
-    if (!response.ok) {
-      console.error(
-        "❌ Erreur API TMDB:",
-        response.status,
-        response.statusText
-      );
-      return res.status(response.status).json({
+    if (!movieRes.ok && !tvRes.ok) {
+      return res.status(movieRes.status).json({
         success: false,
         error: "Erreur lors de la recherche sur TMDB",
       });
     }
 
-    let data = await response.json();
+    const [movieData, tvData] = await Promise.all([
+      movieRes.ok ? movieRes.json() : { results: [] },
+      tvRes.ok   ? tvRes.json()   : { results: [] },
+    ]);
 
-    // Si aucun résultat avec la query originale et qu'on a extrait des mots-clés,
-    // essayer plusieurs variantes de recherche pour améliorer la tolérance aux fautes
-    if (!data.results || data.results.length === 0) {
-      // Essayer avec les mots-clés seulement (sans fautes évidentes)
-      if (searchTerms.length > 0) {
-        const keywordsQuery = searchTerms.join(" ");
-        if (keywordsQuery.toLowerCase() !== query.trim().toLowerCase()) {
-          console.log(
-            `🔍 Aucun résultat avec "${query.trim()}", essai avec mots-clés: "${keywordsQuery}"`
-          );
-          searchUrl = `${TMDB_API_URL}/search/movie?api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(
-            keywordsQuery
-          )}`;
-          response = await fetch(searchUrl);
+    // Normaliser les résultats TV (name → title, first_air_date → release_date)
+    const tvResults = (tvData.results || []).map(r => ({
+      ...r,
+      title:        r.name || r.original_name,
+      original_title: r.original_name,
+      release_date: r.first_air_date || null,
+      media_type:   "tv",
+    }));
+    const movieResults = (movieData.results || []).map(r => ({ ...r, media_type: "movie" }));
 
-          if (response.ok) {
-            const keywordsData = await response.json();
-            if (keywordsData.results && keywordsData.results.length > 0) {
-              data = keywordsData;
-            }
-          }
-        }
-      }
+    // Fusionner et trier par popularité
+    let combined = [...movieResults, ...tvResults].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
-      // Si toujours aucun résultat, essayer avec le premier mot-clé seulement
-      // (pour des cas comme "harry Poster" → cherche "harry")
-      if (
-        (!data.results || data.results.length === 0) &&
-        searchTerms.length > 0
-      ) {
-        const firstKeyword = searchTerms[0];
-        if (firstKeyword.length >= 3) {
-          console.log(
-            `🔍 Aucun résultat, essai avec premier mot-clé: "${firstKeyword}"`
-          );
-          searchUrl = `${TMDB_API_URL}/search/movie?api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(
-            firstKeyword
-          )}`;
-          response = await fetch(searchUrl);
-
-          if (response.ok) {
-            const singleKeywordData = await response.json();
-            if (
-              singleKeywordData.results &&
-              singleKeywordData.results.length > 0
-            ) {
-              data = singleKeywordData;
-            }
-          }
-        }
+    // Si aucun résultat, retry avec mots-clés extraits
+    if (combined.length === 0 && searchTerms.length > 0) {
+      const keywordsQuery = searchTerms.join(" ");
+      if (keywordsQuery.toLowerCase() !== query.trim().toLowerCase()) {
+        const kbParams = `api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(keywordsQuery)}`;
+        const [kmRes, ktvRes] = await Promise.all([
+          fetch(`${TMDB_API_URL}/search/movie?${kbParams}`),
+          fetch(`${TMDB_API_URL}/search/tv?${kbParams}`),
+        ]);
+        const [kmData, ktvData] = await Promise.all([
+          kmRes.ok  ? kmRes.json()  : { results: [] },
+          ktvRes.ok ? ktvRes.json() : { results: [] },
+        ]);
+        const kTvNorm = (ktvData.results || []).map(r => ({ ...r, title: r.name || r.original_name, original_title: r.original_name, release_date: r.first_air_date || null, media_type: "tv" }));
+        combined = [...(kmData.results || []).map(r => ({ ...r, media_type: "movie" })), ...kTvNorm].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
       }
     }
 
     // Si aucun résultat
-    if (!data.results || data.results.length === 0) {
+    if (combined.length === 0) {
       return res.json({
         success: true,
         hasResults: false,
         movies: [],
         suggestions: [],
-        message: "Aucun film correspondant trouvé",
+        message: "Aucun film ou série correspondant trouvé",
       });
     }
 
     // Formater tous les résultats (jusqu'à 5) pour les suggestions
-    const maxResults = Math.min(data.results.length, 5);
+    const maxResults = Math.min(combined.length, 5);
     const formattedMovies = [];
 
     for (let i = 0; i < maxResults; i++) {
-      const result = data.results[i];
+      const result = combined[i];
 
       const genreId =
         result.genre_ids && result.genre_ids.length > 0
@@ -188,6 +163,7 @@ async function searchMovie(req, res) {
           ? `https://image.tmdb.org/t/p/w500${result.poster_path}`
           : null,
         release_date: result.release_date || null,
+        media_type: result.media_type,
       });
     }
 

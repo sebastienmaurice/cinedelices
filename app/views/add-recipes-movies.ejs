@@ -423,14 +423,14 @@
       >
         <!-- CHAMPS CACHÉS -->
         <input type="hidden" name="filmId" id="filmId-hidden" value="<% if (typeof newMovie !== 'undefined' && newMovie && newMovie.id) { %><%= newMovie.id %><% } %>" />
-        <input type="hidden" name="title" id="film-title-hidden" value="" />
-        <input type="hidden" name="year" id="film-year-hidden" value="" />
-        <input type="hidden" name="genre" id="film-genre-hidden" value="" />
-        <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="" />
-        <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="" />
-        <input type="hidden" name="titleFR" id="titleFR-hidden" value="" />
-        <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="" />
-        <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="" />
+        <input type="hidden" name="title" id="film-title-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.title || '' %><% } %>" />
+        <input type="hidden" name="year" id="film-year-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.year || '' %><% } %>" />
+        <input type="hidden" name="genre" id="film-genre-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.genre || '' %><% } %>" />
+        <input type="hidden" name="synopsis" id="film-synopsis-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.synopsis || '' %><% } %>" />
+        <input type="hidden" name="tmdbId" id="tmdbId-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.tmdbId || '' %><% } %>" />
+        <input type="hidden" name="titleFR" id="titleFR-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.title || '' %><% } %>" />
+        <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.year || '' %><% } %>" />
+        <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.genre || '' %><% } %>" />
 
         <!-- ══════════════════════════════════════════
            SECTION 2 — MA RECETTE
@@ -466,9 +466,9 @@
                 type="text"
                 name="name"
                 id="recipe-name"
-                class="arm-input"
+                class="arm-input arm-input--recipe"
                 placeholder="Ex : Le Ragoût de l'Explorateur, Tarte des Sorcières…"
-                value=""
+                value="<% if (typeof newRecipe !== 'undefined' && newRecipe && newRecipe.name) { %><%= newRecipe.name %><% } %>"
                 spellcheck="true"
                 lang="fr"
                 required
@@ -560,10 +560,13 @@
               </label>
 
               <div class="arm-photos-info">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                <span>Vous pouvez ajouter jusqu'à <strong>3 photos</strong> pour illustrer votre recette. Le format recommandé est <strong>paysage (ratio 3:2)</strong>.<br>
-                📸 <strong>Photo 1</strong> : L'image principale sera affichée sur la fiche de la recette et en en-tête de la page de détail.<br>
-                <strong>Photos 2 et 3</strong> : Les images complémentaires serviront à illustrer la recette (étapes de préparation, présentation finale, mise en situation).</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>
+                  <strong>Format paysage obligatoire</strong> — ratio entre 1,3 et 2,0 (ex : 16:9, 4:3, 3:2). Les images portrait ou carrées sont refusées.<br>
+                  Toutes les images sont <strong>recadrées automatiquement à 1200×800 px</strong> pour un affichage uniforme sur le site.<br>
+                  📸 <strong>Photo 1</strong> : image principale affichée sur la fiche et en en-tête de la page détail.<br>
+                  <strong>Photos 2 et 3</strong> : photos complémentaires (étapes, présentation, mise en situation).
+                </span>
               </div>
 
               <div class="arm-upload-grid" id="arm-uploadGrid">
@@ -648,8 +651,10 @@
               <!-- Compteur photos -->
               <div class="arm-upload-count">
                 <span class="arm-upload-count__n" id="arm-photoNum">0</span>/3 photos —
-                <span id="arm-photoLbl">Au moins 1 photo requise · Format 3:2 conseillé</span>
+                <span id="arm-photoLbl">Au moins 1 photo requise · Format paysage requis</span>
               </div>
+              <!-- Warning non bloquant ratio -->
+              <p id="arm-ratio-warn" class="arm-ratio-warn" style="display:none"></p>
 
               <!-- Éléments backward-compat pour recipe-image-upload.js -->
               <img id="recipeImagePreview" src="" alt="" style="display:none;" />
@@ -891,6 +896,10 @@
               slot.classList.remove('has-photo');
               photoCount = Math.max(0, photoCount - 1);
               updateCount();
+              if (photoCount === 0) {
+                var rw = document.getElementById('arm-ratio-warn');
+                if (rw) rw.style.display = 'none';
+              }
               if (n === 1) {
                 var lp = document.getElementById('recipeImagePreview');
                 if (lp) lp.src = '';
@@ -913,19 +922,48 @@
               input.value = '';
               return;
             }
+            var ratioWarn = document.getElementById('arm-ratio-warn');
             var reader = new FileReader();
             reader.onload = function (ev) {
-              prev.style.backgroundImage = 'url("' + ev.target.result + '")';
-              prev.classList.add('on');
-              if (!slot.classList.contains('has-photo')) {
-                slot.classList.add('has-photo');
-                photoCount++;
-                updateCount();
-              }
-              if (n === 1) {
-                var lp = document.getElementById('recipeImagePreview');
-                if (lp) lp.src = ev.target.result;
-              }
+              var dataUrl = ev.target.result;
+              var imgCheck = new Image();
+              imgCheck.onload = function () {
+                var r = imgCheck.width / imgCheck.height;
+                // Portrait ou carré (ratio < 1.3) → blocage
+                if (r < 1.3) {
+                  alert('Format portrait ou carré refusé. Utilisez une image en paysage (ratio ≥ 1,3 — ex : 16:9, 4:3, 3:2).');
+                  input.value = '';
+                  return;
+                }
+                // Trop large (ratio > 2.0) → blocage
+                if (r > 2.0) {
+                  alert('Image trop panoramique (ratio > 2:1). Choisissez un format moins large.');
+                  input.value = '';
+                  return;
+                }
+                // Valide : afficher la preview
+                prev.style.backgroundImage = 'url("' + dataUrl + '")';
+                prev.classList.add('on');
+                if (!slot.classList.contains('has-photo')) {
+                  slot.classList.add('has-photo');
+                  photoCount++;
+                  updateCount();
+                }
+                if (n === 1) {
+                  var lp = document.getElementById('recipeImagePreview');
+                  if (lp) lp.src = dataUrl;
+                }
+                // Warning non bloquant si ratio hors 3:2 ±15 %
+                if (ratioWarn) {
+                  if (Math.abs(r - 1.5) > 0.15) {
+                    ratioWarn.textContent = '⚠ Votre image sera automatiquement recadrée en 3:2 pour un affichage optimal sur le site.';
+                    ratioWarn.style.display = '';
+                  } else {
+                    ratioWarn.style.display = 'none';
+                  }
+                }
+              };
+              imgCheck.src = dataUrl;
             };
             reader.readAsDataURL(file);
           });

@@ -237,8 +237,8 @@
                   <% recipes.forEach(recipe => { %>
                   <%
                     const displayRating = recipe.avgRating || recipe.quote || '0';
-                    const authorName = recipe.contributor?.pseudo || 'Anonyme';
-                    const authorAvatar = recipe.contributor?.picture || null;
+                    const recipeContrib = recipe.contributor;
+                    const recipeIsStaff = recipeContrib && (recipeContrib.role === 'admin' || recipeContrib.role === 'superadmin');
                     const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
                     const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
                   %>
@@ -278,12 +278,15 @@
 
                     <!-- Corps de la card -->
                     <div class="recipe-card__body">
-                      <h3 class="recipe-ttl"><%= recipe.name %></h3>
+                      <div class="recipe-card__title-row">
+                        <h3 class="recipe-ttl"><%= recipe.name %></h3>
+                        <% if (recipe.isNew) { %><span class="badge-new badge-new--new recipe-badge-new">NEW</span><% } %>
+                      </div>
 
                       <div class="recipe-card__meta">
                         <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
-                        <% if (recipe.isNew) { %><span class="badge-new badge-new--new">Nouveau</span><% } %>
                       </div>
+
 
                       <div class="recipe-card__row">
                         <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
@@ -304,22 +307,18 @@
 
                       <p class="recipe-card__desc"><%= truncatedDescription %></p>
 
+                      <!-- Footer : auteur à gauche, bouton à droite -->
                       <div class="recipe-card__foot">
-                        <span class="author">
-                          <span class="author__av">
-                            <% if (authorAvatar) { %>
-                            <img src="<%= authorAvatar %>" alt="<%= authorName %>" />
-                            <% } else { %>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>
-                            <% } %>
-                          </span>
-                          <span class="author__info">
-                            <span class="author__name"><%= authorName %></span>
-                          </span>
-                        </span>
+                        <div class="contrib <%= recipeIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                          <div class="contrib__av"><img src="<%= recipeContrib && recipeContrib.picture ? recipeContrib.picture : '/images/image-default-profile.jpg' %>" alt="<%= recipeContrib ? recipeContrib.pseudo : 'Chef' %>" loading="lazy"></div>
+                          <div class="contrib__info">
+                            <span class="contrib__pseudo"><%= recipeContrib ? recipeContrib.pseudo : 'Anonyme' %></span>
+                            <span class="contrib__pill <%= recipeIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= recipeIsStaff ? 'Ciné Délices' : 'Membre' %></span>
+                          </div>
+                        </div>
                         <a class="btn btn--red btn--sm" href="/recipes-movie/details/<%= recipe.slug || recipe.id %>">
                           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                          Voir la recette →
+                          Voir →
                         </a>
                       </div>
                     </div>

@@ -127,6 +127,20 @@ export async function loadAdminData() {
     order: [["id", "DESC"]],
   });
 
+  // Photos de recettes en attente de modération (positions 2+ après migration)
+  const pendingRecipePictures = await RecipePicture.findAll({
+    where: { status: "pending" },
+    include: [
+      {
+        model: Recipe,
+        attributes: ["id", "name", "status"],
+        include: [{ model: User, as: "contributor", attributes: ["id", "pseudo"] }],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+  const pendingRecipePicturesCount = pendingRecipePictures.length;
+
   // Récupérer tous les avis (notices)
   const avis = await Notice.findAll({
     order: [
@@ -160,5 +174,7 @@ export async function loadAdminData() {
     validatedMovies: enrichMoviesWithImagePaths(validatedMovies),
     validatedRecipes,
     validatedNotices,
+    pendingRecipePictures,
+    pendingRecipePicturesCount,
   };
 }

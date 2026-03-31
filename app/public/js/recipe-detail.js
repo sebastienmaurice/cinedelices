@@ -217,6 +217,21 @@ document.addEventListener("DOMContentLoaded", () => {
         form.reset();
         document.querySelectorAll(".star-pick").forEach((s) => s.classList.remove("on"));
         if (document.getElementById("avisQuoteInput")) document.getElementById("avisQuoteInput").value = "";
+        // Toast XP (membres uniquement — xpGained = 0 pour admin/superadmin)
+        if (data.xpGained) {
+          const msg = data.leveledUp
+            ? `+${data.xpGained} XP — Niveau supérieur ! ${data.rank}`
+            : `+${data.xpGained} XP pour votre avis`;
+          if (window._cdToast) {
+            window._cdToast(msg, "success");
+          } else {
+            const t = document.createElement("div");
+            t.textContent = msg;
+            t.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;background:#1a7a46;color:#fff;padding:10px 18px;border-radius:6px;font-size:.85rem;box-shadow:0 4px 16px rgba(0,0,0,.4);pointer-events:none;";
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3200);
+          }
+        }
       } else {
         errorEl.textContent = data.message || "Une erreur est survenue.";
         errorEl.style.display = "block";

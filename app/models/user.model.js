@@ -22,6 +22,9 @@ User.init({
   notify_recipes: { type: DataTypes.BOOLEAN, defaultValue: true },
   notify_cinema: { type: DataTypes.BOOLEAN, defaultValue: true },
   role: { type: DataTypes.STRING(50), defaultValue: 'user' },
+  suspended: { type: DataTypes.BOOLEAN, defaultValue: false },
+  suspended_until: { type: DataTypes.DATE, allowNull: true },
+  suspension_reason: { type: DataTypes.STRING(500), allowNull: true },
   },
   {
   sequelize, // instance sequelize pour lui donner le nom de la table où aller chercher les données

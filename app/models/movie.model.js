@@ -43,10 +43,14 @@ Movie.init(
         if (!movie.slug && movie.title) {
           movie.slug = slugify(movie.title, { lower: true, strict: true });
         }
+        if (movie.genre) movie.genre = movie.genre.toLowerCase();
       },
       beforeUpdate: (movie) => {
         if (movie.changed("title") && movie.title) {
           movie.slug = slugify(movie.title, { lower: true, strict: true });
+        }
+        if (movie.changed("genre") && movie.genre) {
+          movie.genre = movie.genre.toLowerCase();
         }
       },
     },

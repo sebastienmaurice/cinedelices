@@ -20,9 +20,9 @@ function buildRetainFilm(body) {
   if (!title && !tmdbId) return null;
   return {
     tmdbId: tmdbId || "",
-    title:  title  || "",
-    year:   year   || "",
-    genre:  genre  || "",
+    title: title || "",
+    year: year || "",
+    genre: genre || "",
     synopsis: synopsis || "",
   };
 }
@@ -345,7 +345,11 @@ const addRecipesMoviesController = {
         // Télécharger l'affiche TMDB avant de créer le film
         let picturePath = null;
         if (parsedTmdbId) {
-          picturePath = await downloadTmdbPoster(parsedTmdbId, req.body.type, title);
+          picturePath = await downloadTmdbPoster(
+            parsedTmdbId,
+            req.body.type,
+            title,
+          );
         }
 
         // Les films TMDB sont auto-approuvés (source fiable) — pas de validation admin requise
@@ -357,7 +361,9 @@ const addRecipesMoviesController = {
           id_user: req.userId,
           tmdb_id: parsedTmdbId || null,
           picture: picturePath, // 🎯 Ajouter l'affiche téléchargée
-          ...(parsedTmdbId ? { status: "approved", validated_at: new Date() } : {}),
+          ...(parsedTmdbId
+            ? { status: "approved", validated_at: new Date() }
+            : {}),
         });
       }
 

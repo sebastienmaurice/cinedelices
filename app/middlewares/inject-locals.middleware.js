@@ -89,7 +89,7 @@ async function getNavData(userId) {
     ),
   ]);
   const data = {
-    navAvatar:      row?.picture || null,
+    navAvatar:      row?.picture || '/images/image-default-profile.jpg',
     navFrameUrl:    _frameUrl(row?.active_frame_code),
     hasAuthorPage:  count > 0,
     t: Date.now(),

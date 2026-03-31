@@ -10,6 +10,7 @@
  */
 
 import { Favorite, Movie, Recipe } from "../models/index.model.js";
+import { awardActionXP } from "../services/xpService.js";
 
 /**
  * Vérifie qu'une entité existe dans sa table
@@ -97,10 +98,19 @@ const favoritesController = {
           entity_type: entityType,
           entity_id: entityId,
         });
+
+        // XP pour les membres uniquement (fire-and-forget)
+        const xpResult = await awardActionXP(userId, req.userRole, "like_received").catch(() => null);
+
         return res.json({
           success: true,
           isFavorite: true,
           message: `${entityLabel} ajouté(e) aux favoris`,
+          xpGained:  xpResult?.xpGained  ?? 0,
+          newXP:     xpResult?.newXP      ?? 0,
+          newLevel:  xpResult?.newLevel   ?? 0,
+          leveledUp: xpResult?.leveledUp  ?? false,
+          rank:      xpResult?.rank       ?? "",
         });
       }
     } catch (error) {

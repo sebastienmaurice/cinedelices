@@ -28,51 +28,62 @@
         </button>
 
         <p class="sidebar-nav__label">Modération</p>
-        <button class="nav-item" data-nav-view="films">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
-          <span>Films</span>
-          <% const pendingMoviesCount = movies ? movies.filter(m => m.status === 'pending').length : 0; %>
-          <% if (pendingMoviesCount > 0) { %><span class="nav-badge"><%= pendingMoviesCount %></span><% } %>
-        </button>
         <button class="nav-item" data-nav-view="recettes">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2"/><path d="M18 15h.01"/><path d="M18 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
           <span>Recettes</span>
-          <% const pendingRecipesCount = recipes ? recipes.filter(r => r.status === 'pending').length : 0; %>
-          <% if (pendingRecipesCount > 0) { %><span class="nav-badge"><%= pendingRecipesCount %></span><% } %>
+          <% const pendingRecettesTotal = (recipes ? recipes.filter(r => r.status === 'pending').length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0); %>
+          <% if (pendingRecettesTotal > 0) { %><span class="nav-badge"><%= pendingRecettesTotal %></span><% } %>
         </button>
         <button class="nav-item" data-nav-view="avis">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span>Avis</span>
-          <% const pendingAvisCount = avis ? avis.filter(a => a.status === 'pending').length : 0; %>
-          <% if (pendingAvisCount > 0) { %><span class="nav-badge"><%= pendingAvisCount %></span><% } %>
+          <% const pendingAvisTotal = (avis ? avis.filter(a => a.status === 'pending').length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0); %>
+          <% if (pendingAvisTotal > 0) { %><span class="nav-badge"><%= pendingAvisTotal %></span><% } %>
         </button>
-        <button class="nav-item" data-nav-view="demandes">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Demandes</span>
-          <% const totalDemandes = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0); %>
-          <% if (totalDemandes > 0) { %><span class="nav-badge"><%= totalDemandes %></span><% } %>
-        </button>
-
-        <p class="sidebar-nav__label">Médias</p>
-        <button class="nav-item" data-nav-view="photos">
+        <button class="nav-item" data-nav-view="profils">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Photos profil</span>
-          <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %><span class="nav-badge"><%= pendingProfilePhotos.length %></span><% } %>
+          <span>Profils</span>
+          <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + (pendingBanners ? pendingBanners.length : 0); %>
+          <% if (pendingProfilsTotal > 0) { %><span class="nav-badge"><%= pendingProfilsTotal %></span><% } %>
         </button>
-        <button class="nav-item" data-nav-view="bannieres">
+        <button class="nav-item" data-nav-view="photos-recettes">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span>Bannières</span>
-          <% if (pendingBanners && pendingBanners.length > 0) { %><span class="nav-badge"><%= pendingBanners.length %></span><% } %>
+          <span>Photos</span>
+          <% if (pendingRecipePictures && pendingRecipePictures.length > 0) { %><span class="nav-badge"><%= pendingRecipePictures.length %></span><% } %>
         </button>
 
-        <p class="sidebar-nav__label">Communauté</p>
+        <p class="sidebar-nav__label">Contenu publié</p>
+        <button class="nav-item" data-nav-view="pub-films">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+          <span>Films</span>
+          <% const pendingFilmsEdits = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0); %>
+          <% if (pendingFilmsEdits > 0) { %><span class="nav-badge"><%= pendingFilmsEdits %></span><% } %>
+        </button>
+        <button class="nav-item" data-nav-view="pub-recettes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/></svg>
+          <span>Recettes</span>
+        </button>
+        <button class="nav-item" data-nav-view="pub-avis">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Avis</span>
+        </button>
+
+        <p class="sidebar-nav__label">Administration</p>
         <button class="nav-item" data-nav-view="utilisateurs">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>Utilisateurs</span>
         </button>
-        <button class="nav-item" data-nav-view="publies">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
-          <span>Contenus publiés</span>
+        <button class="nav-item" data-nav-view="gamification">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Gamification</span>
+        </button>
+        <button class="nav-item" data-nav-view="logs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Logs</span>
+        </button>
+        <button class="nav-item" data-nav-view="parametres">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Paramètres</span>
         </button>
       </nav>
 
@@ -128,6 +139,8 @@
             <p class="page-header__sub">Bienvenue dans l'espace d'administration Ciné Délices.</p>
           </div>
 
+          <% const totalDemandes = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0); %>
+
           <!-- Stats rapides -->
           <div class="stats-grid">
             <div class="stat-card stat-card--orange">
@@ -135,7 +148,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               </div>
               <div class="stat-card__body">
-                <span class="stat-card__value"><%= (movies ? movies.filter(m => m.status === 'pending').length : 0) + (recipes ? recipes.filter(r => r.status === 'pending').length : 0) + (avis ? avis.filter(a => a.status === 'pending').length : 0) %></span>
+                <span class="stat-card__value"><%= (recipes ? recipes.filter(r => r.status === 'pending').length : 0) + (avis ? avis.filter(a => a.status === 'pending').length : 0) %></span>
                 <span class="stat-card__label">En attente de validation</span>
               </div>
             </div>
@@ -173,12 +186,6 @@
             <div class="dash-card">
               <h3 class="dash-card__title">Activité récente</h3>
               <ul class="activity-feed">
-                <% if (movies && movies.filter(m => m.status === 'pending').length > 0) { %>
-                <li class="activity-item activity-item--orange">
-                  <span class="activity-dot"></span>
-                  <span><strong><%= movies.filter(m => m.status === 'pending').length %></strong> film(s) en attente de validation</span>
-                </li>
-                <% } %>
                 <% if (recipes && recipes.filter(r => r.status === 'pending').length > 0) { %>
                 <li class="activity-item activity-item--or">
                   <span class="activity-dot"></span>
@@ -203,7 +210,7 @@
                   <span><strong><%= pendingBanners.length %></strong> bannière(s) à modérer</span>
                 </li>
                 <% } %>
-                <% if ((movies ? movies.filter(m => m.status === 'pending').length : 0) === 0 && (recipes ? recipes.filter(r => r.status === 'pending').length : 0) === 0 && (avis ? avis.filter(a => a.status === 'pending').length : 0) === 0 && (!pendingProfilePhotos || pendingProfilePhotos.length === 0) && (!pendingBanners || pendingBanners.length === 0)) { %>
+                <% if ((recipes ? recipes.filter(r => r.status === 'pending').length : 0) === 0 && (avis ? avis.filter(a => a.status === 'pending').length : 0) === 0 && (!pendingProfilePhotos || pendingProfilePhotos.length === 0) && (!pendingBanners || pendingBanners.length === 0)) { %>
                 <li class="activity-item">
                   <span class="activity-dot activity-dot--vert"></span>
                   <span>Tout est à jour — aucune modération en attente.</span>
@@ -240,148 +247,6 @@
         </section>
 
 
-        <!-- ═══════════════════════════════════════════
-             VUE — FILMS
-        ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="films">
-          <div class="page-header">
-            <h1 class="page-header__title">Films</h1>
-            <p class="page-header__sub">Validation et gestion des films soumis par la communauté.</p>
-          </div>
-
-          <div class="queue-tabs" role="tablist">
-            <button class="queue-tab is-active" data-sub-tab="films-pending" role="tab">
-              En attente
-              <% const filmsPending = movies ? movies.filter(m => m.status === 'pending') : []; %>
-              <% if (filmsPending.length > 0) { %><span class="queue-tab__count"><%= filmsPending.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="films-validated" role="tab">
-              Validés
-              <% if (validatedMovies && validatedMovies.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedMovies.length %></span><% } %>
-            </button>
-          </div>
-
-          <!-- Sous-panel : Films en attente -->
-          <div class="sub-panel" id="films-pending">
-            <% if (filmsPending.length === 0) { %>
-            <div class="empty-state">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              <p>Aucun film en attente de validation.</p>
-            </div>
-            <% } else { %>
-            <div class="filter-bar">
-              <input type="text" class="filter-bar__search" placeholder="Filtrer les films…" data-filter-input="films-pending" />
-            </div>
-            <% filmsPending.forEach(function(movie) { %>
-            <div class="movie-val-panel" data-search-item="<%= (movie.title || '').toLowerCase() %>">
-              <div class="movie-val-panel__poster">
-                <% if (movie.poster) { %>
-                <img src="<%= movie.poster %>" alt="Affiche <%= movie.title %>" loading="lazy" />
-                <% } else { %>
-                <div class="movie-val-panel__poster--placeholder">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-                </div>
-                <% } %>
-              </div>
-              <div class="movie-val-panel__body">
-                <div class="movie-val-panel__meta">
-                  <h3 class="movie-val-panel__title"><%= movie.title %></h3>
-                  <span class="s-badge s-badge--pending">En attente</span>
-                </div>
-                <div class="movie-val-panel__info">
-                  <% if (movie.year) { %><span class="tag"><%= movie.year %></span><% } %>
-                  <% if (movie.genre) { %><span class="tag"><%= movie.genre %></span><% } %>
-                  <% if (movie.director) { %><span class="tag">Réal. <%= movie.director %></span><% } %>
-                  <% if (movie.User?.pseudo) { %><span class="tag tag--user">Par : <%= movie.User.pseudo %></span><% } %>
-                </div>
-                <% if (movie.synopsis) { %>
-                <p class="movie-val-panel__synopsis"><%= movie.synopsis.substring(0, 240) %><%= movie.synopsis.length > 240 ? '…' : '' %></p>
-                <% } %>
-                <div class="movie-val-panel__actions">
-                  <form action="/admin/validateMovie/<%= movie.id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      Valider
-                    </button>
-                  </form>
-                  <form action="/admin/rejectMovie/<%= movie.id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      Refuser
-                    </button>
-                  </form>
-                  <button type="button" class="act-btn act-btn--edit"
-                    data-edit-btn
-                    data-edit-type="movie"
-                    data-edit-id="<%= movie.id %>"
-                    data-edit-title="<%= movie.title %>"
-                    data-edit-year="<%= movie.year || '' %>"
-                    data-edit-genre="<%= movie.genre || '' %>"
-                    data-edit-synopsis="<%= String(movie.synopsis || '').replace(/"/g, '&quot;') %>">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    Éditer
-                  </button>
-                </div>
-              </div>
-            </div>
-            <% }) %>
-            <% } %>
-          </div>
-
-          <!-- Sous-panel : Films validés -->
-          <div class="sub-panel" id="films-validated" style="display:none;">
-            <% if (!validatedMovies || validatedMovies.length === 0) { %>
-            <div class="empty-state">
-              <p>Aucun film validé.</p>
-            </div>
-            <% } else { %>
-            <div class="filter-bar">
-              <input type="text" class="filter-bar__search" placeholder="Filtrer les films validés…" data-filter-input="films-validated" />
-            </div>
-            <table class="ctable">
-              <thead>
-                <tr>
-                  <th>Film</th>
-                  <th>Année</th>
-                  <th>Genre</th>
-                  <th>Soumis par</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% validatedMovies.forEach(function(movie) { %>
-                <tr class="admin-list-item" data-search="<%= (movie.title || '').toLowerCase() + ' ' + (movie.genre || '').toLowerCase() %>">
-                  <td class="cell-media">
-                    <% if (movie.poster) { %><img src="<%= movie.poster %>" alt="" class="cell-media__thumb" /><% } %>
-                    <span class="cell-media__title"><%= movie.title %></span>
-                  </td>
-                  <td><%= movie.year || '—' %></td>
-                  <td><span class="tag"><%= movie.genre || '—' %></span></td>
-                  <td class="user-cell"><%= movie.User?.pseudo || '—' %></td>
-                  <td class="actions-cell">
-                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
-                      data-edit-btn
-                      data-edit-type="movie"
-                      data-edit-id="<%= movie.id %>"
-                      data-edit-title="<%= movie.title %>"
-                      data-edit-year="<%= movie.year || '' %>"
-                      data-edit-genre="<%= movie.genre || '' %>"
-                      data-edit-synopsis="<%= String(movie.synopsis || '').replace(/"/g, '&quot;') %>">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <form action="/admin/movies/<%= movie.id %>/delete/direct" method="POST" style="display:inline;">
-                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-                <% }) %>
-              </tbody>
-            </table>
-            <% } %>
-          </div>
-        </section>
 
 
         <!-- ═══════════════════════════════════════════
@@ -399,14 +264,18 @@
               <% const recipesPending = recipes ? recipes.filter(r => r.status === 'pending') : []; %>
               <% if (recipesPending.length > 0) { %><span class="queue-tab__count"><%= recipesPending.length %></span><% } %>
             </button>
-            <button class="queue-tab" data-sub-tab="recettes-validated" role="tab">
-              Validées
-              <% if (validatedRecipes && validatedRecipes.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedRecipes.length %></span><% } %>
+            <button class="queue-tab" data-sub-tab="recettes-edits" role="tab">
+              Modifications
+              <% if (pendingRecipeEdits && pendingRecipeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingRecipeEdits.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="recettes-deletes" role="tab">
+              Suppressions
+              <% if (pendingRecipeDeleteRequests && pendingRecipeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingRecipeDeleteRequests.length %></span><% } %>
             </button>
           </div>
 
           <!-- Sous-panel : Recettes en attente -->
-          <div class="sub-panel" id="recettes-pending">
+          <div class="sub-panel is-active" id="recettes-pending">
             <% if (recipesPending.length === 0) { %>
             <div class="empty-state">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -497,6 +366,7 @@
                   data-edit-name="<%= recipe.name %>"
                   data-edit-category="<%= recipe.category || '' %>"
                   data-edit-time="<%= recipe.time || '' %>"
+                  data-edit-servings="<%= recipe.servings || '' %>"
                   data-edit-difficulty="<%= recipe.difficulty || '' %>"
                   data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
                   data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
@@ -510,216 +380,8 @@
             <% } %>
           </div>
 
-          <!-- Sous-panel : Recettes validées -->
-          <div class="sub-panel" id="recettes-validated" style="display:none;">
-            <% if (!validatedRecipes || validatedRecipes.length === 0) { %>
-            <div class="empty-state"><p>Aucune recette validée.</p></div>
-            <% } else { %>
-            <div class="filter-bar">
-              <input type="text" class="filter-bar__search" placeholder="Filtrer les recettes validées…" data-filter-input="recettes-validated" />
-            </div>
-            <table class="ctable">
-              <thead>
-                <tr>
-                  <th>Recette</th>
-                  <th>Catégorie</th>
-                  <th>Difficulté</th>
-                  <th>Soumis par</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% validatedRecipes.forEach(function(recipe) { %>
-                <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
-                  <td class="cell-media">
-                    <% const thumb = (recipe.RecipePictures && recipe.RecipePictures.length > 0) ? recipe.RecipePictures[0].file_path : recipe.picture; %>
-                    <% if (thumb) { %><img src="<%= thumb %>" alt="" class="cell-media__thumb" /><% } %>
-                    <span class="cell-media__title"><%= recipe.name %></span>
-                  </td>
-                  <td><span class="tag"><%= recipe.category || '—' %></span></td>
-                  <td><%= recipe.difficulty || '—' %></td>
-                  <td class="user-cell"><%= recipe.contributor?.pseudo || '—' %></td>
-                  <td class="actions-cell">
-                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
-                      data-edit-btn
-                      data-edit-type="recipe"
-                      data-edit-id="<%= recipe.id %>"
-                      data-edit-name="<%= recipe.name %>"
-                      data-edit-category="<%= recipe.category || '' %>"
-                      data-edit-time="<%= recipe.time || '' %>"
-                      data-edit-difficulty="<%= recipe.difficulty || '' %>"
-                      data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
-                      data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
-                      data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <form action="/admin/recipes/<%= recipe.id %>/delete/direct" method="POST" style="display:inline;">
-                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-                <% }) %>
-              </tbody>
-            </table>
-            <% } %>
-          </div>
-        </section>
-
-
-        <!-- ═══════════════════════════════════════════
-             VUE — AVIS
-        ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="avis">
-          <div class="page-header">
-            <h1 class="page-header__title">Avis</h1>
-            <p class="page-header__sub">Modération des avis et commentaires communautaires.</p>
-          </div>
-
-          <% const avisPending = avis ? avis.filter(a => a.status === 'pending') : []; %>
-
-          <% if (avisPending.length === 0) { %>
-          <div class="empty-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <p>Aucun avis en attente de validation.</p>
-          </div>
-          <% } else { %>
-          <div class="filter-bar">
-            <input type="text" class="filter-bar__search" placeholder="Filtrer les avis…" data-filter-input="avis" />
-          </div>
-          <table class="ctable">
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>Recette</th>
-                <th>Note</th>
-                <th>Commentaire</th>
-                <th>Statut</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% avisPending.forEach(function(notice) { %>
-              <tr class="admin-list-item" data-search="<%= notice.id %>">
-                <td class="user-cell"><%= notice.id_user || '—' %></td>
-                <td><%= notice.id_recipe || '—' %></td>
-                <td class="score-cell">
-                  <% if (notice.quote) { %>
-                  <span class="score-badge"><%= notice.quote %>/5</span>
-                  <% } else { %>—<% } %>
-                </td>
-                <td><span class="cell-excerpt"><%= (notice.content || '').substring(0, 80) %>…</span></td>
-                <td><span class="s-badge s-badge--pending">En attente</span></td>
-                <td class="actions-cell">
-                  <form action="/admin/validateNotice/<%= notice.id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Valider">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </button>
-                  </form>
-                  <form action="/admin/rejectNotice/<%= notice.id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  </form>
-                  <button type="button" class="act-btn act-btn--edit act-btn--sm" title="Éditer"
-                    data-edit-btn
-                    data-edit-type="notice"
-                    data-edit-id="<%= notice.id %>"
-                    data-edit-content="<%= String(notice.content || '').replace(/"/g, '&quot;') %>"
-                    data-edit-quote="<%= notice.quote || '' %>"
-                    data-edit-author="<%= notice.id_user || '' %>"
-                    data-edit-recipe="<%= notice.id_recipe || '' %>">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  </button>
-                  <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                    </button>
-                  </form>
-                </td>
-              </tr>
-              <% }) %>
-            </tbody>
-          </table>
-          <% } %>
-        </section>
-
-
-        <!-- ═══════════════════════════════════════════
-             VUE — DEMANDES
-        ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="demandes">
-          <div class="page-header">
-            <h1 class="page-header__title">Demandes</h1>
-            <p class="page-header__sub">Modifications et suppressions demandées par les utilisateurs.</p>
-          </div>
-
-          <div class="queue-tabs" role="tablist">
-            <button class="queue-tab is-active" data-sub-tab="demandes-movie-edits" role="tab">
-              Modif. Films
-              <% if (pendingMovieEdits && pendingMovieEdits.length > 0) { %><span class="queue-tab__count"><%= pendingMovieEdits.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="demandes-recipe-edits" role="tab">
-              Modif. Recettes
-              <% if (pendingRecipeEdits && pendingRecipeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingRecipeEdits.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="demandes-notice-edits" role="tab">
-              Modif. Avis
-              <% if (pendingNoticeEdits && pendingNoticeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingNoticeEdits.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="demandes-movie-deletes" role="tab">
-              Suppr. Films
-              <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingMovieDeleteRequests.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="demandes-recipe-deletes" role="tab">
-              Suppr. Recettes
-              <% if (pendingRecipeDeleteRequests && pendingRecipeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingRecipeDeleteRequests.length %></span><% } %>
-            </button>
-            <button class="queue-tab" data-sub-tab="demandes-notice-deletes" role="tab">
-              Suppr. Avis
-              <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingNoticeDeleteRequests.length %></span><% } %>
-            </button>
-          </div>
-
-          <!-- Modifications Films -->
-          <div class="sub-panel" id="demandes-movie-edits">
-            <% if (!pendingMovieEdits || pendingMovieEdits.length === 0) { %>
-            <div class="empty-state"><p>Aucune demande de modification de film.</p></div>
-            <% } else { %>
-            <div class="mod-table">
-              <% pendingMovieEdits.forEach(function(req) { %>
-              <div class="mod-row">
-                <div class="mod-row__info">
-                  <span class="s-badge s-badge--modif">Modification</span>
-                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
-                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
-                  <ul class="mod-row__changes">
-                    <% if (req.pending_title && req.pending_title !== req.title) { %><li><em>Titre :</em> <s class="mod-old"><%= req.title %></s> → <strong class="mod-new"><%= req.pending_title %></strong></li><% } %>
-                    <% if (req.pending_year && req.pending_year !== req.year) { %><li><em>Année :</em> <s class="mod-old"><%= req.year %></s> → <strong class="mod-new"><%= req.pending_year %></strong></li><% } %>
-                    <% if (req.pending_genre && req.pending_genre !== req.genre) { %><li><em>Genre :</em> <s class="mod-old"><%= req.genre %></s> → <strong class="mod-new"><%= req.pending_genre %></strong></li><% } %>
-                  </ul>
-                </div>
-                <div class="actions-cell">
-                  <form action="/admin/movies/<%= req.id %>/edit/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Approuver la modification">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </button>
-                  </form>
-                  <form action="/admin/movies/<%= req.id %>/edit/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la modification">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <% }) %>
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Modifications Recettes -->
-          <div class="sub-panel" id="demandes-recipe-edits" style="display:none;">
+          <!-- Sous-panel : Modifications recettes -->
+          <div class="sub-panel" id="recettes-edits">
             <% if (!pendingRecipeEdits || pendingRecipeEdits.length === 0) { %>
             <div class="empty-state"><p>Aucune demande de modification de recette.</p></div>
             <% } else { %>
@@ -759,8 +421,135 @@
             <% } %>
           </div>
 
-          <!-- Modifications Avis -->
-          <div class="sub-panel" id="demandes-notice-edits" style="display:none;">
+          <!-- Sous-panel : Suppressions recettes -->
+          <div class="sub-panel" id="recettes-deletes">
+            <% if (!pendingRecipeDeleteRequests || pendingRecipeDeleteRequests.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de suppression de recette.</p></div>
+            <% } else { %>
+            <div class="mod-table">
+              <% pendingRecipeDeleteRequests.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
+                  <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
+                  <% if (req.Movie) { %><p class="mod-row__excerpt">Film : <%= req.Movie.title %></p><% } %>
+                </div>
+                <div class="actions-cell">
+                  <form action="/admin/recipes/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </form>
+                  <form action="/admin/recipes/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — AVIS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="avis">
+          <div class="page-header">
+            <h1 class="page-header__title">Avis</h1>
+            <p class="page-header__sub">Modération des avis et commentaires communautaires.</p>
+          </div>
+
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="avis-pending" role="tab">
+              En attente
+              <% const avisPending = avis ? avis.filter(a => a.status === 'pending') : []; %>
+              <% if (avisPending.length > 0) { %><span class="queue-tab__count"><%= avisPending.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="avis-edits" role="tab">
+              Modifications
+              <% if (pendingNoticeEdits && pendingNoticeEdits.length > 0) { %><span class="queue-tab__count"><%= pendingNoticeEdits.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="avis-deletes" role="tab">
+              Suppressions
+              <% if (pendingNoticeDeleteRequests && pendingNoticeDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingNoticeDeleteRequests.length %></span><% } %>
+            </button>
+          </div>
+
+          <!-- Sous-panel : Avis en attente -->
+          <div class="sub-panel is-active" id="avis-pending">
+            <% if (avisPending.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucun avis en attente de validation.</p>
+            </div>
+            <% } else { %>
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Filtrer les avis…" data-filter-input="avis-pending" />
+            </div>
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>Recette</th>
+                  <th>Note</th>
+                  <th>Commentaire</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% avisPending.forEach(function(notice) { %>
+                <tr class="admin-list-item" data-search="<%= notice.id %>">
+                  <td class="user-cell"><%= notice.id_user || '—' %></td>
+                  <td><%= notice.id_recipe || '—' %></td>
+                  <td class="score-cell">
+                    <% if (notice.quote) { %>
+                    <span class="score-badge"><%= notice.quote %>/5</span>
+                    <% } else { %>—<% } %>
+                  </td>
+                  <td><span class="cell-excerpt"><%= (notice.content || '').substring(0, 80) %>…</span></td>
+                  <td><span class="s-badge s-badge--pending">En attente</span></td>
+                  <td class="actions-cell">
+                    <form action="/admin/validateNotice/<%= notice.id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Valider">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                    </form>
+                    <form action="/admin/rejectNotice/<%= notice.id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </form>
+                    <button type="button" class="act-btn act-btn--edit act-btn--sm" title="Éditer"
+                      data-edit-btn
+                      data-edit-type="notice"
+                      data-edit-id="<%= notice.id %>"
+                      data-edit-content="<%= String(notice.content || '').replace(/"/g, '&quot;') %>"
+                      data-edit-quote="<%= notice.quote || '' %>"
+                      data-edit-author="<%= notice.id_user || '' %>"
+                      data-edit-recipe="<%= notice.id_recipe || '' %>">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <% } %>
+          </div>
+
+          <!-- Sous-panel : Modifications avis -->
+          <div class="sub-panel" id="avis-edits">
             <% if (!pendingNoticeEdits || pendingNoticeEdits.length === 0) { %>
             <div class="empty-state"><p>Aucune demande de modification d'avis.</p></div>
             <% } else { %>
@@ -791,71 +580,8 @@
             <% } %>
           </div>
 
-          <!-- Suppressions Films -->
-          <div class="sub-panel" id="demandes-movie-deletes" style="display:none;">
-            <% if (!pendingMovieDeleteRequests || pendingMovieDeleteRequests.length === 0) { %>
-            <div class="empty-state"><p>Aucune demande de suppression de film.</p></div>
-            <% } else { %>
-            <div class="mod-table">
-              <% pendingMovieDeleteRequests.forEach(function(req) { %>
-              <div class="mod-row">
-                <div class="mod-row__info">
-                  <span class="s-badge s-badge--delete">Suppression</span>
-                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
-                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
-                </div>
-                <div class="actions-cell">
-                  <form action="/admin/movies/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                    </button>
-                  </form>
-                  <form action="/admin/movies/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <% }) %>
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Suppressions Recettes -->
-          <div class="sub-panel" id="demandes-recipe-deletes" style="display:none;">
-            <% if (!pendingRecipeDeleteRequests || pendingRecipeDeleteRequests.length === 0) { %>
-            <div class="empty-state"><p>Aucune demande de suppression de recette.</p></div>
-            <% } else { %>
-            <div class="mod-table">
-              <% pendingRecipeDeleteRequests.forEach(function(req) { %>
-              <div class="mod-row">
-                <div class="mod-row__info">
-                  <span class="s-badge s-badge--delete">Suppression</span>
-                  <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
-                  <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
-                  <% if (req.Movie) { %><p class="mod-row__excerpt">Film : <%= req.Movie.title %></p><% } %>
-                </div>
-                <div class="actions-cell">
-                  <form action="/admin/recipes/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                    </button>
-                  </form>
-                  <form action="/admin/recipes/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <% }) %>
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Suppressions Avis -->
-          <div class="sub-panel" id="demandes-notice-deletes" style="display:none;">
+          <!-- Sous-panel : Suppressions avis -->
+          <div class="sub-panel" id="avis-deletes">
             <% if (!pendingNoticeDeleteRequests || pendingNoticeDeleteRequests.length === 0) { %>
             <div class="empty-state"><p>Aucune demande de suppression d'avis.</p></div>
             <% } else { %>
@@ -888,85 +614,143 @@
         </section>
 
 
+
+
         <!-- ═══════════════════════════════════════════
-             VUE — PHOTOS PROFIL
+             VUE — PROFILS (Photos + Bannières)
         ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="photos">
+        <section class="view" data-view-id="profils">
           <div class="page-header">
-            <h1 class="page-header__title">Photos de profil</h1>
-            <p class="page-header__sub">Validation des photos de profil soumises par les utilisateurs.</p>
+            <h1 class="page-header__title">Profils</h1>
+            <p class="page-header__sub">Validation des photos de profil et bannières soumises par les utilisateurs.</p>
           </div>
 
-          <% if (!pendingProfilePhotos || pendingProfilePhotos.length === 0) { %>
-          <div class="empty-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <p>Aucune photo de profil en attente de validation.</p>
+          <div class="queue-tabs" role="tablist">
+            <button class="queue-tab is-active" data-sub-tab="profils-photos" role="tab">
+              Photos de profil
+              <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %><span class="queue-tab__count"><%= pendingProfilePhotos.length %></span><% } %>
+            </button>
+            <button class="queue-tab" data-sub-tab="profils-bannieres" role="tab">
+              Bannières
+              <% if (pendingBanners && pendingBanners.length > 0) { %><span class="queue-tab__count"><%= pendingBanners.length %></span><% } %>
+            </button>
           </div>
-          <% } else { %>
-          <div class="media-approval-grid">
-            <% pendingProfilePhotos.forEach(function(photo) { %>
-            <div class="media-card">
-              <div class="media-card__img-wrap">
-                <img src="<%= photo.pending_picture %>" alt="Photo de profil" class="media-card__img" />
-              </div>
-              <div class="media-card__body">
-                <p class="media-card__user"><%= photo.username || 'Utilisateur inconnu' %></p>
-                <span class="s-badge s-badge--pending">En attente</span>
-              </div>
-              <div class="media-card__actions">
-                <form action="/admin/users/<%= photo.id %>/photo/approve" method="POST" style="display:inline;">
-                  <button type="submit" class="act-btn act-btn--approve">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Valider</span>
-                  </button>
-                </form>
-                <form action="/admin/users/<%= photo.id %>/photo/reject" method="POST" style="display:inline;">
-                  <button type="submit" class="act-btn act-btn--reject">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    <span>Refuser</span>
-                  </button>
-                </form>
-              </div>
+
+          <!-- Sous-panel : Photos de profil -->
+          <div class="sub-panel is-active" id="profils-photos">
+            <% if (!pendingProfilePhotos || pendingProfilePhotos.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucune photo de profil en attente de validation.</p>
             </div>
-            <% }) %>
+            <% } else { %>
+            <div class="media-approval-grid">
+              <% pendingProfilePhotos.forEach(function(photo) { %>
+              <div class="media-card">
+                <div class="media-card__img-wrap">
+                  <img src="<%= photo.pending_picture %>" alt="Photo de profil" class="media-card__img" />
+                </div>
+                <div class="media-card__body">
+                  <p class="media-card__user"><%= photo.username || 'Utilisateur inconnu' %></p>
+                  <span class="s-badge s-badge--pending">En attente</span>
+                </div>
+                <div class="media-card__actions">
+                  <form action="/admin/users/<%= photo.id %>/photo/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>Valider</span>
+                    </button>
+                  </form>
+                  <form action="/admin/users/<%= photo.id %>/photo/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      <span>Refuser</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
           </div>
-          <% } %>
+
+          <!-- Sous-panel : Bannières -->
+          <div class="sub-panel" id="profils-bannieres">
+            <% if (!pendingBanners || pendingBanners.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucune bannière en attente de validation.</p>
+            </div>
+            <% } else { %>
+            <div class="media-approval-grid media-approval-grid--wide">
+              <% pendingBanners.forEach(function(banner) { %>
+              <div class="media-card media-card--banner">
+                <div class="media-card__img-wrap media-card__img-wrap--banner">
+                  <img src="<%= banner.banner_image %>" alt="Bannière" class="media-card__img" />
+                </div>
+                <div class="media-card__body">
+                  <p class="media-card__user"><%= banner.pseudo || 'Utilisateur inconnu' %></p>
+                  <span class="s-badge s-badge--pending">En attente</span>
+                </div>
+                <div class="media-card__actions">
+                  <form action="/admin/users/<%= banner.id %>/banner/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>Valider</span>
+                    </button>
+                  </form>
+                  <form action="/admin/users/<%= banner.id %>/banner/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      <span>Refuser</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
         </section>
 
 
         <!-- ═══════════════════════════════════════════
-             VUE — BANNIÈRES
+             VUE — PHOTOS RECETTES
         ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="bannieres">
+        <section class="view" data-view-id="photos-recettes">
           <div class="page-header">
-            <h1 class="page-header__title">Bannières</h1>
-            <p class="page-header__sub">Validation des bannières de profil soumises par les utilisateurs.</p>
+            <h1 class="page-header__title">Photos de recettes</h1>
+            <p class="page-header__sub">Modération des photos complémentaires soumises avec les recettes.</p>
           </div>
 
-          <% if (!pendingBanners || pendingBanners.length === 0) { %>
+          <% if (!pendingRecipePictures || pendingRecipePictures.length === 0) { %>
           <div class="empty-state">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <p>Aucune bannière en attente de validation.</p>
+            <p>Aucune photo de recette en attente de modération.</p>
           </div>
           <% } else { %>
-          <div class="media-approval-grid media-approval-grid--wide">
-            <% pendingBanners.forEach(function(banner) { %>
-            <div class="media-card media-card--banner">
-              <div class="media-card__img-wrap media-card__img-wrap--banner">
-                <img src="<%= banner.banner_image %>" alt="Bannière" class="media-card__img" />
+          <div class="media-approval-grid">
+            <% pendingRecipePictures.forEach(function(pic) { %>
+            <div class="media-card">
+              <div class="media-card__img-wrap">
+                <img src="<%= pic.file_path %>" alt="Photo recette" class="media-card__img" data-lightbox-trigger data-lightbox-src="<%= pic.file_path %>" data-lightbox-alt="Photo recette" />
               </div>
               <div class="media-card__body">
-                <p class="media-card__user"><%= banner.pseudo || 'Utilisateur inconnu' %></p>
+                <% if (pic.Recipe) { %>
+                <p class="media-card__user"><%= pic.Recipe.name %></p>
+                <% if (pic.Recipe.contributor) { %><span class="mod-row__user">par <%= pic.Recipe.contributor.pseudo %></span><% } %>
+                <% } %>
                 <span class="s-badge s-badge--pending">En attente</span>
+                <span class="tag" style="margin-left:4px;">Photo <%= pic.position %></span>
               </div>
               <div class="media-card__actions">
-                <form action="/admin/users/<%= banner.id %>/banner/approve" method="POST" style="display:inline;">
+                <form action="/admin/recipe-pictures/<%= pic.id %>/approve" method="POST" style="display:inline;">
                   <button type="submit" class="act-btn act-btn--approve">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     <span>Valider</span>
                   </button>
                 </form>
-                <form action="/admin/users/<%= banner.id %>/banner/reject" method="POST" style="display:inline;">
+                <form action="/admin/recipe-pictures/<%= pic.id %>/delete" method="POST" style="display:inline;">
                   <button type="submit" class="act-btn act-btn--reject">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     <span>Refuser</span>
@@ -987,71 +771,180 @@
           <div class="page-header">
             <h1 class="page-header__title">Utilisateurs</h1>
             <p class="page-header__sub">Gestion et modération des membres de la communauté.</p>
+            <button type="button" class="act-btn act-btn--approve" data-create-user style="margin-left:auto;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Créer un utilisateur</span>
+            </button>
           </div>
 
           <div class="filter-bar">
             <input type="text" class="filter-bar__search" placeholder="Rechercher un utilisateur…" data-filter-input="utilisateurs" />
           </div>
 
-          <% const regularUsers = users ? users.filter(u => !u.isAdmin && u.role !== 'admin') : []; %>
-          <% const adminUsers = users ? users.filter(u => u.isAdmin || u.role === 'admin') : []; %>
+          <%
+            const roleBadgeMap = {
+              superadmin: { label: 'Super Admin', cls: 'tag--superadmin', color: 'rgba(200,100,255,.9)' },
+              admin:      { label: 'Admin',       cls: 'tag--admin',       color: 'rgba(196,160,82,.9)' },
+              editor:     { label: 'Éditeur',     cls: 'tag--editor',      color: 'rgba(80,150,255,.9)' },
+              user:       { label: 'Membre',      cls: 'tag--user',        color: 'rgba(160,200,130,.8)' },
+            };
+            const staffUsers   = users ? users.filter(u => ['superadmin','admin','editor'].includes(u.role))
+                                               .sort((a,b) => (['superadmin','admin','editor'].indexOf(a.role)) - (['superadmin','admin','editor'].indexOf(b.role))) : [];
+            const memberUsers  = users ? users.filter(u => u.role === 'user' || !u.role) : [];
+          %>
 
-          <% if (adminUsers.length > 0) { %>
-          <h3 class="section-title section-title--admin">Administrateurs</h3>
+          <%
+            /* ── Macro : rendu d'une ligne utilisateur ── */
+            function userRow(user) {
+              const badge = roleBadgeMap[user.role] || roleBadgeMap.user;
+              return '';
+            }
+          %>
+
+          <% if (!users || users.length === 0) { %>
+          <div class="empty-state"><p>Aucun utilisateur inscrit.</p></div>
+          <% } else { %>
+
+          <!-- ── Section Équipe / Staff ── -->
+          <% if (staffUsers.length > 0) { %>
+          <h2 class="ctable-section-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            Équipe &amp; Administration
+          </h2>
+          <div class="ctable-wrap" style="margin-bottom:28px;">
           <table class="ctable">
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>Email</th>
-                <th>Rôle</th>
-                <th>Inscrit le</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Pseudo</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Inscrit le</th><th>Actions</th>
+            </tr></thead>
             <tbody>
-              <% adminUsers.forEach(function(user) { %>
-              <tr class="admin-list-item" data-search="<%= (user.username || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
+              <% staffUsers.forEach(function(user) { %>
+              <% const badge = roleBadgeMap[user.role] || roleBadgeMap.user; %>
+              <tr class="admin-list-item" data-search="<%= (user.pseudo || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
                 <td class="user-cell">
-                  <% if (user.profilePhoto) { %><img src="<%= user.profilePhoto %>" alt="" class="user-cell__avatar" /><% } %>
-                  <span><%= user.username || user.name || '—' %></span>
+                  <div class="user-cell__inner">
+                    <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
+                    <span><%= user.pseudo || '—' %></span>
+                  </div>
                 </td>
-                <td><%= user.email || '—' %></td>
-                <td><span class="tag tag--admin">Admin</span></td>
+                <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
+                <td>
+                  <select class="tag" style="background:transparent; border:1px solid rgba(255,255,255,.1); color:<%= badge.color %>; font-size:.6rem; padding:2px 6px; border-radius:4px; cursor:pointer;"
+                    data-user-role-select="<%= user.id %>">
+                    <option value="user"       <%= user.role === 'user'       ? 'selected' : '' %>>Membre</option>
+                    <option value="editor"     <%= user.role === 'editor'     ? 'selected' : '' %>>Éditeur</option>
+                    <option value="admin"      <%= user.role === 'admin'      ? 'selected' : '' %>>Admin</option>
+                    <option value="superadmin" <%= user.role === 'superadmin' ? 'selected' : '' %>>Super Admin</option>
+                  </select>
+                </td>
+                <td>
+                  <% if (user.suspended) { %>
+                  <span class="s-badge s-badge--rejected" style="font-size:.58rem;">Suspendu</span>
+                  <% } else { %>
+                  <span style="font-size:.6rem; color:rgba(100,200,130,.7);">Actif</span>
+                  <% } %>
+                </td>
                 <td class="date-cell"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '—' %></td>
-                <td class="actions-cell">—</td>
+                <td class="actions-cell">
+                  <button type="button" class="act-btn act-btn--edit act-btn--sm" title="Modifier"
+                    data-edit-user-id="<%= user.id %>"
+                    data-edit-user-pseudo="<%= user.pseudo || '' %>"
+                    data-edit-user-email="<%= user.email || '' %>"
+                    data-edit-user-role="<%= user.role || 'user' %>">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <% if (user.suspended) { %>
+                  <form action="/admin/users/<%= user.id %>/unsuspend" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Réactiver">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </form>
+                  <% } else if (user.role !== 'superadmin') { %>
+                  <button type="button" class="act-btn act-btn--ban act-btn--sm" title="Suspendre"
+                    data-suspend-user-id="<%= user.id %>"
+                    data-suspend-user-pseudo="<%= user.pseudo || '' %>">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  </button>
+                  <% } %>
+                  <% if (user.role !== 'superadmin') { %>
+                  <form action="/admin/deleteUser/<%= user.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </form>
+                  <% } %>
+                </td>
               </tr>
               <% }) %>
             </tbody>
           </table>
+          </div>
           <% } %>
 
-          <h3 class="section-title">Membres <span class="section-title__count"><%= regularUsers.length %></span></h3>
-          <% if (regularUsers.length === 0) { %>
-          <div class="empty-state"><p>Aucun membre inscrit.</p></div>
+          <!-- ── Section Membres ── -->
+          <h2 class="ctable-section-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Membres
+            <span class="ctable-section-count"><%= memberUsers.length %></span>
+          </h2>
+          <% if (memberUsers.length === 0) { %>
+          <div class="empty-state" style="margin-top:0;"><p>Aucun membre inscrit.</p></div>
           <% } else { %>
+          <div class="ctable-wrap">
           <table class="ctable">
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>Email</th>
-                <th>Niveau</th>
-                <th>Inscrit le</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Pseudo</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Inscrit le</th><th>Actions</th>
+            </tr></thead>
             <tbody>
-              <% regularUsers.forEach(function(user) { %>
-              <tr class="admin-list-item" data-search="<%= (user.username || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
+              <% memberUsers.forEach(function(user) { %>
+              <% const badge = roleBadgeMap[user.role] || roleBadgeMap.user; %>
+              <tr class="admin-list-item" data-search="<%= (user.pseudo || '').toLowerCase() + ' ' + (user.email || '').toLowerCase() %>">
                 <td class="user-cell">
-                  <% if (user.profilePhoto) { %><img src="<%= user.profilePhoto %>" alt="" class="user-cell__avatar" /><% } %>
-                  <span><%= user.username || user.name || '—' %></span>
+                  <div class="user-cell__inner">
+                    <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
+                    <span><%= user.pseudo || '—' %></span>
+                  </div>
                 </td>
-                <td><%= user.email || '—' %></td>
-                <td><span class="lvl-inline">Niv. <%= user.level || 1 %></span></td>
+                <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
+                <td>
+                  <select class="tag" style="background:transparent; border:1px solid rgba(255,255,255,.1); color:<%= badge.color %>; font-size:.6rem; padding:2px 6px; border-radius:4px; cursor:pointer;"
+                    data-user-role-select="<%= user.id %>">
+                    <option value="user"       <%= user.role === 'user'       ? 'selected' : '' %>>Membre</option>
+                    <option value="editor"     <%= user.role === 'editor'     ? 'selected' : '' %>>Éditeur</option>
+                    <option value="admin"      <%= user.role === 'admin'      ? 'selected' : '' %>>Admin</option>
+                    <option value="superadmin" <%= user.role === 'superadmin' ? 'selected' : '' %>>Super Admin</option>
+                  </select>
+                </td>
+                <td>
+                  <% if (user.suspended) { %>
+                  <span class="s-badge s-badge--rejected" style="font-size:.58rem;">Suspendu</span>
+                  <% } else { %>
+                  <span style="font-size:.6rem; color:rgba(100,200,130,.7);">Actif</span>
+                  <% } %>
+                </td>
                 <td class="date-cell"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '—' %></td>
                 <td class="actions-cell">
-                  <form action="/admin/deleteUser/<%= user._id %>" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer l'utilisateur">
+                  <button type="button" class="act-btn act-btn--edit act-btn--sm" title="Modifier"
+                    data-edit-user-id="<%= user.id %>"
+                    data-edit-user-pseudo="<%= user.pseudo || '' %>"
+                    data-edit-user-email="<%= user.email || '' %>"
+                    data-edit-user-role="<%= user.role || 'user' %>">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <% if (user.suspended) { %>
+                  <form action="/admin/users/<%= user.id %>/unsuspend" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Réactiver">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </form>
+                  <% } else { %>
+                  <button type="button" class="act-btn act-btn--ban act-btn--sm" title="Suspendre"
+                    data-suspend-user-id="<%= user.id %>"
+                    data-suspend-user-pseudo="<%= user.pseudo || '' %>">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  </button>
+                  <% } %>
+                  <form action="/admin/deleteUser/<%= user.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                     </button>
                   </form>
@@ -1060,36 +953,39 @@
               <% }) %>
             </tbody>
           </table>
+          </div>
+          <% } %>
+
           <% } %>
         </section>
 
 
         <!-- ═══════════════════════════════════════════
-             VUE — CONTENUS PUBLIÉS
+             VUE — FILMS PUBLIÉS (+ demandes modification/suppression)
         ═══════════════════════════════════════════ -->
-        <section class="view" data-view-id="publies">
+        <section class="view" data-view-id="pub-films">
           <div class="page-header">
-            <h1 class="page-header__title">Contenus publiés</h1>
-            <p class="page-header__sub">Tous les contenus validés et visibles sur le site.</p>
+            <h1 class="page-header__title">Films</h1>
+            <p class="page-header__sub">Films publiés et demandes de modification ou suppression.</p>
           </div>
 
           <div class="queue-tabs" role="tablist">
-            <button class="queue-tab is-active" data-sub-tab="publies-films" role="tab">
-              Films
+            <button class="queue-tab is-active" data-sub-tab="pub-films-list" role="tab">
+              Films publiés
               <% if (validatedMovies && validatedMovies.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedMovies.length %></span><% } %>
             </button>
-            <button class="queue-tab" data-sub-tab="publies-recettes" role="tab">
-              Recettes
-              <% if (validatedRecipes && validatedRecipes.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedRecipes.length %></span><% } %>
+            <button class="queue-tab" data-sub-tab="pub-films-edits" role="tab">
+              Modifications
+              <% if (pendingMovieEdits && pendingMovieEdits.length > 0) { %><span class="queue-tab__count"><%= pendingMovieEdits.length %></span><% } %>
             </button>
-            <button class="queue-tab" data-sub-tab="publies-avis" role="tab">
-              Avis
-              <% if (validatedNotices && validatedNotices.length > 0) { %><span class="queue-tab__count queue-tab__count--vert"><%= validatedNotices.length %></span><% } %>
+            <button class="queue-tab" data-sub-tab="pub-films-deletes" role="tab">
+              Suppressions
+              <% if (pendingMovieDeleteRequests && pendingMovieDeleteRequests.length > 0) { %><span class="queue-tab__count queue-tab__count--rouge"><%= pendingMovieDeleteRequests.length %></span><% } %>
             </button>
           </div>
 
           <!-- Films publiés -->
-          <div class="sub-panel" id="publies-films">
+          <div class="sub-panel is-active" id="pub-films-list">
             <% if (!validatedMovies || validatedMovies.length === 0) { %>
             <div class="empty-state"><p>Aucun film publié.</p></div>
             <% } else { %>
@@ -1111,9 +1007,11 @@
                 <tbody>
                   <% validatedMovies.forEach(function(movie) { %>
                   <tr class="admin-list-item" data-search="<%= (movie.title || '').toLowerCase() + ' ' + (movie.genre || '').toLowerCase() %>">
-                    <td class="cell-media">
-                      <% if (movie.poster) { %><img src="<%= movie.poster %>" alt="" class="cell-media__thumb" /><% } %>
-                      <span class="cell-media__title"><%= movie.title %></span>
+                    <td>
+                      <div class="cell-media">
+                        <% if (movie.poster) { %><img src="<%= movie.poster %>" alt="" class="cell-media__thumb" /><% } %>
+                        <span class="cell-media__title"><%= movie.title %></span>
+                      </div>
                     </td>
                     <td><%= movie.year || '—' %></td>
                     <td><span class="tag"><%= movie.genre || '—' %></span></td>
@@ -1147,128 +1045,341 @@
             <% } %>
           </div>
 
-          <!-- Recettes publiées -->
-          <div class="sub-panel" id="publies-recettes" style="display:none;">
-            <% if (!validatedRecipes || validatedRecipes.length === 0) { %>
-            <div class="empty-state"><p>Aucune recette publiée.</p></div>
+          <!-- Modifications films -->
+          <div class="sub-panel" id="pub-films-edits">
+            <% if (!pendingMovieEdits || pendingMovieEdits.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de modification de film.</p></div>
             <% } else { %>
-            <div class="admin-published-section" data-page-size="10">
-              <div class="filter-bar">
-                <input type="text" class="filter-bar__search" placeholder="Rechercher une recette publiée…" data-search-input />
-                <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
+            <div class="mod-table">
+              <% pendingMovieEdits.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--modif">Modification</span>
+                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
+                  <ul class="mod-row__changes">
+                    <% if (req.pending_title && req.pending_title !== req.title) { %><li><em>Titre :</em> <s class="mod-old"><%= req.title %></s> → <strong class="mod-new"><%= req.pending_title %></strong></li><% } %>
+                    <% if (req.pending_year && req.pending_year !== req.year) { %><li><em>Année :</em> <s class="mod-old"><%= req.year %></s> → <strong class="mod-new"><%= req.pending_year %></strong></li><% } %>
+                    <% if (req.pending_genre && req.pending_genre !== req.genre) { %><li><em>Genre :</em> <s class="mod-old"><%= req.genre %></s> → <strong class="mod-new"><%= req.pending_genre %></strong></li><% } %>
+                  </ul>
+                </div>
+                <div class="actions-cell">
+                  <form action="/admin/movies/<%= req.id %>/edit/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Approuver la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </form>
+                  <form action="/admin/movies/<%= req.id %>/edit/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la modification">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </form>
+                </div>
               </div>
-              <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
-              <table class="ctable">
-                <thead>
-                  <tr>
-                    <th>Recette</th>
-                    <th>Catégorie</th>
-                    <th>Difficulté</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% validatedRecipes.forEach(function(recipe) { %>
-                  <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
-                    <td class="cell-media">
-                      <% const vThumb = (recipe.RecipePictures && recipe.RecipePictures.length > 0) ? recipe.RecipePictures[0].file_path : recipe.picture; %>
-                      <% if (vThumb) { %><img src="<%= vThumb %>" alt="" class="cell-media__thumb" /><% } %>
-                      <span class="cell-media__title"><%= recipe.name %></span>
-                    </td>
-                    <td><span class="tag"><%= recipe.category || '—' %></span></td>
-                    <td><%= recipe.difficulty || '—' %></td>
-                    <td class="actions-cell">
-                      <button type="button" class="act-btn act-btn--edit act-btn--sm"
-                        data-edit-btn
-                        data-edit-type="recipe"
-                        data-edit-id="<%= recipe.id %>"
-                        data-edit-name="<%= recipe.name %>"
-                        data-edit-category="<%= recipe.category || '' %>"
-                        data-edit-time="<%= recipe.preparationTime || '' %>"
-                        data-edit-difficulty="<%= recipe.difficulty || '' %>"
-                        data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
-                        data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
-                        data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                      </button>
-                      <form action="/admin/recipes/<%= recipe.id %>/delete/direct" method="POST" style="display:inline;">
-                        <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-              <div class="admin-pagination" style="display:none;">
-                <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
-                <span class="admin-pagination__info"></span>
-                <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
-              </div>
+              <% }) %>
             </div>
             <% } %>
           </div>
 
-          <!-- Avis publiés -->
-          <div class="sub-panel" id="publies-avis" style="display:none;">
-            <% if (!validatedNotices || validatedNotices.length === 0) { %>
-            <div class="empty-state"><p>Aucun avis publié.</p></div>
+          <!-- Suppressions films -->
+          <div class="sub-panel" id="pub-films-deletes">
+            <% if (!pendingMovieDeleteRequests || pendingMovieDeleteRequests.length === 0) { %>
+            <div class="empty-state"><p>Aucune demande de suppression de film.</p></div>
             <% } else { %>
-            <div class="admin-published-section" data-page-size="10">
-              <div class="filter-bar">
-                <input type="text" class="filter-bar__search" placeholder="Rechercher un avis publié…" data-search-input />
-                <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
+            <div class="mod-table">
+              <% pendingMovieDeleteRequests.forEach(function(req) { %>
+              <div class="mod-row">
+                <div class="mod-row__info">
+                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
+                  <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
+                </div>
+                <div class="actions-cell">
+                  <form action="/admin/movies/<%= req.id %>/delete/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Confirmer la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </form>
+                  <form action="/admin/movies/<%= req.id %>/delete/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject act-btn--sm" title="Refuser la suppression">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </form>
+                </div>
               </div>
-              <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
-              <table class="ctable">
-                <thead>
-                  <tr>
-                    <th>Utilisateur</th>
-                    <th>Recette</th>
-                    <th>Note</th>
-                    <th>Commentaire</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% validatedNotices.forEach(function(notice) { %>
-                  <tr class="admin-list-item" data-search="<%= (notice.user || notice.author || '').toLowerCase() + ' ' + (notice.recipe || '').toLowerCase() %>">
-                    <td class="user-cell"><%= notice.user || notice.author || '—' %></td>
-                    <td><%= notice.recipe || '—' %></td>
-                    <td class="score-cell">
-                      <% if (notice.rating || notice.note) { %><span class="score-badge"><%= notice.rating || notice.note %>/5</span><% } else { %>—<% } %>
-                    </td>
-                    <td><span class="cell-excerpt"><%= ((notice.content || notice.comment || notice.quote || '') + '').substring(0, 60) %>…</span></td>
-                    <td class="actions-cell">
-                      <button type="button" class="act-btn act-btn--edit act-btn--sm"
-                        data-edit-btn
-                        data-edit-type="notice"
-                        data-edit-id="<%= notice.id %>"
-                        data-edit-content="<%= String(notice.content || notice.comment || '').replace(/"/g, '&quot;') %>"
-                        data-edit-quote="<%= String(notice.quote || '').replace(/"/g, '&quot;') %>"
-                        data-edit-author="<%= notice.user || notice.author || '' %>"
-                        data-edit-recipe="<%= notice.recipe || '' %>">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                      </button>
-                      <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
-                        <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-              <div class="admin-pagination" style="display:none;">
-                <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
-                <span class="admin-pagination__info"></span>
-                <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
-              </div>
+              <% }) %>
             </div>
             <% } %>
           </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — RECETTES PUBLIÉES
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="pub-recettes">
+          <div class="page-header">
+            <h1 class="page-header__title">Recettes publiées</h1>
+            <p class="page-header__sub">Toutes les recettes validées et visibles sur le site.</p>
+          </div>
+
+          <% if (!validatedRecipes || validatedRecipes.length === 0) { %>
+          <div class="empty-state"><p>Aucune recette publiée.</p></div>
+          <% } else { %>
+          <div class="admin-published-section" data-page-size="10">
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Rechercher une recette publiée…" data-search-input />
+              <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
+            </div>
+            <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th>Recette</th>
+                  <th>Catégorie</th>
+                  <th>Difficulté</th>
+                  <th>Soumis par</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% validatedRecipes.forEach(function(recipe) { %>
+                <tr class="admin-list-item" data-search="<%= (recipe.name || '').toLowerCase() + ' ' + (recipe.category || '').toLowerCase() %>">
+                  <td>
+                    <div class="cell-media">
+                      <% const vThumb = (recipe.RecipePictures && recipe.RecipePictures.length > 0) ? recipe.RecipePictures[0].file_path : recipe.picture; %>
+                      <% if (vThumb) { %><img src="<%= vThumb %>" alt="" class="cell-media__thumb cell-media__thumb--recipe" /><% } %>
+                      <span class="cell-media__title"><%= recipe.name %></span>
+                    </div>
+                  </td>
+                  <td><span class="tag"><%= recipe.category || '—' %></span></td>
+                  <td><%= recipe.difficulty || '—' %></td>
+                  <td class="user-cell"><%= recipe.contributor?.pseudo || '—' %></td>
+                  <td class="actions-cell">
+                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
+                      data-edit-btn
+                      data-edit-type="recipe"
+                      data-edit-id="<%= recipe.id %>"
+                      data-edit-name="<%= recipe.name %>"
+                      data-edit-category="<%= recipe.category || '' %>"
+                      data-edit-time="<%= recipe.time || '' %>"
+                      data-edit-servings="<%= recipe.servings || '' %>"
+                      data-edit-difficulty="<%= recipe.difficulty || '' %>"
+                      data-edit-description="<%= String(recipe.description || '').replace(/"/g, '&quot;') %>"
+                      data-edit-ingredients="<%= String(recipe.ingredients || '').replace(/"/g, '&quot;') %>"
+                      data-edit-preparation="<%= String(recipe.preparation || '').replace(/"/g, '&quot;') %>">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <form action="/admin/recipes/<%= recipe.id %>/delete/direct" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <div class="admin-pagination" style="display:none;">
+              <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
+              <span class="admin-pagination__info"></span>
+              <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
+            </div>
+          </div>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — AVIS PUBLIÉS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="pub-avis">
+          <div class="page-header">
+            <h1 class="page-header__title">Avis publiés</h1>
+            <p class="page-header__sub">Tous les avis validés et visibles sur le site.</p>
+          </div>
+
+          <% if (!validatedNotices || validatedNotices.length === 0) { %>
+          <div class="empty-state"><p>Aucun avis publié.</p></div>
+          <% } else { %>
+          <div class="admin-published-section" data-page-size="10">
+            <div class="filter-bar">
+              <input type="text" class="filter-bar__search" placeholder="Rechercher un avis publié…" data-search-input />
+              <button type="button" class="filter-bar__clear" data-search-clear title="Effacer">×</button>
+            </div>
+            <div data-no-results style="display:none;" class="empty-state"><p>Aucun résultat pour cette recherche.</p></div>
+            <table class="ctable">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>Recette</th>
+                  <th>Note</th>
+                  <th>Commentaire</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% validatedNotices.forEach(function(notice) { %>
+                <tr class="admin-list-item" data-search="<%= (notice.user || notice.author || '').toLowerCase() + ' ' + (notice.recipe || '').toLowerCase() %>">
+                  <td class="user-cell"><%= notice.user || notice.author || '—' %></td>
+                  <td><%= notice.recipe || '—' %></td>
+                  <td class="score-cell">
+                    <% if (notice.rating || notice.note) { %><span class="score-badge"><%= notice.rating || notice.note %>/5</span><% } else { %>—<% } %>
+                  </td>
+                  <td><span class="cell-excerpt"><%= ((notice.content || notice.comment || notice.quote || '') + '').substring(0, 60) %>…</span></td>
+                  <td class="actions-cell">
+                    <button type="button" class="act-btn act-btn--edit act-btn--sm"
+                      data-edit-btn
+                      data-edit-type="notice"
+                      data-edit-id="<%= notice.id %>"
+                      data-edit-content="<%= String(notice.content || notice.comment || '').replace(/"/g, '&quot;') %>"
+                      data-edit-quote="<%= String(notice.quote || '').replace(/"/g, '&quot;') %>"
+                      data-edit-author="<%= notice.user || notice.author || '' %>"
+                      data-edit-recipe="<%= notice.recipe || '' %>">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
+                      <button type="submit" class="act-btn act-btn--delete act-btn--sm" title="Supprimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <div class="admin-pagination" style="display:none;">
+              <button class="btn btn--ghost admin-pagination__prev">← Précédent</button>
+              <span class="admin-pagination__info"></span>
+              <button class="btn btn--ghost admin-pagination__next">Suivant →</button>
+            </div>
+          </div>
+          <% } %>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — GAMIFICATION (stub)
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="gamification">
+          <div class="page-header">
+            <h1 class="page-header__title">Gamification</h1>
+            <p class="page-header__sub">Gestion des niveaux, badges et points des membres.</p>
+            <span class="act-btn act-btn--view" style="margin-left:auto;opacity:.5;cursor:default;">En développement</span>
+          </div>
+
+          <!-- Bannière statut -->
+          <div class="card" style="border:1px dashed rgba(196,160,82,.4);background:rgba(196,160,82,.06);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(196,160,82,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div>
+              <div style="font-weight:600;color:rgba(196,160,82,.9);margin-bottom:2px;">Module Gamification — à venir</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.4);">Ce panneau affichera les statistiques XP, niveaux et badges de la communauté. Les données sont déjà calculées côté back-end.</div>
+            </div>
+          </div>
+
+          <!-- Placeholders widgets -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+            <% [['XP total distribué','★'],['Membres actifs','👤'],['Badges débloqués','🏅'],['Niveau moyen','◈']].forEach(function(w){ %>
+            <div class="card" style="padding:20px;opacity:.45;pointer-events:none;border:1px dashed rgba(255,255,255,.12);">
+              <div style="font-size:1.4rem;margin-bottom:8px;"><%= w[1] %></div>
+              <div style="font-size:1.6rem;font-weight:700;color:rgba(255,255,255,.3);">—</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:4px;"><%= w[0] %></div>
+            </div>
+            <% }); %>
+          </div>
+
+          <!-- Placeholder tableau membres -->
+          <div class="card" style="padding:0;opacity:.35;pointer-events:none;">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);font-size:.8rem;font-weight:600;color:rgba(255,255,255,.4);">Top membres par XP</div>
+            <% for(let i=0;i<4;i++){ %>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);">
+              <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
+              <div style="flex:1;">
+                <div style="height:10px;width:120px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:5px;"></div>
+                <div style="height:8px;width:70px;background:rgba(255,255,255,.07);border-radius:3px;"></div>
+              </div>
+              <div style="height:10px;width:50px;background:rgba(255,255,255,.08);border-radius:3px;"></div>
+            </div>
+            <% } %>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — LOGS
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="logs">
+          <div class="page-header">
+            <h1 class="page-header__title">Logs</h1>
+            <p class="page-header__sub">Journal des 200 dernières actions administrateur. Lecture seule.</p>
+            <button type="button" class="act-btn act-btn--view" id="logs-export-btn" style="margin-left:auto;" title="Exporter en JSON">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Exporter JSON</span>
+            </button>
+          </div>
+
+          <!-- Filtres -->
+          <div class="filter-bar" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" class="filter-bar__search" id="logs-filter-text" placeholder="Filtrer par action ou admin…" style="flex:1; min-width:180px;" />
+            <select class="filter-bar__search" id="logs-filter-action" style="flex:0 0 auto; min-width:160px; cursor:pointer;">
+              <option value="">Toutes les actions</option>
+            </select>
+          </div>
+
+          <div class="card" style="padding:0;">
+            <div class="ctable-wrap" id="logs-table-wrap" style="max-height:600px; overflow-y:auto;">
+              <table class="ctable" id="logs-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Admin</th>
+                    <th>Action</th>
+                    <th>Type</th>
+                    <th>ID cible</th>
+                    <th>Détail</th>
+                  </tr>
+                </thead>
+                <tbody id="logs-tbody">
+                  <tr id="logs-loading-row">
+                    <td colspan="6" style="text-align:center; padding:32px; color:rgba(255,255,255,.35);">Chargement…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="logs-empty" style="display:none; text-align:center; padding:28px; color:rgba(255,255,255,.3); font-size:.72rem;">Aucun log correspondant.</div>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════
+             VUE — PARAMÈTRES (stub)
+        ═══════════════════════════════════════════ -->
+        <section class="view" data-view-id="parametres">
+          <div class="page-header">
+            <h1 class="page-header__title">Paramètres</h1>
+            <p class="page-header__sub">Configuration de la plateforme Ciné Délices.</p>
+            <span class="act-btn act-btn--view" style="margin-left:auto;opacity:.5;cursor:default;">En développement</span>
+          </div>
+
+          <!-- Bannière statut -->
+          <div class="card" style="border:1px dashed rgba(100,160,255,.35);background:rgba(100,160,255,.05);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(100,160,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <div>
+              <div style="font-weight:600;color:rgba(100,160,255,.85);margin-bottom:2px;">Paramètres système — à venir</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.4);">Ce panneau permettra de configurer les paramètres globaux de la plateforme (maintenance, modération, notifications, etc.).</div>
+            </div>
+          </div>
+
+          <!-- Placeholder sections paramètres -->
+          <% [['Général','Nom du site, URL, maintenance'],['Modération','Seuils d\'approbation automatique, mots bannis'],['Notifications','Emails admin, alertes de contenu'],['Sécurité','Durée des tokens, tentatives de connexion']].forEach(function(s){ %>
+          <div class="card" style="padding:20px 24px;margin-bottom:12px;opacity:.4;pointer-events:none;display:flex;align-items:center;gap:16px;">
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:.85rem;margin-bottom:3px;"><%= s[0] %></div>
+              <div style="font-size:.75rem;color:rgba(255,255,255,.35);"><%= s[1] %></div>
+            </div>
+            <div style="height:28px;width:60px;background:rgba(255,255,255,.08);border-radius:4px;"></div>
+          </div>
+          <% }); %>
         </section>
 
       </main>
@@ -1369,7 +1480,11 @@
               </div>
               <div class="admin-modal__field">
                 <label class="admin-modal__label" for="edit-recipe-time">Temps (min)</label>
-                <input type="number" id="edit-recipe-time" name="time" class="admin-modal__input" min="1" />
+                <input type="number" id="edit-recipe-time" name="time" class="admin-modal__input" min="0" />
+              </div>
+              <div class="admin-modal__field">
+                <label class="admin-modal__label" for="edit-recipe-servings">Portions</label>
+                <input type="number" id="edit-recipe-servings" name="servings" class="admin-modal__input" min="1" placeholder="ex: 4" />
               </div>
               <div class="admin-modal__field">
                 <label class="admin-modal__label" for="edit-recipe-difficulty">Difficulté</label>
@@ -1387,11 +1502,37 @@
             </div>
             <div class="admin-modal__field">
               <label class="admin-modal__label" for="edit-recipe-ingredients">Ingrédients</label>
-              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4"></textarea>
+              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" required></textarea>
             </div>
             <div class="admin-modal__field">
               <label class="admin-modal__label" for="edit-recipe-preparation">Préparation</label>
-              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5"></textarea>
+              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5" required></textarea>
+            </div>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-recipe-image">Photo principale (optionnel)</label>
+              <input type="file" id="edit-recipe-image" name="recipeImage" class="admin-modal__input" accept="image/jpeg,image/jpg,image/png,image/webp" style="padding:6px;" />
+              <img id="edit-recipe-image-preview" src="" alt="Aperçu" style="display:none; max-width:100%; max-height:120px; margin-top:8px; border-radius:6px; object-fit:cover;" />
+            </div>
+
+            <!-- ── Photos complémentaires ── -->
+            <div class="admin-modal__field" style="border-top:1px solid rgba(255,255,255,.06); padding-top:14px; margin-top:4px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <label class="admin-modal__label" style="margin:0;">Photos de la recette</label>
+                <span id="recipe-photos-count-badge" style="font-size:.63rem; color:rgba(196,160,82,.65);"></span>
+              </div>
+              <div id="recipe-photos-grid" style="display:flex; gap:10px; flex-wrap:wrap; min-height:60px; align-items:flex-start;">
+                <span style="font-size:.7rem; opacity:.35; align-self:center;">Chargement…</span>
+              </div>
+              <!-- Zone ajout photo (visible si count < 3) -->
+              <div id="recipe-photo-add-zone" style="display:none; margin-top:10px;">
+                <label class="admin-modal__label" style="margin-bottom:6px;">Ajouter une photo</label>
+                <input type="file" id="recipe-photo-add-input" accept="image/jpeg,image/jpg,image/png,image/webp" style="font-size:.72rem;" />
+                <button type="button" id="recipe-photo-add-btn" class="act-btn act-btn--approve" style="margin-top:6px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Ajouter
+                </button>
+              </div>
+              <p id="recipe-photos-limit-msg" style="display:none; font-size:.68rem; color:rgba(220,140,60,.9); margin-top:8px;">Limite de 3 photos atteinte.</p>
             </div>
           </div>
 
@@ -1420,6 +1561,105 @@
           <div class="admin-modal__footer">
             <button type="button" class="btn btn--ghost" data-modal-close>Annuler</button>
             <button type="submit" class="btn btn--primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         MODAL SUSPENSION UTILISATEUR
+    ═══════════════════════════════════════════ -->
+    <div class="admin-modal" id="user-suspension-modal" role="dialog" aria-modal="true" aria-labelledby="suspend-modal-title">
+      <div class="admin-modal__backdrop"></div>
+      <div class="admin-modal__dialog">
+        <div class="admin-modal__header">
+          <div class="admin-modal__title-row">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            <h2 class="admin-modal__title" id="suspend-modal-title">Suspendre l'utilisateur</h2>
+          </div>
+          <button type="button" class="admin-modal__close" id="suspend-modal-close" aria-label="Fermer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <form class="admin-modal__form" id="suspend-form">
+          <div class="admin-modal__field">
+            <label class="admin-modal__label" for="suspend-duration">Durée</label>
+            <select name="duration" id="suspend-duration" class="admin-modal__input">
+              <option value="1">1 jour</option>
+              <option value="3">3 jours</option>
+              <option value="7" selected>7 jours</option>
+              <option value="14">14 jours</option>
+              <option value="30">30 jours</option>
+              <option value="0">Permanent</option>
+            </select>
+          </div>
+          <div class="admin-modal__field">
+            <label class="admin-modal__label" for="suspend-reason">Raison</label>
+            <textarea name="reason" id="suspend-reason" class="admin-modal__textarea" maxlength="500" rows="3" placeholder="Motif de la suspension…"></textarea>
+          </div>
+          <div class="admin-modal__footer">
+            <button type="submit" class="act-btn act-btn--danger">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              Suspendre
+            </button>
+            <button type="button" class="act-btn act-btn--ghost" id="suspend-modal-cancel">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         MODAL CRÉATION / ÉDITION UTILISATEUR
+    ═══════════════════════════════════════════ -->
+    <div class="admin-modal" id="user-role-modal" role="dialog" aria-modal="true" aria-labelledby="ur-modal-title">
+      <div class="admin-modal__backdrop"></div>
+      <div class="admin-modal__dialog">
+        <div class="admin-modal__header">
+          <div class="admin-modal__title-row">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <h2 class="admin-modal__title" id="ur-modal-title">Créer un utilisateur</h2>
+          </div>
+          <button type="button" class="admin-modal__close" id="ur-modal-close" aria-label="Fermer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <form class="admin-modal__form" id="user-role-form">
+          <div class="admin-modal__field">
+            <label class="admin-modal__label" for="ur-pseudo">Pseudo</label>
+            <input type="text" id="ur-pseudo" name="pseudo" class="admin-modal__input" required />
+          </div>
+          <div class="admin-modal__field">
+            <label class="admin-modal__label" for="ur-email">Email</label>
+            <input type="email" id="ur-email" name="email" class="admin-modal__input" required />
+          </div>
+          <div class="admin-modal__field">
+            <label class="admin-modal__label" for="ur-password">
+              Mot de passe
+              <span id="ur-password-hint" style="font-weight:400; opacity:.55; margin-left:6px; font-size:.62rem;">(min. 8 caractères)</span>
+            </label>
+            <input type="password" id="ur-password" name="password" class="admin-modal__input" minlength="8" autocomplete="new-password" />
+          </div>
+          <% if (role === 'superadmin') { %>
+          <div class="admin-modal__field" id="ur-role-field">
+            <label class="admin-modal__label" for="ur-role">Rôle</label>
+            <select id="ur-role" name="role" class="admin-modal__select">
+              <option value="user">Membre</option>
+              <option value="editor">Éditeur</option>
+              <option value="admin">Admin</option>
+              <option value="superadmin">Super Admin</option>
+            </select>
+          </div>
+          <% } %>
+          <div class="admin-modal__footer">
+            <button type="submit" id="ur-submit-btn" class="act-btn act-btn--approve">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="ur-submit-label">Créer</span>
+            </button>
+            <button type="button" id="ur-modal-cancel" class="act-btn act-btn--ghost">Annuler</button>
           </div>
         </form>
       </div>

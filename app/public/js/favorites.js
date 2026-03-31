@@ -10,6 +10,21 @@
  * - Recettes (data-entity-type="recipe")
  */
 
+/* ── XP toast (affiché uniquement pour les membres) ───────────────── */
+function _showXpToast(xpGained, leveledUp, rank) {
+  if (!xpGained) return;
+  const msg = leveledUp
+    ? `+${xpGained} XP — Niveau supérieur ! ${rank}`
+    : `+${xpGained} XP`;
+  if (window._cdToast) { window._cdToast(msg, "success"); return; }
+  // fallback léger si contributions.js absent
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;background:#1a7a46;color:#fff;padding:10px 18px;border-radius:6px;font-size:.85rem;box-shadow:0 4px 16px rgba(0,0,0,.4);pointer-events:none;";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const isLoggedIn = window.CINEDELICES?.isLoggedIn || false;
 
@@ -88,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => btn.classList.remove("animating"), 400);
 
             showNotification(data.message, "success");
+            if (newState) _showXpToast(data.xpGained, data.leveledUp, data.rank);
           } else {
             showNotification(data.message || "Erreur lors de l'opération", "error");
           }

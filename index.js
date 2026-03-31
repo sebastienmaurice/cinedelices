@@ -29,7 +29,22 @@ app.use(router);
 
 // middleware (404)
 app.use((req, res) => {
-  res.status(404).render("error", { error: "404", message: "Page introuvable." });
+  res
+    .status(404)
+    .render("error", { error: "404", message: "Page introuvable." });
+});
+
+// Global error handler pour attraper les erreurs non gérées et éviter un 500 générique
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  const acceptsJson =
+    req.xhr || req.headers.accept?.includes("application/json");
+  if (acceptsJson) {
+    return res.status(500).json({ status: "fail", message: "Erreur serveur." });
+  }
+  return res
+    .status(500)
+    .render("error", { error: "500", message: "Erreur serveur." });
 });
 
 app.listen(PORT, () => {

@@ -2,6 +2,7 @@ import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+import { awardActionXP } from "../services/xpService.js";
 
 /**
  * Récupère les IDs des recettes favorites de l'utilisateur
@@ -123,7 +124,7 @@ const recipesController = {
       const recipes = await Recipe.findAll({
         where: whereClause,
         include: [
-          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
         ],
         order,
@@ -181,7 +182,7 @@ const recipesController = {
           {
             model: User,
             as: "contributor",
-            attributes: ["id", "pseudo", "picture"],
+            attributes: ["id", "pseudo", "picture", "role"],
           },
         ],
       });
@@ -233,7 +234,7 @@ const recipesController = {
       }
 
       // Jointure User via alias "contributor" — même include dans les 2 cas
-      const userInclude = [{ model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] }];
+      const userInclude = [{ model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] }];
 
       let recipes;
       if (!category || category === "all") {
@@ -304,8 +305,10 @@ const recipesController = {
 
       const plainRecipe = recipe.get({ plain: true });
 
+      // Pas de filtre status : si la recette est approuvée, son film est accessible
+      // (les films TMDB sont auto-approuvés ; les films manuels peuvent être encore en attente)
       const movie = await Movie.findOne({
-        where: { id: plainRecipe.id_movie, status: "approved" },
+        where: { id: plainRecipe.id_movie },
       });
       const enrichedMovie = movie ? enrichMovieWithImagePaths(movie) : null;
 
@@ -478,7 +481,18 @@ recipesController.submitNotice = async function submitNotice(req, res) {
       status: "pending",
     });
 
-    return res.json({ success: true, message: "Votre avis a été envoyé et sera publié après modération." });
+    // XP pour les membres uniquement (fire-and-forget)
+    const xpResult = await awardActionXP(req.userId, req.userRole, "comment_posted").catch(() => null);
+
+    return res.json({
+      success:   true,
+      message:   "Votre avis a été envoyé et sera publié après modération.",
+      xpGained:  xpResult?.xpGained  ?? 0,
+      newXP:     xpResult?.newXP      ?? 0,
+      newLevel:  xpResult?.newLevel   ?? 0,
+      leveledUp: xpResult?.leveledUp  ?? false,
+      rank:      xpResult?.rank       ?? "",
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Erreur serveur." });
   }

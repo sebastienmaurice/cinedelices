@@ -209,8 +209,12 @@
                 </div>
               </div>
               <div class="djc-cta__btns">
-                <a href="/auth/register" class="djc-cta__btn-primary">✦ Créer un compte</a>
-                <a href="/add-recipes-movies/" class="djc-cta__btn-secondary">🍴 Ajouter ma recette</a>
+                <% if (typeof role === 'undefined') { %>
+                <button type="button" class="djc-cta__btn-primary js-open-register">✦ Créer un compte</button>
+                <button type="button" class="djc-cta__btn-secondary js-open-login" data-login-hint="Connectez-vous pour ajouter votre recette">🍴 Ajouter ma recette</button>
+                <% } else { %>
+                <a href="/add-recipes-movies/" class="djc-cta__btn-primary">🍴 Ajouter ma recette</a>
+                <% } %>
                 <div class="djc-cta__membres">
                   <% [0,1,2].forEach(function(i) { %>
                     <% const tc = topContributors && topContributors[i]; %>
@@ -266,11 +270,13 @@
                   </div>
                 </div>
                 <div class="djc-recette__foot">
-                  <div class="djc-recette__author">
-                    <img class="djc-recette__avatar" src="<%= topRecipe.contributor && topRecipe.contributor.picture ? topRecipe.contributor.picture : '/images/image-default-profile.jpg' %>" alt="<%= topRecipe.contributor ? topRecipe.contributor.pseudo : 'Chef' %>" loading="lazy">
-                    <div>
-                      <div class="djc-recette__author-name"><%= topRecipe.contributor ? topRecipe.contributor.pseudo : 'Chef Ciné Délices' %></div>
-                      <div class="djc-recette__author-rank">★★ Studio Bronze</div>
+                  <% const trContrib = topRecipe.contributor;
+                     const trIsStaff = trContrib && (trContrib.role === 'admin' || trContrib.role === 'superadmin'); %>
+                  <div class="contrib <%= trIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                    <div class="contrib__av"><img src="<%= trContrib && trContrib.picture ? trContrib.picture : '/images/image-default-profile.jpg' %>" alt="<%= trContrib ? trContrib.pseudo : 'Chef' %>" loading="lazy"></div>
+                    <div class="contrib__info">
+                      <span class="contrib__pseudo"><%= trContrib ? trContrib.pseudo : 'Chef Ciné Délices' %></span>
+                      <span class="contrib__pill <%= trIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= trIsStaff ? 'Ciné Délices' : 'Membre' %></span>
                     </div>
                   </div>
                   <a href="/recipes-movie/details/<%= topRecipe.slug || topRecipe.id %>" class="djc-recette__btn">Voir la recette →</a>
@@ -339,15 +345,12 @@
                   <% } %>
                   <div class="top3-featured__foot">
                     <% const c0 = recipes[0].contributor;
-                       const c0cls = c0 && c0.role === 'admin' ? 'lvl--legend' : 'lvl--1';
-                       const c0ttl = c0 && c0.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
-                    <div class="lvl-badge <%= c0cls %>">
-                      <div class="lvl-av">
-                        <img src="<%= c0 && c0.picture ? c0.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy">
-                      </div>
-                      <div class="lvl-info">
-                        <span class="lvl-name"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="lvl-title"><%= c0ttl %></span>
+                       const c0isStaff = c0 && (c0.role === 'admin' || c0.role === 'superadmin'); %>
+                    <div class="contrib <%= c0isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                      <div class="contrib__av"><img src="<%= c0 && c0.picture ? c0.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                      <div class="contrib__info">
+                        <span class="contrib__pseudo"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="contrib__pill <%= c0isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c0isStaff ? 'Ciné Délices' : 'Membre' %></span>
                       </div>
                     </div>
                     <a href="/recipes-movie/details/<%= recipes[0].slug || recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
@@ -384,15 +387,12 @@
                   <% if (recipes[1].description) { %><p class="top3-card__desc"><%= recipes[1].description.slice(0, 80) %>...</p><% } %>
                   <div class="top3-card__foot">
                     <% const c1 = recipes[1].contributor;
-                       const c1cls = c1 && c1.role === 'admin' ? 'lvl--legend' : 'lvl--1';
-                       const c1ttl = c1 && c1.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
-                    <div class="lvl-badge lvl-badge--sm <%= c1cls %>">
-                      <div class="lvl-av">
-                        <img src="<%= c1 && c1.picture ? c1.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy">
-                      </div>
-                      <div class="lvl-info">
-                        <span class="lvl-name"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="lvl-title"><%= c1ttl %></span>
+                       const c1isStaff = c1 && (c1.role === 'admin' || c1.role === 'superadmin'); %>
+                    <div class="contrib <%= c1isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                      <div class="contrib__av"><img src="<%= c1 && c1.picture ? c1.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                      <div class="contrib__info">
+                        <span class="contrib__pseudo"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="contrib__pill <%= c1isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c1isStaff ? 'Ciné Délices' : 'Membre' %></span>
                       </div>
                     </div>
                     <a href="/recipes-movie/details/<%= recipes[1].slug || recipes[1].id %>" class="top3-card__btn">Voir</a>
@@ -429,15 +429,12 @@
                   <% if (recipes[2].description) { %><p class="top3-card__desc"><%= recipes[2].description.slice(0, 80) %>...</p><% } %>
                   <div class="top3-card__foot">
                     <% const c2 = recipes[2].contributor;
-                       const c2cls = c2 && c2.role === 'admin' ? 'lvl--legend' : 'lvl--1';
-                       const c2ttl = c2 && c2.role === 'admin' ? '★★★★★ Légende' : '★ Popcorn Rookie'; %>
-                    <div class="lvl-badge lvl-badge--sm <%= c2cls %>">
-                      <div class="lvl-av">
-                        <img src="<%= c2 && c2.picture ? c2.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy">
-                      </div>
-                      <div class="lvl-info">
-                        <span class="lvl-name"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="lvl-title"><%= c2ttl %></span>
+                       const c2isStaff = c2 && (c2.role === 'admin' || c2.role === 'superadmin'); %>
+                    <div class="contrib <%= c2isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                      <div class="contrib__av"><img src="<%= c2 && c2.picture ? c2.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                      <div class="contrib__info">
+                        <span class="contrib__pseudo"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
+                        <span class="contrib__pill <%= c2isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c2isStaff ? 'Ciné Délices' : 'Membre' %></span>
                       </div>
                     </div>
                     <a href="/recipes-movie/details/<%= recipes[2].slug || recipes[2].id %>" class="top3-card__btn">Voir</a>

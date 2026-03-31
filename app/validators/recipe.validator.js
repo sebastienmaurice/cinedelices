@@ -1,5 +1,9 @@
 import Joi from "joi";
 
+function acceptsJson(req) {
+  return req.xhr || req.headers.accept?.includes("application/json");
+}
+
 /**
  * description : Middleware de validation avec joi pour la création d'une recette.
  * dossier validators : recipe.validator.js
@@ -8,23 +12,18 @@ import Joi from "joi";
 function validateRecipeCreate(req, res, next) {
   const recipeSchema = Joi.object({
     name: Joi.string()
-    .trim()
-    .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
-    .required()
-    .messages({
-      "string.empty": "Le nom de la recette est obligatoire.",
-    }),
+      .trim()
+      .replace(/\s+/g, "_") // Remplace tous les espaces restants par des underscores
+      .required()
+      .messages({
+        "string.empty": "Le nom de la recette est obligatoire.",
+      }),
 
-    description: Joi.string()
-    .required()
-    .messages({
+    description: Joi.string().required().messages({
       "string.empty": "La description est obligatoire.",
     }),
 
-    picture: Joi.string()
-    .max(255)
-    .allow(null, "")
-    .optional(),
+    picture: Joi.string().max(255).allow(null, "").optional(),
 
     category: Joi.string()
       .valid("apéritif", "entrée", "plat", "dessert", "boisson", "autres")
@@ -35,34 +34,20 @@ function validateRecipeCreate(req, res, next) {
           'La catégorie doit être "apéritif", "entrée", "plat", "dessert", "boisson" ou "autres".',
       }),
 
-    quote: Joi.number()
-    .integer()
-    .min(0)
-    .max(5)
-    .default(0)
-    .optional()
-    .messages({
+    quote: Joi.number().integer().min(0).max(5).default(0).optional().messages({
       "number.min": "La note doit être entre 0 et 5.",
       "number.max": "La note doit être entre 0 et 5.",
     }),
 
-    ingredients: Joi.string()
-    .required()
-    .messages({
+    ingredients: Joi.string().required().messages({
       "string.empty": "Les ingrédients sont obligatoires.",
     }),
 
-    preparation: Joi.string()
-    .required()
-    .messages({
+    preparation: Joi.string().required().messages({
       "string.empty": "La préparation est obligatoire.",
     }),
 
-    time: Joi.number()
-    .integer()
-    .min(1)
-    .required()
-    .messages({
+    time: Joi.number().integer().min(1).required().messages({
       "number.base": "Le temps doit être un nombre.",
       "number.min": "Le temps doit être au moins 1 minute.",
       "any.required": "Le temps de préparation est obligatoire.",
@@ -73,12 +58,11 @@ function validateRecipeCreate(req, res, next) {
       .required()
       .messages({
         "string.empty": "La difficulté est obligatoire.",
-        "any.only":'La difficulté doit être "Facile", "Moyenne" ou "Difficile".',
+        "any.only":
+          'La difficulté doit être "Facile", "Moyenne" ou "Difficile".',
       }),
 
-    status: Joi.boolean()
-    .default(false)
-    .optional(),
+    status: Joi.boolean().default(false).optional(),
 
     servings: Joi.number().integer().min(1).optional(),
 
@@ -95,11 +79,89 @@ function validateRecipeCreate(req, res, next) {
 
   const { error } = recipeSchema.validate(req.body);
   if (error) {
+    const message = `${error.details[0].message}`;
+    if (acceptsJson(req)) {
+      return res.status(400).json({ status: "fail", message });
+    }
     return res.status(400).render("error", {
       error: "400",
-      message: `${error.details[0].message}`,
+      message,
     });
   }
+  next();
+}
+
+function validateMovieAndRecipeCreate(req, res, next) {
+  const movieAndRecipeSchema = Joi.object({
+    filmId: Joi.number().integer().positive().allow(null, "").optional(),
+    title: Joi.string().trim().allow("", null).optional(),
+    year: Joi.number().integer().min(1888).max(2099).allow(null, "").optional(),
+    genre: Joi.string().trim().allow("", null).optional(),
+    synopsis: Joi.string().allow(null, "").optional(),
+    tmdbId: Joi.number().integer().positive().allow(null, "").optional(),
+    name: Joi.string().trim().required().messages({
+      "string.empty": "Le nom de la recette est obligatoire.",
+    }),
+    description: Joi.string().required().messages({
+      "string.empty": "La description est obligatoire.",
+    }),
+    category: Joi.string()
+      .valid("apéritif", "entrée", "plat", "dessert", "boisson", "autres")
+      .required()
+      .messages({
+        "string.empty": "La catégorie est obligatoire.",
+        "any.only":
+          'La catégorie doit être "apéritif", "entrée", "plat", "dessert", "boisson" ou "autres".',
+      }),
+    ingredients: Joi.string().required().messages({
+      "string.empty": "Les ingrédients sont obligatoires.",
+    }),
+    preparation: Joi.string().required().messages({
+      "string.empty": "La préparation est obligatoire.",
+    }),
+    time: Joi.number().integer().min(1).required().messages({
+      "number.base": "Le temps doit être un nombre.",
+      "number.min": "Le temps doit être au moins 1 minute.",
+      "any.required": "Le temps de préparation est obligatoire.",
+    }),
+    difficulty: Joi.string()
+      .valid("Facile", "Moyenne", "Difficile")
+      .required()
+      .messages({
+        "string.empty": "La difficulté est obligatoire.",
+        "any.only":
+          'La difficulté doit être "Facile", "Moyenne" ou "Difficile".',
+      }),
+    servings: Joi.number().integer().min(1).allow(null, "").optional(),
+  });
+
+  const { error } = movieAndRecipeSchema.validate(req.body, {
+    allowUnknown: true,
+  });
+  if (error) {
+    const message = `${error.details[0].message}`;
+    if (acceptsJson(req)) {
+      return res.status(400).json({ status: "fail", message });
+    }
+    return res.status(400).render("add-recipes-movies", {
+      error: true,
+      errorMessage: message,
+    });
+  }
+
+  if (!req.body.filmId && !req.body.tmdbId) {
+    if (!req.body.title || !req.body.year || !req.body.genre) {
+      const message = "Merci de compléter les informations du film.";
+      if (acceptsJson(req)) {
+        return res.status(400).json({ status: "fail", message });
+      }
+      return res.status(400).render("add-recipes-movies", {
+        error: true,
+        errorMessage: message,
+      });
+    }
+  }
+
   next();
 }
 
@@ -147,4 +209,8 @@ function validateRecipeUpdate(req, res, next) {
   next();
 }
 
-export { validateRecipeCreate, validateRecipeUpdate };
+export {
+  validateRecipeCreate,
+  validateRecipeUpdate,
+  validateMovieAndRecipeCreate,
+};

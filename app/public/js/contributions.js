@@ -98,9 +98,13 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
   const newList = framesList.cloneNode(true);
   framesList.parentNode.replaceChild(newList, framesList);
 
+  const _userRole = document.body.dataset.userRole || '';
+  const _isStaff  = _userRole === 'admin' || _userRole === 'superadmin';
+
   newList.addEventListener('click', function (e) {
     const row = e.target.closest('.frame-row');
     if (!row) return;
+    if (_isStaff) return; // pas d'équipement de cadre pour admin/superadmin
     if (row.dataset.unlocked !== 'true') {
       window._cdToast('Ce cadre est verrouillé pour votre niveau.', 'error');
       return;
@@ -171,14 +175,32 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
         }
 
         // ── 3. Nav badge ─────────────────────────────────────────
-        const navFrame = document.querySelector('.nav-badge-static__frame');
-        if (navFrame) {
-          if (data.activeFrameUrl) {
+        const navTrigger = document.getElementById('userDropdownTrigger');
+        let   navBadge   = navTrigger?.querySelector('.nav-badge-static');
+        let   navFrame   = navTrigger?.querySelector('.nav-badge-static__frame');
+        const avatarSrc  = navTrigger?.dataset.navAvatar || '/images/image-default-profile.jpg';
+
+        if (!navBadge && navTrigger) {
+          // SVG générique affiché → construire le badge avec la photo
+          navTrigger.innerHTML = `<div class="nav-badge-static" aria-hidden="true"><img class="nav-badge-static__photo" src="${avatarSrc}" alt="" /></div>`;
+          navBadge = navTrigger.querySelector('.nav-badge-static');
+          navFrame = null;
+        }
+
+        if (data.activeFrameUrl) {
+          if (navFrame) {
             navFrame.src = data.activeFrameUrl;
             navFrame.style.display = '';
-          } else {
-            navFrame.style.display = 'none';
+          } else if (navBadge) {
+            const fr = document.createElement('img');
+            fr.className = 'nav-badge-static__frame';
+            fr.src = data.activeFrameUrl;
+            fr.alt = '';
+            navBadge.appendChild(fr);
           }
+        } else {
+          // "Sans cadre" — retirer l'overlay frame s'il existe
+          navFrame?.remove();
         }
 
         // ── 4. Footer widget — ligne de l'utilisateur courant ────

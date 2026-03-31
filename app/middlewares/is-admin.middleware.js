@@ -3,7 +3,7 @@ export function isAdmin(req, res, next) {
   const userRole = req.userRole;
 
   // 🔹 Vérification normale
-  if (userRole === "admin" || userRole === "super_admin") {
+  if (userRole === "admin" || userRole === "superadmin" || userRole === "super_admin") {
     return next();
   }
 

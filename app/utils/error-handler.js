@@ -51,6 +51,16 @@ export function renderServerError(res, error = null, customMessage = null) {
     console.error("Erreur serveur:", error);
   }
 
+  const acceptsJson =
+    res?.req?.headers?.accept?.includes("application/json") || res?.req?.xhr;
+
+  if (acceptsJson) {
+    return res.status(500).json({
+      status: "fail",
+      message: customMessage || "Erreur serveur.",
+    });
+  }
+
   return res.status(500).render("error", {
     error: "500",
     message: customMessage || "Erreur serveur.",

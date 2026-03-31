@@ -2,6 +2,7 @@ import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { getUserGamificationData } from "../services/xpService.js";
+import { getBadgesForProfile } from "../services/badgeService.js";
 import { xpProgress } from "../utils/xp.js";
 
 /* ─────────────────────────────────────────────────────
@@ -92,7 +93,7 @@ const authorController = {
       const recipes = await Recipe.findAll({
         where: { id_user: userId, status: "approved" },
         include: [
-          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
         ],
         order: [["validated_at", "DESC"]],
@@ -113,21 +114,27 @@ const authorController = {
         Notice.findAll({ where: { id_user: userId } }),
       ]);
 
-      const gamif = await getUserGamificationData(userId, {
-        recipes: allRecipes,
-        movies: allMovies,
-        notices: allNotices,
-        isSuperAdmin: false, // La page auteur n'expose pas les droits super_admin
-      });
+      const [gamif, userBadges] = await Promise.all([
+        getUserGamificationData(userId, {
+          recipes: allRecipes,
+          movies: allMovies,
+          notices: allNotices,
+          isSuperAdmin: false,
+        }),
+        getBadgesForProfile(userId),
+      ]);
 
       const xpProg = xpProgress(gamif.xp, gamif.level);
       const isOwner = !!(req.userId && parseInt(req.userId, 10) === userId);
+
+      const isAdminAuthor = author.role === "admin" || author.role === "superadmin";
 
       return res.render("author-page", {
         author,
         recipes: enrichedRecipes,
         recipesCount: approvedCount,
         isOwner,
+        isAdminAuthor,
         // Gamification
         userXP:          gamif.xp,
         userLevel:       gamif.level,
@@ -137,6 +144,7 @@ const authorController = {
         xpPct:           xpProg.pct,
         xpCurrent:       xpProg.current,
         xpNeeded:        xpProg.needed,
+        userBadges,
       });
     } catch (error) {
       return renderServerError(res, error);

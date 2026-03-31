@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Sequelize, Op } from "sequelize";
 import { Recipe, Movie, Notice, User } from "../models/index.model.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
@@ -41,7 +41,7 @@ const homeController = {
         where: { status: "approved" },
         include: [
           { model: Movie, where: { status: "approved" } },
-          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture"] },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
         ],
         order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
       });
@@ -56,9 +56,20 @@ const homeController = {
         duoFilm = { ...enriched, recipeCount: duoRecipeCount };
       }
 
-      // afficher 4 films aléatoirement sur la page d'accueil
-      const topMovies = await Movie.findAll({
+      // afficher 4 films aléatoirement sur la page d'accueil (avec au moins 1 recette approuvée)
+      const moviesWithRecipes = await Recipe.findAll({
         where: { status: "approved" },
+        attributes: ["id_movie"],
+        group: ["id_movie"],
+        raw: true,
+      });
+      const movieIdsWithApprovedRecipes = moviesWithRecipes.map((r) => r.id_movie).filter(Boolean);
+
+      const topMovies = await Movie.findAll({
+        where: {
+          status: "approved",
+          id: { [Op.in]: movieIdsWithApprovedRecipes },
+        },
         order: [Sequelize.literal("RANDOM()")],
         limit: 4,
       });
@@ -101,9 +112,12 @@ const homeController = {
         recipeCount: countMap[m.id] || 0,
       }));
 
-      // Statistiques par genre (pour la category-strip)
+      // Statistiques par genre (pour la category-strip) — uniquement films avec recettes approuvées
       const genreStats = await Movie.findAll({
-        where: { status: "approved" },
+        where: {
+          status: "approved",
+          id: { [Op.in]: movieIdsWithApprovedRecipes },
+        },
         attributes: ["genre", [Sequelize.fn("COUNT", Sequelize.col("id")), "count"]],
         group: ["genre"],
         order: [[Sequelize.fn("COUNT", Sequelize.col("id")), "DESC"]],

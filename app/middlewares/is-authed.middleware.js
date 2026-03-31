@@ -99,7 +99,7 @@ function isLogged(req, res, next) {
   const userRole = req.userRole;
 
   // Vérification normale
-  if (userRole === "user" || userRole === "admin" || userRole === "super_admin") {
+  if (userRole === "user" || userRole === "admin" || userRole === "superadmin" || userRole === "super_admin") {
     next();
   } else {
     // Accès interdit - on ajoute un paramètre pour ouvrir le popup
@@ -123,7 +123,7 @@ function isLogged(req, res, next) {
 function isLoggedApi(req, res, next) {
   const userRole = req.userRole;
 
-  if (userRole === "user" || userRole === "admin" || userRole === "super_admin") {
+  if (userRole === "user" || userRole === "admin" || userRole === "superadmin" || userRole === "super_admin") {
     next();
   } else {
     // Pour les API, on retourne TOUJOURS du JSON

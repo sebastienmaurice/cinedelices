@@ -42,10 +42,14 @@ Recipe.init({
       if (!recipe.slug && recipe.name) {
         recipe.slug = slugify(recipe.name, { lower: true, strict: true });
       }
+      if (recipe.category) recipe.category = recipe.category.toLowerCase();
     },
     beforeUpdate: (recipe) => {
       if (recipe.changed("name") && recipe.name) {
         recipe.slug = slugify(recipe.name, { lower: true, strict: true });
+      }
+      if (recipe.changed("category") && recipe.category) {
+        recipe.category = recipe.category.toLowerCase();
       }
     },
   },

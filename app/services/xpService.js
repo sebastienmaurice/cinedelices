@@ -1,6 +1,10 @@
 import { UserPoints } from "../models/index.model.js";
 import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS } from "../utils/xp.js";
 
+const STAFF_ROLES = new Set(["admin", "superadmin"]);
+
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
 function _statusLabel(status) {
   switch (status) {
     case "approved": return "Approuvé";
@@ -35,24 +39,61 @@ function _timeAgo(date) {
  *   - Avis approuvé     : XP_ACTIONS.review_approved  (10)
  */
 export async function syncUserXP(userId, { recipes = [], movies = [], notices = [] }) {
-  const xp =
+  const contentXP =
     recipes.filter((r) => r.status === "approved").length * XP_ACTIONS.recipe_published +
     movies.filter((m) => m.status === "approved").length * XP_ACTIONS.movie_accepted +
     notices.filter((n) => n.status === "approved").length * XP_ACTIONS.review_approved;
 
-  const level = computeLevel(xp);
+  const [row] = await UserPoints.findOrCreate({
+    where: { id_user: userId },
+    defaults: { points: contentXP, level_code: computeLevel(contentXP).toString(), active_frame_code: "cine" },
+  });
+
+  // Ne jamais réduire les points (les bonus d'actions/login s'accumulent)
+  const newPoints = Math.max(row.points, contentXP);
+  const level = computeLevel(newPoints);
+
+  if (row.points !== newPoints || row.level_code !== level.toString()) {
+    await row.update({ points: newPoints, level_code: level.toString() });
+  }
+
+  return { xp: newPoints, level, row };
+}
+
+/**
+ * Accorde des XP pour une action utilisateur (favoris, avis, etc.).
+ * Sans effet pour les comptes admin / superadmin.
+ *
+ * @param {number} userId
+ * @param {string} userRole  - rôle issu du JWT (req.userRole)
+ * @param {string} actionCode - clé de XP_ACTIONS
+ * @returns {{ xpGained:number, newXP:number, newLevel:number, leveledUp:boolean, rank:string }}
+ */
+export async function awardActionXP(userId, userRole, actionCode) {
+  if (STAFF_ROLES.has(userRole)) return { xpGained: 0, newXP: 0, newLevel: 0, leveledUp: false, rank: "" };
+
+  const xpGained = XP_ACTIONS[actionCode] ?? 0;
+  if (xpGained <= 0) return { xpGained: 0, newXP: 0, newLevel: 0, leveledUp: false, rank: "" };
 
   const [row] = await UserPoints.findOrCreate({
     where: { id_user: userId },
-    defaults: { points: xp, level_code: level.toString(), active_frame_code: "cine" },
+    defaults: { points: 0, level_code: "1", active_frame_code: "cine" },
   });
 
-  // Mise à jour si différent
-  if (row.points !== xp || row.level_code !== level.toString()) {
-    await row.update({ points: xp, level_code: level.toString() });
-  }
+  const prevLevel  = computeLevel(row.points);
+  const newPoints  = row.points + xpGained;
+  const newLevel   = computeLevel(newPoints);
+  const leveledUp  = newLevel > prevLevel;
 
-  return { xp, level, row };
+  await row.update({ points: newPoints, level_code: newLevel.toString() });
+
+  return {
+    xpGained,
+    newXP:    newPoints,
+    newLevel,
+    leveledUp,
+    rank:     RANK_TITLES[newLevel] ?? RANK_TITLES[1],
+  };
 }
 
 /**
@@ -120,4 +161,31 @@ export async function getUserGamificationData(userId, { recipes = [], movies = [
     activeFrameUrl: activeFrame?.pngUrl ?? null,
     activity,
   };
+}
+
+/**
+ * Accorde 3 XP de connexion hebdomadaire si la dernière attribution
+ * remonte à plus de 7 jours (ou n'a jamais eu lieu).
+ * Idempotent et fire-and-forget friendly.
+ * @returns {boolean} true si les XP ont été accordés
+ */
+export async function awardWeeklyLoginXP(userId) {
+  const [row] = await UserPoints.findOrCreate({
+    where: { id_user: userId },
+    defaults: { points: 0, level_code: "1", active_frame_code: "cine", last_weekly_login_at: null },
+  });
+
+  const lastLogin = row.last_weekly_login_at;
+  if (lastLogin && Date.now() - new Date(lastLogin).getTime() < ONE_WEEK_MS) {
+    return false;
+  }
+
+  const newPoints = row.points + XP_ACTIONS.daily_login;
+  const newLevel  = computeLevel(newPoints);
+  await row.update({
+    points:               newPoints,
+    level_code:           newLevel.toString(),
+    last_weekly_login_at: new Date(),
+  });
+  return true;
 }

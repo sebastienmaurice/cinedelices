@@ -405,9 +405,9 @@ body.recipe-page main {
 .rh-ctx-toggle[aria-expanded="false"] .rh-ctx-less { display: none; }
 .rd-hero-footer {
   position: relative; z-index: 5;
-  background: linear-gradient(to bottom, rgba(6,13,24,.0) 0%, var(--bleu-nuit) 100%);
-  height: 52px;
-  margin-top: -2px;
+  background: linear-gradient(to bottom, rgba(6,13,24,.0) 0%, rgba(6,13,24,.6) 40%, var(--bleu-nuit) 100%);
+  height: 88px;
+  margin-top: -4px;
 }
 
 /* ====================================================== */
@@ -433,6 +433,8 @@ body.recipe-page main {
 .rd-sec-h {
   display: flex; flex-direction: column; gap: 2px;
   margin-bottom: 28px; position: relative;
+  padding-left: 16px;
+  border-left: 2px solid rgba(196,160,82,.2);
 }
 .rd-sec-h__eye {
   font-family: var(--f-title); font-size: .56rem; font-weight: 700;
@@ -441,9 +443,12 @@ body.recipe-page main {
   display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
 }
 .rd-sec-h__eye::before {
-  content: ""; width: 24px; height: 1px;
-  background: linear-gradient(90deg, var(--or-200), transparent);
-  flex-shrink: 0;
+  content: "◆";
+  font-size: .3rem; line-height: 1;
+  color: rgba(196,160,82,.42);
+  width: auto; height: auto;
+  background: none;
+  flex-shrink: 0; letter-spacing: 3px;
 }
 .rd-sec-h__title {
   font-family: var(--f-display); font-size: 2.6rem;
@@ -455,25 +460,27 @@ body.recipe-page main {
   width: 100%; height: 1px; margin-top: 14px;
   background: linear-gradient(90deg, rgba(196,160,82,.25) 0%, rgba(196,160,82,.06) 40%, transparent 100%);
 }
-/* Badge auteur ancré à droite, aligné avec le titre de section */
-.rd-author-badge.rd-author-badge--sec-h {
-  position: absolute; right: 0;
-  top: 50%; transform: translateY(-50%);
-  background: rgba(190,4,4,.1);
-  border-color: rgba(190,4,4,.2);
-  box-shadow: 0 2px 14px rgba(190,4,4,.12);
+/* Badge auteur dans la sidebar — pleine largeur */
+.rd-author-badge.rd-author-badge--sidebar {
+  width: 100%;
+  border-radius: 14px;
+  background: rgba(8,18,32,.6);
+  border-color: rgba(196,160,82,.14);
+  box-shadow: none;
+  padding: 12px 14px 12px 12px;
 }
-.rd-author-badge.rd-author-badge--sec-h .rd-author-label {
-  color: rgba(220,80,80,.72);
+.rd-author-badge.rd-author-badge--sidebar .rd-author-avatar {
+  width: 52px; height: 52px;
 }
-.rd-author-badge.rd-author-badge--sec-h .rd-author-name {
-  color: #fff; font-weight: 700;
+.rd-author-badge.rd-author-badge--sidebar .rd-author-label {
+  font-size: .62rem;
 }
-.rd-author-badge.rd-author-badge--sec-h .rd-author-arrow {
-  color: rgba(220,80,80,.55);
+.rd-author-badge.rd-author-badge--sidebar .rd-author-name {
+  font-size: .82rem;
 }
-.rd-author-badge.rd-author-badge--sec-h .rd-author-avatar {
-  border-color: rgba(190,4,4,.12);
+.rd-author-badge.rd-author-badge--sidebar:hover {
+  border-color: rgba(196,160,82,.35);
+  background: rgba(8,18,32,.85);
 }
 
 /* ====================================================== */
@@ -587,8 +594,8 @@ body.recipe-page main {
   position: relative; padding: 8px 0;
 }
 .rd-steps-list::before {
-  content: ""; position: absolute; left: 55px; top: 60px; bottom: 60px; width: 1px;
-  background: linear-gradient(180deg, rgba(196,160,82,.22), rgba(196,160,82,.08) 70%, transparent);
+  content: ""; position: absolute; left: 32px; top: 56px; bottom: 56px; width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(196,160,82,.28) 15%, rgba(196,160,82,.16) 75%, transparent);
   pointer-events: none;
 }
 .rd-step-item {
@@ -676,8 +683,9 @@ body.recipe-page main {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-/* 1 photo : grille mono-colonne */
+/* 1 photo : grille mono-colonne, aspect cinéma */
 .rd-gallery--1 { grid-template-columns: 1fr; }
+.rd-gallery--1 .rd-gallery__main { aspect-ratio: 16/9; }
 /* 2 photos : main + secondaire pleine largeur */
 .rd-gallery--2 .rd-gallery__secondary { grid-column: 1 / -1; }
 /* 3 photos : layout par défaut (main pleine largeur, secondaire + détail côte à côte) */
@@ -764,10 +772,21 @@ body.recipe-page main {
 
 .rd-nav-actions {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; padding: 20px 0;
-  border-top: 1px solid rgba(65,90,119,.12);
-  border-bottom: 1px solid rgba(65,90,119,.12);
+  gap: 12px; padding: 28px 0;
   margin-bottom: 52px;
+  position: relative;
+}
+.rd-nav-actions::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,160,82,.22) 25%, rgba(196,160,82,.35) 50%, rgba(196,160,82,.22) 75%, transparent);
+}
+.rd-nav-actions::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(65,90,119,.18) 30%, rgba(65,90,119,.28) 50%, rgba(65,90,119,.18) 70%, transparent);
 }
 
 /* ====================================================== */
@@ -1116,16 +1135,8 @@ body.recipe-page main {
 /* ====================================================== */
 
 .rd-sidebar {
-  display: flex; flex-direction: column; gap: 20px;
+  display: flex; flex-direction: column; gap: 14px;
   position: sticky; top: calc(var(--nav-h) + 24px);
-}
-
-/* Ingrédients — bordure gold trick */
-.rd-ingredients {
-  position: relative; border-radius: 18px;
-  background: var(--gold-gradient);
-  padding: 2px;
-  box-shadow: 0 20px 56px rgba(184,136,42,.22), 0 4px 18px rgba(0,0,0,.55);
 }
 .rd-ingredients__inner {
   background: linear-gradient(145deg, #0e1d2e 0%, #13243a 50%, #0c1a28 100%);
@@ -1154,16 +1165,8 @@ body.recipe-page main {
 
 /* Contrôle portions */
 .rd-ing-portions-ctrl {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px; padding: 10px 14px;
-  background: rgba(196,160,82,.06); border-radius: 10px;
-  border: 1px solid rgba(196,160,82,.14);
+  display: flex; align-items: center; gap: 8px;
 }
-.rd-ing-portions-ctrl__label {
-  font-family: var(--f-title); font-size: .58rem; letter-spacing: .12em;
-  text-transform: uppercase; color: rgba(196,160,82,.5);
-}
-.rd-ing-portions-ctrl__inner { display: flex; align-items: center; gap: 10px; }
 .rd-ing-portions-ctrl__val {
   font-family: var(--f-display); font-size: 1rem; letter-spacing: .06em;
   color: var(--dore-clair); min-width: 2ch; text-align: center;
@@ -1237,36 +1240,127 @@ body.recipe-page main {
   opacity: .6;
 }
 
-/* Sidebar cards génériques */
+/* ── Base card unifiée sidebar ── */
 .rd-sidebar-card {
-  background: linear-gradient(145deg,rgba(12,24,40,.95),rgba(16,30,50,.9));
-  border: 1px solid rgba(65,90,119,.18); border-radius: 16px; padding: 20px;
+  background: rgba(8,16,30,.75);
+  border: 1px solid rgba(196,160,82,.1);
+  border-radius: 16px; padding: 20px;
   transition: border-color .25s, box-shadow .25s;
 }
-.rd-sidebar-card:hover { border-color: rgba(65,90,119,.35); box-shadow: 0 10px 32px rgba(0,0,0,.35); }
-.rd-sc-title {
-  font-family: var(--f-title); font-size: .6rem; font-weight: 700;
-  letter-spacing: .16em; text-transform: uppercase; color: var(--or-titre);
-  margin-bottom: 16px; display: flex; align-items: center; gap: 7px;
+.rd-sidebar-card:hover { border-color: rgba(196,160,82,.22); box-shadow: 0 8px 28px rgba(0,0,0,.3); }
+
+/* ── Film associé — cinematic poster ── */
+.rd-movie-card { border-radius: 16px; overflow: hidden; }
+.rd-movie-poster {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  position: relative; height: 200px;
+  background-size: cover; background-position: center;
+  text-decoration: none; overflow: hidden; border-radius: 16px;
+  transition: transform .4s cubic-bezier(.22,1,.36,1);
+}
+.rd-movie-poster:hover { transform: scale(1.015); }
+.rd-movie-poster__overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4,9,18,.96) 0%, rgba(4,9,18,.6) 45%, rgba(4,9,18,.1) 100%);
+  transition: opacity .3s;
+}
+.rd-movie-poster:hover .rd-movie-poster__overlay { opacity: .85; }
+.rd-movie-poster__body {
+  position: relative; z-index: 2;
+  padding: 18px 16px 12px;
+}
+.rd-movie-poster__eye {
+  display: block;
+  font-family: var(--f-title); font-size: .5rem; font-weight: 700;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: rgba(196,160,82,.55); margin-bottom: 5px;
+}
+.rd-movie-poster__title {
+  font-family: var(--f-editorial); font-style: italic; font-weight: 700;
+  font-size: 1.15rem; color: #fff; line-height: 1.2; margin-bottom: 3px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.6);
+}
+.rd-movie-poster__meta {
+  font-size: .58rem; font-weight: 300; letter-spacing: .1em;
+  color: rgba(196,160,82,.55);
+}
+.rd-movie-poster__cta {
+  position: relative; z-index: 2;
+  display: block; padding: 10px 16px;
+  font-family: var(--f-title); font-size: .58rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--or-titre);
+  border-top: 1px solid rgba(196,160,82,.14);
+  transition: color .2s, background .2s;
+  background: rgba(4,9,18,.6);
+}
+.rd-movie-poster:hover .rd-movie-poster__cta { color: #fff; background: rgba(196,160,82,.12); }
+
+/* ── Auteur — sidebar ── */
+.rd-author-badge.rd-author-badge--sidebar {
+  width: 100%; border-radius: 14px;
+  background: rgba(8,16,30,.75);
+  border-color: rgba(196,160,82,.1);
+  box-shadow: none; padding: 14px 16px 14px 14px;
+}
+.rd-author-badge.rd-author-badge--sidebar:hover {
+  background: rgba(8,16,30,.95);
+  border-color: rgba(196,160,82,.28);
+}
+.rd-author-badge.rd-author-badge--sidebar .rd-author-avatar {
+  width: 52px; height: 52px;
+}
+.rd-author-badge.rd-author-badge--sidebar .rd-author-label {
+  font-size: .56rem; color: rgba(196,160,82,.42);
+}
+.rd-author-badge.rd-author-badge--sidebar .rd-author-name {
+  font-size: .78rem; color: var(--argent);
 }
 
-/* Note communauté */
-.rd-rating-summary { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.rd-rating-big { font-family: var(--f-display); font-size: 3.4rem; letter-spacing: .04em; color: var(--or-titre); line-height: 1; }
-.rd-rating-right { display: flex; flex-direction: column; gap: 5px; }
-.rd-rating-stars-row { display: flex; gap: 4px; font-size: 1.15rem; }
-.rd-rating-stars-row .rating-star { color: rgba(196,160,82,.15); }
-.rd-rating-stars-row .rating-star.is-active { color: var(--dore-clair); text-shadow: 0 0 6px rgba(242,200,75,.3); }
-.rd-rating-sub { font-size: .6rem; font-weight: 300; color: rgba(232,232,232,.28); letter-spacing: .08em; }
-.rd-rating-cta { width: 100%; justify-content: center; }
+/* ── Ingrédients — card unifiée, accent gauche doré ── */
+.rd-ingredients {
+  position: relative;
+  border-radius: 16px; overflow: hidden;
+  background: rgba(8,16,30,.75);
+  border: 1px solid rgba(196,160,82,.1);
+  border-left: 2px solid rgba(196,160,82,.45);
+  padding: 0; box-shadow: none;
+}
+.rd-ingredients__inner {
+  background: transparent;
+  border-radius: 0; padding: 20px 20px 16px;
+  position: relative; overflow: hidden;
+}
+.rd-ingredients__inner::before {
+  content: ""; position: absolute; top: 0; right: 0; width: 100px; height: 100px;
+  background: radial-gradient(circle at top right, rgba(196,160,82,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* Portions control inline dans le header */
+.rd-ingredients__header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.rd-ingredients__header .rd-ing-portions-ctrl {
+  margin-bottom: 0; margin-left: auto; padding: 6px 10px;
+  background: rgba(196,160,82,.06); border-radius: 8px;
+  border: 1px solid rgba(196,160,82,.12);
+  display: flex; align-items: center; gap: 8px;
+}
 
-/* Film associé */
-.rd-movie-card .rd-movie-media { border-radius: 10px; overflow: hidden; margin-bottom: 12px; aspect-ratio: 16/9; }
-.rd-movie-card .rd-movie-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.55) brightness(.88); transition: filter .3s; }
-.rd-movie-card:hover .rd-movie-media img { filter: saturate(.85) brightness(1); }
-.rd-movie-title { font-family: var(--f-title); font-size: .78rem; font-weight: 700; color: var(--argent); margin-bottom: 4px; }
-.rd-movie-meta { font-size: .64rem; font-weight: 300; color: rgba(196,160,82,.45); margin-bottom: 12px; letter-spacing: .06em; }
-.rd-movie-link { width: 100%; justify-content: center; }
+/* ── Note communauté ── */
+.rd-rating-card { padding: 18px 20px; }
+.rd-rating-summary { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.rd-rating-big {
+  font-family: var(--f-display); font-size: 3.2rem; letter-spacing: .02em;
+  color: var(--or-titre); line-height: 1; flex-shrink: 0;
+}
+.rd-rating-denom { font-size: 1.1rem; opacity: .45; letter-spacing: .04em; }
+.rd-rating-right { display: flex; flex-direction: column; gap: 5px; }
+.rd-rating-stars-row { display: flex; gap: 3px; font-size: 1rem; }
+.rd-rating-stars-row .rating-star { color: rgba(196,160,82,.15); }
+.rd-rating-stars-row .rating-star.is-active { color: var(--dore-clair); text-shadow: 0 0 8px rgba(242,200,75,.35); }
+.rd-rating-sub { font-size: .58rem; font-weight: 300; color: rgba(232,232,232,.28); letter-spacing: .06em; }
+.rd-rating-cta { width: 100%; justify-content: center; }
 
 .rating-star { background: transparent; border: none; font-size: 1.15rem; color: rgba(196,160,82,.15); cursor: pointer; transition: color .2s, transform .2s; }
 .rating-star.is-active { color: var(--dore-clair); }

@@ -167,9 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Faire défiler vers la section recette
    */
   function scrollToRecipe() {
-    // Cibler la deuxième carte (section recette)
-    const recipeCards = document.querySelectorAll(".add-recipe-card");
-    const recipeSection = recipeCards.length > 1 ? recipeCards[1] : null;
+    const recipeSection = document.getElementById("arm-s2");
     if (recipeSection) {
       recipeSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -178,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Gérer le clic sur le bouton "Je passe à la recette"
    */
+  if (!goToRecipeButton) return;
   goToRecipeButton.addEventListener("click", (e) => {
     e.preventDefault();
 

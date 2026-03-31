@@ -2,6 +2,7 @@ import { Router } from "express";
 import adminController from "../controllers/admin.controllers.js";
 import uploadMovie from "../middlewares/upload-movie.middleware.js";
 import uploadRecipe from "../middlewares/upload.middleware.js";
+import { isSuperAdmin } from "../middlewares/is-superadmin.middleware.js";
 
 const adminRouter = Router();
 
@@ -18,7 +19,10 @@ adminRouter.get("/", adminController.admin);
 //adminRouter.get("/admin/recipes", isAdmin, adminController.listRecipes);
 
 // pour lister les utisateurs (action directe suppression)
-adminRouter.post("/deleteUser/:id", adminController.deleteUser);
+adminRouter.post("/deleteUser/:id",  isSuperAdmin, adminController.deleteUser);
+adminRouter.post("/users/create",    isSuperAdmin, adminController.createUser);
+adminRouter.post("/users/:id/edit",               adminController.editUser);
+adminRouter.post("/users/:id/role",  isSuperAdmin, adminController.changeUserRole);
 adminRouter.post("/validateNotice/:id", adminController.validateNotice);
 adminRouter.post("/rejectNotice/:id", adminController.rejectNotice);
 adminRouter.post("/users/:id/photo/approve", adminController.validateUserPhoto);
@@ -129,5 +133,34 @@ adminRouter.post(
 // Migration unique : remplace les anciennes images films par les affiches TMDB
 // Usage : POST /admin/migrate-movie-images (appel manuel une seule fois)
 adminRouter.post("/migrate-movie-images", adminController.migrateMovieImages);
+
+/* ===============================================
+   Masquage films
+   =============================================== */
+adminRouter.post("/movies/:id/hide", adminController.hideMovie);
+adminRouter.post("/movies/:id/unhide", adminController.unhideMovie);
+
+/* ===============================================
+   Photos de recettes
+   =============================================== */
+adminRouter.post("/recipe-pictures/:id/approve", adminController.approveRecipePicture);
+
+// Photo panel (AJAX/JSON — utilisé par le modal d'édition recette)
+adminRouter.get("/recipes/:id/pictures", adminController.getRecipePictures);
+adminRouter.post("/recipes/:id/pictures/add", uploadRecipe.single("picture"), adminController.addRecipePicture);
+adminRouter.post("/recipe-pictures/:id/delete-json", adminController.deleteRecipePictureJson);
+adminRouter.post("/recipe-pictures/:id/approve-json", adminController.approveRecipePictureJson);
+adminRouter.post("/recipe-pictures/:id/replace", uploadRecipe.single("picture"), adminController.replaceRecipePicture);
+
+/* ===============================================
+   Suspension utilisateurs
+   =============================================== */
+adminRouter.post("/users/:id/suspend", adminController.suspendUser);
+adminRouter.post("/users/:id/unsuspend", adminController.unsuspendUser);
+
+/* ===============================================
+   Logs admin
+   =============================================== */
+adminRouter.get("/logs", isSuperAdmin, adminController.getAdminLogs);
 
 export default adminRouter;

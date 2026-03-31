@@ -16,7 +16,7 @@ const UserPoints = sequelize.define(
     level_code: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      defaultValue: "figurant",
+      defaultValue: "1",
     },
     active_frame_code: {
       type: DataTypes.STRING(20),

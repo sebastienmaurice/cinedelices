@@ -251,10 +251,6 @@ input, select, textarea { font: inherit; }
   padding:16px 20px; border-bottom:1px solid rgba(196,160,82,.08);
   display:flex; align-items:center; justify-content:space-between; gap:10px; flex-shrink:0;
 }
-.dash-card__title {
-  font-family:var(--f-title); font-size:.48rem; font-weight:700;
-  letter-spacing:.16em; text-transform:uppercase; color:rgba(196,160,82,.38);
-}
 .dash-card__body { flex:1; overflow-y:auto; }
 
 /* Activity */
@@ -338,6 +334,16 @@ input, select, textarea { font: inherit; }
    TABLE ctable
 ══════════════════════════════ */
 .ctable-wrap { overflow-x:auto; border-radius:var(--card-r); margin-bottom:16px; }
+.ctable-section-title {
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--f-title); font-size:.52rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(196,160,82,.5); margin:0 0 10px;
+}
+.ctable-section-count {
+  margin-left:4px; font-family:var(--f-body); font-size:.58rem; font-weight:400;
+  background:rgba(196,160,82,.1); border:1px solid rgba(196,160,82,.18);
+  color:rgba(196,160,82,.65); border-radius:20px; padding:1px 7px; letter-spacing:0;
+}
 .ctable {
   width:100%; border-collapse:collapse;
   background:var(--surface-card); border:1px solid rgba(255,255,255,.05);
@@ -362,7 +368,9 @@ input, select, textarea { font: inherit; }
 .cell-media__info { display:flex; flex-direction:column; gap:3px; }
 .cell-media__title { font-family:var(--f-title); font-size:.64rem; font-weight:600; color:var(--argent-ecran); }
 .cell-media__sub   { font-size:.58rem; font-weight:300; color:rgba(232,232,232,.38); }
-.user-cell { display:flex; align-items:center; gap:8px; }
+/* user-cell et actions-cell : le flex est sur un <div> interne, pas sur le <td> */
+.user-cell  { vertical-align:middle; }
+.user-cell__inner { display:flex; align-items:center; gap:8px; }
 .user-cell__av {
   width:28px; height:28px; border-radius:50%; overflow:hidden; flex-shrink:0;
   background:rgba(196,160,82,.1); border:1px solid rgba(196,160,82,.22);
@@ -372,7 +380,14 @@ input, select, textarea { font: inherit; }
 .user-cell__name { font-size:.64rem; font-weight:400; color:rgba(232,232,232,.72); }
 .date-cell  { font-size:.6rem; font-weight:300; color:rgba(232,232,232,.32); white-space:nowrap; }
 .score-cell { font-family:var(--f-display); font-size:.8rem; letter-spacing:1px; color:var(--dore-clair); }
-.actions-cell { display:flex; align-items:center; gap:5px; justify-content:flex-end; }
+.actions-cell { white-space:nowrap; }
+td.actions-cell { vertical-align:middle; text-align:right; }
+td.actions-cell .act-btn + .act-btn,
+td.actions-cell form + .act-btn,
+td.actions-cell .act-btn + form,
+td.actions-cell form + form { margin-left:5px; }
+div.actions-cell { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+.actions-cell__inner { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
 
 /* ══════════════════════════════
    S-BADGE (statuts)
@@ -400,7 +415,7 @@ input, select, textarea { font: inherit; }
 ══════════════════════════════ */
 .act-btn {
   width:30px; height:30px; border-radius:7px;
-  display:flex; align-items:center; justify-content:center;
+  display:inline-flex; align-items:center; justify-content:center;
   cursor:pointer; border:1px solid transparent;
   transition:all var(--transition); flex-shrink:0;
 }
@@ -651,8 +666,8 @@ input, select, textarea { font: inherit; }
 }
 .admin-modal__input:focus,
 .admin-modal__select:focus { border-color:rgba(196,160,82,.5); }
-.admin-modal__select { appearance:none; cursor:pointer; }
-.admin-modal__select option { background:var(--surface-deep); }
+.admin-modal__select { appearance:none; cursor:pointer; color-scheme:dark; }
+.admin-modal__select option { background:var(--surface-deep); color:var(--argent-ecran); }
 .admin-modal__textarea {
   background:rgba(15,26,42,.88); border:1.5px solid rgba(196,160,82,.18);
   border-radius:8px; padding:9px 12px; resize:vertical;
@@ -799,7 +814,8 @@ input, select, textarea { font: inherit; }
 .tag--admin         { background:rgba(196,160,82,.1); border-color:rgba(196,160,82,.25); color:var(--or-titre); }
 
 /* Cell aliases */
-.cell-media__thumb  { width:44px; height:56px; border-radius:6px; object-fit:cover; object-position:top; background:rgba(65,90,119,.25); display:block; flex-shrink:0; }
+.cell-media__thumb         { width:38px; height:56px; border-radius:5px; object-fit:cover; object-position:top; background:rgba(65,90,119,.25); display:block; flex-shrink:0; }
+.cell-media__thumb--recipe { width:54px; height:36px; border-radius:5px; object-position:center; }
 .user-cell__avatar  { width:28px; height:28px; border-radius:50%; overflow:hidden; flex-shrink:0; background:rgba(196,160,82,.1); border:1px solid rgba(196,160,82,.22); }
 .score-badge        { font-family:var(--f-display); font-size:.8rem; letter-spacing:1px; color:var(--dore-clair); }
 .cell-excerpt       { font-size:.64rem; font-weight:300; color:rgba(232,232,232,.55); font-style:italic; }
@@ -859,6 +875,10 @@ input, select, textarea { font: inherit; }
 .filter-bar__search::placeholder { color:rgba(232,232,232,.22); }
 .filter-bar__clear { width:28px; height:28px; border-radius:6px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgba(232,232,232,.35); font-size:.9rem; transition:all var(--transition); }
 .filter-bar__clear:hover { background:rgba(194,48,24,.12); border-color:rgba(194,48,24,.3); color:#e84020; }
+
+/* Sub-panel show/hide */
+.sub-panel          { display: none; }
+.sub-panel.is-active { display: block; }
 
 /* is-hidden */
 .is-hidden { display:none !important; }

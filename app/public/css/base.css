@@ -854,6 +854,7 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   top: 14px;
   left: 14px;
   z-index: 1;
+  box-shadow: 0 0 0 2px rgba(8, 8, 16, 0.6), 0 0 0 4px #b8882a;
 }
 .nav-badge-static__frame {
   position: absolute;
@@ -2505,6 +2506,15 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   display: block;
   animation: fadeIn 0.3s ease;
 }
+.auth-form__hint {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--or-cinema, #c9a84c);
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--or-cinema, #c9a84c);
+  font-size: 0.82rem;
+  border-radius: 0 6px 6px 0;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -3304,67 +3314,8 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
 }
 
 /* ====================================================== */
-/* 15. AUTEUR DE RECETTE — Moodboard V3
+/* 15. (supprimé — remplacé par .contrib dans base.css)
 ====================================================== */
-.author {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-  text-decoration: none;
-  color: var(--argent);
-  transition: color 0.2s ease;
-}
-
-/* Avatar circulaire — bord doré subtil */
-.author__av,
-.author__avatar {
-  /* .author__avatar : alias rétro-compat */
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(198, 166, 100, 0.12);
-  border: 1px solid rgba(198, 166, 100, 0.28);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.author__av img,
-.author__avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.author__av svg,
-.author__av .icon,
-.author__avatar svg,
-.author__avatar .icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-/* Wrapper infos texte (nom + niveau) */
-.author__info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-/* Nom de l'auteur */
-.author__name {
-  font-family: var(--f-title);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: var(--argent);
-  white-space: nowrap;
-  max-width: 110px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* ====================================================== */
 /* 16. ICÔNES RÉSEAUX SOCIAUX (Planche V2.0)
@@ -3597,20 +3548,6 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
     font-size: 0.85rem;
   }
 
-  .author {
-    padding: 0.3rem 0.6rem;
-    gap: 0.4rem;
-  }
-
-  .author__av,
-  .author__avatar {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .author__name {
-    font-size: 0.75rem;
-  }
 }
 
 /* ================================================================ */
@@ -3836,106 +3773,187 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   padding: 3px 10px;
 }
 
-/* ── Niveaux Contributeur ── */
-.lvl-badge {
+
+/* ════════════════════════════════════════════════════════════
+   GAMIFICATION — badge harmonisé (cartes, sidebars, avis)
+   Classe de base réutilisable + variantes couleur.
+   Ne pas modifier les propriétés de layout des composants
+   parents (lvl-badge, rd-author-badge, etc.).
+════════════════════════════════════════════════════════════ */
+.gamification-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 20px;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--f-title, "Cinzel", serif);
+  font-size: .52rem;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  line-height: 1.6;
   border: 1px solid transparent;
-  background: rgba(13, 27, 42, 0.7);
+  white-space: nowrap;
+  vertical-align: middle;
 }
-.lvl-av {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(196, 160, 82, 0.08);
-  border: 1.5px solid transparent;
-  display: flex;
+/* Officiel / admin / "Ciné Délices" — pill rouge */
+.gamification-badge--official {
+  color: rgba(255, 90, 90, .92);
+  background: rgba(200, 40, 40, .14);
+  border-color: rgba(220, 60, 60, .32);
+  border-radius: 50px;
+}
+/* Rang membre — bleu-argent */
+.gamification-badge--rank {
+  color: rgba(120, 190, 255, .88);
+  background: rgba(80, 130, 255, .10);
+  border-color: rgba(120, 190, 255, .22);
+}
+/* XP / progression — vert */
+.gamification-badge--xp {
+  color: rgba(90, 210, 140, .9);
+  background: rgba(40, 170, 100, .10);
+  border-color: rgba(40, 170, 100, .25);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CONTRIB BADGE — badge contributeur/auteur unifié
+   Moodboard de référence : docs/SEB/moodboard-badges-contributeur.html
+   Deux tailles :
+     .contrib               → h 48px  (pages détail, hero)
+     .contrib--sm           → h 30px  (cards listing)
+   Deux thèmes :
+     .contrib--admin        → bleu nuit (admin / superadmin)
+     .contrib--membre       → prune    (membres)
+════════════════════════════════════════════════════════════════ */
+.contrib {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
+  gap: 9px;
+  height: 48px;
+  border-radius: 999px;
+  padding: 0 16px 0 6px;
   overflow: hidden;
+  cursor: default;
+  transition: transform .25s ease, box-shadow .3s ease;
+  text-decoration: none;
   flex-shrink: 0;
 }
-.lvl-av img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.contrib:hover { transform: translateY(-2px); }
+.contrib::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent);
+  pointer-events: none;
+  z-index: 3;
 }
-.lvl-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+
+/* ── avatar ── */
+.contrib__av {
+  width: 36px; height: 36px;
+  border-radius: 50%; flex-shrink: 0;
+  overflow: hidden; position: relative; z-index: 2;
 }
-.lvl-name {
-  font-family: var(--f-title);
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--argent-ecran);
-}
-.lvl-title {
-  font-size: 0.5rem;
+.contrib__av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── texte stack ── */
+.contrib__info { display: flex; flex-direction: column; gap: 3px; min-width: 0; z-index: 2; }
+.contrib__pseudo {
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: .7rem;
   font-weight: 700;
-  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--argent, #e8e8e8);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* ── pill ── */
+.contrib__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--f-title, 'Cinzel', serif);
+  font-size: .38rem;
+  font-weight: 700;
   letter-spacing: 1.2px;
+  text-transform: uppercase;
+  line-height: 1.5;
+  white-space: nowrap;
 }
+.contrib__pill-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+/* pill admin — bleu */
+.contrib__pill--admin {
+  background: linear-gradient(135deg, #0a2540 0%, #0e3a5e 45%, #1560a0 100%);
+  border: 1px solid rgba(60,140,200,.55);
+  color: rgba(160,215,255,.95);
+  box-shadow: 0 0 8px rgba(30,100,180,.35), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.contrib__pill--admin .contrib__pill-dot { background: rgba(140,200,255,.75); }
+/* pill membre — prune/rose */
+.contrib__pill--membre {
+  background: linear-gradient(135deg, #2a0820 0%, #4a1438 45%, #7a2460 100%);
+  border: 1px solid rgba(180,80,148,.55);
+  color: rgba(255,185,230,.95);
+  box-shadow: 0 0 8px rgba(180,80,148,.3), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.contrib__pill--membre .contrib__pill-dot { background: rgba(255,170,220,.75); }
 
-.lvl--1 {
-  border-color: rgba(192, 200, 215, 0.22);
+/* ── thème ADMIN — bleu nuit ── */
+.contrib--admin {
+  background: rgba(8,28,46,.58);
+  box-shadow:
+    0 0 0 1.5px rgba(60,140,200,.35),
+    0 0 0 3px   rgba(60,140,200,.06),
+    0 6px 28px  rgba(60,140,200,.18),
+    0 2px 8px   rgba(0,0,0,.65);
 }
-.lvl--1 .lvl-av {
-  border-color: rgba(192, 200, 215, 0.4);
+.contrib--admin:hover {
+  box-shadow:
+    0 0 0 1.5px rgba(60,140,200,.6),
+    0 0 0 4px   rgba(60,140,200,.1),
+    0 10px 36px rgba(60,140,200,.28),
+    0 2px 8px   rgba(0,0,0,.7);
 }
-.lvl--1 .lvl-title {
-  color: rgba(192, 200, 215, 0.7);
-}
+.contrib--admin .contrib__pseudo { color: rgba(115,185,240,.92); }
+.contrib--admin .contrib__av img { box-shadow: 0 0 0 1.5px rgba(60,140,200,.7), 0 0 10px rgba(60,140,200,.35); }
 
-.lvl--2 {
-  border-color: rgba(205, 127, 50, 0.28);
+/* ── thème MEMBRE — prune ── */
+.contrib--membre {
+  background: rgba(38,14,32,.62);
+  box-shadow:
+    0 0 0 1.5px rgba(180,80,148,.38),
+    0 0 0 3px   rgba(180,80,148,.07),
+    0 6px 28px  rgba(180,80,148,.18),
+    0 2px 8px   rgba(0,0,0,.6);
 }
-.lvl--2 .lvl-av {
-  border-color: rgba(205, 127, 50, 0.55);
-  box-shadow: 0 0 8px rgba(205, 127, 50, 0.2);
+.contrib--membre:hover {
+  box-shadow:
+    0 0 0 1.5px rgba(180,80,148,.65),
+    0 0 0 4px   rgba(180,80,148,.12),
+    0 10px 36px rgba(180,80,148,.28),
+    0 2px 8px   rgba(0,0,0,.7);
 }
-.lvl--2 .lvl-title {
-  color: #cd7f32;
-}
+.contrib--membre .contrib__pseudo { color: rgba(218,130,190,.92); }
+.contrib--membre .contrib__av img { box-shadow: 0 0 0 1.5px rgba(180,80,148,.7), 0 0 10px rgba(180,80,148,.38); }
 
-.lvl--3 {
-  border-color: rgba(192, 210, 225, 0.32);
+/* ── taille SM — h 30px (cards listing) ── */
+.contrib--sm {
+  height: 30px;
+  gap: 5px;
+  padding: 0 10px 0 4px;
 }
-.lvl--3 .lvl-av {
-  border-color: rgba(192, 210, 225, 0.65);
-  box-shadow: 0 0 10px rgba(192, 210, 225, 0.28);
-}
-.lvl--3 .lvl-title {
-  color: rgba(192, 210, 225, 0.9);
-}
-
-.lvl--4 {
-  border-color: rgba(198, 166, 100, 0.35);
-}
-.lvl--4 .lvl-av {
-  border-color: var(--or-titre);
-  box-shadow: 0 0 12px rgba(198, 166, 100, 0.32);
-}
-.lvl--4 .lvl-title {
-  color: var(--or-titre);
-}
-
-.lvl--legend {
-  border-color: rgba(198, 166, 100, 0.48);
-  box-shadow: 0 4px 28px rgba(198, 166, 100, 0.08);
-}
-.lvl--legend .lvl-av {
-  border-color: #f7c948;
-  box-shadow: 0 0 18px rgba(247, 201, 72, 0.38);
-}
-.lvl--legend .lvl-title {
-  color: #f7c948;
-}
+.contrib--sm .contrib__av { width: 22px; height: 22px; }
+.contrib--sm .contrib__av img { width: 22px; height: 22px; }
+.contrib--sm .contrib__info { gap: 2px; }
+.contrib--sm .contrib__pseudo { font-size: .44rem; letter-spacing: .3px; }
+.contrib--sm .contrib__pill { font-size: .25rem; letter-spacing: .8px; padding: 1px 5px; }
+.contrib--sm .contrib__pill-dot { width: 3px; height: 3px; }
 
 /* ── Animations Moodboard V2.1 ── */
 @keyframes shimmer-gold {
