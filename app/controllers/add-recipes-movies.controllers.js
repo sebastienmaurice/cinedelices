@@ -2,14 +2,77 @@ import { Recipe, Movie, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
-import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
+import {
+  processRecipeImages,
+  cleanupFiles,
+} from "../utils/recipe-image-processor.js";
 import fs from "fs";
 import slugify from "slugify";
 
-/** Retourne le slug du film, ou le calcule depuis le titre si absent en base */
-function _movieSlug(movie) {
-  if (!movie) return "";
-  return movie.slug || slugify(movie.title || "", { lower: true, strict: true });
+function acceptsJson(req) {
+  return req.xhr || req.headers.accept?.includes("application/json");
+}
+
+function buildRetainFilm(body) {
+  const { filmId, tmdbId, title, year, genre, synopsis } = body || {};
+  // Si film existant (filmId) → pas besoin de retainFilm, filmId suffit
+  if (filmId) return null;
+  if (!title && !tmdbId) return null;
+  return {
+    tmdbId: tmdbId || "",
+    title:  title  || "",
+    year:   year   || "",
+    genre:  genre  || "",
+    synopsis: synopsis || "",
+  };
+}
+
+function renderClientError(req, res, message, status = 400, extra = {}) {
+  if (acceptsJson(req)) {
+    return res.status(status).json({ status: "fail", message });
+  }
+  return res.status(status).render("add-recipes-movies", {
+    error: true,
+    errorMessage: message,
+    retainFilm: buildRetainFilm(req.body),
+    ...extra,
+  });
+}
+
+function renderClientSuccess(req, res, payload = {}) {
+  if (acceptsJson(req)) {
+    return res.status(201).json({ status: "ok", ...payload });
+  }
+  return res.status(201).render("add-recipes-movies", {
+    success: true,
+    successMessage:
+      payload.successMessage || "Film et recette envoyés pour validation.",
+    ...payload,
+  });
+}
+
+function getRatioErrorMessage(err) {
+  const fileLabel = err.filename ? `"${err.filename}"` : "cette image";
+  if (err.type === "portrait") {
+    return `L'image ${fileLabel} est trop verticale ou carrée (${err.w}×${err.h} px). Envoyez une photo proche du ratio 3:2 (ex: 1200×800).`;
+  }
+  if (err.type === "panoramic") {
+    return `L'image ${fileLabel} est trop panoramique (${err.w}×${err.h} px). Envoyez une photo proche du ratio 3:2 (ex: 1200×800).`;
+  }
+  return `Le format de l'image ${fileLabel} n'est pas pris en charge.`;
+}
+
+function collectImageWarning(processed) {
+  const warnings = processed
+    .filter((item) => item.warning)
+    .map((item) => {
+      const { warning } = item;
+      if (warning.type === "ratio") {
+        return `L'image "${item.filename || "sélectionnée"}" n'est pas au ratio 3:2 exact (${warning.w}×${warning.h} px). Elle a été recadrée automatiquement en 1200×800.`;
+      }
+      return `L'image "${item.filename || "sélectionnée"}" a été recadrée automatiquement en 1200×800.`;
+    });
+  return warnings.length ? warnings.join(" ") : null;
 }
 
 const addRecipesMoviesController = {
@@ -89,19 +152,62 @@ const addRecipesMoviesController = {
         id_movie,
       } = req.body;
 
-      // Traitement des photos uploadées
+      const parsedTime = time ? parseInt(time, 10) : NaN;
+      const parsedServings = servings ? parseInt(servings, 10) : null;
+
+      if (!files.length) {
+        return renderClientError(
+          req,
+          res,
+          "Merci d'ajouter au moins une photo de la recette.",
+        );
+      }
+
+      if (
+        !name ||
+        !description ||
+        !category ||
+        !ingredients ||
+        !preparation ||
+        !difficulty
+      ) {
+        return renderClientError(
+          req,
+          res,
+          "Merci de compléter tous les champs de la recette.",
+        );
+      }
+
+      if (Number.isNaN(parsedTime) || parsedTime < 1) {
+        return renderClientError(
+          req,
+          res,
+          "Le temps de préparation doit être un nombre entier supérieur à 0.",
+        );
+      }
+
       let processed = [];
       if (files.length > 0) {
         try {
           processed = await processRecipeImages(files);
         } catch (err) {
-          // Nettoyer les fichiers restants si un ratio est invalide
-          cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
-          if (err.message === "ratio") {
-            return res.status(400).render("add-recipes-movies", {
-              error: true,
-              errorMessage: `L'image "${err.filename}" doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${err.w}×${err.h} px.`,
-            });
+          cleanupFiles(files);
+          if (err.message === "invalid_image") {
+            return renderClientError(
+              req,
+              res,
+              `Le fichier "${err.filename}" n'est pas une image valide. Utilisez JPG, PNG ou WEBP.`,
+            );
+          }
+          if (err.message === "invalid_image_ratio") {
+            return renderClientError(req, res, getRatioErrorMessage(err));
+          }
+          if (err.message === "image_processing") {
+            return renderClientError(
+              req,
+              res,
+              `Impossible de traiter l'image "${err.filename}". Vérifiez le format et réessayez.`,
+            );
           }
           throw err;
         }
@@ -130,11 +236,15 @@ const addRecipesMoviesController = {
             recipe_id: newRecipe.id,
             file_path: relPath,
             position,
-          }))
+          })),
         );
       }
 
-      res.status(201).render("add-recipes-movies", { newRecipe });
+      const warningMessage = collectImageWarning(processed);
+      return renderClientSuccess(req, res, {
+        newRecipe,
+        warningMessage,
+      });
     } catch (error) {
       cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
       return renderServerError(res, error);
@@ -154,6 +264,7 @@ const addRecipesMoviesController = {
         year,
         genre,
         synopsis,
+        tmdbId,
         name,
         description,
         category,
@@ -164,32 +275,89 @@ const addRecipesMoviesController = {
         difficulty,
       } = req.body;
 
-      if (!name || !description || !category || !ingredients || !preparation || !time || !difficulty) {
+      const parsedFilmId = filmId ? parseInt(filmId, 10) : null;
+      const parsedTmdbId = tmdbId ? parseInt(tmdbId, 10) : null;
+      const parsedTime = time ? parseInt(time, 10) : null;
+      const parsedServings = servings ? parseInt(servings, 10) : null;
+
+      if (
+        !name ||
+        !description ||
+        !category ||
+        !ingredients ||
+        !preparation ||
+        !parsedTime ||
+        !difficulty
+      ) {
         cleanupFiles(files);
-        return res.status(400).render("add-recipes-movies", {
-          error: true,
-          errorMessage: "Merci de compléter tous les champs de la recette.",
-        });
+        return renderClientError(
+          req,
+          res,
+          "Merci de compléter tous les champs de la recette.",
+        );
       }
 
-      // Film : existant ou nouveau
+      if (parsedTime < 1 || Number.isNaN(parsedTime)) {
+        cleanupFiles(files);
+        return renderClientError(
+          req,
+          res,
+          "Le temps de préparation doit être un nombre entier supérieur à 0.",
+        );
+      }
+
+      if (files.length === 0) {
+        return renderClientError(
+          req,
+          res,
+          "Merci d'ajouter au moins une photo de la recette.",
+        );
+      }
+
+      // Film : existant (par DB id, tmdb_id ou slug) ou nouveau
       let movie = null;
-      if (filmId) movie = await Movie.findByPk(filmId);
+      if (parsedFilmId) {
+        movie = await Movie.findByPk(parsedFilmId);
+        if (!movie) {
+          return renderClientError(
+            req,
+            res,
+            "Le film sélectionné est introuvable.",
+          );
+        }
+      }
+      if (!movie && parsedTmdbId)
+        movie = await Movie.findOne({ where: { tmdb_id: parsedTmdbId } });
+      if (!movie && title)
+        movie = await Movie.findOne({
+          where: { slug: slugify(title, { lower: true, strict: true }) },
+        });
 
       if (!movie) {
         if (!title || !year || !genre) {
           cleanupFiles(files);
-          return res.status(400).render("add-recipes-movies", {
-            error: true,
-            errorMessage: "Merci de compléter les informations du film.",
-          });
+          return renderClientError(
+            req,
+            res,
+            "Merci de compléter les informations du film.",
+          );
         }
+        // Télécharger l'affiche TMDB avant de créer le film
+        let picturePath = null;
+        if (parsedTmdbId) {
+          picturePath = await downloadTmdbPoster(parsedTmdbId, req.body.type, title);
+        }
+
+        // Les films TMDB sont auto-approuvés (source fiable) — pas de validation admin requise
         movie = await Movie.create({
           title,
-          year,
+          year: parseInt(year, 10),
           genre,
           synopsis: synopsis || null,
           id_user: req.userId,
+          tmdb_id: parsedTmdbId || null,
+          picture: picturePath, // 🎯 Ajouter l'affiche téléchargée
+          ...(parsedTmdbId ? { status: "approved", validated_at: new Date() } : {}),
         });
       }
 
@@ -199,12 +367,23 @@ const addRecipesMoviesController = {
         try {
           processed = await processRecipeImages(files);
         } catch (err) {
-          cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
-          if (err.message === "ratio") {
-            return res.status(400).render("add-recipes-movies", {
-              error: true,
-              errorMessage: `L'image "${err.filename}" doit avoir un ratio paysage 3:2 (ex : 1200×800 px). Votre image fait ${err.w}×${err.h} px.`,
-            });
+          cleanupFiles(files);
+          if (err.message === "invalid_image") {
+            return renderClientError(
+              req,
+              res,
+              `Le fichier "${err.filename}" n'est pas une image valide. Utilisez JPG, PNG ou WEBP.`,
+            );
+          }
+          if (err.message === "invalid_image_ratio") {
+            return renderClientError(req, res, getRatioErrorMessage(err));
+          }
+          if (err.message === "image_processing") {
+            return renderClientError(
+              req,
+              res,
+              `Impossible de traiter l'image "${err.filename}". Vérifiez le format et réessayez.`,
+            );
           }
           throw err;
         }
@@ -218,8 +397,8 @@ const addRecipesMoviesController = {
         category,
         ingredients,
         preparation,
-        time,
-        servings: servings || null,
+        time: parsedTime,
+        servings: parsedServings || null,
         difficulty,
         id_movie: movie.id,
         id_user: req.userId,
@@ -233,16 +412,16 @@ const addRecipesMoviesController = {
             recipe_id: newRecipe.id,
             file_path: relPath,
             position,
-          }))
+          })),
         );
       }
 
       const enrichedMovie = enrichMovieWithImagePaths(movie);
-      return res.status(201).render("add-recipes-movies", {
-        success: true,
-        successMessage: "Film et recette envoyés pour validation.",
+      const warningMessage = collectImageWarning(processed);
+      return renderClientSuccess(req, res, {
         newMovie: enrichedMovie,
         newRecipe,
+        warningMessage,
       });
     } catch (error) {
       cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
