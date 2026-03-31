@@ -52,7 +52,7 @@ class PosterDiagnostic {
     this.results.moviesApproved = approvedMovies.length;
 
     console.log(
-      `Total films: ${this.results.moviesTotal}, Approuvés: ${this.results.moviesApproved}`
+      `Total films: ${this.results.moviesTotal}, Approuvés: ${this.results.moviesApproved}`,
     );
 
     // Vérifier chaque film
@@ -83,7 +83,7 @@ class PosterDiagnostic {
 
     console.log(`Films avec affiche en BDD: ${this.results.moviesWithPicture}`);
     console.log(
-      `Films TMDB sans affiche: ${this.results.missingMoviePosters.length}`
+      `Films TMDB sans affiche: ${this.results.missingMoviePosters.length}`,
     );
     console.log(`Chemins cassés: ${this.results.brokenMoviePaths.length}`);
   }
@@ -102,7 +102,7 @@ class PosterDiagnostic {
     this.results.recipesApproved = approvedRecipes.length;
 
     console.log(
-      `Total recettes: ${this.results.recipesTotal}, Approuvées: ${this.results.recipesApproved}`
+      `Total recettes: ${this.results.recipesTotal}, Approuvées: ${this.results.recipesApproved}`,
     );
 
     for (const recipe of approvedRecipes) {
@@ -120,12 +120,12 @@ class PosterDiagnostic {
     }
 
     console.log(
-      `Recettes avec affiche en BDD: ${this.results.recipesWithPicture}`
+      `Recettes avec affiche en BDD: ${this.results.recipesWithPicture}`,
     );
     console.log(
       `Recettes sans affiche (principale): ${
         this.results.recipesApproved - this.results.recipesWithPicture
-      }`
+      }`,
     );
     console.log(`Chemins cassés: ${this.results.missingRecipePosters.length}`);
   }
@@ -162,7 +162,7 @@ class PosterDiagnostic {
     }
 
     console.log(
-      `Photos manquantes: ${this.results.missingRecipePictureFiles.length}`
+      `Photos manquantes: ${this.results.missingRecipePictureFiles.length}`,
     );
   }
 
@@ -177,12 +177,13 @@ class PosterDiagnostic {
     if (fs.existsSync(originalsDir)) {
       const files = fs.readdirSync(originalsDir);
       console.log(
-        `Affiches TMDB (originals): ${files.length} fichiers dans ${originalsDir}`
+        `Affiches TMDB (originals): ${files.length} fichiers dans ${originalsDir}`,
       );
 
       // Afficher les premiers fichiers
       files.slice(0, 5).forEach((f) => console.log(`  ├─ ${f}`));
-      if (files.length > 5) console.log(`  └─ ... et ${files.length - 5} autres`);
+      if (files.length > 5)
+        console.log(`  └─ ... et ${files.length - 5} autres`);
     } else {
       console.log(`⚠️ Dossier originals inexistant: ${originalsDir}`);
     }
@@ -191,31 +192,36 @@ class PosterDiagnostic {
     if (fs.existsSync(recipeDir)) {
       const files = fs.readdirSync(recipeDir);
       console.log(
-        `Photos recettes uploadées: ${files.length} fichiers dans ${recipeDir}`
+        `Photos recettes uploadées: ${files.length} fichiers dans ${recipeDir}`,
       );
 
       // Afficher les premiers fichiers
       files.slice(0, 5).forEach((f) => console.log(`  ├─ ${f}`));
-      if (files.length > 5) console.log(`  └─ ... et ${files.length - 5} autres`);
+      if (files.length > 5)
+        console.log(`  └─ ... et ${files.length - 5} autres`);
     } else {
       console.log(`⚠️ Dossier recipes inexistant: ${recipeDir}`);
     }
   }
 
   printReport() {
-    console.log("\n\n═════════════════════════════════════════════════════════════");
+    console.log(
+      "\n\n═════════════════════════════════════════════════════════════",
+    );
     console.log("📊 RAPPORT DE DIAGNOSTIC - AFFICHES ET PHOTOS");
-    console.log("═════════════════════════════════════════════════════════════\n");
+    console.log(
+      "═════════════════════════════════════════════════════════════\n",
+    );
 
     console.log("📈 STATISTIQUES GLOBALES\n");
     console.log(
-      `  Films  : ${this.results.moviesApproved}/${this.results.moviesTotal} approuvés (${this.results.moviesWithPicture} avec affiche)`
+      `  Films  : ${this.results.moviesApproved}/${this.results.moviesTotal} approuvés (${this.results.moviesWithPicture} avec affiche)`,
     );
     console.log(
-      `  Recettes : ${this.results.recipesApproved}/${this.results.recipesTotal} approuvées (${this.results.recipesWithPicture} avec affiche)`
+      `  Recettes : ${this.results.recipesApproved}/${this.results.recipesTotal} approuvées (${this.results.recipesWithPicture} avec affiche)`,
     );
     console.log(
-      `  Photos   : ${this.results.recipePicturesTotal} photos recettes\n`
+      `  Photos   : ${this.results.recipePicturesTotal} photos recettes\n`,
     );
 
     // Problèmes détectés
@@ -234,16 +240,16 @@ class PosterDiagnostic {
 
     if (this.results.missingMoviePosters.length > 0) {
       console.log(
-        `❌ ${this.results.missingMoviePosters.length} films TMDB sans affiche:\n`
+        `❌ ${this.results.missingMoviePosters.length} films TMDB sans affiche:\n`,
       );
       this.results.missingMoviePosters.slice(0, 5).forEach((m) => {
         console.log(
-          `   • ID ${m.id}: "${m.title}" (TMDB #${m.tmdbId}) - ${m.reason}`
+          `   • ID ${m.id}: "${m.title}" (TMDB #${m.tmdbId}) - ${m.reason}`,
         );
       });
       if (this.results.missingMoviePosters.length > 5) {
         console.log(
-          `   ... et ${this.results.missingMoviePosters.length - 5} autres\n`
+          `   ... et ${this.results.missingMoviePosters.length - 5} autres\n`,
         );
       } else {
         console.log();
@@ -252,7 +258,7 @@ class PosterDiagnostic {
 
     if (this.results.brokenMoviePaths.length > 0) {
       console.log(
-        `❌ ${this.results.brokenMoviePaths.length} films avec chemins cassés:\n`
+        `❌ ${this.results.brokenMoviePaths.length} films avec chemins cassés:\n`,
       );
       this.results.brokenMoviePaths.slice(0, 5).forEach((m) => {
         console.log(`   • ID ${m.id}: "${m.title}"`);
@@ -261,35 +267,37 @@ class PosterDiagnostic {
       });
       if (this.results.brokenMoviePaths.length > 5) {
         console.log(
-          `   ... et ${this.results.brokenMoviePaths.length - 5} autres\n`
+          `   ... et ${this.results.brokenMoviePaths.length - 5} autres\n`,
         );
       }
     }
 
     if (this.results.missingRecipePosters.length > 0) {
       console.log(
-        `❌ ${this.results.missingRecipePosters.length} recettes avec affiches manquantes:\n`
+        `❌ ${this.results.missingRecipePosters.length} recettes avec affiches manquantes:\n`,
       );
       this.results.missingRecipePosters.slice(0, 5).forEach((r) => {
         console.log(`   • ID ${r.id}: "${r.name}"`);
       });
       if (this.results.missingRecipePosters.length > 5) {
         console.log(
-          `   ... et ${this.results.missingRecipePosters.length - 5} autres\n`
+          `   ... et ${this.results.missingRecipePosters.length - 5} autres\n`,
         );
       }
     }
 
     if (this.results.missingRecipePictureFiles.length > 0) {
-      console.log(`❌ ${this.results.missingRecipePictureFiles.length} photos manquantes:\n`);
+      console.log(
+        `❌ ${this.results.missingRecipePictureFiles.length} photos manquantes:\n`,
+      );
       this.results.missingRecipePictureFiles.slice(0, 5).forEach((p) => {
         console.log(
-          `   • Photo #${p.id} (Recette #${p.recipeId}): ${p.filePath}`
+          `   • Photo #${p.id} (Recette #${p.recipeId}): ${p.filePath}`,
         );
       });
       if (this.results.missingRecipePictureFiles.length > 5) {
         console.log(
-          `   ... et ${this.results.missingRecipePictureFiles.length - 5} autres\n`
+          `   ... et ${this.results.missingRecipePictureFiles.length - 5} autres\n`,
         );
       }
     }
@@ -298,16 +306,20 @@ class PosterDiagnostic {
 
     if (this.results.missingMoviePosters.length > 0) {
       console.log(
-        "1. Films TMDB sans affiche → Utiliser la route POST /admin/migrate-movie-images"
+        "1. Films TMDB sans affiche → Utiliser la route POST /admin/migrate-movie-images",
       );
       console.log("   Cette route re-télécharger toutes les affiches TMDB\n");
     }
 
     if (this.results.brokenMoviePaths.length > 0) {
-      console.log("2. Films avec chemins cassés → Vérifier la BDD et re-télécharger\n");
+      console.log(
+        "2. Films avec chemins cassés → Vérifier la BDD et re-télécharger\n",
+      );
     }
 
-    console.log("═════════════════════════════════════════════════════════════\n");
+    console.log(
+      "═════════════════════════════════════════════════════════════\n",
+    );
   }
 
   async run() {

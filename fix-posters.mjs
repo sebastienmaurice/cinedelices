@@ -33,15 +33,26 @@ async function migrateMoviePostersDirect() {
       console.log(`    Chemin actuel: ${movie.picture || "null"}`);
 
       // Si l'affiche est déjà un chemin local, skip
-      if (movie.picture && movie.picture.startsWith("/images/movies/originals/")) {
+      if (
+        movie.picture &&
+        movie.picture.startsWith("/images/movies/originals/")
+      ) {
         console.log(`    ✅ Déjà correct (chemin local)`);
-        results.skipped.push({ id: movie.id, title: movie.title, reason: "Déjà local" });
+        results.skipped.push({
+          id: movie.id,
+          title: movie.title,
+          reason: "Déjà local",
+        });
         continue;
       }
 
       // Télécharger l'affiche TMDB
       console.log(`    ⏳ Téléchargement depuis TMDB...`);
-      const newPath = await downloadTmdbPoster(movie.tmdb_id, movie.type, movie.title);
+      const newPath = await downloadTmdbPoster(
+        movie.tmdb_id,
+        movie.type,
+        movie.title,
+      );
 
       if (!newPath) {
         console.log(`    ❌ Téléchargement échoué`);
