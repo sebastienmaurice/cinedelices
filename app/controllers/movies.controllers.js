@@ -15,6 +15,7 @@ import {
 } from "../utils/movie-image-helper.js";
 import { renderServerError } from "../utils/error-handler.js";
 import tmdbGenreMap from "../utils/tmdb-genre-map.js";
+import { getPublicMovieIds } from "../utils/movie-visibility-helper.js";
 import "dotenv/config";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -51,11 +52,17 @@ const moviesController = {
     try {
       const { query } = req.query;
 
-      // Si pas de query ou query vide, retourner tous les films
+      // Récupérer les IDs de films publics (≥1 recette approuvée)
+      const publicMovieIds = await getPublicMovieIds();
+
+      // Si pas de query ou query vide, retourner tous les films publics
       if (!query || query.trim() === "") {
         const allMovies = await Movie.findAll({
-          where: { status: "approved" }, // Uniquement les films validés
-          limit: 20, // Limiter les résultats
+          where: {
+            status: "approved",
+            id: { [Op.in]: publicMovieIds }, // 🎯 Filtrer par films publics
+          },
+          limit: 20,
           order: [["title", "ASC"]],
         });
 
@@ -97,20 +104,37 @@ const moviesController = {
       // Recherche avancée : titre, année, genre
       const movies = await Movie.findAll({
         where: {
-          status: "approved", // Uniquement les films validés
+          status: "approved",
+          id: { [Op.in]: publicMovieIds }, // 🎯 Filtrer par films publics
           [Op.or]: searchConditions,
         },
-        limit: 20, // Limiter les résultats
-        order: [["title", "ASC"]], // Ordre alphabétique simple
+        limit: 20,
+        order: [["title", "ASC"]],
       });
 
       // Enrichir les movies avec les chemins d'images
       const enrichedMovies = enrichMoviesWithImagePaths(movies);
 
+      // Déduplication par titre normalisé : garder l'entrée la plus complète
+      // (celle qui a une année ET une image TMDB, sinon celle avec une année)
+      const seen = new Map();
+      for (const m of enrichedMovies) {
+        const key = (m.title || "").toLowerCase().trim();
+        const existing = seen.get(key);
+        if (!existing) {
+          seen.set(key, m);
+        } else {
+          const mScore   = (m.year ? 2 : 0) + (m.tmdb_id ? 1 : 0);
+          const exScore  = (existing.year ? 2 : 0) + (existing.tmdb_id ? 1 : 0);
+          if (mScore > exScore) seen.set(key, m);
+        }
+      }
+      const dedupedMovies = [...seen.values()];
+
       return res.json({
         success: true,
-        movies: enrichedMovies,
-        hasResults: enrichedMovies.length > 0,
+        movies: dedupedMovies,
+        hasResults: dedupedMovies.length > 0,
         query: searchTerm,
       });
     } catch (error) {
@@ -179,8 +203,11 @@ const moviesController = {
         where: { status: "approved" },
       });
 
-      // Filtrer par genre si fourni
-      let filteredMovies = allMovies;
+      // 🎯 FILTRER par films publics (≥1 recette approuvée)
+      const publicMovieIds = await getPublicMovieIds();
+      let filteredMovies = allMovies.filter((m) =>
+        publicMovieIds.includes(m.id)
+      );
       if (genre && genre.trim() !== "") {
         filteredMovies = filteredMovies.filter(
           (movie) => normalizeText(movie.genre) === normalizeText(genre)
@@ -666,7 +693,21 @@ const moviesController = {
   // Affichage de la liste des films sur la page des films
   async moviesList(req, res) {
     try {
-      const movies = await Movie.findAll({ where: { status: "approved" } });
+      // Récupérer uniquement les films qui ont au moins une recette approuvée
+      const moviesWithRecipes = await Recipe.findAll({
+        where: { status: "approved" },
+        attributes: ["id_movie"],
+        group: ["id_movie"],
+        raw: true,
+      });
+      const movieIdsWithApprovedRecipes = moviesWithRecipes.map((r) => r.id_movie).filter(Boolean);
+
+      const movies = await Movie.findAll({
+        where: {
+          status: "approved",
+          id: { [Op.in]: movieIdsWithApprovedRecipes },
+        },
+      });
       const selectedGenre = req.query.genre || "tous";
 
       // Récupérer les genres uniques depuis les films (pour les chips de filtrage)
