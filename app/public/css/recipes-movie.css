@@ -1843,6 +1843,15 @@ body.film-page main {
   z-index: 1;
 }
 
+/* Overlay gradient complet image (transparent → sombre bas) */
+.recipe-card__img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(8, 16, 26, 0.82) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .recipe-card__img img {
   width: 100%;
   height: 100%;
@@ -1855,7 +1864,7 @@ body.film-page main {
   transform: scale(1.07);
 }
 
-/* Overlay top : badge catégorie + favori */
+/* Overlay top : badges gauche + favori droite */
 .recipe-card__ot {
   position: absolute;
   top: 0.6rem;
@@ -1865,6 +1874,14 @@ body.film-page main {
   justify-content: space-between;
   align-items: flex-start;
   z-index: 5;
+}
+
+/* Groupe badges gauche (catégorie + NEW) */
+.recipe-card__ot-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 /* Badge film en bas à gauche de l'image (moodboard) */
@@ -1891,30 +1908,35 @@ body.film-page main {
   height: 1.1rem;
 }
 
-/* Body sous image — padding moodboard */
+/* Séparateur lumineux doré entre image et corps */
+.recipe-card__glow-sep {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(196, 160, 82, 0.28) 30%,
+    rgba(196, 160, 82, 0.48) 50%,
+    rgba(196, 160, 82, 0.28) 70%,
+    transparent 100%
+  );
+}
+
+/* Body sous image */
 .recipe-card__body {
-  padding: 0.65rem 2px 0;
+  padding: 1rem 1rem 0.9rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-/* Ligne titre + badge NOUVEAU inline */
-.recipe-card__title-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4rem;
-  margin: 0.55rem 0 0.4rem;
-}
-
-/* Titre — Playfair Display italic pour l'éditorial food-cinéma */
+/* Titre — Playfair Display italic */
 .recipe-ttl {
   font-family: var(--font-h2-h6); /* Playfair Display */
   font-size: 1.02rem;
   font-style: italic;
   font-weight: 700;
-  color: var(--dore-popcorn);
-  margin: 0;
+  color: #C4A052;
+  margin: 0 0 0.75rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -1922,57 +1944,56 @@ body.film-page main {
   overflow: hidden;
   transition: color 0.25s ease;
   line-height: 1.35;
-  flex: 1;
-  min-width: 0;
 }
 
 .recipe-card:hover .recipe-ttl {
   color: var(--dore-clair);
 }
 
-/* Badge NOUVEAU réduit, aligné à droite du titre */
+/* Badge NEW — dans overlay image, aligné avec catégorie */
 .recipe-badge-new {
-  flex-shrink: 0;
   font-size: 0.52rem;
-  letter-spacing: 0.06em;
-  padding: 0.18rem 0.38rem;
+  letter-spacing: 0.08em;
+  padding: 0.18rem 0.42rem;
   border-radius: 4px;
-  margin-top: 0.18rem;
   line-height: 1.2;
 }
 
-/* Ligne rating + infos recette côte à côte */
-.recipe-card__row {
-  display: flex;
+/* Ligne difficulté (gauche) + temps (droite) */
+.recipe-card .recipe-card__body .recipe-card__meta-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.55rem;
+  flex-wrap: nowrap;
+  margin-bottom: 0.65rem;
 }
 
-/* Bloc infos (temps, portions) */
-.recipe-card__infos {
-  display: flex;
-  gap: 0.55rem;
+/* Temps — poussé à droite */
+.recipe-card .recipe-card__body .meta-time {
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #8294A8;
+  font-family: var(--f-body);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* SVG horloge inline dans flex */
+.recipe-card .recipe-card__body .meta-time svg,
+.recipe-card .recipe-card__body .meta-time .meta-time__icon {
+  display: inline-block !important;
+  width: 13px !important;
+  height: 13px !important;
   flex-shrink: 0;
+  max-width: none !important;
+  vertical-align: middle;
 }
 
-.recipe-info-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  font-size: 0.65rem;
-  color: rgba(232, 232, 232, 0.48);
-}
-
-.recipe-info-item .icon {
-  width: 0.65rem;
-  height: 0.65rem;
-  color: rgba(196, 160, 82, 0.48);
-  flex-shrink: 0;
-}
-
-/* Notation - Style planche V2 */
+/* Notation — ligne étoiles */
 .recipe-card .rating {
   margin-bottom: 0;
 }
@@ -1981,6 +2002,7 @@ body.film-page main {
   display: flex;
   align-items: center;
   gap: 0.15rem;
+  margin-bottom: 0.65rem;
 }
 
 .recipe-card .rating__star {
@@ -2013,11 +2035,10 @@ body.film-page main {
 
 /* Description (2 lignes) */
 .recipe-card__desc {
-  font-size: 0.8rem;
-  color: var(--argent-ecran);
-  opacity: 0.65;
-  margin: 0 0 0.65rem;
-  line-height: 1.55;
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.52);
+  margin: 0 0 0.7rem;
+  line-height: 1.65;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -2026,13 +2047,23 @@ body.film-page main {
   flex: 1;
 }
 
+/* Séparateur doré corps — remplace border-top du foot */
+.recipe-card__sep {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(196, 160, 82, 0.18),
+    rgba(196, 160, 82, 0.08) 60%,
+    transparent
+  );
+  margin-bottom: 0.75rem;
+}
+
 /* Footer : Auteur + Bouton */
 .recipe-card__foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0.65rem;
-  border-top: 1px solid rgba(196, 160, 82, 0.12);
   margin-top: auto;
 }
 

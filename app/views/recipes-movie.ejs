@@ -46,6 +46,32 @@
 
     <!-- styles-->
     <link rel="stylesheet" href="/css/recipes-movie.css" />
+    <style>
+      .recipe-card .recipe-card__title-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+        margin-bottom: 0.6rem !important;
+      }
+      .recipe-card .meta-time {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 3px !important;
+        margin-left: auto !important;
+        font-size: 0.68rem !important;
+        color: rgba(232, 232, 232, 0.5) !important;
+        white-space: nowrap !important;
+      }
+      .recipe-card .meta-time svg {
+        display: block !important;
+        width: 0.7rem !important;
+        height: 0.7rem !important;
+        flex-shrink: 0 !important;
+      }
+    </style>
 
     <!-- scripts -->
     <script src="/js/filtred-category.js" defer></script>
@@ -253,9 +279,14 @@
                         height="400"
                         decoding="async"
                       />
-                      <!-- Overlay top : badge catégorie + favori -->
+                      <div class="recipe-card__img-overlay"></div>
+                      <!-- Overlay top : badges gauche (catégorie + new) + favori droite -->
                       <div class="recipe-card__ot">
-                        <span class="badge badge--type-b"><%= recipe.category %></span>
+                        <div class="recipe-card__ot-badges">
+                          <span class="badge badge--type-b"><%= recipe.category %></span>
+                          <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
+                          <% if (recipe.isNew) { %><span class="badge-new badge-new--new recipe-badge-new">NEW</span><% } %>
+                        </div>
                         <button
                           class="btn-fav"
                           data-entity-id="<%= recipe.id %>"
@@ -276,36 +307,33 @@
                       </div>
                     </div>
 
+                    <!-- Séparateur lumineux doré image / corps -->
+                    <div class="recipe-card__glow-sep"></div>
+
                     <!-- Corps de la card -->
                     <div class="recipe-card__body">
+                      <!-- Titre (gauche) + Temps (droite) -->
                       <div class="recipe-card__title-row">
                         <h3 class="recipe-ttl"><%= recipe.name %></h3>
-                        <% if (recipe.isNew) { %><span class="badge-new badge-new--new recipe-badge-new">NEW</span><% } %>
+                        <span class="meta-time">
+                          <svg class="meta-time__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><%= recipe.time %> min
+                        </span>
                       </div>
 
-                      <div class="recipe-card__meta">
-                        <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
-                      </div>
-
-
-                      <div class="recipe-card__row">
-                        <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
-                          <% for (let i = 1; i <= 5; i++) { %>
-                          <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
-                            <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                          </span>
-                          <% } %>
-                          <span class="rating__value"><%= displayRating %></span>
-                        </div>
-                        <div class="recipe-card__infos">
-                          <span class="recipe-info-item">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            <%= recipe.time %> min
-                          </span>
-                        </div>
+                      <!-- Étoiles + valeur -->
+                      <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= displayRating %>">
+                        <% for (let i = 1; i <= 5; i++) { %>
+                        <span class="rating__star <%= i <= Math.round(parseFloat(displayRating)) ? 'rating__star--filled' : '' %>">
+                          <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </span>
+                        <% } %>
+                        <span class="rating__value"><%= displayRating %></span>
                       </div>
 
                       <p class="recipe-card__desc"><%= truncatedDescription %></p>
+
+                      <!-- Séparateur doré avant footer -->
+                      <div class="recipe-card__sep"></div>
 
                       <!-- Footer : auteur à gauche, bouton à droite -->
                       <div class="recipe-card__foot">
