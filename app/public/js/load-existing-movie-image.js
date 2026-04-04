@@ -8,7 +8,7 @@
 (function () {
   "use strict";
 
-  const DEFAULT_IMG = "/images/image-default-movie.jpg";
+  const DEFAULT_IMG = "/images/movie-default-img.png";
 
   document.addEventListener("DOMContentLoaded", async () => {
     const filmIdHidden = document.getElementById("filmId-hidden");

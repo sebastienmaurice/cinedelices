@@ -296,7 +296,7 @@
     card.setAttribute("aria-selected", "false");
 
     // Poster (60x90px)
-    const posterUrl = movie.poster || "/images/image-default-movie.jpg";
+    const posterUrl = movie.poster || "/images/movie-default-img.png";
 
     // Highlight du titre avec les mots correspondants
     const highlightedTitle = highlightMatches(

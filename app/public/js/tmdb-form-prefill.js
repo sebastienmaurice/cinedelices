@@ -305,7 +305,7 @@
       filmSelectedImage.src = posterUrl;
       filmSelectedImage.alt = "Affiche du film";
     } else {
-      filmSelectedImage.src = "/images/image-default-movie.jpg";
+      filmSelectedImage.src = "/images/movie-default-img.png";
       filmSelectedImage.alt = "Image de film par defaut";
     }
   }

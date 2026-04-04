@@ -854,7 +854,9 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   top: 14px;
   left: 14px;
   z-index: 1;
-  box-shadow: 0 0 0 2px rgba(8, 8, 16, 0.6), 0 0 0 4px #b8882a;
+  box-shadow:
+    0 0 0 2px rgba(8, 8, 16, 0.6),
+    0 0 0 4px #b8882a;
 }
 .nav-badge-static__frame {
   position: absolute;
@@ -3547,7 +3549,6 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   .rating__star {
     font-size: 0.85rem;
   }
-
 }
 
 /* ================================================================ */
@@ -3773,7 +3774,6 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   padding: 3px 10px;
 }
 
-
 /* ════════════════════════════════════════════════════════════
    GAMIFICATION — badge harmonisé (cartes, sidebars, avis)
    Classe de base réutilisable + variantes couleur.
@@ -3787,9 +3787,9 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   padding: 2px 7px;
   border-radius: 4px;
   font-family: var(--f-title, "Cinzel", serif);
-  font-size: .52rem;
+  font-size: 0.52rem;
   font-weight: 700;
-  letter-spacing: .10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.6;
   border: 1px solid transparent;
@@ -3798,22 +3798,22 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
 }
 /* Officiel / admin / "Ciné Délices" — pill rouge */
 .gamification-badge--official {
-  color: rgba(255, 90, 90, .92);
-  background: rgba(200, 40, 40, .14);
-  border-color: rgba(220, 60, 60, .32);
+  color: rgba(255, 90, 90, 0.92);
+  background: rgba(200, 40, 40, 0.14);
+  border-color: rgba(220, 60, 60, 0.32);
   border-radius: 50px;
 }
 /* Rang membre — bleu-argent */
 .gamification-badge--rank {
-  color: rgba(120, 190, 255, .88);
-  background: rgba(80, 130, 255, .10);
-  border-color: rgba(120, 190, 255, .22);
+  color: rgba(120, 190, 255, 0.88);
+  background: rgba(80, 130, 255, 0.1);
+  border-color: rgba(120, 190, 255, 0.22);
 }
 /* XP / progression — vert */
 .gamification-badge--xp {
-  color: rgba(90, 210, 140, .9);
-  background: rgba(40, 170, 100, .10);
-  border-color: rgba(40, 170, 100, .25);
+  color: rgba(90, 210, 140, 0.9);
+  background: rgba(40, 170, 100, 0.1);
+  border-color: rgba(40, 170, 100, 0.25);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -3836,36 +3836,62 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   padding: 0 16px 0 6px;
   overflow: hidden;
   cursor: default;
-  transition: transform .25s ease, box-shadow .3s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.3s ease;
   text-decoration: none;
   flex-shrink: 0;
 }
-.contrib:hover { transform: translateY(-2px); }
+.contrib:hover {
+  transform: translateY(-2px);
+}
 .contrib::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 12%; right: 12%;
+  top: 0;
+  left: 12%;
+  right: 12%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.13),
+    transparent
+  );
   pointer-events: none;
   z-index: 3;
 }
 
 /* ── avatar ── */
 .contrib__av {
-  width: 36px; height: 36px;
-  border-radius: 50%; flex-shrink: 0;
-  overflow: hidden; position: relative; z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
-.contrib__av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.contrib__av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* ── texte stack ── */
-.contrib__info { display: flex; flex-direction: column; gap: 3px; min-width: 0; z-index: 2; }
+.contrib__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  z-index: 2;
+}
 .contrib__pseudo {
-  font-family: var(--f-title, 'Cinzel', serif);
-  font-size: .7rem;
+  font-family: var(--f-title, "Cinzel", serif);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: .6px;
+  letter-spacing: 0.6px;
   color: var(--argent, #e8e8e8);
   white-space: nowrap;
   line-height: 1;
@@ -3878,69 +3904,94 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   gap: 3px;
   padding: 2px 8px;
   border-radius: 999px;
-  font-family: var(--f-title, 'Cinzel', serif);
-  font-size: .38rem;
+  font-family: var(--f-title, "Cinzel", serif);
+  font-size: 0.38rem;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   line-height: 1.5;
   white-space: nowrap;
 }
-.contrib__pill-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.contrib__pill-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 /* pill admin — bleu */
 .contrib__pill--admin {
   background: linear-gradient(135deg, #0a2540 0%, #0e3a5e 45%, #1560a0 100%);
-  border: 1px solid rgba(60,140,200,.55);
-  color: rgba(160,215,255,.95);
-  box-shadow: 0 0 8px rgba(30,100,180,.35), inset 0 1px 0 rgba(255,255,255,.1);
+  border: 1px solid rgba(60, 140, 200, 0.55);
+  color: rgba(160, 215, 255, 0.95);
+  box-shadow:
+    0 0 8px rgba(30, 100, 180, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
-.contrib__pill--admin .contrib__pill-dot { background: rgba(140,200,255,.75); }
+.contrib__pill--admin .contrib__pill-dot {
+  background: rgba(140, 200, 255, 0.75);
+}
 /* pill membre — prune/rose */
 .contrib__pill--membre {
   background: linear-gradient(135deg, #2a0820 0%, #4a1438 45%, #7a2460 100%);
-  border: 1px solid rgba(180,80,148,.55);
-  color: rgba(255,185,230,.95);
-  box-shadow: 0 0 8px rgba(180,80,148,.3), inset 0 1px 0 rgba(255,255,255,.08);
+  border: 1px solid rgba(180, 80, 148, 0.55);
+  color: rgba(255, 185, 230, 0.95);
+  box-shadow:
+    0 0 8px rgba(180, 80, 148, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-.contrib__pill--membre .contrib__pill-dot { background: rgba(255,170,220,.75); }
+.contrib__pill--membre .contrib__pill-dot {
+  background: rgba(255, 170, 220, 0.75);
+}
 
 /* ── thème ADMIN — bleu nuit ── */
 .contrib--admin {
-  background: rgba(8,28,46,.58);
+  background: rgba(8, 28, 46, 0.58);
   box-shadow:
-    0 0 0 1.5px rgba(60,140,200,.35),
-    0 0 0 3px   rgba(60,140,200,.06),
-    0 6px 28px  rgba(60,140,200,.18),
-    0 2px 8px   rgba(0,0,0,.65);
+    0 0 0 1.5px rgba(60, 140, 200, 0.35),
+    0 0 0 3px rgba(60, 140, 200, 0.06),
+    0 6px 28px rgba(60, 140, 200, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.65);
 }
 .contrib--admin:hover {
   box-shadow:
-    0 0 0 1.5px rgba(60,140,200,.6),
-    0 0 0 4px   rgba(60,140,200,.1),
-    0 10px 36px rgba(60,140,200,.28),
-    0 2px 8px   rgba(0,0,0,.7);
+    0 0 0 1.5px rgba(60, 140, 200, 0.6),
+    0 0 0 4px rgba(60, 140, 200, 0.1),
+    0 10px 36px rgba(60, 140, 200, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.7);
 }
-.contrib--admin .contrib__pseudo { color: rgba(115,185,240,.92); }
-.contrib--admin .contrib__av img { box-shadow: 0 0 0 1.5px rgba(60,140,200,.7), 0 0 10px rgba(60,140,200,.35); }
+.contrib--admin .contrib__pseudo {
+  color: rgba(115, 185, 240, 0.92);
+}
+.contrib--admin .contrib__av img {
+  box-shadow:
+    0 0 0 1.5px rgba(60, 140, 200, 0.7),
+    0 0 10px rgba(60, 140, 200, 0.35);
+}
 
 /* ── thème MEMBRE — prune ── */
 .contrib--membre {
-  background: rgba(38,14,32,.62);
+  background: rgba(38, 14, 32, 0.62);
   box-shadow:
-    0 0 0 1.5px rgba(180,80,148,.38),
-    0 0 0 3px   rgba(180,80,148,.07),
-    0 6px 28px  rgba(180,80,148,.18),
-    0 2px 8px   rgba(0,0,0,.6);
+    0 0 0 1.5px rgba(180, 80, 148, 0.38),
+    0 0 0 3px rgba(180, 80, 148, 0.07),
+    0 6px 28px rgba(180, 80, 148, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.6);
 }
 .contrib--membre:hover {
   box-shadow:
-    0 0 0 1.5px rgba(180,80,148,.65),
-    0 0 0 4px   rgba(180,80,148,.12),
-    0 10px 36px rgba(180,80,148,.28),
-    0 2px 8px   rgba(0,0,0,.7);
+    0 0 0 1.5px rgba(180, 80, 148, 0.65),
+    0 0 0 4px rgba(180, 80, 148, 0.12),
+    0 10px 36px rgba(180, 80, 148, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.7);
 }
-.contrib--membre .contrib__pseudo { color: rgba(218,130,190,.92); }
-.contrib--membre .contrib__av img { box-shadow: 0 0 0 1.5px rgba(180,80,148,.7), 0 0 10px rgba(180,80,148,.38); }
+.contrib--membre .contrib__pseudo {
+  color: rgba(218, 130, 190, 0.92);
+}
+.contrib--membre .contrib__av img {
+  box-shadow:
+    0 0 0 1.5px rgba(180, 80, 148, 0.7),
+    0 0 10px rgba(180, 80, 148, 0.38);
+}
 
 /* ── taille SM — h 30px (cards listing) ── */
 .contrib--sm {
@@ -3948,12 +3999,30 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   gap: 5px;
   padding: 0 10px 0 4px;
 }
-.contrib--sm .contrib__av { width: 22px; height: 22px; }
-.contrib--sm .contrib__av img { width: 22px; height: 22px; }
-.contrib--sm .contrib__info { gap: 2px; }
-.contrib--sm .contrib__pseudo { font-size: .44rem; letter-spacing: .3px; }
-.contrib--sm .contrib__pill { font-size: .25rem; letter-spacing: .8px; padding: 1px 5px; }
-.contrib--sm .contrib__pill-dot { width: 3px; height: 3px; }
+.contrib--sm .contrib__av {
+  width: 22px;
+  height: 22px;
+}
+.contrib--sm .contrib__av img {
+  width: 22px;
+  height: 22px;
+}
+.contrib--sm .contrib__info {
+  gap: 2px;
+}
+.contrib--sm .contrib__pseudo {
+  font-size: 0.44rem;
+  letter-spacing: 0.3px;
+}
+.contrib--sm .contrib__pill {
+  font-size: 0.25rem;
+  letter-spacing: 0.8px;
+  padding: 1px 5px;
+}
+.contrib--sm .contrib__pill-dot {
+  width: 3px;
+  height: 3px;
+}
 
 /* ── Animations Moodboard V2.1 ── */
 @keyframes shimmer-gold {

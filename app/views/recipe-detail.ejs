@@ -168,7 +168,7 @@
 
           <!-- Poster — carrousel jusqu'à 3 photos -->
           <%
-            const posterPhotos = [{ src: recipeImage, alt: recipe.name }];
+            const posterPhotos = [{ src: mainGalSrc, alt: recipe.name }];
             if (galPic2) posterPhotos.push({ src: galPic2.file_path, alt: 'Photo 2 — ' + recipe.name });
             if (galPic3) posterPhotos.push({ src: galPic3.file_path, alt: 'Photo 3 — ' + recipe.name });
             const multiPoster = posterPhotos.length > 1;
@@ -641,22 +641,7 @@
           <!-- ═══ SIDEBAR DROITE ═══ -->
           <aside class="rd-sidebar">
 
-            <!-- ① Film associé — ancre cinématographique -->
-            <% if (movie) { %>
-            <div class="rd-movie-card">
-              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="rd-movie-poster" style="background-image:url('<%= movieImage %>')" aria-label="Voir les recettes du film <%= movie.title %>">
-                <div class="rd-movie-poster__overlay"></div>
-                <div class="rd-movie-poster__body">
-                  <span class="rd-movie-poster__eye">Film associé</span>
-                  <p class="rd-movie-poster__title"><%= movie.title %></p>
-                  <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
-                </div>
-                <span class="rd-movie-poster__cta">Voir les recettes →</span>
-              </a>
-            </div>
-            <% } %>
-
-            <!-- ② Auteur -->
+            <!-- ① Auteur -->
             <% if (contributor) { %>
             <a
               class="rd-author-badge rd-author-badge--sidebar"
@@ -722,6 +707,21 @@
                 </div>
               </div>
             </div>
+
+            <!-- ③ Film associé — affiche cinématographique 2:3 -->
+            <% if (movie) { %>
+            <div class="rd-movie-card">
+              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="rd-movie-poster" style="background-image:url('<%= movieImage %>')" aria-label="Voir les recettes du film <%= movie.title %>">
+                <div class="rd-movie-poster__overlay"></div>
+                <div class="rd-movie-poster__body">
+                  <span class="rd-movie-poster__eye">Film associé</span>
+                  <p class="rd-movie-poster__title"><%= movie.title %></p>
+                  <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
+                </div>
+                <span class="rd-movie-poster__cta">Voir les recettes →</span>
+              </a>
+            </div>
+            <% } %>
 
             <!-- ④ Note communauté -->
             <div class="rd-sidebar-card rd-rating-card">

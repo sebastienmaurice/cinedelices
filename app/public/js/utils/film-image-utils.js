@@ -70,7 +70,7 @@ async function updateFilmImage(movie) {
   }
 
   // Nouveau film ou film sans image : image par défaut
-  filmSelectedImage.src = "/images/image-default-movie.jpg";
+  filmSelectedImage.src = "/images/movie-default-img.png";
   filmSelectedImage.alt = "Image de film par defaut";
 }
 

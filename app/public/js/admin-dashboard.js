@@ -940,7 +940,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest("[data-edit-btn][data-edit-type='recipe']");
     if (!btn) return;
     const rid = btn.dataset.editId;
-    if (rid && rid !== currentRecipeId) {
+    if (rid) {
       currentRecipeId = rid;
       // Lancer le fetch photos (légèrement différé pour que le modal s'ouvre d'abord)
       setTimeout(() => refreshPhotosPanel(rid), 80);

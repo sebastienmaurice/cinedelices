@@ -823,8 +823,37 @@ const adminController = {
     try {
       const recipeId = parseInt(req.params.id);
 
-      // Marquer la recette comme refusée (status: 'rejected') sans la supprimer
-      await Recipe.update({ status: "rejected" }, { where: { id: recipeId } });
+      // Charger la recette avec ses images pour nettoyage disque
+      const recipe = await Recipe.findByPk(recipeId, {
+        attributes: ["id", "picture", "pending_picture"],
+        include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["id", "file_path"] }],
+      });
+
+      if (!recipe) {
+        return res.redirect("/admin?success=recipe_not_found");
+      }
+
+      // Supprimer les fichiers images du disque (erreurs non bloquantes)
+      try { unlinkIfExists(recipe.picture); } catch (err) {
+        console.error(`[rejectRecipe] Erreur suppression image principale (${recipe.picture}):`, err.message);
+      }
+      try { unlinkIfExists(recipe.pending_picture); } catch (err) {
+        console.error(`[rejectRecipe] Erreur suppression image pending (${recipe.pending_picture}):`, err.message);
+      }
+      for (const pic of (recipe.RecipePictures || [])) {
+        try { unlinkIfExists(pic.file_path); } catch (err) {
+          console.error(`[rejectRecipe] Erreur suppression image secondaire (${pic.file_path}):`, err.message);
+        }
+      }
+
+      // Supprimer les enregistrements RecipePicture en BDD
+      await RecipePicture.destroy({ where: { recipe_id: recipeId } });
+
+      // Marquer la recette comme refusée et vider les chemins images
+      await Recipe.update(
+        { status: "rejected", picture: null, pending_picture: null },
+        { where: { id: recipeId } },
+      );
 
       logAdminAction({ adminId: req.userId, action: "reject_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_rejected");

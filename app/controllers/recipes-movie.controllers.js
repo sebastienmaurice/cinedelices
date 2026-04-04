@@ -126,6 +126,7 @@ const recipesController = {
         include: [
           { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
+          { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"], where: { position: 1 }, required: false },
         ],
         order,
       });
@@ -184,6 +185,13 @@ const recipesController = {
             as: "contributor",
             attributes: ["id", "pseudo", "picture", "role"],
           },
+          {
+            model: RecipePicture,
+            as: "RecipePictures",
+            attributes: ["file_path", "position"],
+            where: { position: 1 },
+            required: false,
+          },
         ],
       });
 
@@ -234,7 +242,10 @@ const recipesController = {
       }
 
       // Jointure User via alias "contributor" — même include dans les 2 cas
-      const userInclude = [{ model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] }];
+      const userInclude = [
+        { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
+        { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"], where: { position: 1 }, required: false },
+      ];
 
       let recipes;
       if (!category || category === "all") {
@@ -425,30 +436,46 @@ function formatDescriptionBlocks(description) {
 }
 
 /**
- * Formate les ingrédients en liste (un ingrédient par ligne)
- * @param {string} ingredients - Texte des ingrédients
- * @returns {Array<string>} - Tableau d'ingrédients formatés
+ * Formate les ingrédients en liste.
+ * Accepte le nouveau format JSON ["item1","item2"] ou l'ancien format texte brut (retours à la ligne).
+ * @param {string} ingredients
+ * @returns {Array<string>}
  */
 function formatIngredientsBlocks(ingredients) {
-  return (ingredients || "")
-    .replace(/\r\n/g, "\n") // Normaliser les retours à la ligne
-    .split(/\n+/) // Séparer par retours à la ligne (un ingrédient par ligne)
+  const raw = (ingredients || "").trim();
+  if (raw.startsWith("[")) {
+    try {
+      return JSON.parse(raw).map((s) => String(s).trim()).filter(Boolean);
+    } catch (_) {}
+  }
+  // Ancien format : un ingrédient par ligne
+  return raw
+    .replace(/\r\n/g, "\n")
+    .split(/\n+/)
     .map((item) => item.trim())
-    .filter(Boolean); // Retirer les chaînes vides
+    .filter(Boolean);
 }
 
 /**
- * Formate la préparation en étapes (paragraphes puis lignes)
- * @param {string} preparation - Texte de préparation
- * @returns {Array<string>} - Tableau d'étapes formatées
+ * Formate la préparation en étapes.
+ * Accepte le nouveau format JSON ["étape1","étape2"] ou l'ancien format texte brut.
+ * @param {string} preparation
+ * @returns {Array<string>}
  */
 function formatPreparationBlocks(preparation) {
-  return (preparation || "")
-    .replace(/\r\n/g, "\n") // Normaliser les retours à la ligne
-    .split(/\n{2,}/) // Séparer par retours à la ligne doubles (paragraphes)
-    .flatMap((chunk) => chunk.split(/\n/)) // Diviser chaque paragraphe en lignes
+  const raw = (preparation || "").trim();
+  if (raw.startsWith("[")) {
+    try {
+      return JSON.parse(raw).map((s) => String(s).trim()).filter(Boolean);
+    } catch (_) {}
+  }
+  // Ancien format : paragraphes doubles puis lignes simples
+  return raw
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .flatMap((chunk) => chunk.split(/\n/))
     .map((step) => step.trim())
-    .filter(Boolean); // Retirer les chaînes vides
+    .filter(Boolean);
 }
 
 // Ajouter submitNotice dans l'objet recipesController

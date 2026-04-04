@@ -267,12 +267,13 @@
                     const recipeIsStaff = recipeContrib && (recipeContrib.role === 'admin' || recipeContrib.role === 'superadmin');
                     const recipeDescription = recipe.description || recipe.anecdote || 'Découvrez cette délicieuse recette inspirée du cinéma...';
                     const truncatedDescription = recipeDescription.length > 80 ? recipeDescription.substring(0, 80) + '...' : recipeDescription;
+                    const cardImg = (recipe.RecipePictures && recipe.RecipePictures[0]) ? recipe.RecipePictures[0].file_path : (recipe.picture || '/images/image-default-recipe-1.jpg');
                   %>
                   <article class="recipe-card">
                     <!-- Image paysage 3:2 -->
                     <div class="recipe-card__img">
                       <img
-                        src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
+                        src="<%= cardImg %>"
                         alt="<%= recipe.name %>"
                         loading="lazy"
                         width="600"

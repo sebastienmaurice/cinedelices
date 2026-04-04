@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentions Légales · Ciné Délices</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bleu-nuit:       #142234;
+  --bleu-inter:      #1b263b;
+  --surface-card:    #0f1e30;
+  --bleu-clair:      #415a77;
+  --or-titre:        #C4A052;
+  --or-100:          #D4A843;
+  --or-200:          #B8882A;
+  --dore-clair:      #F2C84B;
+  --jaune-blond:     #FFE085;
+  --rouge-cta:       #C23018;
+  --argent:          #e8e8e8;
+  --gold-gradient:   linear-gradient(135deg, #B8882A 0%, #D4A843 30%, #F2C84B 55%, #FFE085 80%, #D4A843 100%);
+  --f-display:  'Bebas Neue', cursive;
+  --f-title:    'Cinzel', serif;
+  --f-editorial:'Playfair Display', serif;
+  --f-body:     'Lato', sans-serif;
+  --nav-h: 68px;
+  --page-px: 64px;
+  --max-w: 1440px;
+  --content-w: 860px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; }
+
+body {
+  background: var(--bleu-nuit);
+  font-family: var(--f-body);
+  color: var(--argent);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ── FOND ── */
+.bg-glow {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(196,160,82,.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 10% 90%, rgba(65,90,119,.12) 0%, transparent 55%);
+}
+.scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.018) 2px, rgba(0,0,0,.018) 4px);
+}
+
+/* ══ NAV ══ */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h);
+  display: flex; align-items: center; padding: 0 var(--page-px);
+  background: rgba(20,34,52,.82); backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid rgba(196,160,82,.1);
+}
+.nav-inner {
+  width: 100%; max-width: var(--max-w); margin: 0 auto;
+  display: flex; align-items: center;
+}
+.nav-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+.nav-logo__img { height: 38px; width: auto; display: block; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.nav-btn-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 18px; height: 34px; border-radius: 7px;
+  background: transparent; border: 1px solid rgba(196,160,82,.35); cursor: pointer;
+  font-family: var(--f-title); font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--or-titre); text-decoration: none; transition: all .25s;
+}
+.nav-btn-back:hover { background: rgba(196,160,82,.1); border-color: rgba(196,160,82,.6); }
+
+/* ══ HERO ══ */
+.page-hero {
+  position: relative; width: 100%;
+  padding: calc(var(--nav-h) + 64px) var(--page-px) 56px;
+  border-bottom: 1px solid rgba(196,160,82,.08);
+  overflow: hidden;
+}
+.page-hero__inner {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.page-hero__eyebrow {
+  font-family: var(--f-title); font-size: .58rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(196,160,82,.5); display: flex; align-items: center; gap: 8px;
+  animation: fadeUp .5s cubic-bezier(.22,1,.36,1) .1s both;
+}
+.eyebrow-line { width: 28px; height: 1px; background: rgba(196,160,82,.3); }
+.page-hero__title {
+  font-family: var(--f-display);
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  letter-spacing: .08em; line-height: .9; color: #fff;
+  animation: fadeUp .5s cubic-bezier(.22,1,.36,1) .18s both;
+}
+.page-hero__title em {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  font-style: normal;
+}
+.page-hero__sub {
+  font-family: var(--f-editorial); font-style: italic; font-size: 1rem;
+  color: rgba(232,232,232,.38); margin-top: 4px;
+  animation: fadeUp .5s cubic-bezier(.22,1,.36,1) .26s both;
+}
+.page-hero__meta {
+  display: flex; align-items: center; gap: 20px; margin-top: 18px;
+  animation: fadeUp .5s cubic-bezier(.22,1,.36,1) .34s both;
+}
+.meta-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(196,160,82,.15);
+  background: rgba(27,38,59,.5);
+  font-family: var(--f-title); font-size: .5rem; letter-spacing: .15em; text-transform: uppercase;
+  color: rgba(196,160,82,.5);
+}
+.meta-badge__dot { width: 5px; height: 5px; border-radius: 50%; background: var(--rouge-cta); }
+
+/* Déco hero */
+.hero-reel {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(196,160,82,.06);
+  pointer-events: none;
+}
+.hero-reel--a { width: 320px; height: 320px; right: -80px; top: -60px; animation: rotReel 55s linear infinite; }
+.hero-reel--b { width: 180px; height: 180px; right: 140px; bottom: -50px; animation: rotReel 35s linear infinite reverse; }
+.hero-reel::before { content: ""; position: absolute; inset: 22px; border-radius: 50%; border: 1px solid rgba(196,160,82,.04); }
+@keyframes rotReel { to { transform: rotate(360deg); } }
+
+/* ══ LAYOUT PRINCIPAL ══ */
+.page-body {
+  position: relative; z-index: 1;
+  width: 100%; max-width: var(--max-w); margin: 0 auto;
+  padding: 72px var(--page-px) 120px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+/* ── SIDEBAR NAVIGATION ── */
+.sidebar {
+  position: sticky; top: calc(var(--nav-h) + 28px);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.sidebar__title {
+  font-family: var(--f-title); font-size: .48rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(196,160,82,.3); margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(196,160,82,.08);
+}
+.sidebar__link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 6px; border: none;
+  background: transparent; cursor: pointer; text-decoration: none;
+  font-family: var(--f-body); font-size: .72rem; color: rgba(232,232,232,.4);
+  transition: all .2s; text-align: left;
+}
+.sidebar__link:hover { background: rgba(196,160,82,.06); color: rgba(232,232,232,.75); }
+.sidebar__link.active { background: rgba(196,160,82,.08); color: var(--or-titre); }
+.sidebar__link::before {
+  content: ''; width: 3px; height: 14px; border-radius: 2px;
+  background: transparent; flex-shrink: 0; transition: background .2s;
+}
+.sidebar__link.active::before { background: var(--or-titre); }
+.sidebar__link:hover::before { background: rgba(196,160,82,.3); }
+
+/* ── CONTENU ── */
+.content { display: flex; flex-direction: column; gap: 0; }
+
+/* Section */
+.legal-section {
+  padding: 48px 0;
+  border-bottom: 1px solid rgba(196,160,82,.07);
+  animation: fadeUp .5s cubic-bezier(.22,1,.36,1) both;
+}
+.legal-section:first-child { padding-top: 0; }
+.legal-section:last-child { border-bottom: none; padding-bottom: 0; }
+
+.section-header {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px;
+}
+.section-num {
+  font-family: var(--f-display); font-size: 2.5rem; line-height: 1;
+  color: rgba(196,160,82,.1); min-width: 2ch; flex-shrink: 0;
+  margin-top: -4px;
+}
+.section-title-wrap { display: flex; flex-direction: column; gap: 4px; }
+.section-title {
+  font-family: var(--f-display); font-size: 1.4rem; letter-spacing: .08em; color: #fff;
+}
+.section-title em {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  font-style: normal;
+}
+.section-sub { font-family: var(--f-title); font-size: .5rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(196,160,82,.35); }
+
+/* Contenu texte */
+.legal-text {
+  font-family: var(--f-body); font-size: .875rem; color: rgba(232,232,232,.65);
+  line-height: 1.8;
+}
+.legal-text + .legal-text { margin-top: 14px; }
+.legal-text a { color: var(--or-titre); text-decoration: none; border-bottom: 1px solid rgba(196,160,82,.3); transition: border-color .2s; }
+.legal-text a:hover { border-color: var(--or-titre); }
+.legal-text strong { color: rgba(232,232,232,.85); font-weight: 700; }
+
+/* Info card */
+.info-card {
+  background: rgba(15,30,48,.6);
+  border: 1px solid rgba(196,160,82,.1);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 32px;
+}
+.info-field { display: flex; flex-direction: column; gap: 4px; }
+.info-field--full { grid-column: 1 / -1; }
+.info-label {
+  font-family: var(--f-title); font-size: .46rem; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(196,160,82,.35);
+}
+.info-value {
+  font-family: var(--f-body); font-size: .82rem; color: rgba(232,232,232,.7);
+}
+.info-value.placeholder {
+  color: rgba(196,160,82,.45); font-style: italic;
+  background: rgba(196,160,82,.04); border-radius: 4px; padding: 2px 6px;
+  border: 1px dashed rgba(196,160,82,.18); display: inline-block;
+}
+
+/* Liste */
+.legal-list {
+  list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 8px;
+}
+.legal-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: .875rem; color: rgba(232,232,232,.65); line-height: 1.7;
+}
+.legal-list li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(196,160,82,.4); flex-shrink: 0; margin-top: .5em;
+}
+
+/* Alerte / notice */
+.legal-notice {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 20px; border-radius: 10px; margin-top: 20px;
+  background: rgba(194,48,24,.07); border: 1px solid rgba(194,48,24,.18);
+}
+.notice-icon { flex-shrink: 0; margin-top: 2px; color: rgba(194,48,24,.8); }
+.notice-text { font-size: .8rem; color: rgba(232,232,232,.55); line-height: 1.7; }
+.notice-text strong { color: rgba(232,232,232,.75); }
+
+.legal-notice--gold {
+  background: rgba(196,160,82,.05); border-color: rgba(196,160,82,.15);
+}
+.legal-notice--gold .notice-icon { color: rgba(196,160,82,.7); }
+
+/* Tag RGPD */
+.rgpd-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 12px;
+  background: rgba(42,122,80,.12); border: 1px solid rgba(42,122,80,.25);
+  font-family: var(--f-title); font-size: .44rem; letter-spacing: .15em; text-transform: uppercase;
+  color: rgba(61,170,114,.75); margin-left: 8px; vertical-align: middle;
+}
+
+/* Update badge */
+.update-bar {
+  display: flex; align-items: center; gap: 10px; margin-top: 12px;
+  padding: 10px 16px; border-radius: 8px;
+  background: rgba(27,38,59,.4); border: 1px solid rgba(196,160,82,.08);
+  font-size: .75rem; color: rgba(232,232,232,.35);
+}
+.update-bar strong { color: rgba(196,160,82,.5); font-weight: 600; }
+
+/* Divider doré */
+.gold-divider { width: 60px; height: 2px; background: var(--gold-gradient); border-radius: 2px; margin: 0 0 20px; }
+
+/* FOOTER ZONE */
+.legal-footer {
+  margin-top: 72px; padding-top: 32px;
+  border-top: 1px solid rgba(196,160,82,.08);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-align: center;
+}
+.legal-footer__logo { height: 30px; opacity: .5; }
+.legal-footer__copy { font-size: .68rem; color: rgba(196,160,82,.25); letter-spacing: .1em; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="scanlines"></div>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img class="nav-logo__img" src="https://i.postimg.cc/1txrW4nC/logo_cine_delices_2026_1.png" alt="Ciné Délices">
+    </a>
+    <div class="nav-right">
+      <a href="#" class="nav-btn-back">← Retour</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="page-hero">
+  <div class="hero-reel hero-reel--a"></div>
+  <div class="hero-reel hero-reel--b"></div>
+  <div class="page-hero__inner">
+    <p class="page-hero__eyebrow"><span class="eyebrow-line"></span>Informations légales</p>
+    <h1 class="page-hero__title">Mentions <em>Légales</em></h1>
+    <p class="page-hero__sub">Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique.</p>
+    <div class="page-hero__meta">
+      <span class="meta-badge"><span class="meta-badge__dot"></span>Auto-entrepreneur</span>
+      <span class="meta-badge">RGPD Conforme</span>
+      <span class="meta-badge">Loi LCEN</span>
+    </div>
+  </div>
+</header>
+
+<!-- CORPS -->
+<div class="page-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <p class="sidebar__title">Sommaire</p>
+    <a href="#editeur" class="sidebar__link active">1. Éditeur du site</a>
+    <a href="#hebergeur" class="sidebar__link">2. Hébergeur</a>
+    <a href="#propriete" class="sidebar__link">3. Propriété intellectuelle</a>
+    <a href="#donnees" class="sidebar__link">4. Données personnelles</a>
+    <a href="#cookies" class="sidebar__link">5. Cookies</a>
+    <a href="#responsabilite" class="sidebar__link">6. Responsabilité</a>
+    <a href="#contact" class="sidebar__link">7. Contact & réclamations</a>
+  </aside>
+
+  <!-- CONTENU -->
+  <main class="content">
+
+    <!-- 1. ÉDITEUR -->
+    <section class="legal-section" id="editeur" style="animation-delay:.1s">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title"><em>Éditeur</em> du site</h2>
+          <span class="section-sub">Responsable de publication</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">Le site <strong>cinedelices.fr</strong> est édité par :</p>
+      <div class="info-card">
+        <div class="info-field">
+          <span class="info-label">Nom & Prénom</span>
+          <span class="info-value placeholder">[Prénom NOM]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Statut juridique</span>
+          <span class="info-value">Auto-entrepreneur / Entreprise individuelle</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">SIRET</span>
+          <span class="info-value placeholder">[XXX XXX XXX XXXXX]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">N° TVA intracommunautaire</span>
+          <span class="info-value placeholder">[FR XX XXXXXXXXX] ou N/A</span>
+        </div>
+        <div class="info-field info-field--full">
+          <span class="info-label">Adresse du siège</span>
+          <span class="info-value placeholder">[Numéro, Rue, Code postal, Ville, France]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Email de contact</span>
+          <span class="info-value placeholder">[contact@cinedelices.fr]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Directeur de publication</span>
+          <span class="info-value placeholder">[Prénom NOM]</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. HÉBERGEUR -->
+    <section class="legal-section" id="hebergeur" style="animation-delay:.15s">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title"><em>Hébergeur</em></h2>
+          <span class="section-sub">Infrastructure technique</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">Le site est hébergé par :</p>
+      <div class="info-card">
+        <div class="info-field">
+          <span class="info-label">Société</span>
+          <span class="info-value placeholder">[Nom de l'hébergeur — ex. OVH SAS]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Forme juridique</span>
+          <span class="info-value placeholder">[SAS / SARL / etc.]</span>
+        </div>
+        <div class="info-field info-field--full">
+          <span class="info-label">Adresse du siège social</span>
+          <span class="info-value placeholder">[Adresse complète de l'hébergeur]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Site web</span>
+          <span class="info-value placeholder">[https://www.hebergeur.com]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Téléphone</span>
+          <span class="info-value placeholder">[+33 X XX XX XX XX]</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PROPRIÉTÉ INTELLECTUELLE -->
+    <section class="legal-section" id="propriete" style="animation-delay:.2s">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">Propriété <em>intellectuelle</em></h2>
+          <span class="section-sub">Droits d'auteur & contenus</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">L'ensemble du contenu présent sur le site <strong>cinedelices.fr</strong> — notamment les textes, articles, recettes, photographies, illustrations, logos, icônes et éléments graphiques — est protégé par le droit d'auteur et constitue la propriété exclusive de l'éditeur ou de ses partenaires, sauf mention contraire expresse.</p>
+      <p class="legal-text">Toute reproduction, représentation, modification, publication, transmission ou dénaturation, totale ou partielle, du contenu de ce site, quel que soit le support ou le procédé utilisé, est interdite sans autorisation écrite préalable de l'éditeur.</p>
+      <p class="legal-text">Les marques et logos reproduits sur le site sont des marques déposées par les sociétés éditrices des films, séries ou œuvres évoquées. Leur mention s'inscrit exclusivement dans un cadre informatif et éditorial, sans aucun lien commercial.</p>
+      <div class="legal-notice legal-notice--gold">
+        <svg class="notice-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M9 5v4M9 12h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <p class="notice-text">Toute demande d'utilisation ou de reproduction de contenu doit être adressée par email à <strong><span class="placeholder" style="color:rgba(196,160,82,.5)">[contact@cinedelices.fr]</span></strong>.</p>
+      </div>
+    </section>
+
+    <!-- 4. DONNÉES PERSONNELLES -->
+    <section class="legal-section" id="donnees" style="animation-delay:.25s">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">Données <em>personnelles</em> <span class="rgpd-tag">RGPD</span></h2>
+          <span class="section-sub">Règlement européen 2016/679</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée, vous disposez de droits sur vos données personnelles.</p>
+
+      <p class="legal-text" style="margin-top:20px"><strong>Données collectées</strong></p>
+      <ul class="legal-list">
+        <li>Données de navigation (pages visitées, durée de session) via des outils d'analyse anonymisés.</li>
+        <li>Adresse email et pseudo en cas de création de compte utilisateur.</li>
+        <li>Contenu soumis volontairement (commentaires, avis, notes de films).</li>
+        <li>Données techniques (adresse IP, type de navigateur, système d'exploitation).</li>
+      </ul>
+
+      <p class="legal-text" style="margin-top:20px"><strong>Finalités du traitement</strong></p>
+      <ul class="legal-list">
+        <li>Fonctionnement et amélioration du service (base légale : intérêt légitime).</li>
+        <li>Gestion des comptes utilisateurs (base légale : exécution du contrat).</li>
+        <li>Envoi de communications si vous y avez consenti (base légale : consentement).</li>
+        <li>Respect des obligations légales applicables (base légale : obligation légale).</li>
+      </ul>
+
+      <p class="legal-text" style="margin-top:20px"><strong>Durée de conservation</strong></p>
+      <p class="legal-text">Les données de compte sont conservées pendant la durée de vie du compte, puis supprimées dans un délai de 3 ans après la dernière activité. Les données de navigation anonymisées sont conservées 25 mois maximum.</p>
+
+      <p class="legal-text" style="margin-top:20px"><strong>Vos droits</strong></p>
+      <ul class="legal-list">
+        <li><strong>Droit d'accès</strong> — obtenir une copie de vos données.</li>
+        <li><strong>Droit de rectification</strong> — corriger des données inexactes.</li>
+        <li><strong>Droit à l'effacement</strong> — demander la suppression de vos données.</li>
+        <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format lisible.</li>
+        <li><strong>Droit d'opposition</strong> — s'opposer à certains traitements.</li>
+        <li><strong>Droit à la limitation</strong> — restreindre temporairement un traitement.</li>
+      </ul>
+
+      <div class="legal-notice">
+        <svg class="notice-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2L2 15h14L9 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M9 7v4M9 12.5h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <p class="notice-text">Pour exercer vos droits, contactez-nous à <strong><span style="color:rgba(196,160,82,.5)">[contact@cinedelices.fr]</span></strong>. En cas de réponse insatisfaisante, vous pouvez introduire une réclamation auprès de la <strong>CNIL</strong> — <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color:rgba(196,160,82,.6);text-decoration:underline">www.cnil.fr</a>.</p>
+      </div>
+    </section>
+
+    <!-- 5. COOKIES -->
+    <section class="legal-section" id="cookies" style="animation-delay:.3s">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">Politique <em>Cookies</em></h2>
+          <span class="section-sub">Traceurs & préférences</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">Le site <strong>cinedelices.fr</strong> utilise des cookies et technologies similaires pour assurer son bon fonctionnement et améliorer votre expérience. Conformément à la réglementation CNIL, les cookies non essentiels sont déposés uniquement après votre consentement explicite.</p>
+
+      <div class="info-card" style="grid-template-columns:1fr;gap:12px;margin-top:20px">
+        <div class="info-field">
+          <span class="info-label">🔒 Cookies essentiels — toujours actifs</span>
+          <span class="info-value" style="font-size:.8rem;color:rgba(232,232,232,.55)">Session utilisateur, préférences d'affichage, panier de favoris. Ces cookies sont nécessaires au fonctionnement du site et ne peuvent pas être désactivés.</span>
+        </div>
+        <div class="info-field" style="border-top:1px solid rgba(196,160,82,.06);padding-top:12px">
+          <span class="info-label">📊 Cookies analytiques — sur consentement</span>
+          <span class="info-value" style="font-size:.8rem;color:rgba(232,232,232,.55)">Mesure d'audience anonymisée (ex. : Matomo ou équivalent privacy-first). Permettent de comprendre comment les visiteurs utilisent le site, sans transfert de données vers des tiers publicitaires.</span>
+        </div>
+        <div class="info-field" style="border-top:1px solid rgba(196,160,82,.06);padding-top:12px">
+          <span class="info-label">🎯 Cookies de préférences — sur consentement</span>
+          <span class="info-value" style="font-size:.8rem;color:rgba(232,232,232,.55)">Mémorisation de vos filtres, genres préférés et historique de visionnage pour personnaliser votre expérience sur Ciné Délices.</span>
+        </div>
+      </div>
+
+      <p class="legal-text" style="margin-top:20px">Vous pouvez à tout moment modifier vos préférences via le panneau de gestion des cookies accessible en bas de chaque page, ou en configurant votre navigateur pour bloquer les cookies tiers.</p>
+      <p class="legal-text">Les cookies essentiels sont conservés pour la durée de votre session ou 12 mois maximum. Les cookies analytiques sont conservés 13 mois.</p>
+    </section>
+
+    <!-- 6. RESPONSABILITÉ -->
+    <section class="legal-section" id="responsabilite" style="animation-delay:.35s">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">Limitation de <em>responsabilité</em></h2>
+          <span class="section-sub">Garanties & disponibilité</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">L'éditeur s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur le site. Toutefois, il ne peut garantir l'exactitude, la complétude ou l'actualité des informations qui y sont diffusées, notamment concernant les fiches de films, les plateformes de streaming ou les disponibilités de recettes.</p>
+      <p class="legal-text">L'éditeur décline toute responsabilité pour les dommages directs ou indirects résultant de l'accès au site ou de l'utilisation des informations qui y sont présentées. Le site peut être temporairement inaccessible pour des raisons de maintenance ou de force majeure.</p>
+      <p class="legal-text">Les liens hypertextes présents sur le site pointant vers d'autres ressources sont proposés à titre indicatif. L'éditeur ne saurait être tenu responsable du contenu des sites tiers vers lesquels ces liens renvoient.</p>
+    </section>
+
+    <!-- 7. CONTACT -->
+    <section class="legal-section" id="contact" style="animation-delay:.4s">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">Contact & <em>réclamations</em></h2>
+          <span class="section-sub">Nous joindre</span>
+        </div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="legal-text">Pour toute question relative aux présentes mentions légales, à l'exercice de vos droits ou pour signaler un contenu problématique, vous pouvez nous contacter :</p>
+      <div class="info-card" style="grid-template-columns:1fr 1fr">
+        <div class="info-field">
+          <span class="info-label">Par email</span>
+          <span class="info-value placeholder">[contact@cinedelices.fr]</span>
+        </div>
+        <div class="info-field">
+          <span class="info-label">Par courrier</span>
+          <span class="info-value placeholder">[Adresse postale complète]</span>
+        </div>
+        <div class="info-field info-field--full">
+          <span class="info-label">Délai de réponse</span>
+          <span class="info-value">Nous nous engageons à répondre dans un délai de <strong>30 jours ouvrés</strong> à compter de la réception de votre demande.</span>
+        </div>
+      </div>
+
+      <div class="update-bar" style="margin-top:32px">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="rgba(196,160,82,.4)" stroke-width="1.2"/><path d="M7 4v3.5L9 9" stroke="rgba(196,160,82,.4)" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Dernière mise à jour des mentions légales : <strong>Janvier 2026</strong> — Le droit applicable est le droit français. Tout litige sera soumis à la compétence exclusive des tribunaux français.</span>
+      </div>
+    </section>
+
+    <!-- FOOTER ZONE -->
+    <div class="legal-footer">
+      <img class="legal-footer__logo" src="https://i.postimg.cc/1txrW4nC/logo_cine_delices_2026_1.png" alt="Ciné Délices">
+      <p class="legal-footer__copy">© 2026 Ciné Délices · Tous droits réservés</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* Sidebar active state au scroll */
+const sections = document.querySelectorAll('.legal-section');
+const links = document.querySelectorAll('.sidebar__link');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const id = entry.target.getAttribute('id');
+      const active = document.querySelector(`.sidebar__link[href="#${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+/* Smooth scroll */
+links.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const id = link.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>

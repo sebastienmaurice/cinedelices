@@ -66,7 +66,7 @@
     <!-- ═══════════ STEPPER STICKY ═══════════ -->
     <div class="arm-stepper-wrap">
       <nav class="arm-stepper" aria-label="Progression du formulaire">
-        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--done<% } else { %>arm-step--active<% } %>" href="#arm-s1">
+        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--done<% } else { %>arm-step--active<% } %>" href="#arm-s1" id="tab1">
           <div class="arm-step__bubble">
             <% if (typeof newMovie !== 'undefined' && newMovie) { %>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -76,20 +76,23 @@
             <span class="arm-step__label">Étape 1 / 3</span>
             <span class="arm-step__name">Mon film ou ma série</span>
           </div>
+          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog1" <% if (typeof newMovie !== 'undefined' && newMovie) { %>style="width:100%;background:linear-gradient(90deg,#2a7a50,#3daa72)"<% } %>></div></div>
         </a>
-        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--active<% } %>" href="#arm-s2">
+        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--active<% } %>" href="#arm-s2" id="tab2">
           <div class="arm-step__bubble">2</div>
           <div class="arm-step__info">
             <span class="arm-step__label">Étape 2 / 3</span>
             <span class="arm-step__name">Ma recette</span>
           </div>
+          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog2"></div></div>
         </a>
-        <a class="arm-step" href="#arm-s3">
+        <a class="arm-step" href="#arm-s3" id="tab3">
           <div class="arm-step__bubble">3</div>
           <div class="arm-step__info">
             <span class="arm-step__label">Étape 3 / 3</span>
             <span class="arm-step__name">Ingrédients &amp; préparation</span>
           </div>
+          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog3"></div></div>
         </a>
       </nav>
     </div>
@@ -148,7 +151,7 @@
          SECTION 1 — MON FILM
          Layout 2 colonnes : champs | poster preview
       ══════════════════════════════════════════ -->
-      <article class="arm-card <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-card--confirmed<% } %>" id="arm-s1" aria-labelledby="arm-s1-title">
+      <article class="arm-card <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-card--confirmed arm-card--done<% } else { %>arm-card--active<% } %>" id="arm-s1" aria-labelledby="arm-s1-title">
         <span class="arm-card__num" aria-hidden="true">01</span>
         <div class="arm-body">
 
@@ -157,9 +160,9 @@
           <div class="arm-film-confirmed">
             <div class="arm-film-confirmed__poster film-selected-image">
               <img
-                src="<%= newMovie.cardPath || newMovie.picture || '/images/image-default-movie.jpg' %>"
+                src="<%= newMovie.cardPath || newMovie.picture || '/images/movie-default-img.png' %>"
                 alt="Affiche <%= newMovie.title %>"
-                onerror="this.onerror=null;this.src='/images/image-default-movie.jpg'"
+                onerror="this.onerror=null;this.src='/images/movie-default-img.png'"
               />
             </div>
             <div class="arm-film-confirmed__info">
@@ -196,8 +199,9 @@
               <div class="arm-s1-fields">
 
                 <div class="arm-hd">
-                  <div class="arm-hd__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                  <div class="arm-hd__step-badge" id="s1badge">
+                    <span class="badge-num">1</span>
+                    <span class="badge-lbl">Étape</span>
                   </div>
                   <div class="arm-hd__text">
                     <span class="arm-hd__step">Étape 1</span>
@@ -361,17 +365,16 @@
                     <img
                       src="<%= newMovie.cardPath || newMovie.picture %>"
                       alt="Affiche du film ajouté"
-                      onerror="this.onerror=null;this.src='/images/image-default-movie.jpg'"
+                      onerror="this.onerror=null;this.src='/images/movie-default-img.png'"
                     />
                     <% } else { %>
                     <img
-                      src="/images/image-default-movie.jpg"
+                      src="/images/movie-default-img.png"
                       alt="Image de film par défaut"
                     />
                     <% } %>
                     <div class="arm-poster-ph" id="arm-posterPh">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/><path d="M17 3v18"/></svg>
-                      <span>Affiche du film</span>
                     </div>
                     <div class="arm-poster-tz">
                       <span class="arm-poster-name" id="display-film-name">
@@ -435,13 +438,14 @@
         <!-- ══════════════════════════════════════════
            SECTION 2 — MA RECETTE
         ══════════════════════════════════════════ -->
-        <article class="arm-card" id="arm-s2" aria-labelledby="arm-s2-title">
+        <article class="arm-card <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-card--active<% } %>" id="arm-s2" aria-labelledby="arm-s2-title">
           <span class="arm-card__num" aria-hidden="true">02</span>
           <div class="arm-body">
 
             <div class="arm-hd">
-              <div class="arm-hd__icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              <div class="arm-hd__step-badge" id="s2badge">
+                <span class="badge-num">2</span>
+                <span class="badge-lbl">Étape</span>
               </div>
               <div class="arm-hd__text">
                 <span class="arm-hd__step">Étape 2</span>
@@ -562,10 +566,8 @@
               <div class="arm-photos-info">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
                 <span>
-                  <strong>Format paysage obligatoire</strong> — ratio entre 1,3 et 2,0 (ex : 16:9, 4:3, 3:2). Les images portrait ou carrées sont refusées.<br>
-                  Toutes les images sont <strong>recadrées automatiquement à 1200×800 px</strong> pour un affichage uniforme sur le site.<br>
-                  📸 <strong>Photo 1</strong> : image principale affichée sur la fiche et en en-tête de la page détail.<br>
-                  <strong>Photos 2 et 3</strong> : photos complémentaires (étapes, présentation, mise en situation).
+                  <strong>Format paysage obligatoire</strong> (ex : 16:9, 4:3, 3:2). Les images portrait ou carrées sont refusées. Toutes les images seront <strong>recadrées automatiquement à 1200×800 px</strong> pour un affichage uniforme sur le site.<br>
+                   <strong>Photo 1</strong> : image principale affichée sur la fiche et en en-tête de la page détail. <strong>Photos 2 et 3</strong> : photos complémentaires (étapes, présentation, mise en situation).
                 </span>
               </div>
 
@@ -714,8 +716,9 @@
           <div class="arm-body">
 
             <div class="arm-hd">
-              <div class="arm-hd__icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/><path d="M6 9.01V9"/><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/></svg>
+              <div class="arm-hd__step-badge" id="s3badge">
+                <span class="badge-num">3</span>
+                <span class="badge-lbl">Étape</span>
               </div>
               <div class="arm-hd__text">
                 <span class="arm-hd__step">Étape 3</span>
@@ -737,17 +740,44 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                   </div>
                   <span class="arm-editor__title">INGRÉDIENTS</span>
-                  <span class="arm-editor__hint">1 ligne = 1 ingrédient</span>
+                  <span class="arm-editor__hint">1 ligne = 1 ingrédient · T pour un titre</span>
+                </div>
+                <!-- Barre d'outils -->
+                <div class="arm-toolbar" id="ing-toolbar" role="toolbar" aria-label="Mise en forme ingrédients">
+                  <button type="button" class="arm-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="heading" title="Titre de section">
+                    <span class="arm-tb-T">T</span>
+                  </button>
+                  <div class="arm-tb-sep" aria-hidden="true"></div>
+                  <button type="button" class="arm-tb-btn" data-cmd="bulletList" title="Liste à puces">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="orderedList" title="Liste numérotée">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+                  </button>
+                </div>
+                <div class="arm-editor__guide" role="note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  <span>Tapez <strong>1 ingrédient par ligne</strong>. Cliquez sur <strong>T</strong> pour ajouter un titre de section (ex : <em>Pâte sablée</em>, <em>Garniture</em>).</span>
                 </div>
                 <div class="arm-editor__body">
-                  <textarea
-                    name="ingredients"
-                    id="ingredients"
-                    class="arm-editor__ta add-recipe-textarea add-recipe-textarea--tall"
-                    placeholder="200g de farine&#10;3 œufs&#10;100g de beurre fondu&#10;1 pincée de sel…"
+                  <div
+                    class="arm-rte"
+                    id="ing-rte"
+                    contenteditable="true"
                     spellcheck="true"
                     lang="fr"
-                  ></textarea>
+                    role="textbox"
+                    aria-multiline="true"
+                    aria-label="Ingrédients"
+                    data-placeholder="🥧 Pâte sablée&#10;250 g farine&#10;125 g beurre froid (en dés)&#10;80 g sucre glace&#10;1 œuf · 1 pincée de sel&#10;&#10;🍯 Garniture&#10;300 g golden syrup&#10;150 g chapelure&#10;1 citron (zeste + jus)&#10;1 œuf · 30 g beurre fondu"
+                  ></div>
+                  <textarea name="ingredients" id="ingredients" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
                   <span class="arm-line-counter"><span id="ingCount">0</span> ingrédient(s)</span>
@@ -761,17 +791,49 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
                   </div>
                   <span class="arm-editor__title">PRÉPARATION</span>
-                  <span class="arm-editor__hint">1 ligne = 1 étape</span>
+                  <span class="arm-editor__hint">Séparateur d'étape pour délimiter</span>
+                </div>
+                <!-- Barre d'outils -->
+                <div class="arm-toolbar" id="prep-toolbar" role="toolbar" aria-label="Mise en forme préparation">
+                  <button type="button" class="arm-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="heading" title="Titre de section">
+                    <span class="arm-tb-T">T</span>
+                  </button>
+                  <div class="arm-tb-sep" aria-hidden="true"></div>
+                  <button type="button" class="arm-tb-btn" data-cmd="bulletList" title="Liste à puces">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+                  </button>
+                  <button type="button" class="arm-tb-btn" data-cmd="orderedList" title="Liste numérotée">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+                  </button>
+                  <div class="arm-tb-sep" aria-hidden="true"></div>
+                  <button type="button" class="arm-tb-btn arm-tb-btn--sep" data-cmd="separator" title="Délimite la fin d'une étape — raccourci : Ctrl+Entrée">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 8 3 12 8 16"/><polyline points="16 8 21 12 16 16"/></svg>
+                    Séparateur d'étape
+                  </button>
+                </div>
+                <div class="arm-editor__guide" role="note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  <span>Écrivez votre préparation ligne par ligne. Cliquez sur <strong>Séparateur d'étape</strong> (ou <kbd>Ctrl+Entrée</kbd>) pour créer l'étape suivante. Utilisez le bouton <strong>Titre T</strong> pour nommer une étape.</span>
                 </div>
                 <div class="arm-editor__body">
-                  <textarea
-                    name="preparation"
-                    id="preparation"
-                    class="arm-editor__ta add-recipe-textarea add-recipe-textarea--tall"
-                    placeholder="Préchauffer le four à 180°C&#10;Mélanger la farine et les œufs&#10;Ajouter le beurre fondu progressivement…"
+                  <div
+                    class="arm-rte"
+                    id="prep-rte"
+                    contenteditable="true"
                     spellcheck="true"
                     lang="fr"
-                  ></textarea>
+                    role="textbox"
+                    aria-multiline="true"
+                    aria-label="Préparation"
+                    data-placeholder="Préparer la pâte&#10;Mélanger la farine, le beurre coupé en dés et le sucre glace du bout des doigts jusqu'à obtenir une texture sableuse. Ajouter l'œuf et malaxer brièvement.&#10;Former une boule, emballer et réfrigérer 30 min.&#10;&#10;[cliquez Séparateur d'étape ici]&#10;&#10;Foncer le moule&#10;Étaler la pâte froide sur un plan fariné. Garnir un moule de 22 cm. Piquer le fond à la fourchette.&#10;Enfourner 15 min à 180 °C à blanc (avec des billes de cuisson)."
+                  ></div>
+                  <textarea name="preparation" id="preparation" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
                   <span class="arm-line-counter"><span id="prepCount">0</span> étape(s)</span>
@@ -793,7 +855,7 @@
         <!-- ══════════════════════════════════════════
            GOLDEN TICKET — Validation finale
         ══════════════════════════════════════════ -->
-        <div class="arm-ticket" id="arm-ticket">
+        <div class="arm-ticket arm-ticket--disabled" id="arm-ticket">
           <div class="arm-ticket__shimmer" aria-hidden="true"></div>
           <div class="arm-ticket__perfo arm-ticket__perfo--l" aria-hidden="true">
             <div class="arm-ticket__hole"></div>
@@ -815,6 +877,20 @@
           </div>
 
           <div class="arm-ticket__text">
+            <div class="arm-ticket__steps-status" id="ticketSteps">
+              <span class="ticket-step-pill ticket-step-pill--wait" id="tpill1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Film
+              </span>
+              <span class="ticket-step-pill ticket-step-pill--wait" id="tpill2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Recette
+              </span>
+              <span class="ticket-step-pill ticket-step-pill--wait" id="tpill3">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Ingrédients
+              </span>
+            </div>
             <h2 class="arm-ticket__title">PRÊT À PARTAGER ?</h2>
             <p class="arm-ticket__desc">
               Votre recette sera soumise à modération. Une fois validée, elle sera
@@ -831,10 +907,12 @@
               type="submit"
               class="arm-ticket__submit"
               id="submit-unified-form"
+              disabled
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               Je valide ma recette
             </button>
+            <p class="arm-ticket__unlock-hint" id="unlockHint">Complétez les 3 étapes pour publier</p>
           </div>
         </div>
 
@@ -1017,20 +1095,395 @@
         }
       })();
 
-      // ── Compteurs de lignes ingrédients / préparation ──
-      (function () {
-        function countLines(taId, countId) {
-          var ta = document.getElementById(taId);
-          var counter = document.getElementById(countId);
-          if (!ta || !counter) return;
-          ta.addEventListener('input', function() {
-            var lines = ta.value.split('\n').filter(function(l) { return l.trim() !== ''; }).length;
-            counter.textContent = lines;
+    </script>
+
+    <!-- ═══════════ ÉDITEUR RICHE (contenteditable natif, sans CDN) ═══════════ -->
+    <script>
+    (function () {
+      'use strict';
+
+      var EDITORS = [
+        { rteId: 'ing-rte',  taId: 'ingredients', tbId: 'ing-toolbar',  countId: 'ingCount',  mode: 'ingredients' },
+        { rteId: 'prep-rte', taId: 'preparation', tbId: 'prep-toolbar', countId: 'prepCount', mode: 'preparation' },
+      ];
+
+      /* ── Extraction du texte pur d'un nœud (inline uniquement) ── */
+      function textOf(node) {
+        if (node.nodeType === 3) return node.textContent;
+        var tag = (node.tagName || '').toLowerCase();
+        if (tag === 'br') return ' ';
+        return [].slice.call(node.childNodes).map(textOf).join('');
+      }
+
+      /* ── Sérialisation JSON depuis le contenteditable ──
+         mode 'ingredients' : chaque bloc non-titre → 1 item JSON
+         mode 'preparation' : blocs entre séparateurs (.arm-step-sep) → 1 item JSON concaténé
+         Les .arm-step-sep déclenchent un flush de groupe (délimiteurs réels, pas juste ignorés). */
+      function rteToJson(rte, mode) {
+        var items = [];
+        var group = [];
+
+        function flushGroup() {
+          var t = group.join(' ').replace(/\s+/g, ' ').trim();
+          if (t) items.push(t);
+          group = [];
+        }
+
+        [].slice.call(rte.childNodes).forEach(function (node) {
+          // Séparateur d'étape → délimite le groupe en cours (BUG FIX : flush avant de sauter)
+          if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
+            if (mode === 'preparation') flushGroup();
+            return;
+          }
+          // Autres éléments non-éditables → ignorer silencieusement
+          if (node.nodeType === 1 && node.getAttribute('contenteditable') === 'false') return;
+
+          var tag = (node.tagName || '').toLowerCase();
+          var text = textOf(node).trim();
+
+          if (!text) {
+            // Ligne vide : flush uniquement si pas de séparateur explicite (mode libre sans séparateurs)
+            return;
+          }
+
+          // Titre h3 : visuel uniquement, non inclus dans le JSON
+          if (tag === 'h3') return;
+
+          // Listes ul/ol
+          if (tag === 'ul' || tag === 'ol') {
+            [].slice.call(node.children).forEach(function (li) {
+              var liText = textOf(li).trim();
+              if (!liText) return;
+              if (mode === 'ingredients') items.push(liText);
+              else group.push(liText);
+            });
+            return;
+          }
+
+          // Bloc normal (p, div…)
+          if (mode === 'ingredients') items.push(text);
+          else group.push(text);
+        });
+
+        if (mode === 'preparation') flushGroup();
+        return items;
+      }
+
+      /* ── Séparateur d'étape : insertion, suppression, renumérotation ── */
+      function makeSepEl(num) {
+        var sep = document.createElement('div');
+        sep.className = 'arm-step-sep';
+        sep.setAttribute('contenteditable', 'false');
+
+        var label = document.createElement('span');
+        label.className = 'arm-step-sep__label';
+        label.textContent = 'fin étape ' + num;
+
+        var del = document.createElement('button');
+        del.className = 'arm-step-sep__del';
+        del.type = 'button';
+        del.setAttribute('aria-label', 'Supprimer ce séparateur');
+        del.innerHTML = '&#x2715;'; // ✕
+
+        sep.appendChild(label);
+        sep.appendChild(del);
+        return sep;
+      }
+
+      function renumberStepSeps(rte) {
+        [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep, idx) {
+          var lbl = sep.querySelector('.arm-step-sep__label');
+          if (lbl) lbl.textContent = 'fin étape ' + (idx + 1);
+        });
+      }
+
+      function insertSeparator(rte) {
+        var stepNum = rte.querySelectorAll('.arm-step-sep').length + 1;
+        var sep = makeSepEl(stepNum);
+
+        var sel = window.getSelection();
+        var anchor = null;
+        if (sel && sel.rangeCount) {
+          var node = sel.getRangeAt(0).commonAncestorContainer;
+          while (node && node.parentNode !== rte) node = node.parentNode;
+          if (node && node.parentNode === rte) anchor = node;
+        }
+
+        rte.insertBefore(sep, anchor ? anchor.nextSibling : null);
+
+        var newP = document.createElement('p');
+        newP.appendChild(document.createElement('br'));
+        rte.insertBefore(newP, sep.nextSibling);
+
+        var range = document.createRange();
+        range.setStart(newP, 0);
+        range.collapse(true);
+        sel.removeAllRanges();
+        try { sel.addRange(range); } catch (_) {}
+      }
+
+      /* ── Sync active state des boutons toolbar ── */
+      function syncActive(tb) {
+        tb.querySelectorAll('[data-cmd]').forEach(function (btn) {
+          var cmd = btn.dataset.cmd;
+          var active = false;
+          try {
+            if      (cmd === 'bold')        active = document.queryCommandState('bold');
+            else if (cmd === 'italic')      active = document.queryCommandState('italic');
+            else if (cmd === 'heading') {
+              active = document.queryCommandValue('formatBlock').toLowerCase() === 'h3';
+            }
+            else if (cmd === 'bulletList')  active = document.queryCommandState('insertUnorderedList');
+            else if (cmd === 'orderedList') active = document.queryCommandState('insertOrderedList');
+          } catch (_) {}
+          btn.classList.toggle('is-active', active);
+        });
+      }
+
+      EDITORS.forEach(function (cfg) {
+        var rte = document.getElementById(cfg.rteId);
+        var ta  = document.getElementById(cfg.taId);
+        var tb  = document.getElementById(cfg.tbId);
+        if (!rte || !ta || !tb) return;
+
+        function refresh() {
+          document.getElementById(cfg.countId).textContent = rteToJson(rte, cfg.mode).length;
+          syncActive(tb);
+        }
+
+        /* Suppression d'un séparateur via le bouton ✕ */
+        rte.addEventListener('click', function (e) {
+          var delBtn = e.target.closest('.arm-step-sep__del');
+          if (!delBtn) return;
+          var sep = delBtn.closest('.arm-step-sep');
+          if (sep) { sep.remove(); renumberStepSeps(rte); refresh(); }
+        });
+
+        /* Paste : forcer le texte brut pour éviter les styles importés */
+        rte.addEventListener('paste', function (e) {
+          e.preventDefault();
+          var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+          if (!text) return;
+          document.execCommand('insertText', false, text);
+          refresh();
+        });
+
+        rte.addEventListener('input', function () {
+          if (cfg.mode === 'preparation') renumberStepSeps(rte);
+          refresh();
+        });
+        rte.addEventListener('keyup',   function () { syncActive(tb); });
+        rte.addEventListener('mouseup', function () { syncActive(tb); });
+
+        /* Ctrl+Enter dans l'éditeur préparation → insérer séparateur */
+        if (cfg.mode === 'preparation') {
+          rte.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+              e.preventDefault();
+              insertSeparator(rte);
+              renumberStepSeps(rte);
+              refresh();
+            }
           });
         }
-        countLines('ingredients', 'ingCount');
-        countLines('preparation', 'prepCount');
-      })();
+
+        /* Toolbar — mousedown pour ne pas perdre le focus éditeur */
+        tb.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          var btn = e.target.closest('[data-cmd]');
+          if (!btn) return;
+          var cmd = btn.dataset.cmd;
+          rte.focus();
+          if      (cmd === 'bold')        document.execCommand('bold');
+          else if (cmd === 'italic')      document.execCommand('italic');
+          else if (cmd === 'heading') {
+            var cur = document.queryCommandValue('formatBlock').toLowerCase();
+            document.execCommand('formatBlock', false, cur === 'h3' ? 'p' : 'h3');
+          }
+          else if (cmd === 'bulletList')  document.execCommand('insertUnorderedList');
+          else if (cmd === 'orderedList') document.execCommand('insertOrderedList');
+          else if (cmd === 'separator')  { insertSeparator(rte); renumberStepSeps(rte); }
+          refresh();
+        });
+      });
+
+      /* ── Juste avant le submit : sérialiser en JSON dans les textareas cachées ── */
+      var form = document.getElementById('unified-form');
+      if (form) {
+        form.addEventListener('submit', function () {
+          EDITORS.forEach(function (cfg) {
+            var rte = document.getElementById(cfg.rteId);
+            var ta  = document.getElementById(cfg.taId);
+            if (rte && ta) ta.value = JSON.stringify(rteToJson(rte, cfg.mode));
+          });
+        });
+      }
+    })();
+    </script>
+
+    <!-- ═══════════ TICKET DISABLE / ENABLE LOGIC ═══════════ -->
+    <script>
+    (function () {
+      'use strict';
+
+      /* ── État global ── */
+      var steps = { s1: false, s2: false, s3: false };
+
+      /* ── SVG check ── */
+      var CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>';
+      var PILL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><polyline points="20 6 9 17 4 12"/></svg>';
+      var PILL_WAIT  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+      var PILL_LABELS = ['Film', 'Recette', 'Ingrédients'];
+
+      /* ── Mise à jour du Golden Ticket ── */
+      function updateTicket() {
+        var allDone = steps.s1 && steps.s2 && steps.s3;
+        var ticket  = document.getElementById('arm-ticket');
+        var btn     = document.getElementById('submit-unified-form');
+        var hint    = document.getElementById('unlockHint');
+        if (!ticket) return;
+
+        if (allDone) {
+          ticket.classList.remove('arm-ticket--disabled');
+          ticket.classList.add('arm-ticket--enabled');
+          if (btn) btn.disabled = false;
+          if (hint) hint.textContent = 'Tout est prêt — bonne publication !';
+        } else {
+          ticket.classList.add('arm-ticket--disabled');
+          ticket.classList.remove('arm-ticket--enabled');
+          if (btn) btn.disabled = true;
+          if (hint) {
+            var missing = [!steps.s1 && 'film', !steps.s2 && 'recette', !steps.s3 && 'ingrédients'].filter(Boolean);
+            hint.textContent = missing.length ? 'Manquant : ' + missing.join(', ') : 'Complétez les 3 étapes pour publier';
+          }
+        }
+      }
+
+      /* ── Marquer une étape comme terminée ── */
+      function setStepDone(n) {
+        if (steps['s' + n]) return; // déjà fait
+        steps['s' + n] = true;
+
+        var tab   = document.getElementById('tab' + n);
+        var card  = document.getElementById('arm-s' + n);
+        var badge = document.getElementById('s' + n + 'badge');
+        var prog  = document.getElementById('prog' + n);
+        var pill  = document.getElementById('tpill' + n);
+
+        /* Stepper */
+        if (tab) {
+          tab.classList.remove('arm-step--active');
+          tab.classList.add('arm-step--done');
+        }
+        if (prog) { prog.style.width = '100%'; prog.style.background = 'linear-gradient(90deg,#2a7a50,#3daa72)'; }
+
+        /* Card */
+        if (card) {
+          card.classList.remove('arm-card--active');
+          card.classList.add('arm-card--done');
+        }
+
+        /* Badge en-tête */
+        if (badge) {
+          badge.classList.add('arm-hd__step-badge--done');
+          var numEl = badge.querySelector('.badge-num');
+          if (numEl) numEl.innerHTML = CHECK_SVG;
+        }
+
+        /* Pill ticket */
+        if (pill) {
+          pill.className = 'ticket-step-pill ticket-step-pill--ok';
+          pill.innerHTML = PILL_CHECK + ' ' + PILL_LABELS[n - 1];
+        }
+
+        /* Activer la section suivante */
+        var nextCard = document.getElementById('arm-s' + (n + 1));
+        var nextTab  = document.getElementById('tab' + (n + 1));
+        if (nextCard) nextCard.classList.add('arm-card--active');
+        if (nextTab && !steps['s' + (n + 1)]) nextTab.classList.add('arm-step--active');
+
+        updateTicket();
+      }
+
+      /* ── Pill wait reset (si contenu effacé) ── */
+      function setStepWait(n) {
+        if (!steps['s' + n]) return;
+        steps['s' + n] = false;
+
+        var tab   = document.getElementById('tab' + n);
+        var card  = document.getElementById('arm-s' + n);
+        var badge = document.getElementById('s' + n + 'badge');
+        var prog  = document.getElementById('prog' + n);
+        var pill  = document.getElementById('tpill' + n);
+
+        if (tab) { tab.classList.remove('arm-step--done'); tab.classList.add('arm-step--active'); }
+        if (prog) { prog.style.width = '35%'; prog.style.background = ''; }
+        if (card) { card.classList.remove('arm-card--done'); card.classList.add('arm-card--active'); }
+        if (badge) {
+          badge.classList.remove('arm-hd__step-badge--done');
+          var numEl = badge.querySelector('.badge-num');
+          if (numEl) numEl.innerHTML = String(n);
+        }
+        if (pill) {
+          pill.className = 'ticket-step-pill ticket-step-pill--wait';
+          pill.innerHTML = PILL_WAIT + ' ' + PILL_LABELS[n - 1];
+        }
+
+        updateTicket();
+      }
+
+      /* ══ S1 — Film ══ */
+      var filmName = document.getElementById('film-name');
+      function checkS1() {
+        if (!filmName) return;
+        if (filmName.value.trim()) setStepDone(1);
+        else setStepWait(1);
+      }
+      if (filmName) {
+        filmName.addEventListener('input', checkS1);
+        filmName.addEventListener('change', checkS1);
+      }
+
+      /* ══ S2 — Recette (nom + au moins 1 photo) ══ */
+      var recipeName = document.getElementById('recipe-name');
+      var photoInputs = [
+        document.getElementById('recipeImageInput'),
+        document.getElementById('recipeImageInput2'),
+        document.getElementById('recipeImageInput3'),
+      ];
+      function checkS2() {
+        var hasName = recipeName && recipeName.value.trim().length > 0;
+        var hasPhoto = photoInputs.some(function(inp) { return inp && inp.files && inp.files.length > 0; });
+        if (hasName && hasPhoto) setStepDone(2);
+        else setStepWait(2);
+      }
+      if (recipeName) recipeName.addEventListener('input', checkS2);
+      photoInputs.forEach(function(inp) {
+        if (inp) inp.addEventListener('change', checkS2);
+      });
+
+      /* ══ S3 — Ingrédients & Préparation ══ */
+      var ingRte  = document.getElementById('ing-rte');
+      var prepRte = document.getElementById('prep-rte');
+      function checkS3() {
+        var hasIng  = ingRte  && ingRte.textContent.trim().length > 0;
+        var hasPrep = prepRte && prepRte.textContent.trim().length > 0;
+        if (hasIng && hasPrep) setStepDone(3);
+        else setStepWait(3);
+      }
+      if (ingRte)  ingRte.addEventListener('input', checkS3);
+      if (prepRte) prepRte.addEventListener('input', checkS3);
+
+      /* ══ Init : si film déjà confirmé côté serveur ══ */
+      <% if (typeof newMovie !== 'undefined' && newMovie) { %>
+      setStepDone(1);
+      <% } else { %>
+      checkS1();
+      <% } %>
+
+      updateTicket();
+
+    })();
     </script>
   </body>
 </html>
