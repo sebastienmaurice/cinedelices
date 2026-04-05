@@ -124,6 +124,25 @@ const homeController = {
         raw: true,
       });
 
+      // Top 3 films par genre pour les tooltips du carrousel
+      const genreTopMoviesRaw = await Movie.findAll({
+        where: { status: "approved", id: { [Op.in]: movieIdsWithApprovedRecipes } },
+        include: [{ model: Recipe, where: { status: "approved" }, attributes: [] }],
+        attributes: ["genre", "title", [Sequelize.fn("COUNT", Sequelize.col("Recipes.id")), "recipeCount"]],
+        group: ["Movie.id"],
+        order: [["genre", "ASC"], [Sequelize.fn("COUNT", Sequelize.col("Recipes.id")), "DESC"]],
+        subQuery: false,
+        raw: true,
+      });
+      // Grouper par genre, garder max 3 films par genre
+      const genreFilmsMap = {};
+      for (const m of genreTopMoviesRaw) {
+        if (!genreFilmsMap[m.genre]) genreFilmsMap[m.genre] = [];
+        if (genreFilmsMap[m.genre].length < 3) {
+          genreFilmsMap[m.genre].push({ t: m.title, n: String(m.recipeCount) });
+        }
+      }
+
       // Statistiques communauté (COUNT)
       const [totalUsers, totalRecipes, totalMovies] = await Promise.all([
         User.count(),
@@ -161,6 +180,7 @@ const homeController = {
         topMovies: enrichedTopMovies,
         recipeImages,
         genreStats,
+        genreFilmsMap,
         totalUsers,
         totalRecipes,
         totalMovies,

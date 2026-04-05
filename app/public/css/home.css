@@ -799,7 +799,7 @@ main {
     scale(calc(var(--ts) * var(--hover-ts)));
 
   /* Les badges loin du spotlight sont semi-transparents */
-  opacity: calc(0.08 + var(--spot) * 0.92);
+  opacity: calc(0.52 + var(--spot) * 0.48);
 
   background: linear-gradient(
     135deg,
@@ -837,16 +837,16 @@ main {
   --hover-tx: -7px; /* Monte de 7px au hover */
   --hover-ts: 1.04; /* Grossit de 4% au hover */
   opacity: 1;
-  border-color: rgba(var(--glow-rgb), 0.6);
+  border-color: rgba(var(--glow-rgb), 0.75);
   background: linear-gradient(
     135deg,
-    rgba(var(--glow-rgb), 0.15) 0%,
+    rgba(var(--glow-rgb), 0.22) 0%,
     rgba(10, 20, 36, 0.97) 100%
   );
   box-shadow:
     0 28px 70px rgba(0, 0, 0, 0.85),
-    0 0 65px rgba(var(--glow-rgb), 0.32),
-    0 0 130px rgba(var(--glow-rgb), 0.12),
+    0 0 65px rgba(var(--glow-rgb), 0.48),
+    0 0 130px rgba(var(--glow-rgb), 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
@@ -937,7 +937,8 @@ main {
   /* Pas de border-radius — le CSS border-radius clip le rendu canvas
      aux coins et coupe l'animation de bordure */
 }
-.carousel-outer .badge:hover .badge__border-canvas {
+.carousel-outer .badge:hover .badge__border-canvas,
+.carousel-outer .badge.is-selected .badge__border-canvas {
   opacity: 1;
 }
 
@@ -981,30 +982,6 @@ main {
     );
 }
 
-/* Cadre pellicule (assombrit les 4 bords de l'image) */
-.badge__img-wrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(
-      to right,
-      rgba(8, 16, 28, 0.55) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(8, 16, 28, 0.55) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(8, 16, 28, 0.6) 0%,
-      transparent 22%,
-      transparent 78%,
-      rgba(8, 16, 28, 0.6) 100%
-    );
-}
 
 /*
   Filtre image "cinéma" contrôlé par le spotlight.
@@ -1205,146 +1182,279 @@ main {
   opacity: 1;
 }
 
+/* ═══ CAROUSEL CONTAINER + NAV BUTTONS ═══ */
+.carousel-container {
+  position: relative;
+  width: 100%;
+}
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(10, 18, 34, 0.82);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  backdrop-filter: blur(14px);
+  color: rgba(196, 160, 82, 0.9);
+  font-size: 1.15rem;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  outline: none;
+}
+.carousel-nav--prev { left: 20px; }
+.carousel-nav--next { right: 20px; }
+.carousel-container:hover .carousel-nav { opacity: 1; pointer-events: auto; }
+.carousel-nav:hover {
+  background: rgba(196, 160, 82, 0.18);
+  border-color: rgba(196, 160, 82, 0.55);
+  transform: translateY(-50%) scale(1.1);
+}
+.carousel-nav:active { transform: translateY(-50%) scale(0.94); }
+.carousel-nav:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: 2px solid rgba(196, 160, 82, 0.6);
+  outline-offset: 3px;
+}
+@media (max-width: 600px) { .carousel-nav { display: none; } }
+
+/* ═══ PROGRESS DOTS ═══ */
+.carousel-progress {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 22px;
+  position: relative;
+  z-index: 10;
+}
+.carousel-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(196, 160, 82, 0.2);
+  transition:
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease;
+  cursor: pointer;
+}
+.carousel-dot.active { width: 20px; background: rgba(196, 160, 82, 0.78); }
+.carousel-dot:hover:not(.active) { background: rgba(196, 160, 82, 0.42); }
+
+/* ═══ SCROLL HINT ═══ */
+.scroll-hint {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--f-body);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0);
+  transition: color 0.5s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.scroll-hint.visible { color: rgba(196, 160, 82, 0.35); }
+
+/* ═══ BADGE — animation entrée + état sélectionné + frame-num ═══ */
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateY(22px) scale(0.92); }
+  to   { opacity: calc(0.52 + var(--spot, 0) * 0.48); transform: translateY(calc(var(--tx, 0px) + var(--hover-tx, 0px))) scale(calc(var(--ts, 1) * var(--hover-ts, 1))); }
+}
+@keyframes filmCounterFlip {
+  0%   { transform: translateY(0) rotateX(0); opacity: 1; }
+  40%  { transform: translateY(-6px) rotateX(30deg); opacity: 0; }
+  60%  { transform: translateY(6px) rotateX(-20deg); opacity: 0; }
+  100% { transform: translateY(0) rotateX(0); opacity: 1; }
+}
+.film-counter__idx.flip {
+  animation: filmCounterFlip 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.carousel-outer .badge.is-selected {
+  opacity: 1;
+  border-color: rgba(var(--glow-rgb), 0.5) !important;
+  background: linear-gradient(135deg, rgba(var(--glow-rgb), 0.1) 0%, rgba(10, 20, 36, 0.98) 100%) !important;
+}
+.carousel-outer .badge.is-selected::after {
+  opacity: 1;
+  background: linear-gradient(90deg, transparent, rgba(var(--glow-rgb), 0.7) 50%, transparent);
+}
+.badge__frame-num {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  z-index: 14;
+  font-family: var(--f-display, "Bebas Neue", cursive);
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  color: rgba(196, 160, 82, 0.3);
+  pointer-events: none;
+  opacity: calc(0.25 + var(--spot, 0) * 0.45);
+  transition: opacity 0.5s ease;
+}
+.carousel-outer .badge:hover .badge__frame-num,
+.carousel-outer .badge.is-selected .badge__frame-num {
+  opacity: 0.65;
+  color: rgba(var(--glow-rgb), 0.65);
+}
+
 /* --- Tooltip global (#global-tooltip dans le HTML) ---
-   Affiché/caché via la classe .is-open ajoutée par le JS */
+   Structure : arrow + band + body (comme la démo) */
 #global-tooltip {
   position: fixed;
-  width: 230px;
-  background: rgba(14, 24, 40, 0.55);
-  backdrop-filter: blur(28px) saturate(2) brightness(0.92);
-  -webkit-backdrop-filter: blur(28px) saturate(2) brightness(0.92);
+  width: 252px;
+  background: rgba(8, 16, 30, 0.75);
+  backdrop-filter: blur(32px) saturate(1.9) brightness(0.88);
+  -webkit-backdrop-filter: blur(32px) saturate(1.9) brightness(0.88);
   border: 1px solid rgba(196, 160, 82, 0.28);
-  border-radius: 16px;
-  padding: 13px 16px 12px;
+  border-radius: 18px;
+  padding: 0;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(-100%) scale(0.96);
   transition:
     opacity 0.2s ease,
     transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 18px 55px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
   --tt-rgb: 196, 160, 82;
 }
-/* Ligne colorée en haut du tooltip */
-#global-tooltip::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 15%;
-  width: 70%;
-  height: 1px;
+#global-tooltip.is-open { opacity: 1; pointer-events: auto; }
+#global-tooltip.above { transform: translateY(calc(-100% - 4px)) scale(1); }
+#global-tooltip.below { transform: translateY(4px) scale(1); }
+#global-tooltip.above.hiding,
+#global-tooltip.below.hiding { transform: scale(0.96); }
+
+/* Bande colorée en haut du tooltip */
+#global-tooltip .tooltip__band {
+  height: 3px;
+  width: 100%;
   background: linear-gradient(
     90deg,
-    transparent,
-    rgba(var(--tt-rgb), 0.65),
-    transparent
+    rgba(var(--tt-rgb), 0) 0%,
+    rgba(var(--tt-rgb), 1) 30%,
+    rgba(var(--tt-rgb), 1) 70%,
+    rgba(var(--tt-rgb), 0) 100%
   );
+  opacity: 0.88;
 }
-/* Petite flèche pointant vers le badge */
-#global-tooltip::after {
-  content: "";
+#global-tooltip .tooltip__body { padding: 12px 14px 13px; }
+
+/* Flèche directionnelle */
+#global-tooltip .tooltip__arrow {
   position: absolute;
-  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: rgba(196, 160, 82, 0.3);
+  pointer-events: none;
 }
-#global-tooltip.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
+#global-tooltip .tooltip__arrow.up  { top: 100%; border-top-color: rgba(196, 160, 82, 0.28); }
+#global-tooltip .tooltip__arrow.down { bottom: 100%; border-bottom-color: rgba(196, 160, 82, 0.28); }
+
 #global-tooltip .tooltip__genre {
-  font-family: var(--f-display);
-  font-size: 0.9rem;
+  font-family: var(--f-display, "Bebas Neue", cursive);
+  font-size: 0.88rem;
   letter-spacing: 0.14em;
   color: var(--or-titre);
-  text-shadow: 0 0 10px rgba(196, 160, 82, 0.35);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   padding-bottom: 7px;
   border-bottom: 1px solid rgba(196, 160, 82, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   opacity: 0;
   transform: translateY(-4px);
   transition:
     opacity 0.18s ease 0.04s,
     transform 0.22s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
 }
-#global-tooltip.is-open .tooltip__genre {
-  opacity: 1;
-  transform: translateY(0);
+#global-tooltip.is-open .tooltip__genre { opacity: 1; transform: translateY(0); }
+#global-tooltip .tooltip__genre-badge {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(var(--tt-rgb), 0.15);
+  color: rgba(var(--tt-rgb), 1);
+  border: 1px solid rgba(var(--tt-rgb), 0.28);
 }
 #global-tooltip .tooltip__films {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 9px;
+  gap: 5px 8px;
 }
 #global-tooltip .tooltip__film {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding: 5px 7px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.055);
   opacity: 0;
-  transform: translateY(4px);
+  transform: translateY(5px);
   transition:
     opacity 0.16s ease,
     transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-#global-tooltip.is-open .tooltip__film:nth-child(1) {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.08s;
-}
-#global-tooltip.is-open .tooltip__film:nth-child(2) {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.13s;
-}
-#global-tooltip.is-open .tooltip__film:nth-child(3) {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.18s;
-}
-#global-tooltip.is-open .tooltip__film:nth-child(4) {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.23s;
-}
+#global-tooltip.is-open .tooltip__film:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.08s; }
+#global-tooltip.is-open .tooltip__film:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.13s; }
+#global-tooltip.is-open .tooltip__film:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
+#global-tooltip.is-open .tooltip__film:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.23s; }
 #global-tooltip .tooltip__film-title {
-  font-size: 0.64rem;
+  font-size: 0.63rem;
   font-weight: 400;
-  color: rgba(232, 232, 232, 0.82);
+  color: rgba(232, 232, 232, 0.84);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
 }
 #global-tooltip .tooltip__film-note {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  color: var(--dore-clair);
-  opacity: 0.85;
   letter-spacing: 0.04em;
+  color: rgba(var(--tt-rgb), 1);
+  opacity: 0.9;
 }
 #global-tooltip .tooltip__hint {
-  display: block;
-  margin-top: 9px;
-  font-size: 0.58rem;
+  margin-top: 10px;
+  font-size: 0.56rem;
   font-weight: 300;
   font-style: italic;
-  letter-spacing: 0.1em;
-  color: rgba(196, 160, 82, 0.5);
+  letter-spacing: 0.12em;
+  color: rgba(196, 160, 82, 0.45);
   text-align: center;
-  text-decoration: none;
   opacity: 0;
   transition: opacity 0.16s ease 0.28s;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 7px;
 }
-#global-tooltip.is-open .tooltip__hint {
-  opacity: 1;
+#global-tooltip.is-open .tooltip__hint { opacity: 1; }
+#global-tooltip .tooltip__no-films {
+  font-size: 0.6rem;
+  opacity: 0.4;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 4px 0;
+  font-style: italic;
 }
 
 /* Canvas des rings au clic (plein écran fixe) */
@@ -1783,6 +1893,7 @@ main {
   position: relative;
   z-index: 30;
   isolation: isolate;
+  overflow: hidden;
 }
 .genres-section::before {
   content: "";

@@ -40,6 +40,9 @@ const DEFAULT_GENRE_THEME = { glow: '#C4A052', accent: '#F2C84B', rgb: '196,160,
   Le slug sert de nom de fichier : /images/categories/comedie.webp
 */
 function genreSlug(name) {
+  const overrides = { 'science-fiction': 'sci-fi', 'historique': 'aventure', 'biopic': 'documentaire', 'romance': 'drame' };
+  const lower = name.toLowerCase();
+  if (overrides[lower]) return overrides[lower];
   return name.toLowerCase()
     .replace(/[éèêë]/g, 'e')
     .replace(/[àâ]/g, 'a')
@@ -81,7 +84,7 @@ function genreSlug(name) {
         %>
         <h2 class="section-title" data-reveal="left">
           Le goût du Cinéma
-          <span class="film-counter">
+          <span class="film-counter" aria-live="polite" aria-atomic="true">
             <span class="film-counter__idx">01</span>
             <span class="film-counter__sep"> / </span>
             <span class="film-counter__total"><%= genreStats ? genreStats.length : '00' %></span>
@@ -107,95 +110,66 @@ function genreSlug(name) {
        carousel-track : la rangée de badges. Le JS la déplace avec
                         transform: translateX() pour faire défiler
        ============================================================ %>
-  <div class="carousel-outer" id="carouselOuter">
-    <div class="carousel-track" id="track">
+  <div class="carousel-container">
+<div class="carousel-outer" id="carouselOuter" role="list" aria-label="Genres cinématographiques">
+      <div class="carousel-track" id="track">
 
-      <% if (genreStats && genreStats.length > 0) { %>
-        <% genreStats.forEach(function(stat) { %>
+        <% if (genreStats && genreStats.length > 0) { %>
+          <% genreStats.forEach(function(stat, idx) { %>
 
-          <%
-            const theme = GENRE_THEMES[stat.genre] || DEFAULT_GENRE_THEME;
-            const slug  = genreSlug(stat.genre);
-          %>
+            <%
+              const themeKey   = Object.keys(GENRE_THEMES).find(k => k.toLowerCase() === stat.genre.toLowerCase());
+              const theme      = (themeKey ? GENRE_THEMES[themeKey] : null) || DEFAULT_GENRE_THEME;
+              const slug       = genreSlug(stat.genre);
+              const filmsJson  = JSON.stringify((genreFilmsMap && genreFilmsMap[stat.genre]) || []).replace(/"/g, '&quot;');
+            %>
 
-          <%#
-            <article> est sémantiquement correct ici : chaque badge
-            est un contenu autonome et indépendant (genre + nb de films).
+            <article
+              class="badge"
+              role="listitem"
+              tabindex="0"
+              style="--glow:<%- theme.glow %>;--accent:<%- theme.accent %>;--glow-rgb:<%- theme.rgb %>;"
+              data-count="<%- stat.count %>"
+              data-genre="<%- stat.genre %>"
+              data-anim="<%- theme.anim %>"
+              data-idx="<%- idx + 1 %>"
+              data-films="<%- filmsJson %>"
+              aria-label="<%- stat.genre %>, <%- stat.count %> film<%= stat.count > 1 ? 's' : '' %>"
+            >
+              <canvas class="badge__border-canvas"></canvas>
 
-            style="--glow: ...; --glow-rgb: ...;"
-            → Variables CSS injectées directement sur l'élément.
-              Chaque badge a sa propre couleur sans règle CSS dédiée.
+              <div class="badge__img-wrap">
+                <div class="badge__skeleton"></div>
+                <img
+                  class="badge__img"
+                  src="/images/categories/<%- slug %>.png"
+                  alt="Genre <%- stat.genre %>"
+                  onerror="this.onerror=null;this.src='/images/image-default-profile.jpg';"
+                />
+                <div class="badge__fade"></div>
+                <div class="badge__img-tint"></div>
+              </div>
 
-            data-anim : lu par le JS pour choisir l'animation de bordure.
-            data-films : tableau JSON des films à afficher dans le tooltip.
-                         Pour le remplir, passer les films depuis le contrôleur.
-          %>
-          <article
-            class="badge"
-            style="
-              --glow:     <%- theme.glow %>;
-              --accent:   <%- theme.accent %>;
-              --glow-rgb: <%- theme.rgb %>;
-            "
-            data-count="<%- stat.count %>"
-            data-genre="<%- stat.genre %>"
-            data-anim="<%- theme.anim %>"
-            data-films='[]'
-          >
+              <div class="badge__text">
+                <span class="badge__category"><%- stat.genre %></span>
+                <div class="badge__divider"></div>
+                <p class="badge__count">
+                  <strong data-target="<%- stat.count %>">0</strong>
+                  <span>Film<%= stat.count > 1 ? 's' : '' %></span>
+                </p>
+              </div>
 
-            <%# Canvas invisible par défaut. Le JS le rend visible
-                 au hover et y dessine la bordure animée. %>
-            <canvas class="badge__border-canvas"></canvas>
+            </article>
 
-            <%# Zone image %>
-            <div class="badge__img-wrap">
-              <div class="badge__skeleton"></div>
-              <img
-                class="badge__img"
-                src="/images/categories/<%- slug %>.webp"
-                alt="Genre <%- stat.genre %>"
-                <%#
-                  Fallback en deux étapes :
-                  1. .webp introuvable → bascule sur .png
-                  2. .png introuvable  → cache l'image (this.onerror = null
-                     coupe la récursion infinie)
-                %>
-                onerror="
-                  if (this.src.endsWith('.webp')) {
-                    this.src = this.src.slice(0, -5) + '.png';
-                  } else {
-                    this.onerror = null;
-                    this.style.display = 'none';
-                  }
-                "
-              />
-              <div class="badge__fade"></div>    <%# dégradé sombre sur les bords %>
-              <div class="badge__img-tint"></div> <%# teinte colorée au hover (JS) %>
-            </div>
+          <% }); %>
+        <% } %>
 
-            <%# Texte du badge %>
-            <div class="badge__text">
-              <span class="badge__category"><%- stat.genre %></span>
-              <div class="badge__divider"></div>
-              <p class="badge__count">
-                <%#
-                  data-target = vraie valeur numérique.
-                  Au hover, le JS anime le chiffre de 0 → data-target.
-                  Valeur initiale "0" dans le DOM pour ne pas afficher
-                  le chiffre avant l'animation.
-                %>
-                <strong data-target="<%- stat.count %>">0</strong>
-                <span>Film<%= stat.count > 1 ? 's' : '' %></span>
-              </p>
-            </div>
+      </div><%# /carousel-track %>
+    </div><%# /carousel-outer %>
 
-          </article>
-
-        <% }); %>
-      <% } %>
-
-    </div><%# /carousel-track %>
-  </div><%# /carousel-outer %>
+    <div class="carousel-progress" id="carouselProgress" role="tablist" aria-label="Navigation par genre"></div>
+    <span class="scroll-hint" id="scrollHint">molette · drag · flèches</span>
+  </div><%# /carousel-container %>
 
 
   <%# Séparateur décoratif en bas de la section %>
