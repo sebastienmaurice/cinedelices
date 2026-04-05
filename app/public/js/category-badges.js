@@ -98,6 +98,7 @@ originals.forEach(n => {
 /* ══ TOOLTIP GLOBAL ══ */
 const globalTT = document.getElementById('global-tooltip');
 let openBadge  = null;
+let hideTimer  = null;
 
 function buildTooltipContent(badge) {
   const genre = badge.dataset.genre || '';
@@ -125,16 +126,22 @@ function buildTooltipContent(badge) {
 }
 
 function showGlobalTooltip(badge) {
+  /* Annuler le reset différé d'un hide précédent — sinon il écrase la transform du nouveau tooltip */
+  clearTimeout(hideTimer);
   buildTooltipContent(badge);
   const rect = badge.getBoundingClientRect();
   const ttW  = 252;
   let left = rect.left + rect.width / 2 - ttW / 2;
   left = Math.max(8, Math.min(left, window.innerWidth - ttW - 8));
+  /* Couper la transition pour repositionner sans animation parasite */
+  globalTT.style.transition = 'none';
   globalTT.style.left      = left + 'px';
   globalTT.style.top       = (rect.top - 10) + 'px';
   globalTT.style.transform = 'translateY(-100%) scale(.96)';
   globalTT.classList.remove('is-open');
   void globalTT.offsetHeight; /* force reflow */
+  /* Rétablir les transitions CSS pour l'animation d'ouverture */
+  globalTT.style.transition = '';
   globalTT.classList.add('is-open');
   requestAnimationFrame(() => {
     globalTT.style.transform = 'translateY(calc(-100% - 4px)) scale(1)';
@@ -144,7 +151,8 @@ function showGlobalTooltip(badge) {
 function hideGlobalTooltip() {
   globalTT.style.transform = 'translateY(-100%) scale(.96)';
   globalTT.classList.remove('is-open');
-  setTimeout(() => { globalTT.style.transform = ''; }, 300);
+  /* Stocker l'ID pour pouvoir annuler ce reset si un nouveau tooltip s'ouvre avant les 300ms */
+  hideTimer = setTimeout(() => { globalTT.style.transform = ''; hideTimer = null; }, 300);
 }
 
 /* ══ CLICK TOOLTIP + BURST ══ */

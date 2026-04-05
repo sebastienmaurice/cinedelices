@@ -658,6 +658,20 @@
               <!-- Warning non bloquant ratio -->
               <p id="arm-ratio-warn" class="arm-ratio-warn" style="display:none"></p>
 
+              <!-- Toast notification upload erreur -->
+              <div id="arm-upload-toast" class="is-hidden" role="alert" aria-live="assertive">
+                <div class="arm-toast__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div class="arm-toast__body">
+                  <p class="arm-toast__title">Photo refusée</p>
+                  <p class="arm-toast__msg" id="arm-toast-msg"></p>
+                </div>
+                <button class="arm-toast__close" id="arm-toast-close" type="button" aria-label="Fermer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
               <!-- Éléments backward-compat pour recipe-image-upload.js -->
               <img id="recipeImagePreview" src="" alt="" style="display:none;" />
               <button type="button" id="uploadButton" style="display:none;"></button>
@@ -940,6 +954,36 @@
     <!-- 3-slot upload avec preview -->
     <script>
       (function () {
+        /* ── Toast upload : remplace les alert() ── */
+        var toastEl   = document.getElementById('arm-upload-toast');
+        var toastMsg  = document.getElementById('arm-toast-msg');
+        var toastClose = document.getElementById('arm-toast-close');
+        var toastTimer = null;
+
+        function showUploadToast(message, slot) {
+          clearTimeout(toastTimer);
+          if (toastMsg) toastMsg.textContent = message;
+          toastEl.classList.remove('is-hidden', 'is-hiding');
+          /* Feedback visuel sur le slot */
+          if (slot) {
+            slot.classList.remove('has-error');
+            void slot.offsetWidth; /* reset animation */
+            slot.classList.add('has-error');
+            setTimeout(function() { slot.classList.remove('has-error'); }, 800);
+          }
+          toastTimer = setTimeout(function () { hideUploadToast(); }, 5000);
+        }
+
+        function hideUploadToast() {
+          toastEl.classList.add('is-hiding');
+          setTimeout(function () {
+            toastEl.classList.remove('is-hiding');
+            toastEl.classList.add('is-hidden');
+          }, 260);
+        }
+
+        if (toastClose) toastClose.addEventListener('click', hideUploadToast);
+
         var photoCount = 0;
         var slotNums = [1, 2, 3];
 
@@ -991,12 +1035,12 @@
             if (!file) return;
             var ok = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             if (!ok.includes(file.type)) {
-              alert('Format non supporté. Utilisez JPG, PNG ou WEBP.');
+              showUploadToast('Format non supporté. Utilisez JPG, PNG ou WEBP.', slot);
               input.value = '';
               return;
             }
             if (file.size > 2 * 1024 * 1024) {
-              alert('Fichier trop volumineux (max 2 Mo par photo).');
+              showUploadToast('Fichier trop volumineux (max 2 Mo par photo).', slot);
               input.value = '';
               return;
             }
@@ -1009,13 +1053,13 @@
                 var r = imgCheck.width / imgCheck.height;
                 // Portrait ou carré (ratio < 1.3) → blocage
                 if (r < 1.3) {
-                  alert('Format portrait ou carré refusé. Utilisez une image en paysage (ratio ≥ 1,3 — ex : 16:9, 4:3, 3:2).');
+                  showUploadToast('Format portrait ou carré refusé. Utilisez une image en paysage (ratio ≥ 1,3 — ex : 16:9, 4:3, 3:2).', slot);
                   input.value = '';
                   return;
                 }
                 // Trop large (ratio > 2.0) → blocage
                 if (r > 2.0) {
-                  alert('Image trop panoramique (ratio > 2:1). Choisissez un format moins large.');
+                  showUploadToast('Image trop panoramique (ratio > 2:1). Choisissez un format moins large.', slot);
                   input.value = '';
                   return;
                 }
