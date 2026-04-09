@@ -737,25 +737,76 @@ body.movies-page main {
 /* Invisible en vue liste (le btn-vr est dans le footer) */
 .films-grid.list-view .fcard__hover-overlay { display: none; }
 
-/* Pill "Voir les recettes" */
+/* Pill "Voir les recettes" — cercle doré style icon-wrap */
 .fcard__cta-pill {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 0 14px; height: 28px;
-  background: rgba(10,18,32,.72);
-  border: 1.5px solid rgba(196,160,82,.45);
-  border-radius: 100px;
-  backdrop-filter: blur(6px);
-  transform: translateY(5px) scale(.94);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  transform: translateY(12px) scale(.86);
   opacity: 0;
-  transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .22s ease;
+  transition: transform .34s cubic-bezier(.34,1.56,.64,1), opacity .26s ease;
 }
 .fcard:hover .fcard__cta-pill { transform: translateY(0) scale(1); opacity: 1; }
 
+/* Conteneur anneau + cercle — flottement vertical au hover */
+.fcard__cta-icon-wrap {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px; flex-shrink: 0;
+}
+.fcard:hover .fcard__cta-icon-wrap { animation: fctaFloat 2.2s ease-in-out infinite; }
+@keyframes fctaFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+/* Anneau en pointillés externe (tourne au hover) */
+.fcard__cta-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px dashed rgba(242,200,75,.45);
+  transition: border-color .45s ease, transform .6s cubic-bezier(.34,1.56,.64,1);
+}
+.fcard:hover .fcard__cta-ring { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
+
+/* Cercle principal — gradient doré (même palette que djc-cta) */
+.fcard__cta-bg {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(145deg, #8b6914 0%, #b8882a 22%, #c4a052 42%, #d4a843 55%, #f2c84b 68%, #d4a843 80%, #b8882a 100%);
+  border: 1.5px solid rgba(255,255,255,.22);
+  box-shadow: 0 4px 18px rgba(184,136,42,.45), inset 0 1px 0 rgba(255,255,255,.28);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(20,10,0,.72);
+  position: relative; z-index: 1;
+  transition: box-shadow .3s ease, filter .3s ease;
+}
+.fcard:hover .fcard__cta-bg {
+  box-shadow: 0 6px 28px rgba(184,136,42,.65), inset 0 1px 0 rgba(255,255,255,.35);
+  filter: brightness(1.08);
+}
+.fcard__cta-bg svg { transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
+.fcard:hover .fcard__cta-bg svg { transform: scale(1.18) translateY(-1px); }
+
+/* Anneau pulsant (rayonne au hover) */
+.fcard__cta-bg::after {
+  content: "";
+  position: absolute; inset: -5px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(242,200,75,.55);
+  opacity: 0;
+  pointer-events: none;
+}
+.fcard:hover .fcard__cta-bg::after { animation: fctaPulse 1.9s ease-out infinite; }
+@keyframes fctaPulse {
+  0%   { transform: scale(1);    opacity: .65; }
+  100% { transform: scale(1.85); opacity: 0; }
+}
+
+/* Label texte sous le cercle */
 .fcard__cta-label {
   font-family: var(--f-title);
-  font-size: .62rem; font-weight: 600;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--or-titre); white-space: nowrap;
+  font-size: .58rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--or-titre, #c4a052);
+  white-space: nowrap;
+  text-shadow: 0 1px 10px rgba(0,0,0,.9);
 }
 
 /* ── COMPTEUR RECETTES DANS LE POSTER ── */
