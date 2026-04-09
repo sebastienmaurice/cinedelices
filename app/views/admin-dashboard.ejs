@@ -43,7 +43,8 @@
         <button class="nav-item" data-nav-view="profils">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span>Profils</span>
-          <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + (pendingBanners ? pendingBanners.length : 0); %>
+          <% const pendingPseudosNav = users ? users.filter(u => u.pending_pseudo && u.pseudo_status === 'pending').length : 0; %>
+          <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + (pendingBanners ? pendingBanners.length : 0) + pendingPseudosNav; %>
           <% if (pendingProfilsTotal > 0) { %><span class="nav-badge"><%= pendingProfilsTotal %></span><% } %>
         </button>
         <button class="nav-item" data-nav-view="photos-recettes">
@@ -634,6 +635,10 @@
               Bannières
               <% if (pendingBanners && pendingBanners.length > 0) { %><span class="queue-tab__count"><%= pendingBanners.length %></span><% } %>
             </button>
+            <button class="queue-tab" data-sub-tab="profils-pseudos" role="tab">
+              Pseudos
+              <% if (pendingPseudosNav > 0) { %><span class="queue-tab__count"><%= pendingPseudosNav %></span><% } %>
+            </button>
           </div>
 
           <!-- Sous-panel : Photos de profil -->
@@ -700,6 +705,53 @@
                     </button>
                   </form>
                   <form action="/admin/users/<%= banner.id %>/banner/reject" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--reject">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      <span>Refuser</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Sous-panel : Pseudos -->
+          <div class="sub-panel" id="profils-pseudos">
+            <% const pendingPseudosList = users ? users.filter(u => u.pending_pseudo && u.pseudo_status === 'pending') : []; %>
+            <% if (pendingPseudosList.length === 0) { %>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <p>Aucun pseudo en attente de validation.</p>
+            </div>
+            <% } else { %>
+            <div class="media-approval-grid">
+              <% pendingPseudosList.forEach(function(u) { %>
+              <div class="media-card pseudo-card">
+                <div class="pseudo-card__header">
+                  <span class="pseudo-card__username"><%= u.username || u.pseudo %></span>
+                  <span class="s-badge s-badge--pending">En attente</span>
+                </div>
+                <div class="pseudo-card__change">
+                  <div class="pseudo-card__value">
+                    <span class="pseudo-card__label">Actuel</span>
+                    <strong class="pseudo-card__name"><%= u.pseudo %></strong>
+                  </div>
+                  <svg class="pseudo-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <div class="pseudo-card__value">
+                    <span class="pseudo-card__label">Demandé</span>
+                    <strong class="pseudo-card__name pseudo-card__name--new"><%= u.pending_pseudo %></strong>
+                  </div>
+                </div>
+                <div class="media-card__actions">
+                  <form action="/admin/users/<%= u.id %>/pseudo/approve" method="POST" style="display:inline;">
+                    <button type="submit" class="act-btn act-btn--approve">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>Valider</span>
+                    </button>
+                  </form>
+                  <form action="/admin/users/<%= u.id %>/pseudo/reject" method="POST" style="display:inline;">
                     <button type="submit" class="act-btn act-btn--reject">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       <span>Refuser</span>

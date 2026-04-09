@@ -1665,6 +1665,51 @@ const adminController = {
       return renderServerError(res, error, "Erreur lors de la récupération des logs.");
     }
   },
+
+  /* Modération pseudo */
+  async validateUserPseudo(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      const user = await User.findByPk(userId);
+      if (!user || !user.pending_pseudo) return res.redirect("/admin?success=admin_pseudo_error");
+      await User.update(
+        { pseudo: user.pending_pseudo, pending_pseudo: null, pseudo_status: "approved" },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "approve_user_pseudo", targetType: "user", targetId: userId });
+      return res.redirect("/admin?success=admin_pseudo_approved");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur validation pseudo.");
+    }
+  },
+
+  async rejectUserPseudo(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      await User.update(
+        { pending_pseudo: null, pseudo_status: "rejected" },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "reject_user_pseudo", targetType: "user", targetId: userId });
+      return res.redirect("/admin?success=admin_pseudo_rejected");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur rejet pseudo.");
+    }
+  },
+
+  /* Polling admin : compteurs en attente */
+  async getPendingCount(req, res) {
+    try {
+      const users = await User.findAll({ attributes: ["banner_status", "banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] });
+      const banners = users.filter(u => u.banner_image && u.banner_status === "pending").length;
+      const photos  = users.filter(u => u.pending_picture && u.picture_status === "pending").length;
+      const pseudos = users.filter(u => u.pending_pseudo && u.pseudo_status === "pending").length;
+      const recipes = await Recipe.count({ where: { status: "pending" } });
+      return res.json({ success: true, banners, photos, pseudos, recipes });
+    } catch (error) {
+      return res.status(500).json({ success: false });
+    }
+  },
 };
 
 export default adminController;

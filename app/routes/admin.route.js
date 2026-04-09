@@ -10,6 +10,7 @@ const adminRouter = Router();
 
 // route principale admin
 adminRouter.get("/", adminController.admin);
+adminRouter.get("/api/pending-count", adminController.getPendingCount);
 
 /* ===============================================
    coté gauche
@@ -29,6 +30,8 @@ adminRouter.post("/users/:id/photo/approve", adminController.validateUserPhoto);
 adminRouter.post("/users/:id/photo/reject", adminController.rejectUserPhoto);
 adminRouter.post("/users/:id/banner/approve", adminController.validateUserBanner);
 adminRouter.post("/users/:id/banner/reject", adminController.rejectUserBanner);
+adminRouter.post("/users/:id/pseudo/approve", adminController.validateUserPseudo);
+adminRouter.post("/users/:id/pseudo/reject", adminController.rejectUserPseudo);
 
 /* ===============================================
    action recettes

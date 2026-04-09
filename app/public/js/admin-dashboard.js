@@ -1003,4 +1003,38 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   console.log("✅ Admin dashboard v2 initialisé.");
+
+  // ══════════════════════════════════════════════════════
+  // POLLING — nouvelles demandes en attente (toutes les 20s)
+  // ══════════════════════════════════════════════════════
+  let _pendingSnapshot = null;
+
+  async function checkPendingCount() {
+    try {
+      const r = await fetch("/admin/api/pending-count");
+      const d = await r.json();
+      if (!d.success) return;
+
+      if (_pendingSnapshot === null) {
+        /* Premier appel : juste mémoriser */
+        _pendingSnapshot = d;
+        return;
+      }
+
+      const newBanners = d.banners - _pendingSnapshot.banners;
+      const newPhotos  = d.photos  - _pendingSnapshot.photos;
+      const newRecipes = d.recipes - _pendingSnapshot.recipes;
+
+      if (newBanners > 0) showToast(`${newBanners} nouvelle${newBanners > 1 ? 's' : ''} bannière${newBanners > 1 ? 's' : ''} en attente de validation`, "warning");
+      if (newPhotos  > 0) showToast(`${newPhotos} nouvelle${newPhotos > 1 ? 's' : ''} photo${newPhotos > 1 ? 's' : ''} de profil en attente`, "warning");
+      if (newRecipes > 0) showToast(`${newRecipes} nouvelle${newRecipes > 1 ? 's' : ''} recette${newRecipes > 1 ? 's' : ''} en attente de validation`, "warning");
+      const newPseudos = (d.pseudos || 0) - (_pendingSnapshot.pseudos || 0);
+      if (newPseudos > 0) showToast(`${newPseudos} nouveau${newPseudos > 1 ? 'x' : ''} pseudo${newPseudos > 1 ? 's' : ''} en attente de validation`, "warning");
+
+      _pendingSnapshot = d;
+    } catch { /* silencieux */ }
+  }
+
+  checkPendingCount();
+  setInterval(checkPendingCount, 20000);
 });

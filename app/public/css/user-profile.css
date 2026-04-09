@@ -164,6 +164,11 @@ body.profile-page main {
   background: rgba(30, 8, 6, 0.8);
   border-color: rgba(194, 48, 24, 0.5);
   color: #e84020;
+  cursor: pointer;
+}
+.banner-btn--rejected:hover {
+  background: rgba(50, 12, 8, 0.9);
+  border-color: rgba(194, 48, 24, 0.8);
 }
 .b-dot {
   width: 5px;
@@ -473,8 +478,9 @@ body.profile-page main {
   cursor: text;
   border-bottom: 1.5px solid transparent;
   transition: border-color 0.2s;
-  min-width: 100px;
-  max-width: 340px;
+  min-width: 120px;
+  width: auto;
+  max-width: min(520px, 55vw);
 }
 .hero-pseudo--input:focus {
   border-bottom-color: rgba(196, 160, 82, 0.5);
@@ -508,6 +514,29 @@ body.profile-page main {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.pseudo-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+  font-family: var(--f-title, "Cinzel", serif);
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  backdrop-filter: blur(8px);
+}
+.pseudo-status-badge--pending {
+  background: rgba(30, 15, 4, 0.8);
+  border-color: rgba(212, 130, 10, 0.5);
+  color: var(--orange-clair, #f59e0b);
+}
+.pseudo-status-badge--rejected {
+  background: rgba(30, 8, 6, 0.8);
+  border-color: rgba(194, 48, 24, 0.5);
+  color: #e84020;
+}
+
 .hero-pseudo-save {
   display: none;
   padding: 4px 10px;
@@ -525,6 +554,21 @@ body.profile-page main {
 }
 .hero-pseudo-save:hover {
   filter: brightness(1.08);
+}
+.hero-pseudo-save--cancel {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.65);
+  font-family: var(--f-title);
+  font-size: 0.44rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.hero-pseudo-save--cancel:hover {
+  filter: none;
+  background: rgba(255,255,255,0.13);
+  color: #fff;
 }
 .hero-sub {
   display: flex; align-items: center; gap: 7px;

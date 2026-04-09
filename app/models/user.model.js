@@ -12,6 +12,8 @@ User.init({
   first_name: { type: DataTypes.STRING(100), allowNull: false },
   last_name: { type: DataTypes.STRING(100), allowNull: false },
   pseudo: { type: DataTypes.TEXT, allowNull: false, unique: true },
+  pending_pseudo: { type: DataTypes.STRING(100), allowNull: true },
+  pseudo_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
   email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
   password: { type: DataTypes.STRING(255), allowNull: false },
   picture: { type: DataTypes.STRING(255) },

@@ -25,6 +25,8 @@ authRouter.post(
   uploadAvatar.single("avatar"),
   authController.uploadProfilePhoto
 );
+authRouter.get("/profil/:id/banner/status", isLogged, injectId, authController.getBannerStatus);
+authRouter.get("/profil/:id/pseudo/status", isLogged, injectId, authController.getPseudoStatus);
 authRouter.post(
   "/profil/:id/banner",
   isLogged,

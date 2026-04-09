@@ -10,9 +10,10 @@
   const avatarInput = document.getElementById("avatar");
   const avatarImg = profilePage.querySelector(".avatar-img");
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-  const editPseudoBtn = document.getElementById("editPseudoBtn");
-  const savePseudoBtn = document.getElementById("savePseudoBtn");
-  const pseudoInput = document.getElementById("username");
+  const editPseudoBtn   = document.getElementById("editPseudoBtn");
+  const savePseudoBtn   = document.getElementById("savePseudoBtn");
+  const cancelPseudoBtn = document.getElementById("cancelPseudoBtn");
+  const pseudoInput   = document.getElementById("username");
   const pseudoDisplay = document.getElementById("pseudoDisplay");
 
   const editableInputs = profilePage.querySelectorAll(
@@ -113,43 +114,109 @@
   }
 
   // ── PSEUDO EDIT ──────────────────────────────────
-  editPseudoBtn?.addEventListener("click", () => {
+  /* Démarrer le poll si le pseudo est déjà en attente au chargement */
+  const _initialPseudoStatus = document.querySelector(".pseudo-status-badge--pending") ? "pending" : null;
+  if (_initialPseudoStatus === "pending") startPseudoPoll();
+  /* ── helpers mode édition pseudo ── */
+  const _originalPseudo = pseudoInput ? pseudoInput.value : "";
+
+  function enterPseudoEditMode() {
     if (!pseudoInput) return;
     if (pseudoDisplay) pseudoDisplay.style.display = "none";
-    pseudoInput.style.display = "";
+    pseudoInput.style.display = "block";
     pseudoInput.disabled = false;
     pseudoInput.focus();
     pseudoInput.select();
-    editPseudoBtn.style.display = "none";
-    if (savePseudoBtn) savePseudoBtn.style.display = "";
+    if (editPseudoBtn) editPseudoBtn.style.display = "none";
+    if (savePseudoBtn) savePseudoBtn.style.display = "inline-flex";
+    if (cancelPseudoBtn) cancelPseudoBtn.style.display = "inline-flex";
+  }
+
+  function exitPseudoEditMode(restoreValue) {
+    if (pseudoInput) {
+      if (restoreValue) pseudoInput.value = _originalPseudo;
+      pseudoInput.disabled = true;
+      pseudoInput.style.display = "none";
+    }
+    if (pseudoDisplay) pseudoDisplay.style.display = "block";
+    if (editPseudoBtn) editPseudoBtn.style.display = "";
+    if (savePseudoBtn) savePseudoBtn.style.display = "none";
+    if (cancelPseudoBtn) cancelPseudoBtn.style.display = "none";
+  }
+
+  /* ── Polling pseudo status ── */
+  let pseudoPollInterval = null;
+  function stopPseudoPoll() { if (pseudoPollInterval) { clearInterval(pseudoPollInterval); pseudoPollInterval = null; } }
+  function startPseudoPoll() {
+    stopPseudoPoll();
+    pseudoPollInterval = setInterval(async () => {
+      try {
+        const r = await fetch(`/auth/profil/${userId}/pseudo/status`);
+        const d = await r.json();
+        if (!d.success) return;
+        if (d.pseudo_status === "approved") {
+          stopPseudoPoll();
+          /* Mettre à jour l'affichage avec le nouveau pseudo approuvé */
+          if (pseudoDisplay) {
+            const words = d.pseudo.split(" ");
+            const last = words.pop(), rest = words.join(" ");
+            const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+            pseudoDisplay.innerHTML = (rest ? esc(rest) + " " : "") + "<em>" + esc(last) + "</em>";
+          }
+          /* Remplacer le badge pending par le bouton edit */
+          const row = document.querySelector(".hero-pseudo-row");
+          const badge = row?.querySelector(".pseudo-status-badge");
+          if (badge) {
+            const btn = document.createElement("button");
+            btn.type = "button"; btn.className = "hero-pseudo-edit"; btn.id = "editPseudoBtn";
+            btn.title = "Modifier le pseudo";
+            btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+            btn.addEventListener("click", enterPseudoEditMode);
+            badge.replaceWith(btn);
+          }
+          showToast("Pseudo approuvé et mis à jour !", "success");
+        } else if (d.pseudo_status === "rejected") {
+          stopPseudoPoll();
+          const row = document.querySelector(".hero-pseudo-row");
+          const badge = row?.querySelector(".pseudo-status-badge");
+          if (badge) badge.className = "pseudo-status-badge pseudo-status-badge--rejected";
+          if (badge) badge.innerHTML = `<span class="b-dot"></span>Pseudo refusé`;
+          showToast("Votre demande de pseudo a été refusée.", "error");
+        }
+      } catch { /* silencieux */ }
+    }, 6000);
+  }
+
+  editPseudoBtn?.addEventListener("click", enterPseudoEditMode);
+  cancelPseudoBtn?.addEventListener("click", () => exitPseudoEditMode(true));
+  pseudoInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); savePseudoBtn?.click(); }
+    if (e.key === "Escape") { e.preventDefault(); exitPseudoEditMode(true); }
   });
 
   savePseudoBtn?.addEventListener("click", async () => {
     if (!pseudoInput) return;
     const pseudo = pseudoInput.value.trim();
-    if (!pseudo) {
-      showToast("Le pseudo ne peut pas être vide.", "error");
-      return;
-    }
+    if (!pseudo) { showToast("Le pseudo ne peut pas être vide.", "error"); return; }
+    if (pseudo === _originalPseudo) { exitPseudoEditMode(false); return; }
     const formData = new FormData();
     formData.append("pseudo", pseudo);
     try {
       const response = await fetch(`/auth/profil/${userId}/update`, { method: "POST", body: formData });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Erreur lors de la mise à jour.");
-      pseudoInput.disabled = true;
-      pseudoInput.style.display = "none";
-      if (pseudoDisplay) {
-        const words = pseudo.split(' ');
-        const last = words.pop();
-        const rest = words.join(' ');
-        const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        pseudoDisplay.innerHTML = (rest ? esc(rest) + ' ' : '') + '<em>' + esc(last) + '</em>';
-        pseudoDisplay.style.display = "";
+      exitPseudoEditMode(false);
+      /* Afficher badge "en attente" à la place du bouton edit */
+      const row = document.querySelector(".hero-pseudo-row");
+      const editBtn = row?.querySelector(".hero-pseudo-edit");
+      if (editBtn) {
+        const badge = document.createElement("span");
+        badge.className = "pseudo-status-badge pseudo-status-badge--pending";
+        badge.innerHTML = `<span class="b-dot"></span>En attente`;
+        editBtn.replaceWith(badge);
       }
-      if (savePseudoBtn) savePseudoBtn.style.display = "none";
-      if (editPseudoBtn) editPseudoBtn.style.display = "";
-      showToast("Pseudo mis à jour.", "success");
+      showToast("Pseudo soumis — en attente de validation par un admin.", "success");
+      startPseudoPoll();
     } catch (error) {
       showToast(error.message, "error");
     }

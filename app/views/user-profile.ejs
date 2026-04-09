@@ -53,7 +53,9 @@
           <% if (user.banner_status === 'pending') { %>
             <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
           <% } else if (user.banner_status === 'rejected') { %>
-            <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
+            <button class="banner-btn banner-btn--rejected" type="button" onclick="document.getElementById('bannerInput').click()" title="Votre bannière a été refusée — cliquez pour en proposer une nouvelle">
+              <span class="b-dot"></span>Bannière refusée — Réessayer
+            </button>
           <% } else { %>
             <button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById('bannerInput').click()">
               <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -128,10 +130,17 @@
                 maxlength="30"
                 disabled
               />
-              <button type="button" class="hero-pseudo-edit" id="editPseudoBtn" title="Modifier le pseudo">
-                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button type="button" class="hero-pseudo-save" id="savePseudoBtn">Sauvegarder</button>
+              <% if (user.pseudo_status === 'pending') { %>
+                <span class="pseudo-status-badge pseudo-status-badge--pending"><span class="b-dot"></span>En attente</span>
+              <% } else if (user.pseudo_status === 'rejected') { %>
+                <span class="pseudo-status-badge pseudo-status-badge--rejected"><span class="b-dot"></span>Refusé</span>
+              <% } else { %>
+                <button type="button" class="hero-pseudo-edit" id="editPseudoBtn" title="Modifier le pseudo">
+                  <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+              <% } %>
+              <button type="button" class="hero-pseudo-save hero-pseudo-save--validate" id="savePseudoBtn">Valider</button>
+              <button type="button" class="hero-pseudo-save hero-pseudo-save--cancel" id="cancelPseudoBtn">Annuler</button>
             </div>
             <p class="hero-sub">
               <%
@@ -1980,6 +1989,50 @@
         if (!input) return;
         const userId = '<%= user.id %>';
 
+        let bannerPollInterval = null;
+
+        function stopBannerPoll() {
+          if (bannerPollInterval) { clearInterval(bannerPollInterval); bannerPollInterval = null; }
+        }
+
+        function startBannerPoll() {
+          stopBannerPoll();
+          bannerPollInterval = setInterval(async function () {
+            try {
+              const r = await fetch('/auth/profil/' + userId + '/banner/status');
+              const d = await r.json();
+              if (!d.success) return;
+
+              if (d.banner_status === 'approved') {
+                stopBannerPoll();
+                /* Afficher la bannière approuvée */
+                const heroDiv = document.querySelector('.hero-banner');
+                if (heroDiv) {
+                  let img = heroDiv.querySelector('img');
+                  if (img) { img.src = d.banner_image; }
+                  else { img = document.createElement('img'); img.src = d.banner_image; img.alt = ''; heroDiv.prepend(img); }
+                }
+                /* Remettre le bouton "Modifier" */
+                const wrap = document.querySelector('.hero-banner-status');
+                if (wrap) {
+                  wrap.innerHTML = '<button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById(\'bannerInput\').click()"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Modifier la bannière</button>';
+                }
+              } else if (d.banner_status === 'rejected') {
+                stopBannerPoll();
+                const wrap = document.querySelector('.hero-banner-status');
+                if (wrap) {
+                  wrap.innerHTML = '<button class="banner-btn banner-btn--rejected" type="button" onclick="document.getElementById(\'bannerInput\').click()" title="Bannière refusée — cliquez pour réessayer"><span class="b-dot"></span>Bannière refusée — Réessayer</button>';
+                }
+              }
+            } catch { /* silencieux */ }
+          }, 5000);
+        }
+
+        /* Si au chargement la bannière est déjà en pending, démarrer le poll */
+        <% if (user.banner_status === 'pending') { %>
+        startBannerPoll();
+        <% } %>
+
         input.addEventListener('change', async function () {
           const file = input.files[0];
           if (!file) return;
@@ -1993,24 +2046,12 @@
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error(data.message || 'Erreur upload.');
 
-            // Prévisualisation
-            const bannerImg = document.querySelector('.hero-banner img');
-            if (bannerImg) {
-              bannerImg.src = data.banner_image;
-            } else {
-              const heroDiv = document.querySelector('.hero-banner');
-              if (heroDiv) {
-                const img = document.createElement('img');
-                img.src = data.banner_image;
-                heroDiv.prepend(img);
-              }
-            }
-
-            // Remplacer le bouton par le badge "en attente"
+            /* Mettre le badge "en attente" et démarrer le poll */
             const wrap = document.querySelector('.hero-banner-status');
             if (wrap) {
               wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
             }
+            startBannerPoll();
           } catch (err) {
             console.error('Banner upload error:', err);
           }

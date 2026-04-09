@@ -354,7 +354,7 @@ const authController = {
       const updateData = {};
       if (first_name) updateData.first_name = first_name;
       if (last_name) updateData.last_name = last_name;
-      if (pseudo) updateData.pseudo = pseudo;
+      /* Le pseudo ne se met PAS à jour directement — il passe en modération */
       if (email) updateData.email = email;
 
       if (password && password.trim() !== "") {
@@ -387,22 +387,29 @@ const authController = {
         updateData.picture_status = "pending";
       }
 
-      if (updateData.pseudo || updateData.email) {
-        const existingUser = await User.findOne({
+      /* Soumission pseudo en modération */
+      if (pseudo && pseudo.trim()) {
+        const trimmedPseudo = pseudo.trim();
+        /* Vérifier unicité contre pseudo actif ET pseudos en attente */
+        const conflict = await User.findOne({
           where: {
-            [Op.or]: [
-              updateData.pseudo ? { pseudo: updateData.pseudo } : null,
-              updateData.email ? { email: updateData.email } : null,
-            ].filter(Boolean),
+            [Op.or]: [{ pseudo: trimmedPseudo }, { pending_pseudo: trimmedPseudo }],
             id: { [Op.ne]: userId },
           },
         });
+        if (conflict) {
+          return res.status(StatusCodes.CONFLICT).json({ success: false, message: "Ce pseudo est déjà pris." });
+        }
+        updateData.pending_pseudo = trimmedPseudo;
+        updateData.pseudo_status  = "pending";
+      }
 
+      if (updateData.email) {
+        const existingUser = await User.findOne({
+          where: { email: updateData.email, id: { [Op.ne]: userId } },
+        });
         if (existingUser) {
-          return res.status(StatusCodes.CONFLICT).json({
-            success: false,
-            message: "Pseudo ou email déjà utilisé.",
-          });
+          return res.status(StatusCodes.CONFLICT).json({ success: false, message: "Email déjà utilisé." });
         }
       }
 
@@ -410,7 +417,8 @@ const authController = {
 
       return res.status(StatusCodes.OK).json({
         success: true,
-        message: "Profil mis à jour avec succès.",
+        message: pseudo ? "Pseudo soumis — en attente de validation par un admin." : "Profil mis à jour avec succès.",
+        pseudo_status: pseudo ? "pending" : undefined,
       });
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -1306,6 +1314,32 @@ const authController = {
         success: false,
         message: "Erreur lors de la suppression du film.",
       });
+    }
+  },
+
+  /* Polling user : statut pseudo courant */
+  async getPseudoStatus(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (req.userId !== userId) return res.status(StatusCodes.FORBIDDEN).json({ success: false });
+      const user = await User.findByPk(userId, { attributes: ["pseudo", "pending_pseudo", "pseudo_status"] });
+      if (!user) return res.status(StatusCodes.NOT_FOUND).json({ success: false });
+      return res.json({ success: true, pseudo: user.pseudo, pending_pseudo: user.pending_pseudo, pseudo_status: user.pseudo_status });
+    } catch {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
+    }
+  },
+
+  /* Polling user : statut bannière courant */
+  async getBannerStatus(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (req.userId !== userId) return res.status(StatusCodes.FORBIDDEN).json({ success: false });
+      const user = await User.findByPk(userId, { attributes: ["banner_status", "banner_image"] });
+      if (!user) return res.status(StatusCodes.NOT_FOUND).json({ success: false });
+      return res.json({ success: true, banner_status: user.banner_status, banner_image: user.banner_image });
+    } catch {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
     }
   },
 
