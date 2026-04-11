@@ -10,7 +10,7 @@
  */
 
 import { Favorite, Movie, Recipe } from "../models/index.model.js";
-import { awardActionXP } from "../services/xpService.js";
+import { awardActionXP } from "../services/gamification.service.js";
 
 /**
  * Vérifie qu'une entité existe dans sa table

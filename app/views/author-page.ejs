@@ -147,29 +147,20 @@
                 <span class="h-stat__lbl">Niveau</span>
               </div>
               <% } %>
-              <%
-                const _unlockedBadges = (typeof userBadges !== 'undefined')
-                  ? userBadges.filter(function(b){ return b.unlocked; })
-                  : [];
-              %>
-              <% if (_unlockedBadges.length > 0) { %>
+              <% if (typeof userFrames !== 'undefined' && userFrames.length > 0) { %>
               <div class="h-stat-div" aria-hidden="true"></div>
-              <div class="h-stat h-stat--badges">
-                <div class="h-badges-row">
-                  <% _unlockedBadges.forEach(function(b) { %>
-                  <span class="h-badge" title="<%= b.film %>">
-                    <% if (b.code === 'BIENVENUE') { %>🎬
-                    <% } else if (b.code === 'STRANGE') { %>🧙
-                    <% } else if (b.code === 'HARRY') { %>⚡
-                    <% } else if (b.code === 'INDIANA') { %>🎩
-                    <% } else if (b.code === 'MATRIX') { %>💊
-                    <% } else if (b.code === 'FREDDY') { %>🔪
-                    <% } else if (b.code === 'READY') { %>🕹️
-                    <% } else { %>🏅<% } %>
-                  </span>
+              <div class="h-stat h-stat--frames">
+                <div class="h-frames-row">
+                  <% userFrames.forEach(function(f) { %>
+                  <span
+                    class="h-frame-pill<%= f.isActive ? ' h-frame-pill--active' : '' %>"
+                    title="<%= f.label %>"
+                    data-code="<%= f.code %>"
+                    <% if (f.thumbUrl) { %>style="background-image:url('<%= f.thumbUrl %>')"<% } %>
+                  ><% if (!f.thumbUrl) { %><%= f.icon %><% } %></span>
                   <% }) %>
                 </div>
-                <span class="h-stat__lbl">Badges</span>
+                <span class="h-stat__lbl">Cadres de contribution</span>
               </div>
               <% } %>
             </div>
@@ -388,10 +379,10 @@
     <!-- Scripts globaux -->
 
     <!-- Badge gamification -->
-    <script src="/js/sherlock-badge.js" defer></script>
-    <script src="/js/badge-engine.js" defer></script>
+    <script src="/js/gamification-sherlock.js" defer></script>
+    <script src="/js/gamification-engine.js" defer></script>
 
-    <!-- Init canvas hero auteur (équivalent de contributions.js pour profileBadgeHero) -->
+    <!-- Init canvas hero auteur (équivalent de gamification.js pour profileBadgeHero) -->
     <script>
       (function () {
         const ANIMATED = ['sherlock', 'matrix', 'indiana', 'harry'];
@@ -409,7 +400,7 @@
           heroEl.insertBefore(inner, null);
           heroEl._badgeEngine = new window.BadgeEngine(inner, frameCode, photoSrc);
         }
-        // badge-engine.js est defer — on attend qu'il soit prêt
+        // gamification-engine.js est defer — on attend qu'il soit prêt
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initAuthorHero);
         } else {

@@ -17,7 +17,7 @@ function _showXpToast(xpGained, leveledUp, rank) {
     ? `+${xpGained} XP — Niveau supérieur ! ${rank}`
     : `+${xpGained} XP`;
   if (window._cdToast) { window._cdToast(msg, "success"); return; }
-  // fallback léger si contributions.js absent
+  // fallback léger si gamification.js absent
   const el = document.createElement("div");
   el.textContent = msg;
   el.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;background:#1a7a46;color:#fff;padding:10px 18px;border-radius:6px;font-size:.85rem;box-shadow:0 4px 16px rgba(0,0,0,.4);pointer-events:none;";

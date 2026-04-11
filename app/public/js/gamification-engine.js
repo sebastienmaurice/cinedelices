@@ -1,5 +1,5 @@
 /**
- * badge-engine.js — Ciné Délices
+ * gamification-engine.js — Ciné Délices
  * Animations canvas pour les cadres de gamification (260×260)
  * Usage : new window.BadgeEngine(containerEl, frameCode, photoSrc)
  */

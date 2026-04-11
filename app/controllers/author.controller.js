@@ -1,9 +1,8 @@
 import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
-import { getUserGamificationData } from "../services/xpService.js";
-import { getBadgesForProfile } from "../services/badgeService.js";
-import { xpProgress } from "../utils/xp.js";
+import { getUserGamificationData } from "../services/gamification.service.js";
+import { xpProgress } from "../utils/gamification.utils.js";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)
@@ -114,28 +113,20 @@ const authorController = {
         Notice.findAll({ where: { id_user: userId } }),
       ]);
 
-      const [gamif, rawBadges, approvedMovies] = await Promise.all([
-        getUserGamificationData(userId, {
-          recipes: allRecipes,
-          movies: allMovies,
-          notices: allNotices,
-          isSuperAdmin: false,
-        }),
-        getBadgesForProfile(userId),
-        Movie.findAll({ where: { status: "approved" }, attributes: ["slug"] }),
-      ]);
-
-      const approvedSlugs = approvedMovies.map((m) => m.slug).filter(Boolean);
-      const userBadges = rawBadges.filter((b) =>
-        b.unlocked ||
-        b.movie_slug_pattern.startsWith("__") ||
-        approvedSlugs.some((slug) => slug.includes(b.movie_slug_pattern))
-      );
+      const gamif = await getUserGamificationData(userId, {
+        recipes: allRecipes,
+        movies: allMovies,
+        notices: allNotices,
+        isSuperAdmin: author.role === "superadmin",
+      });
 
       const xpProg = xpProgress(gamif.xp, gamif.level);
       const isOwner = !!(req.userId && parseInt(req.userId, 10) === userId);
 
       const isAdminAuthor = author.role === "admin" || author.role === "superadmin";
+
+      // Cadres débloqués visibles sur la page auteur (hors "none" sans visuel)
+      const userFrames = gamif.frames.filter((f) => f.unlocked && f.code !== 'none');
 
       return res.render("author-page", {
         author,
@@ -149,10 +140,10 @@ const authorController = {
         userRank:        gamif.rank,
         userActiveFrame: gamif.activeFrameUrl,
         userActiveFrameId: gamif.activeFrameCode,
+        userFrames,
         xpPct:           xpProg.pct,
         xpCurrent:       xpProg.current,
         xpNeeded:        xpProg.needed,
-        userBadges,
       });
     } catch (error) {
       return renderServerError(res, error);

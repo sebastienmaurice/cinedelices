@@ -2,7 +2,7 @@ import { Op, fn, col } from "sequelize";
 import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
-import { awardActionXP } from "../services/xpService.js";
+import { awardActionXP } from "../services/gamification.service.js";
 
 /**
  * Récupère les IDs des recettes favorites de l'utilisateur

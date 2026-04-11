@@ -1,5 +1,5 @@
 // utils/xp.js — Source de vérité unique pour le système de progression
-// Partagé entre xpService.js (backend) et user-profile.ejs (EJS inline)
+// Partagé entre gamification.service.js (backend) et user-profile.ejs (EJS inline)
 
 export const XP_TABLE = [
   0,      // niv. 1
@@ -66,6 +66,7 @@ export const FRAME_UNLOCKS = [
     icon:     '○',
     minLvl:   1,
     pngUrl:   null,
+    thumbUrl: null, // pas de miniature pour "sans cadre"
     hasAnim:  false,
   },
   {
@@ -75,6 +76,7 @@ export const FRAME_UNLOCKS = [
     icon:     '🎬',
     minLvl:   1,
     pngUrl:   '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-2.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-cine.jpg',
     hasAnim:  false,
   },
   {
@@ -84,6 +86,7 @@ export const FRAME_UNLOCKS = [
     icon:     '🔍',
     minLvl:   2,
     pngUrl:   '/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-sherlock.jpg',
     hasAnim:  true,
   },
   {
@@ -93,6 +96,7 @@ export const FRAME_UNLOCKS = [
     icon:     '🟢',
     minLvl:   4,
     pngUrl:   '/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-matrix.jpg',
     hasAnim:  true,
   },
   {
@@ -102,6 +106,7 @@ export const FRAME_UNLOCKS = [
     icon:     '🎩',
     minLvl:   6,
     pngUrl:   '/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-indiana.jpg',
     hasAnim:  true,
   },
   {
@@ -111,6 +116,7 @@ export const FRAME_UNLOCKS = [
     icon:     '⚡',
     minLvl:   8,
     pngUrl:   '/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-harry.jpg',
     hasAnim:  true,
   },
 ];

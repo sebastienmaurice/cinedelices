@@ -6,7 +6,6 @@ import {
   UsersRecipes,
   RecipePicture,
 } from "../models/index.model.js";
-import { checkAndAwardSignatureBadges } from "../services/badgeService.js";
 import * as argon2 from "argon2";
 import { Op } from "sequelize";
 import {
@@ -14,6 +13,7 @@ import {
   enrichMoviesWithImagePaths,
 } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
+import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
 import searchCache from "../utils/search-cache.js";
@@ -708,16 +708,6 @@ const adminController = {
       // Mise à jour en BDD : status → 'approved' + horodatage validated_at
       await Recipe.update(updateData, { where: { id: recipeId } });
 
-      // Badges signature : vérifier si le film associé débloque un badge
-      const recipe = await Recipe.findByPk(recipeId, {
-        include: [{ model: Movie, as: undefined, attributes: ["slug"] }],
-      });
-      if (recipe?.id_user && recipe?.Movie?.slug) {
-        checkAndAwardSignatureBadges(recipe.id_user, recipe.Movie.slug).catch(
-          (err) => console.error("[validateRecipe] badges:", err)
-        );
-      }
-
       logAdminAction({ adminId: req.userId, action: "approve_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
@@ -938,6 +928,8 @@ const adminController = {
         { picture: user.pending_picture, pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
       );
+      // Invalider le cache nav pour que la nouvelle photo apparaisse immédiatement
+      clearNavCache(userId);
       logAdminAction({ adminId: req.userId, action: "approve_user_photo", targetType: "user", targetId: userId });
       res.redirect("/admin?success=user_photo_approved");
     } catch (error) {

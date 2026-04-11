@@ -14,7 +14,7 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { User, Recipe, Movie } from "../models/index.model.js";
-import { FRAME_UNLOCKS } from "../utils/xp.js";
+import { FRAME_UNLOCKS } from "../utils/gamification.utils.js";
 
 /* ──────────────────────────────────────────────────────────────
    Cache en mémoire — évite de refaire les COUNT à chaque requête

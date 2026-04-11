@@ -1,5 +1,5 @@
 /**
- * contributions.js — Ciné Délices
+ * gamification.js — Ciné Délices
  * - Équiper un cadre via l'API POST /auth/equip-frame
  * - Mise à jour temps réel : hero profil, nav badge, footer widget
  * - Toast notifications

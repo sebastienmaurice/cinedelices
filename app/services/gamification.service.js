@@ -1,5 +1,5 @@
 import { UserPoints } from "../models/index.model.js";
-import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS } from "../utils/xp.js";
+import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS } from "../utils/gamification.utils.js";
 
 const STAFF_ROLES = new Set(["admin", "superadmin"]);
 

@@ -1,7 +1,6 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
-import { getUserGamificationData, awardWeeklyLoginXP } from "../services/xpService.js";
-import { awardWelcomeBadge, getBadgesForProfile } from "../services/badgeService.js";
+import { getUserGamificationData, awardWeeklyLoginXP } from "../services/gamification.service.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
@@ -124,11 +123,6 @@ const authController = {
         secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
       });
-
-      // Badge Bienvenue accordé à chaque nouvel inscrit (fire & forget)
-      awardWelcomeBadge(user.id).catch((err) =>
-        console.error("[register] awardWelcomeBadge:", err)
-      );
 
       res.status(StatusCodes.CREATED).redirect("/");
     } catch (error) {
@@ -268,16 +262,13 @@ const authController = {
         ? (allRatings.reduce((sum, r) => sum + r.score, 0) / allRatings.length).toFixed(1)
         : "0.0";
 
-      // Gamification — calcul XP + cadres + activité + badges
-      const [gamif, userBadges] = await Promise.all([
-        getUserGamificationData(user.id, {
-          recipes:      userRecipes,
-          movies:       userMovies,
-          notices:      userNotices,
-          isSuperAdmin: req.userRole === "superadmin" || req.userRole === "super_admin",
-        }),
-        getBadgesForProfile(user.id),
-      ]);
+      // Gamification — calcul XP + cadres + activité
+      const gamif = await getUserGamificationData(user.id, {
+        recipes:      userRecipes,
+        movies:       userMovies,
+        notices:      userNotices,
+        isSuperAdmin: req.userRole === "superadmin" || req.userRole === "super_admin",
+      });
 
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
@@ -306,7 +297,6 @@ const authController = {
         userFrames:       gamif.frames,
         userActivity:     gamif.activity,
         userCommentsCount:0,
-        userBadges,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

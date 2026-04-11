@@ -1,5 +1,5 @@
 /**
- * sherlock-badge.js — Ciné Délices
+ * gamification-sherlock.js — Ciné Délices
  * Animation Sherlock Holmes complète — portée depuis cadre-gamification-sherlock-holme.html
  * Tourne à 1440×1440 natif, scalée CSS à 260×260 (ou autre taille via cfg.badge.width)
  *

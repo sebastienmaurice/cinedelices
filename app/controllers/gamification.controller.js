@@ -1,5 +1,5 @@
 import { UserPoints } from "../models/index.model.js";
-import { computeLevel, FRAME_UNLOCKS } from "../utils/xp.js";
+import { computeLevel, FRAME_UNLOCKS } from "../utils/gamification.utils.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { StatusCodes } from "http-status-codes";
 
