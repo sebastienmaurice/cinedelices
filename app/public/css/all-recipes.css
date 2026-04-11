@@ -146,10 +146,10 @@ body.all-recipes-page main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.ar-recipe-card:hover .ar-recipe-card__img img { transform: scale(1.07); }
+.ar-recipe-card:hover .ar-recipe-card__img img { transform: scale(2); }
 
 .ar-recipe-card__img::after {
   content: '';
@@ -190,6 +190,7 @@ body.all-recipes-page main {
   flex-direction: column;
   gap: 5px;
   flex: 1;
+  overflow: hidden;
 }
 
 /* Titre + temps inline */
@@ -256,15 +257,35 @@ body.all-recipes-page main {
 
 .ar-recipe-card__time .icon { width: 0.7rem; height: 0.7rem; }
 
-/* Footer : auteur + bouton */
+/* Stretched link */
+.ar-recipe-card__link {
+  position: absolute; inset: 0; z-index: 1;
+  border-radius: inherit;
+}
+
+/* Overlay doré + icône */
+.ar-recipe-card:hover .cd-hover-overlay { opacity: 1; }
+.ar-recipe-card:hover .cd-icon-btn { transform: translateY(0) scale(1); opacity: 1; }
+.ar-recipe-card:hover .cd-icon-btn__ring { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
+.ar-recipe-card:hover .cd-icon-btn__bg { box-shadow: 0 6px 28px rgba(184,136,42,.65); filter: brightness(1.08); }
+.ar-recipe-card:hover .cd-icon-btn__bg svg { transform: scale(1.15) translateY(-1px); }
+.ar-recipe-card:hover .cd-icon-btn__wrap { animation: cdIconFloat 2.2s ease-in-out infinite; }
+.ar-recipe-card:hover .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite; }
+
+/* Footer : auteur + favori — sibling du body, reste visible au hover */
 .ar-recipe-card__foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative; z-index: 4;
   gap: 6px;
   margin-top: auto;
+  padding: 0.45rem 0.65rem 0.55rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+
+.ar-recipe-card__foot .btn-fav { flex-shrink: 0; }
 
 .ar-recipe-card__foot .btn--sm {
   padding: 0 10px;

@@ -3706,9 +3706,97 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   transform: scale(1.1);
   color: #fff;
 }
-.btn-fav .btn__shimmer {
-  display: none;
+.btn-fav[data-is-favorite="true"] {
+  background: rgba(194, 48, 24, 0.82);
+  border-color: #c23018;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(194, 48, 24, 0.45);
 }
+.btn-fav[data-is-favorite="true"] .icon { fill: currentColor; }
+.btn-fav[data-is-favorite="true"]:hover { background: rgba(232, 64, 32, 0.95); }
+.btn-fav .btn__shimmer { display: none; }
+
+/* ── Overlay hover générique (cards recettes & films) ── */
+.cd-hover-overlay {
+  position: absolute; inset: 0; z-index: 3;
+  background: linear-gradient(160deg, rgba(8,16,28,.22) 0%, rgba(120,80,10,.28) 55%, rgba(184,136,42,.18) 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none; /* le stretched link ou l'overlay parent gère le clic */
+}
+.cd-icon-btn {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  transform: translateY(10px) scale(.88);
+  opacity: 0;
+  transition: transform .34s cubic-bezier(.34,1.56,.64,1), opacity .26s ease;
+}
+.cd-icon-btn__wrap {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px;
+}
+.cd-icon-btn__ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px dashed rgba(242,200,75,.45);
+  transition: border-color .45s ease, transform .6s cubic-bezier(.34,1.56,.64,1);
+}
+.cd-icon-btn__bg {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(145deg, #8b6914 0%, #b8882a 22%, #c4a052 42%, #d4a843 55%, #f2c84b 68%, #d4a843 80%, #b8882a 100%);
+  border: 1.5px solid rgba(255,255,255,.22);
+  box-shadow: 0 4px 18px rgba(184,136,42,.45), inset 0 1px 0 rgba(255,255,255,.28);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(20,10,0,.72);
+  position: relative; z-index: 1;
+  transition: box-shadow .3s ease, filter .3s ease;
+}
+.cd-icon-btn__bg svg { width: 18px; height: 18px; transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
+.cd-icon-btn__label {
+  font-family: var(--f-title);
+  font-size: .56rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--or-titre, #c4a052);
+  white-space: nowrap;
+  text-shadow: 0 1px 10px rgba(0,0,0,.9);
+}
+
+/* Animations au hover — déclenchées par les parents via leurs propres sélecteurs */
+.cd-hover-overlay.is-visible { opacity: 1; }
+.cd-hover-overlay.is-visible .cd-icon-btn { transform: translateY(0) scale(1); opacity: 1; }
+.cd-hover-overlay.is-visible .cd-icon-btn__ring { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
+.cd-hover-overlay.is-visible .cd-icon-btn__bg { box-shadow: 0 6px 28px rgba(184,136,42,.65); filter: brightness(1.08); }
+.cd-hover-overlay.is-visible .cd-icon-btn__bg svg { transform: scale(1.15) translateY(-1px); }
+
+/* Float vertical */
+@keyframes cdIconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.cd-hover-overlay.is-visible .cd-icon-btn__wrap { animation: cdIconFloat 2.2s ease-in-out infinite; }
+
+/* Pulse rayonnant */
+.cd-icon-btn__bg::after {
+  content: ""; position: absolute; inset: -5px; border-radius: 50%;
+  border: 1.5px solid rgba(242,200,75,.55); opacity: 0; pointer-events: none;
+}
+.cd-hover-overlay.is-visible .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite; }
+@keyframes cdPulse { 0% { transform: scale(1); opacity: .65; } 100% { transform: scale(1.85); opacity: 0; } }
+
+/* Cards mixtes (Option A) : image s'étend sur toute la card au hover
+   → overlay léger doré centré, icône centrée sur l'image plein-card */
+.recipe-card .cd-hover-overlay,
+.ar-recipe-card .cd-hover-overlay,
+.top3-card .cd-hover-overlay,
+.top3-featured .cd-hover-overlay,
+.djc-recette .cd-hover-overlay {
+  background: linear-gradient(160deg,
+    rgba(8,16,28,.18) 0%,
+    rgba(100,65,8,.30) 50%,
+    rgba(184,136,42,.22) 100%
+  );
+}
+
+/* Mobile (touch) : overlay masqué, la card reste cliquable via le stretched link */
+@media (hover: none) { .cd-hover-overlay { display: none; } }
 
 /* ── Badges Overlay Cards — Moodboard V2.1 ── */
 /* Remplacent les anciens badge--sapphire / badge--red / badge--gold sur les cards */

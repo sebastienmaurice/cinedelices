@@ -154,6 +154,18 @@
             <a href="/recipes-movie/<%= duoFilm.slug || duoFilm.id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= duoFilm.title %>">
               <img class="djc-film__img" src="<%= duoFilm.cardPath || duoFilm.picture %>" alt="Affiche <%= duoFilm.title %>" loading="lazy">
               <div class="djc-film__overlay"></div>
+              <!-- Hover CTA — icon doré centré -->
+              <div class="djc-film__hover-cta" aria-hidden="true">
+                <div class="cd-icon-btn">
+                  <div class="cd-icon-btn__wrap">
+                    <span class="cd-icon-btn__ring"></span>
+                    <span class="cd-icon-btn__bg">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                    </span>
+                  </div>
+                  <span class="cd-icon-btn__label">Voir les recettes</span>
+                </div>
+              </div>
               <div class="djc-film__top">
                 <span class="djc-film__badge">🎬 Film</span>
                 <button class="djc-film__fav btn-fav" data-entity-id="<%= duoFilm.id %>" data-entity-type="movie" aria-label="Ajouter aux favoris">♡</button>
@@ -240,12 +252,25 @@
             <!-- ③ RECETTE — format 3:2 — topRecipe — maquette lines 1626-1668 -->
             <% if (topRecipe) { %>
             <div class="djc-recette" data-reveal="right">
+              <!-- Stretched link -->
+              <a href="/recipes-movie/details/<%= topRecipe.slug || topRecipe.id %>" class="djc-recette__link" aria-label="Voir la recette <%= topRecipe.name %>"></a>
               <div class="djc-recette__img-wrap">
                 <img class="djc-recette__img" src="<%= topRecipe.picture %>" alt="<%= topRecipe.name %>" loading="lazy">
                 <div class="djc-recette__img-overlay"></div>
+                <!-- Overlay hover doré — centré sur l'image -->
+                <div class="cd-hover-overlay">
+                  <div class="cd-icon-btn">
+                    <div class="cd-icon-btn__wrap">
+                      <span class="cd-icon-btn__ring"></span>
+                      <span class="cd-icon-btn__bg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                      </span>
+                    </div>
+                    <span class="cd-icon-btn__label">Voir la recette</span>
+                  </div>
+                </div>
                 <div class="djc-recette__img-top">
                   <span class="djc-recette__type"><%= topRecipe.difficulty || 'Recette' %></span>
-                  <button class="djc-recette__fav btn-fav" data-entity-id="<%= topRecipe.id %>" data-entity-type="recipe" aria-label="Ajouter aux favoris">♡</button>
                 </div>
                 <div class="djc-recette__img-bottom">
                   <span class="djc-recette__film-badge">🎞 <%= topRecipe.Movie ? topRecipe.Movie.title : 'Film inconnu' %></span>
@@ -269,18 +294,28 @@
                     <% if (topRecipe.servings) { %><span>👥 <%= topRecipe.servings %> pers.</span><% } %>
                   </div>
                 </div>
-                <div class="djc-recette__foot">
-                  <% const trContrib = topRecipe.contributor;
-                     const trIsStaff = trContrib && (trContrib.role === 'admin' || trContrib.role === 'superadmin'); %>
-                  <div class="contrib <%= trIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
-                    <div class="contrib__av"><img src="<%= trContrib && trContrib.picture ? trContrib.picture : '/images/image-default-profile.jpg' %>" alt="<%= trContrib ? trContrib.pseudo : 'Chef' %>" loading="lazy"></div>
-                    <div class="contrib__info">
-                      <span class="contrib__pseudo"><%= trContrib ? trContrib.pseudo : 'Chef Ciné Délices' %></span>
-                      <span class="contrib__pill <%= trIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= trIsStaff ? 'Ciné Délices' : 'Membre' %></span>
-                    </div>
+              </div>
+              <!-- Footer hors du body -->
+              <div class="djc-recette__foot">
+                <% const trContrib = topRecipe.contributor;
+                   const trIsStaff = trContrib && (trContrib.role === 'admin' || trContrib.role === 'superadmin'); %>
+                <div class="contrib <%= trIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                  <div class="contrib__av"><img src="<%= trContrib && trContrib.picture ? trContrib.picture : '/images/image-default-profile.jpg' %>" alt="<%= trContrib ? trContrib.pseudo : 'Chef' %>" loading="lazy"></div>
+                  <div class="contrib__info">
+                    <span class="contrib__pseudo"><%= trContrib ? trContrib.pseudo : 'Chef Ciné Délices' %></span>
+                    <span class="contrib__pill <%= trIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= trIsStaff ? 'Ciné Délices' : 'Membre' %></span>
                   </div>
-                  <a href="/recipes-movie/details/<%= topRecipe.slug || topRecipe.id %>" class="djc-recette__btn">Voir la recette →</a>
                 </div>
+                <button
+                  class="btn-fav"
+                  data-entity-id="<%= topRecipe.id %>"
+                  data-entity-type="recipe"
+                  data-is-favorite="<%= topRecipe.isFavorite || false %>"
+                  aria-label="<%= topRecipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                  title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (topRecipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" fill="<%= topRecipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </button>
               </div>
             </div>
             <% } %>
@@ -312,11 +347,24 @@
             <!-- ① HERO : featured #1 — col 1, row 1+2 -->
               <% if (recipes[0]) { %>
               <div class="top3-featured bento__cell cell--hero">
+                <!-- Stretched link -->
+                <a href="/recipes-movie/details/<%= recipes[0].slug || recipes[0].id %>" class="top3-featured__link" aria-label="Voir la recette <%= recipes[0].name %>"></a>
                 <div class="top3-featured__img-wrap">
                   <img class="top3-featured__img" src="<%= recipes[0].picture %>" alt="<%= recipes[0].name %>" loading="lazy">
                   <div class="top3-featured__overlay"></div>
+                  <!-- Overlay hover doré — centré sur l'image -->
+                  <div class="cd-hover-overlay">
+                    <div class="cd-icon-btn">
+                      <div class="cd-icon-btn__wrap">
+                        <span class="cd-icon-btn__ring"></span>
+                        <span class="cd-icon-btn__bg">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                        </span>
+                      </div>
+                      <span class="cd-icon-btn__label">Voir la recette</span>
+                    </div>
+                  </div>
                   <div class="top3-featured__medal">1</div>
-                  <button class="top3-featured__fav btn-fav" data-entity-id="<%= recipes[0].id %>" data-entity-type="recipe" aria-label="Favoris">♡</button>
                   <span class="top3-featured__film-badge">🎬 <%= recipes[0].Movie ? recipes[0].Movie.title : 'Film inconnu' %></span>
                 </div>
                 <div class="top3-featured__body">
@@ -341,30 +389,54 @@
                     </div>
                   </div>
                   <% if (recipes[0].description) { %>
-                  <p class="top3-featured__desc"><%= recipes[0].description.slice(0, 120) %>...</p>
+                  <p class="top3-featured__desc"><%= recipes[0].description %></p>
                   <% } %>
-                  <div class="top3-featured__foot">
-                    <% const c0 = recipes[0].contributor;
-                       const c0isStaff = c0 && (c0.role === 'admin' || c0.role === 'superadmin'); %>
-                    <div class="contrib <%= c0isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
-                      <div class="contrib__av"><img src="<%= c0 && c0.picture ? c0.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
-                      <div class="contrib__info">
-                        <span class="contrib__pseudo"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="contrib__pill <%= c0isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c0isStaff ? 'Ciné Délices' : 'Membre' %></span>
-                      </div>
-                    </div>
-                    <a href="/recipes-movie/details/<%= recipes[0].slug || recipes[0].id %>" class="top3-featured__btn">Voir la recette →</a>
+                </div>
+              <!-- Footer hors du body -->
+              <div class="top3-featured__foot">
+                <% const c0 = recipes[0].contributor;
+                   const c0isStaff = c0 && (c0.role === 'admin' || c0.role === 'superadmin'); %>
+                <div class="contrib <%= c0isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                  <div class="contrib__av"><img src="<%= c0 && c0.picture ? c0.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                  <div class="contrib__info">
+                    <span class="contrib__pseudo"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
+                    <span class="contrib__pill <%= c0isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c0isStaff ? 'Ciné Délices' : 'Membre' %></span>
                   </div>
                 </div>
+                <button
+                  class="btn-fav"
+                  data-entity-id="<%= recipes[0].id %>"
+                  data-entity-type="recipe"
+                  data-is-favorite="<%= recipes[0].isFavorite || false %>"
+                  aria-label="<%= recipes[0].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
+                  title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipes[0].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
+                >
+                  <svg class="icon" viewBox="0 0 24 24" fill="<%= recipes[0].isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </button>
               </div>
+            </div>
               <% } %>
 
             <!-- ② VERTICAL : card #2 — col 2, row 1 -->
               <% if (recipes[1]) { %>
               <div class="top3-card bento__cell cell--vertical">
+                <!-- Stretched link -->
+                <a href="/recipes-movie/details/<%= recipes[1].slug || recipes[1].id %>" class="top3-card__link" aria-label="Voir la recette <%= recipes[1].name %>"></a>
                 <div class="top3-card__img-wrap">
                   <img class="top3-card__img" src="<%= recipes[1].picture %>" alt="<%= recipes[1].name %>" loading="lazy">
                   <div class="top3-card__overlay"></div>
+                  <!-- Overlay hover doré — centré sur l'image -->
+                  <div class="cd-hover-overlay">
+                    <div class="cd-icon-btn">
+                      <div class="cd-icon-btn__wrap">
+                        <span class="cd-icon-btn__ring"></span>
+                        <span class="cd-icon-btn__bg">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                        </span>
+                      </div>
+                      <span class="cd-icon-btn__label">Voir la recette</span>
+                    </div>
+                  </div>
                   <div class="top3-card__medal top3-card__medal--2">2</div>
                   <span class="top3-card__film-badge">🎬 <%= recipes[1].Movie ? recipes[1].Movie.title : 'Film inconnu' %></span>
                 </div>
@@ -385,28 +457,45 @@
                     </div>
                   </div>
                   <% if (recipes[1].description) { %><p class="top3-card__desc"><%= recipes[1].description.slice(0, 80) %>...</p><% } %>
-                  <div class="top3-card__foot">
-                    <% const c1 = recipes[1].contributor;
-                       const c1isStaff = c1 && (c1.role === 'admin' || c1.role === 'superadmin'); %>
-                    <div class="contrib <%= c1isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
-                      <div class="contrib__av"><img src="<%= c1 && c1.picture ? c1.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
-                      <div class="contrib__info">
-                        <span class="contrib__pseudo"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="contrib__pill <%= c1isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c1isStaff ? 'Ciné Délices' : 'Membre' %></span>
-                      </div>
-                    </div>
-                    <a href="/recipes-movie/details/<%= recipes[1].slug || recipes[1].id %>" class="top3-card__btn">Voir</a>
+                </div>
+              <!-- Footer hors du body -->
+              <div class="top3-card__foot">
+                <% const c1 = recipes[1].contributor;
+                   const c1isStaff = c1 && (c1.role === 'admin' || c1.role === 'superadmin'); %>
+                <div class="contrib <%= c1isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                  <div class="contrib__av"><img src="<%= c1 && c1.picture ? c1.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                  <div class="contrib__info">
+                    <span class="contrib__pseudo"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
+                    <span class="contrib__pill <%= c1isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c1isStaff ? 'Ciné Délices' : 'Membre' %></span>
                   </div>
                 </div>
+                <button class="btn-fav" data-entity-id="<%= recipes[1].id %>" data-entity-type="recipe" data-is-favorite="<%= recipes[1].isFavorite || false %>" aria-label="<%= recipes[1].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>" title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipes[1].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>">
+                  <svg class="icon" viewBox="0 0 24 24" fill="<%= recipes[1].isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </button>
               </div>
+            </div>
               <% } %>
 
               <!-- ③ VERTICAL : card #3 — col 3, row 1 -->
               <% if (recipes[2]) { %>
               <div class="top3-card bento__cell cell--vertical">
+                <!-- Stretched link -->
+                <a href="/recipes-movie/details/<%= recipes[2].slug || recipes[2].id %>" class="top3-card__link" aria-label="Voir la recette <%= recipes[2].name %>"></a>
                 <div class="top3-card__img-wrap">
                   <img class="top3-card__img" src="<%= recipes[2].picture %>" alt="<%= recipes[2].name %>" loading="lazy">
                   <div class="top3-card__overlay"></div>
+                  <!-- Overlay hover doré — centré sur l'image -->
+                  <div class="cd-hover-overlay">
+                    <div class="cd-icon-btn">
+                      <div class="cd-icon-btn__wrap">
+                        <span class="cd-icon-btn__ring"></span>
+                        <span class="cd-icon-btn__bg">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                        </span>
+                      </div>
+                      <span class="cd-icon-btn__label">Voir la recette</span>
+                    </div>
+                  </div>
                   <div class="top3-card__medal top3-card__medal--3">3</div>
                   <span class="top3-card__film-badge">🎬 <%= recipes[2].Movie ? recipes[2].Movie.title : 'Film inconnu' %></span>
                 </div>
@@ -427,20 +516,23 @@
                     </div>
                   </div>
                   <% if (recipes[2].description) { %><p class="top3-card__desc"><%= recipes[2].description.slice(0, 80) %>...</p><% } %>
-                  <div class="top3-card__foot">
-                    <% const c2 = recipes[2].contributor;
-                       const c2isStaff = c2 && (c2.role === 'admin' || c2.role === 'superadmin'); %>
-                    <div class="contrib <%= c2isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
-                      <div class="contrib__av"><img src="<%= c2 && c2.picture ? c2.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
-                      <div class="contrib__info">
-                        <span class="contrib__pseudo"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
-                        <span class="contrib__pill <%= c2isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c2isStaff ? 'Ciné Délices' : 'Membre' %></span>
-                      </div>
-                    </div>
-                    <a href="/recipes-movie/details/<%= recipes[2].slug || recipes[2].id %>" class="top3-card__btn">Voir</a>
+                </div>
+              <!-- Footer hors du body -->
+              <div class="top3-card__foot">
+                <% const c2 = recipes[2].contributor;
+                   const c2isStaff = c2 && (c2.role === 'admin' || c2.role === 'superadmin'); %>
+                <div class="contrib <%= c2isStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                  <div class="contrib__av"><img src="<%= c2 && c2.picture ? c2.picture : '/images/image-default-profile.jpg' %>" alt="" loading="lazy"></div>
+                  <div class="contrib__info">
+                    <span class="contrib__pseudo"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
+                    <span class="contrib__pill <%= c2isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c2isStaff ? 'Ciné Délices' : 'Membre' %></span>
                   </div>
                 </div>
+                <button class="btn-fav" data-entity-id="<%= recipes[2].id %>" data-entity-type="recipe" data-is-favorite="<%= recipes[2].isFavorite || false %>" aria-label="<%= recipes[2].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>" title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipes[2].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>">
+                  <svg class="icon" viewBox="0 0 24 24" fill="<%= recipes[2].isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </button>
               </div>
+            </div>
               <% } %>
 
               <!-- ④ CTA DORÉ — col 2-3, row 2 -->

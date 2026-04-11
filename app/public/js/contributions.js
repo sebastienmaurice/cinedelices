@@ -98,13 +98,9 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
   const newList = framesList.cloneNode(true);
   framesList.parentNode.replaceChild(newList, framesList);
 
-  const _userRole = document.body.dataset.userRole || '';
-  const _isStaff  = _userRole === 'admin' || _userRole === 'superadmin';
-
   newList.addEventListener('click', function (e) {
     const row = e.target.closest('.frame-row');
     if (!row) return;
-    if (_isStaff) return; // pas d'équipement de cadre pour admin/superadmin
     if (row.dataset.unlocked !== 'true') {
       window._cdToast('Ce cadre est verrouillé pour votre niveau.', 'error');
       return;

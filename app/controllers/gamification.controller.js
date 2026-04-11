@@ -28,7 +28,7 @@ const gamificationController = {
       const level = computeLevel(row.points);
       const frame = FRAME_UNLOCKS.find((f) => f.code === frameCode);
 
-      if (level < frame.minLvl && req.userRole !== "super_admin") {
+      if (level < frame.minLvl && req.userRole !== "superadmin") {
         return res.status(StatusCodes.FORBIDDEN).json({
           error: `Niveau ${frame.minLvl} requis pour ce cadre (vous êtes niveau ${level}).`,
         });

@@ -1830,6 +1830,7 @@ body.film-page main {
   background: linear-gradient(135deg, var(--bleu-clair) 0%, var(--bleu-intermediaire) 100%);
   z-index: 1;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: border-radius 0.35s ease;
 }
 
 /* Fondu bas de l'image recette */
@@ -1857,11 +1858,11 @@ body.film-page main {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transition: transform 0.5s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .recipe-card:hover .recipe-card__img img {
-  transform: scale(1.07);
+  transform: scale(2);
 }
 
 /* Overlay top : badges gauche + favori droite */
@@ -1919,6 +1920,7 @@ body.film-page main {
     rgba(196, 160, 82, 0.28) 70%,
     transparent 100%
   );
+  overflow: hidden;
 }
 
 /* Body sous image */
@@ -1927,6 +1929,7 @@ body.film-page main {
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow: hidden;
 }
 
 /* Titre — Playfair Display italic */
@@ -2059,27 +2062,33 @@ body.film-page main {
   margin-bottom: 0.75rem;
 }
 
-/* Footer : Auteur + Bouton */
+/* Stretched link — couvre toute la card, z-index sous le footer */
+.recipe-card__link {
+  position: absolute; inset: 0; z-index: 1;
+  border-radius: inherit;
+}
+
+/* Overlay doré + icône — déclenché au hover */
+.recipe-card:hover .cd-hover-overlay { opacity: 1; }
+.recipe-card:hover .cd-icon-btn { transform: translateY(0) scale(1); opacity: 1; }
+.recipe-card:hover .cd-icon-btn__ring { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
+.recipe-card:hover .cd-icon-btn__bg { box-shadow: 0 6px 28px rgba(184,136,42,.65); filter: brightness(1.08); }
+.recipe-card:hover .cd-icon-btn__bg svg { transform: scale(1.15) translateY(-1px); }
+.recipe-card:hover .cd-icon-btn__wrap { animation: cdIconFloat 2.2s ease-in-out infinite; }
+.recipe-card:hover .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite; }
+
+/* Footer : Auteur + Favori — sibling du body, reste visible au hover */
 .recipe-card__foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.55rem 1rem 0.7rem;
   margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative; z-index: 4;
 }
 
-
-/* Bouton Voir — utilise .btn--red de base.css */
-.recipe-card__foot .btn--red {
-  flex-shrink: 0;
-  margin-left: auto;
-  font-size: 0.76rem;
-  padding: 0.52rem 1.1rem;
-}
-
-.recipe-card__foot .btn--red .icon {
-  width: 0.7rem;
-  height: 0.7rem;
-}
+.recipe-card__foot .btn-fav { flex-shrink: 0; }
 
 .recipe-card-rating .star {
   font-size: 1.6rem; /* étoiles plus grandes */
@@ -2214,11 +2223,7 @@ body.film-page main {
     align-items: stretch;
   }
 
-  .recipe-card__foot .btn--red {
-    width: 100%;
-    justify-content: center;
-    margin-left: 0;
-  }
+  .recipe-card__foot { flex-direction: row; }
 }
 
 @media (max-width: 540px) {

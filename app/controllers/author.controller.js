@@ -114,7 +114,7 @@ const authorController = {
         Notice.findAll({ where: { id_user: userId } }),
       ]);
 
-      const [gamif, userBadges] = await Promise.all([
+      const [gamif, rawBadges, approvedMovies] = await Promise.all([
         getUserGamificationData(userId, {
           recipes: allRecipes,
           movies: allMovies,
@@ -122,7 +122,15 @@ const authorController = {
           isSuperAdmin: false,
         }),
         getBadgesForProfile(userId),
+        Movie.findAll({ where: { status: "approved" }, attributes: ["slug"] }),
       ]);
+
+      const approvedSlugs = approvedMovies.map((m) => m.slug).filter(Boolean);
+      const userBadges = rawBadges.filter((b) =>
+        b.unlocked ||
+        b.movie_slug_pattern.startsWith("__") ||
+        approvedSlugs.some((slug) => slug.includes(b.movie_slug_pattern))
+      );
 
       const xpProg = xpProgress(gamif.xp, gamif.level);
       const isOwner = !!(req.userId && parseInt(req.userId, 10) === userId);

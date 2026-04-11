@@ -520,10 +520,10 @@ body.movies-page main {
 
 .fcard__img {
   width: 100%; height: 100%; object-fit: cover; object-position: center top;
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.55s ease;
   filter: saturate(0.82) brightness(0.88);
 }
-.fcard:hover .fcard__img { transform: scale(1.07); filter: saturate(1.18) brightness(1); }
+.fcard:hover .fcard__img { transform: scale(2); filter: saturate(1.18) brightness(1); }
 
 .fcard__overlay {
   position: absolute; inset: 0;
@@ -718,15 +718,13 @@ body.movies-page main {
   .fcard__hover-overlay { display: none; }
 }
 
-/* ── FCARD HOVER OVERLAY (lien "Voir les recettes" au hover) ── */
+/* ── FCARD HOVER OVERLAY (lien "Voir les recettes" — dans le poster) ── */
 .fcard__hover-overlay {
-  position: absolute; inset: 0; z-index: 4;
-  background: rgba(8,16,28,.48);
-  backdrop-filter: blur(2px);
+  position: absolute; inset: 0; z-index: 3;
+  background: linear-gradient(160deg, rgba(8,16,28,.18) 0%, rgba(100,65,8,.30) 50%, rgba(184,136,42,.22) 100%);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; text-decoration: none;
   transition: opacity .3s ease;
-  border-radius: 0; /* clipped by fcard overflow:hidden */
 }
 .fcard:hover .fcard__hover-overlay,
 .fcard__hover-overlay:focus-visible { opacity: 1; outline: none; }

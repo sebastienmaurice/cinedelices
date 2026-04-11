@@ -99,13 +99,14 @@ export async function getBadgesForProfile(userId) {
   );
 
   return all.map((b) => ({
-    id:          b.id,
-    code:        b.code,
-    label:       b.label,
-    film:        b.film,
-    theme:       b.theme,
-    sort_order:  b.sort_order,
-    unlocked:    unlockedMap.has(b.id),
-    unlocked_at: unlockedMap.get(b.id) ?? null,
+    id:                  b.id,
+    code:                b.code,
+    label:               b.label,
+    film:                b.film,
+    theme:               b.theme,
+    sort_order:          b.sort_order,
+    movie_slug_pattern:  b.movie_slug_pattern,
+    unlocked:            unlockedMap.has(b.id),
+    unlocked_at:         unlockedMap.get(b.id) ?? null,
   }));
 }
