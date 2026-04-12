@@ -152,12 +152,21 @@
               <div class="h-stat h-stat--frames">
                 <div class="h-frames-row">
                   <% userFrames.forEach(function(f) { %>
+                  <% if (f.unlocked) { %>
                   <span
                     class="h-frame-pill<%= f.isActive ? ' h-frame-pill--active' : '' %>"
                     title="<%= f.label %>"
                     data-code="<%= f.code %>"
                     <% if (f.thumbUrl) { %>style="background-image:url('<%= f.thumbUrl %>')"<% } %>
                   ><% if (!f.thumbUrl) { %><%= f.icon %><% } %></span>
+                  <% } else { %>
+                  <span
+                    class="h-frame-pill h-frame-pill--locked"
+                    title="<%= f.label %> · Niveau <%= f.minLvl %> requis"
+                    data-code="<%= f.code %>"
+                    <% if (f.thumbUrl) { %>style="background-image:url('<%= f.thumbUrl %>')"<% } %>
+                  ><% if (!f.thumbUrl) { %><%= f.icon %><% } %></span>
+                  <% } %>
                   <% }) %>
                 </div>
                 <span class="h-stat__lbl">Cadres de contribution</span>

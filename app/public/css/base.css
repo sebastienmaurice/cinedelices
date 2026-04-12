@@ -3209,7 +3209,6 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
-  z-index: 1;
   background: linear-gradient(135deg, #415a77, #1b263b);
 }
 .recipe-card__img img {
@@ -3796,7 +3795,7 @@ a:not([class*="btn"]):not(.author):not([class*="author-"]):not(
 }
 
 /* Mobile (touch) : overlay masqué, la card reste cliquable via le stretched link */
-@media (hover: none) { .cd-hover-overlay { display: none; } }
+/* Touch : overlay reste dans le DOM (opacity:0 + pointer-events:none suffisent) */
 
 /* ── Badges Overlay Cards — Moodboard V2.1 ── */
 /* Remplacent les anciens badge--sapphire / badge--red / badge--gold sur les cards */

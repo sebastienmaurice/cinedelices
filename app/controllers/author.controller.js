@@ -125,8 +125,8 @@ const authorController = {
 
       const isAdminAuthor = author.role === "admin" || author.role === "superadmin";
 
-      // Cadres débloqués visibles sur la page auteur (hors "none" sans visuel)
-      const userFrames = gamif.frames.filter((f) => f.unlocked && f.code !== 'none');
+      // Tous les cadres sauf "none" — débloqués et verrouillés affichés sur la page auteur
+      const userFrames = gamif.frames.filter((f) => f.code !== 'none');
 
       return res.render("author-page", {
         author,
