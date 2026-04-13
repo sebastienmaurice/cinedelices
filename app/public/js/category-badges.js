@@ -9,6 +9,21 @@ if (!document.getElementById('track')) return;
 
 const PAD = 14;
 
+function buildGenreMoviesLink(genre) {
+  return `/movies?genre=${encodeURIComponent(genre || "")}`;
+}
+
+function setBadgeAccessibility(badge, { isClone = false } = {}) {
+  if (!badge) return;
+  if (isClone) {
+    badge.setAttribute('aria-hidden', 'true');
+    badge.setAttribute('tabindex', '-1');
+    return;
+  }
+  badge.removeAttribute('aria-hidden');
+  badge.setAttribute('tabindex', '0');
+}
+
 /* ══ CINEMATIC RING — effet sobre au clic ══ */
 const ringCanvas = document.getElementById('burst-canvas');
 if (ringCanvas) {
@@ -86,11 +101,13 @@ document.querySelectorAll('.badge').forEach(b => {
 
 const originals = Array.from(track.children);
 originals.forEach((n, i) => { n.dataset.badgeId = i; });
+originals.forEach(n => setBadgeAccessibility(n));
 originals.forEach(n => {
   const c = n.cloneNode(true);
   c.querySelectorAll('.badge__img').forEach(lazyObserve);
   c.dataset.cloneOf = n.dataset.badgeId;
   const tt = c.querySelector('.tooltip'); if (tt) tt.remove();
+  setBadgeAccessibility(c, { isClone: true });
   track.appendChild(c);
 });
 
@@ -99,10 +116,13 @@ originals.forEach(n => {
 const globalTT = document.getElementById('global-tooltip');
 let openBadge  = null;
 let hideTimer  = null;
+let isTooltipOpen = false;
+let isKeyboardInteracting = false;
 
 function buildTooltipContent(badge) {
   const genre = badge.dataset.genre || '';
   const rgb   = badge.style.getPropertyValue('--glow-rgb') || '196,160,82';
+  const moviesLink = buildGenreMoviesLink(genre);
   let films = [];
   try { films = JSON.parse(badge.dataset.films || '[]'); } catch(e) {}
   globalTT.style.setProperty('--tt-rgb', rgb);
@@ -122,6 +142,35 @@ function buildTooltipContent(badge) {
       </div>
       <div class="tooltip__films">${filmsHtml}</div>
       <p class="tooltip__hint">Cliquer pour explorer →</p>
+    </div>`;
+}
+
+function buildTooltipContent(badge) {
+  const genre = badge.dataset.genre || '';
+  const rgb   = badge.style.getPropertyValue('--glow-rgb') || '196,160,82';
+  const moviesLink = buildGenreMoviesLink(genre);
+  let films = [];
+  try { films = JSON.parse(badge.dataset.films || '[]'); } catch(e) {}
+  globalTT.style.setProperty('--tt-rgb', rgb);
+  globalTT.style.borderColor = `rgba(${rgb},.28)`;
+  const filmsHtml = films.length
+    ? films.map(f => `<div class="tooltip__film">
+        <span class="tooltip__film-title">${f.t}</span>
+        <span class="tooltip__film-note">â˜… ${f.n} recette${f.n > 1 ? 's' : ''}</span>
+      </div>`).join('')
+    : '<p class="tooltip__no-films">Aucun film disponible</p>';
+  globalTT.innerHTML = `
+    <div class="tooltip__band"></div>
+    <div class="tooltip__body">
+      <div class="tooltip__genre">
+        ${genre.toUpperCase()}
+        <span class="tooltip__genre-badge">GENRE</span>
+      </div>
+      <div class="tooltip__films">${filmsHtml}</div>
+      <div class="tooltip__actions">
+        <a class="tooltip__cta" href="${moviesLink}">Voir les films</a>
+      </div>
+      <p class="tooltip__hint">Cliquer pour explorer</p>
     </div>`;
 }
 
@@ -155,24 +204,84 @@ function hideGlobalTooltip() {
   hideTimer = setTimeout(() => { globalTT.style.transform = ''; hideTimer = null; }, 300);
 }
 
+function showGlobalTooltip(badge) {
+  clearTimeout(hideTimer);
+  buildTooltipContent(badge);
+  const rect = badge.getBoundingClientRect();
+  const ttW  = 252;
+  let left = rect.left + rect.width / 2 - ttW / 2;
+  left = Math.max(8, Math.min(left, window.innerWidth - ttW - 8));
+  globalTT.style.transition = 'none';
+  globalTT.style.left      = left + 'px';
+  globalTT.style.top       = (rect.top - 10) + 'px';
+  globalTT.style.transform = 'translateY(-100%) scale(.96)';
+  globalTT.classList.remove('is-open');
+  void globalTT.offsetHeight;
+  globalTT.style.transition = '';
+  globalTT.classList.add('is-open');
+  isTooltipOpen = true;
+  requestAnimationFrame(() => {
+    globalTT.style.transform = 'translateY(calc(-100% - 4px)) scale(1)';
+  });
+}
+
+function hideGlobalTooltip() {
+  globalTT.style.transform = 'translateY(-100%) scale(.96)';
+  globalTT.classList.remove('is-open');
+  isTooltipOpen = false;
+  hideTimer = setTimeout(() => { globalTT.style.transform = ''; hideTimer = null; }, 300);
+}
+
 /* ══ CLICK TOOLTIP + BURST ══ */
+function closeOpenBadge() {
+  if (!openBadge) return;
+  openBadge.classList.remove('tooltip-open');
+  openBadge.setAttribute('aria-expanded', 'false');
+  openBadge = null;
+  hideGlobalTooltip();
+}
+
+function resolveBadgeTarget(badge) {
+  const sourceId = badge.dataset.cloneOf;
+  return sourceId != null
+    ? document.querySelector(`.badge[data-badge-id="${sourceId}"]`) || badge
+    : badge;
+}
+
+function openBadgeDetails(badge) {
+  const target = resolveBadgeTarget(badge);
+  const wasOpen = openBadge === target;
+  closeOpenBadge();
+  if (!wasOpen) {
+    target.classList.add('tooltip-open');
+    target.setAttribute('aria-expanded', 'true');
+    openBadge = target;
+    showGlobalTooltip(badge);
+    triggerRing(badge);
+  }
+}
+
 document.querySelectorAll('.badge').forEach(b => {
+  if (b.dataset.cloneOf != null) return;
+  b.setAttribute('aria-expanded', 'false');
   b.addEventListener('click', e => {
     e.stopPropagation();
-    const sourceId = b.dataset.cloneOf;
-    const target   = sourceId != null ? document.querySelector(`.badge[data-badge-id="${sourceId}"]`) || b : b;
-    const wasOpen  = openBadge === target;
-    if (openBadge) { openBadge.classList.remove('tooltip-open'); openBadge = null; hideGlobalTooltip(); }
-    if (!wasOpen) {
-      target.classList.add('tooltip-open');
-      openBadge = target;
-      showGlobalTooltip(b);
-      triggerRing(b);
-    }
+    openBadgeDetails(b);
+  });
+  b.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    e.stopPropagation();
+    isKeyboardInteracting = true;
+    openBadgeDetails(b);
   });
 });
+globalTT?.addEventListener('click', e => e.stopPropagation());
 document.addEventListener('click', () => {
-  if (openBadge) { openBadge.classList.remove('tooltip-open'); openBadge = null; hideGlobalTooltip(); }
+  closeOpenBadge();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeOpenBadge();
 });
 
 /* ══ COUNTER ANIMATION ══ */
@@ -207,9 +316,10 @@ document.querySelectorAll('.badge:not([data-clone-of])').forEach(b => {
 
 /* ══ CAROUSEL AUTO-SCROLL ══ */
 const outer = document.getElementById('carouselOuter');
-const BASE_SPEED = 0.045, SLOW_SPEED = 0.008;
+const BASE_SPEED = 0.061, SLOW_SPEED = 0.014;
 let txPx = 0, halfW = 0, currentSpeed = BASE_SPEED, targetSpeed = BASE_SPEED;
 let mouseProx = 0, isDragging = false, touchLastX = 0, touchVel = 0;
+let drivePhase = 0;
 
 function measureHalf() {
   const items = track.querySelectorAll('.badge');
@@ -222,6 +332,10 @@ setTimeout(measureHalf, 100);
 
 outer.addEventListener('mouseenter', () => { mouseProx = 1; });
 outer.addEventListener('mouseleave', () => { mouseProx = 0; });
+outer.addEventListener('focusin', () => { isKeyboardInteracting = true; });
+outer.addEventListener('focusout', e => {
+  if (!outer.contains(e.relatedTarget)) isKeyboardInteracting = false;
+});
 outer.addEventListener('touchstart', e => { touchLastX = e.touches[0].clientX; touchVel = 0; isDragging = true; }, { passive: true });
 outer.addEventListener('touchmove', e => {
   if (!isDragging) return;
@@ -443,8 +557,8 @@ if (genresSection) genresSection.appendChild(spotBeam);
 /* ══ SPOTLIGHT CINÉMATOGRAPHIQUE ══ */
 function applySpotlight(ts) {
   const vCX  = window.innerWidth / 2;
-  const R    = 340;
-  const LERP = 0.062;
+  const R    = 315;
+  const LERP = 0.072;
 
   let beamX        = vCX;
   let maxSpot      = 0;
@@ -457,6 +571,7 @@ function applySpotlight(ts) {
     if (!rect.width) return;
     const cx   = rect.left + rect.width / 2;
     const dist = Math.abs(cx - vCX);
+    const signedDist = cx - vCX;
 
     const raw    = Math.max(0, 1 - dist / R);
     const target = raw * raw * raw;
@@ -473,14 +588,19 @@ function applySpotlight(ts) {
     }
 
     badge.style.setProperty('--spot', sp.toFixed(4));
-    badge.style.setProperty('--tx',   (-sp * 8).toFixed(2) + 'px');
-    badge.style.setProperty('--ts',   (1 + sp * 0.052).toFixed(4));
+    badge.style.setProperty('--tx',   (-sp * 12).toFixed(2) + 'px');
+    badge.style.setProperty('--ts',   (1 + sp * 0.078).toFixed(4));
+    const approach = signedDist > 0 ? Math.max(0, 1 - signedDist / (R * 0.78)) : 0;
+    const hold = Math.pow(approach, 2.2) * (1 - sp);
+    badge.style.setProperty('--pre-tx', (hold * 5.5).toFixed(2) + 'px');
+    badge.style.setProperty('--pre-ts', (1 - hold * 0.026).toFixed(4));
 
-    badge.style.setProperty('--img-sat', (sp * 1.55).toFixed(3));
-    badge.style.setProperty('--img-bri', (0.20 + sp * 0.95).toFixed(3));
-    badge.style.setProperty('--img-con', (1.14 - sp * 0.06).toFixed(3));
-    badge.style.setProperty('--img-sep', (0.50 * (1 - sp)).toFixed(3));
-    badge.style.setProperty('--img-hue', (215 * (1 - sp)).toFixed(1) + 'deg');
+    badge.style.setProperty('--img-sat', (0.18 + sp * 1.74).toFixed(3));
+    badge.style.setProperty('--img-bri', (0.34 + sp * 0.94).toFixed(3));
+    badge.style.setProperty('--img-con', (1.08 + sp * 0.2).toFixed(3));
+    badge.style.setProperty('--img-sep', (0.22 * (1 - sp)).toFixed(3));
+    badge.style.setProperty('--img-hue', (125 * (1 - sp)).toFixed(1) + 'deg');
+    badge.classList.toggle('is-dominant', sp > 0.9);
 
     /* Compteur animé au spotlight (guard séparé du hover) */
     if (sp > 0.72 && !badge.dataset.cloneOf) {
@@ -490,7 +610,7 @@ function applySpotlight(ts) {
   });
 
   /* ── Section color wash — plafonné à 0.04 max ── */
-  washAlpha += (Math.min(maxSpot * 0.065, 0.040) - washAlpha) * 0.014;
+  washAlpha += (Math.min(maxSpot * 0.028, 0.014) - washAlpha) * 0.016;
   genresSection.style.setProperty('--wash-rgb',   beamRGB);
   genresSection.style.setProperty('--wash-alpha', washAlpha.toFixed(4));
 
@@ -516,7 +636,7 @@ function applySpotlight(ts) {
     const badgeRect = dominantBadge.getBoundingClientRect();
     nowShowing.style.left    = (beamX - secRect.left) + 'px';
     nowShowing.style.top     = (badgeRect.top - secRect.top - 22) + 'px';
-    nowShowing.style.opacity = Math.min(1, (maxSpot - 0.55) * 2.8).toFixed(3);
+    nowShowing.style.opacity = Math.min(1, (maxSpot - 0.52) * 3.1).toFixed(3);
   } else {
     nowShowing.style.opacity = '0';
   }
@@ -532,9 +652,9 @@ function applySpotlight(ts) {
   if (spotBeam && genresSection) {
     const secRect = genresSection.getBoundingClientRect();
     spotBeam.style.left    = (beamX - secRect.left) + 'px';
-    spotBeam.style.opacity = (maxSpot * 0.92).toFixed(3);
+    spotBeam.style.opacity = Math.min(maxSpot * 0.34, 0.16).toFixed(3);
     spotBeam.style.setProperty('--beam-rgb',  beamRGB);
-    spotBeam.style.setProperty('--beam-dust', (maxSpot * 0.88).toFixed(3));
+    spotBeam.style.setProperty('--beam-dust', Math.min(maxSpot * 0.12, 0.05).toFixed(3));
   }
 }
 
@@ -546,9 +666,16 @@ function mainRaf(ts) {
   lastRafTs = ts;
 
   /* Auto-pause spotlight : ralentit quand un badge est plein centre */
-  const pauseSpeed = spotPauseActive ? 0.004 : (mouseProx ? SLOW_SPEED : BASE_SPEED);
+  const shouldPauseForInteraction = isTooltipOpen || isKeyboardInteracting;
+  drivePhase += dt * 0.0013;
+  const cruiseSpeed = mouseProx
+    ? SLOW_SPEED
+    : BASE_SPEED * (1 + 0.08 * Math.sin(drivePhase * 0.85) + 0.025 * Math.sin(drivePhase * 1.9));
+  const pauseSpeed = shouldPauseForInteraction
+    ? 0
+    : (spotPauseActive ? 0.006 : cruiseSpeed);
   targetSpeed = pauseSpeed;
-  currentSpeed += (targetSpeed - currentSpeed) * .06;
+  currentSpeed += (targetSpeed - currentSpeed) * .085;
 
   if (!isDragging) {
     if (Math.abs(touchVel) > .1) { txPx -= touchVel * .85; touchVel *= .88; }

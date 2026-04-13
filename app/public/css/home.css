@@ -787,43 +787,45 @@ main {
   /* Valeurs initiales */
   --spot: 0;
   --tx: 0px;
+  --pre-tx: 0px;
   --hover-tx: 0px;
   --ts: 1;
+  --pre-ts: 1;
   --hover-ts: 1;
   --glow-x: 50%;
   --glow-y: 50%;
   --glow-intensity: 0;
 
   /* combine les deux sources de déplacement vertical */
-  transform: translateY(calc(var(--tx) + var(--hover-tx)))
-    scale(calc(var(--ts) * var(--hover-ts)));
+  transform: translateY(calc(var(--tx) + var(--pre-tx) + var(--hover-tx)))
+    scale(calc(var(--ts) * var(--pre-ts) * var(--hover-ts)));
 
-  /* Les badges loin du spotlight sont semi-transparents */
-  opacity: calc(0.52 + var(--spot) * 0.48);
+  /* Les badges restent opaques : on évite de voir le starfield au travers */
+  opacity: 1;
 
   background: linear-gradient(
     135deg,
-    rgba(22, 36, 58, 0.98) 0%,
-    rgba(10, 20, 36, 1) 100%
+    rgba(calc(28 + var(--spot) * 16), calc(42 + var(--spot) * 14), calc(64 + var(--spot) * 14), 0.985) 0%,
+    rgba(14, 26, 44, 1) 54%,
+    rgba(11, 22, 38, 1) 100%
   );
 
   /* Bordure dont l'intensité grandit avec le spotlight */
   border: 1px solid rgba(var(--glow-rgb), calc(0.1 + var(--spot) * 0.48));
 
   box-shadow:
-    0 calc(6px + var(--spot) * 18px) calc(22px + var(--spot) * 32px)
-      rgba(0, 0, 0, 0.65),
+    0 calc(8px + var(--spot) * 18px) calc(24px + var(--spot) * 30px)
+      rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, calc(0.05 + var(--spot) * 0.09)),
     inset 0 -1px 0 rgba(0, 0, 0, 0.3),
-    0 0 calc(12px + var(--spot) * 52px)
-      rgba(var(--glow-rgb), calc(var(--spot) * 0.30));
+    0 0 calc(10px + var(--spot) * 42px)
+      rgba(var(--glow-rgb), calc(0.08 + var(--spot) * 0.22));
 
   /* Transitions : les variables hover sont animées via @property,
      transform n'est PAS transitionné (piloté par JS chaque frame) */
   transition:
     --hover-tx 0.55s cubic-bezier(0.22, 1, 0.36, 1),
     --hover-ts 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.7s ease,
     border-color 0.7s ease,
     background 0.7s ease;
@@ -834,44 +836,51 @@ main {
 }
 
 .carousel-outer .badge:hover {
-  --hover-tx: -7px; /* Monte de 7px au hover */
-  --hover-ts: 1.04; /* Grossit de 4% au hover */
-  opacity: 1;
-  border-color: rgba(var(--glow-rgb), 0.75);
+  --hover-tx: -9px;
+  --hover-ts: 1.055;
+  border-color: rgba(var(--glow-rgb), 0.82);
   background: linear-gradient(
     135deg,
-    rgba(var(--glow-rgb), 0.22) 0%,
-    rgba(10, 20, 36, 0.97) 100%
+    rgba(var(--glow-rgb), 0.18) 0%,
+    rgba(18, 32, 52, 0.985) 52%,
+    rgba(12, 24, 40, 1) 100%
   );
   box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.85),
-    0 0 65px rgba(var(--glow-rgb), 0.48),
-    0 0 130px rgba(var(--glow-rgb), 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    0 26px 64px rgba(0, 0, 0, 0.84),
+    0 0 54px rgba(var(--glow-rgb), 0.38),
+    0 0 110px rgba(var(--glow-rgb), 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.carousel-outer .badge.tooltip-open {
-  opacity: 1;
-}
 .carousel-outer .badge:hover,
 .carousel-outer .badge.tooltip-open {
   z-index: 25;
 }
 
+.carousel-outer .badge.is-dominant {
+  z-index: 22;
+  border-color: rgba(var(--glow-rgb), 0.78);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.9),
+    0 0 72px rgba(var(--glow-rgb), 0.34),
+    0 0 160px rgba(var(--glow-rgb), 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.carousel-outer .badge.is-dominant::after {
+  opacity: 1;
+  width: 74px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--glow-rgb), 0.92) 50%,
+    transparent
+  );
+}
+
 /* Glow radial interne qui suit la tête de l'animation */
 .carousel-outer .badge::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  background: radial-gradient(
-    ellipse 110px 85px at var(--glow-x) var(--glow-y),
-    rgba(var(--glow-rgb), calc(var(--glow-intensity) * 0.28)) 0%,
-    rgba(var(--glow-rgb), calc(var(--glow-intensity) * 0.1)) 40%,
-    transparent 75%
-  );
-  pointer-events: none;
-  z-index: 3;
+  content: none;
 }
 
 /* Reflet spéculaire en haut du badge */
@@ -1025,9 +1034,14 @@ main {
   filter: saturate(var(--img-sat, 0)) brightness(var(--img-bri, 0.2))
     contrast(var(--img-con, 1.14)) sepia(var(--img-sep, 0.5))
     hue-rotate(var(--img-hue, 215deg));
+  transform: scale(calc(1 + var(--spot, 0) * 0.05));
   transition:
     filter 0.9s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carousel-outer .badge.is-dominant .badge__img {
+  filter: saturate(2.04) brightness(1.4) contrast(1.34);
 }
 .carousel-outer .badge:hover .badge__img {
   filter: saturate(1.45) brightness(1.08) contrast(1.12);
@@ -1103,12 +1117,13 @@ main {
 .badge__category {
   font-family: var(--f-display, "Bebas Neue", sans-serif);
   font-size: 1.65rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   line-height: 1;
   color: var(--argent, #e8e8e8);
-  opacity: calc(0.78 + var(--spot) * 0.22);
-  text-shadow: 0 0 calc(var(--spot) * 18px)
-    rgba(var(--glow-rgb), calc(var(--spot) * 0.6));
+  opacity: calc(0.86 + var(--spot) * 0.14);
+  text-shadow:
+    0 0 calc(var(--spot) * 10px) rgba(var(--glow-rgb), calc(var(--spot) * 0.28)),
+    0 2px 18px rgba(0, 0, 0, 0.34);
   transition:
     color 0.55s ease,
     text-shadow 0.55s ease,
@@ -1156,7 +1171,8 @@ main {
   font-size: 1.25rem;
   line-height: 1;
   color: var(--argent, #e8e8e8);
-  opacity: 0.6;
+  opacity: calc(0.72 + var(--spot) * 0.22);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
   transition:
     color 0.55s ease,
     opacity 0.55s ease;
@@ -1273,7 +1289,7 @@ main {
 /* ═══ BADGE — animation entrée + état sélectionné + frame-num ═══ */
 @keyframes badgeIn {
   from { opacity: 0; transform: translateY(22px) scale(0.92); }
-  to   { opacity: calc(0.52 + var(--spot, 0) * 0.48); transform: translateY(calc(var(--tx, 0px) + var(--hover-tx, 0px))) scale(calc(var(--ts, 1) * var(--hover-ts, 1))); }
+  to   { opacity: 1; transform: translateY(calc(var(--tx, 0px) + var(--pre-tx, 0px) + var(--hover-tx, 0px))) scale(calc(var(--ts, 1) * var(--pre-ts, 1) * var(--hover-ts, 1))); }
 }
 @keyframes filmCounterFlip {
   0%   { transform: translateY(0) rotateX(0); opacity: 1; }
@@ -1434,6 +1450,56 @@ main {
   color: rgba(var(--tt-rgb), 1);
   opacity: 0.9;
 }
+#global-tooltip .tooltip__actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 0.16s ease 0.24s,
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.24s;
+}
+#global-tooltip.is-open .tooltip__actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+#global-tooltip .tooltip__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 132px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--tt-rgb), 0.34);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tt-rgb), 0.22) 0%,
+    rgba(10, 18, 34, 0.94) 100%
+  );
+  color: rgba(255, 248, 225, 0.96);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease;
+}
+#global-tooltip .tooltip__cta:hover,
+#global-tooltip .tooltip__cta:focus-visible {
+  border-color: rgba(var(--tt-rgb), 0.62);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tt-rgb), 0.34) 0%,
+    rgba(10, 18, 34, 0.98) 100%
+  );
+  color: #fff;
+  transform: translateY(-1px);
+}
 #global-tooltip .tooltip__hint {
   margin-top: 10px;
   font-size: 0.56rem;
@@ -1479,9 +1545,10 @@ main {
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 58% 88% at 50% 50%,
-    rgba(var(--wash-rgb), var(--wash-alpha)) 0%,
-    transparent 68%
+    ellipse 42% 60% at 50% 52%,
+    rgba(var(--wash-rgb), calc(var(--wash-alpha) * 0.32)) 0%,
+    rgba(var(--wash-rgb), calc(var(--wash-alpha) * 0.08)) 24%,
+    transparent 48%
   );
   transition: background 2.8s ease;
 }
@@ -1600,7 +1667,7 @@ main {
 
 /* Faisceau de projecteur cinéma */
 .spotlight-beam {
-  display: none;
+  display: none !important;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1614,10 +1681,10 @@ main {
     opacity 0.55s ease;
   background:
     radial-gradient(
-      ellipse 52% 55% at 50% 55%,
-      rgba(var(--beam-rgb, 196, 160, 82), 0.13) 0%,
-      rgba(var(--beam-rgb, 196, 160, 82), 0.055) 42%,
-      transparent 70%
+      ellipse 28% 28% at 50% 56%,
+      rgba(var(--beam-rgb, 196, 160, 82), 0.045) 0%,
+      rgba(var(--beam-rgb, 196, 160, 82), 0.012) 22%,
+      transparent 40%
     );
 }
 /* Particules de poussière dans le faisceau */
@@ -1651,8 +1718,9 @@ main {
       rgba(255, 255, 255, 0.1) 0%,
       transparent 100%
     );
-  opacity: var(--beam-dust, 0);
+  opacity: calc(var(--beam-dust, 0) * 0.28);
   transition: opacity 0.8s ease;
+  mix-blend-mode: normal;
 }
 .spotlight-beam::after {
   display: none;
@@ -1935,30 +2003,50 @@ main {
 
 .genres-see-all {
   font-family: var(--f-title);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(196, 160, 82, 0.55);
+  color: rgba(196, 160, 82, 0.62);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: color 0.25s;
+  transition:
+    color 0.25s,
+    transform 0.25s,
+    opacity 0.25s;
   white-space: nowrap;
-  padding-bottom: 4px;
+  padding: 2px 0 4px;
   position: relative;
   z-index: 41;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.92;
 }
-.genres-see-all:hover {
-  color: var(--dore-clair);
+a.genres-see-all:link,
+a.genres-see-all:visited,
+a.genres-see-all:hover,
+a.genres-see-all:focus-visible,
+a.genres-see-all:active {
+  color: rgba(214, 181, 96, 0.82);
+  text-decoration: none;
 }
-.genres-see-all::after {
+a.genres-see-all:hover,
+a.genres-see-all:focus-visible {
+  transform: translateY(-1px);
+  opacity: 1;
+}
+a.genres-see-all::after {
   content: "\2192";
   transition: transform 0.25s;
+  opacity: 0.72;
 }
-.genres-see-all:hover::after {
+a.genres-see-all:hover::after,
+a.genres-see-all:focus-visible::after {
   transform: translateX(4px);
+  opacity: 1;
 }
 
 /* ======================================================
