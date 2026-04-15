@@ -34,38 +34,9 @@ body.all-recipes-page main {
 .ar-search-info a:hover { color: var(--or-titre); }
 
 /* ══════════════════════════════════════════
-   TOOLBAR — sélecteur de tri
+   TOOLBAR — tri supprimé : ar-sort-select
+   → remplacé par .dropdown + .dd-filter-wrap (base.css)
 ══════════════════════════════════════════ */
-.ar-sort-select {
-  height: 36px;
-  padding: 0 32px 0 12px;
-  background: rgba(8, 16, 26, 0.7) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c4a052' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
-  border: 1px solid rgba(196, 160, 82, 0.25);
-  border-radius: 8px;
-  color: rgba(196, 160, 82, 0.85);
-  font-family: var(--f-title);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  transition: border-color 0.2s, background-color 0.2s;
-}
-.ar-sort-select:hover,
-.ar-sort-select:focus {
-  border-color: rgba(196, 160, 82, 0.55);
-  background-color: rgba(196, 160, 82, 0.06);
-}
-.ar-sort-select option {
-  background: #0d1b2e;
-  color: #e8e8e8;
-  font-size: 0.8rem;
-  text-transform: none;
-  letter-spacing: 0;
-}
 
 /* ══════════════════════════════════════════
    SECTION + GRILLE
@@ -77,20 +48,19 @@ body.all-recipes-page main {
 
 /* Wrapper — conteneur pleine largeur */
 .ar-grid-wrap {
-  width: 100%;
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto;
   box-sizing: border-box;
   padding: 8px 0 80px; /* padding-top : espace pour translateY(-6px) hover sans clipping */
   overflow-x: clip;    /* clip ne crée pas de BFC → overflow-y reste visible */
 }
 
-/* Grille 4 colonnes : max-width directement sur la grille */
+/* Grille 4 colonnes — largeur contrôlée par .ar-grid-wrap */
 /* (1440 − 3×16) / 4 = 348px par carte */
 .all-recipes-page .recipes-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-  max-width: 1440px;
-  margin: 0 auto;
 }
 
 /* ══════════════════════════════════════════
@@ -295,21 +265,19 @@ body.all-recipes-page main {
 }
 
 /* Masquage "voir plus" — nouvelle classe */
-.recipes-grid.only__display__9__recipes .ar-recipe-card:nth-child(n + 10) {
+.recipes-grid.only__display__9__recipes .recipe-card:nth-child(n + 10) {
   display: none;
 }
 
-/* fcard--cta hors grille — même max-width que la grille */
+/* fcard--cta hors grille — largeur contrôlée par .ar-grid-wrap */
 .all-recipes-page .fcard.fcard--cta {
   grid-column: unset;
-  max-width: 1440px;
-  margin: 56px auto 80px;
+  margin: 56px 0 80px;
 }
 
-/* Bouton "Voir plus" — centré dans la même largeur */
+/* Bouton "Voir plus" — centré dans .ar-grid-wrap */
 .all-recipes-page .center-button {
-  max-width: 1440px;
-  margin: 0 auto;
+  text-align: center;
 }
 
 /* Message vide */

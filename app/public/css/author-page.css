@@ -180,9 +180,9 @@ body.author-page main {
    SECTION RECETTES
 ───────────────────────────────────────────────────── */
 .author-recipes-section {
-  max-width: var(--max-w, 1440px);
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 0 auto;
-  padding: 40px var(--page-px, 64px) 0;
+  padding: 40px 0 0;
 }
 
 /* Grille 4 colonnes — surcharge recipes-movie.css (3 col) */
@@ -190,8 +190,6 @@ body.author-page main {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-  max-width: 1440px;
-  margin: 0 auto;
 }
 
 /* ─── Toolbar (style films-toolbar de /movies) ─── */
@@ -203,8 +201,11 @@ body.author-page main {
   padding-bottom: 0;
   margin-bottom: 0;
 }
-.author-films-toolbar .tb-right:empty {
-  display: none;
+.author-films-toolbar .tb-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .author-films-toolbar .tb-label {
   font-size: 0.62rem;
@@ -240,18 +241,7 @@ body.author-page main {
   color: rgba(196, 160, 82, 0.38);
 }
 
-/* ─── Barre de filtres (selects) ─── */
-.author-filters {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 12px 0 20px;
-  border-top: 1px solid rgba(65, 90, 119, 0.15);
-  margin-top: 10px;
-}
-
-/* Icône + label "Filtrer" */
+/* Icône + label "Filtrer" (dans tb-right) */
 .af-label {
   display: inline-flex;
   align-items: center;
@@ -266,70 +256,6 @@ body.author-page main {
 }
 .af-label svg {
   color: rgba(196, 160, 82, 0.45);
-}
-
-/* Wrapper select */
-.af-select-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.af-select-label {
-  font-family: var(--font-title, "Cinzel", serif);
-  font-size: 0.42rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(196, 160, 82, 0.38);
-  padding-left: 2px;
-}
-
-.af-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background: rgba(10, 18, 32, 0.7);
-  border: 1px solid rgba(196, 160, 82, 0.22);
-  border-radius: 6px;
-  color: rgba(232, 232, 232, 0.82);
-  font-family: var(--font-title, "Cinzel", serif);
-  font-size: 0.5rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 7px 34px 7px 12px;
-  cursor: pointer;
-  min-width: 180px;
-  max-width: 260px;
-  outline: none;
-  transition: border-color 0.2s, background 0.2s;
-}
-.af-select:hover,
-.af-select:focus {
-  border-color: rgba(196, 160, 82, 0.55);
-  background: rgba(10, 18, 32, 0.9);
-}
-.af-select option {
-  background: #0e1c2e;
-  color: rgba(232, 232, 232, 0.85);
-}
-
-/* Chevron custom */
-.af-chevron {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  pointer-events: none;
-  color: rgba(196, 160, 82, 0.5);
-}
-
-/* Compteur résultats */
-.af-count {
-  margin-left: auto;
-  font-family: var(--font-display, "Bebas Neue", cursive);
-  font-size: 1rem;
-  letter-spacing: 0.1em;
-  color: rgba(196, 160, 82, 0.38);
 }
 
 /* Message vide */
@@ -486,12 +412,7 @@ body.author-page main {
   .author-page .recipes-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 1100px) {
-  .author-recipes-section {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-}
+/* @media (max-width: 1100px) — supprimé : gutters gérés par width: min() dans .author-recipes-section */
 
 @media (max-width: 860px) {
   .author-page .recipes-grid { grid-template-columns: repeat(2, 1fr); }
@@ -499,8 +420,6 @@ body.author-page main {
 
 @media (max-width: 768px) {
   .author-recipes-section {
-    padding-left: 18px;
-    padding-right: 18px;
     padding-top: 24px;
   }
 
@@ -516,3 +435,12 @@ body.author-page main {
 @media (max-width: 540px) {
   .author-page .recipes-grid { grid-template-columns: 1fr; }
 }
+
+/* ar-grid-wrap imbriqué dans author-recipes-section — annule le double-gutter de all-recipes.css */
+.author-page .ar-grid-wrap {
+  width: 100%;
+  margin: 0;
+}
+
+/* Recipe cards sur la page auteur — variante centralisée dans base.css */
+

@@ -394,6 +394,8 @@
   --max-width: 1440px; /* legacy — gardé pour compatibilité */
   --max-w: 1440px; /* largeur max conteneur (choix projet — moodboard: 1408px) */
   --page-px: 64px; /* moodboard V3 — padding horizontal pages */
+  --cd-max: 1440px; /* container max-width — système global (source unique de vérité) */
+  --cd-px: 2rem;    /* container gutter — padding horizontal responsive */
   --nav-h: 70px; /* 68px + 2px border-top accent doré */
   --card-r: 16px; /* moodboard V3 — border-radius cards */
 
@@ -1067,21 +1069,13 @@ a:not([class]):hover {
  * Dropdown pour le menu utilisateur connecté
  * Contient : Mon compte, Se déconnecter
  */
-.user-dropdown {
-  position: relative;
-  display: inline-block;
-}
+/* ══════════════════════════════════════════════════════
+   SYSTÈME DROPDOWN v4 — Moodboard Ciné Délices
+   Utilisé : header nav, filtres, tri
+══════════════════════════════════════════════════════ */
 
-.user-dropdown__trigger {
-  /* Hérite des styles de .header-icon - pas de reset ici */
-  font: inherit;
-}
-
-.user-dropdown__menu {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  min-width: 220px;
+/* ── Panel dropdown ── */
+.dropdown {
   background: rgba(10, 18, 30, 0.96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -1089,132 +1083,195 @@ a:not([class]):hover {
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
   padding: 8px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.25s ease;
-  z-index: 1000;
-  overflow: hidden;
+  min-width: 220px;
 }
 
-/* Liseré doré en haut du menu */
-.user-dropdown__menu::before {
-  content: "";
-  display: block;
+/* Liseré doré en haut du panel */
+.dropdown__header {
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(196, 160, 82, 0.35),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(196, 160, 82, 0.35), transparent);
   margin: 0 8px 6px;
 }
 
-.user-dropdown.is-open .user-dropdown__menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.user-dropdown__item {
+/* Item de navigation */
+.dropdown__item {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
   border-radius: 7px;
-  color: rgba(232, 232, 232, 0.62);
   font-size: 0.72rem;
+  color: rgba(232, 232, 232, 0.62);
   text-decoration: none;
-  transition: all 0.18s ease;
-  background: none;
-  border: none;
+  transition: all 0.18s;
   cursor: pointer;
-  width: 100%;
-  font-family: inherit;
-  /* Reset pour les boutons */
+  /* reset bouton */
   background: transparent;
   border: none;
   width: 100%;
-  cursor: pointer;
   font-family: inherit;
   text-align: left;
 }
+.dropdown__item:hover { background: rgba(196, 160, 82, 0.08); color: var(--or-titre); }
+.dropdown__item--active { background: rgba(196, 160, 82, 0.06); color: var(--or-titre); font-weight: 700; }
+.dropdown__item--danger { color: rgba(232, 100, 80, 0.62); }
+.dropdown__item--danger:hover { background: rgba(194, 48, 24, 0.12); color: #e84020; }
 
-.user-dropdown__item .lucide-icon {
-  width: 1rem;
-  height: 1rem;
-  color: var(--or-titre);
-  opacity: 0.7;
-}
-
-.user-dropdown__item:hover {
+/* Pastille icône */
+.dropdown__icon {
+  width: 22px; height: 22px;
+  border-radius: 6px;
   background: rgba(196, 160, 82, 0.08);
-  color: var(--or-titre);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
+.dropdown__icon svg { width: 0.78rem; height: 0.78rem; }
 
-.user-dropdown__item:hover .lucide-icon {
-  opacity: 1;
-}
-
-/* Danger — déconnexion */
-.user-dropdown__item--logout {
-  color: rgba(232, 100, 80, 0.62);
-}
-
-.user-dropdown__item--logout .lucide-icon {
-  color: rgba(232, 100, 80, 0.62);
-}
-
-.user-dropdown__item--logout:hover {
-  background: rgba(194, 48, 24, 0.12);
-  color: #e84020;
-}
-
-.user-dropdown__item--logout:hover .lucide-icon {
-  color: #e84020;
-  opacity: 1;
-}
-
-/* Inscription dans dropdown */
-.user-dropdown__item--register:hover {
-  background: rgba(194, 48, 24, 0.12);
-  color: #e84020;
-}
-
-.user-dropdown__item--register:hover .lucide-icon {
-  color: #e84020;
-  opacity: 1;
-}
-
-/* Séparateur — classe utilitaire */
-.nav-dd-sep {
+/* Séparateur */
+.dropdown__sep {
   height: 1px;
   background: rgba(255, 255, 255, 0.06);
   margin: 5px 8px;
 }
 
-/* Animation de l'icône trigger quand ouvert (style rouge par défaut) */
-.user-dropdown.is-open .user-dropdown__trigger:not(:has(.nav-badge-static)) {
-  background: var(--rouge-projecteur);
-  border-color: var(--rouge-projecteur);
-  color: white;
-  box-shadow: 0 0 15px rgba(215, 38, 56, 0.5);
+/* ── Variante profil (utilisateur connecté) ── */
+.dropdown--profil { min-width: 260px; }
+.dropdown__user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px 12px;
+}
+.dropdown__av {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(196, 160, 82, 0.12);
+  border: 1.5px solid rgba(196, 160, 82, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+.dropdown__av img { width: 100%; height: 100%; object-fit: cover; }
+.dropdown__uname {
+  font-family: var(--f-title); font-size: 0.64rem; font-weight: 600;
+  color: var(--argent-ecran);
+}
+.dropdown__ulvl {
+  font-size: 0.46rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: rgba(196, 160, 82, 0.55); margin-top: 2px;
 }
 
-/* Quand le badge gamification est affiché : aucun effet à l'ouverture */
+/* ── Variante filtres films (thème violet) ── */
+.dropdown--films { border-color: rgba(107, 79, 160, 0.35); }
+.dropdown--films .dropdown__header { background: linear-gradient(90deg, transparent, rgba(107, 79, 160, 0.45), transparent); }
+.dropdown--films .dropdown__cat { padding: 6px 12px; font-family: var(--f-title); font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(155, 126, 208, 0.55); }
+.dropdown--films .dropdown__check:hover { background: rgba(107, 79, 160, 0.08); color: rgba(185, 160, 232, 0.95); }
+.dropdown--films .dropdown__check.checked .dropdown__check-box { background: rgba(107, 79, 160, 0.88); border-color: rgba(107, 79, 160, 0.88); color: #fff; }
+.dropdown--films .dropdown__check.checked { color: rgba(185, 160, 232, 0.95); }
+
+/* ── Variante filtres recettes (thème caramel) ── */
+.dropdown--recettes { border-color: rgba(201, 123, 58, 0.35); }
+.dropdown--recettes .dropdown__header { background: linear-gradient(90deg, transparent, rgba(201, 123, 58, 0.45), transparent); }
+.dropdown--recettes .dropdown__cat { padding: 6px 12px; font-family: var(--f-title); font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(201, 123, 58, 0.58); }
+.dropdown--recettes .dropdown__check:hover { background: rgba(201, 123, 58, 0.08); color: rgba(235, 165, 90, 0.95); }
+.dropdown--recettes .dropdown__check.checked .dropdown__check-box { background: var(--caramel); border-color: var(--caramel); color: #fff; }
+.dropdown--recettes .dropdown__check.checked { color: rgba(235, 165, 90, 0.95); }
+
+/* ── Checkbox items (filtres) ── */
+.dropdown--filtres { min-width: 200px; }
+.dropdown__check {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 12px; border-radius: 7px;
+  font-size: 0.68rem; color: rgba(232, 232, 232, 0.55);
+  cursor: pointer; transition: all 0.18s;
+  /* reset bouton */
+  background: transparent; border: none;
+  width: 100%; font-family: inherit; text-align: left;
+}
+.dropdown__check:hover { background: rgba(196, 160, 82, 0.06); color: rgba(232, 232, 232, 0.85); }
+.dropdown__check-box {
+  width: 14px; height: 14px;
+  border-radius: 3px; border: 1.5px solid rgba(196, 160, 82, 0.30);
+  background: transparent; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.52rem;
+}
+.dropdown__check.checked .dropdown__check-box { background: var(--or-titre); border-color: var(--or-titre); color: var(--bleu-nuit); }
+.dropdown__cat { padding: 6px 12px; font-family: var(--f-title); font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(196, 160, 82, 0.45); }
+
+/* ── Trigger bouton déclencheur ── */
+.dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 14px; height: 38px; border-radius: 10px;
+  font-family: var(--f-title); font-size: 0.58rem; font-weight: 600;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  border: 1.5px solid rgba(196, 160, 82, 0.32);
+  background: rgba(10, 18, 30, 0.72);
+  color: rgba(196, 160, 82, 0.75);
+  cursor: pointer; transition: all 0.22s;
+  backdrop-filter: blur(10px);
+}
+.dropdown-trigger:hover { border-color: rgba(196, 160, 82, 0.65); color: var(--or-titre); background: rgba(196, 160, 82, 0.06); }
+.dropdown-trigger svg { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+.dropdown-trigger .dt-arrow { font-size: 0.5rem; opacity: 0.55; transition: transform 0.22s; line-height: 1; }
+.dropdown-trigger.is-open .dt-arrow { transform: rotate(180deg); }
+.dropdown-trigger .dt-badge { background: var(--or-titre); color: var(--bleu-nuit); font-size: 0.44rem; padding: 1px 5px; border-radius: 3px; font-weight: 800; }
+
+/* ── Wrapper positionnel (contexte de positionnement du panel) ── */
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.user-dropdown__trigger { font: inherit; }
+
+/* Panel positionné dans le contexte nav */
+.user-dropdown .dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
+  z-index: 1000;
+}
+.user-dropdown.is-open .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Trigger ouvert — badge gamification : pas d'effet */
 .user-dropdown.is-open .user-dropdown__trigger:has(.nav-badge-static) {
   background: transparent;
   border: none;
   box-shadow: none;
 }
 
-/* Variante dorée (legacy - utilisée uniquement si header-icon--login appliqué) */
-.user-dropdown.is-open .user-dropdown__trigger.header-icon--login {
-  background: var(--dore-popcorn);
-  border-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  box-shadow: 0 0 15px rgba(198, 166, 100, 0.5);
+/* Séparateur nav legacy */
+.nav-dd-sep {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 5px 8px;
+}
+
+/* ── Wrapper positionnel pour dropdowns inline (filtres, tri) ── */
+.dd-filter-wrap {
+  position: relative;
+  display: inline-block;
+}
+.dd-filter-wrap .dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+}
+.dd-filter-wrap.is-open .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /**
@@ -3152,162 +3209,287 @@ a:not([class]):hover {
   color: rgba(196, 160, 82, 0.52);
 }
 
-/* ── Recipe Card ── */
+/* ══════════════════════════════════════════════════════════
+   RECIPE CARD — Composant centralisé (source unique)
+   Utilisé sur : /recipes-movie/:slug  et  /auteur/:id
+   Variantes contextuelles en bas de ce bloc.
+══════════════════════════════════════════════════════════ */
+
+/* ── Carte de base ── */
 .recipe-card {
   position: relative;
-  width: 380px;
-  background: linear-gradient(150deg, #0f1e30 0%, #142234 100%);
+  background: linear-gradient(150deg, var(--surface-card) 0%, var(--bleu-nuit) 100%);
   border: 1.5px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--card-r);
-  padding: 1rem;
+  border-radius: 12px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  box-shadow:
-    0 8px 32px rgba(0, 2, 12, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 2, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   transition: all 0.35s ease;
   overflow: hidden;
+  cursor: pointer;
 }
+
+/* Halo doré coin supérieur droit */
 .recipe-card::before {
-  content: "";
+  content: '';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 80px;
-  height: 80px;
+  top: 0; right: 0;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at top right, rgba(196, 160, 82, 0.12) 0%, transparent 70%);
   pointer-events: none;
+  transition: background 0.35s ease;
   z-index: 0;
-  background: radial-gradient(
-    circle at top right,
-    rgba(196, 160, 82, 0.12) 0%,
-    transparent 70%
-  );
-  transition: background 0.35s;
 }
-.recipe-card:hover::before {
-  background: radial-gradient(
-    circle at top right,
-    rgba(196, 160, 82, 0.3) 0%,
-    transparent 70%
-  );
+
+/* Liseré doré bas — apparaît au hover */
+.recipe-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(196, 160, 82, 0.55) 30%, rgba(242, 200, 75, 0.7) 55%, rgba(196, 160, 82, 0.55) 75%, transparent);
+  opacity: 0;
+  transition: opacity 0.35s;
+  border-radius: 0 0 12px 12px;
+  pointer-events: none;
+  z-index: 2;
 }
+
 .recipe-card:hover {
-  border-color: rgba(196, 160, 82, 0.42);
-  box-shadow:
-    0 18px 46px rgba(196, 160, 82, 0.18),
-    0 4px 14px rgba(0, 0, 0, 0.55);
-  transform: translateY(-7px);
+  border-color: rgba(196, 160, 82, 0.38);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 20px 52px rgba(196, 160, 82, 0.16), 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-10px);
 }
+.recipe-card:hover::after  { opacity: 1; }
+.recipe-card:hover::before { background: radial-gradient(circle at top right, rgba(196, 160, 82, 0.28) 0%, transparent 70%); }
+
+/* ── Stretched link — couvre toute la card ── */
+.recipe-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+/* ── Image 3:2 ── */
 .recipe-card__img {
   position: relative;
   width: 100%;
-  aspect-ratio: 3/2;
-  border-radius: 10px;
+  aspect-ratio: 3 / 2;
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #415a77, #1b263b);
+  background: linear-gradient(135deg, var(--bleu-clair) 0%, var(--bleu-intermediaire) 100%);
 }
+
 .recipe-card__img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.55s ease;
+  object-position: center;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.recipe-card:hover .recipe-card__img img {
-  transform: scale(1.06);
-}
+.recipe-card:hover .recipe-card__img img { transform: scale(2); }
+
+/* Fondu bas image */
 .recipe-card__img::after {
-  content: "";
+  content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   height: 45%;
   background: linear-gradient(to bottom, transparent, rgba(10, 17, 28, 0.78));
   pointer-events: none;
   z-index: 1;
 }
+
+/* ── Overlays badges (décoratifs, transparents aux clics) ── */
 .recipe-card__ot {
   position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  right: 0.6rem;
+  top: 0.6rem; left: 0.6rem; right: 0.6rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   z-index: 5;
+  pointer-events: none;
+}
+.recipe-card__ot-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .recipe-card__ob {
   position: absolute;
-  bottom: 0.55rem;
-  left: 0.6rem;
+  bottom: 0.55rem; left: 0.6rem; right: 0.6rem;
   display: flex;
   gap: 0.3rem;
   z-index: 3;
+  pointer-events: none;
+  align-items: flex-start;
 }
+
+/* Overlays décoratifs : transparents aux clics */
+.recipe-card__ot,
+.recipe-card__ob,
+.cd-hover-overlay { pointer-events: none; }
+
+/* Animations overlay hover */
+.recipe-card:hover .cd-hover-overlay     { opacity: 1; }
+.recipe-card:hover .cd-icon-btn          { transform: translateY(0) scale(1); opacity: 1; }
+.recipe-card:hover .cd-icon-btn__ring    { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
+.recipe-card:hover .cd-icon-btn__bg      { box-shadow: 0 6px 28px rgba(184,136,42,.65); filter: brightness(1.08); }
+.recipe-card:hover .cd-icon-btn__bg svg  { transform: scale(1.15) translateY(-1px); }
+.recipe-card:hover .cd-icon-btn__wrap    { animation: cdIconFloat 2.2s ease-in-out infinite; }
+.recipe-card:hover .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite; }
+
+/* ── Séparateur doré — entre body et footer (bas de card) ── */
+.recipe-card__glow-sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(196, 160, 82, 0.28) 30%, rgba(196, 160, 82, 0.48) 50%, rgba(196, 160, 82, 0.28) 70%, transparent 100%);
+  margin-top: auto;
+}
+
+/* ── Corps de la card ── */
 .recipe-card__body {
-  padding: 0.7rem 0 0;
+  padding: 1rem 1rem 0.9rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.42rem;
+  overflow: hidden;
 }
+
+/* Titre */
 .recipe-ttl {
-  font-family: var(--f-editorial);
-  font-size: 0.92rem;
+  font-family: var(--font-h2-h6);
+  font-size: 1.02rem;
   font-style: italic;
   font-weight: 700;
   color: var(--or-titre);
+  margin: 0 0 0.75rem;
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  transition: color 0.25s;
+  transition: color 0.25s ease;
 }
-.recipe-card:hover .recipe-ttl {
-  color: var(--dore-clair);
-}
-.recipe-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.26rem;
-}
-.recipe-card__row {
+.recipe-card:hover .recipe-ttl { color: var(--dore-clair); }
+
+/* Ligne titre + temps */
+.recipe-card__title-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
-.recipe-infos {
-  display: flex;
-  gap: 0.55rem;
-  align-items: center;
-}
-.r-info {
+
+/* Métadonnées */
+.recipe-card__meta-row {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
-  font-size: 0.63rem;
-  color: rgba(232, 232, 232, 0.45);
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-bottom: 0.65rem;
 }
+.meta-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--bleu-secondaire);
+  font-family: var(--f-body);
+  white-space: nowrap;
+  margin-left: auto;
+}
+.meta-time svg,
+.meta-time .meta-time__icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Étoiles de notation dans la card */
+.recipe-card .rating { margin-bottom: 0; }
+.recipe-card .rating--sm {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-bottom: 0.65rem;
+}
+.recipe-card .rating__star { color: var(--bleu-secondaire); opacity: 0.4; }
+.recipe-card .rating__star .icon { width: 1rem; height: 1rem; fill: currentColor; stroke: currentColor; }
+.recipe-card .rating__star--filled { color: var(--dore-popcorn); opacity: 1; }
+.recipe-card .rating__star--filled .icon { fill: var(--dore-popcorn); }
+.recipe-card .rating__value { font-size: 0.85rem; font-weight: 700; color: var(--argent-ecran); margin-left: 0.35rem; }
+
+/* Description */
 .recipe-card__desc {
-  font-size: 0.73rem;
-  color: var(--argent);
-  opacity: 0.58;
-  line-height: 1.55;
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.52);
+  margin: 0 0 0.7rem;
+  line-height: 1.65;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
 }
+
+/* Badge NEW */
+.recipe-badge-new {
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+  padding: 0.18rem 0.42rem;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+
+/* Séparateur interne corps */
+.recipe-card__sep {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 160, 82, 0.18), rgba(196, 160, 82, 0.08) 60%, transparent);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Footer : auteur + favori ── */
 .recipe-card__foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0.62rem;
-  margin-top: auto;
-  border-top: 1px solid rgba(196, 160, 82, 0.1);
+  padding: 0.55rem 1rem 0.7rem;
+}
+.recipe-card__foot .btn-fav { flex-shrink: 0; }
+
+/* Bouton favori : cliquable au-dessus du stretched link */
+.recipe-card .btn-fav {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+}
+.recipe-card .btn-fav .icon { width: 1.1rem; height: 1.1rem; }
+
+/* ── Variante : page auteur ── */
+.author-page .recipe-card {
+  width: auto;
+  max-width: 100%;
+  border-color: rgba(196, 160, 82, 0.18);
+}
+
+/* ── Contrib dans recipe-card : z-index et gestion des clics uniquement ── */
+/* Le style épuré est défini globalement dans .contrib--sm (section 18) */
+.recipe-card .contrib {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Contrib cliquable (tag <a>) dans recipe-card */
+a.contrib.recipe-card-contrib-link {
+  pointer-events: auto;
 }
 
 /* ====================================================== */
@@ -4076,35 +4258,100 @@ a:not([class]):hover {
     0 0 10px rgba(180, 80, 148, 0.38);
 }
 
-/* ── taille SM — h 30px (cards listing) ── */
+/* ── taille SM — version épurée (cards, home, pages listing) ── */
 .contrib--sm {
-  height: 30px;
-  gap: 5px;
-  padding: 0 10px 0 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+  cursor: default;
+  transform: none !important;
+  transition: none;
 }
+.contrib--sm:hover {
+  transform: none;
+  box-shadow: none;
+}
+.contrib--sm::before { display: none; }
+
+/* Admin SM → pseudo doré + anneau doré */
+.contrib--sm.contrib--admin,
+.contrib--sm.contrib--admin:hover {
+  background: none;
+  box-shadow: none;
+}
+.contrib--sm.contrib--admin .contrib__pseudo {
+  color: var(--or-titre, #c4a052);
+}
+.contrib--sm.contrib--admin .contrib__av {
+  box-shadow: 0 0 0 1.5px rgba(196, 160, 82, 0.75);
+}
+.contrib--sm.contrib--admin .contrib__pill--admin {
+  background: rgba(21, 96, 160, 0.25);
+  border: 1px solid rgba(60, 140, 200, 0.5);
+  color: rgba(160, 215, 255, 0.95);
+  box-shadow: none;
+}
+
+/* Membre SM → pseudo argent + anneau argenté */
+.contrib--sm.contrib--membre,
+.contrib--sm.contrib--membre:hover {
+  background: none;
+  box-shadow: none;
+}
+.contrib--sm.contrib--membre .contrib__pseudo {
+  color: var(--argent, #e8e8e8);
+}
+.contrib--sm.contrib--membre .contrib__av {
+  box-shadow: 0 0 0 1.5px rgba(200, 200, 210, 0.45);
+}
+.contrib--sm.contrib--membre .contrib__pill--membre {
+  background: rgba(122, 36, 96, 0.25);
+  border: 1px solid rgba(180, 80, 148, 0.45);
+  color: rgba(255, 185, 230, 0.9);
+  box-shadow: none;
+}
+
+/* Avatar 28×28 */
 .contrib--sm .contrib__av {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  margin-right: 3px;
 }
 .contrib--sm .contrib__av img {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
 }
-.contrib--sm .contrib__info {
-  gap: 2px;
-}
+.contrib--sm .contrib__info { gap: 3px; }
 .contrib--sm .contrib__pseudo {
-  font-size: 0.44rem;
-  letter-spacing: 0.3px;
+  font-size: 0.58rem;
+  letter-spacing: 0.4px;
 }
 .contrib--sm .contrib__pill {
-  font-size: 0.25rem;
-  letter-spacing: 0.8px;
-  padding: 1px 5px;
+  font-size: 0.28rem;
+  letter-spacing: 0.9px;
+  padding: 1.5px 6px;
 }
 .contrib--sm .contrib__pill-dot {
   width: 3px;
   height: 3px;
+}
+
+/* Contrib SM cliquable (tag <a>) */
+a.contrib--sm {
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: none;
+}
+a.contrib--sm:hover .contrib__pseudo {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ── Animations Moodboard V2.1 ── */
@@ -4183,22 +4430,10 @@ a:not([class]):hover {
    NAV v2 — Navigation glassmorphism (header.ejs refonte maquette)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Wrap : conteneur centré 1440px pour layouts full-bleed ── */
+/* ── Wrap : conteneur centré — utilise le système global --cd-max / --cd-px ── */
 .wrap {
-  width: 100%;
-  max-width: var(--max-w); /* 1408px — moodboard V3 (était 1440px) */
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 0 auto;
-  padding: 0 var(--page-px); /* 64px */
-}
-@media (max-width: 900px) {
-  .wrap {
-    padding: 0 32px;
-  }
-}
-@media (max-width: 600px) {
-  .wrap {
-    padding: 0 20px;
-  }
 }
 
 /* ── Décalage global nav fixe ── */

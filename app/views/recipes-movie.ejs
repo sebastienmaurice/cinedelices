@@ -244,13 +244,21 @@
                   <h2 class="sec-h__title" id="recipes-title">RECETTES DU FILM</h2>
                 </div>
                 <div class="fh-toolbar">
-                  <label for="search" class="fh-filter__label">Catégorie</label>
-                  <select name="recipes" id="search" class="search__select__film">
-                    <option value="all" selected>Toutes</option>
-                    <option value="entrée">Entrée</option>
-                    <option value="plat">Plat</option>
-                    <option value="dessert">Dessert</option>
-                  </select>
+                  <div class="dd-filter-wrap" id="ddFhCatWrap">
+                    <button class="dropdown-trigger" id="ddFhCatTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                      <span id="ddFhCatLabel">Toutes</span>
+                      <span class="dt-arrow">▾</span>
+                    </button>
+                    <div class="dropdown dropdown--recettes dropdown--filtres" id="ddFhCatPanel" aria-hidden="true">
+                      <div class="dropdown__header"></div>
+                      <div class="dropdown__cat">Catégorie</div>
+                      <button class="dropdown__item dropdown__item--active" type="button" data-value="all">Toutes</button>
+                      <button class="dropdown__item" type="button" data-value="entrée">Entrée</button>
+                      <button class="dropdown__item" type="button" data-value="plat">Plat</button>
+                      <button class="dropdown__item" type="button" data-value="dessert">Dessert</button>
+                    </div>
+                  </div>
                   <a class="btn btn--primary" href="/add-recipes-movies/<%= movie.id %>">
                     <span class="btn__shimmer"></span>
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -291,7 +299,6 @@
                         height="400"
                         decoding="async"
                       />
-                      <div class="recipe-card__img-overlay"></div>
                       <!-- Overlay hover doré — centré sur l'image -->
                       <div class="cd-hover-overlay">
                         <div class="cd-icon-btn">
@@ -321,9 +328,6 @@
                       </div>
                     </div>
 
-                    <!-- Séparateur lumineux doré image / corps -->
-                    <div class="recipe-card__glow-sep"></div>
-
                     <!-- Corps de la card -->
                     <div class="recipe-card__body">
                       <!-- Titre (gauche) + Temps (droite) -->
@@ -347,15 +351,22 @@
                       <p class="recipe-card__desc"><%= truncatedDescription %></p>
                     </div>
 
-                    <!-- Footer hors du body — reste visible au hover -->
+                    <!-- Séparateur doré bas de card -->
+                    <div class="recipe-card__glow-sep"></div>
+
+                    <!-- Footer -->
                     <div class="recipe-card__foot">
+                      <% if (recipeContrib && recipeContrib.id) { %>
+                      <a href="/auteur/<%= recipeContrib.id %>" class="contrib recipe-card-contrib-link <%= recipeIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                      <% } else { %>
                       <div class="contrib <%= recipeIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                      <% } %>
                         <div class="contrib__av"><img src="<%= recipeContrib && recipeContrib.picture ? recipeContrib.picture : '/images/image-default-profile.jpg' %>" alt="<%= recipeContrib ? recipeContrib.pseudo : 'Chef' %>" loading="lazy"></div>
                         <div class="contrib__info">
                           <span class="contrib__pseudo"><%= recipeContrib ? recipeContrib.pseudo : 'Anonyme' %></span>
                           <span class="contrib__pill <%= recipeIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= recipeIsStaff ? 'Ciné Délices' : 'Membre' %></span>
                         </div>
-                      </div>
+                      <% if (recipeContrib && recipeContrib.id) { %></a><% } else { %></div><% } %>
                       <button
                         class="btn-fav"
                         data-entity-id="<%= recipe.id %>"
@@ -461,6 +472,7 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+    <script src="/js/recipe-card-click.js" defer></script>
     <script>
       (function() {
         const h1 = document.getElementById('filmTitle');

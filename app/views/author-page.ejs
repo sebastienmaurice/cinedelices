@@ -16,6 +16,42 @@
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
     <link rel="stylesheet" href="/css/author-page.css" />
+    <style>
+      /* Titre + temps — identique à recipes-movie.ejs */
+      .recipe-card .recipe-card__title-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+        margin-bottom: 0.6rem !important;
+      }
+      .recipe-card .meta-time {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 3px !important;
+        margin-left: auto !important;
+        font-size: 0.68rem !important;
+        color: rgba(232, 232, 232, 0.5) !important;
+        white-space: nowrap !important;
+      }
+      .recipe-card .meta-time svg {
+        display: block !important;
+        width: 0.7rem !important;
+        height: 0.7rem !important;
+        flex-shrink: 0 !important;
+      }
+      /* Overlay hover — contourne le problème Windows hover:none */
+      .recipe-card .cd-hover-overlay { display: flex !important; }
+      .recipe-card:hover .cd-hover-overlay { opacity: 1 !important; }
+      .recipe-card:hover .cd-icon-btn { transform: translateY(0) scale(1) !important; opacity: 1 !important; }
+      .recipe-card:hover .cd-icon-btn__ring { border-color: rgba(242,200,75,.9) !important; transform: rotate(60deg) !important; }
+      .recipe-card:hover .cd-icon-btn__bg { box-shadow: 0 6px 28px rgba(184,136,42,.65) !important; filter: brightness(1.08) !important; }
+      .recipe-card:hover .cd-icon-btn__bg svg { transform: scale(1.15) translateY(-1px) !important; }
+      .recipe-card:hover .cd-icon-btn__wrap { animation: cdIconFloat 2.2s ease-in-out infinite !important; }
+      .recipe-card:hover .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite !important; }
+    </style>
 
   </head>
 
@@ -223,43 +259,60 @@
             <div class="tb-label">Créations de <%= author.pseudo %></div>
             <h2 class="tb-title" id="authorRecipesTitle">SES RECETTES</h2>
           </div>
-          <div class="tb-right"></div>
-        </div>
 
-        <!-- ── Filtres : film + catégorie ── -->
-        <% if (_uniqueMovies.length > 0 || _uniqueCats.length > 0) { %>
-        <div class="author-filters">
-          <span class="af-label">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            Filtrer
-          </span>
-          <% if (_uniqueMovies.length > 0) { %>
-          <div class="af-select-wrap">
-            <label class="af-select-label" for="filterFilm">Film</label>
-            <select id="filterFilm" class="af-select" data-filter="film">
-              <option value="all">Tous les films</option>
-              <% _uniqueMovies.forEach(m => { %>
-              <option value="<%= m.title.toLowerCase() %>"><%= m.title %></option>
-              <% }) %>
-            </select>
-            <svg class="af-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <% if (_uniqueMovies.length > 0 || _uniqueCats.length > 0) { %>
+          <div class="tb-right">
+            <span class="af-label">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Filtrer
+            </span>
+
+            <% if (_uniqueMovies.length > 0) { %>
+            <div class="dd-filter-wrap" id="ddFilmWrap">
+              <button class="dropdown-trigger" id="ddFilmTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                <span id="ddFilmLabel">Tous les films</span>
+                <span class="dt-arrow">▾</span>
+              </button>
+              <div class="dropdown dropdown--films dropdown--filtres" id="ddFilmPanel" aria-hidden="true">
+                <div class="dropdown__header"></div>
+                <div class="dropdown__cat">Films</div>
+                <button class="dropdown__item dropdown__item--active" type="button" data-filter="film" data-value="all">
+                  <span class="dropdown__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/></svg></span>
+                  Tous les films
+                </button>
+                <% _uniqueMovies.forEach(m => { %>
+                <button class="dropdown__item" type="button" data-filter="film" data-value="<%= m.title.toLowerCase() %>">
+                  <span class="dropdown__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect width="15" height="14" x="1" y="5" rx="2" ry="2"/></svg></span>
+                  <%= m.title %>
+                </button>
+                <% }) %>
+              </div>
+            </div>
+            <% } %>
+
+            <% if (_uniqueCats.length > 0) { %>
+            <div class="dd-filter-wrap" id="ddCatWrap">
+              <button class="dropdown-trigger" id="ddCatTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <span id="ddCatLabel">Toutes les catégories</span>
+                <span class="dt-arrow">▾</span>
+              </button>
+              <div class="dropdown dropdown--recettes dropdown--filtres" id="ddCatPanel" aria-hidden="true">
+                <div class="dropdown__header"></div>
+                <div class="dropdown__cat">Type de plat</div>
+                <button class="dropdown__item dropdown__item--active" type="button" data-filter="cat" data-value="all">Toutes les catégories</button>
+                <% _uniqueCats.forEach(cat => { %>
+                <button class="dropdown__item" type="button" data-filter="cat" data-value="<%= cat %>">
+                  <%= cat.charAt(0).toUpperCase() + cat.slice(1) %>
+                </button>
+                <% }) %>
+              </div>
+            </div>
+            <% } %>
           </div>
           <% } %>
-          <% if (_uniqueCats.length > 0) { %>
-          <div class="af-select-wrap">
-            <label class="af-select-label" for="filterCat">Type de plat</label>
-            <select id="filterCat" class="af-select" data-filter="cat">
-              <option value="all">Toutes les catégories</option>
-              <% _uniqueCats.forEach(cat => { %>
-              <option value="<%= cat %>"><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
-              <% }) %>
-            </select>
-            <svg class="af-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <% } %>
-          <span class="af-count" id="afCount"><%= recipes.length %> recette<%= recipes.length > 1 ? 's' : '' %></span>
         </div>
-        <% } %>
 
         <!-- Grille de recettes + CTA -->
         <div class="ar-grid-wrap">
@@ -276,13 +329,14 @@
               const movieTitle = recipe.Movie ? recipe.Movie.title : null;
               const movieSlug  = recipe.Movie ? (recipe.Movie.slug || recipe.Movie.id) : null;
             %>
-            <article class="ar-recipe-card"
+            <article class="recipe-card"
               data-film="<%= movieTitle ? movieTitle.toLowerCase() : '' %>"
               data-cat="<%= (recipe.category || '').toLowerCase() %>">
               <!-- Stretched link -->
-              <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="ar-recipe-card__link" aria-label="Voir la recette <%= recipe.name %>"></a>
-              <!-- Image 16:9 -->
-              <div class="ar-recipe-card__img">
+              <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="recipe-card__link" aria-label="Voir la recette <%= recipe.name %>"></a>
+
+              <!-- Image 3:2 -->
+              <div class="recipe-card__img">
                 <img
                   src="<%= recipe.picture || '/images/image-default-recipe-1.jpg' %>"
                   alt="<%= recipe.name %>"
@@ -301,55 +355,63 @@
                     <span class="cd-icon-btn__label">Voir la recette</span>
                   </div>
                 </div>
-                <!-- Overlay top : badge catégorie + favori -->
-                <div class="ar-recipe-card__ot">
-                  <span class="badge badge--type-b"><%= recipe.category %></span>
-                  <button
-                    class="btn-fav"
-                    data-entity-id="<%= recipe.id %>"
-                    data-entity-type="recipe"
-                    data-is-favorite="<%= recipe.isFavorite || false %>"
-                    aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
-                    title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>"
-                  >
-                    <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                  </button>
+                <!-- Overlay top : catégorie + difficulté + NEW -->
+                <div class="recipe-card__ot">
+                  <div class="recipe-card__ot-badges">
+                    <span class="badge badge--type-b"><%= recipe.category %></span>
+                    <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
+                    <% if (recipe.isNew) { %><span class="badge-new badge-new--new recipe-badge-new">NEW</span><% } %>
+                  </div>
                 </div>
                 <!-- Badge film bas-gauche -->
                 <% if (movieTitle) { %>
-                <div class="ar-recipe-card__ob">
-                  <a class="badge badge--film-dk" href="/recipes-movie/<%= movieSlug %>">
+                <div class="recipe-card__ob">
+                  <span class="badge badge--film-dk">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
                     <%= movieTitle.length > 22 ? movieTitle.slice(0, 22) + '…' : movieTitle %>
-                  </a>
+                  </span>
                 </div>
                 <% } %>
               </div>
 
               <!-- Corps -->
-              <div class="ar-recipe-card__body">
-                <h3 class="ar-recipe-card__title"><%= recipe.name %></h3>
-
-                <div class="ar-recipe-card__meta">
-                  <span class="tag <%= !recipe.difficulty ? 'tag--gris' : recipe.difficulty.toLowerCase().includes('facile') ? 'tag--recette-facile' : recipe.difficulty.toLowerCase().includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen' %>"><%= recipe.difficulty || 'N/A' %></span>
-                  <% if (recipe.isNew) { %><span class="badge-new badge-new--new">Nouveau</span><% } %>
-                  <span class="ar-recipe-card__time">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <%= recipe.time %> min
+              <div class="recipe-card__body">
+                <!-- Titre (gauche) + Temps (droite) -->
+                <div class="recipe-card__title-row">
+                  <h3 class="recipe-ttl"><%= recipe.name %></h3>
+                  <span class="meta-time">
+                    <svg class="meta-time__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><%= recipe.time %> min
                   </span>
                 </div>
-
+                <!-- Étoiles + valeur -->
+                <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= recipe.avgRating || '0' %>">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                  <span class="rating__star <%= i <= Math.round(parseFloat(recipe.avgRating || 0)) ? 'rating__star--filled' : '' %>">
+                    <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </span>
+                  <% } %>
+                  <span class="rating__value"><%= recipe.avgRating || '0' %></span>
+                </div>
+                <!-- Description courte -->
+                <p class="recipe-card__desc"><%= (recipe.description || '').length > 80 ? recipe.description.substring(0, 80) + '...' : (recipe.description || 'Découvrez cette délicieuse recette inspirée du cinéma...') %></p>
               </div>
 
-              <!-- Footer hors du body — reste visible au hover -->
-              <div class="ar-recipe-card__foot">
+              <!-- Séparateur doré bas de card -->
+              <div class="recipe-card__glow-sep"></div>
+
+              <!-- Footer -->
+              <div class="recipe-card__foot">
+                <% if (apContrib && apContrib.id) { %>
+                <a href="/auteur/<%= apContrib.id %>" class="contrib recipe-card-contrib-link <%= apIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                <% } else { %>
                 <div class="contrib <%= apIsStaff ? 'contrib--admin' : 'contrib--membre' %> contrib--sm">
+                <% } %>
                   <div class="contrib__av"><img src="<%= apContrib && apContrib.picture ? apContrib.picture : (author.picture || '/images/image-default-profile.jpg') %>" alt="<%= apContrib ? apContrib.pseudo : author.pseudo %>" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= apContrib ? apContrib.pseudo : author.pseudo %></span>
                     <span class="contrib__pill <%= apIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= apIsStaff ? 'Ciné Délices' : 'Membre' %></span>
                   </div>
-                </div>
+                <% if (apContrib && apContrib.id) { %></a><% } else { %></div><% } %>
                 <button
                   class="btn-fav"
                   data-entity-id="<%= recipe.id %>"
@@ -426,19 +488,18 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+    <script src="/js/recipe-card-click.js" defer></script>
 
-    <!-- Filtrage selects : film + catégorie combinés -->
+    <!-- Filtrage dropdowns : film + catégorie combinés -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const selects = document.querySelectorAll('.af-select');
-        if (!selects.length) return;
-
         let activeFilm = 'all';
         let activeCat  = 'all';
         const countEl  = document.getElementById('afCount');
 
+        /* ── Logique de filtrage ── */
         function applyFilters() {
-          const cards = document.querySelectorAll('#recipes__list .ar-recipe-card');
+          const cards = document.querySelectorAll('#recipes__list .recipe-card');
           let visible = 0;
           cards.forEach(function (card) {
             const filmOk = activeFilm === 'all' || (card.dataset.film || '') === activeFilm;
@@ -450,13 +511,46 @@
           if (countEl) countEl.textContent = visible + (visible > 1 ? ' recettes' : ' recette');
         }
 
-        selects.forEach(function (sel) {
-          sel.addEventListener('change', function () {
-            if (this.dataset.filter === 'film') activeFilm = this.value;
-            else activeCat = this.value;
-            applyFilters();
+        /* ── Helper : ouvrir/fermer un dd-filter-wrap ── */
+        function initFilterDropdown(wrapperId, triggerId, panelId, labelId) {
+          const wrap    = document.getElementById(wrapperId);
+          const trigger = document.getElementById(triggerId);
+          const panel   = document.getElementById(panelId);
+          const labelEl = document.getElementById(labelId);
+          if (!wrap || !trigger || !panel) return;
+
+          function open()  { wrap.classList.add('is-open'); trigger.classList.add('is-open'); trigger.setAttribute('aria-expanded','true'); panel.setAttribute('aria-hidden','false'); }
+          function close() { wrap.classList.remove('is-open'); trigger.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); panel.setAttribute('aria-hidden','true'); }
+          function toggle(){ wrap.classList.contains('is-open') ? close() : open(); }
+
+          trigger.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+
+          panel.querySelectorAll('.dropdown__item[data-value]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              const filter = btn.dataset.filter;
+              const value  = btn.dataset.value;
+              if (filter === 'film') activeFilm = value;
+              else activeCat = value;
+
+              /* maj label trigger */
+              if (labelEl) labelEl.textContent = btn.textContent.trim();
+
+              /* maj état actif */
+              panel.querySelectorAll('.dropdown__item').forEach(function(b){ b.classList.remove('dropdown__item--active'); });
+              btn.classList.add('dropdown__item--active');
+
+              close();
+              applyFilters();
+            });
           });
-        });
+
+          /* fermeture au clic extérieur */
+          document.addEventListener('click', function(e){ if (!wrap.contains(e.target)) close(); });
+          document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+        }
+
+        initFilterDropdown('ddFilmWrap', 'ddFilmTrigger', 'ddFilmPanel', 'ddFilmLabel');
+        initFilterDropdown('ddCatWrap',  'ddCatTrigger',  'ddCatPanel',  'ddCatLabel');
       });
     </script>
 

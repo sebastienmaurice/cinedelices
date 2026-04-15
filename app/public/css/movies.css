@@ -89,9 +89,8 @@ body.movies-page main {
 .page-hero__content {
   position: relative; z-index: 5; flex: 1;
   display: flex; flex-direction: row; align-items: center; gap: 48px;
-  padding: 0 var(--page-px);
-  max-width: var(--max-width); margin: 0 auto;
-  width: 100%;
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto;
 }
 
 /* Colonne gauche du hero */
@@ -388,8 +387,8 @@ body.movies-page main {
 
 /* ── FILMS TOOLBAR ── */
 .films-toolbar {
-  width: 100%; max-width: var(--max-width);
-  margin: 0 auto 28px; padding: 52px var(--page-px) 0;
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto 28px; padding: 52px 0 0;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 .tb-label {
@@ -417,8 +416,8 @@ body.movies-page main {
 
 /* ── FILMS GRID ── */
 .films-wrap {
-  width: 100%; max-width: var(--max-width);
-  margin: 0 auto; padding: 0 var(--page-px) 80px;
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto; padding: 0 0 80px;
   position: relative; z-index: 2;
 }
 .films-grid {
@@ -547,7 +546,7 @@ body.movies-page main {
   transition: all 0.25s ease; z-index: 10;
 }
 .fcard__fav:hover, .fcard__fav.liked {
-  background: rgba(194,48,24,.28); border-color: rgba(194,48,24,.65); color: #e84020;
+  background: rgba(194,48,24,.28); border-color: rgba(194,48,24,.65);
 }
 .fcard__fav svg { width: 14px; height: 14px; }
 
@@ -650,8 +649,8 @@ body.movies-page main {
 
 /* ── LOAD MORE ── */
 .load-more-wrap {
-  width: 100%; max-width: var(--max-width);
-  margin: 0 auto 80px; padding: 0 var(--page-px);
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto 80px;
   display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
 .load-bar {
@@ -834,10 +833,8 @@ body.movies-page main {
 /* Banner indépendante (hors grille) sur la page movies */
 .movies-cta {
   grid-column: unset;
-  max-width: var(--max-width);
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 56px auto 80px;
-  padding: 0 var(--page-px);
-  box-sizing: border-box;
 }
 .fcard.fcard--cta::before {
   display: none;

@@ -450,9 +450,9 @@ body.film-page main {
 /* ====================================================== */
 
 .film-main {
-  max-width: var(--max-width, 1280px);
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 0 auto;
-  padding: 52px var(--px, 2rem) 100px;
+  padding: 52px 0 100px;
   position: relative;
   z-index: 2;
 }
@@ -673,12 +673,7 @@ body.film-page main {
   flex-shrink: 0;
 }
 
-.fh-filter__label {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: rgba(196, 160, 82, 0.65);
-  white-space: nowrap;
-}
+/* .fh-filter__label supprimé — remplacé par .dropdown-trigger (base.css) */
 
 /* Bouton toolbar : sous-label film */
 .fh-toolbar .btn__text {
@@ -695,55 +690,16 @@ body.film-page main {
   line-height: 1.1;
 }
 
-/* Override du select dans la toolbar cinématographique */
-.fh-toolbar .search__select__film {
-  appearance: none;
-  -webkit-appearance: none;
-  background-color: rgba(15, 30, 48, 0.92);
-  border: 1px solid rgba(65, 90, 119, 0.38);
-  color: rgba(212, 220, 232, 0.88);
-  padding: 0.5rem 2rem 0.5rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.72rem;
-  height: 36px;
-  /* Chevron fin argenté — constant, pas de changement au hover */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23a0b0c8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 L6 6.5 L11 1.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.7rem center;
-  background-size: 10px;
-  transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
-}
-.fh-toolbar .search__select__film:hover {
-  background-color: rgba(22, 42, 66, 0.98);
-  border-color: rgba(196, 160, 82, 0.32);
-  color: rgba(228, 235, 245, 0.95);
-  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.07);
-}
-.fh-toolbar .search__select__film:focus {
-  background-color: rgba(22, 42, 66, 0.98);
-  border-color: rgba(196, 160, 82, 0.45);
-  color: rgba(228, 235, 245, 0.95);
-  box-shadow: 0 0 0 3px rgba(196, 160, 82, 0.1);
-  outline: none;
-}
-/* Dropdown panel — fond sombre, texte clair */
-.fh-toolbar .search__select__film option {
-  background-color: #0e1d2f;
-  color: #c8d4e4;
-}
-.fh-toolbar .search__select__film option:checked {
-  background-color: #1a2d46;
-  color: #f2c84b;
-}
+/* .search__select__film supprimé — remplacé par .dropdown + .dd-filter-wrap (base.css) */
 
 /* ====================================================== */
 /* ══════════ 9. RECIPES GRID (2 colonnes) ════════════════ */
 /* ====================================================== */
 
-/* Grille 3 colonnes pour la vue fiche film (moodboard) */
+/* Grille 4 colonnes — fiche film, cohérente avec /auteur/ et /recipes-movie/ */
 .recipes-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   margin-bottom: 0;
 }
@@ -1004,16 +960,16 @@ body.film-page main {
   }
 }
 
+@media (max-width: 1200px) {
+  .recipes-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 960px) {
-  .recipes-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .recipes-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 600px) {
-  .recipes-grid {
-    grid-template-columns: 1fr;
-  }
+  .recipes-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 800px) {
@@ -1064,7 +1020,7 @@ body.film-page main {
   }
 
   .film-main {
-    padding: 32px 1rem 60px;
+    padding: 32px 0 60px; /* gutters horizontaux gérés par width: min() */
   }
 
   .info-bar {
@@ -1668,45 +1624,7 @@ body.film-page main {
   margin-right: 1rem;
 }
 
-.search__select__film {
-  background-color: var(--bleu-clair);
-  padding: 0.75rem 2.5rem 0.75rem 1rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--argent-ecran);
-  border: 1px solid rgba(236, 239, 241, 0.3);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e8e8e8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 12px;
-  min-width: 180px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.search__select__film:hover {
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border: 1px solid rgba(236, 239, 241, 0.3);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-}
-
-.search__select__film:focus {
-  outline: none;
-  background-color: var(--dore-popcorn);
-  color: var(--bleu-nuit);
-  border: 1px solid rgba(236, 239, 241, 0.3);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230d1b2a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-}
-
-.search__select__film option {
-  background-color: var(--argent-ecran);
-  color: var(--bleu-nuit);
-  padding: 0.5rem;
-}
+/* .search__select__film (legacy) supprimé — remplacé par .dropdown (base.css) */
 
 /* ====================================================== */
 /* ========== PRÉSENTATION DES RECETTES ================= */
@@ -1763,331 +1681,10 @@ body.film-page main {
 }
 
 /* ====================================================== */
-/* ============= RECIPE CARD V2 (Planche) =============== */
+/* ============= RECIPE CARD — voir base.css ============ */
+/* Le composant .recipe-card est centralisé dans base.css */
 /* ====================================================== */
-.recipe-card {
-  background: linear-gradient(150deg, var(--surface-card) 0%, var(--bleu-nuit) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px 12px 14px;
-  transition: all 0.35s ease;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 2, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  position: relative;
-  overflow: hidden;
-}
 
-/* Halo doré discret en coin supérieur droit */
-.recipe-card::before {
-  content: '';
-  position: absolute;
-  top: 0; right: 0;
-  width: 80px; height: 80px;
-  background: radial-gradient(circle at top right, rgba(196, 160, 82, 0.12) 0%, transparent 70%);
-  pointer-events: none;
-  transition: background 0.35s ease;
-  z-index: 0;
-}
-
-/* Liseré doré bas — apparaît au hover */
-.recipe-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(196, 160, 82, 0.55) 30%, rgba(242, 200, 75, 0.7) 55%, rgba(196, 160, 82, 0.55) 75%, transparent);
-  opacity: 0;
-  transition: opacity 0.35s;
-  border-radius: 0 0 12px 12px;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.recipe-card:hover {
-  border-color: rgba(196, 160, 82, 0.38);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 20px 52px rgba(196, 160, 82, 0.16), 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transform: translateY(-10px);
-}
-
-.recipe-card:hover::after {
-  opacity: 1;
-}
-
-.recipe-card:hover::before {
-  background: radial-gradient(circle at top right, rgba(196, 160, 82, 0.28) 0%, transparent 70%);
-}
-
-/* Image avec overlay — ratio 3:2 paysage (food photography standard) */
-.recipe-card__img {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 0;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, var(--bleu-clair) 0%, var(--bleu-intermediaire) 100%);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  transition: border-radius 0.35s ease;
-}
-
-/* Fondu bas de l'image recette */
-.recipe-card__img::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 45%;
-  background: linear-gradient(to bottom, transparent, rgba(10, 17, 28, 0.78));
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Overlay gradient complet image (transparent → sombre bas) */
-.recipe-card__img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 40%, rgba(8, 16, 26, 0.82) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.recipe-card__img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.recipe-card:hover .recipe-card__img img {
-  transform: scale(2);
-}
-
-/* Overlay top : badges gauche + favori droite */
-.recipe-card__ot {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  right: 0.6rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  z-index: 5;
-}
-
-/* Groupe badges gauche (catégorie + NEW) */
-.recipe-card__ot-badges {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* Badge film en bas à gauche de l'image (moodboard) */
-.recipe-card__ob {
-  position: absolute;
-  bottom: 0.55rem;
-  left: 0.6rem;
-  right: 0.6rem;
-  display: flex;
-  gap: 0.3rem;
-  z-index: 3;
-  align-items: flex-start;
-}
-
-/* Bouton favori dans la card */
-.recipe-card .btn-fav {
-  width: 2.25rem;
-  height: 2.25rem;
-  flex-shrink: 0;
-}
-
-.recipe-card .btn-fav .icon {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-/* Séparateur lumineux doré entre image et corps */
-.recipe-card__glow-sep {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(196, 160, 82, 0.28) 30%,
-    rgba(196, 160, 82, 0.48) 50%,
-    rgba(196, 160, 82, 0.28) 70%,
-    transparent 100%
-  );
-  overflow: hidden;
-}
-
-/* Body sous image */
-.recipe-card__body {
-  padding: 1rem 1rem 0.9rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* Titre — Playfair Display italic */
-.recipe-ttl {
-  font-family: var(--font-h2-h6); /* Playfair Display */
-  font-size: 1.02rem;
-  font-style: italic;
-  font-weight: 700;
-  color: #C4A052;
-  margin: 0 0 0.75rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color 0.25s ease;
-  line-height: 1.35;
-}
-
-.recipe-card:hover .recipe-ttl {
-  color: var(--dore-clair);
-}
-
-/* Badge NEW — dans overlay image, aligné avec catégorie */
-.recipe-badge-new {
-  font-size: 0.52rem;
-  letter-spacing: 0.08em;
-  padding: 0.18rem 0.42rem;
-  border-radius: 4px;
-  line-height: 1.2;
-}
-
-/* Ligne difficulté (gauche) + temps (droite) */
-.recipe-card .recipe-card__body .recipe-card__meta-row {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  margin-bottom: 0.65rem;
-}
-
-/* Temps — poussé à droite */
-.recipe-card .recipe-card__body .meta-time {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
-  color: #8294A8;
-  font-family: var(--f-body);
-  white-space: nowrap;
-  margin-left: auto;
-}
-
-/* SVG horloge inline dans flex */
-.recipe-card .recipe-card__body .meta-time svg,
-.recipe-card .recipe-card__body .meta-time .meta-time__icon {
-  display: inline-block !important;
-  width: 13px !important;
-  height: 13px !important;
-  flex-shrink: 0;
-  max-width: none !important;
-  vertical-align: middle;
-}
-
-/* Notation — ligne étoiles */
-.recipe-card .rating {
-  margin-bottom: 0;
-}
-
-.recipe-card .rating--sm {
-  display: flex;
-  align-items: center;
-  gap: 0.15rem;
-  margin-bottom: 0.65rem;
-}
-
-.recipe-card .rating__star {
-  color: var(--bleu-secondaire);
-  opacity: 0.4;
-}
-
-.recipe-card .rating__star .icon {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
-  stroke: currentColor;
-}
-
-.recipe-card .rating__star--filled {
-  color: var(--dore-popcorn);
-  opacity: 1;
-}
-
-.recipe-card .rating__star--filled .icon {
-  fill: var(--dore-popcorn);
-}
-
-.recipe-card .rating__value {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--argent-ecran);
-  margin-left: 0.35rem;
-}
-
-/* Description (2 lignes) */
-.recipe-card__desc {
-  font-size: 0.78rem;
-  color: rgba(232, 232, 232, 0.52);
-  margin: 0 0 0.7rem;
-  line-height: 1.65;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex: 1;
-}
-
-/* Séparateur doré corps — remplace border-top du foot */
-.recipe-card__sep {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    rgba(196, 160, 82, 0.18),
-    rgba(196, 160, 82, 0.08) 60%,
-    transparent
-  );
-  margin-bottom: 0.75rem;
-}
-
-/* Stretched link — couvre toute la card, z-index sous le footer */
-.recipe-card__link {
-  position: absolute; inset: 0; z-index: 1;
-  border-radius: inherit;
-}
-
-/* Overlay doré + icône — déclenché au hover */
-.recipe-card:hover .cd-hover-overlay { opacity: 1; }
-.recipe-card:hover .cd-icon-btn { transform: translateY(0) scale(1); opacity: 1; }
-.recipe-card:hover .cd-icon-btn__ring { border-color: rgba(242,200,75,.9); transform: rotate(60deg); }
-.recipe-card:hover .cd-icon-btn__bg { box-shadow: 0 6px 28px rgba(184,136,42,.65); filter: brightness(1.08); }
-.recipe-card:hover .cd-icon-btn__bg svg { transform: scale(1.15) translateY(-1px); }
-.recipe-card:hover .cd-icon-btn__wrap { animation: cdIconFloat 2.2s ease-in-out infinite; }
-.recipe-card:hover .cd-icon-btn__bg::after { animation: cdPulse 1.9s ease-out infinite; }
-
-/* Footer : Auteur + Favori — sibling du body, reste visible au hover */
-.recipe-card__foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.55rem 1rem 0.7rem;
-  margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  position: relative; z-index: 4;
-}
-
-.recipe-card__foot .btn-fav { flex-shrink: 0; }
 
 .recipe-card-rating .star {
   font-size: 1.6rem; /* étoiles plus grandes */
@@ -2166,11 +1763,6 @@ body.film-page main {
 
   .search__label {
     margin-right: 0;
-  }
-
-  .search__select__film {
-    width: 100%;
-    min-width: auto;
   }
 
   .banner__image__film {

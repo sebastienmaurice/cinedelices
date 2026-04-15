@@ -1,22 +1,35 @@
 /**
- * Filtrage des recettes par catégorie
- * Redirige vers la page recipes-movie filtrée selon la catégorie sélectionnée
+ * Filtrage des recettes par catégorie — dropdown custom
+ * Redirige vers la page recipes-movie filtrée selon la catégorie sélectionnée.
  */
+(function () {
+  const wrap    = document.getElementById('ddFhCatWrap');
+  const trigger = document.getElementById('ddFhCatTrigger');
+  const panel   = document.getElementById('ddFhCatPanel');
+  const labelEl = document.getElementById('ddFhCatLabel');
+  const movieEl = document.getElementById('movie');
+  const movieId = movieEl?.dataset.id;
 
-Filtred();
+  if (!wrap || !trigger || !panel || !movieId) return;
 
-function Filtred() {
-  const selectElement = document.getElementById("search");
-  const movieElement = document.getElementById("movie");
-  const movieId = movieElement?.dataset.id;
+  function open()  { wrap.classList.add('is-open'); trigger.classList.add('is-open'); trigger.setAttribute('aria-expanded','true'); panel.setAttribute('aria-hidden','false'); }
+  function close() { wrap.classList.remove('is-open'); trigger.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); panel.setAttribute('aria-hidden','true'); }
 
-  if (selectElement && movieId) {
-    selectElement.addEventListener("change", function () {
-      const selectedValue = this.value;
+  trigger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    wrap.classList.contains('is-open') ? close() : open();
+  });
 
-      // Redirection vers la route qui affiche la page filtrée en fonction de la catégorie choisie
-      // Le navigateur va charger cette nouvelle page comme si l'utilisateur cliquait sur un lien
-      window.location.href = `/recipes-movie/category/${movieId}/${selectedValue}`;
+  panel.querySelectorAll('.dropdown__item[data-value]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (labelEl) labelEl.textContent = btn.textContent.trim();
+      panel.querySelectorAll('.dropdown__item').forEach(function (b) { b.classList.remove('dropdown__item--active'); });
+      btn.classList.add('dropdown__item--active');
+      close();
+      window.location.href = '/recipes-movie/category/' + movieId + '/' + btn.dataset.value;
     });
-  }
-}
+  });
+
+  document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();

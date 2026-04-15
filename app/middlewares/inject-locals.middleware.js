@@ -77,7 +77,7 @@ async function getNavData(userId) {
 
   const [[row], [{ count }]] = await Promise.all([
     sequelize.query(
-      `SELECT u.picture, COALESCE(up.active_frame_code, 'cine') AS active_frame_code
+      `SELECT u.picture, u.pseudo, COALESCE(up.active_frame_code, 'cine') AS active_frame_code
        FROM users u
        LEFT JOIN user_points up ON up.id_user = u.id
        WHERE u.id = :userId`,
@@ -90,6 +90,7 @@ async function getNavData(userId) {
   ]);
   const data = {
     navAvatar:      row?.picture || '/images/image-default-profile.jpg',
+    navPseudo:      row?.pseudo  || '',
     navFrameUrl:    _frameUrl(row?.active_frame_code),
     hasAuthorPage:  count > 0,
     t: Date.now(),
@@ -118,6 +119,7 @@ async function injectLocals(req, res, next) {
     res.locals.topContributors = contributors;
     if (navData) {
       res.locals.navAvatar      = navData.navAvatar;
+      res.locals.navPseudo      = navData.navPseudo;
       res.locals.navFrameUrl    = navData.navFrameUrl;
       res.locals.hasAuthorPage  = navData.hasAuthorPage;
     }

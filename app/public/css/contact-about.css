@@ -103,8 +103,8 @@ body.contact-about-page .ca-main {
 .ca-hero__content {
   position: relative; z-index: 5; height: 100%;
   display: flex; flex-direction: row; align-items: center; gap: 48px;
-  padding: 0 var(--ca-px);
-  max-width: var(--ca-w); margin: 0 auto;
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
+  margin: 0 auto;
 }
 .ca-hero__left { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
 
@@ -203,9 +203,9 @@ body.contact-about-page .ca-main {
    MAIN WRAP
 ══════════════════════════════════════════════════════════ */
 .ca-main {
-  width: 100%; max-width: var(--ca-w);
+  width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 0 auto;
-  padding: 40px var(--ca-px) 100px;
+  padding: 40px 0 100px;
   position: relative; z-index: 2;
 }
 
@@ -696,7 +696,7 @@ textarea.ca-fi { resize: vertical; min-height: 100px; }
    RESPONSIVE
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 1100px) {
-  :root { --ca-px: 32px; }
+  /* --ca-px supprimé : gutters gérés par width: min() dans .ca-hero__content et .ca-main */
   .ca-mcard { grid-template-columns: 1fr; max-height: none; }
   .ca-mcard__photo { aspect-ratio: 3/2; }
   .ca-mcard__photo-fade { background: linear-gradient(to bottom, transparent 55%, rgba(14,24,38,0.98) 100%); }
@@ -714,7 +714,7 @@ textarea.ca-fi { resize: vertical; min-height: 100px; }
   .ca-hero__tabs { justify-content: center; }
 }
 @media (max-width: 768px) {
-  :root { --ca-px: 18px; }
+  /* --ca-px supprimé : gutters gérés par width: min() */
   .ca-hero { padding: 36px 0; }
   .ca-hero__title { font-size: clamp(2.2rem, 8vw, 3.2rem); }
   .ca-hero__stats { gap: 14px; }
