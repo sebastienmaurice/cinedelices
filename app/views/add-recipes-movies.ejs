@@ -1151,62 +1151,62 @@
         { rteId: 'prep-rte', taId: 'preparation', tbId: 'prep-toolbar', countId: 'prepCount', mode: 'preparation' },
       ];
 
-      /* ── Extraction du texte pur d'un nœud (inline uniquement) ── */
-      function textOf(node) {
-        if (node.nodeType === 3) return node.textContent;
-        var tag = (node.tagName || '').toLowerCase();
-        if (tag === 'br') return ' ';
-        return [].slice.call(node.childNodes).map(textOf).join('');
-      }
-
-      /* ── Sérialisation JSON depuis le contenteditable ──
-         mode 'ingredients' : chaque bloc non-titre → 1 item JSON
-         mode 'preparation' : blocs entre séparateurs (.arm-step-sep) → 1 item JSON concaténé
-         Les .arm-step-sep déclenchent un flush de groupe (délimiteurs réels, pas juste ignorés). */
+      /* ── Sérialisation JSON depuis le contenteditable (HTML préservé) ──
+         mode 'ingredients' : chaque bloc → 1 item JSON ; h3 → item titre rendu côté template
+         mode 'preparation' : blocs entre séparateurs → 1 item JSON (jointure <br>)
+         Les balises <strong>, <em>, <ul>, <li> etc. sont conservées pour le rendu.
+         Les blocs visuellement vides (<p><br></p>) sont ignorés. */
       function rteToJson(rte, mode) {
         var items = [];
         var group = [];
 
         function flushGroup() {
-          var t = group.join(' ').replace(/\s+/g, ' ').trim();
+          // Ignorer les entrées visuellement vides (juste <br> ou whitespace)
+          var cleaned = group.filter(function(s) {
+            return s.replace(/<br\s*\/?>/gi, '').trim().length > 0;
+          });
+          var t = cleaned.join('<br>').replace(/(<br>\s*)+$/, '').trim();
           if (t) items.push(t);
           group = [];
         }
 
         [].slice.call(rte.childNodes).forEach(function (node) {
-          // Séparateur d'étape → délimite le groupe en cours (BUG FIX : flush avant de sauter)
+          // Séparateur d'étape → délimite le groupe en cours
           if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
             if (mode === 'preparation') flushGroup();
             return;
           }
-          // Autres éléments non-éditables → ignorer silencieusement
+          // Éléments non-éditables → ignorer
           if (node.nodeType === 1 && node.getAttribute('contenteditable') === 'false') return;
 
           var tag = (node.tagName || '').toLowerCase();
-          var text = textOf(node).trim();
+          var html = (node.innerHTML !== undefined ? node.innerHTML : node.textContent || '').trim();
+          var textContent = (node.textContent || '').trim();
 
-          if (!text) {
-            // Ligne vide : flush uniquement si pas de séparateur explicite (mode libre sans séparateurs)
+          // Ignorer les blocs visuellement vides (ex : <p><br></p>)
+          if (!textContent) return;
+
+          // Titre h3 : en ingrédients → item section header ; en préparation → ignoré
+          if (tag === 'h3') {
+            if (mode === 'ingredients') items.push('<h3 class="rd-ing-group-title">' + textContent + '</h3>');
             return;
           }
 
-          // Titre h3 : visuel uniquement, non inclus dans le JSON
-          if (tag === 'h3') return;
-
-          // Listes ul/ol
+          // Listes ul/ol : chaque <li> devient un item distinct (HTML inline conservé)
           if (tag === 'ul' || tag === 'ol') {
             [].slice.call(node.children).forEach(function (li) {
-              var liText = textOf(li).trim();
+              var liHtml = li.innerHTML.trim();
+              var liText = (li.textContent || '').trim();
               if (!liText) return;
-              if (mode === 'ingredients') items.push(liText);
-              else group.push(liText);
+              if (mode === 'ingredients') items.push(liHtml);
+              else group.push(liHtml);
             });
             return;
           }
 
-          // Bloc normal (p, div…)
-          if (mode === 'ingredients') items.push(text);
-          else group.push(text);
+          // Bloc normal (p, div…) : HTML inline conservé (<strong>, <em>, <br>…)
+          if (mode === 'ingredients') items.push(html);
+          else group.push(html);
         });
 
         if (mode === 'preparation') flushGroup();
@@ -1501,7 +1501,10 @@
         if (hasName && hasPhoto) setStepDone(2);
         else setStepWait(2);
       }
-      if (recipeName) recipeName.addEventListener('input', checkS2);
+      if (recipeName) {
+        recipeName.addEventListener('input', checkS2);
+        recipeName.addEventListener('paste', function() { setTimeout(checkS2, 0); });
+      }
       photoInputs.forEach(function(inp) {
         if (inp) inp.addEventListener('change', checkS2);
       });

@@ -12,6 +12,7 @@ import tmdbRouter from "./tmdb.route.js";
 import favoritesRouter from "./favorites.route.js";
 import ratingsRouter from "./ratings.route.js";
 import authorRouter from "./author.route.js";
+import mentionsLegalesRouter from "./mentions-legales.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
@@ -29,5 +30,6 @@ router.use("/api/tmdb", isLogged, tmdbRouter); // Route API pour TMDB (protégé
 router.use("/api/favorites", favoritesRouter); // Route API pour les favoris
 router.use("/api/ratings", ratingsRouter); // Route API pour les notes
 router.use("/auteur", authorRouter); // Page publique auteur (gamification)
+router.use("/mentions-legales", mentionsLegalesRouter); // Page mentions légales
 
 export default router;

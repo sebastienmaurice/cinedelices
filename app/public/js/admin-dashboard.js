@@ -567,8 +567,36 @@ document.addEventListener("DOMContentLoaded", () => {
         difficultySelect.value = match ? match.value : (data.difficulty || "");
       }
       if (descTextarea) descTextarea.value = data.description || "";
-      if (ingredientsTextarea) ingredientsTextarea.value = data.ingredients || "";
-      if (prepTextarea) prepTextarea.value = data.preparation || "";
+      // Ingrédients : parse JSON → une ligne par item (h3 → "# Titre")
+      if (ingredientsTextarea) {
+        const rawIng = (data.ingredients || "").trim();
+        if (rawIng.startsWith("[")) {
+          try {
+            const arr = JSON.parse(rawIng);
+            ingredientsTextarea.value = arr.map(item => {
+              const s = String(item);
+              const titleMatch = s.match(/^<h3[^>]*>(.*?)<\/h3>$/i);
+              if (titleMatch) return '# ' + titleMatch[1].trim();
+              // Retirer les balises HTML pour l'affichage admin
+              return s.replace(/<[^>]+>/g, '').trim();
+            }).join('\n');
+          } catch (_) { ingredientsTextarea.value = rawIng; }
+        } else {
+          ingredientsTextarea.value = rawIng;
+        }
+      }
+      // Préparation : parse JSON → étapes séparées par "---"
+      if (prepTextarea) {
+        const rawPrep = (data.preparation || "").trim();
+        if (rawPrep.startsWith("[")) {
+          try {
+            const arr = JSON.parse(rawPrep);
+            prepTextarea.value = arr.map(s => String(s).replace(/<[^>]+>/g, '').trim()).join('\n---\n');
+          } catch (_) { prepTextarea.value = rawPrep; }
+        } else {
+          prepTextarea.value = rawPrep;
+        }
+      }
     }
     if (type === "notice") {
       const quoteInput = document.getElementById("edit-notice-quote");
@@ -618,6 +646,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   editModal?.querySelectorAll(".admin-modal__textarea--autosize").forEach((ta) => {
     ta.addEventListener("input", () => autoResizeTextarea(ta));
+  });
+
+  // Re-sérialise les textareas ingrédients/préparation en JSON avant soumission admin
+  editForm?.addEventListener("submit", () => {
+    const ingTa  = document.getElementById("edit-recipe-ingredients");
+    const prepTa = document.getElementById("edit-recipe-preparation");
+    if (ingTa && ingTa.value.trim() && !ingTa.value.trim().startsWith("[")) {
+      const lines = ingTa.value.split('\n').map(l => l.trim()).filter(Boolean);
+      const items = lines.map(l => l.startsWith('# ') ? '<h3 class="rd-ing-group-title">' + l.slice(2) + '</h3>' : l);
+      ingTa.value = JSON.stringify(items);
+    }
+    if (prepTa && prepTa.value.trim() && !prepTa.value.trim().startsWith("[")) {
+      const steps = prepTa.value.split(/\n---\n/).map(s => s.trim()).filter(Boolean);
+      prepTa.value = JSON.stringify(steps);
+    }
   });
 
   // Preview photo recette dans le modal d'édition

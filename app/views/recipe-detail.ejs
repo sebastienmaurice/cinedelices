@@ -70,7 +70,7 @@
         const movieImage      = movie ? (movie.bannerPath || movie.cardPath || movie.picture || "/images/image-default-film.jpg") : "/images/image-default-film.jpg";
         const contributorName  = contributor.pseudo;
         const contributorImage = contributor.picture || "/images/image-default-profile.jpg";
-        const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.length : 0;
+        const ingredientsCount = ingredientsBlocks ? ingredientsBlocks.filter(i => !String(i).startsWith('<h3')).length : 0;
         const preparationCount = preparationBlocks ? preparationBlocks.length : 0;
         const displayServings  = recipe.servings || 4;
 
@@ -280,7 +280,7 @@
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>
                         </button>
                       </p>
-                      <p class="rd-step-text"><%= step %></p>
+                      <p class="rd-step-text"><%- step %></p>
                     </div>
                   </div>
                   <% }) %>
@@ -692,12 +692,16 @@
                 <div class="rd-ing-list">
                   <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
                   <% ingredientsBlocks.forEach((ingredient) => { %>
+                  <% if (String(ingredient).startsWith('<h3')) { %>
+                  <div class="rd-ing-group-hd"><%- ingredient %></div>
+                  <% } else { %>
                   <div class="rd-ing-item" role="checkbox" aria-checked="false" tabindex="0">
                     <div class="rd-ing-chk" aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
-                    <span class="rd-ing-text"><%= ingredient %></span>
+                    <span class="rd-ing-text"><%- ingredient %></span>
                   </div>
+                  <% } %>
                   <% }) %>
                   <% } else { %>
                   <div class="rd-ing-item">
