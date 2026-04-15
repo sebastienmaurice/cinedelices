@@ -5,11 +5,10 @@
 
 #cookie-banner {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: clamp(12px, 2vw, 20px);
+  left: clamp(1rem, 4vw, 3rem);
+  right: clamp(1rem, 4vw, 3rem);
   z-index: 9999;
-  padding: 0 clamp(1rem, 4vw, 3rem) clamp(12px, 2vw, 20px);
   pointer-events: none;
   /* Slide-up à l'affichage */
   transform: translateY(110%);
@@ -25,7 +24,7 @@
 .ck-inner {
   position: relative;
   overflow: hidden;
-  border-radius: 18px 18px 0 0;
+  border-radius: 18px;
   padding: 18px 24px 16px;
   display: flex;
   align-items: center;
@@ -46,7 +45,6 @@
     0 -2px 12px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(196, 160, 82, 0.35);
-  border-bottom: none;
 }
 
 /* Texture noise (même que djc-cta) */
@@ -89,9 +87,10 @@
 
 /* ── Icône cookie ─────────────────────────────────────────────── */
 .ck-icon {
-  font-size: 1.8rem;
+  font-size: 2.8rem;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+  line-height: 1;
 }
 
 /* ── Texte ────────────────────────────────────────────────────── */
@@ -196,9 +195,9 @@
     align-items: flex-start;
     gap: 14px;
     padding: 16px 18px 14px;
-    border-radius: 14px 14px 0 0;
+    border-radius: 14px;
   }
-  .ck-icon { font-size: 1.4rem; }
+  .ck-icon { font-size: 2rem; }
   .ck-actions {
     flex-direction: row;
     width: 100%;
