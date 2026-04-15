@@ -516,10 +516,12 @@
     }
 
     editRecipeModal.classList.add("open");
+    document.body.classList.add("modal-open");
   };
 
   const closeEditModal = () => {
     editRecipeModal?.classList.remove("open");
+    document.body.classList.remove("modal-open");
     activeEditItem = null;
     _clearAllSlots();
   };
