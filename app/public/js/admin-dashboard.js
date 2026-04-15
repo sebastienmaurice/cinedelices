@@ -549,8 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const servingsInput = document.getElementById("edit-recipe-servings");
       const difficultySelect = document.getElementById("edit-recipe-difficulty");
       const descTextarea = document.getElementById("edit-recipe-description");
-      const ingredientsTextarea = document.getElementById("edit-recipe-ingredients");
-      const prepTextarea = document.getElementById("edit-recipe-preparation");
+
       if (nameInput) nameInput.value = data.name || "";
       if (categorySelect) {
         const match = Array.from(categorySelect.options).find(
@@ -567,35 +566,21 @@ document.addEventListener("DOMContentLoaded", () => {
         difficultySelect.value = match ? match.value : (data.difficulty || "");
       }
       if (descTextarea) descTextarea.value = data.description || "";
-      // Ingrédients : parse JSON → une ligne par item (h3 → "# Titre")
-      if (ingredientsTextarea) {
+      // Ingrédients → RTE
+      const ingRte = document.getElementById("admin-ing-rte");
+      if (ingRte) {
         const rawIng = (data.ingredients || "").trim();
-        if (rawIng.startsWith("[")) {
-          try {
-            const arr = JSON.parse(rawIng);
-            ingredientsTextarea.value = arr.map(item => {
-              const s = String(item);
-              const titleMatch = s.match(/^<h3[^>]*>(.*?)<\/h3>$/i);
-              if (titleMatch) return '# ' + titleMatch[1].trim();
-              // Retirer les balises HTML pour l'affichage admin
-              return s.replace(/<[^>]+>/g, '').trim();
-            }).join('\n');
-          } catch (_) { ingredientsTextarea.value = rawIng; }
-        } else {
-          ingredientsTextarea.value = rawIng;
-        }
+        let ingItems = [];
+        if (rawIng.startsWith("[")) { try { ingItems = JSON.parse(rawIng); } catch (_) {} }
+        RteMini.loadIntoRte(ingRte, ingItems, "ingredients");
       }
-      // Préparation : parse JSON → étapes séparées par "---"
-      if (prepTextarea) {
+      // Préparation → RTE
+      const prepRte = document.getElementById("admin-prep-rte");
+      if (prepRte) {
         const rawPrep = (data.preparation || "").trim();
-        if (rawPrep.startsWith("[")) {
-          try {
-            const arr = JSON.parse(rawPrep);
-            prepTextarea.value = arr.map(s => String(s).replace(/<[^>]+>/g, '').trim()).join('\n---\n');
-          } catch (_) { prepTextarea.value = rawPrep; }
-        } else {
-          prepTextarea.value = rawPrep;
-        }
+        let prepItems = [];
+        if (rawPrep.startsWith("[")) { try { prepItems = JSON.parse(rawPrep); } catch (_) {} }
+        RteMini.loadIntoRte(prepRte, prepItems, "preparation");
       }
     }
     if (type === "notice") {
@@ -648,20 +633,23 @@ document.addEventListener("DOMContentLoaded", () => {
     ta.addEventListener("input", () => autoResizeTextarea(ta));
   });
 
-  // Re-sérialise les textareas ingrédients/préparation en JSON avant soumission admin
+  // Sérialise les RTEs ingrédients/préparation dans les hidden inputs avant soumission
   editForm?.addEventListener("submit", () => {
-    const ingTa  = document.getElementById("edit-recipe-ingredients");
-    const prepTa = document.getElementById("edit-recipe-preparation");
-    if (ingTa && ingTa.value.trim() && !ingTa.value.trim().startsWith("[")) {
-      const lines = ingTa.value.split('\n').map(l => l.trim()).filter(Boolean);
-      const items = lines.map(l => l.startsWith('# ') ? '<h3 class="rd-ing-group-title">' + l.slice(2) + '</h3>' : l);
-      ingTa.value = JSON.stringify(items);
-    }
-    if (prepTa && prepTa.value.trim() && !prepTa.value.trim().startsWith("[")) {
-      const steps = prepTa.value.split(/\n---\n/).map(s => s.trim()).filter(Boolean);
-      prepTa.value = JSON.stringify(steps);
-    }
+    const ingRte     = document.getElementById("admin-ing-rte");
+    const ingHidden  = document.getElementById("edit-recipe-ingredients");
+    const prepRte    = document.getElementById("admin-prep-rte");
+    const prepHidden = document.getElementById("edit-recipe-preparation");
+    if (ingRte  && ingHidden)  ingHidden.value  = JSON.stringify(RteMini.rteToJson(ingRte,  "ingredients"));
+    if (prepRte && prepHidden) prepHidden.value = JSON.stringify(RteMini.rteToJson(prepRte, "preparation"));
   });
+
+  // Initialiser les RTEs (une seule fois au chargement)
+  const _ingRte  = document.getElementById("admin-ing-rte");
+  const _ingTb   = document.getElementById("admin-ing-tb");
+  const _prepRte = document.getElementById("admin-prep-rte");
+  const _prepTb  = document.getElementById("admin-prep-tb");
+  if (_ingRte  && _ingTb)  RteMini.initEditor({ rteEl: _ingRte,  tbEl: _ingTb,  mode: "ingredients" });
+  if (_prepRte && _prepTb) RteMini.initEditor({ rteEl: _prepRte, tbEl: _prepTb, mode: "preparation" });
 
   // Preview photo recette dans le modal d'édition
   document.getElementById("edit-recipe-image")?.addEventListener("change", (e) => {

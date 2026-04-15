@@ -7,6 +7,7 @@
     <title>Mon compte - Ciné Délices</title>
     <%- include("partials/head-resources") %>
     <link rel="stylesheet" href="/css/user-profile.css" />
+    <link rel="stylesheet" href="/css/rte-mini.css" />
   </head>
 
   <body class="profile-page" data-user-role="<%= user.role %>">
@@ -1924,8 +1925,35 @@
             </div>
           </div>
           <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" id="editField-description" name="description" rows="2"></textarea></div>
-          <div class="ci-ef-full"><label class="ci-ef-label">Ingrédients</label><textarea class="ci-ef-textarea" id="editField-ingredients" name="ingredients" rows="3"></textarea></div>
-          <div class="ci-ef-full"><label class="ci-ef-label">Préparation</label><textarea class="ci-ef-textarea" id="editField-preparation" name="preparation" rows="4"></textarea></div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Ingrédients <span class="ci-ef-label-hint">§ titre de section · • liste</span></label>
+            <div class="rte-mini-wrap">
+              <div class="rte-mini-toolbar" id="profil-ing-tb" role="toolbar" aria-label="Mise en forme ingrédients">
+                <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras"><strong>G</strong></button>
+                <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique"><em>I</em></button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                <button type="button" class="rte-tb-btn" data-cmd="heading" title="Titre de section">§ titre</button>
+              </div>
+              <div class="rte-mini-editor" id="profil-ing-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Ingrédients"></div>
+            </div>
+            <input type="hidden" id="editField-ingredients" name="ingredients" />
+          </div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Préparation <span class="ci-ef-label-hint">Ctrl+↵ ou + étape pour séparer les étapes</span></label>
+            <div class="rte-mini-wrap">
+              <div class="rte-mini-toolbar" id="profil-prep-tb" role="toolbar" aria-label="Mise en forme préparation">
+                <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras"><strong>G</strong></button>
+                <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique"><em>I</em></button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="separator" title="Nouvelle étape (Ctrl+Entrée)">+ étape</button>
+              </div>
+              <div class="rte-mini-editor" id="profil-prep-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Préparation"></div>
+            </div>
+            <input type="hidden" id="editField-preparation" name="preparation" />
+          </div>
           <div class="ci-ef-full">
             <label class="ci-ef-label">Photos <span class="ci-ef-label-hint">max 3 · ratio 3:2 · 2 Mo par photo · remplace les photos actuelles si modifiées</span></label>
             <div class="ci-ef-photo-slots" id="editPhotoSlots">
@@ -1951,7 +1979,19 @@
 
     <!-- Scripts -->
     <script src="/js/profile-tabs.js" defer></script>
+    <script src="/js/rte-mini.js"></script>
     <script src="/js/account.js" defer></script>
+    <script>
+    // Initialiser les RTEs du modal d'édition recette (une seule fois)
+    document.addEventListener('DOMContentLoaded', function () {
+      var ingRte  = document.getElementById('profil-ing-rte');
+      var ingTb   = document.getElementById('profil-ing-tb');
+      var prepRte = document.getElementById('profil-prep-rte');
+      var prepTb  = document.getElementById('profil-prep-tb');
+      if (ingRte  && ingTb  && window.RteMini) RteMini.initEditor({ rteEl: ingRte,  tbEl: ingTb,  mode: 'ingredients' });
+      if (prepRte && prepTb && window.RteMini) RteMini.initEditor({ rteEl: prepRte, tbEl: prepTb, mode: 'preparation' });
+    });
+    </script>
 
     <!-- Upload bannière -->
     <script>

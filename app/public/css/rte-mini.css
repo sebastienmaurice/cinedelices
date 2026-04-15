@@ -1,0 +1,159 @@
+/* ══════════════════════════════════════════════════════════════
+   rte-mini.css — Éditeur riche compact pour modals (admin & profil)
+   ══════════════════════════════════════════════════════════════ */
+
+.rte-mini-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────── */
+.rte-mini-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+.rte-tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 5px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, .5);
+  cursor: pointer;
+  font-size: .72rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+}
+
+.rte-tb-btn:hover {
+  background: rgba(255, 255, 255, .07);
+  color: rgba(255, 255, 255, .85);
+}
+
+.rte-tb-btn.is-active {
+  background: rgba(196, 160, 82, .15);
+  color: var(--or-titre, #C4A052);
+}
+
+.rte-tb-btn svg { display: block; }
+
+.rte-tb-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, .1);
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+/* ── Zone d'édition ───────────────────────────────────────────── */
+.rte-mini-editor {
+  min-height: 72px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 0 0 6px 6px;
+  color: rgba(255, 255, 255, .82);
+  font-size: .78rem;
+  line-height: 1.65;
+  outline: none;
+  cursor: text;
+}
+
+.rte-mini-editor:focus {
+  border-color: rgba(196, 160, 82, .35);
+  background: rgba(255, 255, 255, .04);
+}
+
+.rte-mini-editor p,
+.rte-mini-editor div {
+  margin: 1px 0;
+  min-height: 1em;
+}
+
+.rte-mini-editor h3 {
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--or-titre, #C4A052);
+  margin: 8px 0 3px;
+  font-family: var(--f-title, 'Cinzel', serif);
+}
+
+.rte-mini-editor ul,
+.rte-mini-editor ol {
+  margin: 2px 0 2px 18px;
+  padding: 0;
+}
+
+.rte-mini-editor li {
+  margin: 1px 0;
+}
+
+/* ── Séparateur d'étape (préparation) ────────────────────────── */
+.rte-mini-sep {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rte-mini-sep::before,
+.rte-mini-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 160, 82, .3), transparent);
+}
+
+.rte-mini-sep::after {
+  background: linear-gradient(270deg, rgba(196, 160, 82, .3), transparent);
+}
+
+.rte-mini-sep__label {
+  font-size: .58rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, .5);
+  white-space: nowrap;
+}
+
+.rte-mini-sep__del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(232, 100, 60, .12);
+  color: rgba(232, 100, 60, .65);
+  cursor: pointer;
+  font-size: .58rem;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background .12s, color .12s;
+}
+
+.rte-mini-sep__del:hover {
+  background: rgba(232, 100, 60, .28);
+  color: rgba(232, 100, 60, 1);
+}

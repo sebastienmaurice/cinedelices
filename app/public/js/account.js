@@ -476,8 +476,23 @@
     document.getElementById("editField-time").value = item.dataset.time || "";
     document.getElementById("editField-difficulty").value = item.dataset.difficulty || "";
     document.getElementById("editField-description").value = decodeURIComponent(item.dataset.description || "");
-    document.getElementById("editField-ingredients").value = decodeURIComponent(item.dataset.ingredients || "");
-    document.getElementById("editField-preparation").value = decodeURIComponent(item.dataset.preparation || "");
+
+    // Ingrédients → RTE
+    const ingRte = document.getElementById("profil-ing-rte");
+    if (ingRte && window.RteMini) {
+      const rawIng = decodeURIComponent(item.dataset.ingredients || "").trim();
+      let ingItems = [];
+      if (rawIng.startsWith("[")) { try { ingItems = JSON.parse(rawIng); } catch (_) {} }
+      RteMini.loadIntoRte(ingRte, ingItems, "ingredients");
+    }
+    // Préparation → RTE
+    const prepRte = document.getElementById("profil-prep-rte");
+    if (prepRte && window.RteMini) {
+      const rawPrep = decodeURIComponent(item.dataset.preparation || "").trim();
+      let prepItems = [];
+      if (rawPrep.startsWith("[")) { try { prepItems = JSON.parse(rawPrep); } catch (_) {} }
+      RteMini.loadIntoRte(prepRte, prepItems, "preparation");
+    }
 
     // Pré-remplir les slots avec les photos actuelles
     _clearAllSlots();
@@ -560,6 +575,15 @@
         formData.append(name, val);
       }
     });
+    // Sérialiser les RTEs dans les hidden inputs avant comparaison
+    if (window.RteMini) {
+      const ingRte  = document.getElementById("profil-ing-rte");
+      const ingHid  = document.getElementById("editField-ingredients");
+      const prepRte = document.getElementById("profil-prep-rte");
+      const prepHid = document.getElementById("editField-preparation");
+      if (ingRte  && ingHid)  ingHid.value  = JSON.stringify(RteMini.rteToJson(ingRte,  "ingredients"));
+      if (prepRte && prepHid) prepHid.value = JSON.stringify(RteMini.rteToJson(prepRte, "preparation"));
+    }
     // Champs longs : le dataset est encodé en URI, décoder pour comparer
     ["description", "ingredients", "preparation"].forEach((name) => {
       const el = document.getElementById(`editField-${name}`);

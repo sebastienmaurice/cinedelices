@@ -7,6 +7,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin-dashboard.css" />
+    <link rel="stylesheet" href="/css/rte-mini.css" />
   </head>
   <body>
 
@@ -1553,12 +1554,33 @@
               <textarea id="edit-recipe-description" name="description" class="admin-modal__textarea admin-modal__textarea--autosize" rows="2"></textarea>
             </div>
             <div class="admin-modal__field">
-              <label class="admin-modal__label" for="edit-recipe-ingredients">Ingrédients <span style="font-weight:400;opacity:.5;font-size:.75em">— 1 ligne = 1 ingrédient · <code># Titre de section</code></span></label>
-              <textarea id="edit-recipe-ingredients" name="ingredients" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4" required></textarea>
+              <label class="admin-modal__label">Ingrédients <span style="font-weight:400;opacity:.5;font-size:.75em">— <kbd>§</kbd> titre de section · <kbd>•</kbd> liste</span></label>
+              <div class="rte-mini-wrap">
+                <div class="rte-mini-toolbar" id="admin-ing-tb" role="toolbar" aria-label="Mise en forme ingrédients">
+                  <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)"><strong>G</strong></button>
+                  <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)"><em>I</em></button>
+                  <div class="rte-tb-divider"></div>
+                  <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                  <button type="button" class="rte-tb-btn" data-cmd="heading" title="Titre de section (§)">§ titre</button>
+                </div>
+                <div class="rte-mini-editor" id="admin-ing-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Ingrédients"></div>
+              </div>
+              <input type="hidden" id="edit-recipe-ingredients" name="ingredients" />
             </div>
             <div class="admin-modal__field">
-              <label class="admin-modal__label" for="edit-recipe-preparation">Préparation <span style="font-weight:400;opacity:.5;font-size:.75em">— séparer les étapes par <code>---</code> sur sa propre ligne</span></label>
-              <textarea id="edit-recipe-preparation" name="preparation" class="admin-modal__textarea admin-modal__textarea--autosize" rows="5" required></textarea>
+              <label class="admin-modal__label">Préparation <span style="font-weight:400;opacity:.5;font-size:.75em">— <kbd>Ctrl+↵</kbd> ou <kbd>+ étape</kbd> pour séparer les étapes</span></label>
+              <div class="rte-mini-wrap">
+                <div class="rte-mini-toolbar" id="admin-prep-tb" role="toolbar" aria-label="Mise en forme préparation">
+                  <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)"><strong>G</strong></button>
+                  <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)"><em>I</em></button>
+                  <div class="rte-tb-divider"></div>
+                  <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                  <div class="rte-tb-divider"></div>
+                  <button type="button" class="rte-tb-btn" data-cmd="separator" title="Nouvelle étape (Ctrl+Entrée)">+ étape</button>
+                </div>
+                <div class="rte-mini-editor" id="admin-prep-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Préparation"></div>
+              </div>
+              <input type="hidden" id="edit-recipe-preparation" name="preparation" />
             </div>
             <div class="admin-modal__field">
               <label class="admin-modal__label" for="edit-recipe-image">Photo principale (optionnel)</label>
@@ -1734,6 +1756,7 @@
 
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
+    <script src="/js/rte-mini.js"></script>
     <script src="/js/admin-dashboard.js"></script>
     <script src="/js/recipe-detail.js"></script>
   </body>
