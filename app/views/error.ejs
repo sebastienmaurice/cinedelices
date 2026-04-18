@@ -7,14 +7,26 @@
   const _errCode = (typeof error !== 'undefined' && error) ? String(error) : '404';
   const _is404 = _errCode === '404';
   const _is403 = _errCode === '403';
+  const _is401 = _errCode === '401';
   const _is500 = _errCode === '500';
-  const _pageTitle = _is404 ? 'Scène Introuvable' : _is403 ? 'Accès Refusé' : _is500 ? 'Erreur de Projection' : 'Erreur';
-  const _eyebrow  = _is404 ? 'Scène introuvable' : _is403 ? 'Accès interdit' : _is500 ? 'Erreur serveur' : 'Une erreur est survenue';
+  const _pageTitle = _is404 ? 'Scène Introuvable'
+                   : _is403 ? 'Accès Refusé'
+                   : _is401 ? 'Identification Impossible'
+                   : _is500 ? 'Erreur de Projection'
+                   : 'Erreur';
+  const _eyebrow  = _is404 ? 'Scène introuvable'
+                  : _is403 ? 'Accès interdit'
+                  : _is401 ? 'Identifiants invalides'
+                  : _is500 ? 'Erreur serveur'
+                  : 'Une erreur est survenue';
   const _title    = _is404 ? 'Cette page a été <em>coupée au montage</em>'
                   : _is403 ? 'Vous n\'avez pas accès à <em>cette salle</em>'
+                  : _is401 ? 'Les identifiants ne <em>correspondent pas</em>'
                   : _is500 ? 'Le projecteur a <em>rencontré un problème</em>'
                   : 'Une erreur <em>inattendue</em> est survenue';
-  const _sub      = (typeof message !== 'undefined' && message && message !== _errCode + '.')
+  const _sub      = _is401
+                  ? 'Pseudo ou mot de passe invalide. Vérifiez vos informations, ou réinitialisez votre mot de passe si vous l\'avez oublié.'
+                  : (typeof message !== 'undefined' && message && message !== _errCode + '.')
                   ? message
                   : _is404 ? 'Comme une scène supprimée au dernier moment, cette page n\'existe plus ou n\'a jamais existé. Retournez en salle avant que les lumières s\'allument.'
                   : _is403 ? 'Cette section est réservée. Connectez-vous avec le bon compte ou retournez à l\'accueil.'
@@ -278,20 +290,35 @@ body {
     <p class="error-sub"><%- _sub %></p>
 
     <div class="cta-group">
-      <a href="/" class="btn-primary">
-        <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
-          <path d="M8 1L1 8l7 7M1 8h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Retour à l'accueil
-      </a>
-      <a href="/films" class="btn-secondary">
-        <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
-          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        Rechercher un film
-      </a>
-    </div>
+      <% if (_is401) { %>
+        <a href="/auth/forgot-password" class="btn-primary">
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
+            <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Mot de passe oublié ?
+        </a>
+        <a href="/" class="btn-secondary">
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1L1 8l7 7M1 8h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Retour à l'accueil
+        </a>
+      <% } else { %>
+        <a href="/" class="btn-primary">
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1L1 8l7 7M1 8h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Retour à l'accueil
+        </a>
+        <a href="/films" class="btn-secondary">
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Rechercher un film
+        </a>
+      <% } %>
 
   </div>
 </main>

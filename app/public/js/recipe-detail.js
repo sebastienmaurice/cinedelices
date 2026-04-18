@@ -258,25 +258,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const curEl   = document.getElementById('rh-poster-cur');
   let current   = 0;
 
+  const AUTOPLAY_DELAY = 3800;
+  let autoplayTimer = null;
+  let isProgrammatic = false;
+
   function goTo(idx) {
-    current = Math.max(0, Math.min(slides.length - 1, idx));
-    track.scrollTo({ left: current * track.offsetWidth, behavior: 'smooth' });
+    current = ((idx % slides.length) + slides.length) % slides.length;
+    isProgrammatic = true;
+    track.scrollTo({ left: current * track.clientWidth, behavior: 'smooth' });
+    setTimeout(() => { isProgrammatic = false; }, 700);
     dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
     if (curEl) curEl.textContent = current + 1;
-    if (btnPrev) btnPrev.disabled = current === 0;
-    if (btnNext) btnNext.disabled = current === slides.length - 1;
+    if (btnPrev) btnPrev.disabled = false;
+    if (btnNext) btnNext.disabled = false;
   }
 
-  btnPrev && btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); });
-  btnNext && btnNext.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); });
-  dots.forEach((d) => d.addEventListener('click', () => goTo(parseInt(d.dataset.idx, 10))));
+  function startAutoplay() {
+    stopAutoplay();
+    autoplayTimer = setInterval(() => goTo(current + 1), AUTOPLAY_DELAY);
+  }
+  function stopAutoplay() {
+    if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+  }
+
+  btnPrev && btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); startAutoplay(); });
+  btnNext && btnNext.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); startAutoplay(); });
+  dots.forEach((d) => d.addEventListener('click', () => { goTo(parseInt(d.dataset.idx, 10)); startAutoplay(); }));
 
   track.addEventListener('scroll', () => {
-    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    if (isProgrammatic) return;
+    const idx = Math.round(track.scrollLeft / track.clientWidth);
     if (idx !== current) goTo(idx);
   }, { passive: true });
 
+  // Pause au survol
+  const posterEl = track.closest('.rh-poster');
+  if (posterEl) {
+    posterEl.addEventListener('mouseenter', stopAutoplay);
+    posterEl.addEventListener('mouseleave', startAutoplay);
+  }
+
   goTo(0);
+  startAutoplay();
 });
 
 // ── "Charger plus" avis ──

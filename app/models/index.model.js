@@ -9,6 +9,7 @@ import Favorite from './favorite.model.js';
 import Rating from './rating.model.js';
 import UserPoints from './UserPoints.model.js';
 import RecipePicture from './RecipePicture.model.js';
+import PasswordReset from './password_reset.model.js';
 
 
 // Définition des relations entre les modèles
@@ -69,8 +70,12 @@ User.hasOne(UserPoints, { foreignKey: 'id_user' });
 Recipe.hasMany(RecipePicture, { foreignKey: 'recipe_id', as: 'RecipePictures' });
 RecipePicture.belongsTo(Recipe, { foreignKey: 'recipe_id' });
 
+// Reset mot de passe : un utilisateur peut avoir plusieurs tokens (historique)
+User.hasMany(PasswordReset, { foreignKey: 'user_id' });
+PasswordReset.belongsTo(User, { foreignKey: 'user_id' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset };
 
 
 

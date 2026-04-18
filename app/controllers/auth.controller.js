@@ -1,6 +1,11 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { getUserGamificationData, awardWeeklyLoginXP } from "../services/gamification.service.js";
+import {
+  createAndSendResetToken,
+  findActiveToken,
+  markTokenUsed,
+} from "../services/password-reset.service.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
@@ -1330,6 +1335,135 @@ const authController = {
       return res.json({ success: true, banner_status: user.banner_status, banner_image: user.banner_image });
     } catch {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
+    }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  //  FORGOT / RESET PASSWORD
+  // ─────────────────────────────────────────────────────────────
+
+  // GET /auth/forgot-password — affiche le formulaire
+  async forgotPasswordForm(req, res) {
+    return res.render("forgot-password", {
+      sent: false,
+      error: null,
+    });
+  },
+
+  // POST /auth/forgot-password — envoie le lien (réponse neutre)
+  async forgotPasswordSubmit(req, res) {
+    const raw = (req.body.identifier || "").trim();
+    const NEUTRAL_VIEW = {
+      sent: true,
+      error: null,
+    };
+
+    try {
+      if (!raw) {
+        return res.status(StatusCodes.BAD_REQUEST).render("forgot-password", {
+          sent: false,
+          error: "Merci de renseigner votre email ou identifiant.",
+        });
+      }
+
+      // Recherche par email OU pseudo (insensible à la casse)
+      const user = await User.findOne({
+        where: {
+          [Op.or]: [
+            { email:  { [Op.iLike]: raw } },
+            { pseudo: { [Op.iLike]: raw } },
+          ],
+        },
+      });
+
+      if (user && user.email) {
+        try {
+          await createAndSendResetToken(user);
+        } catch (e) {
+          // On log mais on ne révèle rien à l'utilisateur (réponse neutre)
+          console.error("[forgot-password] sendMail failed:", e.message);
+        }
+      }
+
+      // Réponse neutre dans tous les cas (existe / n'existe pas / mail KO)
+      return res.render("forgot-password", NEUTRAL_VIEW);
+    } catch (error) {
+      console.error("[forgot-password] error:", error);
+      return res.render("forgot-password", NEUTRAL_VIEW);
+    }
+  },
+
+  // GET /auth/reset-password?token=XXX — vérifie token puis affiche form
+  async resetPasswordForm(req, res) {
+    const token = (req.query.token || "").trim();
+    const record = await findActiveToken(token);
+
+    if (!record) {
+      return res.status(StatusCodes.BAD_REQUEST).render("reset-password", {
+        tokenValid: false,
+        token: null,
+        error: "Ce lien de réinitialisation est invalide ou a expiré.",
+        success: false,
+      });
+    }
+
+    return res.render("reset-password", {
+      tokenValid: true,
+      token,
+      error: null,
+      success: false,
+    });
+  },
+
+  // POST /auth/reset-password — applique le nouveau mot de passe
+  async resetPasswordSubmit(req, res) {
+    const token = (req.body.token || "").trim();
+    const { password, confirm_password } = req.body;
+
+    const record = await findActiveToken(token);
+    if (!record) {
+      return res.status(StatusCodes.BAD_REQUEST).render("reset-password", {
+        tokenValid: false,
+        token: null,
+        error: "Ce lien de réinitialisation est invalide ou a expiré.",
+        success: false,
+      });
+    }
+
+    // Validation mot de passe (même règle que register)
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,255}$/;
+    if (!password || !strongPwd.test(password)) {
+      return res.status(StatusCodes.BAD_REQUEST).render("reset-password", {
+        tokenValid: true,
+        token,
+        error:
+          "Mot de passe trop faible. Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial.",
+        success: false,
+      });
+    }
+
+    if (password !== confirm_password) {
+      return res.status(StatusCodes.BAD_REQUEST).render("reset-password", {
+        tokenValid: true,
+        token,
+        error: "Les mots de passe ne correspondent pas.",
+        success: false,
+      });
+    }
+
+    try {
+      const hash = await argon2.hash(password);
+      await User.update({ password: hash }, { where: { id: record.user_id } });
+      await markTokenUsed(record);
+
+      return res.render("reset-password", {
+        tokenValid: false,
+        token: null,
+        error: null,
+        success: true,
+      });
+    } catch (error) {
+      return renderServerError(res, error);
     }
   },
 
