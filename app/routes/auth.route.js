@@ -94,6 +94,11 @@ authRouter.post("/login", validateUserLogin , authController.login);
 authRouter.get("/logout", authController.logout);
 authRouter.post("/logout", isLogged, authController.logout);
 
+// Google OAuth
+authRouter.post("/google", authController.googleAuth);           // One Tap credential
+authRouter.post("/google/code", authController.googleCode);      // Popup code flow
+authRouter.post("/google/complete", authController.googleComplete);
+
 // Réinitialisation de mot de passe (flow complet email OR identifiant)
 authRouter.get("/forgot-password",  authController.forgotPasswordForm);
 authRouter.post("/forgot-password", authController.forgotPasswordSubmit);

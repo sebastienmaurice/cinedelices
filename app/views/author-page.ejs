@@ -106,7 +106,7 @@
             <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
           <% } else { %>
             <button class="banner-btn banner-btn--upload" type="button" id="authorBannerBtn">
-              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <i data-lucide="upload" width="10" height="10" aria-hidden="true"></i>
               Modifier la bannière
             </button>
           <% } %>
@@ -144,12 +144,12 @@
             <!-- Badge rang / niveau -->
             <% if (isAdminAuthor) { %>
             <div class="hero-rank-badge hero-rank-badge--official gamification-badge gamification-badge--official">
-              <svg viewBox="0 0 24 24" width="12" height="12"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="currentColor" stroke="none"/></svg>
+              <i data-lucide="star" width="12" height="12" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               Ciné Délices
             </div>
             <% } else { %>
             <div class="hero-rank-badge gamification-badge gamification-badge--rank">
-              <svg viewBox="0 0 24 24" width="12" height="12"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" stroke="none"/></svg>
+              <i data-lucide="star" width="12" height="12" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               Niveau <%= userLevel %>
             </div>
             <% } %>
@@ -263,14 +263,14 @@
           <% if (_uniqueMovies.length > 0 || _uniqueCats.length > 0) { %>
           <div class="tb-right">
             <span class="af-label">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              <i data-lucide="filter" width="13" height="13" aria-hidden="true"></i>
               Filtrer
             </span>
 
             <% if (_uniqueMovies.length > 0) { %>
             <div class="dd-filter-wrap" id="ddFilmWrap">
               <button class="dropdown-trigger" id="ddFilmTrigger" type="button" aria-haspopup="true" aria-expanded="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                <i data-lucide="film" aria-hidden="true"></i>
                 <span id="ddFilmLabel">Tous les films</span>
                 <span class="dt-arrow">▾</span>
               </button>
@@ -278,12 +278,12 @@
                 <div class="dropdown__header"></div>
                 <div class="dropdown__cat">Films</div>
                 <button class="dropdown__item dropdown__item--active" type="button" data-filter="film" data-value="all">
-                  <span class="dropdown__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 12h18"/></svg></span>
+                  <span class="dropdown__icon"><i data-lucide="film" aria-hidden="true"></i></span>
                   Tous les films
                 </button>
                 <% _uniqueMovies.forEach(m => { %>
                 <button class="dropdown__item" type="button" data-filter="film" data-value="<%= m.title.toLowerCase() %>">
-                  <span class="dropdown__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect width="15" height="14" x="1" y="5" rx="2" ry="2"/></svg></span>
+                  <span class="dropdown__icon"><i data-lucide="video" aria-hidden="true"></i></span>
                   <%= m.title %>
                 </button>
                 <% }) %>
@@ -294,7 +294,7 @@
             <% if (_uniqueCats.length > 0) { %>
             <div class="dd-filter-wrap" id="ddCatWrap">
               <button class="dropdown-trigger" id="ddCatTrigger" type="button" aria-haspopup="true" aria-expanded="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <i data-lucide="utensils" aria-hidden="true"></i>
                 <span id="ddCatLabel">Toutes les catégories</span>
                 <span class="dt-arrow">▾</span>
               </button>
@@ -349,7 +349,7 @@
                     <div class="cd-icon-btn__wrap">
                       <span class="cd-icon-btn__ring"></span>
                       <span class="cd-icon-btn__bg">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                        <i data-lucide="utensils" width="18" height="18" aria-hidden="true"></i>
                       </span>
                     </div>
                     <span class="cd-icon-btn__label">Voir la recette</span>
@@ -367,7 +367,7 @@
                 <% if (movieTitle) { %>
                 <div class="recipe-card__ob">
                   <span class="badge badge--film-dk">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+                    <i data-lucide="film" class="icon" aria-hidden="true"></i>
                     <%= movieTitle.length > 22 ? movieTitle.slice(0, 22) + '…' : movieTitle %>
                   </span>
                 </div>
@@ -380,14 +380,14 @@
                 <div class="recipe-card__title-row">
                   <h3 class="recipe-ttl"><%= recipe.name %></h3>
                   <span class="meta-time">
-                    <svg class="meta-time__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><%= recipe.time %> min
+                    <i data-lucide="clock" class="meta-time__icon" width="13" height="13" aria-hidden="true"></i><%= recipe.time %> min
                   </span>
                 </div>
                 <!-- Étoiles + valeur -->
                 <div class="rating rating--sm" data-entity-id="<%= recipe.id %>" data-entity-type="recipe" data-average="<%= recipe.avgRating || '0' %>">
                   <% for (let i = 1; i <= 5; i++) { %>
                   <span class="rating__star <%= i <= Math.round(parseFloat(recipe.avgRating || 0)) ? 'rating__star--filled' : '' %>">
-                    <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <i data-lucide="star" class="icon" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
                   </span>
                   <% } %>
                   <span class="rating__value"><%= recipe.avgRating || '0' %></span>
@@ -419,7 +419,7 @@
                   data-is-favorite="<%= recipe.isFavorite || false %>"
                   aria-label="<%= recipe.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>"
                 >
-                  <svg class="icon" viewBox="0 0 24 24" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  <i data-lucide="heart" class="icon" fill="<%= recipe.isFavorite ? 'currentColor' : 'none' %>" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></i>
                 </button>
               </div>
             </article>
@@ -430,7 +430,7 @@
           <div class="center-button">
             <button id="see__all__recipes__button" class="btn btn--red" aria-label="Voir plus de recettes">
               <span class="btn__shimmer"></span>
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/></svg>
+              <i data-lucide="lightbulb" class="icon" aria-hidden="true"></i>
               <span class="btn__text">Voir plus</span>
             </button>
           </div>

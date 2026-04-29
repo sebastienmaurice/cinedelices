@@ -127,6 +127,19 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
         });
         row.querySelector('.frame-row-check')?.classList.replace('frame-row-check--ok', 'frame-row-check--active');
 
+        // Nouveau pill bento (.ctb-frame-tile__status) : repasser tous en "ready", puis activer le cliqué
+        newList.querySelectorAll('.ctb-frame-tile__status').forEach(p => {
+          if (p.classList.contains('is-locked')) return;
+          p.classList.remove('is-active');
+          p.classList.add('is-ready');
+          p.innerHTML = '<span>Équiper</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        });
+        const pill = row.querySelector('.ctb-frame-tile__status');
+        if (pill) {
+          pill.classList.remove('is-ready', 'is-locked');
+          pill.classList.add('is-active');
+          pill.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg><span>Équipé</span>';
+        }
         // Widget "Cadre actif" dans la sidebar contributions
         const activePreview = document.querySelector('.active-frame-body .active-frame-preview');
         if (activePreview) {

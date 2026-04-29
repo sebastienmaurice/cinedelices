@@ -1551,6 +1551,27 @@ a:not([class]):hover {
   box-shadow: 0 6px 20px rgba(194, 48, 24, 0.52);
 }
 
+.btn--google {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem;
+  background: #fff;
+  color: #3c4043;
+  border: 1.5px solid #dadce0;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.btn--google:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #c6c6c6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.btn--google svg {
+  flex-shrink: 0;
+  display: block;
+}
+
 /* ── Shimmer bordure or — utilisé sur film-card et recipe/recette-card ── */
 /* Technique background-clip: le 2e background (border-box = bordure) glisse en boucle */
 @keyframes shimmer-gold-border {
@@ -2492,13 +2513,28 @@ a:not([class]):hover {
 .modal-content {
   position: relative;
   background: var(--bleu-intermediaire);
-  padding: 2rem;
+  padding: 1.5rem 1.75rem 1.75rem;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
+  max-height: 88vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   color: var(--argent-ecran);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
   animation: modalShowPop 0.3s ease-out;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 160, 82, 0.3) transparent;
+}
+.modal-content::-webkit-scrollbar {
+  width: 4px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: rgba(196, 160, 82, 0.35);
+  border-radius: 4px;
 }
 /**
  * Animation d'apparition de la modal
@@ -2537,21 +2573,30 @@ a:not([class]):hover {
 
 .modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  font-size: 1.6rem;
-  background: none;
-  border: none;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
   color: var(--argent-ecran);
   cursor: pointer;
   transition:
-    color 0.3s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
   z-index: 10;
 }
 .modal-close:hover {
+  background: rgba(196, 160, 82, 0.15);
+  border-color: rgba(196, 160, 82, 0.4);
   color: var(--dore-popcorn);
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .auth-form {
@@ -2583,8 +2628,8 @@ a:not([class]):hover {
 
 .modal-content input {
   width: 100%;
-  padding: 0.6rem 0.8rem;
-  margin-bottom: 1rem;
+  padding: 0.55rem 0.8rem;
+  margin-bottom: 0.45rem;
   border-radius: 12px;
   border: 1px solid var(--argent-ecran);
   background: var(--bleu-nuit);
@@ -2593,6 +2638,36 @@ a:not([class]):hover {
   transition:
     border-color 0.3s,
     background 0.3s;
+}
+
+/* Prénom + Nom côte à côte — économise un champ complet de hauteur */
+.modal-content .form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Help text repositionné AU-DESSUS de l'input via order (sans modifier le HTML) */
+.modal-content .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.modal-content .help {
+  order: -1;
+  display: block;
+  font-size: 0.68rem;
+  color: rgba(196, 160, 82, 0.55);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* Le div d'erreur caché ne doit pas générer de marge */
+.modal-content .error {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
 }
 .modal-content input:focus {
   border-color: var(--dore-popcorn);
@@ -2603,12 +2678,57 @@ a:not([class]):hover {
 .modal-content h2 {
   text-align: center;
   font-family: var(--font-h2-h6);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--dore-popcorn);
 }
-.modal-content button {
+.modal-content button:not(.modal-close) {
   display: block;
   width: 100%;
+}
+
+/* ── Divider "ou" dans le modal auth ── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.6rem 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Bouton Google dans le burger menu mobile ── */
+.mobile-drawer__btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: #fff;
+  color: #3c4043;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.mobile-drawer__btn-google:hover {
+  background: #f1f3f4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+.mobile-drawer__btn-google svg {
+  flex-shrink: 0;
 }
 
 /* ====================================================== */
@@ -2745,9 +2865,9 @@ a:not([class]):hover {
 }
 
 .switch-form {
-  margin-top: 1rem;
+  margin-top: 0.65rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 .btn-link {
   background: none;

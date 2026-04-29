@@ -43,7 +43,7 @@
         <% if (userRecipes && userRecipes.filter(r => r.status === 'approved').length > 0) { %>
         <div class="hero-author-link">
           <a href="/auteur/<%= user.id %>" class="author-link" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+            <i data-lucide="film" aria-hidden="true"></i>
             Ma page auteur
           </a>
         </div>
@@ -59,7 +59,7 @@
             </button>
           <% } else { %>
             <button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById('bannerInput').click()">
-              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <i data-lucide="upload" width="10" height="10" aria-hidden="true"></i>
               Modifier la bannière
             </button>
           <% } %>
@@ -103,11 +103,11 @@
               <!-- Actions -->
               <div class="avatar-actions">
                 <label for="avatar" class="av-btn av-btn--upload" title="Changer la photo">
-                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <i data-lucide="upload" aria-hidden="true"></i>
                 </label>
                 <input type="file" id="avatar" name="avatar" accept="image/*" hidden />
                 <button type="button" class="av-btn av-btn--del" id="removeAvatarBtn" title="Supprimer la photo">
-                  <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  <i data-lucide="trash-2" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -137,7 +137,7 @@
                 <span class="pseudo-status-badge pseudo-status-badge--rejected"><span class="b-dot"></span>Refusé</span>
               <% } else { %>
                 <button type="button" class="hero-pseudo-edit" id="editPseudoBtn" title="Modifier le pseudo">
-                  <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <i data-lucide="square-pen" aria-hidden="true"></i>
                 </button>
               <% } %>
               <button type="button" class="hero-pseudo-save hero-pseudo-save--validate" id="savePseudoBtn">Valider</button>
@@ -188,26 +188,26 @@
       <div class="profile-tabs-wrap">
         <nav class="profile-tabs" role="tablist" aria-label="Navigation du compte">
           <button class="ptab active" data-tab="overview" role="tab" aria-selected="true">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <i data-lucide="layout-grid" aria-hidden="true"></i>
             <span class="ptab-text">Vue d'ensemble</span>
           </button>
           <button class="ptab" data-tab="profil" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <i data-lucide="user" aria-hidden="true"></i>
             <span class="ptab-text">Profil</span>
           </button>
           <button class="ptab" data-tab="favoris" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <i data-lucide="heart" aria-hidden="true"></i>
             <span class="ptab-text">Favoris</span>
           </button>
           <button class="ptab" data-tab="creations" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <i data-lucide="plus" aria-hidden="true"></i>
             <span class="ptab-text">Créations</span>
             <% const totalCreations = userRecipes.length + userMovies.length + userNoticesCount; if (totalCreations > 0) { %>
             <span class="ptab-badge"><%= totalCreations %></span>
             <% } %>
           </button>
           <button class="ptab" data-tab="contributions" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <i data-lucide="star" aria-hidden="true"></i>
             <span class="ptab-text">Contributions</span>
           </button>
         </nav>
@@ -227,7 +227,7 @@
           <div class="impact-banner">
             <div class="impact-cell">
               <div class="impact-cell__icon ic--recipe">
-                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <i data-lucide="utensils" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" data-ov-target="<%= userRecipes.length %>">0</div>
@@ -236,7 +236,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--film">
-                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                <i data-lucide="film" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" data-ov-target="<%= userMovies.length %>">0</div>
@@ -245,7 +245,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--avis">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <i data-lucide="message-square" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" data-ov-target="<%= userNoticesCount %>">0</div>
@@ -254,7 +254,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--note">
-                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <i data-lucide="star" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= avgUserRating || '—' %></div>
@@ -317,7 +317,7 @@
                   <!-- Membre depuis -->
                   <% if (_ovSince) { %>
                   <div class="ov-member-since">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <i data-lucide="clock" aria-hidden="true"></i>
                     Membre depuis <%= _ovSince %>
                   </div>
                   <% } %>
@@ -333,15 +333,15 @@
                 </div>
                 <div class="quick-actions">
                   <button class="qa-btn qa-btn--gold" onclick="document.querySelector('[data-tab=\'creations\']').click()">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="plus" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Mes créations</div><div class="qa-sub">Recettes, films et avis</div></div>
                   </button>
                   <button class="qa-btn qa-btn--violet" onclick="document.querySelector('[data-tab=\'favoris\']').click()">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="heart" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
                   </button>
                   <button class="qa-btn qa-btn--vert" onclick="document.querySelector('[data-tab=\'contributions\']').click()">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="star" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Contributions</div><div class="qa-sub">XP, niveaux et cadres</div></div>
                   </button>
                 </div>
@@ -387,13 +387,13 @@
                           <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
                         </div>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <i data-lucide="clock" aria-hidden="true"></i>
                           <%= recipe.time %> min · <%= recipe.difficulty %>
                         </div>
                       </div>
                       <% if (recipe.status === 'approved') { %>
                       <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
-                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                        <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
                       </a>
                       <% } %>
                     </div>
@@ -440,13 +440,13 @@
                       </div>
                       <% if (movie.genre) { %><div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div><% } %>
                       <div class="list-row__sub">
-                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                        <i data-lucide="film" aria-hidden="true"></i>
                         <%= movie.year %>
                       </div>
                     </div>
                     <% if (movie.status === 'approved') { %>
                     <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
-                      <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                      <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
                     </a>
                     <% } %>
                   </div>
@@ -470,7 +470,7 @@
                   <% userNotices.slice(0, 2).forEach(function(notice) { %>
                   <div class="avis-card">
                     <div class="avis-icon">
-                      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <i data-lucide="message-square" aria-hidden="true"></i>
                     </div>
                     <div class="avis-body">
                       <div class="avis-top">
@@ -519,7 +519,7 @@
           <div class="impact-banner">
             <div class="impact-cell">
               <div class="impact-cell__icon ic--recipe">
-                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <i data-lucide="user" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= user.pseudo %></div>
@@ -528,7 +528,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--avis">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <i data-lucide="message-square" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= userNoticesCount %></div>
@@ -537,7 +537,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--note">
-                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <i data-lucide="star" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= avgUserRating || '—' %></div>
@@ -546,7 +546,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--film">
-                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                <i data-lucide="film" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= userRecipes.length %></div>
@@ -558,59 +558,28 @@
           <!-- LAYOUT 2 COLONNES -->
           <div class="crea-layout">
 
-            <!-- ── SIDEBAR (gauche, étroite) : stats + zone danger ── -->
+            <!-- ── SIDEBAR (gauche, étroite) : zone danger ── -->
             <aside class="crea-sidebar">
 
-              <!-- MON COMPTE -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Mon compte</span>
-                </div>
-                <div class="stats-grid">
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= userNoticesCount %></div>
-                      <div class="stat-lbl">Avis</div>
+              <!-- ═══ CARD SUPPRIMER MON COMPTE ═══ -->
+              <div class="delacc-card" role="region" aria-labelledby="delacc-title">
+                <div class="delacc-card__shimmer" aria-hidden="true"></div>
+                <div class="delacc-card__inner">
+                  <div class="delacc-card__head">
+                    <div class="delacc-card__icon" aria-hidden="true">
+                      <i data-lucide="triangle-alert" aria-hidden="true"></i>
+                    </div>
+                    <div class="delacc-card__titles">
+                      <p class="delacc-card__eyebrow">Zone critique</p>
+                      <h3 class="delacc-card__title" id="delacc-title">Supprimer<em>mon compte</em></h3>
                     </div>
                   </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= avgUserRating || '—' %></div>
-                      <div class="stat-lbl">Note moy.</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= userRecipes.length %></div>
-                      <div class="stat-lbl">Recettes</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= userMovies.length %></div>
-                      <div class="stat-lbl">Films</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ZONE DANGER -->
-              <div class="widget widget--danger">
-                <div class="widget-head widget-head--danger">
-                  <div class="widget-head__line" style="background:#e84020;"></div>
-                  <span class="widget-head__title" style="color:rgba(232,100,65,.7);">Zone Danger</span>
-                  <span style="font-size:1rem;">⚠️</span>
-                </div>
-                <div class="widget__form-body">
-                  <p class="pf-danger-sub">La suppression de votre compte est irréversible. Toutes vos données, recettes, avis et favoris seront définitivement effacés.</p>
-                  <button class="lr-btn lr-btn--del" id="deleteAccountBtn" style="width:100%;height:34px;justify-content:center;margin-top:4px;">
-                    <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    Supprimer mon compte
+                  <p class="delacc-card__desc">
+                    Action <strong>irréversible</strong>. Recettes, avis, favoris et historique seront définitivement effacés.
+                  </p>
+                  <button type="button" class="delacc-card__cta" id="deleteAccountBtn">
+                    <i data-lucide="trash-2" aria-hidden="true"></i>
+                    <span>Supprimer mon compte</span>
                   </button>
                 </div>
               </div>
@@ -649,6 +618,24 @@
                           <input class="pf-input" type="email" id="email" name="email" value="<%= user.email %>" disabled />
                         </div>
                       </div>
+                      <% if (user.google_id) { %>
+                      <!-- Compte Google : pas de mot de passe local -->
+                      <div class="pf-row">
+                        <div class="pf-group pf-group--full">
+                          <label class="pf-label">Connexion</label>
+                          <div class="pf-google-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 48 48" aria-hidden="true">
+                              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                            </svg>
+                            Compte connecté via Google
+                          </div>
+                          <p class="pf-hint">Pour définir un mot de passe sur ce compte, utilisez <a href="/auth/forgot-password" class="pf-link">réinitialiser mon mot de passe</a>.</p>
+                        </div>
+                      </div>
+                      <% } else { %>
                       <div class="pf-row">
                         <div class="pf-group pf-group--full">
                           <label class="pf-label" for="password">Mot de passe</label>
@@ -656,6 +643,7 @@
                           <a href="/auth/forgot-password" class="pf-link">Mot de passe oublié ?</a>
                         </div>
                       </div>
+                      <% } %>
                       <div class="pf-actions">
                         <button type="submit" class="lr-btn lr-btn--edit" id="saveProfileBtn" style="display:none;height:32px;padding:0 16px;">Enregistrer</button>
                         <button type="button" class="lr-btn lr-btn--view" id="cancelProfileBtn" style="display:none;height:32px;padding:0 16px;">Annuler</button>
@@ -716,7 +704,7 @@
           <div class="impact-banner">
             <div class="impact-cell">
               <div class="impact-cell__icon ic--film">
-                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                <i data-lucide="film" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= favoriteMoviesCount || 0 %></div>
@@ -725,7 +713,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--recipe">
-                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <i data-lucide="utensils" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= favoriteRecipesCount || 0 %></div>
@@ -734,7 +722,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--note">
-                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <i data-lucide="star" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= ratedMoviesCount || 0 %></div>
@@ -743,7 +731,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--valide">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <i data-lucide="message-square" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val"><%= ratedRecipesCount || 0 %></div>
@@ -758,44 +746,6 @@
             <!-- ── SIDEBAR ── -->
             <aside class="crea-sidebar">
 
-              <!-- Résumé -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Mes collections</span>
-                </div>
-                <div class="stats-grid">
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= favoriteMoviesCount || 0 %></div>
-                      <div class="stat-lbl">Films fav.</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= favoriteRecipesCount || 0 %></div>
-                      <div class="stat-lbl">Recettes fav.</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= ratedMoviesCount || 0 %></div>
-                      <div class="stat-lbl">Films notés</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num"><%= ratedRecipesCount || 0 %></div>
-                      <div class="stat-lbl">Recettes notées</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <!-- Navigation sections -->
               <div class="widget">
                 <div class="widget-head">
@@ -804,15 +754,15 @@
                 </div>
                 <div class="quick-actions">
                   <a href="#favFilmsSection" class="qa-btn qa-btn--violet" onclick="document.getElementById('favFilmsSection').scrollIntoView({behavior:'smooth'});return false;">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="film" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Films favoris</div><div class="qa-sub"><%= favoriteMoviesCount || 0 %> film<%= (favoriteMoviesCount || 0) > 1 ? 's' : '' %></div></div>
                   </a>
                   <a href="#favRecettesSection" class="qa-btn qa-btn--gold" onclick="document.getElementById('favRecettesSection').scrollIntoView({behavior:'smooth'});return false;">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Recettes favorites</div><div class="qa-sub"><%= favoriteRecipesCount || 0 %> recette<%= (favoriteRecipesCount || 0) > 1 ? 's' : '' %></div></div>
                   </a>
                   <a href="#notedFilmsSection" class="qa-btn qa-btn--vert" onclick="document.getElementById('notedFilmsSection').scrollIntoView({behavior:'smooth'});return false;">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="star" fill="currentColor" stroke="currentColor" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Mes notes</div><div class="qa-sub"><%= (ratedMoviesCount || 0) + (ratedRecipesCount || 0) %> évaluation<%= ((ratedMoviesCount || 0) + (ratedRecipesCount || 0)) > 1 ? 's' : '' %></div></div>
                   </a>
                 </div>
@@ -848,11 +798,11 @@
                           <span class="lr-tag lr-tag--genre" style="flex-shrink:0"><% if (movie.genre) { %><%= movie.genre %><% } %></span>
                         </div>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <i data-lucide="film" aria-hidden="true"></i>
                           <%= movie.year %><% if (!movie.genre) { %> · Voir les recettes<% } %>
                         </div>
                       </div>
-                      <svg class="fav-row-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                      <i data-lucide="chevron-right" class="fav-row-arrow" aria-hidden="true"></i>
                     </a>
                     <% }) %>
                     <% if (favoriteMoviesCount > 8) { %>
@@ -893,11 +843,11 @@
                           <span class="lr-tag lr-tag--cat" style="flex-shrink:0"><%= recipe.category %></span>
                         </div>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <i data-lucide="clock" aria-hidden="true"></i>
                           <%= recipe.time %> min<% if (recipe.Movie) { %> · <%= recipe.Movie.title %><% } %>
                         </div>
                       </div>
-                      <svg class="fav-row-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                      <i data-lucide="chevron-right" class="fav-row-arrow" aria-hidden="true"></i>
                     </a>
                     <% }) %>
                     <% if (favoriteRecipesCount > 8) { %>
@@ -937,7 +887,7 @@
                           <span class="list-row__name"><%= movie.title %></span>
                         </div>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <i data-lucide="film" aria-hidden="true"></i>
                           <%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %>
                         </div>
                       </div>
@@ -978,7 +928,7 @@
                           <span class="list-row__name"><%= recipe.name %></span>
                         </div>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <i data-lucide="clock" aria-hidden="true"></i>
                           <%= recipe.category %> · <%= recipe.time %> min
                         </div>
                       </div>
@@ -1028,7 +978,7 @@
           <div class="impact-banner">
             <div class="impact-cell">
               <div class="impact-cell__icon ic--recipe">
-                <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                <i data-lucide="utensils" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" id="creaStatRecettes"><%= _crTotal %></div>
@@ -1037,7 +987,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--film">
-                <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                <i data-lucide="film" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" id="creaStatFilms"><%= _cmTotal %></div>
@@ -1046,7 +996,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--avis">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <i data-lucide="message-square" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" id="creaStatAvis"><%= _cnTotal %></div>
@@ -1055,7 +1005,7 @@
             </div>
             <div class="impact-cell">
               <div class="impact-cell__icon ic--valide">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <i data-lucide="check" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
                 <div class="impact-cell__val" id="creaStatValide"><%= _crValidated %></div>
@@ -1078,28 +1028,28 @@
                 </div>
                 <div class="stats-grid">
                   <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="stat-icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
                     <div class="stat-text">
                       <div class="stat-num" data-crea-target="<%= _crTotal %>">0</div>
                       <div class="stat-lbl">Recettes</div>
                     </div>
                   </div>
                   <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="stat-icon"><i data-lucide="film" aria-hidden="true"></i></div>
                     <div class="stat-text">
                       <div class="stat-num" data-crea-target="<%= _cmTotal %>">0</div>
                       <div class="stat-lbl">Films</div>
                     </div>
                   </div>
                   <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="stat-icon"><i data-lucide="message-square" aria-hidden="true"></i></div>
                     <div class="stat-text">
                       <div class="stat-num" data-crea-target="<%= _cnTotal %>">0</div>
                       <div class="stat-lbl">Avis</div>
                     </div>
                   </div>
                   <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="stat-icon"><i data-lucide="check" aria-hidden="true"></i></div>
                     <div class="stat-text">
                       <div class="stat-num" data-crea-target="<%= _crValidated %>">0</div>
                       <div class="stat-lbl">Validés</div>
@@ -1146,21 +1096,21 @@
                 </div>
                 <div class="quick-actions">
                   <a href="/add-recipes-movies" class="qa-btn qa-btn--gold">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
                     <div class="qa-text">
                       <div class="qa-title">Nouvelle recette</div>
                       <div class="qa-sub">Partager une création culinaire</div>
                     </div>
                   </a>
                   <a href="/add-recipes-movies" class="qa-btn qa-btn--violet">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="film" aria-hidden="true"></i></div>
                     <div class="qa-text">
                       <div class="qa-title">Proposer un film</div>
                       <div class="qa-sub">Suggérer un film à la communauté</div>
                     </div>
                   </a>
                   <a href="/all-recipes" class="qa-btn qa-btn--vert">
-                    <div class="qa-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="qa-icon"><i data-lucide="message-square" aria-hidden="true"></i></div>
                     <div class="qa-text">
                       <div class="qa-title">Rédiger un avis</div>
                       <div class="qa-sub">Évaluer une recette existante</div>
@@ -1226,7 +1176,7 @@
                   <button class="f-pill fp--refuse" data-crea-filter="rejected" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:#e84020"></span>Refusées</button>
                   <div class="filter-sep"></div>
                   <div class="crea-search-wrap">
-                    <svg class="crea-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <i data-lucide="search" class="crea-search-icon" aria-hidden="true"></i>
                     <input class="crea-search-input" type="text" placeholder="Filtrer mes recettes…" data-crea-search="creaRecettesGrid" />
                   </div>
                 </div>
@@ -1274,7 +1224,7 @@
                           <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
                         </div>
                         <div class="list-row__sub account-item__meta">
-                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <i data-lucide="clock" aria-hidden="true"></i>
                           <%= recipe.time %> min<% if (recipe.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
                         </div>
                         <% if (recipe.edit_status === 'pending') { %>
@@ -1288,19 +1238,19 @@
                       <div class="list-row__actions">
                         <% if (recipe.status === 'approved') { %>
                         <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
-                          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                          <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
                         </a>
                         <% } %>
                         <button class="lr-btn lr-btn--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>
-                          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 1 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Éditer</span>
+                          <i data-lucide="square-pen" aria-hidden="true"></i><span>Éditer</span>
                         </button>
                         <% if (recipe.delete_request_status === 'pending') { %>
                         <button class="lr-btn lr-btn--del account-delete-btn" disabled>
-                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Suppr.</span>
+                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Suppr.</span>
                         </button>
                         <% } else { %>
                         <button class="lr-btn lr-btn--del account-delete-btn">
-                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Suppr.</span>
+                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Suppr.</span>
                         </button>
                         <% } %>
                       </div>
@@ -1333,7 +1283,7 @@
                   <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
                   <div class="filter-sep"></div>
                   <div class="crea-search-wrap">
-                    <svg class="crea-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <i data-lucide="search" class="crea-search-icon" aria-hidden="true"></i>
                     <input class="crea-search-input" type="text" placeholder="Filtrer mes films…" data-crea-search="creaFilmsGrid" />
                   </div>
                 </div>
@@ -1370,18 +1320,18 @@
                         <div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div>
                         <% } %>
                         <div class="list-row__sub">
-                          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
+                          <i data-lucide="film" aria-hidden="true"></i>
                           <%= movie.year %><% if (movie.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
                         </div>
                       </div>
                       <div class="list-row__actions">
                         <% if (movie.status === 'approved') { %>
                         <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
-                          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Voir</span>
+                          <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
                         </a>
                         <% } %>
                         <button class="lr-btn lr-btn--del account-delete-btn">
-                          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg><span>Retirer</span>
+                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Retirer</span>
                         </button>
                       </div>
                     </div>
@@ -1421,7 +1371,7 @@
                       data-crea-status="<%= notice.status %>"
                     >
                       <div class="avis-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <i data-lucide="message-square" aria-hidden="true"></i>
                       </div>
                       <div class="avis-body">
                         <div class="avis-top">
@@ -1450,7 +1400,7 @@
                           <span class="account-item__hint">Suppression en attente.</span>
                           <% } else { %>
                           <button class="avis-del-btn account-delete-btn">
-                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>Supprimer
+                            <i data-lucide="trash-2" aria-hidden="true"></i>Supprimer
                           </button>
                           <% } %>
                         </div>
@@ -1499,6 +1449,7 @@
             /* ── Titres par niveau ── */
             const _ranks = ['Novice Ciné Délices','Apprenti Cuisinier','Explorateur du Goût','Aventurier Culinaire','Critique Cinéphile','Connaisseur des Saveurs','Sorcier Cuisinier','Critique Éclairé','Maître des Arômes','Grand Cinéphile','Expert Culinaire','Légende Culinaire','Virtuose du Goût','Maître Cinéphile','Grand Maître','Gardien des Saveurs','Légende Vivante','Gardien des Saveurs'];
             const _rank = _ranks[Math.min(_lvl - 1, _ranks.length - 1)];
+            const _nextRank = _ranks[_lvl] || 'Rang légendaire';
 
             /* ── Cadres ── */
             const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
@@ -1518,212 +1469,291 @@
             const _activity    = (typeof userActivity !== 'undefined' && Array.isArray(userActivity)) ? userActivity : [];
           %>
 
-          <!-- ═══ BANDEAU IMPACT XP ═══ -->
-          <div class="impact-banner">
-            <div class="impact-cell">
-              <div class="impact-cell__icon ic--xp">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              </div>
-              <div class="impact-cell__body">
-                <div class="impact-cell__val"><%= _xp.toLocaleString('fr-FR') %> XP</div>
-                <div class="impact-cell__lbl">XP total accumulé</div>
-              </div>
-            </div>
-            <div class="impact-cell">
-              <div class="impact-cell__icon ic--rank">
-                <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-              <div class="impact-cell__body">
-                <div class="impact-cell__val">Niv. <%= _lvl %></div>
-                <div class="impact-cell__lbl"><%= _rank %></div>
-              </div>
-            </div>
-            <div class="impact-cell">
-              <div class="impact-cell__icon ic--badge">
-                <svg viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/></svg>
-              </div>
-              <div class="impact-cell__body">
-                <div class="impact-cell__val"><%= _deblocked.length %> / <%= _allFrames.length %></div>
-                <div class="impact-cell__lbl">Cadres débloqués</div>
-              </div>
-            </div>
-            <div class="impact-cell">
-              <div class="impact-cell__icon ic--streak">
-                <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-              </div>
-              <div class="impact-cell__body">
-                <div class="impact-cell__val"><%= _streak %> jour<%= _streak > 1 ? 's' : '' %></div>
-                <div class="impact-cell__lbl">Série active</div>
-              </div>
-            </div>
-          </div>
+          <!-- ═══════════════════════════════════════════════════
+               HERO XP BENTO — Cadre actif + XP hub + Streak
+          ═══════════════════════════════════════════════════ -->
+          <section class="ctb-hero" aria-label="Progression et niveau">
 
-          <!-- ═══ LAYOUT 2 COLONNES ═══ -->
-          <div class="contrib-layout">
-
-            <!-- ── SIDEBAR ── -->
-            <aside>
-
-              <!-- STATISTIQUES -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Statistiques</span>
+            <!-- ── Bloc 1 : Cadre actif ── -->
+            <div class="ctb-hero__block ctb-hero__block--frame">
+              <p class="ctb-hero__eyebrow">Cadre équipé</p>
+              <div class="active-frame-body">
+                <% if (_activeFrame.id === 'none') { %>
+                <div class="active-frame-preview active-frame-preview--noframe">
+                  <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
                 </div>
-                <div class="stats-grid">
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-target="<%= userRecipes.length %>">0</div>
-                      <div class="stat-lbl">Recettes</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-target="<%= userNoticesCount %>">0</div>
-                      <div class="stat-lbl">Avis</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-target="<%= _comments %>">0</div>
-                      <div class="stat-lbl">Commentaires</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-target="<%= userMovies.length %>">0</div>
-                      <div class="stat-lbl">Films proposés</div>
-                    </div>
-                  </div>
+                <% } else if (_activeFrame.hasRealFrame && _frameUrl) { %>
+                <div class="active-frame-preview">
+                  <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
+                  <img class="bsf" src="<%= _frameUrl %>" alt="Cadre <%= _activeFrame.label %>" />
                 </div>
-                <div class="xp-block">
-                  <div class="xp-level-row">
-                    <div class="xp-level-chip">Niv. <%= _lvl %> → <%= _lvl + 1 %></div>
-                    <div class="xp-total"><%= _xp.toLocaleString('fr-FR') %> XP</div>
-                  </div>
-                  <div class="xp-track-wrap">
-                    <div class="xp-track">
-                      <div class="xp-fill" data-pct="<%= _xpPct %>" style="width:0%"></div>
-                      <div class="xp-milestone<%= _xpPct >= 50 ? ' passed' : '' %>" style="left:50%"></div>
-                    </div>
-                  </div>
-                  <div class="xp-bottom">
-                    <div class="xp-sub"><%= _xpLeft.toLocaleString('fr-FR') %> XP avant le niveau <%= _lvl + 1 %></div>
-                    <div class="xp-pct"><%= _xpPct %>%</div>
-                  </div>
+                <% } else { %>
+                <div class="active-frame-preview-icon" style="background:radial-gradient(circle,<%= _activeFrame.bg %>,rgba(10,18,30,.05));border-color:<%= _activeFrame.border %>;">
+                  <%= _activeFrame.icon %>
+                </div>
+                <% } %>
+                <div class="active-frame-meta">
+                  <div class="active-frame-name"><%= _activeFrame.label %></div>
+                  <div class="active-frame-theme"><%= _activeFrame.theme %></div>
+                  <div class="active-frame-pill">✓ Débloqué · Niv. <%= _activeFrame.minLvl %></div>
                 </div>
               </div>
+              <button type="button" class="ctb-hero__frame-cta" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})">
+                <span>Changer de cadre</span>
+                <i data-lucide="arrow-right" aria-hidden="true"></i>
+              </button>
+            </div>
 
-              <!-- CADRE ACTIF -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Cadre actif</span>
-                  <span class="widget-head__extra" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth'})">Changer →</span>
+            <!-- ── Bloc 2 : XP hub ── -->
+            <div class="ctb-hero__block ctb-hero__block--xp">
+              <div class="ctb-hero__xp-head">
+                <span class="ctb-hero__lvl-chip">Niv. <%= _lvl %></span>
+                <span class="ctb-hero__rank" title="<%= _rank %>">« <%= _rank %> »</span>
+              </div>
+              <div class="ctb-hero__xp-num">
+                <span class="ctb-hero__xp-val"><%= _xp.toLocaleString('fr-FR') %></span>
+                <span class="ctb-hero__xp-unit">XP</span>
+              </div>
+              <div class="ctb-hero__xp-progress">
+                <div class="xp-track">
+                  <div class="xp-fill" data-pct="<%= _xpPct %>" style="width:0%"></div>
+                  <div class="xp-milestone<%= _xpPct >= 50 ? ' passed' : '' %>" style="left:50%"></div>
                 </div>
-                <div class="active-frame-body">
-                  <% if (_activeFrame.id === 'none') { %>
-                  <div class="active-frame-preview active-frame-preview--noframe">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
+                <div class="ctb-hero__xp-footer">
+                  <span class="ctb-hero__xp-left">
+                    <strong><%= _xpLeft.toLocaleString('fr-FR') %> XP</strong>
+                    avant le Niv. <%= _lvl + 1 %>
+                  </span>
+                  <span class="ctb-hero__xp-pct"><%= _xpPct %>%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Bloc 3 : Streak + cadres ── -->
+            <div class="ctb-hero__block ctb-hero__block--streak">
+              <div class="ctb-hero__flame" aria-hidden="true">
+                <span class="flame flame--1"></span>
+                <span class="flame flame--2"></span>
+                <span class="flame flame--3"></span>
+              </div>
+              <div class="ctb-hero__streak-row">
+                <div class="ctb-hero__streak-big"><%= _streak %></div>
+                <div class="ctb-hero__streak-lblwrap">
+                  <div class="ctb-hero__streak-lbl">jour<%= _streak > 1 ? 's' : '' %></div>
+                  <div class="ctb-hero__streak-sub">d'affilée</div>
+                </div>
+              </div>
+              <div class="ctb-hero__streak-divider"></div>
+              <div class="ctb-hero__frames-count">
+                <span class="ctb-hero__frames-n"><%= _deblocked.length %><em>/<%= _allFrames.length %></em></span>
+                <span class="ctb-hero__frames-l">Cadres débloqués</span>
+              </div>
+            </div>
+
+          </section>
+
+          <!-- ═══════════════════════════════════════════════════
+               GALERIE DE CADRES — bento
+          ═══════════════════════════════════════════════════ -->
+          <section class="ctb-frames-section" aria-label="Collection de cadres">
+            <div class="sec-eyebrow">
+              <div class="sec-eyebrow__line"></div>
+              <span class="sec-eyebrow__label">Collection</span>
+            </div>
+            <div class="sec-header">
+              <div class="sec-title">MES CADRES</div>
+              <span class="ctb-frames-count">
+                <strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués
+              </span>
+            </div>
+
+            <div class="ctb-frames-grid" id="contrib-frames-list">
+              <% _allFrames.forEach(function(fr) {
+                const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
+                const _isActive   = fr.id === _activeFrame.id;
+              %>
+              <div
+                class="frame-row ctb-frame-tile<%= _isActive ? ' frame-row--active is-active' : '' %><%= !_isUnlocked ? ' frame-row--locked is-locked' : '' %>"
+                data-frame-id="<%= fr.id %>"
+                data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>"
+              >
+                <!-- Preview -->
+                <div class="ctb-frame-tile__preview">
+                  <% if (fr.id === 'none') { %>
+                  <div class="frame-row-badge-static frame-row-badge-static--noframe">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
                   </div>
-                  <% } else if (_activeFrame.hasRealFrame && _frameUrl) { %>
-                  <div class="active-frame-preview">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
-                    <img class="bsf" src="<%= _frameUrl %>" alt="Cadre <%= _activeFrame.label %>" />
+                  <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+                  <div class="frame-row-badge-static">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+                  </div>
+                  <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+                  <div class="frame-row-badge-static ctb-frame-tile__preview--dimmed">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+                    <div class="ctb-frame-tile__lock-overlay">
+                      <i data-lucide="lock" stroke-width="1.8" aria-hidden="true"></i>
+                    </div>
                   </div>
                   <% } else { %>
-                  <div class="active-frame-preview-icon" style="background:radial-gradient(circle,<%= _activeFrame.bg %>,rgba(10,18,30,.05));border-color:<%= _activeFrame.border %>;">
-                    <%= _activeFrame.icon %>
-                  </div>
+                  <div class="frame-row-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;"><%= fr.icon %></div>
                   <% } %>
-                  <div class="active-frame-meta">
-                    <div class="active-frame-name"><%= _activeFrame.label %></div>
-                    <div class="active-frame-theme"><%= _activeFrame.theme %></div>
-                    <div class="active-frame-pill">✓ Débloqué · Niv. <%= _activeFrame.minLvl %></div>
-                  </div>
+                </div>
+
+                <!-- Info -->
+                <div class="frame-row-info ctb-frame-tile__info">
+                  <div class="frame-row-name ctb-frame-tile__name"><%= fr.label %></div>
+                  <div class="frame-row-sub ctb-frame-tile__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
+                </div>
+
+                <!-- Compat check (lu par gamification.js) -->
+                <div class="frame-row-check ctb-frame-tile__check-compat <%= _isActive ? 'frame-row-check--active' : (_isUnlocked ? 'frame-row-check--ok' : 'frame-row-check--locked') %>" aria-hidden="true">
+                  <% if (_isActive || _isUnlocked) { %>
+                  <i data-lucide="check" aria-hidden="true"></i>
+                  <% } else { %>
+                  <i data-lucide="lock" aria-hidden="true"></i>
+                  <% } %>
+                </div>
+
+                <!-- Status pill -->
+                <div class="ctb-frame-tile__status<%= _isActive ? ' is-active' : (_isUnlocked ? ' is-ready' : ' is-locked') %>">
+                  <% if (_isActive) { %>
+                    <i data-lucide="check" stroke-width="2.2" aria-hidden="true"></i>
+                    <span>Équipé</span>
+                  <% } else if (_isUnlocked) { %>
+                    <span>Équiper</span>
+                    <i data-lucide="arrow-right" aria-hidden="true"></i>
+                  <% } else { %>
+                    <i data-lucide="lock" aria-hidden="true"></i>
+                    <span>Niv. <%= fr.minLvl %> requis</span>
+                  <% } %>
                 </div>
               </div>
+              <% }); %>
+            </div>
+          </section>
 
-              <!-- MES CADRES -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Mes cadres</span>
-                </div>
-                <div class="frames-list" id="contrib-frames-list">
+          <!-- ═══════════════════════════════════════════════════
+               MAIN — Timeline activité + Next milestone
+          ═══════════════════════════════════════════════════ -->
+          <div class="ctb-main">
 
-                  <div class="frames-divider">
-                    <span class="frames-divider__label">Débloqués</span>
-                    <div class="frames-divider__line"></div>
+            <!-- ── Timeline activité ── -->
+            <section class="ctb-timeline-col">
+              <div class="sec-eyebrow">
+                <div class="sec-eyebrow__line"></div>
+                <span class="sec-eyebrow__label">Historique</span>
+              </div>
+              <div class="sec-header">
+                <div class="sec-title">ACTIVITÉ RÉCENTE</div>
+              </div>
+
+              <div class="activity-filters">
+                <button class="af-pill active" data-filter="all">Tout</button>
+                <button class="af-pill" data-filter="recipe"><span class="af-pill__dot" style="background:#c97b3a"></span>Recettes</button>
+                <button class="af-pill" data-filter="notice"><span class="af-pill__dot" style="background:#c4a052"></span>Avis</button>
+                <button class="af-pill" data-filter="movie"><span class="af-pill__dot" style="background:#9b79e0"></span>Films</button>
+                <button class="af-pill" data-filter="comment"><span class="af-pill__dot" style="background:rgba(140,180,225,.8)"></span>Commentaires</button>
+              </div>
+
+              <div class="ctb-timeline" id="contribActivityList">
+                <% if (_activity.length > 0) { %>
+                  <% _activity.forEach(function(act, idx) { %>
+                  <div class="activity-item ctb-tl-item" data-type="<%= act.type %>" style="animation-delay:<%= idx * 60 %>ms;">
+                    <div class="ctb-tl-rail">
+                      <div class="ctb-tl-dot ai--<%= act.type %>"></div>
+                      <div class="ctb-tl-line"></div>
+                    </div>
+                    <div class="ctb-tl-card">
+                      <div class="activity-icon ai--<%= act.type %>">
+                        <% if (act.type === 'recipe') { %>
+                        <i data-lucide="utensils" aria-hidden="true"></i>
+                        <% } else if (act.type === 'notice') { %>
+                        <i data-lucide="star" aria-hidden="true"></i>
+                        <% } else if (act.type === 'movie') { %>
+                        <i data-lucide="film" aria-hidden="true"></i>
+                        <% } else { %>
+                        <i data-lucide="message-square" aria-hidden="true"></i>
+                        <% } %>
+                      </div>
+                      <div class="ctb-tl-body">
+                        <div class="ctb-tl-title"><%= act.title %></div>
+                        <div class="ctb-tl-sub"><%= act.sub %></div>
+                        <div class="ctb-tl-time">
+                          <i data-lucide="clock" aria-hidden="true"></i>
+                          <%= act.time %>
+                        </div>
+                      </div>
+                      <div class="ctb-tl-xp">
+                        <div class="ctb-tl-xp__val">+<%= act.xp %></div>
+                        <div class="ctb-tl-xp__lbl">XP</div>
+                      </div>
+                    </div>
                   </div>
+                  <% }); %>
+                <% } else { %>
+                <div class="contrib-empty">
+                  <i data-lucide="info" width="28" height="28" stroke-width="1.5" aria-hidden="true"></i>
+                  <p>Aucune activité pour le moment.<br />Publiez votre première recette pour gagner vos premiers XP&nbsp;!</p>
+                </div>
+                <% } %>
+              </div>
+            </section>
 
-                  <% _deblocked.forEach(function(fr) { %>
-                  <div
-                    class="frame-row<%= fr.id === _activeFrame.id ? ' frame-row--active' : '' %>"
-                    data-frame-id="<%= fr.id %>"
-                    data-unlocked="true"
-                  >
-                    <% if (fr.id === 'none') { %>
-                    <div class="frame-row-badge-static frame-row-badge-static--noframe">
-                      <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+            <!-- ── Sidebar : Next milestone + Guide XP ── -->
+            <aside class="ctb-side-col">
+
+              <!-- Next milestone — trading card gold -->
+              <div class="ctb-milestone" role="region" aria-label="Prochain palier">
+                <div class="ctb-milestone__shimmer" aria-hidden="true"></div>
+                <div class="ctb-milestone__inner">
+                  <p class="ctb-milestone__eyebrow">✦ Prochain niveau</p>
+                  <h3 class="ctb-milestone__title">
+                    Niv. <%= _lvl + 1 %>
+                    <em><%= _nextRank %></em>
+                  </h3>
+                  <div class="ctb-milestone__xp">
+                    <div class="ctb-milestone__xp-num"><%= _xpLeft.toLocaleString('fr-FR') %></div>
+                    <div class="ctb-milestone__xp-lbl">XP restants</div>
+                  </div>
+                  <div class="ctb-milestone__rewards">
+                    <div class="ctb-milestone__reward">
+                      <span class="ctb-milestone__reward-ico">🎯</span>
+                      <div>
+                        <div class="ctb-milestone__reward-title">Nouveau titre</div>
+                        <div class="ctb-milestone__reward-sub">« <%= _nextRank %> »</div>
+                      </div>
                     </div>
-                    <% } else if (fr.hasRealFrame && fr.pngUrl) { %>
-                    <div class="frame-row-badge-static">
-                      <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
-                      <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+                    <div class="ctb-milestone__reward">
+                      <span class="ctb-milestone__reward-ico">✨</span>
+                      <div>
+                        <div class="ctb-milestone__reward-title">Bonus XP</div>
+                        <div class="ctb-milestone__reward-sub">+10% sur les contributions</div>
+                      </div>
                     </div>
-                    <% } else { %>
-                    <div class="frame-row-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;"><%= fr.icon %></div>
+                    <% if (_nextUnlock && _nextUnlock.minLvl <= _lvl + 2) { %>
+                    <div class="ctb-milestone__reward">
+                      <span class="ctb-milestone__reward-ico"><%= _nextUnlock.icon %></span>
+                      <div>
+                        <div class="ctb-milestone__reward-title">Cadre <%= _nextUnlock.label %></div>
+                        <div class="ctb-milestone__reward-sub"><%= _nextUnlock.theme %> · Niv. <%= _nextUnlock.minLvl %></div>
+                      </div>
+                    </div>
                     <% } %>
-                    <div class="frame-row-info">
-                      <div class="frame-row-name"><%= fr.label %></div>
-                      <div class="frame-row-sub"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
-                    </div>
-                    <div class="frame-row-check <%= fr.id === _activeFrame.id ? 'frame-row-check--active' : 'frame-row-check--ok' %>">
-                      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
                   </div>
-                  <% }); %>
-
-                  <% if (_locked.length > 0) { %>
-                  <div class="frames-divider frames-divider--locked" style="margin-top:6px;">
-                    <span class="frames-divider__label">Verrouillés</span>
-                    <div class="frames-divider__line"></div>
-                  </div>
-                  <% _locked.forEach(function(fr, idx) { %>
-                  <div
-                    class="frame-row frame-row--locked<%= idx === 0 ? ' frame-row--next-unlock' : '' %>"
-                    data-frame-id="<%= fr.id %>"
-                    data-unlocked="false"
-                  >
-                    <div class="frame-row-icon" style="background:rgba(65,90,119,.08);border-color:rgba(65,90,119,.2);font-size:.9rem;">🔒</div>
-                    <div class="frame-row-info">
-                      <div class="frame-row-name" style="color:rgba(232,232,232,.4);"><%= fr.label %></div>
-                      <div class="frame-row-sub"><%= fr.theme %> · niv. <%= fr.minLvl %> requis</div>
-                    </div>
-                    <div class="frame-row-check frame-row-check--locked">
-                      <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </div>
-                  </div>
-                  <% }); %>
-                  <% } %>
-
                 </div>
               </div>
 
-              <!-- GUIDE XP -->
-              <div class="widget">
+              <!-- Guide XP -->
+              <div class="widget ctb-xpguide-widget">
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Comment progresser</span>
+                  <span class="widget-head__title">Gagner de l'XP</span>
                 </div>
                 <div class="xp-guide">
                   <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--recipe"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>
+                    <div class="xp-guide-icon xp-guide-icon--recipe"><i data-lucide="utensils" aria-hidden="true"></i></div>
                     <div class="xp-guide-body">
                       <div class="xp-guide-label">Recette publiée</div>
                       <div class="xp-guide-sub">Validée par la modération</div>
@@ -1731,18 +1761,18 @@
                     <span class="xp-guide-pts">+50 XP</span>
                   </div>
                   <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--movie"><svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg></div>
+                    <div class="xp-guide-icon xp-guide-icon--movie"><i data-lucide="film" aria-hidden="true"></i></div>
                     <div class="xp-guide-body">
                       <div class="xp-guide-label">Film accepté</div>
-                      <div class="xp-guide-sub">Suggestion validée par l'équipe</div>
+                      <div class="xp-guide-sub">Suggestion validée</div>
                     </div>
                     <span class="xp-guide-pts">+25 XP</span>
                   </div>
                   <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--avis"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="xp-guide-icon xp-guide-icon--avis"><i data-lucide="message-square" aria-hidden="true"></i></div>
                     <div class="xp-guide-body">
                       <div class="xp-guide-label">Avis approuvé</div>
-                      <div class="xp-guide-sub">Critique publiée sur une recette</div>
+                      <div class="xp-guide-sub">Critique publiée</div>
                     </div>
                     <span class="xp-guide-pts">+10 XP</span>
                   </div>
@@ -1751,108 +1781,7 @@
 
             </aside>
 
-            <!-- ── COLONNE DROITE ── -->
-            <div class="right-col">
-
-              <!-- ACTIVITÉ RÉCENTE -->
-              <div>
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Historique</span>
-                </div>
-                <div class="sec-header">
-                  <div class="sec-title">Activité récente</div>
-                </div>
-                <div class="activity-filters">
-                  <button class="af-pill active" data-filter="all">Tout</button>
-                  <button class="af-pill" data-filter="recipe"><span class="af-pill__dot" style="background:#c97b3a"></span>Recettes</button>
-                  <button class="af-pill" data-filter="notice"><span class="af-pill__dot" style="background:#c4a052"></span>Avis</button>
-                  <button class="af-pill" data-filter="movie"><span class="af-pill__dot" style="background:#9b79e0"></span>Films</button>
-                  <button class="af-pill" data-filter="comment"><span class="af-pill__dot" style="background:rgba(140,180,225,.8)"></span>Commentaires</button>
-                </div>
-                <div class="activity-list" id="contribActivityList">
-                  <% if (_activity.length > 0) { %>
-                    <% _activity.forEach(function(act) { %>
-                    <div class="activity-item" data-type="<%= act.type %>">
-                      <div class="activity-icon ai--<%= act.type %>">
-                        <% if (act.type === 'recipe') { %>
-                        <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-                        <% } else if (act.type === 'notice') { %>
-                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        <% } else if (act.type === 'movie') { %>
-                        <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
-                        <% } else { %>
-                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        <% } %>
-                      </div>
-                      <div class="activity-body">
-                        <div class="activity-title"><%= act.title %></div>
-                        <div class="activity-sub"><%= act.sub %></div>
-                        <div class="activity-time">
-                          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                          <%= act.time %>
-                        </div>
-                      </div>
-                      <div class="activity-xp">
-                        <div class="activity-xp__val">+<%= act.xp %></div>
-                        <div class="activity-xp__lbl">XP</div>
-                      </div>
-                    </div>
-                    <% }); %>
-                  <% } else { %>
-                  <div class="contrib-empty">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                    <p>Aucune activité pour le moment.<br />Publie ta première recette pour gagner tes premiers XP !</p>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-
-              <!-- PROCHAIN PALIER -->
-              <div>
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Progression</span>
-                </div>
-                <div class="next-level-block">
-                  <div class="nl-head">
-                    <div class="nl-badge">✦ Prochain niveau · Niv. <%= _lvl + 1 %></div>
-                    <div style="text-align:right;">
-                      <div class="nl-xp-needed"><%= _xpLeft.toLocaleString('fr-FR') %> XP</div>
-                      <div class="nl-xp-sub">restants</div>
-                    </div>
-                  </div>
-                  <div class="nl-rewards">
-                    <div class="nl-reward">
-                      <div class="nl-reward__icon">🎯</div>
-                      <div>
-                        <div class="nl-reward__title">Titre débloqué</div>
-                        <div class="nl-reward__sub">« <%= _ranks[_lvl] || 'Rang suivant' %> »</div>
-                      </div>
-                    </div>
-                    <div class="nl-reward">
-                      <div class="nl-reward__icon">✨</div>
-                      <div>
-                        <div class="nl-reward__title">Bonus XP</div>
-                        <div class="nl-reward__sub">+10% sur les contributions</div>
-                      </div>
-                    </div>
-                    <% if (_nextUnlock && _nextUnlock.minLvl <= _lvl + 2) { %>
-                    <div class="nl-reward">
-                      <div class="nl-reward__icon"><%= _nextUnlock.icon %></div>
-                      <div>
-                        <div class="nl-reward__title">Cadre <%= _nextUnlock.label %></div>
-                        <div class="nl-reward__sub"><%= _nextUnlock.theme %> · niv. <%= _nextUnlock.minLvl %></div>
-                      </div>
-                    </div>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-
-
-            </div><!-- /right-col -->
-          </div><!-- /contrib-layout -->
+          </div>
 
         </div><!-- /tab-pane#contributions -->
 

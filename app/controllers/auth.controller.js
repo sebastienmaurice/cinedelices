@@ -6,6 +6,7 @@ import {
   findActiveToken,
   markTokenUsed,
 } from "../services/password-reset.service.js";
+import { OAuth2Client } from "google-auth-library";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
@@ -50,9 +51,15 @@ const authController = {
         });
       }
 
-      // on récupère le mot de passe de l'utilisateur pour le comparer avec celui fourni après qu'il ai été haché
+      // Compte Google-only : pas de mot de passe enregistré
+      if (!user.password) {
+        return res.status(StatusCodes.UNAUTHORIZED).render("error", {
+          error: "401",
+          message: "Ce compte utilise la connexion Google. Utilisez le bouton « Se connecter avec Google ».",
+        });
+      }
+
       const hash = user.password;
-      // comparaison du mot de passe donné avec celui enregistré
       const ok = await argon2.verify(hash, password);
 
       if (!ok) {
@@ -160,6 +167,7 @@ const authController = {
     try {
       const user = await User.findByPk(req.params.id, {
         attributes: { exclude: ["password"] },
+        // google_id est inclus pour conditionner l'affichage côté vue (section mot de passe)
       });
 
       if (!user) {
@@ -1464,6 +1472,241 @@ const authController = {
       });
     } catch (error) {
       return renderServerError(res, error);
+    }
+  },
+
+  // ── Authentification Google OAuth ──────────────────────────────────────────
+
+  /**
+   * Sanitise un nom Google en pseudo valide (alphanum + underscore, max 20 car.)
+   */
+  _sanitizePseudo(name) {
+    return (name || "")
+      .toLowerCase()
+      .replace(/[éèêë]/g, "e").replace(/[àâ]/g, "a").replace(/[ôö]/g, "o")
+      .replace(/[îï]/g, "i").replace(/[ùûü]/g, "u").replace(/ç/g, "c")
+      .replace(/[^a-z0-9_]/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 20) || "user";
+  },
+
+  /** Vérifie le credential Google et retourne le payload */
+  async _verifyGoogleToken(credential) {
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    return ticket.getPayload();
+  },
+
+  /** Crée un JWT et le stocke dans un cookie httpOnly */
+  _issueJwt(res, user) {
+    const token = jwt.sign(
+      { user_id: user.id, pseudo: user.pseudo, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 2,
+    });
+  },
+
+  /**
+   * POST /auth/google
+   * Reçoit le credential (ID token) de Google Identity Services.
+   * - Si l'utilisateur existe → connexion directe
+   * - Si nouveau et pseudo disponible → création + connexion
+   * - Si nouveau et pseudo occupé → retourne {status:'pseudo_required'}
+   */
+  async googleAuth(req, res) {
+    const { credential } = req.body;
+    if (!credential) return res.status(400).json({ error: "credential manquant" });
+
+    try {
+      const payload = await authController._verifyGoogleToken(credential);
+      const { sub: googleId, email, given_name, family_name, name, picture } = payload;
+
+      // 1. Cherche un compte existant par google_id ou par email
+      let user = await User.findOne({
+        where: { [Op.or]: [{ google_id: googleId }, { email }] },
+      });
+
+      if (user) {
+        // Lie le google_id si ce n'est pas encore fait (compte local existant)
+        if (!user.google_id) {
+          await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
+        }
+        authController._issueJwt(res, user);
+        if (user.role !== "admin" && user.role !== "superadmin") {
+          awardWeeklyLoginXP(user.id).catch(() => {});
+        }
+        return res.json({ status: "ok" });
+      }
+
+      // 2. Nouvel utilisateur — essai de pseudo automatique
+      const basePseudo = authController._sanitizePseudo(given_name || name || email.split("@")[0]);
+      const pseudoExists = await User.findOne({ where: { pseudo: basePseudo } });
+
+      if (pseudoExists) {
+        // Pseudo déjà pris : demander à l'utilisateur d'en choisir un
+        return res.json({
+          status: "pseudo_required",
+          googleData: { email, given_name, family_name, picture, suggestedPseudo: basePseudo },
+        });
+      }
+
+      // Pseudo disponible : création du compte
+      user = await User.create({
+        first_name: given_name || name || "Utilisateur",
+        last_name: family_name || "",
+        pseudo: basePseudo,
+        email,
+        password: null,
+        google_id: googleId,
+        avatar_url: picture || null,
+        role: "user",
+      });
+
+      authController._issueJwt(res, user);
+      return res.json({ status: "ok" });
+    } catch (err) {
+      console.error("Google auth error:", err.message);
+      return res.status(401).json({ error: "Token Google invalide ou expiré" });
+    }
+  },
+
+  /**
+   * POST /auth/google/complete
+   * Appelé quand l'utilisateur choisit son pseudo (cas pseudo_required).
+   * Re-vérifie le token Google pour sécurité, puis crée le compte.
+   */
+  /**
+   * POST /auth/google/code
+   * Reçoit un authorization code (code flow popup) et l'échange contre des tokens.
+   * Même logique métier que googleAuth mais via code OAuth2 au lieu de credential One Tap.
+   */
+  async googleCode(req, res) {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ error: "code manquant" });
+
+    try {
+      const oAuth2Client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        "postmessage"
+      );
+      const { tokens } = await oAuth2Client.getToken(code);
+      if (!tokens.id_token) throw new Error("Pas d'id_token dans la réponse Google");
+
+      const payload = await authController._verifyGoogleToken(tokens.id_token);
+      const { sub: googleId, email, given_name, family_name, name, picture } = payload;
+
+      let user = await User.findOne({
+        where: { [Op.or]: [{ google_id: googleId }, { email }] },
+      });
+
+      if (user) {
+        if (!user.google_id) {
+          await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
+        }
+        authController._issueJwt(res, user);
+        if (user.role !== "admin" && user.role !== "superadmin") {
+          awardWeeklyLoginXP(user.id).catch(() => {});
+        }
+        return res.json({ status: "ok" });
+      }
+
+      const basePseudo = authController._sanitizePseudo(given_name || name || email.split("@")[0]);
+      const pseudoExists = await User.findOne({ where: { pseudo: basePseudo } });
+
+      if (pseudoExists) {
+        // Pseudo pris : émettre un token temporaire signé par le serveur (15 min)
+        const tempToken = jwt.sign(
+          { googleId, email, given_name, family_name, picture, _type: "google_pending" },
+          process.env.JWT_SECRET,
+          { expiresIn: "15m" }
+        );
+        return res.json({
+          status: "pseudo_required",
+          googleData: { email, given_name, family_name, picture, suggestedPseudo: basePseudo },
+          tempToken,
+        });
+      }
+
+      user = await User.create({
+        first_name: given_name || name || "Utilisateur",
+        last_name: family_name || "",
+        pseudo: basePseudo,
+        email,
+        password: null,
+        google_id: googleId,
+        avatar_url: picture || null,
+        role: "user",
+      });
+
+      authController._issueJwt(res, user);
+      return res.json({ status: "ok" });
+    } catch (err) {
+      console.error("Google code exchange error:", err.message);
+      return res.status(401).json({ error: "Authentification Google échouée" });
+    }
+  },
+
+  async googleComplete(req, res) {
+    const { credential, tempToken, pseudo, first_name, last_name } = req.body;
+    if ((!credential && !tempToken) || !pseudo)
+      return res.status(400).json({ error: "Données manquantes" });
+
+    // Validation basique du pseudo
+    if (!/^[a-z0-9_]{3,20}$/.test(pseudo)) {
+      return res.status(400).json({ error: "Pseudo invalide (3-20 car., lettres minuscules, chiffres, _)" });
+    }
+
+    try {
+      let googleId, email, given_name, family_name, picture;
+
+      if (tempToken) {
+        // Code flow : vérifier le token temporaire émis par le serveur
+        const data = jwt.verify(tempToken, process.env.JWT_SECRET);
+        if (data._type !== "google_pending") throw new Error("Token invalide");
+        ({ googleId, email, given_name, family_name, picture } = data);
+      } else {
+        // One Tap flow : vérifier le credential Google
+        const payload = await authController._verifyGoogleToken(credential);
+        ({ sub: googleId, email, given_name, family_name, picture } = payload);
+      }
+
+      // Vérifie unicité du pseudo et de l'email
+      const existing = await User.findOne({
+        where: { [Op.or]: [{ pseudo }, { email }, { google_id: googleId }] },
+      });
+      if (existing) {
+        if (existing.pseudo === pseudo) return res.status(409).json({ error: "Ce pseudo est déjà utilisé" });
+        // Compte déjà existant (email ou google_id) → connexion directe
+        if (!existing.google_id) await existing.update({ google_id: googleId, avatar_url: picture || existing.avatar_url });
+        authController._issueJwt(res, existing);
+        return res.json({ status: "ok" });
+      }
+
+      const user = await User.create({
+        first_name: first_name || given_name || "Utilisateur",
+        last_name: last_name || family_name || "",
+        pseudo,
+        email,
+        password: null,
+        google_id: googleId,
+        avatar_url: picture || null,
+        role: "user",
+      });
+
+      authController._issueJwt(res, user);
+      return res.json({ status: "ok" });
+    } catch (err) {
+      console.error("Google complete error:", err.message);
+      return res.status(401).json({ error: "Token Google invalide ou expiré" });
     }
   },
 
