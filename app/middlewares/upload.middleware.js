@@ -1,37 +1,38 @@
+/**
+ * upload.middleware.js — Upload photos recettes
+ *
+ * Multer écrit dans le dossier temp de l'OS (/tmp sur Linux/Render).
+ * Le contrôleur appelle ensuite recipe-image-processor.js qui :
+ *   1. Valide le ratio de l'image avec Sharp
+ *   2. Redimensionne et convertit en WebP
+ *   3. Upload le résultat sur Cloudinary
+ *   4. Supprime le fichier temporaire
+ *
+ * On ne stocke PLUS dans app/public/images/recipes/ (filesystem éphémère sur Render).
+ */
+
 import multer from "multer";
+import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 import { createFileFilter, MAX_FILE_SIZE } from "../utils/upload-config.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Configuration du stockage pour les recettes
+// Stockage temporaire dans le dossier temp de l'OS
+// Ce fichier est supprimé par recipe-image-processor.js après traitement
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Les images seront stockées dans app/public/images/recipes
-    const uploadPath = path.join(__dirname, "../public/images/recipes");
-    cb(null, uploadPath);
+    cb(null, os.tmpdir());
   },
   filename: (req, file, cb) => {
-    // Génération d'un nom de fichier unique
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    const nameWithoutExt = path.basename(file.originalname, ext);
-    cb(null, "recipe-" + nameWithoutExt + "-" + uniqueSuffix + ext);
+    cb(null, "recipe-tmp-" + uniqueSuffix + ext);
   },
 });
 
-// Refactoring : utilisation du fileFilter centralisé depuis upload-config.js
-// Remplace le code dupliqué (lignes 25-43) par un appel à createFileFilter()
-
-// Configuration de Multer pour les recettes
 const upload = multer({
-  storage: storage,
-  fileFilter: createFileFilter(), // Refactoring : fileFilter centralisé
-  limits: {
-    fileSize: MAX_FILE_SIZE, // Refactoring : limite centralisée
-  },
+  storage,
+  fileFilter: createFileFilter(),
+  limits: { fileSize: MAX_FILE_SIZE },
 });
 
 // Upload multi-photos pour la création de recette (max 3 fichiers, champ "pictures")

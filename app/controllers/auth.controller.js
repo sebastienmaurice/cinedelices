@@ -13,6 +13,7 @@ import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
+import { deleteAsset, uploadBufferToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,12 +21,7 @@ import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** Supprime un fichier statique si il existe (chemin relatif à /public) */
-function unlinkIfExists(relativePath) {
-  if (!relativePath) return;
-  const abs = path.join(__dirname, "../public", relativePath);
-  if (fs.existsSync(abs)) fs.unlinkSync(abs);
-}
+const isProduction = process.env.NODE_ENV === "production";
 
 const authController = {
   // pour se connecter (accepte pseudo ou email)
@@ -82,7 +78,8 @@ const authController = {
       // On stocke le token dans un cookie httpOnly
       res.cookie("token", token, {
         httpOnly: true, // Sécurise contre les attaques XSS
-        secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
+        secure: isProduction,
+        sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
 
@@ -132,7 +129,8 @@ const authController = {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // HTTPS uniquement en production
+        secure: isProduction,
+        sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
       });
 
@@ -379,14 +377,15 @@ const authController = {
       }
 
       if (remove_avatar === "true" && !req.file) {
-        unlinkIfExists(user.picture); // supprimer l'avatar du disque
+        await deleteAsset(user.picture);
         updateData.picture = null;
         updateData.picture_status = "approved";
       }
 
       if (req.file) {
-        unlinkIfExists(user.picture); // supprimer l'ancien avatar avant d'enregistrer le nouveau
-        updateData.picture = `/images/profiles/${req.file.filename}`;
+        await deleteAsset(user.picture);
+        // req.file.path contient l'URL Cloudinary (CloudinaryStorage)
+        updateData.picture = req.file.path;
         updateData.picture_status = "pending";
       }
 
@@ -466,9 +465,10 @@ const authController = {
       }
 
       // Supprimer l'éventuelle photo précédente en attente (non encore validée)
-      if (user.pending_picture) unlinkIfExists(user.pending_picture);
+      if (user.pending_picture) await deleteAsset(user.pending_picture);
 
-      const pendingPicture = `/images/profiles/${req.file.filename}`;
+      // req.file.path contient l'URL Cloudinary (CloudinaryStorage)
+      const pendingPicture = req.file.path;
       await User.update(
         { pending_picture: pendingPicture, picture_status: "pending" },
         { where: { id: userId } }
@@ -544,36 +544,30 @@ const authController = {
 
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-      // --- SUPPRESSION de l'ancienne bannière si elle existe ---
-      // fs.unlink supprime le fichier physique du disque
+      // --- SUPPRESSION de l'ancienne bannière Cloudinary si elle existe ---
       if (user.banner_image) {
-        const oldPath = path.join(__dirname, "../public", user.banner_image);
-        fs.unlink(oldPath, () => {});
+        await deleteAsset(user.banner_image);
       }
 
-      // --- TRAITEMENT avec Sharp ---
-      // Dossier de destination des bannières finales
-      const outputDir = path.join(__dirname, "../public/images/banner-auteur");
-      fs.mkdirSync(outputDir, { recursive: true });
-
-      // Nom du fichier final : user-{id}.webp (un seul fichier par utilisateur)
-      const outputFilename = `user-${userId}.webp`;
-      const outputPath = path.join(outputDir, outputFilename);
-
-      // Sharp : redimensionnement exact 1408×350, conversion WebP qualité 80
-      // fit: "cover" = l'image remplit le cadre sans bandes noires (comme object-fit: cover en CSS)
-      await sharp(req.file.path)
+      // --- TRAITEMENT avec Sharp → Buffer WebP ---
+      // Sharp redimensionne en 1408×350 (fit: cover) et convertit en WebP qualité 80
+      const buffer = await sharp(req.file.path)
         .resize(1408, 350, { fit: "cover" })
         .webp({ quality: 80 })
-        .toFile(outputPath);
+        .toBuffer();
 
-      // --- SUPPRESSION du fichier temporaire Multer ---
-      // Le fichier original n'est plus nécessaire, on le supprime pour économiser l'espace disque
+      // Suppression du fichier temporaire Multer
       fs.unlink(req.file.path, () => {});
 
-      // --- MISE À JOUR en base de données ---
-      // On stocke uniquement le chemin relatif (pas le chemin absolu du serveur)
-      const bannerPath = `/images/banner-auteur/${outputFilename}`;
+      // --- UPLOAD du buffer WebP sur Cloudinary ---
+      // public_id fixe par utilisateur (user-{id}) pour écraser la bannière précédente
+      const cloudResult = await uploadBufferToCloudinary(buffer, {
+        folder:    "cinedelices/banners",
+        public_id: `user-${userId}`,
+        overwrite: true,
+      });
+
+      const bannerPath = cloudResult.secure_url;
       await User.update(
         { banner_image: bannerPath, banner_status: "pending" },
         { where: { id: userId } }
@@ -634,11 +628,9 @@ const authController = {
         });
       }
 
-      // Supprimer le fichier physique avec fs.unlink (asynchrone)
+      // Suppression de l'asset Cloudinary (ou fichier local en dev)
       if (user.banner_image) {
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const oldPath = path.join(__dirname, "../public", user.banner_image);
-        fs.unlink(oldPath, () => {});
+        await deleteAsset(user.banner_image);
       }
 
       // Remettre les valeurs par défaut en base
@@ -686,8 +678,8 @@ const authController = {
         });
       }
 
-      unlinkIfExists(user.picture);
-      unlinkIfExists(user.banner_image);
+      await deleteAsset(user.picture);
+      await deleteAsset(user.banner_image);
 
       await UsersRecipes.destroy({ where: { id_user: userId } });
       await Notice.destroy({ where: { id_user: userId } });
@@ -861,14 +853,14 @@ const authController = {
       }
 
       // Recette non encore approuvée : mise à jour directe
-      if (updateData.picture && recipe.picture) unlinkIfExists(recipe.picture);
+      if (updateData.picture && recipe.picture) await deleteAsset(recipe.picture);
 
       await Recipe.update(updateData, { where: { id: recipeId } });
 
       // Mise à jour de recipe_pictures si de nouvelles photos ont été uploadées
       if (newPictures.length > 0) {
         const oldPics = await RecipePicture.findAll({ where: { recipe_id: recipeId } });
-        oldPics.forEach((p) => unlinkIfExists(p.file_path));
+        for (const p of oldPics) { await deleteAsset(p.file_path); }
         await RecipePicture.destroy({ where: { recipe_id: recipeId } });
         await RecipePicture.bulkCreate(
           newPictures.map(({ relPath, position }) => ({
@@ -943,12 +935,12 @@ const authController = {
       }
 
       // Recette non approuvée (pending/rejected) ou action admin : suppression directe
-      unlinkIfExists(recipe.picture);
-      unlinkIfExists(recipe.pending_picture);
+      await deleteAsset(recipe.picture);
+      await deleteAsset(recipe.pending_picture);
 
-      // Supprimer les fichiers des photos secondaires (recipe_pictures)
+      // Supprimer les assets des photos secondaires (recipe_pictures)
       const recipePictures = await RecipePicture.findAll({ where: { recipe_id: recipeId } });
-      recipePictures.forEach((p) => unlinkIfExists(p.file_path));
+      for (const p of recipePictures) { await deleteAsset(p.file_path); }
 
       await Notice.destroy({ where: { id_recipe: recipeId } });
       await UsersRecipes.destroy({ where: { id_recipe: recipeId } });

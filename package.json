@@ -4,7 +4,11 @@
   "description": "## Installation",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
+    "start": "node index.js",
     "dev": "node --watch index.js",
     "db:init": "psql -U cinedelices -d cinedelices -f ./app/data/create_db.sql",
     "db:migrate": "psql -U cinedelices -d cinedelices -f ./app/data/migration_add_tmdb_id.sql",
@@ -34,16 +38,20 @@
   "homepage": "https://github.com/O-clock-Dundee/dwwm-cinedelices#readme",
   "dependencies": {
     "argon2": "^0.44.0",
+    "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.4.1",
     "express-xss-sanitizer": "^2.0.1",
     "google-auth-library": "^10.6.2",
+    "helmet": "^8.1.0",
     "http-status-codes": "^2.3.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^8.0.5",
     "pg": "^8.16.3",
     "sequelize": "^6.37.7",

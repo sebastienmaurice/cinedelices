@@ -1,32 +1,30 @@
+/**
+ * upload-avatar.middleware.js — Stockage avatars via Cloudinary
+ *
+ * En production (Render), le filesystem est éphémère.
+ * CloudinaryStorage remplace diskStorage : les avatars sont stockés
+ * directement sur Cloudinary et l'URL publique est disponible dans req.file.path.
+ */
+
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../utils/cloudinary-config.js";
 import { createFileFilter, MAX_FILE_SIZE } from "../utils/upload-config.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, "../public/images/profiles");
-    fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    const nameWithoutExt = path.basename(file.originalname, ext);
-    cb(null, `profile-${nameWithoutExt}-${uniqueSuffix}${ext}`);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "cinedelices/profiles",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    // Transformation automatique : carré 400×400
+    transformation: [{ width: 400, height: 400, crop: "fill", quality: "auto" }],
   },
 });
 
 const uploadAvatar = multer({
   storage,
   fileFilter: createFileFilter(),
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
+  limits: { fileSize: MAX_FILE_SIZE },
 });
 
 export default uploadAvatar;

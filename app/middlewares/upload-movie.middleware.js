@@ -1,53 +1,34 @@
+/**
+ * upload-movie.middleware.js — Stockage affiches films via Cloudinary (admin)
+ *
+ * En production (Render), le filesystem est éphémère.
+ * CloudinaryStorage remplace diskStorage : les affiches sont stockées
+ * directement sur Cloudinary et l'URL publique est disponible dans req.file.path.
+ */
+
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../utils/cloudinary-config.js";
 import { createFileFilter, MAX_FILE_SIZE } from "../utils/upload-config.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-/**
- * Nettoie le nom de fichier pour éviter les caractères problématiques
- * @param {string} filename - Nom de fichier original
- * @returns {string} - Nom de fichier nettoyé
- */
-function sanitizeFilename(filename) {
-  // Remplacer les espaces par des tirets
-  // Supprimer les caractères spéciaux sauf tirets, underscores, points et extensions
-  return filename
-    .replace(/\s+/g, "-")
-    .replace(/[^a-zA-Z0-9._-]/g, "")
-    .toLowerCase();
-}
-
-// Configuration du stockage pour les films (admin)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Les images seront stockées dans app/public/images/movies/originals
-    const uploadPath = path.join(
-      __dirname,
-      "../public/images/movies/originals"
-    );
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // Utiliser le nom original du fichier (l'admin prépare les images avec le nom final)
-    // Nettoyer le nom pour éviter les caractères problématiques
-    const sanitized = sanitizeFilename(file.originalname);
-    cb(null, sanitized);
-  },
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: (req, file) => ({
+    folder: "cinedelices/movies",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    // Utilise le nom original nettoyé comme public_id pour garder un nom lisible
+    public_id: file.originalname
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9._-]/g, "")
+      .toLowerCase()
+      .replace(/\.[^.]+$/, ""), // retire l'extension (Cloudinary la gère)
+  }),
 });
 
-// Refactoring : utilisation du fileFilter centralisé depuis upload-config.js
-// Remplace le code dupliqué (lignes 41-59) par un appel à createFileFilter()
-
-// Configuration de Multer pour les films (admin)
 const uploadMovie = multer({
-  storage: storage,
-  fileFilter: createFileFilter(), // Refactoring : fileFilter centralisé
-  limits: {
-    fileSize: MAX_FILE_SIZE, // Refactoring : limite centralisée
-  },
+  storage,
+  fileFilter: createFileFilter(),
+  limits: { fileSize: MAX_FILE_SIZE },
 });
 
 export default uploadMovie;

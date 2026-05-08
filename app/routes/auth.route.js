@@ -1,4 +1,5 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import authController from "../controllers/auth.controller.js";
 import gamificationController from "../controllers/gamification.controller.js";
 import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
@@ -6,6 +7,15 @@ import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
 import uploadBanner from "../middlewares/upload-banner.middleware.js";
 import uploadRecipe, { uploadRecipePhotos } from "../middlewares/upload.middleware.js";
+
+// Rate limiting — protège les endpoints d'authentification contre le brute-force
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // fenêtre de 15 minutes
+  max: 20,                   // 20 tentatives max par IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Trop de tentatives. Réessayez dans 15 minutes." },
+});
 
 const authRouter = Router();
 //route pour savoir qui est connecté
@@ -90,7 +100,7 @@ authRouter.post("/equip-frame", isLogged, injectId, gamificationController.equip
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.get("/register", (req, res) => res.redirect("/"));
 authRouter.post("/register", validateUserRegister, authController.register);
-authRouter.post("/login", validateUserLogin , authController.login);
+authRouter.post("/login", authLimiter, validateUserLogin, authController.login);
 authRouter.get("/logout", authController.logout);
 authRouter.post("/logout", isLogged, authController.logout);
 
@@ -101,7 +111,7 @@ authRouter.post("/google/complete", authController.googleComplete);
 
 // Réinitialisation de mot de passe (flow complet email OR identifiant)
 authRouter.get("/forgot-password",  authController.forgotPasswordForm);
-authRouter.post("/forgot-password", authController.forgotPasswordSubmit);
+authRouter.post("/forgot-password", authLimiter, authController.forgotPasswordSubmit);
 authRouter.get("/reset-password",   authController.resetPasswordForm);
 authRouter.post("/reset-password",  authController.resetPasswordSubmit);
 

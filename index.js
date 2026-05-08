@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
 import { xss } from "express-xss-sanitizer";
 import cookieParser from "cookie-parser";
 import router from "./app/routes/index.route.js";
@@ -7,6 +8,12 @@ import { verifyToken } from "./app/middlewares/is-authed.middleware.js";
 import { injectLocals } from "./app/middlewares/inject-locals.middleware.js";
 
 const app = express();
+
+// Sécurité HTTP — headers de protection (X-Frame-Options, CSP, HSTS, etc.)
+app.use(helmet({
+  // CSP souple pour autoriser les ressources Cloudinary, Google Fonts, TMDB
+  contentSecurityPolicy: false,
+}));
 
 app.set("view engine", "ejs");
 app.set("views", "./app/views");
@@ -23,6 +30,9 @@ app.use(express.json()); // permet de parser le JSON
 app.use(verifyToken); // Middleware global pour vérifier le token et définir req.user si connecté
 app.use(injectLocals); // Middleware global pour injecter les variables locales dans les vues
 app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.query, req.params
+
+// Healthcheck — utilisé par Render pour vérifier que le service est opérationnel
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 // Routes
 app.use(router);

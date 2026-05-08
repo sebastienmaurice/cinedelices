@@ -18,18 +18,12 @@ import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
 import searchCache from "../utils/search-cache.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
+import { deleteAsset, uploadToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-/** Supprime un fichier statique si il existe (chemin relatif à /public) */
-function unlinkIfExists(relativePath) {
-  if (!relativePath) return;
-  const abs = path.join(__dirname, "../public", relativePath);
-  if (fs.existsSync(abs)) fs.unlinkSync(abs);
-}
 
 const adminController = {
   // Page principale admin
@@ -259,7 +253,7 @@ const adminController = {
 
         // Supprimer l'ancienne image locale si elle est différente de la nouvelle
         if (movie.picture && movie.picture !== newPath) {
-          unlinkIfExists(movie.picture);
+          await deleteAsset(movie.picture);
         }
 
         await movie.update({ picture: newPath });
@@ -324,13 +318,13 @@ const adminController = {
       const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
       const recipeIds = recipes.map((recipe) => recipe.id);
       if (recipeIds.length > 0) {
-        recipes.forEach((r) => { unlinkIfExists(r.picture); unlinkIfExists(r.pending_picture); });
+        for (const r of recipes) { await deleteAsset(r.picture); await deleteAsset(r.pending_picture); }
         await Notice.destroy({ where: { id_recipe: recipeIds } });
         await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
         await Recipe.destroy({ where: { id_movie: movieId } });
       }
 
-      unlinkIfExists(movie.picture);
+      await deleteAsset(movie.picture);
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
       return res.redirect("/admin?success=movie_delete_approved");
@@ -463,7 +457,7 @@ const adminController = {
         updateData.description = recipe.pending_description;
       if (recipe.pending_picture) {
         // Supprimer l'ancienne image active avant de la remplacer
-        if (recipe.picture) unlinkIfExists(recipe.picture);
+        if (recipe.picture) await deleteAsset(recipe.picture);
         updateData.picture = recipe.pending_picture;
       }
       if (recipe.pending_category) updateData.category = recipe.pending_category;
@@ -498,9 +492,7 @@ const adminController = {
         attributes: ["id", "pending_picture"],
       });
       if (recipe && recipe.pending_picture) {
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const oldPath = path.join(__dirname, "../public", recipe.pending_picture);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        await deleteAsset(recipe.pending_picture);
       }
 
       await Recipe.update(
@@ -544,9 +536,9 @@ const adminController = {
         return res.redirect("/admin?success=recipe_delete_rejected");
       }
 
-      unlinkIfExists(recipe.picture);
-      unlinkIfExists(recipe.pending_picture);
-      (recipe.RecipePictures || []).forEach((pic) => unlinkIfExists(pic.file_path));
+      await deleteAsset(recipe.picture);
+      await deleteAsset(recipe.pending_picture);
+      for (const pic of (recipe.RecipePictures || [])) { await deleteAsset(pic.file_path); }
       await Notice.destroy({ where: { id_recipe: recipeId } });
       await UsersRecipes.destroy({ where: { id_recipe: recipeId } });
       await Recipe.destroy({ where: { id: recipeId } });
@@ -824,14 +816,14 @@ const adminController = {
       }
 
       // Supprimer les fichiers images du disque (erreurs non bloquantes)
-      try { unlinkIfExists(recipe.picture); } catch (err) {
+      try { await deleteAsset(recipe.picture); } catch (err) {
         console.error(`[rejectRecipe] Erreur suppression image principale (${recipe.picture}):`, err.message);
       }
-      try { unlinkIfExists(recipe.pending_picture); } catch (err) {
+      try { await deleteAsset(recipe.pending_picture); } catch (err) {
         console.error(`[rejectRecipe] Erreur suppression image pending (${recipe.pending_picture}):`, err.message);
       }
       for (const pic of (recipe.RecipePictures || [])) {
-        try { unlinkIfExists(pic.file_path); } catch (err) {
+        try { await deleteAsset(pic.file_path); } catch (err) {
           console.error(`[rejectRecipe] Erreur suppression image secondaire (${pic.file_path}):`, err.message);
         }
       }
@@ -868,7 +860,7 @@ const adminController = {
       // La photo principale (position 1) est gérée via le flux recette complet
       if (pic.position < 2) return res.redirect("/admin?success=recipe_picture_protected");
 
-      unlinkIfExists(pic.file_path);
+      await deleteAsset(pic.file_path);
       await RecipePicture.destroy({ where: { id: pictureId } });
 
       res.redirect("/admin?success=recipe_picture_deleted");
@@ -921,7 +913,7 @@ const adminController = {
       if (!user) return renderNotFound(res, "Utilisateur introuvable.");
 
       // Supprimer l'ancienne photo validée si elle existe
-      if (user.picture) unlinkIfExists(user.picture);
+      if (user.picture) await deleteAsset(user.picture);
 
       // Promouvoir pending_picture → picture
       await User.update(
@@ -948,7 +940,7 @@ const adminController = {
       if (!user) return renderNotFound(res, "Utilisateur introuvable.");
 
       // Supprimer la photo en attente et restaurer le statut sans toucher à picture
-      if (user.pending_picture) unlinkIfExists(user.pending_picture);
+      if (user.pending_picture) await deleteAsset(user.pending_picture);
       await User.update(
         { pending_picture: null, picture_status: "approved" },
         { where: { id: userId } }
@@ -988,9 +980,7 @@ const adminController = {
       // Supprimer le fichier physique WebP avant de reset la base
       const user = await User.findByPk(userId);
       if (user && user.banner_image) {
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const oldPath = path.join(__dirname, "../public", user.banner_image);
-        fs.unlink(oldPath, () => {});
+        await deleteAsset(user.banner_image);
       }
       await User.update(
         { banner_image: null, banner_status: "rejected" },
@@ -1051,13 +1041,13 @@ const adminController = {
       const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
       const recipeIds = recipes.map((recipe) => recipe.id);
       if (recipeIds.length > 0) {
-        recipes.forEach((r) => { unlinkIfExists(r.picture); unlinkIfExists(r.pending_picture); });
+        for (const r of recipes) { await deleteAsset(r.picture); await deleteAsset(r.pending_picture); }
         await Notice.destroy({ where: { id_recipe: recipeIds } });
         await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
         await Recipe.destroy({ where: { id_movie: movieId } });
       }
 
-      unlinkIfExists(movie.picture);
+      await deleteAsset(movie.picture);
       await Movie.destroy({ where: { id: movieId } });
       searchCache.clear();
       logAdminAction({ adminId: req.userId, action: "delete_movie_direct", targetType: "movie", targetId: movieId, detail: movie.title });
@@ -1079,9 +1069,9 @@ const adminController = {
         include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["file_path"] }],
       });
       if (recipe) {
-        unlinkIfExists(recipe.picture);
-        unlinkIfExists(recipe.pending_picture);
-        (recipe.RecipePictures || []).forEach((pic) => unlinkIfExists(pic.file_path));
+        await deleteAsset(recipe.picture);
+        await deleteAsset(recipe.pending_picture);
+        for (const pic of (recipe.RecipePictures || [])) { await deleteAsset(pic.file_path); }
       }
 
       await Notice.destroy({ where: { id_recipe: recipeId } });
@@ -1167,14 +1157,11 @@ const adminController = {
         updateData.synopsis = trimmedSynopsis.length > 0 ? trimmedSynopsis.substring(0, 1000) : null;
       }
 
-      // Photo uploadée par l'admin — supprime l'ancienne si elle existe
+      // Photo uploadée par l'admin — supprime l'ancienne et stocke l'URL Cloudinary
       if (req.file) {
-        if (movie.picture) {
-          const __dirname = path.dirname(fileURLToPath(import.meta.url));
-          const oldPath = path.join(__dirname, "../public", movie.picture);
-          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-        }
-        updateData.picture = `/images/movies/originals/${req.file.filename}`;
+        if (movie.picture) await deleteAsset(movie.picture);
+        // req.file.path = URL Cloudinary (CloudinaryStorage dans upload-movie.middleware)
+        updateData.picture = req.file.path;
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -1246,14 +1233,12 @@ const adminController = {
         updateData.preparation = trimmedPrep;
       }
 
-      // Photo uploadée par l'admin — supprime l'ancienne si elle existe
+      // Photo uploadée par l'admin — upload vers Cloudinary depuis le fichier temp /tmp
       if (req.file) {
-        if (recipe.picture) {
-          const __dirname = path.dirname(fileURLToPath(import.meta.url));
-          const oldPath = path.join(__dirname, "../public", recipe.picture);
-          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-        }
-        updateData.picture = `/images/recipes/${req.file.filename}`;
+        if (recipe.picture) await deleteAsset(recipe.picture);
+        // req.file.path = chemin /tmp (upload.middleware diskStorage)
+        // On upload vers Cloudinary et on stocke l'URL
+        updateData.picture = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -1532,24 +1517,26 @@ const adminController = {
     try {
       const recipeId = parseInt(req.params.id, 10);
       if (!recipeId || Number.isNaN(recipeId)) {
-        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        if (req.file) fs.unlink(req.file.path, () => {});
         return res.json({ success: false, message: "ID invalide" });
       }
 
       const count = await RecipePicture.count({ where: { recipe_id: recipeId } });
       if (count >= 3) {
-        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        if (req.file) fs.unlink(req.file.path, () => {}); // nettoyer le fichier temp
         return res.json({ success: false, message: "Limite de 3 photos atteinte" });
       }
 
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
+
+      const cloudinaryUrl = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
 
       const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId } });
       const nextPosition = (maxPos || 0) + 1;
 
       const pic = await RecipePicture.create({
         recipe_id: recipeId,
-        file_path: `/images/recipes/${req.file.filename}`,
+        file_path: cloudinaryUrl,
         position: nextPosition,
         status: "approved",
         approved_at: new Date(),
@@ -1559,7 +1546,7 @@ const adminController = {
       logAdminAction({ adminId: req.userId, action: "add_recipe_picture", targetType: "photo", targetId: pic.id, detail: `recipe #${recipeId}` });
       return res.json({ success: true, picture: pic });
     } catch (error) {
-      if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+      if (req.file) fs.unlink(req.file.path, () => {}); // nettoyer le fichier temp
       return res.json({ success: false, message: error.message });
     }
   },
@@ -1574,7 +1561,7 @@ const adminController = {
       if (!pic) return res.json({ success: false, message: "Photo introuvable" });
       if (pic.position < 2) return res.json({ success: false, message: "La photo principale ne peut pas être supprimée ici" });
 
-      unlinkIfExists(pic.file_path);
+      await deleteAsset(pic.file_path);
       await RecipePicture.destroy({ where: { id: pictureId } });
       logAdminAction({ adminId: req.userId, action: "delete_recipe_picture", targetType: "photo", targetId: pictureId });
       return res.json({ success: true });
@@ -1608,19 +1595,21 @@ const adminController = {
     try {
       const pictureId = parseInt(req.params.id, 10);
       if (!pictureId || Number.isNaN(pictureId)) {
-        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        if (req.file) fs.unlink(req.file.path, () => {});
         return res.json({ success: false, message: "ID invalide" });
       }
 
       const pic = await RecipePicture.findByPk(pictureId);
       if (!pic) {
-        if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+        if (req.file) fs.unlink(req.file.path, () => {});
         return res.json({ success: false, message: "Photo introuvable" });
       }
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
 
-      unlinkIfExists(pic.file_path);
-      const newPath = `/images/recipes/${req.file.filename}`;
+      // Upload la nouvelle photo sur Cloudinary, supprime l'ancienne
+      const newPath = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
+      await deleteAsset(pic.file_path);
+
       await RecipePicture.update(
         { file_path: newPath, status: "approved", approved_at: new Date() },
         { where: { id: pictureId } }
@@ -1628,7 +1617,7 @@ const adminController = {
       logAdminAction({ adminId: req.userId, action: "replace_recipe_picture", targetType: "photo", targetId: pictureId });
       return res.json({ success: true, file_path: newPath });
     } catch (error) {
-      if (req.file) unlinkIfExists(`/images/recipes/${req.file.filename}`);
+      if (req.file) fs.unlink(req.file.path, () => {});
       return res.json({ success: false, message: error.message });
     }
   },

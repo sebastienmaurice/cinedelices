@@ -1,35 +1,39 @@
 /**
- * Traitement des images uploadées pour les recettes
- * - Validation du ratio 3:2 (tolérance ±15%)
- * - Redimensionnement à 1600px max (sans agrandir)
- * - En production : conversion WebP qualité 75
- * - En développement : compression en mémoire, format conservé
+ * recipe-image-processor.js
+ * Traitement des images uploadées pour les recettes.
  *
- * Partagé par add-recipes-movies.controllers.js et auth.controller.js
+ * Workflow :
+ *   1. Multer écrit le fichier dans /tmp (os.tmpdir())
+ *   2. Sharp lit le fichier, valide le ratio (1.3 – 2.0)
+ *   3. Sharp redimensionne en 1200×800 et convertit en WebP
+ *   4. Le buffer WebP est uploadé sur Cloudinary
+ *   5. Le fichier temporaire est supprimé
+ *
+ * Retourne une URL Cloudinary sécurisée (https://res.cloudinary.com/...)
+ * au lieu d'un chemin local /images/recipes/... (incompatible avec Render).
  */
 
 import sharp from "sharp";
 import fs from "fs";
-import path from "path";
+import { uploadBufferToCloudinary } from "./asset-manager.js";
 
 /**
- * Traite un tableau de fichiers Multer.
+ * Traite un tableau de fichiers Multer — validation ratio + upload Cloudinary.
  * @param {Express.Multer.File[]} files
- * @returns {Promise<{relPath: string, position: number}[]>}
+ * @returns {Promise<{relPath: string, position: number, warning: object|null}[]>}
  */
 export async function processRecipeImages(files) {
-  const isProduction = process.env.NODE_ENV === "production";
   const processed = [];
 
   for (const [idx, file] of files.entries()) {
+    // --- Lecture des métadonnées ---
     let meta;
     try {
       meta = await sharp(file.path).metadata();
     } catch (error) {
-      console.error("Recipe image invalid image metadata:", {
+      console.error("Recipe image invalid metadata:", {
         filename: file.originalname,
         path: file.path,
-        size: file.size,
         error: error.stack || error,
       });
       cleanupFiles([file]);
@@ -40,10 +44,8 @@ export async function processRecipeImages(files) {
     }
 
     if (!meta?.width || !meta?.height) {
-      console.error("Recipe image invalid metadata dimensions:", {
+      console.error("Recipe image invalid dimensions:", {
         filename: file.originalname,
-        path: file.path,
-        size: file.size,
         metadata: meta,
       });
       cleanupFiles([file]);
@@ -52,13 +54,12 @@ export async function processRecipeImages(files) {
       throw err;
     }
 
+    // --- Validation du ratio (1.3 à 2.0) ---
     const ratio = meta.width / meta.height;
 
     if (ratio < 1.3 || ratio > 2.0) {
       console.warn("Recipe image ratio invalid:", {
         filename: file.originalname,
-        path: file.path,
-        size: file.size,
         ratio,
       });
       cleanupFiles([file]);
@@ -73,58 +74,31 @@ export async function processRecipeImages(files) {
 
     const warning =
       Math.abs(ratio - 1.5) > 0.0001
-        ? {
-            type: "ratio",
-            w: meta.width,
-            h: meta.height,
-            ratio,
-          }
+        ? { type: "ratio", w: meta.width, h: meta.height, ratio }
         : null;
 
     if (warning) {
       console.warn("Recipe image ratio warning:", {
         filename: file.originalname,
-        path: file.path,
-        size: file.size,
         ratio,
-        warning,
       });
     }
 
-    let relPath;
-    let outputPath;
-    const dir = path.dirname(file.path);
-    const baseName = path.basename(file.filename, path.extname(file.filename));
-
+    // --- Traitement Sharp → Buffer WebP ---
+    let buffer;
     try {
-      if (isProduction) {
-        const webpName = baseName + ".webp";
-        outputPath = path.join(dir, webpName);
-        await sharp(file.path)
-          .resize(1200, 800, { fit: "cover" })
-          .webp({ quality: 75 })
-          .toFile(outputPath);
-        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-        relPath = `/images/recipes/${webpName}`;
-      } else {
-        const outputName = `${baseName}-processed${path.extname(file.filename)}`;
-        outputPath = path.join(dir, outputName);
-        await sharp(file.path)
-          .resize(1200, 800, { fit: "cover" })
-          .toFile(outputPath);
-        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-        relPath = `/images/recipes/${outputName}`;
-      }
+      buffer = await sharp(file.path)
+        .resize(1200, 800, { fit: "cover" })
+        .webp({ quality: 75 })
+        .toBuffer();
+
+      // Supprime le fichier temporaire Multer dès que le buffer est en mémoire
+      fs.unlink(file.path, () => {});
     } catch (error) {
       console.error("Recipe image processing failed:", {
         filename: file.originalname,
-        path: file.path,
-        size: file.size,
         error: error.stack || error,
       });
-      if (outputPath && fs.existsSync(outputPath) && outputPath !== file.path) {
-        fs.unlinkSync(outputPath);
-      }
       cleanupFiles([file]);
       const err = new Error("image_processing");
       err.filename = file.originalname;
@@ -132,20 +106,39 @@ export async function processRecipeImages(files) {
       throw err;
     }
 
+    // --- Upload du buffer sur Cloudinary ---
+    let cloudinaryResult;
+    try {
+      cloudinaryResult = await uploadBufferToCloudinary(buffer, {
+        folder: "cinedelices/recipes",
+        // Pas de public_id fixe : Cloudinary génère un ID unique
+      });
+    } catch (error) {
+      console.error("Recipe image Cloudinary upload failed:", {
+        filename: file.originalname,
+        error: error.stack || error,
+      });
+      const err = new Error("image_processing");
+      err.filename = file.originalname;
+      err.originalError = error;
+      throw err;
+    }
+
+    // cloudinaryResult est l'objet Cloudinary complet (secure_url, public_id, etc.)
+    const relPath = cloudinaryResult.secure_url;
+
     processed.push({
       relPath,
       position: idx + 1,
       warning,
       filename: file.originalname,
-      originalPath: file.path,
-      outputPath,
     });
   }
 
   return processed;
 }
 
-/** Supprime les fichiers Multer encore sur disque (nettoyage en cas d'erreur) */
+/** Supprime les fichiers temporaires Multer encore sur disque (nettoyage d'urgence) */
 export function cleanupFiles(files) {
   if (!files || files.length === 0) return;
   for (const file of files) {
