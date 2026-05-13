@@ -84,13 +84,21 @@ body {
   text-align: center;
 }
 
-/* Logo centré */
-.maintenance-logo {
-  height: 80px; width: auto;
+/* Logo animé centré */
+.maintenance-logo-scene {
+  position: relative;
+  width: 276px; height: 158px;
   margin-bottom: 2.5rem;
   animation: fadeUp .6s cubic-bezier(.22,1,.36,1) .1s both;
-  filter: drop-shadow(0 0 30px rgba(196,160,82,.2));
 }
+.nav-logo__fx {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.nav-logo__fx--under { z-index: 0; }
+.nav-logo__img { position: relative; z-index: 1; width: 100%; height: auto; display: block; }
+.nav-logo__fx--over { z-index: 2; }
 
 .gold-rule {
   width: 200px; height: 1px; margin: 0 auto 2rem;
@@ -139,7 +147,14 @@ body {
 <main class="page-maintenance">
   <div class="maintenance-content">
 
-    <img class="maintenance-logo" src="/images/Logo/logo-cine-delices-2026-1.png" alt="Ciné Délices">
+    <div class="maintenance-logo-scene nav-logo__scene" id="navLogoScene" data-w="276" data-h="158">
+      <canvas class="nav-logo__fx nav-logo__fx--under" id="navLogoFxUnder" width="276" height="158"></canvas>
+      <img class="nav-logo__img" id="navLogoImg"
+        src="/images/Logo/logo-cine-delices-2026-1.png"
+        alt="Ciné Délices"
+        crossorigin="anonymous" />
+      <canvas class="nav-logo__fx nav-logo__fx--over" id="navLogoFxOver" width="276" height="158"></canvas>
+    </div>
 
     <div class="gold-rule"></div>
 
@@ -195,5 +210,6 @@ function tick() {
 }
 tick();
 </script>
+<script src="/js/nav-logo-fx.js"></script>
 </body>
 </html>

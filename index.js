@@ -35,11 +35,15 @@ app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.que
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 // Page de maintenance — activer via MAINTENANCE=true dans les variables d'environnement Render
-// Les admins et superadmins peuvent toujours accéder au site
+// Les admins/superadmins passent toujours. Les routes d'auth restent accessibles pour connexion.
 if (process.env.MAINTENANCE === "true") {
   app.use((req, res, next) => {
     const role = req.userRole;
+    // Admin connecté → accès total
     if (role === "admin" || role === "superadmin") return next();
+    // Routes toujours accessibles (connexion + assets statiques)
+    const allowed = ["/auth/login", "/auth/logout", "/auth/google", "/auth/google/code", "/auth/google/complete", "/health"];
+    if (allowed.some(r => req.path.startsWith(r))) return next();
     res.status(503).render("maintenance");
   });
 }
