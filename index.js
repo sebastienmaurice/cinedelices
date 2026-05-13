@@ -41,8 +41,8 @@ if (process.env.MAINTENANCE === "true") {
     const role = req.userRole;
     // Admin connecté → accès total
     if (role === "admin" || role === "superadmin") return next();
-    // Routes toujours accessibles (connexion + assets statiques)
-    const allowed = ["/auth/login", "/auth/logout", "/auth/google", "/auth/google/code", "/auth/google/complete", "/health"];
+    // Routes toujours accessibles pendant la maintenance
+    const allowed = ["/admin", "/auth", "/health"];
     if (allowed.some(r => req.path.startsWith(r))) return next();
     res.status(503).render("maintenance");
   });
