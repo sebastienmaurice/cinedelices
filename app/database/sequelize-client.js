@@ -7,9 +7,11 @@ const sequelize = new Sequelize(process.env.PG_URL, {
     timestamps: false,
     underscored: true,
   },
-  // Force le search_path sur public — nécessaire sur Render PostgreSQL
-  dialectOptions: {
-    options: "-c search_path=public",
+  // Force le search_path=public sur chaque connexion — requis sur Render PostgreSQL
+  hooks: {
+    afterConnect: async (connection) => {
+      await connection.query("SET search_path TO public;");
+    },
   },
 });
 
