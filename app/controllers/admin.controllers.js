@@ -871,7 +871,7 @@ const adminController = {
 
   //! Supprimer un utilisateur
   async deleteUser(req, res) {
-    if (req.userRole !== "superadmin") {
+    if (req.userRole !== "superadmin" && req.userRole !== "super_admin") {
       return res.status(403).json({ error: "Permission insuffisante" });
     }
     try {
@@ -882,7 +882,7 @@ const adminController = {
       if (!user) {
         return renderNotFound(res, "Utilisateur");
       }
-      if (user.role === "superadmin") {
+      if (user.role === "superadmin" || user.role === "super_admin") {
         return res.status(403).json({ error: "Impossible de supprimer un super administrateur." });
       }
 
@@ -1356,7 +1356,7 @@ const adminController = {
       // Un superadmin ne peut pas être suspendu
       const target = await User.findByPk(userId, { attributes: ["id", "role"] });
       if (!target) return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
-      if (target.role === "superadmin") {
+      if (target.role === "superadmin" || target.role === "super_admin") {
         return res.status(403).json({ success: false, message: "Impossible de suspendre un super administrateur." });
       }
 
@@ -1401,7 +1401,7 @@ const adminController = {
 
   // POST /admin/users/create — JSON
   async createUser(req, res) {
-    if (req.userRole !== "superadmin") {
+    if (req.userRole !== "superadmin" && req.userRole !== "super_admin") {
       return res.status(403).json({ error: "Permission insuffisante" });
     }
     try {
@@ -1412,7 +1412,7 @@ const adminController = {
       if (password.length < 8) {
         return res.json({ success: false, message: "Le mot de passe doit contenir au moins 8 caractères." });
       }
-      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin", "super_admin"];
       const userRole = ALLOWED_ROLES.includes(role) ? role : "user";
 
       const existing = await User.findOne({
@@ -1461,7 +1461,7 @@ const adminController = {
         updateData.password = await argon2.hash(password);
       }
       if (role) {
-        const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+        const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin", "super_admin"];
         if (ALLOWED_ROLES.includes(role)) updateData.role = role;
       }
 
@@ -1477,7 +1477,7 @@ const adminController = {
 
   // POST /admin/users/:id/role — JSON
   async changeUserRole(req, res) {
-    if (req.userRole !== "superadmin") {
+    if (req.userRole !== "superadmin" && req.userRole !== "super_admin") {
       return res.status(403).json({ error: "Permission insuffisante" });
     }
     try {
@@ -1485,7 +1485,7 @@ const adminController = {
       if (!userId || Number.isNaN(userId)) return res.json({ success: false, message: "ID invalide." });
 
       const { role } = req.body;
-      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin"];
+      const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin", "super_admin"];
       if (!ALLOWED_ROLES.includes(role)) return res.json({ success: false, message: "Rôle invalide." });
 
       await User.update({ role }, { where: { id: userId } });
@@ -1624,7 +1624,7 @@ const adminController = {
 
   // GET /admin/logs
   async getAdminLogs(req, res) {
-    if (req.userRole !== "superadmin") {
+    if (req.userRole !== "superadmin" && req.userRole !== "super_admin") {
       return res.status(403).json({ error: "Permission insuffisante" });
     }
     try {
