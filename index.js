@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import { xss } from "express-xss-sanitizer";
 import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 import router from "./app/routes/index.route.js";
 import { verifyToken } from "./app/middlewares/is-authed.middleware.js";
 import { injectLocals } from "./app/middlewares/inject-locals.middleware.js";
@@ -38,11 +39,16 @@ app.get("/health", (req, res) => res.json({ status: "ok" }));
 // Les admins/superadmins passent toujours. Les routes d'auth restent accessibles pour connexion.
 if (process.env.MAINTENANCE === "true") {
   app.use((req, res, next) => {
-    const role = req.userRole;
-    // Admin connecté → accès total
-    if (role === "admin" || role === "superadmin") return next();
+    // Vérification directe du JWT — plus fiable que req.userRole
+    try {
+      const token = req.cookies?.token;
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role === "admin" || decoded.role === "superadmin") return next();
+      }
+    } catch {}
     // Routes toujours accessibles pendant la maintenance
-    const allowed = ["/admin", "/auth", "/health", "/favicon"];
+    const allowed = ["/admin", "/auth", "/health"];
     if (allowed.some(r => req.path.startsWith(r))) return next();
     // Fichiers statiques (CSS, JS, images) — toujours servis
     if (req.path.match(/\.(css|js|png|jpg|jpeg|webp|svg|ico|woff|woff2|ttf)$/)) return next();

@@ -1704,7 +1704,12 @@ const authController = {
 
   //deconnexion
   async logout(req, res) {
-    res.clearCookie("token");
+    // Les options doivent correspondre à celles utilisées lors de la création du cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: "strict",
+    });
     res.redirect("/");
   },
 };
