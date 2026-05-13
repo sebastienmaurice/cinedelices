@@ -7,7 +7,16 @@ export function isAdmin(req, res, next) {
     return next();
   }
 
-  // 🔹 Accès interdit
+  // Non connecté → ouvrir le popup de connexion
+  if (!userRole) {
+    return res.status(403).render("error", {
+      error: "403",
+      message: "Connectez-vous avec un compte administrateur pour accéder à cette page.",
+      openLoginPopup: true,
+    });
+  }
+
+  // Connecté mais pas admin → accès refusé
   res.status(403).render("error", {
     error: "403",
     message: "Route interdite. Vous n'êtes pas administrateur.",
