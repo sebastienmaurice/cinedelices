@@ -34,7 +34,17 @@ app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.que
 // Healthcheck — utilisé par Render pour vérifier que le service est opérationnel
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-// Routes
+// Page de maintenance — activer via MAINTENANCE=true dans les variables d'environnement Render
+// Les admins et superadmins peuvent toujours accéder au site
+if (process.env.MAINTENANCE === "true") {
+  app.use((req, res, next) => {
+    const role = req.userRole;
+    if (role === "admin" || role === "superadmin") return next();
+    res.status(503).render("maintenance");
+  });
+}
+
+// Routes normales
 app.use(router);
 
 // middleware (404)
