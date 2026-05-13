@@ -836,13 +836,14 @@
 
           <%
             const roleBadgeMap = {
-              superadmin: { label: 'Super Admin', cls: 'tag--superadmin', color: 'rgba(200,100,255,.9)' },
-              admin:      { label: 'Admin',       cls: 'tag--admin',       color: 'rgba(196,160,82,.9)' },
-              editor:     { label: 'Éditeur',     cls: 'tag--editor',      color: 'rgba(80,150,255,.9)' },
-              user:       { label: 'Membre',      cls: 'tag--user',        color: 'rgba(160,200,130,.8)' },
+              super_admin: { label: 'Super Admin', cls: 'tag--superadmin', color: 'rgba(200,100,255,.9)' },
+              superadmin:  { label: 'Super Admin', cls: 'tag--superadmin', color: 'rgba(200,100,255,.9)' },
+              admin:       { label: 'Admin',       cls: 'tag--admin',       color: 'rgba(196,160,82,.9)' },
+              editor:      { label: 'Éditeur',     cls: 'tag--editor',      color: 'rgba(80,150,255,.9)' },
+              user:        { label: 'Membre',      cls: 'tag--user',        color: 'rgba(160,200,130,.8)' },
             };
-            const staffUsers   = users ? users.filter(u => ['superadmin','admin','editor'].includes(u.role))
-                                               .sort((a,b) => (['superadmin','admin','editor'].indexOf(a.role)) - (['superadmin','admin','editor'].indexOf(b.role))) : [];
+            const staffUsers   = users ? users.filter(u => ['super_admin','superadmin','admin','editor'].includes(u.role))
+                                               .sort((a,b) => (['super_admin','superadmin','admin','editor'].indexOf(a.role)) - (['super_admin','superadmin','admin','editor'].indexOf(b.role))) : [];
             const memberUsers  = users ? users.filter(u => u.role === 'user' || !u.role) : [];
           %>
 
