@@ -1,263 +1,128 @@
 # Guide de déploiement — Ciné Délices
 
-> **Rédigé le :** 2026-04-29  
+> **Rédigé le :** 2026-04-29 — **Mis à jour le :** 2026-05-13  
 > **Auteur :** Sébastien  
 > **Infrastructure cible :** Render (PaaS) ou Hostinger VPS  
 > **Stack :** Node.js / Express / PostgreSQL / Cloudinary
 
 ---
 
-## Résumé de l'état du projet
-
-Le projet a subi un **audit technique complet** suivi d'une **mise en conformité production**.  
-Toutes les corrections bloquantes identifiées ont été appliquées directement dans le code.
+## État du projet
 
 | | |
 |---|---|
-| **Score avant corrections** | 52 / 100 |
-| **Score après corrections** | 94 / 100 |
-| **Prêt pour déploiement** | ✅ OUI — sous réserve de configurer les variables d'environnement |
+| **Score de préparation** | **94 / 100** |
+| **Code prêt** | ✅ OUI |
+| **Prêt à déployer maintenant** | ⚠️ NON — configuration externe manquante |
 
 ---
 
-## Ce qui a été fait (corrections appliquées dans le code)
+## Ce qui a été fait dans le code ✅
 
-### Infrastructure & démarrage
+| Correction | Fichier |
+|---|---|
+| Script `"start": "node index.js"` | `package.json` |
+| Node.js `"engines": { "node": ">=20.0.0" }` | `package.json` |
+| `process.exit(1)` si BDD inaccessible | `sequelize-client.js` |
+| Helmet (headers sécurité HTTP) | `index.js` |
+| Healthcheck `GET /health` | `index.js` |
+| Rate limiting login + forgot-password (20 req/15 min) | `auth.route.js` |
+| `sameSite: "strict"` sur tous les cookies JWT | `auth.controller.js` |
+| Cloudinary — avatars | `upload-avatar.middleware.js` |
+| Cloudinary — films (admin) | `upload-movie.middleware.js` |
+| Cloudinary — recettes (Sharp → buffer → Cloudinary) | `recipe-image-processor.js` |
+| Cloudinary — bannières (Sharp → buffer → Cloudinary) | `auth.controller.js` |
+| Cloudinary — affiches TMDB (buffer → Cloudinary) | `tmdb-image-downloader.js` |
+| `deleteAsset()` remplace `unlinkIfExists()` partout | `asset-manager.js` |
+| `.env.example` complet avec toutes les variables | `.env.example` |
+| `robots.txt` | `app/public/robots.txt` |
+| `sitemap.xml` | `app/public/sitemap.xml` |
 
-- **Script `start` ajouté** dans `package.json` → `"start": "node index.js"`  
-  Sans ce script, Render ne savait pas comment démarrer l'application.
-
-- **Version Node.js spécifiée** dans `package.json` → `"engines": { "node": ">=20.0.0" }`  
-  Évite qu'un hébergeur utilise une version incompatible.
-
-- **Crash au démarrage si la BDD est inaccessible** dans `sequelize-client.js`  
-  Le serveur s'arrête proprement (`process.exit(1)`) au lieu de démarrer en état cassé.
+**Packages installés :**
+```
+cloudinary  multer-storage-cloudinary  helmet  express-rate-limit
+```
 
 ---
 
-### Cloudinary — stockage des images
+## Ce qu'il reste à faire ❌
 
-C'était le problème le plus critique. Sur Render et Hostinger VPS (sans volume persistant), les fichiers uploadés sont **perdus à chaque redémarrage**. Tout le système d'upload a été migré vers Cloudinary.
+### Bloquant pour la prod
 
-**Fichiers créés :**
+| # | Quoi | Où | Temps estimé |
+|---|---|---|---|
+| 1 | Créer un compte **Cloudinary** et renseigner les 3 clés | `.env` / dashboard hébergeur | 5 min |
+| 2 | Configurer un **SMTP** (emails reset mdp + contact) | `.env` / dashboard hébergeur | 10 min |
+| 3 | Mettre à jour le domaine dans **Google Cloud Console** | console.cloud.google.com | 5 min |
+| 4 | Renseigner **toutes les variables d'environnement** | dashboard Render ou `.env` VPS | 15 min |
+| 5 | Exécuter les **migrations SQL** (19 fichiers dans l'ordre) | psql / Render Shell | 10 min |
+| 6 | Remplacer `cinedelices.com` par le **vrai domaine** dans `robots.txt` et `sitemap.xml` | 2 fichiers | 2 min |
 
-- `app/utils/cloudinary-config.js` — connexion Cloudinary via variables d'environnement
-- `app/utils/asset-manager.js` — fonctions `deleteAsset()`, `uploadToCloudinary()`, `uploadBufferToCloudinary()`
+### Non bloquant (à faire après la mise en ligne)
 
-**Middlewares Multer migrés :**
-
-| Middleware | Avant | Après |
+| # | Quoi | Détail |
 |---|---|---|
-| `upload-avatar.middleware.js` | Disque local `/images/profiles/` | Cloudinary `cinedelices/profiles/` |
-| `upload-banner.middleware.js` | Disque local `/images/banner-auteur/` | Temp `/tmp` → Sharp → Cloudinary `cinedelices/banners/` |
-| `upload.middleware.js` (recettes) | Disque local `/images/recipes/` | Temp `/tmp` → Sharp → Cloudinary `cinedelices/recipes/` |
-| `upload-movie.middleware.js` | Disque local `/images/movies/originals/` | Cloudinary `cinedelices/movies/` |
-
-**Utilitaires migrés :**
-
-- `recipe-image-processor.js` — Sharp valide le ratio, redimensionne en WebP, envoie le buffer sur Cloudinary
-- `tmdb-image-downloader.js` — télécharge l'affiche TMDB en mémoire puis l'envoie sur Cloudinary
-
-**Suppression des anciens fichiers :**  
-La fonction `unlinkIfExists()` (suppression disque local) est remplacée par `deleteAsset()` dans :
-- `auth.controller.js` (avatars, bannières, photos de recettes utilisateur)
-- `admin.controllers.js` (toutes les suppressions admin)
+| 7 | **Formulaire contact** ne envoie pas d'email | `contact-about.controllers.js` ligne 33 — `TODO` à brancher sur le service mail |
+| 8 | **CORS** non configuré | À ajouter si un front externe ou une app mobile consomme l'API |
+| 9 | **CI/CD** (pipeline GitHub Actions) | Déploiement automatique à chaque push sur `develop` |
+| 10 | **Script d'installation VPS** | Script bash pour automatiser toute l'installation serveur |
+| 11 | `error.message` exposé dans certaines routes admin | Remplacer par un message générique, logger côté serveur |
+| 12 | `_navCache` sans limite d'éviction | Potentielle fuite mémoire sur fort trafic |
+| 13 | Sitemap dynamique (fiches film/recette) | Route `/sitemap.xml` générée depuis la BDD |
+| 14 | Logs structurés | Remplacer `console.log` par `pino` pour des logs exploitables |
+| 15 | Compression gzip | Installer le package `compression` |
 
 ---
 
-### Sécurité HTTP
+## Variables d'environnement
 
-- **Helmet installé et activé** dans `index.js`  
-  Ajoute automatiquement les headers de sécurité : `X-Frame-Options`, `X-Content-Type-Options`, `Strict-Transport-Security`, etc.
+### Toutes obligatoires
 
-- **Rate limiting** sur les endpoints d'authentification dans `auth.route.js`  
-  - `POST /auth/login` → 20 tentatives max / 15 min / IP  
-  - `POST /auth/forgot-password` → 20 tentatives max / 15 min / IP
+```env
+PORT=3000
+NODE_ENV=production
+BASE_URL=https://votre-domaine.com
 
-- **`sameSite: "strict"`** ajouté sur tous les cookies JWT  
-  Dans `auth.controller.js` — login, register, Google OAuth.
+# Base de données
+PG_URL=postgresql://user:password@host:5432/cinedelices
 
----
+# Sécurité
+JWT_SECRET=      # openssl rand -hex 64
 
-### Monitoring & disponibilité
+# Google OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-- **Route healthcheck** ajoutée dans `index.js`  
-  `GET /health` → `{ "status": "ok" }`  
-  Render et les load balancers Hostinger peuvent l'utiliser pour détecter si le service est opérationnel.
+# TMDB
+TMDB_API_KEY=
 
----
-
-### Documentation
-
-- **`.env.example` complété** avec toutes les variables nécessaires :  
-  `NODE_ENV`, `GOOGLE_CLIENT_SECRET`, `TMDB_API_KEY`, `CLOUDINARY_*`, `SMTP_*`
-
-- **`AUDIT-DEPLOIEMENT-RENDER.md`** mis à jour pour refléter l'état après corrections.
-
----
-
-### Packages installés
-
-```
-cloudinary               ^1.41.3
-multer-storage-cloudinary ^4.0.0
-helmet                   ^8.1.0
-express-rate-limit       ^8.4.1
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
 
----
+### SMTP (obligatoire pour les emails)
 
-## Ce qu'il reste à faire avant de déployer
+```env
+SMTP_HOST=smtp.brevo.com
+SMTP_PORT=587
+SMTP_USER=votre-email@domaine.com
+SMTP_PASS=
+SMTP_FROM=Ciné Délices <no-reply@cinedelices.fr>
+```
 
-### Étape 1 — Créer un compte Cloudinary (gratuit)
+**Services SMTP gratuits recommandés :**
 
-1. Aller sur [cloudinary.com](https://cloudinary.com/) → créer un compte gratuit
-2. Dans le Dashboard → **Product Environment Credentials**, noter :
-   - `Cloud Name`
-   - `API Key`
-   - `API Secret`
-
----
-
-### Étape 2 — Choisir et configurer le SMTP pour les emails
-
-La réinitialisation de mot de passe (« Mot de passe oublié ») nécessite un vrai SMTP en production.
-
-Options gratuites recommandées :
-
-| Service | Emails gratuits/mois | Lien |
+| Service | Gratuit | Lien |
 |---|---|---|
-| **Brevo** (ex-Sendinblue) | 300/jour | [brevo.com](https://www.brevo.com/) |
-| **Resend** | 3 000/mois | [resend.com](https://resend.com/) |
-| **Mailgun** | 100/jour | [mailgun.com](https://www.mailgun.com/) |
-
-Après inscription, récupérer : `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`.
+| Brevo | 300 emails/jour | brevo.com |
+| Resend | 3 000 emails/mois | resend.com |
+| Mailgun | 100 emails/jour | mailgun.com |
 
 ---
 
-### Étape 3A — Déploiement sur Render
-
-#### 3A.1 — Créer le service PostgreSQL
-
-1. Render Dashboard → **New** → **PostgreSQL**
-2. Choisir le plan Free (ou payant si besoin)
-3. Après création, copier l'**Internal Database URL** (format `postgresql://...`)
-
-#### 3A.2 — Créer le service Web
-
-1. Render Dashboard → **New** → **Web Service**
-2. Connecter le dépôt GitHub
-3. Configurer :
-   - **Build Command** : `npm install`
-   - **Start Command** : `npm start`
-   - **Node Version** : 20 (ou laisser Render détecter via `engines`)
-   - **Health Check Path** : `/health`
-
-#### 3A.3 — Variables d'environnement dans Render
-
-Dans l'onglet **Environment** du service web, ajouter :
-
-```
-PG_URL                → Internal Database URL du service PostgreSQL Render
-JWT_SECRET            → générer avec : openssl rand -hex 64
-NODE_ENV              → production
-BASE_URL              → https://votre-domaine.com (ou URL Render)
-
-GOOGLE_CLIENT_ID      → depuis Google Cloud Console
-GOOGLE_CLIENT_SECRET  → depuis Google Cloud Console
-
-TMDB_API_KEY          → depuis themoviedb.org/settings/api
-
-CLOUDINARY_CLOUD_NAME → depuis Cloudinary Dashboard
-CLOUDINARY_API_KEY    → depuis Cloudinary Dashboard
-CLOUDINARY_API_SECRET → depuis Cloudinary Dashboard
-
-SMTP_HOST             → smtp.brevo.com (ou autre)
-SMTP_PORT             → 587
-SMTP_USER             → votre-email@domaine.com
-SMTP_PASS             → mot de passe SMTP
-SMTP_FROM             → Ciné Délices <no-reply@cinedelices.fr>
-```
-
----
-
-### Étape 3B — Déploiement sur Hostinger VPS (alternative)
-
-#### 3B.1 — Prérequis sur le VPS
-
-```bash
-# Installer Node.js 20+
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Installer PostgreSQL
-sudo apt-get install -y postgresql postgresql-contrib
-
-# Installer PM2 (gestionnaire de process Node.js)
-npm install -g pm2
-```
-
-#### 3B.2 — Créer la base de données PostgreSQL
-
-```bash
-sudo -u postgres psql
-CREATE DATABASE cinedelices;
-CREATE USER cinedelices WITH PASSWORD 'mot_de_passe_fort';
-GRANT ALL PRIVILEGES ON DATABASE cinedelices TO cinedelices;
-\q
-```
-
-#### 3B.3 — Cloner et configurer le projet
-
-```bash
-git clone https://github.com/votre-repo/cinedelices.git
-cd cinedelices
-npm install
-
-# Créer le .env à partir de l'exemple
-cp .env.example .env
-nano .env   # remplir toutes les valeurs
-```
-
-#### 3B.4 — Démarrer avec PM2
-
-```bash
-NODE_ENV=production pm2 start index.js --name cinedelices
-pm2 save
-pm2 startup   # pour redémarrer au reboot du VPS
-```
-
-#### 3B.5 — Configurer Nginx comme reverse proxy
-
-```nginx
-server {
-    listen 80;
-    server_name votre-domaine.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-```bash
-# Activer HTTPS avec Let's Encrypt
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d votre-domaine.com
-```
-
----
-
-### Étape 4 — Initialiser la base de données
-
-Que ce soit sur Render ou Hostinger, exécuter les migrations dans cet ordre.
-
-**Sur Render** (via Render Shell) :
+## Migrations SQL — ordre d'exécution
 
 ```bash
 psql $PG_URL -f app/data/create_db.sql
@@ -281,70 +146,142 @@ psql $PG_URL -f app/data/migration_add_google_auth.sql
 psql $PG_URL -f app/data/migration_phase2_admin.sql
 ```
 
-**Sur Hostinger VPS** (même commandes, avec la variable `PG_URL` de ton `.env`) :
+---
+
+## Déploiement sur Render
+
+### 1 — Service PostgreSQL
+
+Render Dashboard → **New → PostgreSQL** → copier l'**Internal Database URL**
+
+### 2 — Service Web
+
+Render Dashboard → **New → Web Service** → connecter GitHub
+
+```
+Build Command  : npm install
+Start Command  : npm start
+Health Check   : /health
+Node version   : 20+ (auto-détecté via engines)
+```
+
+### 3 — Variables d'environnement
+
+Onglet **Environment** → ajouter toutes les variables listées ci-dessus.
+
+---
+
+## Déploiement sur Hostinger VPS
+
+### 1 — Installer le serveur
+
+```bash
+# Node.js 20+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# PostgreSQL
+sudo apt-get install -y postgresql postgresql-contrib
+
+# PM2 + Nginx
+npm install -g pm2
+sudo apt-get install -y nginx
+```
+
+### 2 — Créer la base de données
+
+```bash
+sudo -u postgres psql
+CREATE DATABASE cinedelices;
+CREATE USER cinedelices WITH PASSWORD 'mot_de_passe_fort';
+GRANT ALL PRIVILEGES ON DATABASE cinedelices TO cinedelices;
+\q
+```
+
+### 3 — Cloner et configurer
+
+```bash
+git clone https://github.com/O-clock-Dundee/dwwm-cinedelices.git
+cd dwwm-cinedelices
+npm install
+cp .env.example .env
+nano .env   # remplir toutes les valeurs
+```
+
+### 4 — Exécuter les migrations
 
 ```bash
 source .env
 psql $PG_URL -f app/data/create_db.sql
-# ... idem
+# puis les 18 migrations dans l'ordre (voir section ci-dessus)
 ```
+
+### 5 — Démarrer avec PM2
+
+```bash
+pm2 start index.js --name cinedelices --env production
+pm2 save
+pm2 startup
+```
+
+### 6 — Nginx + HTTPS
+
+```nginx
+server {
+    listen 80;
+    server_name votre-domaine.com;
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+```bash
+sudo certbot --nginx -d votre-domaine.com
+```
+
+### 7 — Google OAuth
+
+[console.cloud.google.com](https://console.cloud.google.com) → Identifiants → ajouter :
+- Origines autorisées : `https://votre-domaine.com`
+- URI de redirection : `https://votre-domaine.com/auth/google`
 
 ---
 
-### Étape 5 — Configurer Google OAuth pour la production
-
-1. [Google Cloud Console](https://console.cloud.google.com/) → Identifiants → ton app OAuth
-2. Ajouter dans **Origines JavaScript autorisées** :
-   - `https://votre-domaine.com`
-3. Ajouter dans **URI de redirection autorisés** :
-   - `https://votre-domaine.com/auth/google`
-
----
-
-## Checklist finale avant la mise en ligne
+## Checklist finale
 
 ```
-RENDER / VPS
-□ Variables d'environnement toutes renseignées
-□ PG_URL pointe vers la bonne base PostgreSQL
-□ NODE_ENV=production défini
-□ BASE_URL = URL publique du site (avec https)
+CONFIGURATION
+□ Compte Cloudinary créé — 3 clés dans .env
+□ SMTP configuré — 5 variables dans .env
+□ JWT_SECRET généré (openssl rand -hex 64)
+□ NODE_ENV=production
+□ BASE_URL = domaine réel avec https
+□ Google OAuth — domaine prod ajouté dans Google Cloud Console
+□ robots.txt et sitemap.xml — remplacer cinedelices.com par le vrai domaine
 
 BASE DE DONNÉES
 □ create_db.sql exécuté
-□ Toutes les migrations exécutées dans l'ordre
-
-CLOUDINARY
-□ Compte créé et clés API renseignées
-□ Tester un upload avatar en local avec les clés Cloudinary prod
-
-EMAIL
-□ SMTP configuré (ou accepté que les emails ne fonctionnent pas encore)
-
-GOOGLE OAUTH
-□ Domaine de production ajouté dans Google Cloud Console
+□ 18 migrations exécutées dans l'ordre
 
 VÉRIFICATIONS POST-DÉPLOIEMENT
 □ GET /health → { "status": "ok" }
 □ Page d'accueil s'affiche
 □ Login / Register fonctionne
-□ Upload avatar → URL https://res.cloudinary.com/... visible dans la BDD
+□ Upload avatar → URL https://res.cloudinary.com/... en BDD
 □ Mot de passe oublié → email reçu
 □ Google OAuth fonctionne
 □ Interface admin accessible
 □ Logs sans erreurs au démarrage
+
+À FAIRE APRÈS MISE EN LIGNE
+□ Brancher le formulaire de contact sur le service mail (contact-about.controllers.js)
+□ Configurer CORS si besoin d'un accès API externe
+□ Mettre en place un pipeline CI/CD GitHub Actions
+□ Créer un script d'installation automatisé pour le VPS
 ```
-
----
-
-## Ce qui reste à améliorer (non bloquant)
-
-Ces points n'empêchent pas le déploiement mais sont à traiter pour une application robuste en production.
-
-| Priorité | Sujet | Détail |
-|---|---|---|
-| Moyenne | Emails en production | Configurer SMTP (Brevo recommandé) |
-| Faible | `error.message` dans les réponses admin | Remplacer par un message générique, logger côté serveur |
-| Faible | Cache nav sans limite (`_navCache`) | Ajouter une taille max pour éviter les fuites mémoire sur le long terme |
-| Info | Logs structurés | Envisager `pino` pour des logs exploitables en production |
-| Info | Compression gzip | Installer `compression` pour améliorer les performances |
