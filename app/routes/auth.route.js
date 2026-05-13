@@ -99,6 +99,7 @@ authRouter.post("/equip-frame", isLogged, injectId, gamificationController.equip
 
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.get("/register", (req, res) => res.redirect("/"));
+authRouter.get("/login", (req, res) => res.render("login-standalone"));
 authRouter.post("/register", validateUserRegister, authController.register);
 authRouter.post("/login", authLimiter, validateUserLogin, authController.login);
 authRouter.get("/logout", authController.logout);

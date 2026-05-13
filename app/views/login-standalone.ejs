@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion · Ciné Délices</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bleu-nuit: #142234; --or: #C4A052; --or-gradient: linear-gradient(135deg,#B8882A,#D4A843,#F2C84B,#FFE085,#D4A843);
+  --argent: #e8e8e8; --rouge: #C23018; --f-display:'Bebas Neue',cursive; --f-title:'Cinzel',serif; --f-body:'Lato',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;background:var(--bleu-nuit);font-family:var(--f-body);color:var(--argent);overflow-x:hidden;}
+#particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 65% 55% at 50% 50%,rgba(196,160,82,.07) 0%,transparent 60%),radial-gradient(ellipse 90% 70% at 20% 20%,rgba(196,160,82,.05) 0%,transparent 55%);}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:2;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 40%,rgba(10,16,26,.65) 100%);}
+.reel{position:fixed;border-radius:50%;border:2px solid rgba(196,160,82,.06);pointer-events:none;z-index:0;}
+.reel::before{content:"";position:absolute;inset:18px;border-radius:50%;border:1px solid rgba(196,160,82,.04);}
+.reel--a{width:380px;height:380px;right:-140px;top:-80px;animation:rotReel 50s linear infinite;}
+.reel--b{width:260px;height:260px;left:-100px;bottom:-80px;animation:rotReel 38s linear infinite reverse;}
+@keyframes rotReel{to{transform:rotate(360deg);}}
+
+.page{position:relative;z-index:5;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+
+.logo-wrap{margin-bottom:2rem;animation:fadeUp .6s .1s both;}
+.logo-wrap img{height:80px;width:auto;}
+
+.card{
+  background:rgba(15,30,48,.85); backdrop-filter:blur(20px);
+  border:1px solid rgba(196,160,82,.15); border-radius:16px;
+  padding:2.5rem 2rem; width:100%; max-width:400px;
+  animation:fadeUp .6s .2s both;
+}
+
+.card-title{font-family:var(--f-display);font-size:1.8rem;letter-spacing:.1em;color:#fff;text-align:center;margin-bottom:.3rem;}
+.card-sub{font-family:var(--f-body);font-size:.8rem;color:rgba(255,255,255,.4);text-align:center;margin-bottom:2rem;letter-spacing:.05em;}
+
+.gold-rule{width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(196,160,82,.5),transparent);margin:.5rem auto 1.5rem;}
+
+.form-group{margin-bottom:1.2rem;}
+.form-label{display:block;font-family:var(--f-title);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,160,82,.7);margin-bottom:.5rem;}
+.form-input{
+  width:100%;padding:.75rem 1rem;border-radius:8px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(196,160,82,.2);
+  color:#fff;font-family:var(--f-body);font-size:.9rem;outline:none;
+  transition:border-color .25s;
+}
+.form-input:focus{border-color:rgba(196,160,82,.5);}
+.form-input::placeholder{color:rgba(255,255,255,.25);}
+
+.btn-submit{
+  width:100%;height:46px;border-radius:8px;border:none;cursor:pointer;margin-top:.5rem;
+  background:var(--or-gradient);
+  font-family:var(--f-title);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#142234;box-shadow:0 4px 20px rgba(196,160,82,.25);
+  transition:filter .25s,transform .2s;
+}
+.btn-submit:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+.forgot{text-align:center;margin-top:1rem;}
+.forgot a{font-family:var(--f-body);font-size:.75rem;color:rgba(196,160,82,.5);text-decoration:none;transition:color .25s;}
+.forgot a:hover{color:var(--or);}
+
+.error-msg{background:rgba(194,48,24,.12);border:1px solid rgba(194,48,24,.3);border-radius:8px;padding:.7rem 1rem;font-size:.8rem;color:#ff8a7a;margin-bottom:1rem;text-align:center;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<canvas id="particleCanvas"></canvas>
+<div class="bg-glow"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="reel reel--a"></div>
+<div class="reel reel--b"></div>
+
+<main class="page">
+
+  <div class="logo-wrap">
+    <img src="/images/Logo/logo-cine-delices-2026-1.png" alt="Ciné Délices">
+  </div>
+
+  <div class="card">
+    <h1 class="card-title">Connexion</h1>
+    <p class="card-sub">Espace administrateur</p>
+    <div class="gold-rule"></div>
+
+    <div id="errorMsg" class="error-msg" style="display:none"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" for="pseudo">Identifiant ou email</label>
+        <input class="form-input" type="text" id="pseudo" name="pseudo" placeholder="Votre pseudo ou email" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button class="btn-submit" type="submit">Se connecter</button>
+    </form>
+
+    <div class="forgot">
+      <a href="/auth/forgot-password">Mot de passe oublié ?</a>
+    </div>
+  </div>
+
+</main>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorMsg = document.getElementById('errorMsg');
+  errorMsg.style.display = 'none';
+
+  const res = await fetch('/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      pseudo: document.getElementById('pseudo').value,
+      password: document.getElementById('password').value,
+    }),
+    redirect: 'manual',
+  });
+
+  if (res.ok || res.type === 'opaqueredirect' || res.status === 302 || res.redirected) {
+    window.location.href = '/admin';
+  } else {
+    errorMsg.textContent = 'Identifiants incorrects ou compte non administrateur.';
+    errorMsg.style.display = 'block';
+  }
+});
+
+// Particules
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+const GOLD=['rgba(196,160,82,','rgba(212,168,67,','rgba(242,200,75,'];
+function mkP(){return{x:Math.random()*W,y:H+50,vx:(Math.random()-.5)*.5,vy:-(0.3+Math.random()*0.9),r:.5+Math.random()*2,alpha:0,life:0,maxLife:100+Math.random()*180,color:GOLD[Math.floor(Math.random()*GOLD.length)],tw:Math.random()*Math.PI*2,tws:.03+Math.random()*.04};}
+for(let i=0;i<40;i++){const p=mkP();p.y=Math.random()*H;p.life=Math.random()*p.maxLife;particles.push(p);}
+function tick(){ctx.clearRect(0,0,W,H);if(particles.length<55&&Math.random()<.4)particles.push(mkP());particles=particles.filter(p=>{p.life++;p.x+=p.vx;p.y+=p.vy;p.tw+=p.tws;const t=p.life/p.maxLife;p.alpha=t<.15?t/.15:t>.75?1-(t-.75)/.25:1;const tf=.7+.3*Math.sin(p.tw);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color+(p.alpha*tf).toFixed(3)+')';ctx.fill();return p.life<p.maxLife;});requestAnimationFrame(tick);}
+tick();
+</script>
+</body>
+</html>

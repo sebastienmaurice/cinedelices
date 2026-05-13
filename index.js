@@ -42,8 +42,10 @@ if (process.env.MAINTENANCE === "true") {
     // Admin connecté → accès total
     if (role === "admin" || role === "superadmin") return next();
     // Routes toujours accessibles pendant la maintenance
-    const allowed = ["/admin", "/auth", "/health"];
+    const allowed = ["/admin", "/auth", "/health", "/favicon"];
     if (allowed.some(r => req.path.startsWith(r))) return next();
+    // Fichiers statiques (CSS, JS, images) — toujours servis
+    if (req.path.match(/\.(css|js|png|jpg|jpeg|webp|svg|ico|woff|woff2|ttf)$/)) return next();
     res.status(503).render("maintenance");
   });
 }
