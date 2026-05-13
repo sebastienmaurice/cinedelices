@@ -44,7 +44,7 @@ if (process.env.MAINTENANCE === "true") {
       const token = req.cookies?.token;
       if (token) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role === "admin" || decoded.role === "superadmin") return next();
+        if (["admin","superadmin","super_admin"].includes(decoded.role)) return next();
       }
     } catch {}
     // Routes toujours accessibles pendant la maintenance
