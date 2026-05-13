@@ -13,7 +13,7 @@ import { logAdminAction } from "../utils/admin-logger.js";
 export function isSuperAdmin(req, res, next) {
   const userRole = req.userRole;
 
-  if (userRole === "superadmin") {
+  if (userRole === "superadmin" || userRole === "super_admin") {
     return next();
   }
 
