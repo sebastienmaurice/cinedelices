@@ -546,6 +546,17 @@ const authController = {
 
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+      // --- VALIDATION DU RATIO (paysage uniquement) ---
+      const meta = await sharp(req.file.path).metadata();
+      const ratio = meta.width / meta.height;
+      if (ratio < 1.5) {
+        fs.unlink(req.file.path, () => {});
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "L'image doit être en format paysage (ratio minimum 3:2). Les formats portrait ou carré ne sont pas acceptés.",
+        });
+      }
+
       // --- SUPPRESSION de l'ancienne bannière Cloudinary si elle existe ---
       if (user.banner_image) {
         await deleteAsset(user.banner_image);
