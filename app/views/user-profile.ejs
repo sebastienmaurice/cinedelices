@@ -1991,6 +1991,9 @@
             if (wrap) {
               wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
             }
+            if (typeof window.showProfileToast === 'function') {
+              window.showProfileToast('Bannière envoyée ✓ Un administrateur va l\'examiner avant de la publier.', 'success');
+            }
             startBannerPoll();
           } catch (err) {
             console.error('Banner upload error:', err);

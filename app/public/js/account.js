@@ -48,6 +48,9 @@
     }, 3500);
   };
 
+  // Exposer pour les scripts inline de la page (banner upload, etc.)
+  window.showProfileToast = showToast;
+
   const setEditingState = (enabled) => {
     isEditing = enabled;
     editableInputs.forEach((input) => {
@@ -108,7 +111,7 @@
 
   // État initial
   if (pictureStatus === "pending") {
-    showToast("Photo en attente de validation.", "warning");
+    showToast("Votre photo est en cours de validation par un administrateur. Elle apparaîtra dès son approbation.", "warning");
   } else if (pictureStatus === "rejected") {
     showToast("Photo refusée. Vous pouvez en téléverser une nouvelle.", "warning");
   }
@@ -292,7 +295,7 @@
         }
 
         updatePhotoUI("pending");
-        showToast("Photo envoyée. En attente de validation.", "success");
+        showToast("Photo envoyée ✓ Un administrateur va l'examiner avant de la publier sur votre profil.", "success");
       } catch (error) {
         showToast(error.message, "error");
       }
