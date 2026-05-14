@@ -1,10 +1,10 @@
 # Guide de déploiement — Ciné Délices
 
-> **Rédigé le :** 2026-04-29 — **Mis à jour le :** 2026-05-13  
+> **Rédigé le :** 2026-04-29 — **Mis à jour le :** 2026-05-14  
 > **Auteur :** Sébastien  
 > **Infrastructure :** Render (PaaS) + PostgreSQL + Cloudinary + Resend  
-> **URL prod :** https://cinedelices-fjc7.onrender.com  
-> **Domaine :** cinedelices.com (à pointer — voir section DNS)
+> **URL prod :** https://cinedelices.com  
+> **URL Render :** https://cinedelices-fjc7.onrender.com
 
 ---
 
@@ -12,11 +12,13 @@
 
 |                     |                                           |
 | ------------------- | ----------------------------------------- |
-| **Site en ligne**   | ✅ OUI                                    |
-| **Base de données** | ✅ PostgreSQL Render (Frankfurt)          |
-| **Stockage images** | ✅ Cloudinary                             |
-| **Emails**          | ✅ Resend (configuré, domaine à vérifier) |
-| **Domaine custom**  | ⏳ cinedelices.com acheté — DNS à pointer |
+| **Site en ligne**      | ✅ OUI — cinedelices.com                      |
+| **Base de données**    | ✅ PostgreSQL Render (Frankfurt)              |
+| **Stockage images**    | ✅ Cloudinary                                 |
+| **Emails**             | ✅ Resend + domaine cinedelices.com vérifié   |
+| **Domaine custom**     | ✅ cinedelices.com → Render (HTTPS actif)     |
+| **Google OAuth**       | ✅ Redirect flow (popup flow bloqué Chrome)   |
+| **Page maintenance**   | ✅ MAINTENANCE=true/false dans Render Env     |
 
 ---
 
@@ -42,6 +44,12 @@
 | `robots.txt`                                | `app/public/robots.txt`       |
 | `sitemap.xml`                               | `app/public/sitemap.xml`      |
 | `.env.example` complet                      | `.env.example`                |
+| Google OAuth redirect flow                  | `google-auth.js` + `auth.controller.js` |
+| Page de maintenance + bypass admin          | `index.js` + `maintenance.ejs` |
+| Formulaire contact branché Resend           | `contact-about.controllers.js` |
+| Logo animé page maintenance                 | `maintenance.ejs` |
+| Login standalone `/auth/login`              | `login-standalone.ejs` |
+| `super_admin` reconnu partout               | `is-admin`, `is-superadmin`, `admin.controllers` |
 
 **Packages installés :**
 
@@ -144,6 +152,67 @@ Get-Content data_only.sql | psql postgresql://USER:PASS@HOST.frankfurt-postgres.
 ```
 
 > ⚠️ Utiliser l'**External Database URL** (avec `.frankfurt-postgres.render.com`) depuis le PC, pas l'Internal URL.
+
+### 7. Encodage des données — problème rencontré et solution
+
+**Problème :** Les données locales contenaient du double-encodage UTF-8 (`Ã©` au lieu de `é`). PowerShell corrompt les bytes UTF-8 lors du piping vers psql.
+
+**Solution :** Re-fetch des synopsis/genres/titres directement depuis l'API TMDB via un script Node.js dans le Shell Render :
+
+```bash
+node --input-type=module << 'EOF'
+import sequelize from './app/database/sequelize-client.js';
+const movies = await sequelize.query(
+  "SELECT id, tmdb_id, type FROM movies WHERE tmdb_id IS NOT NULL",
+  { type: 'SELECT' }
+);
+const KEY = process.env.TMDB_API_KEY;
+for (const m of movies) {
+  const r = await fetch(`https://api.themoviedb.org/3/movie/${m.tmdb_id}?api_key=${KEY}&language=fr-FR`);
+  const data = await r.json();
+  if (data.overview) {
+    await sequelize.query('UPDATE movies SET synopsis = :s WHERE id = :id',
+      { replacements: { s: data.overview, id: m.id } });
+  }
+}
+await sequelize.close(); process.exit(0);
+EOF
+```
+
+Pour les descriptions de recettes (contenu utilisateur) : exporter avec `cmd /c pg_dump > file.sql` (bypass PowerShell), commiter le fichier, et importer avec `psql $PG_URL -f file.sql` dans le Shell Render.
+
+### 8. Attribution des données — problème rencontré et solution
+
+**Problème :** Lors de l'import, les IDs utilisateurs locaux ne correspondaient pas aux IDs Render. Les recettes de SEB (id=3 local) étaient attribuées à La Malice (id=3 sur Render).
+
+**Solution :** Corriger manuellement l'attribution via SQL dans le Shell Render :
+
+```bash
+psql $PG_URL -c "
+UPDATE recipes SET id_user = 6 WHERE id IN (2,3,4,5,6,22);
+UPDATE movies SET id_user = 6 WHERE id IN (31,33);
+"
+```
+
+> Toujours vérifier les IDs après import : `SELECT id, pseudo FROM users ORDER BY id;`
+
+### 9. Google OAuth — problème rencontré et solution
+
+**Problème :** Le popup flow (`ux_mode: 'popup'`) ne fonctionnait pas — le callback `handleGoogleCode` n'était jamais déclenché. Chrome bloque le `postMessage` cross-origin entre la popup Google et la page.
+
+**Solution :** Passer au redirect flow (`ux_mode: 'redirect'`) dans `google-auth.js` + nouvelle route `GET /auth/google/callback` dans le contrôleur.
+
+**À ajouter dans Google Cloud Console** → URI de redirection autorisés :
+```
+https://cinedelices.com/auth/google/callback
+```
+
+### 10. Page de maintenance
+
+**Activation :** Render Dashboard → Environment → `MAINTENANCE=true`  
+**Désactivation :** Render Dashboard → Environment → `MAINTENANCE=false`
+
+Les admins/superadmins passent automatiquement. En maintenance, aller sur `https://cinedelices.com/admin` → bouton "Se connecter" → formulaire de login admin.
 
 ---
 
