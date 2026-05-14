@@ -1997,6 +1997,9 @@
             startBannerPoll();
           } catch (err) {
             console.error('Banner upload error:', err);
+            if (typeof window.showProfileToast === 'function') {
+              window.showProfileToast(err.message || 'Erreur lors de l\'envoi de la bannière.', 'error');
+            }
           }
 
           input.value = '';
