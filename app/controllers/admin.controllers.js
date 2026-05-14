@@ -5,6 +5,9 @@ import {
   User,
   UsersRecipes,
   RecipePicture,
+  Favorite,
+  Rating,
+  UserPoints,
 } from "../models/index.model.js";
 import * as argon2 from "argon2";
 import { Op } from "sequelize";
@@ -886,12 +889,24 @@ const adminController = {
         return res.status(403).json({ error: "Impossible de supprimer un super administrateur." });
       }
 
-      // Suppression en cascade des données associées (ordre important)
-      // 1. Supprimer les avis (notices) de l'utilisateur
+      // Suppression en cascade complète (ordre FK important)
+      await Favorite.destroy({ where: { id_user: userId } });
+      await Rating.destroy({ where: { id_user: userId } });
+      await UserPoints.destroy({ where: { id_user: userId } });
       await Notice.destroy({ where: { id_user: userId } });
-      // 2. Supprimer les relations utilisateur-recette
       await UsersRecipes.destroy({ where: { id_user: userId } });
-      // 3. Enfin, supprimer l'utilisateur lui-même
+      // Recettes de l'utilisateur → leurs notices et relations en cascade
+      const userRecipes = await Recipe.findAll({ where: { id_user: userId }, attributes: ['id'] });
+      if (userRecipes.length > 0) {
+        const recipeIds = userRecipes.map(r => r.id);
+        await Notice.destroy({ where: { id_recipe: recipeIds } });
+        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
+        await RecipePicture.destroy({ where: { recipe_id: recipeIds } });
+        await Recipe.destroy({ where: { id_user: userId } });
+      }
+      // Films de l'utilisateur → mettre id_user à null (ne pas supprimer les films approuvés)
+      await Movie.update({ id_user: null }, { where: { id_user: userId } });
+      // Supprimer l'utilisateur
       await User.destroy({ where: { id: userId } });
 
       logAdminAction({ adminId: req.userId, action: "delete_user", targetType: "user", targetId: userId, detail: user.pseudo });
