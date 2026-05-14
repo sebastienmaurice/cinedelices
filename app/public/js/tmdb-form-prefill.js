@@ -261,6 +261,10 @@
     // Afficher un message de succès subtil
     showSuccess();
 
+    // Fermer le dropdown de recherche s'il est ouvert
+    const searchResults = document.getElementById("film-search-results");
+    if (searchResults) searchResults.classList.remove("active");
+
     // Déclencher un événement pour notifier les autres scripts
     const event = new CustomEvent("tmdbFormPrefilled", {
       detail: { movie },
