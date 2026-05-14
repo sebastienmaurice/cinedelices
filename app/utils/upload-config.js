@@ -26,7 +26,7 @@ export const ALLOWED_MIME_TYPES = [
  * Taille maximale d'un fichier uploadé (en bytes)
  * Actuellement : 5 MB
  */
-export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB par fichier (max 3 fichiers = 6 MB total)
+export const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB par fichier
 
 /**
  * Message d'erreur pour format de fichier non supporté

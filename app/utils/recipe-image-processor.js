@@ -57,7 +57,7 @@ export async function processRecipeImages(files) {
     // --- Validation du ratio (1.3 à 2.0) ---
     const ratio = meta.width / meta.height;
 
-    if (ratio < 1.1 || ratio > 2.5) {
+    if (ratio < 1.0 || ratio > 3.0) {
       console.warn("Recipe image ratio invalid:", {
         filename: file.originalname,
         ratio,
