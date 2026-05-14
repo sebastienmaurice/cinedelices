@@ -1702,6 +1702,73 @@ const authController = {
     }
   },
 
+  /**
+   * GET /auth/google/callback?code=...
+   * Reçoit le code d'autorisation Google via redirect flow.
+   * Même logique que googleCode mais via GET redirect.
+   */
+  async googleCallback(req, res) {
+    const { code } = req.query;
+    if (!code) return res.redirect('/?error=google_no_code');
+
+    try {
+      const redirectUri = (process.env.BASE_URL || `${req.protocol}://${req.get('host')}`) + '/auth/google/callback';
+      const oAuth2Client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri
+      );
+      const { tokens } = await oAuth2Client.getToken(code);
+      if (!tokens.id_token) throw new Error("Pas d'id_token dans la réponse Google");
+
+      const payload = await authController._verifyGoogleToken(tokens.id_token);
+      const { sub: googleId, email, given_name, family_name, name, picture } = payload;
+
+      let user = await User.findOne({
+        where: { [Op.or]: [{ google_id: googleId }, { email }] },
+      });
+
+      if (user) {
+        if (!user.google_id) await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
+        authController._issueJwt(res, user);
+        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
+          awardWeeklyLoginXP(user.id).catch(() => {});
+        }
+        return res.redirect('/');
+      }
+
+      const basePseudo = authController._sanitizePseudo(given_name || name || email.split("@")[0]);
+      const pseudoExists = await User.findOne({ where: { pseudo: basePseudo } });
+
+      if (!pseudoExists) {
+        user = await User.create({
+          first_name: given_name || name || "Utilisateur",
+          last_name: family_name || "",
+          pseudo: basePseudo,
+          email,
+          password: null,
+          google_id: googleId,
+          avatar_url: picture || null,
+          role: "user",
+        });
+        authController._issueJwt(res, user);
+        return res.redirect('/');
+      }
+
+      // Pseudo pris → redirect avec paramètre pour que le frontend propose un pseudo
+      const tempToken = jwt.sign(
+        { googleId, email, given_name, family_name, picture, _type: "google_pending" },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+      return res.redirect(`/?google_pending=${encodeURIComponent(tempToken)}&suggested=${encodeURIComponent(basePseudo)}`);
+
+    } catch (err) {
+      console.error("Google callback error:", err.message);
+      return res.redirect('/?error=google_auth_failed');
+    }
+  },
+
   //deconnexion
   async logout(req, res) {
     // Les options doivent correspondre à celles utilisées lors de la création du cookie

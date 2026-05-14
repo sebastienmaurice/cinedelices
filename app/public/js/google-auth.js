@@ -109,12 +109,12 @@
       cancel_on_tap_outside: true,
     });
 
-    /* Code flow — pour les clics bouton (popup fiable) */
+    /* Code flow — redirect vers le serveur (plus fiable que popup/postMessage) */
     window._googleCodeClient = google.accounts.oauth2.initCodeClient({
       client_id: clientId,
       scope: 'openid email profile',
-      ux_mode: 'popup',
-      callback: handleGoogleCode,
+      ux_mode: 'redirect',
+      redirect_uri: window.location.origin + '/auth/google/callback',
     });
   }
 
