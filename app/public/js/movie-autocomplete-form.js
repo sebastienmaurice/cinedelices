@@ -405,6 +405,9 @@
    */
   function handleFilmNameFocus() {
     if (!filmNameInput) return;
+    // Si le film est déjà sélectionné via TMDB (champ caché renseigné), ne pas relancer la recherche
+    const tmdbHidden = document.getElementById("tmdbId-hidden") || document.getElementById("tmdb-id");
+    if (tmdbHidden && tmdbHidden.value) return;
     const query = filmNameInput.value.trim();
     if (query.length >= MIN_SEARCH_LENGTH) {
       performSearch(query);
