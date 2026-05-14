@@ -910,7 +910,7 @@ const adminController = {
       await User.destroy({ where: { id: userId } });
 
       logAdminAction({ adminId: req.userId, action: "delete_user", targetType: "user", targetId: userId, detail: user.pseudo });
-      res.redirect("/admin?success=user_deleted");
+      res.redirect("/admin/users?success=user_deleted");
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError() avec message personnalisé
       return renderServerError(
