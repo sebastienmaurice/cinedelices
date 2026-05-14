@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recipe_picture_deleted: { message: "Photo complémentaire refusée et supprimée.", type: "warning" },
     recipe_picture_not_found: { message: "Photo introuvable.", type: "error" },
     recipe_picture_protected: { message: "La photo principale ne peut pas être supprimée ici.", type: "error" },
-    user_deleted: { message: "Utilisateur supprimé avec succès.", type: "error" },
+    user_deleted: { message: "Utilisateur supprimé avec succès.", type: "success" },
     user_photo_approved: { message: "Photo de profil validée.", type: "success" },
     user_photo_rejected: { message: "Photo de profil refusée.", type: "warning" },
     notice_validated: { message: "Avis validé.", type: "success" },
