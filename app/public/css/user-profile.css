@@ -2217,6 +2217,44 @@ body.profile-page main {
   gap: 8px;
   pointer-events: none;
 }
+
+/* Container des notifications profil (account.js) */
+.profile-toast-wrap {
+  position: fixed;
+  top: calc(var(--nav-h, 68px) + 14px);
+  right: 24px;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+/* Item individuel */
+.profile-toast__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 13px 16px;
+  background: rgba(10, 18, 30, 0.97);
+  border: 1px solid rgba(196, 160, 82, 0.18);
+  border-radius: 12px;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
+  min-width: 280px;
+  max-width: 360px;
+  pointer-events: all;
+  animation: profileToastIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.profile-toast__item.is-success { border-left: 3px solid #4caf50; }
+.profile-toast__item.is-error   { border-left: 3px solid #C23018; }
+.profile-toast__item.is-warning { border-left: 3px solid #C4A052; }
+.profile-toast__title   { font-size: .75rem; font-weight: 700; color: #C4A052; letter-spacing: .05em; }
+.profile-toast__message { font-size: .8rem; color: rgba(255,255,255,.75); line-height: 1.4; }
+
+@keyframes profileToastIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
 .profile-toast {
   display: flex;
   align-items: flex-start;

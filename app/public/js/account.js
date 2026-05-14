@@ -5,7 +5,7 @@
   const userId = document.querySelector("main[data-user-id]")?.dataset.userId || profilePage.dataset.userId;
   const editButton = document.getElementById("editProfileBtn");
   const saveButton = document.getElementById("saveProfileBtn");
-  const toastContainer = document.querySelector(".profile-toast");
+  const toastContainer = document.querySelector(".profile-toast-wrap");
   const removeAvatarBtn = document.getElementById("removeAvatarBtn");
   const avatarInput = document.getElementById("avatar");
   const avatarImg = profilePage.querySelector(".avatar-img");
