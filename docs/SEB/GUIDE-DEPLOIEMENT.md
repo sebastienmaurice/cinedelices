@@ -10,40 +10,41 @@
 
 ## État du projet
 
-| | |
-|---|---|
-| **Site en ligne** | ✅ OUI |
-| **Base de données** | ✅ PostgreSQL Render (Frankfurt) |
-| **Stockage images** | ✅ Cloudinary |
-| **Emails** | ✅ Resend (configuré, domaine à vérifier) |
-| **Domaine custom** | ⏳ cinedelices.com acheté — DNS à pointer |
+|                     |                                           |
+| ------------------- | ----------------------------------------- |
+| **Site en ligne**   | ✅ OUI                                    |
+| **Base de données** | ✅ PostgreSQL Render (Frankfurt)          |
+| **Stockage images** | ✅ Cloudinary                             |
+| **Emails**          | ✅ Resend (configuré, domaine à vérifier) |
+| **Domaine custom**  | ⏳ cinedelices.com acheté — DNS à pointer |
 
 ---
 
 ## Ce qui a été fait dans le code
 
-| Correction | Fichier |
-|---|---|
-| Script `"start": "node index.js"` | `package.json` |
-| Node.js `"engines": { "node": ">=20.0.0" }` | `package.json` |
-| `process.exit(1)` si BDD inaccessible | `sequelize-client.js` |
-| **Fix search_path PostgreSQL Render** | `sequelize-client.js` |
-| Helmet (headers sécurité HTTP) | `index.js` |
-| Healthcheck `GET /health` | `index.js` |
-| Rate limiting login + forgot-password | `auth.route.js` |
-| `sameSite: "strict"` cookies JWT | `auth.controller.js` |
-| Cloudinary — avatars | `upload-avatar.middleware.js` |
-| Cloudinary — films (admin) | `upload-movie.middleware.js` |
-| Cloudinary — recettes (Sharp → Cloudinary) | `recipe-image-processor.js` |
-| Cloudinary — bannières (Sharp → Cloudinary) | `auth.controller.js` |
-| Cloudinary — affiches TMDB | `tmdb-image-downloader.js` |
-| `deleteAsset()` remplace `unlinkIfExists()` | `asset-manager.js` |
-| Service mail migré vers **Resend** | `mail.service.js` |
-| `robots.txt` | `app/public/robots.txt` |
-| `sitemap.xml` | `app/public/sitemap.xml` |
-| `.env.example` complet | `.env.example` |
+| Correction                                  | Fichier                       |
+| ------------------------------------------- | ----------------------------- |
+| Script `"start": "node index.js"`           | `package.json`                |
+| Node.js `"engines": { "node": ">=20.0.0" }` | `package.json`                |
+| `process.exit(1)` si BDD inaccessible       | `sequelize-client.js`         |
+| **Fix search_path PostgreSQL Render**       | `sequelize-client.js`         |
+| Helmet (headers sécurité HTTP)              | `index.js`                    |
+| Healthcheck `GET /health`                   | `index.js`                    |
+| Rate limiting login + forgot-password       | `auth.route.js`               |
+| `sameSite: "strict"` cookies JWT            | `auth.controller.js`          |
+| Cloudinary — avatars                        | `upload-avatar.middleware.js` |
+| Cloudinary — films (admin)                  | `upload-movie.middleware.js`  |
+| Cloudinary — recettes (Sharp → Cloudinary)  | `recipe-image-processor.js`   |
+| Cloudinary — bannières (Sharp → Cloudinary) | `auth.controller.js`          |
+| Cloudinary — affiches TMDB                  | `tmdb-image-downloader.js`    |
+| `deleteAsset()` remplace `unlinkIfExists()` | `asset-manager.js`            |
+| Service mail migré vers **Resend**          | `mail.service.js`             |
+| `robots.txt`                                | `app/public/robots.txt`       |
+| `sitemap.xml`                               | `app/public/sitemap.xml`      |
+| `.env.example` complet                      | `.env.example`                |
 
 **Packages installés :**
+
 ```
 cloudinary  multer-storage-cloudinary  helmet  express-rate-limit  resend
 ```
@@ -54,11 +55,11 @@ cloudinary  multer-storage-cloudinary  helmet  express-rate-limit  resend
 
 ### 1. Comptes externes créés
 
-| Service | Usage | Clés dans `.env` |
-|---|---|---|
-| **Cloudinary** | Stockage images | `CLOUDINARY_CLOUD_NAME`, `API_KEY`, `API_SECRET` |
-| **Resend** | Emails transactionnels | `RESEND_API_KEY` |
-| **Hostinger** | Nom de domaine `cinedelices.com` | — |
+| Service        | Usage                            | Clés dans `.env`                                 |
+| -------------- | -------------------------------- | ------------------------------------------------ |
+| **Cloudinary** | Stockage images                  | `CLOUDINARY_CLOUD_NAME`, `API_KEY`, `API_SECRET` |
+| **Resend**     | Emails transactionnels           | `RESEND_API_KEY`                                 |
+| **Hostinger**  | Nom de domaine `cinedelices.com` | —                                                |
 
 ### 2. Render — Base de données PostgreSQL
 
@@ -105,6 +106,7 @@ psql $PG_URL -f app/data/migration_phase2_admin.sql
 L'erreur était : `relation "recipes" does not exist` alors que la table existait.
 
 **Solution appliquée** dans `sequelize-client.js` :
+
 ```js
 hooks: {
   afterConnect: async (connection) => {
@@ -118,6 +120,7 @@ hooks: {
 **Problème rencontré :** la BDD locale avait des colonnes `createdAt`, `updatedAt`, `pending_picture` absentes de Render.
 
 **Solution :** ajouter les colonnes manquantes dans le Shell Render :
+
 ```bash
 psql $PG_URL -c "
 ALTER TABLE movies ADD COLUMN IF NOT EXISTS \"createdAt\" TIMESTAMP;
@@ -129,11 +132,13 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_picture VARCHAR(255);
 ```
 
 **Export depuis le PC local (PowerShell) :**
+
 ```bash
 pg_dump postgresql://cinedelices:cinedelices@localhost:5432/cinedelices --data-only --inserts --column-inserts --no-privileges --no-owner -t users -t movies -t recipes -t recipe_pictures -t notices -t users_recipes -t favorites -t ratings -t user_points > data_only.sql
 ```
 
 **Import vers Render (PowerShell — utiliser `Get-Content` car `<` non supporté) :**
+
 ```bash
 Get-Content data_only.sql | psql postgresql://USER:PASS@HOST.frankfurt-postgres.render.com/DBNAME
 ```
@@ -145,6 +150,7 @@ Get-Content data_only.sql | psql postgresql://USER:PASS@HOST.frankfurt-postgres.
 ## Variables d'environnement complètes
 
 ### `.env` local (développement)
+
 ```env
 PORT=3000
 NODE_ENV=development
@@ -161,6 +167,7 @@ RESEND_API_KEY=...
 ```
 
 ### Render Dashboard (production)
+
 ```env
 PORT=3000
 NODE_ENV=production
