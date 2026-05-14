@@ -1172,11 +1172,11 @@ const adminController = {
         updateData.synopsis = trimmedSynopsis.length > 0 ? trimmedSynopsis.substring(0, 1000) : null;
       }
 
-      // Photo uploadée par l'admin — supprime l'ancienne et stocke l'URL Cloudinary
+      // Photo uploadée par l'admin — upload buffer vers Cloudinary
       if (req.file) {
         if (movie.picture) await deleteAsset(movie.picture);
-        // req.file.path = URL Cloudinary (CloudinaryStorage dans upload-movie.middleware)
-        updateData.picture = req.file.path;
+        const result = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/movies" });
+        updateData.picture = result.secure_url;
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -1248,12 +1248,11 @@ const adminController = {
         updateData.preparation = trimmedPrep;
       }
 
-      // Photo uploadée par l'admin — upload vers Cloudinary depuis le fichier temp /tmp
+      // Photo uploadée par l'admin — upload buffer vers Cloudinary
       if (req.file) {
         if (recipe.picture) await deleteAsset(recipe.picture);
-        // req.file.path = chemin /tmp (upload.middleware diskStorage)
-        // On upload vers Cloudinary et on stocke l'URL
-        updateData.picture = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
+        const result = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+        updateData.picture = result.secure_url;
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -1544,7 +1543,8 @@ const adminController = {
 
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
 
-      const cloudinaryUrl = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
+      const cloudResult = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+      const cloudinaryUrl = cloudResult.secure_url;
 
       const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId } });
       const nextPosition = (maxPos || 0) + 1;
@@ -1622,7 +1622,8 @@ const adminController = {
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
 
       // Upload la nouvelle photo sur Cloudinary, supprime l'ancienne
-      const newPath = await uploadToCloudinary(req.file.path, "cinedelices/recipes");
+      const replaceResult = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+      const newPath = replaceResult.secure_url;
       await deleteAsset(pic.file_path);
 
       await RecipePicture.update(

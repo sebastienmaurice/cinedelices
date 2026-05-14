@@ -384,8 +384,9 @@ const authController = {
 
       if (req.file) {
         await deleteAsset(user.picture);
-        // req.file.path contient l'URL Cloudinary (CloudinaryStorage)
-        updateData.picture = req.file.path;
+        // req.file.buffer (memoryStorage) → upload vers Cloudinary
+        const result = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/profiles" });
+        updateData.picture = result.secure_url;
         updateData.picture_status = "pending";
       }
 
@@ -467,8 +468,9 @@ const authController = {
       // Supprimer l'éventuelle photo précédente en attente (non encore validée)
       if (user.pending_picture) await deleteAsset(user.pending_picture);
 
-      // req.file.path contient l'URL Cloudinary (CloudinaryStorage)
-      const pendingPicture = req.file.path;
+      // req.file.buffer (memoryStorage) → upload vers Cloudinary
+      const uploadResult = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/profiles" });
+      const pendingPicture = uploadResult.secure_url;
       await User.update(
         { pending_picture: pendingPicture, picture_status: "pending" },
         { where: { id: userId } }
