@@ -47,7 +47,7 @@ const contactAboutController = {
         <!-- HEADER -->
         <tr>
           <td style="background:linear-gradient(135deg,#1a0e2e,#0f1a2e);border-radius:16px 16px 0 0;padding:36px 40px;text-align:center;border-bottom:2px solid #c9a84c;">
-            <p style="margin:0 0 6px;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;font-family:Arial,sans-serif;">🎬 Ciné Délices</p>
+            <img src="https://cinedelices.com/images/Logo/logo-cine-delices-2026-1.png" alt="Ciné Délices" width="130" style="display:block;margin:0 auto 16px;height:auto;" />
             <h1 style="margin:0;font-size:26px;color:#ffffff;font-weight:400;letter-spacing:1px;">Nouveau message de contact</h1>
           </td>
         </tr>
