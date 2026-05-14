@@ -325,6 +325,13 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(message, type);
   }
 
+  // Navigation automatique vers un onglet via ?tab=xxx
+  const tabParam = urlParams.get("tab");
+  if (tabParam) {
+    const navBtn = document.querySelector(`[data-nav-view="${tabParam}"]`);
+    if (navBtn) navBtn.click();
+  }
+
   // ══════════════════════════════════════════════════════
   // FILTRES INLINE — data-filter-input / data-search-item
   // ══════════════════════════════════════════════════════

@@ -35,17 +35,70 @@ const contactAboutController = {
     try {
       await sendMail({
         to: CONTACT_RECIPIENT,
-        subject: `[Ciné Délices] Contact — ${subject || "Sans sujet"}`,
-        html: `
-          <h2>Nouveau message de contact</h2>
-          <p><strong>De :</strong> ${name} &lt;${email}&gt;</p>
-          <p><strong>Sujet :</strong> ${subject || "(aucun)"}</p>
-          <hr>
-          <p>${message.replace(/\n/g, "<br>")}</p>
-          <hr>
-          <small>Envoyé depuis le formulaire de contact de cinedelices.com</small>
-        `,
-        text: `De: ${name} <${email}>\nSujet: ${subject || "(aucun)"}\n\n${message}`,
+        subject: `[Ciné Délices] ${subject || "Nouveau message"} — ${name}`,
+        html: `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0f1520;font-family:'Georgia',serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f1520;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- HEADER -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#1a0e2e,#0f1a2e);border-radius:16px 16px 0 0;padding:36px 40px;text-align:center;border-bottom:2px solid #c9a84c;">
+            <p style="margin:0 0 6px;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;font-family:Arial,sans-serif;">🎬 Ciné Délices</p>
+            <h1 style="margin:0;font-size:26px;color:#ffffff;font-weight:400;letter-spacing:1px;">Nouveau message de contact</h1>
+          </td>
+        </tr>
+
+        <!-- INFOS EXPÉDITEUR -->
+        <tr>
+          <td style="background:#141e30;padding:28px 40px 0;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding:10px 16px;background:#0d1525;border-radius:8px;border-left:3px solid #c9a84c;">
+                  <p style="margin:0 0 6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9a84c;font-family:Arial,sans-serif;">De</p>
+                  <p style="margin:0;font-size:15px;color:#ffffff;">${name} &mdash; <a href="mailto:${email}" style="color:#c9a84c;text-decoration:none;">${email}</a></p>
+                </td>
+              </tr>
+              <tr><td style="height:12px;"></td></tr>
+              <tr>
+                <td style="padding:10px 16px;background:#0d1525;border-radius:8px;border-left:3px solid #415a77;">
+                  <p style="margin:0 0 6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8ab0c8;font-family:Arial,sans-serif;">Sujet</p>
+                  <p style="margin:0;font-size:15px;color:#ffffff;">${subject || "Question générale"}</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- MESSAGE -->
+        <tr>
+          <td style="background:#141e30;padding:24px 40px;">
+            <p style="margin:0 0 12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8ab0c8;font-family:Arial,sans-serif;">Message</p>
+            <div style="background:#0d1525;border-radius:8px;padding:20px 22px;border:1px solid rgba(196,160,82,0.15);">
+              <p style="margin:0;font-size:15px;line-height:1.7;color:#d4d8e0;">${message.replace(/\n/g, "<br>")}</p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background:#0d1525;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;border-top:1px solid rgba(196,160,82,0.15);">
+            <p style="margin:0;font-size:12px;color:#4a5568;font-family:Arial,sans-serif;">
+              Envoyé via le formulaire de contact de
+              <a href="https://cinedelices.com" style="color:#c9a84c;text-decoration:none;">cinedelices.com</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
+        text: `De: ${name} <${email}>\nSujet: ${subject || "Question générale"}\n\n${message}`,
       });
     } catch (err) {
       console.error("[Contact] Erreur envoi email:", err.message);
