@@ -36,7 +36,25 @@ const contactAboutController = {
       await sendMail({
         to: CONTACT_RECIPIENT,
         subject: `[Ciné Délices] ${subject || "Nouveau message"} — ${name}`,
-        html: `<!DOCTYPE html>
+        html: (() => {
+          const categoryColors = {
+            "Question générale":        { bg: "#1a2a4a", border: "#4a8ab5", text: "#8ab0d4" },
+            "Suggestion / idée":        { bg: "#1a3a1a", border: "#4ab54a", text: "#8ad48a" },
+            "Problème technique":       { bg: "#3a1a1a", border: "#b54a4a", text: "#d48a8a" },
+            "Idée de recette ou de film":{ bg: "#2a1a3a", border: "#8a4ab5", text: "#c08ad4" },
+            "Idée de cadre / contribution":{ bg: "#3a2a1a", border: "#c9a84c", text: "#e8c96a" },
+            "Autre":                    { bg: "#1a2030", border: "#556080", text: "#8090b0" },
+          };
+          const cat = categoryColors[subject] || { bg: "#1a2030", border: "#c9a84c", text: "#c9a84c" };
+          const categoryBadge = subject ? `
+            <tr><td style="padding:0 40px 20px;">
+              <table cellpadding="0" cellspacing="0"><tr>
+                <td style="background:${cat.bg};border:1px solid ${cat.border};border-radius:20px;padding:5px 14px;">
+                  <span style="font-size:12px;font-weight:700;color:${cat.text};font-family:Arial,sans-serif;letter-spacing:1px;">${subject}</span>
+                </td>
+              </tr></table>
+            </td></tr>` : '';
+          return `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0f1520;font-family:'Georgia',serif;">
@@ -52,9 +70,12 @@ const contactAboutController = {
           </td>
         </tr>
 
+        <!-- CATÉGORIE -->
+        ${categoryBadge}
+
         <!-- INFOS EXPÉDITEUR -->
         <tr>
-          <td style="background:#141e30;padding:28px 40px 0;">
+          <td style="background:#141e30;padding:0 40px 0;">
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td style="padding:10px 16px;background:#0d1525;border-radius:8px;border-left:3px solid #c9a84c;">
@@ -97,7 +118,8 @@ const contactAboutController = {
     </td></tr>
   </table>
 </body>
-</html>`,
+</html>`;
+        })(),
         text: `De: ${name} <${email}>\nSujet: ${subject || "Question générale"}\n\n${message}`,
       });
     } catch (err) {
