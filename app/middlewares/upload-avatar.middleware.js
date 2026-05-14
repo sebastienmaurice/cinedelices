@@ -7,10 +7,12 @@
 import multer from "multer";
 import { createFileFilter, MAX_FILE_SIZE } from "../utils/upload-config.js";
 
+const AVATAR_MAX_SIZE = 5 * 1024 * 1024; // 5 Mo — plus permissif que les recettes
+
 const uploadAvatar = multer({
   storage: multer.memoryStorage(),
   fileFilter: createFileFilter(),
-  limits: { fileSize: MAX_FILE_SIZE },
+  limits: { fileSize: AVATAR_MAX_SIZE },
 });
 
 export default uploadAvatar;

@@ -28,11 +28,22 @@ authRouter.post(
   validateUserUpdate,
   authController.updateProfile
 );
+// Wrapper pour capturer les erreurs multer (LIMIT_FILE_SIZE, etc.) et retourner du JSON
+function handleAvatarUpload(req, res, next) {
+  uploadAvatar.single("avatar")(req, res, (err) => {
+    if (err?.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ success: false, message: "Le fichier est trop volumineux (max 5 Mo)." });
+    }
+    if (err) return next(err);
+    next();
+  });
+}
+
 authRouter.post(
   "/profil/:id/photo",
   isLogged,
   injectId,
-  uploadAvatar.single("avatar"),
+  handleAvatarUpload,
   authController.uploadProfilePhoto
 );
 authRouter.get("/profil/:id/banner/status", isLogged, injectId, authController.getBannerStatus);

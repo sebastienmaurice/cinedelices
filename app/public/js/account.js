@@ -252,6 +252,12 @@
       const file = avatarInput.files[0];
       if (!file.type.startsWith("image/")) {
         showToast("Le fichier sélectionné n'est pas une image.", "error");
+        avatarInput.value = "";
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("Votre photo est trop volumineuse (max 5 Mo). Compressez-la avant de l'envoyer.", "error");
+        avatarInput.value = "";
         return;
       }
 
