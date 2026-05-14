@@ -1,12 +1,19 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import contactAboutController from "../controllers/contact-about.controllers.js";
 
 const router = Router();
 
-// Route pour la page de contact et à propos
-router.get("/", contactAboutController.contactAbout);
+// Rate limiting : 5 messages max par IP par heure
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 heure
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Trop de messages envoyés. Réessayez dans une heure." },
+});
 
-// Route pour la soumission du formulaire de contact
-router.post("/contact", contactAboutController.sendContact);
+router.get("/", contactAboutController.contactAbout);
+router.post("/contact", contactLimiter, contactAboutController.sendContact);
 
 export default router;

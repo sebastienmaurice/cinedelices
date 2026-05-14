@@ -21,7 +21,12 @@ const contactAboutController = {
 
   // POST /contact-about/contact — réception du formulaire de contact
   async sendContact(req, res) {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, website } = req.body;
+
+    // Honeypot : les bots remplissent ce champ caché, les humains non
+    if (website && website.trim() !== "") {
+      return res.json({ success: true, message: "Votre message a bien été envoyé. Nous vous répondrons rapidement !" });
+    }
 
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
       return res.status(400).json({ success: false, message: "Tous les champs obligatoires doivent être remplis." });
