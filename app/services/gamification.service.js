@@ -1,7 +1,7 @@
 import { UserPoints } from "../models/index.model.js";
 import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS } from "../utils/gamification.utils.js";
 
-const STAFF_ROLES = new Set(["admin", "superadmin"]);
+const STAFF_ROLES = new Set(["admin", "superadmin", "super_admin"]);
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
