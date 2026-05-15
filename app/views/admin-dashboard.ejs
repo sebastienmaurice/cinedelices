@@ -18,9 +18,11 @@
     ═══════════════════════════════════════════ -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-logo">
-        <span class="sidebar-logo__icon">🎬</span>
-        <span class="sidebar-logo__text">Ciné Délices</span>
-        <span class="sidebar-logo__badge">Admin</span>
+        <a href="/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0;">
+          <img src="/images/Logo/logo-cine-delices-2026-1.png" alt="Ciné Délices" style="height:32px;width:auto;flex-shrink:0;" />
+          <span class="sidebar-logo__text">Ciné Délices</span>
+          <span class="sidebar-logo__badge">Admin</span>
+        </a>
       </div>
 
       <nav class="sidebar-nav">
@@ -1320,43 +1322,36 @@
         <section class="view" data-view-id="gamification">
           <div class="page-header">
             <h1 class="page-header__title">Gamification</h1>
-            <p class="page-header__sub">Gestion des niveaux, badges et points des membres.</p>
-            <span class="act-btn act-btn--view" style="margin-left:auto;opacity:.5;cursor:default;">En développement</span>
+            <p class="page-header__sub">Statistiques XP, niveaux et progression de la communauté.</p>
           </div>
 
-          <!-- Bannière statut -->
-          <div class="card" style="border:1px dashed rgba(196,160,82,.4);background:rgba(196,160,82,.06);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(196,160,82,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <div>
-              <div style="font-weight:600;color:rgba(196,160,82,.9);margin-bottom:2px;">Module Gamification — à venir</div>
-              <div style="font-size:.78rem;color:rgba(255,255,255,.4);">Ce panneau affichera les statistiques XP, niveaux et badges de la communauté. Les données sont déjà calculées côté back-end.</div>
+          <!-- Stats cards -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px;" id="gamif-stats-grid">
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,160,82,.5);font-family:var(--f-title);margin-bottom:6px;">XP Total distribué</div>
+              <div id="gamif-total-xp" style="font-size:1.8rem;font-weight:700;color:var(--or-titre);font-family:var(--f-display);">—</div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,160,82,.5);font-family:var(--f-title);margin-bottom:6px;">Membres avec XP</div>
+              <div id="gamif-total-members" style="font-size:1.8rem;font-weight:700;color:var(--or-titre);font-family:var(--f-display);">—</div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,160,82,.5);font-family:var(--f-title);margin-bottom:6px;">XP moyen / membre</div>
+              <div id="gamif-avg-xp" style="font-size:1.8rem;font-weight:700;color:var(--or-titre);font-family:var(--f-display);">—</div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,160,82,.5);font-family:var(--f-title);margin-bottom:6px;">Niveau moyen</div>
+              <div id="gamif-avg-level" style="font-size:1.8rem;font-weight:700;color:var(--or-titre);font-family:var(--f-display);">—</div>
             </div>
           </div>
 
-          <!-- Placeholders widgets -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
-            <% [['XP total distribué','★'],['Membres actifs','👤'],['Badges débloqués','🏅'],['Niveau moyen','◈']].forEach(function(w){ %>
-            <div class="card" style="padding:20px;opacity:.45;pointer-events:none;border:1px dashed rgba(255,255,255,.12);">
-              <div style="font-size:1.4rem;margin-bottom:8px;"><%= w[1] %></div>
-              <div style="font-size:1.6rem;font-weight:700;color:rgba(255,255,255,.3);">—</div>
-              <div style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:4px;"><%= w[0] %></div>
+          <!-- Top membres par XP -->
+          <div class="card" style="padding:0;">
+            <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07);font-size:.8rem;font-weight:600;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px;">
+              <i data-lucide="trophy" width="14" height="14" style="color:var(--or-titre);" aria-hidden="true"></i>
+              Top membres par XP
             </div>
-            <% }); %>
-          </div>
-
-          <!-- Placeholder tableau membres -->
-          <div class="card" style="padding:0;opacity:.35;pointer-events:none;">
-            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);font-size:.8rem;font-weight:600;color:rgba(255,255,255,.4);">Top membres par XP</div>
-            <% for(let i=0;i<4;i++){ %>
-            <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);">
-              <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
-              <div style="flex:1;">
-                <div style="height:10px;width:120px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:5px;"></div>
-                <div style="height:8px;width:70px;background:rgba(255,255,255,.07);border-radius:3px;"></div>
-              </div>
-              <div style="height:10px;width:50px;background:rgba(255,255,255,.08);border-radius:3px;"></div>
-            </div>
-            <% } %>
+            <div id="gamif-top-table" style="padding:16px 20px;color:rgba(255,255,255,.3);font-size:.75rem;">Chargement…</div>
           </div>
         </section>
 
@@ -1413,29 +1408,59 @@
         <section class="view" data-view-id="parametres">
           <div class="page-header">
             <h1 class="page-header__title">Paramètres</h1>
-            <p class="page-header__sub">Configuration de la plateforme Ciné Délices.</p>
-            <span class="act-btn act-btn--view" style="margin-left:auto;opacity:.5;cursor:default;">En développement</span>
+            <p class="page-header__sub">Informations système et configuration de la plateforme.</p>
           </div>
 
-          <!-- Bannière statut -->
-          <div class="card" style="border:1px dashed rgba(100,160,255,.35);background:rgba(100,160,255,.05);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(100,160,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <div>
-              <div style="font-weight:600;color:rgba(100,160,255,.85);margin-bottom:2px;">Paramètres système — à venir</div>
-              <div style="font-size:.78rem;color:rgba(255,255,255,.4);">Ce panneau permettra de configurer les paramètres globaux de la plateforme (maintenance, modération, notifications, etc.).</div>
+          <!-- Infos système en lecture -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px;">
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(100,160,255,.6);font-family:var(--f-title);margin-bottom:6px;">Environnement</div>
+              <div style="font-size:1rem;font-weight:700;color:rgba(232,232,232,.9);"><%= process.env.NODE_ENV || 'development' %></div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(100,160,255,.6);font-family:var(--f-title);margin-bottom:6px;">URL de base</div>
+              <div style="font-size:.82rem;color:rgba(232,232,232,.7);word-break:break-all;"><%= process.env.BASE_URL || 'http://localhost:3000' %></div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(100,160,255,.6);font-family:var(--f-title);margin-bottom:6px;">Mode maintenance</div>
+              <div style="font-size:1rem;font-weight:700;color:<%= process.env.MAINTENANCE === 'true' ? 'rgba(232,100,65,.9)' : 'rgba(61,200,100,.8)' %>;">
+                <%= process.env.MAINTENANCE === 'true' ? '🔒 Activé' : '✅ Désactivé' %>
+              </div>
+            </div>
+            <div class="card" style="padding:18px 20px;">
+              <div style="font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(100,160,255,.6);font-family:var(--f-title);margin-bottom:6px;">Version Node.js</div>
+              <div style="font-size:1rem;font-weight:700;color:rgba(232,232,232,.9);"><%= process.version %></div>
             </div>
           </div>
 
-          <!-- Placeholder sections paramètres -->
-          <% [['Général','Nom du site, URL, maintenance'],['Modération','Seuils d\'approbation automatique, mots bannis'],['Notifications','Emails admin, alertes de contenu'],['Sécurité','Durée des tokens, tentatives de connexion']].forEach(function(s){ %>
-          <div class="card" style="padding:20px 24px;margin-bottom:12px;opacity:.4;pointer-events:none;display:flex;align-items:center;gap:16px;">
-            <div style="flex:1;">
-              <div style="font-weight:600;font-size:.85rem;margin-bottom:3px;"><%= s[0] %></div>
-              <div style="font-size:.75rem;color:rgba(255,255,255,.35);"><%= s[1] %></div>
+          <!-- Actions -->
+          <div class="card" style="padding:20px 24px;margin-bottom:12px;">
+            <div style="font-weight:600;font-size:.85rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="settings" width="14" height="14" style="color:rgba(100,160,255,.7);" aria-hidden="true"></i>
+              Maintenance
             </div>
-            <div style="height:28px;width:60px;background:rgba(255,255,255,.08);border-radius:4px;"></div>
+            <div style="font-size:.76rem;color:rgba(255,255,255,.4);margin-bottom:14px;">Le mode maintenance se active via la variable d'environnement <code style="background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px;">MAINTENANCE=true</code> sur le dashboard Render.</div>
+            <a href="https://dashboard.render.com" target="_blank" rel="noopener" class="act-btn act-btn--view" style="display:inline-flex;">
+              <i data-lucide="external-link" width="13" height="13" aria-hidden="true"></i>
+              Ouvrir Render Dashboard
+            </a>
           </div>
-          <% }); %>
+
+          <div class="card" style="padding:20px 24px;margin-bottom:12px;">
+            <div style="font-weight:600;font-size:.85rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="database" width="14" height="14" style="color:rgba(100,160,255,.7);" aria-hidden="true"></i>
+              Base de données
+            </div>
+            <div style="font-size:.76rem;color:rgba(255,255,255,.4);">PostgreSQL hébergé sur Render (Frankfurt). Les migrations SQL se font via le Shell Render.</div>
+          </div>
+
+          <div class="card" style="padding:20px 24px;">
+            <div style="font-weight:600;font-size:.85rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="image" width="14" height="14" style="color:rgba(100,160,255,.7);" aria-hidden="true"></i>
+              Stockage images
+            </div>
+            <div style="font-size:.76rem;color:rgba(255,255,255,.4);">Cloudinary — cloud name : <code style="background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px;"><%= process.env.CLOUDINARY_CLOUD_NAME || '—' %></code></div>
+          </div>
         </section>
 
       </main>

@@ -1732,6 +1732,43 @@ const adminController = {
       return res.status(500).json({ success: false });
     }
   },
+
+  async getGamificationStats(req, res) {
+    try {
+      const { QueryTypes } = await import("sequelize");
+      const sequelize = (await import("../database/sequelize-client.js")).default;
+
+      const [topMembers, totals, levelDist] = await Promise.all([
+        // Top 15 membres par XP
+        sequelize.query(
+          `SELECT u.id, u.pseudo, u.picture, up.xp, up.level, up.active_frame_code
+           FROM user_points up
+           JOIN users u ON u.id = up.id_user
+           ORDER BY up.xp DESC
+           LIMIT 15`,
+          { type: QueryTypes.SELECT }
+        ),
+        // Totaux globaux
+        sequelize.query(
+          `SELECT COALESCE(SUM(xp),0)::int AS total_xp,
+                  COUNT(*)::int AS total_members,
+                  ROUND(AVG(xp))::int AS avg_xp,
+                  ROUND(AVG(level),1)::float AS avg_level
+           FROM user_points`,
+          { type: QueryTypes.SELECT }
+        ),
+        // Distribution par niveau
+        sequelize.query(
+          `SELECT level, COUNT(*)::int AS count FROM user_points GROUP BY level ORDER BY level`,
+          { type: QueryTypes.SELECT }
+        ),
+      ]);
+
+      return res.json({ success: true, topMembers, totals: totals[0], levelDist });
+    } catch (error) {
+      return renderServerError(res, error, "Erreur stats gamification.");
+    }
+  },
 };
 
 export default adminController;

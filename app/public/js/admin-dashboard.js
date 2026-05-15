@@ -92,7 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
   navItems.forEach((item) => {
     item.addEventListener("click", () => {
       const target = item.dataset.navView;
-      if (target) activateView(target);
+      if (target) {
+        activateView(target);
+        if (target === "gamification" && !gamifLoaded) loadGamificationStats();
+      }
     });
   });
 
@@ -102,6 +105,51 @@ document.addEventListener("DOMContentLoaded", () => {
   // ══════════════════════════════════════════════════════
   // VUE LOGS — chargement à la demande + filtres + export
   // ══════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
+  // VUE GAMIFICATION — chargement à la demande
+  // ══════════════════════════════════════════════════════
+  let gamifLoaded = false;
+
+  async function loadGamificationStats() {
+    try {
+      const res  = await fetch("/admin/gamification/stats");
+      const data = await res.json();
+      if (!data.success) return;
+      gamifLoaded = true;
+
+      const fmt = (n) => (n ?? 0).toLocaleString("fr-FR");
+      const el = (id) => document.getElementById(id);
+
+      if (data.totals) {
+        el("gamif-total-xp")?.textContent && (el("gamif-total-xp").textContent = fmt(data.totals.total_xp) + " XP");
+        el("gamif-total-members")?.textContent && (el("gamif-total-members").textContent = fmt(data.totals.total_members));
+        el("gamif-avg-xp")?.textContent && (el("gamif-avg-xp").textContent = fmt(data.totals.avg_xp) + " XP");
+        el("gamif-avg-level")?.textContent && (el("gamif-avg-level").textContent = "Niv. " + (data.totals.avg_level ?? "—"));
+
+        if (el("gamif-total-xp")) el("gamif-total-xp").textContent = fmt(data.totals.total_xp) + " XP";
+        if (el("gamif-total-members")) el("gamif-total-members").textContent = fmt(data.totals.total_members);
+        if (el("gamif-avg-xp")) el("gamif-avg-xp").textContent = fmt(data.totals.avg_xp) + " XP";
+        if (el("gamif-avg-level")) el("gamif-avg-level").textContent = "Niv. " + (data.totals.avg_level ?? "—");
+      }
+
+      const tableEl = el("gamif-top-table");
+      if (tableEl && data.topMembers?.length) {
+        tableEl.innerHTML = data.topMembers.map((m, i) => `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;${i < data.topMembers.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,.05)' : ''}">
+            <span style="font-family:var(--f-title);font-size:.5rem;color:rgba(196,160,82,.5);min-width:20px;">#${i + 1}</span>
+            <img src="${m.picture || '/images/image-default-profile.jpg'}" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;" />
+            <span style="flex:1;font-size:.78rem;color:rgba(232,232,232,.8);">${m.pseudo}</span>
+            <span style="font-family:var(--f-title);font-size:.5rem;letter-spacing:.1em;color:rgba(196,160,82,.6);">NIV. ${m.level}</span>
+            <span style="font-family:var(--f-display);font-size:.9rem;color:var(--or-titre);min-width:70px;text-align:right;">${fmt(m.xp)} XP</span>
+          </div>`).join("");
+      } else if (tableEl) {
+        tableEl.textContent = "Aucune donnée de gamification pour l'instant.";
+      }
+    } catch (e) {
+      console.error("Erreur chargement stats gamification:", e);
+    }
+  }
+
   let logsLoaded  = false;
   let _logsData   = []; // cache pour filtrage et export
 
@@ -268,10 +316,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // ══════════════════════════════════════════════════════
   const sidebarToggle = document.getElementById("sidebar-toggle");
   const sidebar = document.getElementById("sidebar");
+  const mainWrapper = document.querySelector(".main-wrapper");
 
   if (sidebarToggle && sidebar) {
     sidebarToggle.addEventListener("click", () => {
       sidebar.classList.toggle("is-collapsed");
+      mainWrapper?.classList.toggle("sidebar-collapsed");
     });
   }
 

@@ -165,5 +165,6 @@ adminRouter.post("/users/:id/unsuspend", adminController.unsuspendUser);
    Logs admin
    =============================================== */
 adminRouter.get("/logs", isSuperAdmin, adminController.getAdminLogs);
+adminRouter.get("/gamification/stats", adminController.getGamificationStats);
 
 export default adminRouter;
