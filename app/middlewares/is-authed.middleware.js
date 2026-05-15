@@ -1,4 +1,18 @@
 import jwt from "jsonwebtoken";
+import { User } from "../models/index.model.js";
+
+// Cache suspension — évite une requête BDD à chaque appel (TTL 60s)
+const _suspendCache = new Map();
+const SUSPEND_TTL = 60 * 1000;
+
+async function isSuspended(userId) {
+  const cached = _suspendCache.get(userId);
+  if (cached && Date.now() - cached.t < SUSPEND_TTL) return cached.v;
+  const user = await User.findByPk(userId, { attributes: ["suspended", "suspended_until"] });
+  const v = !!user?.suspended && (!user.suspended_until || new Date(user.suspended_until) > new Date());
+  _suspendCache.set(userId, { v, t: Date.now() });
+  return v;
+}
 
 // Middleware pour vérifier le token JWT
 
@@ -95,18 +109,28 @@ function injectId(req, res, next) {
   }
 }
 
-function isLogged(req, res, next) {
+async function isLogged(req, res, next) {
   const userRole = req.userRole;
 
-  // Vérification normale
   if (userRole === "user" || userRole === "admin" || userRole === "superadmin" || userRole === "super_admin") {
+    // Bloquer les utilisateurs suspendus (admins et superadmins exemptés)
+    if (userRole === "user" && req.userId) {
+      try {
+        const suspended = await isSuspended(req.userId);
+        if (suspended) {
+          return res.status(403).render("error", {
+            error: "403",
+            message: "Votre compte est suspendu. Contactez l'administration pour plus d'informations.",
+          });
+        }
+      } catch { /* silencieux — ne pas bloquer en cas d'erreur BDD */ }
+    }
     next();
   } else {
-    // Accès interdit - on ajoute un paramètre pour ouvrir le popup
     res.status(403).render("error", {
       error: "403",
       message: "Route interdite. Vous n'êtes pas connecté.",
-      openLoginPopup: true  // 👈 Nouveau paramètre
+      openLoginPopup: true,
     });
   }
 }
