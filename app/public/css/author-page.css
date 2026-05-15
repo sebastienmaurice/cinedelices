@@ -444,3 +444,39 @@ body.author-page main {
 
 /* Recipe cards sur la page auteur — variante centralisée dans base.css */
 
+
+/* ── CTA "Proposer un film" — copie des règles de movies.css ── */
+.author-cta-wrap {
+  width: min(1440px, 100% - 2 * var(--cd-px, 2rem));
+  margin: 56px auto 80px;
+}
+.author-cta-wrap .fcard.fcard--cta { margin: 0; grid-column: unset; }
+.fcard.fcard--cta { background:none; border:none; box-shadow:none; border-radius:20px; overflow:visible; }
+.fcard.fcard--cta::before { display:none; }
+.fcard.fcard--cta:hover { transform:none; border-color:transparent; box-shadow:none; }
+.fcard--cta__link { display:flex; flex-direction:row; align-items:center; gap:0; text-decoration:none; color:inherit; width:100%; min-height:220px; padding:40px 0 40px 52px; position:relative; overflow:hidden; background:linear-gradient(135deg,#5c0b05 0%,#8b1c13 28%,#c23018 58%,#d43a20 80%,#e04422 100%); border-radius:20px; border:1px solid rgba(194,48,24,.42); box-shadow:0 20px 60px rgba(194,48,24,.30),0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07); transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,border-color .35s ease; }
+.fcard--cta:hover .fcard--cta__link { transform:translateY(-5px); box-shadow:0 32px 80px rgba(194,48,24,.42),0 12px 32px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.11); border-color:rgba(194,48,24,.68); }
+.fcard--cta__shimmer { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.fcard--cta__shimmer::after { content:''; position:absolute; top:0; bottom:0; width:40%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent); transform:translateX(-120%) skewX(-18deg); }
+.fcard--cta:hover .fcard--cta__shimmer::after { animation:ctaShimmer .75s cubic-bezier(.22,1,.36,1) forwards; }
+@keyframes ctaShimmer { 0%{transform:translateX(-120%) skewX(-18deg)} 100%{transform:translateX(320%) skewX(-18deg)} }
+.fcard--cta__body { flex:0 0 42%; min-width:0; position:relative; z-index:2; display:flex; flex-direction:column; gap:10px; padding-right:36px; }
+.fcard--cta__eyebrow { display:inline-flex; align-items:center; gap:7px; font-family:var(--f-title); font-size:.62rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.40); }
+.fcard--cta__title { font-family:var(--f-display); font-size:2.8rem; letter-spacing:.06em; line-height:.92; color:#fff; text-shadow:0 2px 20px rgba(0,0,0,.25); }
+.fcard--cta__title em { display:block; font-style:normal; color:rgba(255,210,170,.88); }
+.fcard--cta__desc { font-size:.76rem; line-height:1.65; font-weight:300; color:rgba(255,255,255,.52); max-width:460px; }
+.fcard--cta__action { display:inline-flex; align-items:center; gap:9px; padding:0 22px; height:44px; border-radius:10px; background:var(--gold-gradient); color:var(--bleu-nuit); font-family:var(--f-title); font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; box-shadow:0 0 24px rgba(196,160,82,.30),0 6px 20px rgba(0,0,0,.30); transition:all .3s cubic-bezier(.22,1,.36,1); align-self:flex-start; margin-top:6px; border:none; }
+.fcard--cta:hover .fcard--cta__action { transform:translateY(-2px); box-shadow:0 0 40px rgba(196,160,82,.48),0 10px 28px rgba(0,0,0,.40); }
+.fcard--cta__deco { flex:1; min-width:0; overflow:hidden; position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; gap:12px; opacity:.58; transition:opacity .4s ease; mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%); -webkit-mask-image:linear-gradient(to right,transparent 0%,black 12%,black 88%,transparent 100%); }
+.fcard--cta:hover .fcard--cta__deco { opacity:.90; }
+.fcard--cta__poster-row { overflow:hidden; }
+.fcard--cta__poster-track { display:flex; gap:12px; width:max-content; }
+.fcard--cta__poster-row--left  .fcard--cta__poster-track { animation:posterScrollLeft  18s linear infinite; }
+.fcard--cta__poster-row--right .fcard--cta__poster-track { animation:posterScrollRight 24s linear infinite; }
+@keyframes posterScrollLeft  { from{transform:translateX(0)}   to{transform:translateX(-50%)} }
+@keyframes posterScrollRight { from{transform:translateX(-50%)} to{transform:translateX(0)}   }
+.fcard--cta__mini { width:90px; height:127px; border-radius:9px; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,.18); box-shadow:0 6px 20px rgba(0,0,0,.45); transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease,box-shadow .3s ease; cursor:default; }
+.fcard--cta__mini:hover { transform:scale(1.12) translateY(-5px); border-color:rgba(255,255,255,.55); box-shadow:0 16px 36px rgba(0,0,0,.65); z-index:3; }
+.fcard--cta__mini img { width:100%; height:100%; object-fit:cover; display:block; }
+@media (max-width:900px) { .fcard--cta__deco{display:none} .fcard--cta__link{padding:32px 36px} }
+@media (max-width:600px) { .fcard--cta__title{font-size:2rem} .fcard--cta__link{padding:28px 24px} }

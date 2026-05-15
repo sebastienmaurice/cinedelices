@@ -442,6 +442,45 @@
 
       </section>
 
+      <!-- CTA — Proposer un film -->
+      <% if (ctaMovies && ctaMovies.length > 0) { %>
+      <%
+        const ctaMoviesRev = ctaMovies.slice().reverse();
+      %>
+      <div class="author-cta-wrap">
+        <article class="fcard fcard--cta movies-cta" aria-label="Proposer votre film culte à Ciné Délices">
+          <a href="/add-recipes-movies/" class="fcard--cta__link">
+            <div class="fcard--cta__shimmer" aria-hidden="true"></div>
+            <div class="fcard--cta__body">
+              <p class="fcard--cta__eyebrow">
+                <i data-lucide="film" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
+                Communauté · Ciné Délices
+              </p>
+              <h2 class="fcard--cta__title">VOTRE FILM<em>MÉRITE UNE RECETTE.</em></h2>
+              <p class="fcard--cta__desc">Proposez un film culte et créez la recette qui va avec — rejoignez des cinéphiles gourmands.</p>
+              <span class="fcard--cta__action">
+                <i data-lucide="plus" width="13" height="13" stroke-width="3" aria-hidden="true"></i>
+                Proposer un film
+              </span>
+            </div>
+            <div class="fcard--cta__deco" aria-hidden="true">
+              <div class="fcard--cta__poster-row fcard--cta__poster-row--left">
+                <div class="fcard--cta__poster-track">
+                  <% ctaMovies.forEach(m => { %><div class="fcard--cta__mini"><img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async"></div><% }) %>
+                  <% ctaMovies.forEach(m => { %><div class="fcard--cta__mini"><img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async"></div><% }) %>
+                </div>
+              </div>
+              <div class="fcard--cta__poster-row fcard--cta__poster-row--right">
+                <div class="fcard--cta__poster-track">
+                  <% ctaMoviesRev.forEach(m => { %><div class="fcard--cta__mini"><img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async"></div><% }) %>
+                  <% ctaMoviesRev.forEach(m => { %><div class="fcard--cta__mini"><img src="<%= m.cardPath || m.picture %>" alt="" loading="lazy" decoding="async"></div><% }) %>
+                </div>
+              </div>
+            </div>
+          </a>
+        </article>
+      </div>
+      <% } %>
 
     </main>
 

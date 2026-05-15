@@ -113,6 +113,14 @@ const authorController = {
         Notice.findAll({ where: { id_user: userId } }),
       ]);
 
+      // Films approuvés pour le CTA banner (animation affiches)
+      const ctaMovies = await Movie.findAll({
+        where: { status: "approved" },
+        attributes: ["id", "picture", "cardPath"],
+        limit: 12,
+        order: [["validated_at", "DESC"]],
+      });
+
       const gamif = await getUserGamificationData(userId, {
         recipes: allRecipes,
         movies: allMovies,
@@ -144,6 +152,7 @@ const authorController = {
         xpPct:           xpProg.pct,
         xpCurrent:       xpProg.current,
         xpNeeded:        xpProg.needed,
+        ctaMovies,
       });
     } catch (error) {
       return renderServerError(res, error);
