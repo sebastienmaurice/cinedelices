@@ -287,25 +287,42 @@ body.profile-page main {
 /* Ring doré gradient (frame "Par défaut" / none) — inspiré djc-cta */
 .pbh-ring {
   position: absolute;
-  left: 56px;   /* identique à pbh-photo → alignement garanti */
+  left: 56px;
   top: 56px;
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: linear-gradient(
-    145deg,
-    #8b6914 0%,
-    #b8882a 22%,
-    #c4a052 42%,
-    #d4a843 55%,
-    #f2c84b 68%,
-    #d4a843 80%,
-    #b8882a 100%
+  /* Or antique raffiné — foncé, sans jaune criard */
+  background: conic-gradient(
+    from 0deg,
+    #5a4a28,
+    #8b7030,
+    #c4a055,
+    #a88b45,
+    #72613b,
+    #a88b45,
+    #c4a055,
+    #8b7030,
+    #5a4a28
   );
-  /* anneau ~12 px au bord extérieur de l'élément (r_max = 75px) */
-  mask: radial-gradient(circle at 50% 50%, transparent 62px, black 63px);
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 62px, black 63px);
-  filter: drop-shadow(0 0 10px rgba(184, 136, 42, 0.38));
+  /* Double anneau fin : intérieur (2px) + espace (4px) + extérieur (2px) */
+  mask:
+    radial-gradient(circle at 50% 50%,
+      transparent 60px,
+      black 61px 63px,
+      transparent 63px 67px,
+      black 67px 69px,
+      transparent 70px
+    );
+  -webkit-mask:
+    radial-gradient(circle at 50% 50%,
+      transparent 60px,
+      black 61px 63px,
+      transparent 63px 67px,
+      black 67px 69px,
+      transparent 70px
+    );
+  filter: drop-shadow(0 0 6px rgba(114, 97, 59, 0.35));
   z-index: 2;
 }
 /* Actions et statuts par-dessus le badge */
