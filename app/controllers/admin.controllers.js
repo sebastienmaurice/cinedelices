@@ -1739,27 +1739,27 @@ const adminController = {
       const sequelize = (await import("../database/sequelize-client.js")).default;
 
       const [topMembers, totals, levelDist] = await Promise.all([
-        // Top 15 membres par XP
+        // Top 15 membres par points
         sequelize.query(
-          `SELECT u.id, u.pseudo, u.picture, up.xp, up.level, up.active_frame_code
+          `SELECT u.id, u.pseudo, u.picture, up.points, up.level_code, up.active_frame_code
            FROM user_points up
            JOIN users u ON u.id = up.id_user
-           ORDER BY up.xp DESC
+           ORDER BY up.points DESC
            LIMIT 15`,
           { type: QueryTypes.SELECT }
         ),
         // Totaux globaux
         sequelize.query(
-          `SELECT COALESCE(SUM(xp),0)::int AS total_xp,
+          `SELECT COALESCE(SUM(points),0)::int AS total_xp,
                   COUNT(*)::int AS total_members,
-                  ROUND(AVG(xp))::int AS avg_xp,
-                  ROUND(AVG(level),1)::float AS avg_level
+                  ROUND(AVG(points))::int AS avg_xp,
+                  ROUND(AVG(level_code::int),1)::float AS avg_level
            FROM user_points`,
           { type: QueryTypes.SELECT }
         ),
         // Distribution par niveau
         sequelize.query(
-          `SELECT level, COUNT(*)::int AS count FROM user_points GROUP BY level ORDER BY level`,
+          `SELECT level_code, COUNT(*)::int AS count FROM user_points GROUP BY level_code ORDER BY level_code::int`,
           { type: QueryTypes.SELECT }
         ),
       ]);

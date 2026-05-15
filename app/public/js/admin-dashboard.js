@@ -121,14 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const el = (id) => document.getElementById(id);
 
       if (data.totals) {
-        el("gamif-total-xp")?.textContent && (el("gamif-total-xp").textContent = fmt(data.totals.total_xp) + " XP");
-        el("gamif-total-members")?.textContent && (el("gamif-total-members").textContent = fmt(data.totals.total_members));
-        el("gamif-avg-xp")?.textContent && (el("gamif-avg-xp").textContent = fmt(data.totals.avg_xp) + " XP");
-        el("gamif-avg-level")?.textContent && (el("gamif-avg-level").textContent = "Niv. " + (data.totals.avg_level ?? "—"));
-
-        if (el("gamif-total-xp")) el("gamif-total-xp").textContent = fmt(data.totals.total_xp) + " XP";
+        if (el("gamif-total-xp")) el("gamif-total-xp").textContent = fmt(data.totals.total_xp) + " pts";
         if (el("gamif-total-members")) el("gamif-total-members").textContent = fmt(data.totals.total_members);
-        if (el("gamif-avg-xp")) el("gamif-avg-xp").textContent = fmt(data.totals.avg_xp) + " XP";
+        if (el("gamif-avg-xp")) el("gamif-avg-xp").textContent = fmt(data.totals.avg_xp) + " pts";
         if (el("gamif-avg-level")) el("gamif-avg-level").textContent = "Niv. " + (data.totals.avg_level ?? "—");
       }
 
@@ -139,8 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <span style="font-family:var(--f-title);font-size:.5rem;color:rgba(196,160,82,.5);min-width:20px;">#${i + 1}</span>
             <img src="${m.picture || '/images/image-default-profile.jpg'}" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;" />
             <span style="flex:1;font-size:.78rem;color:rgba(232,232,232,.8);">${m.pseudo}</span>
-            <span style="font-family:var(--f-title);font-size:.5rem;letter-spacing:.1em;color:rgba(196,160,82,.6);">NIV. ${m.level}</span>
-            <span style="font-family:var(--f-display);font-size:.9rem;color:var(--or-titre);min-width:70px;text-align:right;">${fmt(m.xp)} XP</span>
+            <span style="font-family:var(--f-title);font-size:.5rem;letter-spacing:.1em;color:rgba(196,160,82,.6);">NIV. ${m.level_code || '—'}</span>
+            <span style="font-family:var(--f-display);font-size:.9rem;color:var(--or-titre);min-width:80px;text-align:right;">${fmt(m.points)} pts</span>
           </div>`).join("");
       } else if (tableEl) {
         tableEl.textContent = "Aucune donnée de gamification pour l'instant.";
