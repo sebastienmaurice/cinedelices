@@ -161,7 +161,7 @@
 
           <% if (!movies || movies.length === 0) { %>
           <div class="no-results">
-            <div class="no-results__icon">🎬</div>
+            <div class="no-results__icon"><i data-lucide="film" width="48" height="48" stroke-width="1" aria-hidden="true"></i></div>
             <p class="no-results__title">Aucun film trouvé</p>
             <p class="no-results__sub">Aucun film pour ce genre — essayez un autre filtre</p>
           </div>
@@ -171,15 +171,17 @@
             const displayRating = movie.rating || '4.0';
             const movieSynopsis = movie.synopsis || 'Synopsis à venir...';
 
-            // Genre → classe fgt-*
+            // Genre → classe tag moodboard
             const genreRaw = (movie.genre || '').toLowerCase();
-            let fgtClass = 'fgt-n';
-            if (genreRaw.includes('aventure') || genreRaw.includes('action')) fgtClass = 'fgt-a';
-            else if (genreRaw.includes('com')) fgtClass = 'fgt-c';
-            else if (genreRaw.includes('thriller') || genreRaw.includes('policier')) fgtClass = 'fgt-t';
-            else if (genreRaw.includes('fanta') || genreRaw.includes('merv')) fgtClass = 'fgt-f';
-            else if (genreRaw.includes('horr') || genreRaw.includes('épou')) fgtClass = 'fgt-h';
-            else if (genreRaw.includes('sci') || genreRaw.includes(' sf') || genreRaw.includes('sf ')) fgtClass = 'fgt-s';
+            let fgtClass = 'tag--bleu';
+            if (genreRaw.includes('aventure') || genreRaw.includes('action')) fgtClass = 'tag--or';
+            else if (genreRaw.includes('com')) fgtClass = 'tag--vert';
+            else if (genreRaw.includes('thriller') || genreRaw.includes('policier')) fgtClass = 'tag--gris';
+            else if (genreRaw.includes('fanta') || genreRaw.includes('merv')) fgtClass = 'tag--genre-cinema';
+            else if (genreRaw.includes('horr') || genreRaw.includes('épou')) fgtClass = 'tag--rouge';
+            else if (genreRaw.includes('sci') || genreRaw.includes(' sf') || genreRaw.includes('sf ')) fgtClass = 'tag--vert';
+            else if (genreRaw.includes('anim')) fgtClass = 'tag--bleu';
+            else if (genreRaw.includes('docu')) fgtClass = 'tag--gris';
 
             const ratingNum = parseFloat(displayRating);
             const starsRounded = Math.round(ratingNum);
@@ -212,7 +214,7 @@
 
               <!-- Badges haut-gauche : "Film" toujours affiché + Nouveau / Populaire -->
               <div class="fcard__badges">
-                <span class="badge badge--type-r">Film</span>
+                <span class="badge--film"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> Film</span>
                 <% if (movie.isNew) { %>
                 <span class="badge-new badge-new--new">
                   <i data-lucide="sparkles" class="icon" aria-hidden="true"></i>
@@ -269,7 +271,7 @@
             <div class="fcard__body">
               <!-- Genre tag -->
               <div class="fcard__genres">
-                <span class="fgt <%= fgtClass %>"><%= movie.genre %></span>
+                <span class="tag <%= fgtClass %>"><%= movie.genre %></span>
               </div>
 
               <!-- Synopsis -->
