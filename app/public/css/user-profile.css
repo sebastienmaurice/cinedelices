@@ -273,7 +273,13 @@ body.profile-page main {
   object-fit: cover;
   object-position: center top;
   z-index: 1;
-  border: 2px solid rgba(8, 8, 16, 0.6);
+  border: none;
+  /* Double anneau or antique — collé à la photo */
+  box-shadow:
+    0 0 0 2px #8b7030,
+    0 0 0 4px rgba(6, 10, 18, 0.88),
+    0 0 0 6px #72613b,
+    0 0 10px rgba(114, 97, 59, 0.2);
 }
 /* Cadre PNG overlay */
 .pbh-frame {
@@ -284,50 +290,8 @@ body.profile-page main {
   z-index: 2;
   pointer-events: none;
 }
-/* Ring doré gradient (frame "Par défaut" / none) — inspiré djc-cta */
-.pbh-ring {
-  position: absolute;
-  /* 170px centré sur la photo 150px : décalage de -10px par rapport à pbh-photo */
-  left: 46px;
-  top: 46px;
-  width: 170px;
-  height: 170px;
-  border-radius: 50%;
-  pointer-events: none;
-  /* Or antique raffiné — foncé, sans jaune criard */
-  background: conic-gradient(
-    from 0deg,
-    #5a4a28,
-    #8b7030,
-    #c4a055,
-    #a88b45,
-    #72613b,
-    #a88b45,
-    #c4a055,
-    #8b7030,
-    #5a4a28
-  );
-  /* Double anneau collé à la photo (rayon photo = 75px) */
-  /* 1px gap → anneau fin 2px → espace 2px → anneau fin 2px */
-  mask:
-    radial-gradient(circle at 50% 50%,
-      transparent 75px,
-      black 76px 78px,
-      transparent 78px 80px,
-      black 80px 82px,
-      transparent 83px
-    );
-  -webkit-mask:
-    radial-gradient(circle at 50% 50%,
-      transparent 75px,
-      black 76px 78px,
-      transparent 78px 80px,
-      black 80px 82px,
-      transparent 83px
-    );
-  filter: drop-shadow(0 0 5px rgba(114, 97, 59, 0.3));
-  z-index: 2;
-}
+/* .pbh-ring supprimé — double anneau géré via box-shadow sur .pbh-photo */
+.pbh-ring { display: none; }
 /* Actions et statuts par-dessus le badge */
 .profile-badge-hero .avatar-actions { z-index: 10; }
 .profile-badge-hero .avatar-photo-status { z-index: 10; }
