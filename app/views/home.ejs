@@ -45,7 +45,7 @@
           <div class="hero__fade-left"></div>
           <div class="hero__fade-right"></div>
           <img class="hero__fg" id="fg-0" src="/images/event/hero-slide-remy-foreground.png" alt="Rémy — Ratatouille" draggable="false">
-          <span class="hero__slide-badge"><span aria-hidden="true">🎬</span> Film du moment</span>
+          <span class="hero__slide-badge"><i data-lucide="film" width="12" height="12" aria-hidden="true"></i> Film du moment</span>
           <div class="hero__content">
             <div class="hero__eyebrow-bar">
               <div class="hero__eyebrow-line"></div>
@@ -58,7 +58,7 @@
             <p class="hero__sub">Quand la cuisine rencontre l'art</p>
             <p class="hero__desc">Un rat passionné de gastronomie défie les conventions dans les cuisines parisiennes. Découvrez les recettes inspirées du chef Gusteau.</p>
             <div class="hero__actions">
-              <a href="/recipes-movie/ratatouille" class="hero__btn-primary"><span aria-hidden="true">🍴</span> Voir les recettes</a>
+              <a href="/recipes-movie/ratatouille" class="hero__btn-primary"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i> Voir les recettes</a>
               <a href="/movies" class="hero__btn-secondary">Fiche Film →</a>
             </div>
           </div>
@@ -81,7 +81,7 @@
           <div class="hero__fade-left"></div>
           <div class="hero__fade-right"></div>
           <img class="hero__fg" id="fg-1" src="/images/event/hero-slide-walter-breaking-bad-foreground.png" alt="Walter White — Breaking Bad" draggable="false">
-          <span class="hero__slide-badge"><span aria-hidden="true">📺</span> Série du moment</span>
+          <span class="hero__slide-badge"><i data-lucide="tv-2" width="12" height="12" aria-hidden="true"></i> Série du moment</span>
           <div class="hero__content">
             <div class="hero__eyebrow-bar">
               <div class="hero__eyebrow-line"></div>
@@ -94,7 +94,7 @@
             <p class="hero__sub">La chimie au service des sens</p>
             <p class="hero__desc">Walter White transformait le danger en art. Nous, on transforme ses recettes en chef-d'œuvres culinaires. Say my name.</p>
             <div class="hero__actions">
-              <a href="/recipes-movie/breaking-bad" class="hero__btn-primary"><span aria-hidden="true">🍴</span> Voir les recettes</a>
+              <a href="/recipes-movie/breaking-bad" class="hero__btn-primary"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i> Voir les recettes</a>
               <a href="/movies" class="hero__btn-secondary">Fiche Série →</a>
             </div>
           </div>
@@ -167,13 +167,13 @@
                 </div>
               </div>
               <div class="djc-film__top">
-                <span class="djc-film__badge">🎬 Film</span>
+                <span class="djc-film__badge"><i data-lucide="film" width="11" height="11" aria-hidden="true"></i> Film</span>
                 <button class="djc-film__fav btn-fav" data-entity-id="<%= duoFilm.id %>" data-entity-type="movie" aria-label="Ajouter aux favoris">♡</button>
               </div>
               <div class="djc-film__bottom">
                 <div class="djc-film__tags">
                   <% if (duoFilm.genre) { %>
-                  <span class="film-badge film-badge--genre"><%= duoFilm.genre.split(',')[0].trim() %></span>
+                  <span class="tag tag--genre-cinema"><%= duoFilm.genre.split(',')[0].trim() %></span>
                   <% } %>
                 </div>
                 <span class="djc-film__title"><%= duoFilm.title %></span>
@@ -184,7 +184,7 @@
                     <% for (let s=1; s<=5; s++) { %><span class="<%= s > dfStars ? 'star-e' : '' %>">★</span><% } %>
                   </div>
                   <% if (duoFilm.recipeCount) { %>
-                  <span class="djc-film__count">🍴 <%= duoFilm.recipeCount %> recette<%= duoFilm.recipeCount > 1 ? 's' : '' %></span>
+                  <span class="djc-film__count"><i data-lucide="utensils" width="11" height="11" aria-hidden="true"></i> <%= duoFilm.recipeCount %> recette<%= duoFilm.recipeCount > 1 ? 's' : '' %></span>
                   <% } %>
                 </div>
               </div>
@@ -223,9 +223,9 @@
               <div class="djc-cta__btns">
                 <% if (typeof role === 'undefined') { %>
                 <button type="button" class="djc-cta__btn-primary js-open-register">✦ Créer un compte</button>
-                <button type="button" class="djc-cta__btn-secondary js-open-login" data-login-hint="Connectez-vous pour ajouter votre recette">🍴 Ajouter ma recette</button>
+                <button type="button" class="djc-cta__btn-secondary js-open-login" data-login-hint="Connectez-vous pour ajouter votre recette"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i> Ajouter ma recette</button>
                 <% } else { %>
-                <a href="/add-recipes-movies/" class="djc-cta__btn-primary">🍴 Ajouter ma recette</a>
+                <a href="/add-recipes-movies/" class="djc-cta__btn-primary"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i> Ajouter ma recette</a>
                 <% } %>
                 <div class="djc-cta__membres">
                   <% [0,1,2].forEach(function(i) { %>
@@ -273,15 +273,15 @@
                   <span class="djc-recette__type"><%= topRecipe.difficulty || 'Recette' %></span>
                 </div>
                 <div class="djc-recette__img-bottom">
-                  <span class="djc-recette__film-badge">🎞 <%= topRecipe.Movie ? topRecipe.Movie.title : 'Film inconnu' %></span>
+                  <span class="badge--film"><i data-lucide="film" width="11" height="11" aria-hidden="true"></i> <%= topRecipe.Movie ? topRecipe.Movie.title : 'Film inconnu' %></span>
                 </div>
               </div>
               <div class="djc-recette__body">
                 <h3 class="djc-recette__title"><%= topRecipe.name %></h3>
                 <div class="djc-recette__tags">
-                  <span class="djc-recette__tag djc-recette__tag--or"><%= topRecipe.difficulty || 'Moyen' %></span>
+                  <span class="tag tag--or"><%= topRecipe.difficulty || 'Moyen' %></span>
                   <% if (topRecipe.category) { %>
-                  <span class="djc-recette__tag djc-recette__tag--bleu"><%= topRecipe.category %></span>
+                  <span class="tag tag--recette-cat"><%= topRecipe.category %></span>
                   <% } %>
                 </div>
                 <div class="djc-recette__meta">
@@ -290,8 +290,8 @@
                     <% for (let s=1; s<=5; s++) { %><span class="<%= s > trStars ? 'star-e' : '' %>">★</span><% } %>
                   </div>
                   <div class="djc-recette__infos">
-                    <% if (topRecipe.time) { %><span>⏱ <%= topRecipe.time %> min</span><% } %>
-                    <% if (topRecipe.servings) { %><span>👥 <%= topRecipe.servings %> pers.</span><% } %>
+                    <% if (topRecipe.time) { %><span><i data-lucide="clock" width="11" height="11" aria-hidden="true"></i> <%= topRecipe.time %> min</span><% } %>
+                    <% if (topRecipe.servings) { %><span><i data-lucide="users" width="11" height="11" aria-hidden="true"></i> <%= topRecipe.servings %> pers.</span><% } %>
                   </div>
                 </div>
               </div>
@@ -365,17 +365,17 @@
                     </div>
                   </div>
                   <div class="top3-featured__medal">1</div>
-                  <span class="top3-featured__film-badge">🎬 <%= recipes[0].Movie ? recipes[0].Movie.title : 'Film inconnu' %></span>
+                  <span class="top3-featured__film-badge"><i data-lucide="film" width="11" height="11" aria-hidden="true"></i> <%= recipes[0].Movie ? recipes[0].Movie.title : 'Film inconnu' %></span>
                 </div>
                 <div class="top3-featured__body">
-                  <span class="top3-featured__eyebrow">🏆 Recette n°1 de la communauté</span>
+                  <span class="top3-featured__eyebrow"><i data-lucide="trophy" width="12" height="12" aria-hidden="true"></i> Recette n°1 de la communauté</span>
                   <h3 class="top3-featured__title"><%= recipes[0].name %></h3>
                   <div class="top3-featured__tags">
                     <% if (recipes[0].difficulty) { %>
-                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--sm"><%= recipes[0].difficulty %></span>
+                    <span class="tag tag--or top3-tag--sm"><%= recipes[0].difficulty %></span>
                     <% } %>
                     <% if (recipes[0].category) { %>
-                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--sm"><%= recipes[0].category %></span>
+                    <span class="tag tag--recette-cat top3-tag--sm"><%= recipes[0].category %></span>
                     <% } %>
                   </div>
                   <div class="top3-featured__meta">
@@ -384,8 +384,8 @@
                       <% for (let s=1; s<=5; s++) { %><span class="<%= s > r0Stars ? 'star-e' : '' %>">★</span><% } %>
                     </div>
                     <div class="top3-featured__infos">
-                      <% if (recipes[0].time) { %><span>⏱ <%= recipes[0].time %> min</span><% } %>
-                      <% if (recipes[0].servings) { %><span>👥 <%= recipes[0].servings %> pers.</span><% } %>
+                      <% if (recipes[0].time) { %><span><i data-lucide="clock" width="11" height="11" aria-hidden="true"></i> <%= recipes[0].time %> min</span><% } %>
+                      <% if (recipes[0].servings) { %><span><i data-lucide="users" width="11" height="11" aria-hidden="true"></i> <%= recipes[0].servings %> pers.</span><% } %>
                     </div>
                   </div>
                   <% if (recipes[0].description) { %>
@@ -438,16 +438,16 @@
                     </div>
                   </div>
                   <div class="top3-card__medal top3-card__medal--2">2</div>
-                  <span class="top3-card__film-badge">🎬 <%= recipes[1].Movie ? recipes[1].Movie.title : 'Film inconnu' %></span>
+                  <span class="top3-card__film-badge"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipes[1].Movie ? recipes[1].Movie.title : 'Film inconnu' %></span>
                 </div>
                 <div class="top3-card__body">
                   <h3 class="top3-card__title"><%= recipes[1].name %></h3>
                   <div class="top3-card__tags">
                     <% if (recipes[1].difficulty) { %>
-                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs"><%= recipes[1].difficulty %></span>
+                    <span class="tag tag--or top3-tag--xs"><%= recipes[1].difficulty %></span>
                     <% } %>
                     <% if (recipes[1].category) { %>
-                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs"><%= recipes[1].category %></span>
+                    <span class="tag tag--recette-cat top3-tag--xs"><%= recipes[1].category %></span>
                     <% } %>
                   </div>
                   <div class="top3-card__meta">
@@ -497,16 +497,16 @@
                     </div>
                   </div>
                   <div class="top3-card__medal top3-card__medal--3">3</div>
-                  <span class="top3-card__film-badge">🎬 <%= recipes[2].Movie ? recipes[2].Movie.title : 'Film inconnu' %></span>
+                  <span class="top3-card__film-badge"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipes[2].Movie ? recipes[2].Movie.title : 'Film inconnu' %></span>
                 </div>
                 <div class="top3-card__body">
                   <h3 class="top3-card__title"><%= recipes[2].name %></h3>
                   <div class="top3-card__tags">
                     <% if (recipes[2].difficulty) { %>
-                    <span class="djc-recette__tag djc-recette__tag--or top3-tag--xs"><%= recipes[2].difficulty %></span>
+                    <span class="tag tag--or top3-tag--xs"><%= recipes[2].difficulty %></span>
                     <% } %>
                     <% if (recipes[2].category) { %>
-                    <span class="djc-recette__tag djc-recette__tag--bleu top3-tag--xs"><%= recipes[2].category %></span>
+                    <span class="tag tag--recette-cat top3-tag--xs"><%= recipes[2].category %></span>
                     <% } %>
                   </div>
                   <div class="top3-card__meta">
