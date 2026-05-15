@@ -106,6 +106,7 @@ psql $PG_URL -f app/data/migration_gamification.sql
 psql $PG_URL -f app/data/migration_add_gamif_columns.sql
 psql $PG_URL -f app/data/migration_add_google_auth.sql
 psql $PG_URL -f app/data/migration_phase2_admin.sql
+psql $PG_URL -f app/database/migrations/20260515-add-pending-banner.sql
 ```
 
 ### 5. Fix search_path PostgreSQL — problème rencontré et solution
