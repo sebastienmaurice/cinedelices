@@ -10,10 +10,11 @@
     sebastien: {
       img:   '/images/profil-contact/profil-sebastien.jpg',
       name:  'Seb le Fourbe',
-      role:  'Maître du front-end & architecte visuel',
+      role:  'Maître du front-end, UI designer & architecte visuel',
       tag1:  'Développeur Full Stack',
       tag2:  'Front-end',
-      bio:   "Graphiste imaginatif, webdesigner affûté et développeur full-stack orienté front, Seb le Fourbe façonne l'identité visuelle de Ciné Délices. Il mêle univers pirate et esthétique cinématographique pour donner vie aux interfaces.",
+      bio:   "Graphiste expérimenté, UI designer et développeur front-end orienté expérience utilisateur, Seb le Fourbe façonne l'univers visuel de Ciné Délices de la maquette au code. Entre esthétique cinématographique, ambiance et interfaces immersives, il conçoit des expériences web modernes, responsives et pensées dans les moindres détails.",
+      portfolio: 'https://sebastienmaurice.github.io/',
       tech:  [
         { n: 'HTML5',      f: true  },
         { n: 'CSS3',       f: true  },
@@ -104,6 +105,17 @@
     $('caMMBio').textContent = d.bio;
     $('caMLI').href = d.li;
     $('caMGH').href = d.gh;
+
+    /* Portfolio — visible uniquement si le membre en a un */
+    var portEl = $('caMPort');
+    if (portEl) {
+      if (d.portfolio) {
+        portEl.href = d.portfolio;
+        portEl.style.display = '';
+      } else {
+        portEl.style.display = 'none';
+      }
+    }
 
     $('caMPills').innerHTML = d.tech.map(function (t) {
       return '<span class="ca-pill"><span class="ca-pill__dot ' + (t.f ? 'ca-dot-fe' : 'ca-dot-be') + '"></span>' + t.n + '</span>';
