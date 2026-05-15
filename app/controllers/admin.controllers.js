@@ -1762,12 +1762,22 @@ const adminController = {
   /* Polling admin : compteurs en attente */
   async getPendingCount(req, res) {
     try {
-      const users = await User.findAll({ attributes: ["banner_status", "banner_image", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] });
+      const [users, recipes, notices, recipePictures, movieEdits, movieDeletes] = await Promise.all([
+        User.findAll({ attributes: ["banner_status", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] }),
+        Recipe.count({ where: { status: "pending" } }),
+        Notice.count({ where: { status: "pending" } }),
+        RecipePicture.count({ where: { status: "pending" } }),
+        Movie.count({ where: { edit_status: "pending" } }),
+        Movie.count({ where: { delete_request_status: "pending" } }),
+      ]);
+
       const banners = users.filter(u => u.pending_banner_image && u.banner_status === "pending").length;
-      const photos  = users.filter(u => u.pending_picture && u.picture_status === "pending").length;
-      const pseudos = users.filter(u => u.pending_pseudo && u.pseudo_status === "pending").length;
-      const recipes = await Recipe.count({ where: { status: "pending" } });
-      return res.json({ success: true, banners, photos, pseudos, recipes });
+      const photos  = users.filter(u => u.pending_picture  && u.picture_status  === "pending").length;
+      const pseudos = users.filter(u => u.pending_pseudo   && u.pseudo_status   === "pending").length;
+      const profils = banners + photos + pseudos;
+      const filmEdits = movieEdits + movieDeletes;
+
+      return res.json({ success: true, banners, photos, pseudos, profils, recipes, notices, recipePictures, filmEdits });
     } catch (error) {
       return res.status(500).json({ success: false });
     }

@@ -1092,32 +1092,53 @@ document.addEventListener("DOMContentLoaded", () => {
   // ══════════════════════════════════════════════════════
   let _pendingSnapshot = null;
 
+  function _updateNavBadge(key, count) {
+    const btn = document.querySelector(`[data-pending-key="${key}"]`);
+    if (!btn) return;
+    let badge = btn.querySelector(".nav-badge");
+    if (count > 0) {
+      if (!badge) { badge = document.createElement("span"); badge.className = "nav-badge"; btn.appendChild(badge); }
+      badge.textContent = count;
+    } else {
+      badge?.remove();
+    }
+  }
+
   async function checkPendingCount() {
     try {
       const r = await fetch("/admin/api/pending-count");
       const d = await r.json();
       if (!d.success) return;
 
+      // Mise à jour des badges nav en temps réel
+      _updateNavBadge("recipes",        d.recipes        || 0);
+      _updateNavBadge("notices",        d.notices        || 0);
+      _updateNavBadge("profils",        d.profils        || 0);
+      _updateNavBadge("recipePictures", d.recipePictures || 0);
+      _updateNavBadge("filmEdits",      d.filmEdits      || 0);
+
       if (_pendingSnapshot === null) {
-        /* Premier appel : juste mémoriser */
         _pendingSnapshot = d;
         return;
       }
 
-      const newBanners = d.banners - _pendingSnapshot.banners;
-      const newPhotos  = d.photos  - _pendingSnapshot.photos;
-      const newRecipes = d.recipes - _pendingSnapshot.recipes;
+      // Toasts pour les nouvelles demandes
+      const newBanners = (d.banners  || 0) - (_pendingSnapshot.banners  || 0);
+      const newPhotos  = (d.photos   || 0) - (_pendingSnapshot.photos   || 0);
+      const newRecipes = (d.recipes  || 0) - (_pendingSnapshot.recipes  || 0);
+      const newPseudos = (d.pseudos  || 0) - (_pendingSnapshot.pseudos  || 0);
+      const newNotices = (d.notices  || 0) - (_pendingSnapshot.notices  || 0);
 
-      if (newBanners > 0) showToast(`${newBanners} nouvelle${newBanners > 1 ? 's' : ''} bannière${newBanners > 1 ? 's' : ''} en attente de validation`, "warning");
+      if (newBanners > 0) showToast(`${newBanners} nouvelle${newBanners > 1 ? 's' : ''} bannière${newBanners > 1 ? 's' : ''} en attente`, "warning");
       if (newPhotos  > 0) showToast(`${newPhotos} nouvelle${newPhotos > 1 ? 's' : ''} photo${newPhotos > 1 ? 's' : ''} de profil en attente`, "warning");
-      if (newRecipes > 0) showToast(`${newRecipes} nouvelle${newRecipes > 1 ? 's' : ''} recette${newRecipes > 1 ? 's' : ''} en attente de validation`, "warning");
-      const newPseudos = (d.pseudos || 0) - (_pendingSnapshot.pseudos || 0);
-      if (newPseudos > 0) showToast(`${newPseudos} nouveau${newPseudos > 1 ? 'x' : ''} pseudo${newPseudos > 1 ? 's' : ''} en attente de validation`, "warning");
+      if (newRecipes > 0) showToast(`${newRecipes} nouvelle${newRecipes > 1 ? 's' : ''} recette${newRecipes > 1 ? 's' : ''} en attente`, "warning");
+      if (newPseudos > 0) showToast(`${newPseudos} nouveau${newPseudos > 1 ? 'x' : ''} pseudo${newPseudos > 1 ? 's' : ''} en attente`, "warning");
+      if (newNotices > 0) showToast(`${newNotices} nouvel${newNotices > 1 ? 's' : ''} avis${newNotices > 1 ? '' : ''} en attente`, "warning");
 
       _pendingSnapshot = d;
     } catch { /* silencieux */ }
   }
 
   checkPendingCount();
-  setInterval(checkPendingCount, 20000);
+  setInterval(checkPendingCount, 15000);
 });

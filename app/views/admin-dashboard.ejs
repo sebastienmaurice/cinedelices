@@ -33,33 +33,33 @@
         </button>
 
         <p class="sidebar-nav__label">Modération</p>
-        <button class="nav-item" data-nav-view="recettes">
+        <button class="nav-item" data-nav-view="recettes" data-pending-key="recipes">
           <i data-lucide="utensils" width="18" height="18" aria-hidden="true"></i>
           <span>Recettes</span>
           <% const pendingRecettesTotal = (recipes ? recipes.filter(r => r.status === 'pending').length : 0) + (pendingRecipeEdits ? pendingRecipeEdits.length : 0) + (pendingRecipeDeleteRequests ? pendingRecipeDeleteRequests.length : 0); %>
           <% if (pendingRecettesTotal > 0) { %><span class="nav-badge"><%= pendingRecettesTotal %></span><% } %>
         </button>
-        <button class="nav-item" data-nav-view="avis">
+        <button class="nav-item" data-nav-view="avis" data-pending-key="notices">
           <i data-lucide="message-square" width="18" height="18" aria-hidden="true"></i>
           <span>Avis</span>
           <% const pendingAvisTotal = (avis ? avis.filter(a => a.status === 'pending').length : 0) + (pendingNoticeEdits ? pendingNoticeEdits.length : 0) + (pendingNoticeDeleteRequests ? pendingNoticeDeleteRequests.length : 0); %>
           <% if (pendingAvisTotal > 0) { %><span class="nav-badge"><%= pendingAvisTotal %></span><% } %>
         </button>
-        <button class="nav-item" data-nav-view="profils">
+        <button class="nav-item" data-nav-view="profils" data-pending-key="profils">
           <i data-lucide="user" width="18" height="18" aria-hidden="true"></i>
           <span>Profils</span>
           <% const pendingPseudosNav = users ? users.filter(u => u.pending_pseudo && u.pseudo_status === 'pending').length : 0; %>
           <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + (pendingBanners ? pendingBanners.length : 0) + pendingPseudosNav; %>
           <% if (pendingProfilsTotal > 0) { %><span class="nav-badge"><%= pendingProfilsTotal %></span><% } %>
         </button>
-        <button class="nav-item" data-nav-view="photos-recettes">
+        <button class="nav-item" data-nav-view="photos-recettes" data-pending-key="recipePictures">
           <i data-lucide="image" width="18" height="18" aria-hidden="true"></i>
           <span>Photos</span>
           <% if (pendingRecipePictures && pendingRecipePictures.length > 0) { %><span class="nav-badge"><%= pendingRecipePictures.length %></span><% } %>
         </button>
 
         <p class="sidebar-nav__label">Contenu publié</p>
-        <button class="nav-item" data-nav-view="pub-films">
+        <button class="nav-item" data-nav-view="pub-films" data-pending-key="filmEdits">
           <i data-lucide="film" width="18" height="18" aria-hidden="true"></i>
           <span>Films</span>
           <% const pendingFilmsEdits = (pendingMovieEdits ? pendingMovieEdits.length : 0) + (pendingMovieDeleteRequests ? pendingMovieDeleteRequests.length : 0); %>
