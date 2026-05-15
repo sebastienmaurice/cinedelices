@@ -8,28 +8,7 @@
 /* ═══════════════════════════════════════════════════════════════
    TOAST
 ═══════════════════════════════════════════════════════════════ */
-(function () {
-  function showToast(msg, type) {
-    let container = document.getElementById('cd-toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'cd-toast-container';
-      container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
-      document.body.appendChild(container);
-    }
-    const t = document.createElement('div');
-    const bg = type === 'success' ? '#1a7a46' : type === 'error' ? '#8b2020' : '#1a3a6a';
-    t.style.cssText = `background:${bg};color:#fff;padding:10px 18px;border-radius:6px;font-size:.85rem;font-family:inherit;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(8px);transition:opacity .22s,transform .22s;pointer-events:none;max-width:320px;`;
-    t.textContent = msg;
-    container.appendChild(t);
-    requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
-    setTimeout(() => {
-      t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
-      setTimeout(() => t.remove(), 280);
-    }, 3200);
-  }
-  window._cdToast = showToast;
-})();
+/* Toast → délégué à cd-toast.js (window._cdToast est déjà défini) */
 
 /* ═══════════════════════════════════════════════════════════════
    HERO — helpers rebuild (utilisés aussi par le handler equip)

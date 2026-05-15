@@ -255,48 +255,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Affiche une notification temporaire
    */
   function showNotification(message, type = "info") {
+    // Délégué au système unifié cd-toast.js
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
-      return;
     }
-
-    const existingNotif = document.querySelector(".favorites-notification");
-    if (existingNotif) existingNotif.remove();
-
-    const notification = document.createElement("div");
-    notification.className = `favorites-notification favorites-notification--${type}`;
-
-    const iconName = type === "success" ? "check-circle" : type === "error" ? "alert-circle" : "info";
-    const iconSVG = window.LucideIcons ? window.LucideIcons.create(iconName) : '';
-    notification.innerHTML = `
-      ${iconSVG}
-      <span>${message}</span>
-    `;
-
-    Object.assign(notification.style, {
-      position: "fixed",
-      bottom: "2rem",
-      right: "2rem",
-      padding: "1rem 1.5rem",
-      borderRadius: "12px",
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-      fontSize: "0.95rem",
-      fontWeight: "500",
-      zIndex: "9999",
-      animation: "slideIn 0.3s ease",
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-      backgroundColor: type === "success" ? "#2e7d32" : type === "error" ? "#c62828" : "#1565c0",
-      color: "#fff",
-    });
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      notification.style.animation = "slideOut 0.3s ease forwards";
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
   }
 
   // Ajouter les keyframes et styles pour animations
