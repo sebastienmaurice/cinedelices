@@ -3,6 +3,7 @@ import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.m
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress } from "../utils/gamification.utils.js";
+import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)
@@ -114,12 +115,13 @@ const authorController = {
       ]);
 
       // Films approuvés pour le CTA banner (animation affiches)
-      const ctaMovies = await Movie.findAll({
+      const ctaMoviesRaw = await Movie.findAll({
         where: { status: "approved" },
-        attributes: ["id", "picture", "cardPath"],
+        attributes: ["id", "picture"],
         limit: 12,
-        order: [["validated_at", "DESC"]],
+        order: [["id", "DESC"]],
       });
+      const ctaMovies = enrichMoviesWithImagePaths(ctaMoviesRaw);
 
       const gamif = await getUserGamificationData(userId, {
         recipes: allRecipes,
