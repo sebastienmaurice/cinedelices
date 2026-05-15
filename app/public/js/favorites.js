@@ -10,6 +10,21 @@
  * - Recettes (data-entity-type="recipe")
  */
 
+/* ── Compteur favoris nav — mise à jour en temps réel ─────────────── */
+function _updateNavFavCount(delta) {
+  const el = document.getElementById("navFavCount");
+  if (!el) return;
+  const current = parseInt(el.textContent) || 0;
+  const next = Math.max(0, current + delta);
+  if (next === 0) {
+    el.textContent = "";
+    el.classList.remove("has-favs");
+  } else {
+    el.textContent = next > 99 ? "99+" : next;
+    el.classList.add("has-favs");
+  }
+}
+
 /* ── XP toast (affiché uniquement pour les membres) ───────────────── */
 function _showXpToast(xpGained, leveledUp, rank) {
   if (!xpGained) return;
@@ -101,6 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             btn.classList.add("animating");
             setTimeout(() => btn.classList.remove("animating"), 400);
+
+            // Mise à jour compteur nav en temps réel
+            _updateNavFavCount(newState ? +1 : -1);
 
             showNotification(data.message, "success");
             if (newState) _showXpToast(data.xpGained, data.leveledUp, data.rank);
