@@ -14,6 +14,7 @@
 
 import { Rating, Movie, Recipe } from "../models/index.model.js";
 import sequelize from "../database/sequelize-client.js";
+import { awardActionXP } from "../services/gamification.service.js";
 
 /**
  * Vérifie qu'une entité existe dans sa table
@@ -123,6 +124,9 @@ const ratingsController = {
           entity_id: entityId,
           score: scoreInt,
         });
+
+        // XP pour première note (pas les mises à jour)
+        awardActionXP(userId, req.userRole, "rating_given").catch(() => {});
 
         // Récupérer la nouvelle moyenne
         const avgResult = await Rating.findOne({

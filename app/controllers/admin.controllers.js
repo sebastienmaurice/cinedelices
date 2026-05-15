@@ -19,6 +19,7 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
+import { awardActionXP } from "../services/gamification.service.js";
 import searchCache from "../utils/search-cache.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import { deleteAsset, uploadToCloudinary } from "../utils/asset-manager.js";
@@ -211,8 +212,15 @@ const adminController = {
       const updateData = { status: "approved", validated_at: new Date() };
 
       // Mise à jour en BDD : status → 'approved' + horodatage validated_at
+      const movie = await Movie.findByPk(movieId, { attributes: ["id", "id_user"] });
       await Movie.update(updateData, { where: { id: movieId } });
       searchCache.clear();
+
+      // XP bonus au contributeur pour film validé
+      if (movie?.id_user) {
+        awardActionXP(movie.id_user, "user", "movie_accepted").catch(() => {});
+      }
+
       res.redirect("/admin?success=movie_validated");
     } catch (error) {
       return renderServerError(
@@ -701,7 +709,13 @@ const adminController = {
       }
 
       // Mise à jour en BDD : status → 'approved' + horodatage validated_at
+      const recipe = await Recipe.findByPk(recipeId, { attributes: ["id", "id_user"] });
       await Recipe.update(updateData, { where: { id: recipeId } });
+
+      // XP bonus au contributeur pour recette validée
+      if (recipe?.id_user) {
+        awardActionXP(recipe.id_user, "user", "recipe_approved").catch(() => {});
+      }
 
       logAdminAction({ adminId: req.userId, action: "approve_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_validated");
@@ -1040,7 +1054,14 @@ const adminController = {
   async validateNotice(req, res) {
     try {
       const noticeId = parseInt(req.params.id, 10);
+      const notice = await Notice.findByPk(noticeId, { attributes: ["id", "id_user"] });
       await Notice.update({ status: "approved", validated_at: new Date() }, { where: { id: noticeId } });
+
+      // XP bonus au contributeur pour avis validé
+      if (notice?.id_user) {
+        awardActionXP(notice.id_user, "user", "review_approved").catch(() => {});
+      }
+
       logAdminAction({ adminId: req.userId, action: "approve_notice", targetType: "notice", targetId: noticeId });
       res.redirect("/admin?success=notice_validated");
     } catch (error) {

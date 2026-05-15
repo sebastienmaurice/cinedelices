@@ -100,7 +100,7 @@ const favoritesController = {
         });
 
         // XP pour les membres uniquement (fire-and-forget)
-        const xpResult = await awardActionXP(userId, req.userRole, "like_received").catch(() => null);
+        const xpResult = await awardActionXP(userId, req.userRole, "favorite_added").catch(() => null);
 
         return res.json({
           success: true,
