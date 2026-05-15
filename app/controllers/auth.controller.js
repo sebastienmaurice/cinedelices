@@ -65,6 +65,26 @@ const authController = {
         });
       }
 
+      // Vérifier si le compte est suspendu
+      if (user.suspended) {
+        const stillSuspended = !user.suspended_until || new Date(user.suspended_until) > new Date();
+        if (stillSuspended) {
+          const until = user.suspended_until
+            ? ` jusqu'au ${new Date(user.suspended_until).toLocaleDateString("fr-FR")}`
+            : " indéfiniment";
+          const reason = user.suspension_reason ? ` Motif : ${user.suspension_reason}` : "";
+          return res.status(StatusCodes.FORBIDDEN).render("error", {
+            error: "403",
+            message: `Votre compte est suspendu${until}.${reason}`,
+          });
+        }
+        // Suspension expirée → lever automatiquement
+        await User.update(
+          { suspended: false, suspended_until: null, suspension_reason: null },
+          { where: { id: user.id } }
+        );
+      }
+
       // Création du token
       const token = jwt.sign(
         // le payload: ce sont les infos que contient le token
