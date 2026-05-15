@@ -341,7 +341,9 @@
       if (firstName) formData.append("first_name", firstName);
       if (lastName) formData.append("last_name", lastName);
       if (email) formData.append("email", email);
-      if (pseudo) formData.append("pseudo", pseudo);
+      // N'envoyer le pseudo que s'il a été explicitement modifié
+      const origPseudo = (_origValues["username"] || "").trim();
+      if (pseudo && pseudo !== origPseudo) formData.append("pseudo", pseudo);
       if (password) formData.append("password", password);
 
       const notifyRecipes = document.querySelector("input[name='notify_recipes']");
