@@ -3,8 +3,9 @@
   if (!profilePage) return;
 
   const userId = document.querySelector("main[data-user-id]")?.dataset.userId || profilePage.dataset.userId;
-  const editButton = document.getElementById("editProfileBtn");
-  const saveButton = document.getElementById("saveProfileBtn");
+  const editButton   = document.getElementById("editProfileBtn");
+  const saveButton   = document.getElementById("saveProfileBtn");
+  const cancelButton = document.getElementById("cancelProfileBtn");
   const toastContainer = document.querySelector(".profile-toast-wrap");
   const removeAvatarBtn = document.getElementById("removeAvatarBtn");
   const avatarInput = document.getElementById("avatar");
@@ -22,6 +23,12 @@
 
   let removeAvatar = false;
   let isEditing = false;
+
+  // Sauvegarder les valeurs initiales pour le bouton Annuler
+  const _origValues = {};
+  editableInputs.forEach((input) => {
+    _origValues[input.id || input.name] = input.value;
+  });
 
   const showToast = (message, type = "") => {
     if (!toastContainer) return;
@@ -53,12 +60,11 @@
 
   const setEditingState = (enabled) => {
     isEditing = enabled;
-    editableInputs.forEach((input) => {
-      input.disabled = !enabled;
-    });
-    if (!enabled) {
-      removeAvatar = false;
-    }
+    editableInputs.forEach((input) => { input.disabled = !enabled; });
+    if (saveButton)   saveButton.style.display   = enabled ? "" : "none";
+    if (cancelButton) cancelButton.style.display = enabled ? "" : "none";
+    if (editButton)   editButton.style.display   = enabled ? "none" : "";
+    if (!enabled) { removeAvatar = false; }
   };
 
   setEditingState(false);
@@ -229,8 +235,18 @@
     editButton.addEventListener("click", () => {
       setEditingState(true);
       showToast("Mode édition activé.", "success");
-      const firstField = document.querySelector("#firstname");
-      firstField?.focus();
+      document.querySelector("#firstname")?.focus();
+    });
+  }
+
+  if (cancelButton) {
+    cancelButton.addEventListener("click", () => {
+      // Restaurer les valeurs originales
+      editableInputs.forEach((input) => {
+        const key = input.id || input.name;
+        if (key in _origValues) input.value = _origValues[key];
+      });
+      setEditingState(false);
     });
   }
 
