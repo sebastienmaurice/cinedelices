@@ -3,11 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="<%= author.pseudo %> — Auteur sur Ciné Délices · <%= recipesCount %> recette<%= recipesCount > 1 ? 's' : '' %> cinéphiles"
-    />
+    <meta name="description" content="<%= author.pseudo %> — Auteur sur Ciné Délices · <%= recipesCount %> recette<%= recipesCount > 1 ? 's' : '' %> cinéphiles inspirées du cinéma." />
     <title><%= author.pseudo %> — Page Auteur · Ciné Délices</title>
+
+    <meta property="og:type"        content="profile" />
+    <meta property="og:site_name"   content="Ciné Délices" />
+    <meta property="og:locale"      content="fr_FR" />
+    <meta property="og:title"       content="<%= author.pseudo %> — Ciné Délices" />
+    <meta property="og:description" content="Découvrez les <%= recipesCount %> recette<%= recipesCount > 1 ? 's' : '' %> de <%= author.pseudo %> inspirées du cinéma." />
+    <meta property="og:image"       content="<%= siteUrl %><%= author.picture || '/images/image-default-profile.jpg' %>" />
+    <meta property="og:url"         content="<%= siteUrl %>/auteur/<%= author.id %>" />
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:title"       content="<%= author.pseudo %> — Ciné Délices" />
+    <meta name="twitter:description" content="Découvrez les recettes cinéphiles de <%= author.pseudo %>." />
+    <link rel="canonical" href="<%= siteUrl %>/auteur/<%= author.id %>" />
 
     <%- include("partials/head-resources") %>
 

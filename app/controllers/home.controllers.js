@@ -191,6 +191,65 @@ const homeController = {
       return renderServerError(res, error);
     }
   },
+
+  async sitemap(req, res) {
+    try {
+      const BASE = process.env.BASE_URL || "https://cinedelices.com";
+      const now  = new Date().toISOString().split("T")[0];
+
+      const [movies, recipes, authors] = await Promise.all([
+        Movie.findAll({
+          where: { status: "approved" },
+          attributes: ["id", "slug", "updatedAt"],
+        }),
+        Recipe.findAll({
+          where: { status: "approved" },
+          attributes: ["id", "slug", "updatedAt"],
+          include: [{ model: Movie, attributes: ["id"], required: true }],
+        }),
+        // Auteurs : membres avec au moins une recette approuvée
+        User.findAll({
+          attributes: ["id", "updatedAt"],
+          include: [{
+            model: Recipe,
+            as: "recipes",
+            where: { status: "approved" },
+            attributes: [],
+            required: true,
+          }],
+        }),
+      ]);
+
+      const url = (loc, freq, priority, lastmod = now) =>
+        `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+
+      const staticUrls = [
+        url(`${BASE}/`,               "daily",   "1.0"),
+        url(`${BASE}/movies`,          "daily",   "0.9"),
+        url(`${BASE}/recipes-movie`,   "daily",   "0.9"),
+        url(`${BASE}/contact-about`,   "monthly", "0.5"),
+        url(`${BASE}/mentions-legales`, "yearly", "0.3"),
+      ].join("\n");
+
+      const movieUrls  = movies.map(m => url(`${BASE}/recipes-movie/${m.slug || m.id}`, "weekly", "0.8", m.updatedAt ? new Date(m.updatedAt).toISOString().split("T")[0] : now)).join("\n");
+      const recipeUrls = recipes.map(r => url(`${BASE}/recipes-movie/details/${r.slug || r.id}`, "weekly", "0.7", r.updatedAt ? new Date(r.updatedAt).toISOString().split("T")[0] : now)).join("\n");
+      const authorUrls = authors.map(a => url(`${BASE}/auteur/${a.id}`, "monthly", "0.5", a.updatedAt ? new Date(a.updatedAt).toISOString().split("T")[0] : now)).join("\n");
+
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls}
+${movieUrls}
+${recipeUrls}
+${authorUrls}
+</urlset>`;
+
+      res.header("Content-Type", "application/xml");
+      res.header("Cache-Control", "public, max-age=3600");
+      res.send(xml);
+    } catch (error) {
+      res.status(500).send("Erreur génération sitemap");
+    }
+  },
 };
 
 export default homeController;
