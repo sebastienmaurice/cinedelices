@@ -494,6 +494,25 @@
     if (e.key === "Escape" && searchOverlay?.classList.contains("is-open")) closeSearch();
   });
 
+  /* ── Compteur favoris nav ── */
+  <% if (typeof role !== "undefined" && userId) { %>
+  (async () => {
+    try {
+      const [rMovies, rRecipes] = await Promise.all([
+        fetch("/api/favorites?entityType=movie"),
+        fetch("/api/favorites?entityType=recipe"),
+      ]);
+      const [dMovies, dRecipes] = await Promise.all([rMovies.json(), rRecipes.json()]);
+      const total = (dMovies.favoriteIds?.length || 0) + (dRecipes.favoriteIds?.length || 0);
+      const el = document.getElementById("navFavCount");
+      if (el && total > 0) {
+        el.textContent = total > 99 ? "99+" : total;
+        el.classList.add("has-favs");
+      }
+    } catch { /* silencieux */ }
+  })();
+  <% } %>
+
   /* Intercepter le submit → rediriger vers /movies?q=QUERY au lieu de l'API JSON */
   document.getElementById("searchForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
