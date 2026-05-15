@@ -383,8 +383,8 @@
                           </span>
                         </div>
                         <div class="list-row__tags">
-                          <span class="lr-tag lr-tag--cat"><%= recipe.category %></span>
-                          <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
+                          <span class="tag tag--recette-cat lr-tag"><%= recipe.category %></span>
+                          <% if (recipe.Movie) { %><span class="tag tag--or lr-tag"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipe.Movie.title %></span><% } %>
                         </div>
                         <div class="list-row__sub">
                           <i data-lucide="clock" aria-hidden="true"></i>
@@ -428,7 +428,7 @@
                     <% if (movie.cardPath || movie.picture) { %>
                     <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
                     <% } else { %>
-                    <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                    <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
                     <% } %>
                     <div class="list-row__body">
                       <div class="list-row__top">
@@ -438,7 +438,7 @@
                           <%= _msTxt %>
                         </span>
                       </div>
-                      <% if (movie.genre) { %><div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div><% } %>
+                      <% if (movie.genre) { %><div class="list-row__tags"><span class="tag tag--genre-cinema lr-tag"><%= movie.genre %></span></div><% } %>
                       <div class="list-row__sub">
                         <i data-lucide="film" aria-hidden="true"></i>
                         <%= movie.year %>
@@ -792,12 +792,12 @@
                       <% if (movie.cardPath || movie.picture) { %>
                       <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
                       <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
                       <% } %>
                       <div class="list-row__body">
                         <div class="list-row__top">
                           <span class="list-row__name"><%= movie.title %></span>
-                          <span class="lr-tag lr-tag--genre" style="flex-shrink:0"><% if (movie.genre) { %><%= movie.genre %><% } %></span>
+                          <span class="tag tag--genre-cinema lr-tag" style="flex-shrink:0"><% if (movie.genre) { %><%= movie.genre %><% } %></span>
                         </div>
                         <div class="list-row__sub">
                           <i data-lucide="film" aria-hidden="true"></i>
@@ -812,7 +812,7 @@
                     <% } %>
                   <% } else { %>
                   <div class="crea-empty">
-                    <div class="crea-empty__icon">🎬</div>
+                    <div class="crea-empty__icon"><i data-lucide="film" width="36" height="36" stroke-width="1" aria-hidden="true"></i></div>
                     <div class="crea-empty__title">Aucun film favori</div>
                     <div class="crea-empty__sub">Explorez la collection et ajoutez vos films préférés</div>
                   </div>
@@ -842,7 +842,7 @@
                       <div class="list-row__body">
                         <div class="list-row__top">
                           <span class="list-row__name"><%= recipe.name %></span>
-                          <span class="lr-tag lr-tag--cat" style="flex-shrink:0"><%= recipe.category %></span>
+                          <span class="tag tag--recette-cat lr-tag" style="flex-shrink:0"><%= recipe.category %></span>
                         </div>
                         <div class="list-row__sub">
                           <i data-lucide="clock" aria-hidden="true"></i>
@@ -882,7 +882,7 @@
                       <% if (movie.cardPath || movie.picture) { %>
                       <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
                       <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
                       <% } %>
                       <div class="list-row__body">
                         <div class="list-row__top">
@@ -1187,7 +1187,7 @@
                     <% _cr.forEach(function(recipe) {
                       const rsCls = recipe.status === 'approved' ? 'lrs--valide' : recipe.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
                       const rsTxt = recipe.status === 'approved' ? 'Validée' : recipe.status === 'pending' ? 'En attente' : 'Refusée';
-                      const diffCls = recipe.difficulty === 'Facile' ? 'lr-tag--diff' : recipe.difficulty === 'Difficile' ? 'lr-tag--diff-h' : 'lr-tag--diff-m';
+                      const diffCls = recipe.difficulty === 'Facile' ? 'tag--recette-facile' : recipe.difficulty === 'Difficile' ? 'tag--recette-difficile' : 'tag--recette-moyen';
                     %>
                     <div class="list-row list-row--recette account-item"
                       data-type="recipe"
@@ -1221,9 +1221,9 @@
                           </span>
                         </div>
                         <div class="list-row__tags">
-                          <span class="lr-tag lr-tag--cat"><%= recipe.category %></span>
-                          <span class="lr-tag <%= diffCls %>"><%= recipe.difficulty %></span>
-                          <% if (recipe.Movie) { %><span class="lr-tag lr-tag--film">🎬 <%= recipe.Movie.title %></span><% } %>
+                          <span class="tag tag--recette-cat lr-tag"><%= recipe.category %></span>
+                          <span class="tag <%= diffCls %> lr-tag"><%= recipe.difficulty %></span>
+                          <% if (recipe.Movie) { %><span class="tag tag--or lr-tag"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipe.Movie.title %></span><% } %>
                         </div>
                         <div class="list-row__sub account-item__meta">
                           <i data-lucide="clock" aria-hidden="true"></i>
@@ -1308,7 +1308,7 @@
                       <% if (movie.cardPath || movie.picture) { %>
                       <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
                       <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph">🎬</div>
+                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
                       <% } %>
                       <div class="list-row__body">
                         <div class="list-row__top">
@@ -1319,7 +1319,7 @@
                           </span>
                         </div>
                         <% if (movie.genre) { %>
-                        <div class="list-row__tags"><span class="lr-tag lr-tag--genre"><%= movie.genre %></span></div>
+                        <div class="list-row__tags"><span class="tag tag--genre-cinema lr-tag"><%= movie.genre %></span></div>
                         <% } %>
                         <div class="list-row__sub">
                           <i data-lucide="film" aria-hidden="true"></i>
@@ -1340,7 +1340,7 @@
                     <% }) %>
                   <% } else { %>
                   <div class="crea-empty">
-                    <div class="crea-empty__icon">🎬</div>
+                    <div class="crea-empty__icon"><i data-lucide="film" width="36" height="36" stroke-width="1" aria-hidden="true"></i></div>
                     <div class="crea-empty__title">Aucun film proposé</div>
                     <div class="crea-empty__sub">Suggérez un film à la communauté</div>
                   </div>
