@@ -139,13 +139,15 @@
             </div>
             <% } %>
             <div class="rh-tags">
-              <span class="rh-tag rh-tag--or"><%= recipe.category %></span>
-              <span class="rh-tag rh-tag--bleu"><%= recipe.difficulty %></span>
-              <span class="rh-tag rh-tag--vert"><%= recipe.time %> min</span>
+              <span class="tag tag--recette-cat"><%= recipe.category %></span>
+              <% const _diff = (recipe.difficulty || '').toLowerCase();
+                 const _diffCls = _diff.includes('facile') ? 'tag--recette-facile' : _diff.includes('difficile') ? 'tag--recette-difficile' : 'tag--recette-moyen'; %>
+              <span class="tag <%= _diffCls %>"><%= recipe.difficulty %></span>
+              <span class="tag tag--vert"><i data-lucide="clock" width="10" height="10" aria-hidden="true"></i> <%= recipe.time %> min</span>
               <% if (recipe.servings) { %>
-              <span class="rh-tag rh-tag--violet"><%= recipe.servings %> pers.</span>
+              <span class="tag tag--bleu"><i data-lucide="users" width="10" height="10" aria-hidden="true"></i> <%= recipe.servings %> pers.</span>
               <% } %>
-              <span class="rh-tag rh-tag--or"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></span>
+              <span class="tag tag--or"><i data-lucide="list" width="10" height="10" aria-hidden="true"></i> <%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></span>
             </div>
             <div class="rh-actions">
               <a href="#preparation" class="btn btn--red">
