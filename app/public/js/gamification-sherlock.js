@@ -141,7 +141,7 @@ class SherlockBadge {
   /* ── DOM ── */
   _buildDOM(el, photoSrc) {
     const S = this.S, N = NATIVE;
-    el.style.cssText = 'position:absolute;top:0;left:0;width:260px;height:260px;overflow:visible;cursor:none;';
+    el.style.cssText = 'position:absolute;top:0;left:0;width:260px;height:260px;overflow:hidden;cursor:none;';
 
     /* Zone clippée */
     const clip = document.createElement('div');
