@@ -1633,6 +1633,36 @@
                     <span>Niv. <%= fr.minLvl %> requis</span>
                   <% } %>
                 </div>
+
+                <!-- Tooltip déblocage (cadres verrouillés uniquement) -->
+                <% if (!_isUnlocked) {
+                  const _xpForFrame     = XP_TABLE[fr.minLvl - 1] || 0;
+                  const _xpGap          = Math.max(0, _xpForFrame - _xp);
+                  const _recipesNeeded  = Math.ceil(_xpGap / 50);
+                  const _reviewsNeeded  = Math.ceil(_xpGap / 10);
+                  const _lvlsToGo       = fr.minLvl - _lvl;
+                %>
+                <div class="frame-tile__tooltip" role="tooltip">
+                  <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
+                  <div class="frame-tile__tooltip-row">
+                    <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
+                    Niveau <%= fr.minLvl %> requis
+                    <% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close">— encore 1 niveau !</span><% } %>
+                  </div>
+                  <div class="frame-tile__tooltip-row">
+                    <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
+                    <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
+                  </div>
+                  <div class="frame-tile__tooltip-hint">
+                    <% if (_recipesNeeded <= 4) { %>
+                      ≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %>
+                    <% } else { %>
+                      ≈ <%= _reviewsNeeded %> avis approuvés ou <%= _recipesNeeded %> recettes
+                    <% } %>
+                  </div>
+                </div>
+                <% } %>
+
               </div>
               <% }); %>
             </div>
