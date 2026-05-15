@@ -206,7 +206,7 @@
         name="query"
         class="search-overlay__input"
         id="searchInput"
-        placeholder="Rechercher un film, une recette…"
+        placeholder="Ex : Harry Potter, Ratatouille, tarte…"
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
@@ -492,6 +492,15 @@
   searchBackdrop?.addEventListener("click", closeSearch);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && searchOverlay?.classList.contains("is-open")) closeSearch();
+  });
+
+  /* Intercepter le submit → rediriger vers /movies?q=QUERY au lieu de l'API JSON */
+  document.getElementById("searchForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = searchInput?.value?.trim();
+    if (!q || q.length < 2) return;
+    closeSearch();
+    window.location.href = "/movies?q=" + encodeURIComponent(q);
   });
 
   /* ── Boutons js-open-login / js-open-register (délégation globale) ── */

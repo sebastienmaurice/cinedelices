@@ -57,6 +57,14 @@
     // Fermer le dropdown si on clique en dehors
     document.addEventListener("click", handleClickOutside);
 
+    // Auto-déclencher si ?q= présent dans l'URL (vient de la recherche globale)
+    const urlQ = new URLSearchParams(window.location.search).get("q");
+    if (urlQ && urlQ.trim().length >= MIN_SEARCH_LENGTH) {
+      searchInput.value = urlQ.trim();
+      searchInput.focus();
+      performSearch(urlQ.trim());
+    }
+
     console.log("✅ Recherche avancée initialisée");
   }
 
