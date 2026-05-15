@@ -25,8 +25,8 @@
         { n: 'Figma',      f: true  },
       ],
       films: ['Retour vers le futur', 'Le Seigneur des Anneaux', 'Interstellar', 'Forrest Gump', 'Star Wars'],
-      li:    'https://linkedin.com',
-      gh:    'https://github.com',
+      li:    'https://www.linkedin.com/in/sebastien-maurice',
+      gh:    'https://github.com/sebastienmaurice',
     },
     ludovic: {
       img:   '/images/profil-contact/profil-ludovic.jpg',
@@ -44,8 +44,8 @@
         { n: 'Git',        f: true  },
       ],
       films: ['Harry Potter', 'Pirates des Caraïbes', '300', 'V pour Vendetta'],
-      li:    'https://linkedin.com',
-      gh:    'https://github.com',
+      li:    'https://www.linkedin.com/in/ludovictrichereaupsp/',
+      gh:    'https://github.com/TRICHEREAUludovic',
     },
     denis: {
       img:   '/images/profil-contact/profil-denis.jpg',
@@ -82,8 +82,8 @@
         { n: 'Git',        f: true  },
       ],
       films: ['Ratatouille', 'Amélie Poulain', 'Le Dîner de Cons', 'Titanic'],
-      li:    'https://linkedin.com',
-      gh:    'https://github.com',
+      li:    'https://www.linkedin.com/in/richard-francois-6b5a80235/',
+      gh:    'https://github.com/Richard-Francois-3842',
     },
   };
 
