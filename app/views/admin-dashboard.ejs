@@ -304,9 +304,9 @@
                   </div>
                 </div>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-                  <span class="s-badge s-badge--pending">En attente</span>
+                  <span class="badge-status badge-status--pending">En attente</span>
                   <% if (recipe.edit_requested_at && recipe.edit_status !== 'pending') { %>
-                  <span class="s-badge" style="background:rgba(80,80,180,.18);border:1px solid rgba(120,120,220,.35);color:rgba(160,160,255,.9);font-size:.55rem;">
+                  <span class="badge-status badge-status--proposed" style="font-size:.55rem;">
                     🔄 Resoumission — <%= new Date(recipe.edit_requested_at).toLocaleDateString('fr-FR') %>
                   </span>
                   <% } %>
@@ -395,7 +395,7 @@
               <% pendingRecipeEdits.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--modif">Modification</span>
+                  <span class="badge-status badge-status--proposed">Modification</span>
                   <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
                   <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
                   <ul class="mod-row__changes">
@@ -436,7 +436,7 @@
               <% pendingRecipeDeleteRequests.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <span class="badge-status badge-status--delete">Suppression</span>
                   <strong class="mod-row__title"><%= req.name || 'Recette inconnue' %></strong>
                   <% if (req.contributor) { %><span class="mod-row__user">par <%= req.contributor.pseudo %></span><% } %>
                   <% if (req.Movie) { %><p class="mod-row__excerpt">Film : <%= req.Movie.title %></p><% } %>
@@ -519,7 +519,7 @@
                     <% } else { %>—<% } %>
                   </td>
                   <td><span class="cell-excerpt"><%= (notice.content || '').substring(0, 80) %>…</span></td>
-                  <td><span class="s-badge s-badge--pending">En attente</span></td>
+                  <td><span class="badge-status badge-status--pending">En attente</span></td>
                   <td class="actions-cell">
                     <form action="/admin/validateNotice/<%= notice.id %>" method="POST" style="display:inline;">
                       <button type="submit" class="act-btn act-btn--approve act-btn--sm" title="Valider">
@@ -563,7 +563,7 @@
               <% pendingNoticeEdits.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--modif">Modification</span>
+                  <span class="badge-status badge-status--proposed">Modification</span>
                   <strong class="mod-row__title">Avis sur "<%= req.Recipe ? req.Recipe.name : 'recette inconnue' %>"</strong>
                   <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                   <% if (req.pending_content) { %><p class="mod-row__excerpt">"<%= req.pending_content.substring(0, 120) %>…"</p><% } %>
@@ -595,7 +595,7 @@
               <% pendingNoticeDeleteRequests.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <span class="badge-status badge-status--delete">Suppression</span>
                   <strong class="mod-row__title">Avis sur "<%= req.Recipe ? req.Recipe.name : 'recette inconnue' %>"</strong>
                   <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                   <% if (req.content) { %><p class="mod-row__excerpt">"<%= req.content.substring(0, 120) %>…"</p><% } %>
@@ -662,7 +662,7 @@
                 </div>
                 <div class="media-card__body">
                   <p class="media-card__user"><%= photo.pseudo || photo.username || 'Utilisateur inconnu' %></p>
-                  <span class="s-badge s-badge--pending">En attente</span>
+                  <span class="badge-status badge-status--pending">En attente</span>
                 </div>
                 <div class="media-card__actions">
                   <form action="/admin/users/<%= photo.id %>/photo/approve" method="POST" style="display:inline;">
@@ -700,7 +700,7 @@
                 </div>
                 <div class="media-card__body">
                   <p class="media-card__user"><%= banner.pseudo || 'Utilisateur inconnu' %></p>
-                  <span class="s-badge s-badge--pending">En attente</span>
+                  <span class="badge-status badge-status--pending">En attente</span>
                 </div>
                 <div class="media-card__actions">
                   <form action="/admin/users/<%= banner.id %>/banner/approve" method="POST" style="display:inline;">
@@ -736,7 +736,7 @@
               <div class="media-card pseudo-card">
                 <div class="pseudo-card__header">
                   <span class="pseudo-card__username"><%= u.username || u.pseudo %></span>
-                  <span class="s-badge s-badge--pending">En attente</span>
+                  <span class="badge-status badge-status--pending">En attente</span>
                 </div>
                 <div class="pseudo-card__change">
                   <div class="pseudo-card__value">
@@ -797,7 +797,7 @@
                 <p class="media-card__user"><%= pic.Recipe.name %></p>
                 <% if (pic.Recipe.contributor) { %><span class="mod-row__user">par <%= pic.Recipe.contributor.pseudo %></span><% } %>
                 <% } %>
-                <span class="s-badge s-badge--pending">En attente</span>
+                <span class="badge-status badge-status--pending">En attente</span>
                 <span class="tag" style="margin-left:4px;">Photo <%= pic.position %></span>
               </div>
               <div class="media-card__actions">
@@ -896,7 +896,7 @@
                 </td>
                 <td>
                   <% if (user.suspended) { %>
-                  <span class="s-badge s-badge--rejected" style="font-size:.58rem;">Suspendu</span>
+                  <span class="badge-status badge-status--rejected" style="font-size:.58rem;">Suspendu</span>
                   <% } else { %>
                   <span style="font-size:.6rem; color:rgba(100,200,130,.7);">Actif</span>
                   <% } %>
@@ -974,7 +974,7 @@
                 </td>
                 <td>
                   <% if (user.suspended) { %>
-                  <span class="s-badge s-badge--rejected" style="font-size:.58rem;">Suspendu</span>
+                  <span class="badge-status badge-status--rejected" style="font-size:.58rem;">Suspendu</span>
                   <% } else { %>
                   <span style="font-size:.6rem; color:rgba(100,200,130,.7);">Actif</span>
                   <% } %>
@@ -1112,7 +1112,7 @@
               <% pendingMovieEdits.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--modif">Modification</span>
+                  <span class="badge-status badge-status--proposed">Modification</span>
                   <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
                   <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                   <ul class="mod-row__changes">
@@ -1148,7 +1148,7 @@
               <% pendingMovieDeleteRequests.forEach(function(req) { %>
               <div class="mod-row">
                 <div class="mod-row__info">
-                  <span class="s-badge s-badge--delete">Suppression</span>
+                  <span class="badge-status badge-status--delete">Suppression</span>
                   <strong class="mod-row__title"><%= req.title || 'Film inconnu' %></strong>
                   <% if (req.User) { %><span class="mod-row__user">par <%= req.User.pseudo %></span><% } %>
                 </div>
