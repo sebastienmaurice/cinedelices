@@ -1,4 +1,20 @@
 import "dotenv/config";
+
+// Validation des variables d'environnement requises au démarrage
+const REQUIRED_ENV = [
+  "JWT_SECRET",
+  "PG_URL",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+  "RESEND_API_KEY",
+];
+const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
+if (missingEnv.length > 0) {
+  console.error(`❌ Variables d'environnement manquantes : ${missingEnv.join(", ")}`);
+  process.exit(1);
+}
+
 import express from "express";
 import helmet from "helmet";
 import { xss } from "express-xss-sanitizer";

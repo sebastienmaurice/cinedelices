@@ -191,7 +191,6 @@ const moviesController = {
       const cachedResult = searchCache.get(cacheKey);
 
       if (cachedResult) {
-        console.log(`📦 Résultat récupéré du cache pour: "${searchTerm}"`);
         return res.json({
           ...cachedResult,
           cached: true,
@@ -603,9 +602,6 @@ const moviesController = {
         if (response.ok) {
           endpoint = otherEndpoint;
           contentType = otherType;
-          console.log(
-            `ℹ️ Type détecté automatiquement pour ${tmdb_id}: ${contentType}`
-          );
         }
       }
 

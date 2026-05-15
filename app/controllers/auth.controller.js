@@ -880,10 +880,7 @@ const authController = {
       const isResubmission = recipe.status === "rejected";
       if (isResubmission) {
         updateData.status = "pending";
-        updateData.edit_requested_at = new Date(); // timestamp de resoumission pour l'admin
-        console.log(
-          `[Revalidation] Recipe resubmitted for review — recipe_id:${recipeId} user_id:${req.userId} timestamp:${new Date().toISOString()}`
-        );
+        updateData.edit_requested_at = new Date();
       }
 
       // Recette non encore approuvée : mise à jour directe

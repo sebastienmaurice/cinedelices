@@ -11,6 +11,7 @@ import {
 } from "../models/index.model.js";
 import * as argon2 from "argon2";
 import { Op } from "sequelize";
+import sequelize from "../database/sequelize-client.js";
 import {
   enrichMovieWithImagePaths,
   enrichMoviesWithImagePaths,
@@ -326,17 +327,30 @@ const adminController = {
         return res.redirect("/admin?success=movie_delete_rejected");
       }
 
-      const recipes = await Recipe.findAll({ where: { id_movie: movieId } });
-      const recipeIds = recipes.map((recipe) => recipe.id);
-      if (recipeIds.length > 0) {
-        for (const r of recipes) { await deleteAsset(r.picture); await deleteAsset(r.pending_picture); }
-        await Notice.destroy({ where: { id_recipe: recipeIds } });
-        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
-        await Recipe.destroy({ where: { id_movie: movieId } });
-      }
+      const recipes = await Recipe.findAll({
+        where: { id_movie: movieId },
+        attributes: ["id", "picture", "pending_picture"],
+      });
+      const recipeIds = recipes.map((r) => r.id);
 
+      await sequelize.transaction(async (t) => {
+        const opts = { transaction: t };
+        if (recipeIds.length > 0) {
+          await Notice.destroy({ where: { id_recipe: recipeIds }, ...opts });
+          await UsersRecipes.destroy({ where: { id_recipe: recipeIds }, ...opts });
+          await RecipePicture.destroy({ where: { recipe_id: recipeIds }, ...opts });
+          await Recipe.destroy({ where: { id_movie: movieId }, ...opts });
+        }
+        await Movie.destroy({ where: { id: movieId }, ...opts });
+      });
+
+      // Suppression des fichiers après la transaction
+      for (const r of recipes) {
+        await deleteAsset(r.picture);
+        await deleteAsset(r.pending_picture);
+      }
       await deleteAsset(movie.picture);
-      await Movie.destroy({ where: { id: movieId } });
+
       searchCache.clear();
       return res.redirect("/admin?success=movie_delete_approved");
     } catch (error) {
@@ -903,39 +917,44 @@ const adminController = {
         return res.status(403).json({ error: "Impossible de supprimer un super administrateur." });
       }
 
-      // Suppression en cascade complète (ordre FK important)
-      await Favorite.destroy({ where: { id_user: userId } });
-      await Rating.destroy({ where: { id_user: userId } });
-      await UserPoints.destroy({ where: { id_user: userId } });
-      await Notice.destroy({ where: { id_user: userId } });
-      await UsersRecipes.destroy({ where: { id_user: userId } });
-      // Recettes de l'utilisateur → fichiers + relations en cascade
+      // Suppression en cascade complète dans une transaction (atomique)
       const userRecipes = await Recipe.findAll({
         where: { id_user: userId },
         attributes: ['id', 'picture', 'pending_picture'],
         include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["file_path"] }],
       });
-      if (userRecipes.length > 0) {
+
+      await sequelize.transaction(async (t) => {
+        const opts = { transaction: t };
         const recipeIds = userRecipes.map(r => r.id);
-        for (const r of userRecipes) {
-          await deleteAsset(r.picture);
-          await deleteAsset(r.pending_picture);
-          for (const pic of (r.RecipePictures || [])) await deleteAsset(pic.file_path);
+
+        await Favorite.destroy({ where: { id_user: userId }, ...opts });
+        await Rating.destroy({ where: { id_user: userId }, ...opts });
+        await UserPoints.destroy({ where: { id_user: userId }, ...opts });
+        await Notice.destroy({ where: { id_user: userId }, ...opts });
+        await UsersRecipes.destroy({ where: { id_user: userId }, ...opts });
+
+        if (recipeIds.length > 0) {
+          await Notice.destroy({ where: { id_recipe: recipeIds }, ...opts });
+          await UsersRecipes.destroy({ where: { id_recipe: recipeIds }, ...opts });
+          await RecipePicture.destroy({ where: { recipe_id: recipeIds }, ...opts });
+          await Recipe.destroy({ where: { id_user: userId }, ...opts });
         }
-        await Notice.destroy({ where: { id_recipe: recipeIds } });
-        await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
-        await RecipePicture.destroy({ where: { recipe_id: recipeIds } });
-        await Recipe.destroy({ where: { id_user: userId } });
-      }
-      // Supprimer les fichiers média du compte
+
+        await Movie.update({ id_user: null }, { where: { id_user: userId }, ...opts });
+        await User.destroy({ where: { id: userId }, ...opts });
+      });
+
+      // Suppression des fichiers après la transaction (non rollbackable, mais BDD cohérente)
       await deleteAsset(user.picture);
       await deleteAsset(user.pending_picture);
       await deleteAsset(user.banner_image);
       await deleteAsset(user.pending_banner_image);
-      // Films de l'utilisateur → mettre id_user à null (ne pas supprimer les films approuvés)
-      await Movie.update({ id_user: null }, { where: { id_user: userId } });
-      // Supprimer l'utilisateur
-      await User.destroy({ where: { id: userId } });
+      for (const r of userRecipes) {
+        await deleteAsset(r.picture);
+        await deleteAsset(r.pending_picture);
+        for (const pic of (r.RecipePictures || [])) await deleteAsset(pic.file_path);
+      }
 
       logAdminAction({ adminId: req.userId, action: "delete_user", targetType: "user", targetId: userId, detail: user.pseudo });
       res.redirect("/admin?success=user_deleted&tab=utilisateurs");

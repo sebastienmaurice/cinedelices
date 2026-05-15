@@ -151,7 +151,8 @@ export const searchCache = new SearchCache(100, 3600000); // 100 entrées max, T
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const cleaned = searchCache.cleanExpired();
-    if (cleaned > 0) {
+    // Log uniquement en développement
+    if (cleaned > 0 && process.env.NODE_ENV !== "production") {
       console.log(`🧹 Cache nettoyé : ${cleaned} entrées expirées supprimées`);
     }
   }, 30 * 60 * 1000); // 30 minutes

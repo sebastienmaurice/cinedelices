@@ -104,7 +104,7 @@ export async function downloadTmdbPoster(tmdbId, type, title) {
       stream.end(buffer);
     });
 
-    console.log(`✅ Affiche TMDB uploadée sur Cloudinary : ${result.secure_url}`);
+    if (process.env.NODE_ENV !== "production") console.log(`✅ Affiche TMDB uploadée sur Cloudinary : ${result.secure_url}`);
     return result.secure_url;
 
   } catch (err) {
