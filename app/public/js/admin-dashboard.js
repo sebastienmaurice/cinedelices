@@ -1092,6 +1092,47 @@ document.addEventListener("DOMContentLoaded", () => {
   // ══════════════════════════════════════════════════════
   let _pendingSnapshot = null;
 
+  // ══════════════════════════════════════════════════════
+  // TOPBAR SEARCH — filtre live dans la vue active
+  // ══════════════════════════════════════════════════════
+  const topbarSearch = document.getElementById("topbar-search-input");
+  if (topbarSearch) {
+    topbarSearch.addEventListener("input", () => {
+      const q = topbarSearch.value.trim().toLowerCase();
+      const activeView = document.querySelector(".view.is-active");
+      if (!activeView) return;
+
+      // Cible : lignes de tableau, cards modération, list items
+      const rows = activeView.querySelectorAll(
+        "tr[data-search], .admin-list-item, .mod-row, .media-card, .recipe-val-panel"
+      );
+
+      if (rows.length === 0) return;
+
+      rows.forEach((row) => {
+        const text = (row.dataset.search || row.textContent || "").toLowerCase();
+        row.style.display = !q || text.includes(q) ? "" : "none";
+      });
+    });
+
+    // Réinitialiser au changement de vue
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => { topbarSearch.value = ""; });
+    });
+  }
+
+  function _updateDashCard(d) {
+    const feed = document.querySelector(".activity-feed");
+    if (!feed) return;
+    const items = [];
+    if (d.recipes  > 0) items.push(`<li class="activity-item activity-item--or"><span class="activity-dot"></span><span><strong>${d.recipes}</strong> recette(s) en attente de validation</span></li>`);
+    if (d.notices  > 0) items.push(`<li class="activity-item activity-item--violet"><span class="activity-dot"></span><span><strong>${d.notices}</strong> avis en attente de validation</span></li>`);
+    if (d.profils  > 0) items.push(`<li class="activity-item activity-item--vert"><span class="activity-dot"></span><span><strong>${d.profils}</strong> profil(s) à modérer (photo/bannière/pseudo)</span></li>`);
+    if (d.filmEdits > 0) items.push(`<li class="activity-item activity-item--or"><span class="activity-dot"></span><span><strong>${d.filmEdits}</strong> demande(s) sur des films</span></li>`);
+    if (items.length === 0) items.push(`<li class="activity-item"><span class="activity-dot activity-dot--vert"></span><span>Tout est à jour — aucune modération en attente.</span></li>`);
+    feed.innerHTML = items.join("");
+  }
+
   function _updateNavBadge(key, count) {
     const btn = document.querySelector(`[data-pending-key="${key}"]`);
     if (!btn) return;
@@ -1110,7 +1151,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const d = await r.json();
       if (!d.success) return;
 
-      // Mise à jour des badges nav en temps réel
+      // Mise à jour badges nav + dash-card en temps réel
+      _updateDashCard(d);
       _updateNavBadge("recipes",        d.recipes        || 0);
       _updateNavBadge("notices",        d.notices        || 0);
       _updateNavBadge("profils",        d.profils        || 0);
