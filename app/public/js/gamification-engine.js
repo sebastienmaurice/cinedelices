@@ -534,6 +534,7 @@ class IndiaBadge {
 ═══════════════════════════════════════════════════════════════ */
 class SherlockBadge {
   constructor(el, cfg, photoSrc) {
+    el.style.overflow='hidden'; /* empêche le canvas 1440px de déborder en carré bleu */
     this.cfg=cfg; this.OX=40; this.OY=40;
     this.CVW=cfg.badge.width+80; this.CVH=cfg.badge.height+80;
     this.RCX=cfg.ring.cx+this.OX; this.RCY=cfg.ring.cy+this.OY;
