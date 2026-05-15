@@ -42,6 +42,8 @@
   /* ── Créer et afficher un toast ─────────────────────────────── */
   function show(title, type, sub) {
     type = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+    /* Seuls warning et error sont affichés — success/info supprimés (UX) */
+    if (type === 'success' || type === 'info') return;
     const container = getContainer();
 
     /* Limiter le nombre de toasts visibles */
