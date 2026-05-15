@@ -145,7 +145,7 @@ class SherlockBadge {
 
     /* Zone clippée */
     const clip = document.createElement('div');
-    clip.style.cssText = 'position:absolute;top:0;left:0;width:260px;height:260px;pointer-events:none;';
+    clip.style.cssText = 'position:absolute;top:0;left:0;width:260px;height:260px;pointer-events:none;overflow:hidden;';
 
     const inner = document.createElement('div');
     inner.style.cssText = `width:${N}px;height:${N}px;transform:scale(${S});transform-origin:top left;position:relative;`;
