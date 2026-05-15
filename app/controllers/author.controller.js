@@ -117,7 +117,6 @@ const authorController = {
       // Films approuvés pour le CTA banner (animation affiches)
       const ctaMoviesRaw = await Movie.findAll({
         where: { status: "approved" },
-        attributes: ["id", "picture"],
         limit: 12,
         order: [["id", "DESC"]],
       });
