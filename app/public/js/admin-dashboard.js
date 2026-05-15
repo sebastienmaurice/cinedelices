@@ -578,7 +578,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (ingRte) {
         const rawIng = (data.ingredients || "").trim();
         let ingItems = [];
-        if (rawIng.startsWith("[")) { try { ingItems = JSON.parse(rawIng); } catch (_) {} }
+        if (rawIng.startsWith("[")) { try { ingItems = JSON.parse(rawIng); } catch (e) { console.warn("Ingrédients JSON parse error:", e.message, rawIng.substring(0, 100)); } }
         RteMini.loadIntoRte(ingRte, ingItems, "ingredients");
       }
       // Préparation → RTE
@@ -586,7 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (prepRte) {
         const rawPrep = (data.preparation || "").trim();
         let prepItems = [];
-        if (rawPrep.startsWith("[")) { try { prepItems = JSON.parse(rawPrep); } catch (_) {} }
+        if (rawPrep.startsWith("[")) { try { prepItems = JSON.parse(rawPrep); } catch (e) { console.warn("Préparation JSON parse error:", e.message, rawPrep.substring(0, 100)); } }
         RteMini.loadIntoRte(prepRte, prepItems, "preparation");
       }
     }

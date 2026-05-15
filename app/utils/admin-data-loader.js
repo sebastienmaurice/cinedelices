@@ -143,6 +143,7 @@ export async function loadAdminData() {
 
   // Récupérer tous les avis (notices)
   const avis = await Notice.findAll({
+    include: [{ model: User, attributes: ["id", "pseudo", "email"] }],
     order: [
       ["status", "ASC"],
       ["id", "DESC"],
