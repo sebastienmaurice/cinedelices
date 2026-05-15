@@ -22,6 +22,7 @@ User.init({
   pending_picture: { type: DataTypes.STRING(255), allowNull: true },
   picture_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
   banner_image: { type: DataTypes.STRING(255) },
+  pending_banner_image: { type: DataTypes.STRING(255), allowNull: true },
   banner_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
   notify_recipes: { type: DataTypes.BOOLEAN, defaultValue: true },
   notify_cinema: { type: DataTypes.BOOLEAN, defaultValue: true },

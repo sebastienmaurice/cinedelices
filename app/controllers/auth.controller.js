@@ -557,9 +557,10 @@ const authController = {
         });
       }
 
-      // --- SUPPRESSION de l'ancienne bannière Cloudinary si elle existe ---
-      if (user.banner_image) {
-        await deleteAsset(user.banner_image);
+      // --- SUPPRESSION de la bannière EN ATTENTE précédente si elle existe ---
+      // On ne touche PAS à banner_image (bannière approuvée) pour ne pas la perdre en cas de refus
+      if (user.pending_banner_image) {
+        await deleteAsset(user.pending_banner_image);
       }
 
       // --- TRAITEMENT avec Sharp → Buffer WebP ---
@@ -573,16 +574,16 @@ const authController = {
       fs.unlink(req.file.path, () => {});
 
       // --- UPLOAD du buffer WebP sur Cloudinary ---
-      // public_id fixe par utilisateur (user-{id}) pour écraser la bannière précédente
+      // public_id distinct (-pending) pour ne pas écraser la bannière approuvée existante
       const cloudResult = await uploadBufferToCloudinary(buffer, {
         folder:    "cinedelices/banners",
-        public_id: `user-${userId}`,
+        public_id: `user-${userId}-pending`,
         overwrite: true,
       });
 
       const bannerPath = cloudResult.secure_url;
       await User.update(
-        { banner_image: bannerPath, banner_status: "pending" },
+        { pending_banner_image: bannerPath, banner_status: "pending" },
         { where: { id: userId } }
       );
 

@@ -58,7 +58,7 @@ const adminController = {
         (user) => user.pending_picture && user.picture_status === "pending"
       );
       const pendingBanners = users.filter(
-        (user) => user.banner_image && user.banner_status === "pending"
+        (user) => user.pending_banner_image && user.banner_status === "pending"
       );
 
       res.render("admin-dashboard", {
@@ -895,15 +895,29 @@ const adminController = {
       await UserPoints.destroy({ where: { id_user: userId } });
       await Notice.destroy({ where: { id_user: userId } });
       await UsersRecipes.destroy({ where: { id_user: userId } });
-      // Recettes de l'utilisateur → leurs notices et relations en cascade
-      const userRecipes = await Recipe.findAll({ where: { id_user: userId }, attributes: ['id'] });
+      // Recettes de l'utilisateur → fichiers + relations en cascade
+      const userRecipes = await Recipe.findAll({
+        where: { id_user: userId },
+        attributes: ['id', 'picture', 'pending_picture'],
+        include: [{ model: RecipePicture, as: "RecipePictures", attributes: ["file_path"] }],
+      });
       if (userRecipes.length > 0) {
         const recipeIds = userRecipes.map(r => r.id);
+        for (const r of userRecipes) {
+          await deleteAsset(r.picture);
+          await deleteAsset(r.pending_picture);
+          for (const pic of (r.RecipePictures || [])) await deleteAsset(pic.file_path);
+        }
         await Notice.destroy({ where: { id_recipe: recipeIds } });
         await UsersRecipes.destroy({ where: { id_recipe: recipeIds } });
         await RecipePicture.destroy({ where: { recipe_id: recipeIds } });
         await Recipe.destroy({ where: { id_user: userId } });
       }
+      // Supprimer les fichiers média du compte
+      await deleteAsset(user.picture);
+      await deleteAsset(user.pending_picture);
+      await deleteAsset(user.banner_image);
+      await deleteAsset(user.pending_banner_image);
       // Films de l'utilisateur → mettre id_user à null (ne pas supprimer les films approuvés)
       await Movie.update({ id_user: null }, { where: { id_user: userId } });
       // Supprimer l'utilisateur
@@ -954,10 +968,10 @@ const adminController = {
       const user = await User.findByPk(userId);
       if (!user) return renderNotFound(res, "Utilisateur introuvable.");
 
-      // Supprimer la photo en attente et restaurer le statut sans toucher à picture
+      // Supprimer la photo en attente et indiquer le refus (picture reste inchangée)
       if (user.pending_picture) await deleteAsset(user.pending_picture);
       await User.update(
-        { pending_picture: null, picture_status: "approved" },
+        { pending_picture: null, picture_status: "rejected" },
         { where: { id: userId } }
       );
       logAdminAction({ adminId: req.userId, action: "reject_user_photo", targetType: "user", targetId: userId });
@@ -974,8 +988,15 @@ const adminController = {
   async validateUserBanner(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);
+      const user = await User.findByPk(userId);
+      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
+
+      // Supprimer l'ancienne bannière approuvée si elle existe (distincte de la pending)
+      if (user.banner_image) await deleteAsset(user.banner_image);
+
+      // Promouvoir pending_banner_image → banner_image
       await User.update(
-        { banner_status: "approved" },
+        { banner_image: user.pending_banner_image, pending_banner_image: null, banner_status: "approved" },
         { where: { id: userId } }
       );
       logAdminAction({ adminId: req.userId, action: "approve_user_banner", targetType: "user", targetId: userId });
@@ -992,13 +1013,17 @@ const adminController = {
   async rejectUserBanner(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);
-      // Supprimer le fichier physique WebP avant de reset la base
       const user = await User.findByPk(userId);
-      if (user && user.banner_image) {
-        await deleteAsset(user.banner_image);
-      }
+      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
+
+      // Supprimer uniquement la bannière EN ATTENTE — conserver banner_image (approuvée)
+      if (user.pending_banner_image) await deleteAsset(user.pending_banner_image);
+
+      // Si l'utilisateur avait déjà une bannière approuvée, on la restaure visuellement
+      // Sinon on indique "rejected" pour qu'il puisse réessayer
+      const newStatus = user.banner_image ? "approved" : "rejected";
       await User.update(
-        { banner_image: null, banner_status: "rejected" },
+        { pending_banner_image: null, banner_status: newStatus },
         { where: { id: userId } }
       );
       logAdminAction({ adminId: req.userId, action: "reject_user_banner", targetType: "user", targetId: userId });
@@ -1697,8 +1722,8 @@ const adminController = {
   /* Polling admin : compteurs en attente */
   async getPendingCount(req, res) {
     try {
-      const users = await User.findAll({ attributes: ["banner_status", "banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] });
-      const banners = users.filter(u => u.banner_image && u.banner_status === "pending").length;
+      const users = await User.findAll({ attributes: ["banner_status", "banner_image", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] });
+      const banners = users.filter(u => u.pending_banner_image && u.banner_status === "pending").length;
       const photos  = users.filter(u => u.pending_picture && u.picture_status === "pending").length;
       const pseudos = users.filter(u => u.pending_pseudo && u.pseudo_status === "pending").length;
       const recipes = await Recipe.count({ where: { status: "pending" } });
