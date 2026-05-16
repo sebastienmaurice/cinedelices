@@ -7,6 +7,7 @@
     <title>Mon compte - Ciné Délices</title>
     <%- include("partials/head-resources") %>
     <link rel="stylesheet" href="/css/user-profile.css" />
+    <link rel="stylesheet" href="/css/ctb2-hero.css" />
     <link rel="stylesheet" href="/css/rte-mini.css" />
   </head>
 
@@ -1476,189 +1477,274 @@
           <!-- ═══════════════════════════════════════════════════
                HERO XP BENTO — Cadre actif + XP hub + Streak
           ═══════════════════════════════════════════════════ -->
+          <%
+            const _tier = _lvl >= 11 ? 'legendary' : _lvl >= 7 ? 'gold' : _lvl >= 4 ? 'silver' : 'bronze';
+            const _roundXP = (v) => Math.round(v / 50) * 50;
+            const _cp1xp = _roundXP(_xpFloor + _xpNeeded * 0.25);
+            const _cp2xp = _roundXP(_xpFloor + _xpNeeded * 0.50);
+            const _cp3xp = _roundXP(_xpFloor + _xpNeeded * 0.75);
+            const _cp1pct = Math.round((_cp1xp - _xpFloor) / _xpNeeded * 100);
+            const _cp2pct = Math.round((_cp2xp - _xpFloor) / _xpNeeded * 100);
+            const _cp3pct = Math.round((_cp3xp - _xpFloor) / _xpNeeded * 100);
+          %>
           <section class="ctb-hero" aria-label="Progression et niveau">
+            <div class="ctb-hero__unified ctb2-card">
 
-            <!-- ── Bloc 1 : Cadre actif ── -->
-            <div class="ctb-hero__block ctb-hero__block--frame">
-              <p class="ctb-hero__eyebrow">Cadre équipé</p>
-              <div class="active-frame-body">
-                <% if (_activeFrame.id === 'none') { %>
-                <div class="active-frame-preview active-frame-preview--noframe">
-                  <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
+              <div class="ctb2-main-row">
+              <!-- ═══ COLONNE GAUCHE — Progression ═══ -->
+              <div class="ctb2-left">
+
+                <!-- Eyebrow -->
+                <div class="ctb2-eyebrow">
+                  <span class="ctb2-eyebrow__gem" aria-hidden="true">✦</span>
+                  <span>Progression &amp; Niveau</span>
                 </div>
-                <% } else if (_activeFrame.hasRealFrame && _frameUrl) { %>
-                <div class="active-frame-preview">
-                  <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="<%= user.pseudo %>" />
-                  <img class="bsf" src="<%= _frameUrl %>" alt="Cadre <%= _activeFrame.label %>" />
+
+                <!-- Médaillon + [infos niveau / barre XP] -->
+                <div class="ctb2-level-row">
+                  <div class="level-medallion level-medallion--<%= _tier %>" aria-label="Niveau <%= _lvl %>">
+                    <span class="level-medallion__gem level-medallion__gem--top"></span>
+                    <span class="level-medallion__gem level-medallion__gem--bottom"></span>
+                    <div class="level-medallion__ring">
+                      <div class="level-medallion__face">
+                        <span class="level-medallion__num"><%= _lvl %></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ctb2-level-right">
+                    <!-- Infos niveau -->
+                    <div class="ctb2-level-info">
+                      <p class="ctb2-level-label">Niveau actuel</p>
+                      <h2 class="ctb2-level-title">Niveau&nbsp;<%= _lvl %></h2>
+                      <p class="ctb2-level-rank">« <%= _rank %> »</p>
+                    </div>
+                    <!-- Barre XP avec checkpoints -->
+                    <div class="ctb2-xp-block">
+                  <div class="ctb2-xp-ratio">
+                    <span><strong><%= _xp.toLocaleString('fr-FR') %></strong> / <%= _xpCeil.toLocaleString('fr-FR') %> XP</span>
+                    <span class="ctb2-xp-pct"><%= _xpPct %>%</span>
+                  </div>
+                  <div class="ctb2-xp-track-wrap">
+                    <!-- Barre de base -->
+                    <div class="xp-track ctb2-xp-track">
+                      <div class="xp-fill" data-pct="<%= _xpPct %>" style="width:0%"></div>
+                    </div>
+                    <!-- Checkpoints -->
+                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp1xp ? 'done' : 'next' %>" style="left:<%= _cp1pct %>%">
+                      <div class="ctb2-cp__dot"><% if (_xp >= _cp1xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
+                      <span class="ctb2-cp__lbl"><%= _cp1xp.toLocaleString('fr-FR') %></span>
+                    </div>
+                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp2xp ? 'done' : 'next' %>" style="left:<%= _cp2pct %>%">
+                      <div class="ctb2-cp__dot"><% if (_xp >= _cp2xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
+                      <span class="ctb2-cp__lbl"><%= _cp2xp.toLocaleString('fr-FR') %></span>
+                    </div>
+                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp3xp ? 'done' : 'next' %>" style="left:<%= _cp3pct %>%">
+                      <div class="ctb2-cp__dot"><% if (_xp >= _cp3xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
+                      <span class="ctb2-cp__lbl"><%= _cp3xp.toLocaleString('fr-FR') %></span>
+                    </div>
+                  </div>
+                  <div class="ctb2-xp-levels">
+                    <span>NIV. <%= _lvl %></span>
+                    <span>NIV. <%= _lvl + 1 %></span>
+                  </div>
+                </div><!-- /ctb2-xp-block -->
+                  </div><!-- /ctb2-level-right -->
+                </div><!-- /ctb2-level-row -->
+
+                <!-- Prochain palier -->
+                <div class="ctb2-next-card">
+                  <div class="ctb2-next-card__icon" aria-hidden="true">
+                    <i data-lucide="trophy" width="16" height="16"></i>
+                  </div>
+                  <div class="ctb2-next-card__body">
+                    <p class="ctb2-next-card__label">Prochain palier</p>
+                    <p class="ctb2-next-card__title">Niv.&nbsp;<%= _lvl + 1 %> — <%= _nextRank %></p>
+                  </div>
+                  <button class="ctb2-next-card__cta" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})">
+                    Voir les niveaux <i data-lucide="chevron-right" width="13" height="13" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- Séparateur doré -->
+              <div class="ctb-hero__sep" aria-hidden="true"></div>
+
+              <!-- ═══ COLONNE DROITE — Stats & Récompenses ═══ -->
+              <div class="ctb2-right">
+
+                <!-- Eyebrow -->
+                <div class="ctb2-eyebrow">
+                  <i data-lucide="trophy" width="12" height="12" aria-hidden="true"></i>
+                  <span>Statistiques &amp; Récompenses</span>
+                </div>
+
+                <!-- Stats rapides -->
+                <div class="ctb2-stats-row">
+                  <div class="ctb2-stat">
+                    <div class="ctb2-stat__icon ctb2-stat__icon--flame" aria-hidden="true">
+                      <i data-lucide="flame" width="18" height="18"></i>
+                    </div>
+                    <div class="ctb2-stat__body">
+                      <% if (_streak === 0) { %>
+                      <p class="ctb2-stat__zero">Lancez-vous !</p>
+                      <% } else { %>
+                      <p class="ctb2-stat__val"><%= _streak %></p>
+                      <% } %>
+                      <p class="ctb2-stat__lbl">Jour<%= _streak > 1 ? 's' : '' %> d'affilée</p>
+                    </div>
+                  </div>
+                  <div class="ctb2-stat-sep" aria-hidden="true"></div>
+                  <div class="ctb2-stat">
+                    <div class="ctb2-stat__icon ctb2-stat__icon--star" aria-hidden="true">
+                      <i data-lucide="star" width="18" height="18"></i>
+                    </div>
+                    <div class="ctb2-stat__body">
+                      <p class="ctb2-stat__val"><%= _deblocked.length %>/<%= _allFrames.length %></p>
+                      <p class="ctb2-stat__lbl">Cadres débloqués</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Prochain cadre à débloquer / tous débloqués -->
+                <% if (_nextUnlock) { %>
+                <div class="ctb2-frame-card">
+                  <div class="ctb2-frame-card__thumb">
+                    <% if (_nextUnlock.thumbUrl) { %>
+                    <img src="<%= _nextUnlock.thumbUrl %>" alt="<%= _nextUnlock.label %>" />
+                    <% } else { %>
+                    <span class="ctb2-frame-card__unk">?</span>
+                    <% } %>
+                  </div>
+                  <div class="ctb2-frame-card__body">
+                    <p class="ctb2-frame-card__label">Prochain cadre à débloquer</p>
+                    <p class="ctb2-frame-card__name"><%= _nextUnlock.label %></p>
+                    <p class="ctb2-frame-card__cond">Débloqué au niveau <%= _nextUnlock.minLvl %></p>
+                  </div>
+                  <button class="ctb2-frame-card__btn" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})" aria-label="Voir la collection">
+                    <i data-lucide="chevron-right" width="16" height="16" aria-hidden="true"></i>
+                  </button>
                 </div>
                 <% } else { %>
-                <div class="active-frame-preview-icon" style="background:radial-gradient(circle,<%= _activeFrame.bg %>,rgba(10,18,30,.05));border-color:<%= _activeFrame.border %>;">
-                  <%= _activeFrame.icon %>
+                <div class="ctb2-all-unlocked">
+                  <i data-lucide="award" width="22" height="22" aria-hidden="true"></i>
+                  <div>
+                    <p class="ctb2-all-unlocked__title">Collection complète</p>
+                    <p class="ctb2-all-unlocked__sub">Tous les cadres sont débloqués. Bravo !</p>
+                  </div>
                 </div>
                 <% } %>
-                <div class="active-frame-meta">
-                  <div class="active-frame-name"><%= _activeFrame.label %></div>
-                  <div class="active-frame-theme"><%= _activeFrame.theme %></div>
-                  <div class="active-frame-pill">✓ Débloqué · Niv. <%= _activeFrame.minLvl %></div>
-                </div>
-              </div>
-              <button type="button" class="ctb-hero__frame-cta" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})">
-                <span>Changer de cadre</span>
-                <i data-lucide="arrow-right" aria-hidden="true"></i>
-              </button>
-            </div>
 
-            <!-- ── Bloc 2 : XP hub ── -->
-            <div class="ctb-hero__block ctb-hero__block--xp">
-              <div class="ctb-hero__xp-head">
-                <span class="ctb-hero__lvl-chip">Niv. <%= _lvl %></span>
-                <span class="ctb-hero__rank" title="<%= _rank %>">« <%= _rank %> »</span>
-              </div>
-              <div class="ctb-hero__xp-num">
-                <span class="ctb-hero__xp-val"><%= _xp.toLocaleString('fr-FR') %></span>
-                <span class="ctb-hero__xp-unit">XP</span>
-              </div>
-              <div class="ctb-hero__xp-progress">
-                <div class="xp-track">
-                  <div class="xp-fill" data-pct="<%= _xpPct %>" style="width:0%"></div>
-                  <div class="xp-milestone<%= _xpPct >= 50 ? ' passed' : '' %>" style="left:50%"></div>
+                <!-- Gains récents -->
+                <div class="ctb2-gains">
+                  <p class="ctb2-gains__title">Gains récents</p>
+                  <div class="ctb2-gains__list">
+                    <div class="ctb2-gain"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i><span>Recette publiée</span><strong>+50 XP</strong></div>
+                    <div class="ctb2-gain"><i data-lucide="film" width="13" height="13" aria-hidden="true"></i><span>Film accepté</span><strong>+25 XP</strong></div>
+                    <div class="ctb2-gain"><i data-lucide="message-square" width="13" height="13" aria-hidden="true"></i><span>Avis approuvé</span><strong>+10 XP</strong></div>
+                  </div>
                 </div>
-                <div class="ctb-hero__xp-footer">
-                  <span class="ctb-hero__xp-left">
-                    <strong><%= _xpLeft.toLocaleString('fr-FR') %> XP</strong>
-                    avant le Niv. <%= _lvl + 1 %>
-                  </span>
-                  <span class="ctb-hero__xp-pct"><%= _xpPct %>%</span>
-                </div>
-              </div>
-            </div>
 
-            <!-- ── Bloc 3 : Streak + cadres ── -->
-            <div class="ctb-hero__block ctb-hero__block--streak">
-              <div class="ctb-hero__flame" aria-hidden="true">
-                <span class="flame flame--1"></span>
-                <span class="flame flame--2"></span>
-                <span class="flame flame--3"></span>
               </div>
-              <div class="ctb-hero__streak-row">
-                <div class="ctb-hero__streak-big"><%= _streak %></div>
-                <div class="ctb-hero__streak-lblwrap">
-                  <div class="ctb-hero__streak-lbl">jour<%= _streak > 1 ? 's' : '' %></div>
-                  <div class="ctb-hero__streak-sub">d'affilée</div>
-                </div>
-              </div>
-              <div class="ctb-hero__streak-divider"></div>
-              <div class="ctb-hero__frames-count">
-                <span class="ctb-hero__frames-n"><%= _deblocked.length %><em>/<%= _allFrames.length %></em></span>
-                <span class="ctb-hero__frames-l">Cadres débloqués</span>
-              </div>
-            </div>
 
+            </div><!-- /ctb2-main-row -->
+            </div><!-- /ctb-hero__unified -->
           </section>
 
           <!-- ═══════════════════════════════════════════════════
                GALERIE DE CADRES — bento
           ═══════════════════════════════════════════════════ -->
           <section class="ctb-frames-section" aria-label="Collection de cadres">
-            <div class="sec-eyebrow">
-              <div class="sec-eyebrow__line"></div>
-              <span class="sec-eyebrow__label">Collection</span>
-            </div>
-            <div class="sec-header">
-              <div class="sec-title">MES CADRES</div>
-              <span class="ctb-frames-count">
-                <strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués
-              </span>
+            <!-- En-tête section -->
+            <div class="cfc-header">
+              <div class="cfc-header__left">
+                <i data-lucide="layout-grid" width="18" height="18" aria-hidden="true"></i>
+                <div>
+                  <h3 class="cfc-header__title">Collection de cadres</h3>
+                  <p class="cfc-header__sub">Collectionnez et équipez vos cadres pour afficher votre style.</p>
+                </div>
+              </div>
+              <span class="cfc-header__count"><strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués</span>
             </div>
 
-            <div class="ctb-frames-grid" id="contrib-frames-list">
+            <!-- Grille de cartes -->
+            <div class="cf-grid" id="contrib-frames-list">
               <% _allFrames.forEach(function(fr) {
                 const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
                 const _isActive   = fr.id === _activeFrame.id;
               %>
-              <div
-                class="frame-row ctb-frame-tile<%= _isActive ? ' frame-row--active is-active' : '' %><%= !_isUnlocked ? ' frame-row--locked is-locked' : '' %>"
+              <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
                 data-frame-id="<%= fr.id %>"
-                data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>"
-              >
-                <!-- Preview -->
-                <div class="ctb-frame-tile__preview">
+                data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>">
+
+                <!-- Pill ACTUEL (carte active uniquement) -->
+                <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
+
+                <!-- Preview circulaire -->
+                <div class="cf-card__preview-wrap">
                   <% if (fr.id === 'none') { %>
-                  <div class="frame-row-badge-static frame-row-badge-static--noframe">
+                  <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
                     <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
                   </div>
                   <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-                  <div class="frame-row-badge-static">
+                  <div class="frame-row-badge-static cf-card__preview-inner">
                     <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
                     <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
                   </div>
                   <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-                  <div class="frame-row-badge-static ctb-frame-tile__preview--dimmed">
+                  <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
                     <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
                     <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-                    <div class="ctb-frame-tile__lock-overlay">
-                      <i data-lucide="lock" stroke-width="1.8" aria-hidden="true"></i>
-                    </div>
+                    <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
                   </div>
                   <% } else { %>
-                  <div class="frame-row-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;"><%= fr.icon %></div>
+                  <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
+                    <span><%= fr.icon %></span>
+                  </div>
                   <% } %>
                 </div>
 
-                <!-- Info -->
-                <div class="frame-row-info ctb-frame-tile__info">
-                  <div class="frame-row-name ctb-frame-tile__name"><%= fr.label %></div>
-                  <div class="frame-row-sub ctb-frame-tile__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
-                </div>
+                <!-- Nom + thème -->
+                <div class="cf-card__name"><%= fr.label %></div>
+                <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
 
-                <!-- Compat check (lu par gamification.js) -->
-                <div class="frame-row-check ctb-frame-tile__check-compat <%= _isActive ? 'frame-row-check--active' : (_isUnlocked ? 'frame-row-check--ok' : 'frame-row-check--locked') %>" aria-hidden="true">
-                  <% if (_isActive || _isUnlocked) { %>
-                  <i data-lucide="check" aria-hidden="true"></i>
-                  <% } else { %>
-                  <i data-lucide="lock" aria-hidden="true"></i>
-                  <% } %>
-                </div>
-
-                <!-- Status pill -->
-                <div class="ctb-frame-tile__status<%= _isActive ? ' is-active' : (_isUnlocked ? ' is-ready' : ' is-locked') %>">
+                <!-- Bouton équiper -->
+                <div class="cf-card__action">
                   <% if (_isActive) { %>
-                    <i data-lucide="check" stroke-width="2.2" aria-hidden="true"></i>
-                    <span>Équipé</span>
+                  <button class="cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active" aria-disabled="true">
+                    <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé
+                  </button>
                   <% } else if (_isUnlocked) { %>
-                    <span>Équiper</span>
-                    <i data-lucide="arrow-right" aria-hidden="true"></i>
+                  <button class="cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn">
+                    Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>
+                  </button>
                   <% } else { %>
-                    <i data-lucide="lock" aria-hidden="true"></i>
-                    <span>Niv. <%= fr.minLvl %> requis</span>
+                  <button class="cf-card__btn cf-card__btn--locked frame-row-check frame-row-check--locked" disabled>
+                    <i data-lucide="lock" width="13" height="13" aria-hidden="true"></i> Niv. <%= fr.minLvl %>
+                  </button>
                   <% } %>
                 </div>
 
-                <!-- Tooltip déblocage (cadres verrouillés uniquement) -->
+                <!-- Tooltip (verrouillés) -->
                 <% if (!_isUnlocked) {
-                  const _xpForFrame     = XP_TABLE[fr.minLvl - 1] || 0;
-                  const _xpGap          = Math.max(0, _xpForFrame - _xp);
-                  const _recipesNeeded  = Math.ceil(_xpGap / 50);
-                  const _reviewsNeeded  = Math.ceil(_xpGap / 10);
-                  const _lvlsToGo       = fr.minLvl - _lvl;
+                  const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
+                  const _xpGap      = Math.max(0, _xpForFrame - _xp);
+                  const _recipesNeeded = Math.ceil(_xpGap / 50);
+                  const _reviewsNeeded = Math.ceil(_xpGap / 10);
+                  const _lvlsToGo   = fr.minLvl - _lvl;
                 %>
                 <div class="frame-tile__tooltip" role="tooltip">
                   <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
                   <div class="frame-tile__tooltip-row">
                     <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
-                    Niveau <%= fr.minLvl %> requis
-                    <% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close">— encore 1 niveau !</span><% } %>
+                    Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
                   </div>
                   <div class="frame-tile__tooltip-row">
                     <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
                     <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
                   </div>
                   <div class="frame-tile__tooltip-hint">
-                    <% if (_recipesNeeded <= 4) { %>
-                      ≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %>
-                    <% } else { %>
-                      ≈ <%= _reviewsNeeded %> avis approuvés ou <%= _recipesNeeded %> recettes
-                    <% } %>
+                    <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
                   </div>
                 </div>
                 <% } %>
@@ -1671,10 +1757,8 @@
           <!-- ═══════════════════════════════════════════════════
                MAIN — Timeline activité + Next milestone
           ═══════════════════════════════════════════════════ -->
-          <div class="ctb-main">
-
-            <!-- ── Timeline activité ── -->
-            <section class="ctb-timeline-col">
+          <!-- Timeline pleine largeur -->
+            <section class="ctb-timeline-col ctb-timeline-col--full">
               <div class="sec-eyebrow">
                 <div class="sec-eyebrow__line"></div>
                 <span class="sec-eyebrow__label">Historique</span>
@@ -1734,88 +1818,6 @@
                 <% } %>
               </div>
             </section>
-
-            <!-- ── Sidebar : Next milestone + Guide XP ── -->
-            <aside class="ctb-side-col">
-
-              <!-- Next milestone — trading card gold -->
-              <div class="ctb-milestone" role="region" aria-label="Prochain palier">
-                <div class="ctb-milestone__shimmer" aria-hidden="true"></div>
-                <div class="ctb-milestone__inner">
-                  <p class="ctb-milestone__eyebrow">✦ Prochain niveau</p>
-                  <h3 class="ctb-milestone__title">
-                    Niv. <%= _lvl + 1 %>
-                    <em><%= _nextRank %></em>
-                  </h3>
-                  <div class="ctb-milestone__xp">
-                    <div class="ctb-milestone__xp-num"><%= _xpLeft.toLocaleString('fr-FR') %></div>
-                    <div class="ctb-milestone__xp-lbl">XP restants</div>
-                  </div>
-                  <div class="ctb-milestone__rewards">
-                    <div class="ctb-milestone__reward">
-                      <span class="ctb-milestone__reward-ico">🎯</span>
-                      <div>
-                        <div class="ctb-milestone__reward-title">Nouveau titre</div>
-                        <div class="ctb-milestone__reward-sub">« <%= _nextRank %> »</div>
-                      </div>
-                    </div>
-                    <div class="ctb-milestone__reward">
-                      <span class="ctb-milestone__reward-ico">✨</span>
-                      <div>
-                        <div class="ctb-milestone__reward-title">Bonus XP</div>
-                        <div class="ctb-milestone__reward-sub">+10% sur les contributions</div>
-                      </div>
-                    </div>
-                    <% if (_nextUnlock && _nextUnlock.minLvl <= _lvl + 2) { %>
-                    <div class="ctb-milestone__reward">
-                      <span class="ctb-milestone__reward-ico"><%= _nextUnlock.icon %></span>
-                      <div>
-                        <div class="ctb-milestone__reward-title">Cadre <%= _nextUnlock.label %></div>
-                        <div class="ctb-milestone__reward-sub"><%= _nextUnlock.theme %> · Niv. <%= _nextUnlock.minLvl %></div>
-                      </div>
-                    </div>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Guide XP -->
-              <div class="widget ctb-xpguide-widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Gagner de l'XP</span>
-                </div>
-                <div class="xp-guide">
-                  <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--recipe"><i data-lucide="utensils" aria-hidden="true"></i></div>
-                    <div class="xp-guide-body">
-                      <div class="xp-guide-label">Recette publiée</div>
-                      <div class="xp-guide-sub">Validée par la modération</div>
-                    </div>
-                    <span class="xp-guide-pts">+50 XP</span>
-                  </div>
-                  <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--movie"><i data-lucide="film" aria-hidden="true"></i></div>
-                    <div class="xp-guide-body">
-                      <div class="xp-guide-label">Film accepté</div>
-                      <div class="xp-guide-sub">Suggestion validée</div>
-                    </div>
-                    <span class="xp-guide-pts">+25 XP</span>
-                  </div>
-                  <div class="xp-guide-row">
-                    <div class="xp-guide-icon xp-guide-icon--avis"><i data-lucide="message-square" aria-hidden="true"></i></div>
-                    <div class="xp-guide-body">
-                      <div class="xp-guide-label">Avis approuvé</div>
-                      <div class="xp-guide-sub">Critique publiée</div>
-                    </div>
-                    <span class="xp-guide-pts">+10 XP</span>
-                  </div>
-                </div>
-              </div>
-
-            </aside>
-
-          </div>
 
         </div><!-- /tab-pane#contributions -->
 

@@ -106,18 +106,51 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
         });
         row.querySelector('.frame-row-check')?.classList.replace('frame-row-check--ok', 'frame-row-check--active');
 
-        // Nouveau pill bento (.ctb-frame-tile__status) : repasser tous en "ready", puis activer le cliqué
+        // Ancien pill bento (.ctb-frame-tile__status)
         newList.querySelectorAll('.ctb-frame-tile__status').forEach(p => {
           if (p.classList.contains('is-locked')) return;
-          p.classList.remove('is-active');
-          p.classList.add('is-ready');
+          p.classList.remove('is-active'); p.classList.add('is-ready');
           p.innerHTML = '<span>Équiper</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
         });
         const pill = row.querySelector('.ctb-frame-tile__status');
         if (pill) {
-          pill.classList.remove('is-ready', 'is-locked');
-          pill.classList.add('is-active');
+          pill.classList.remove('is-ready', 'is-locked'); pill.classList.add('is-active');
           pill.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg><span>Équipé</span>';
+        }
+
+        // ── 1b. Mise à jour nouveaux cf-card (design premium) ─────
+        newList.querySelectorAll('.cf-card').forEach(card => {
+          // Retirer état actif de toutes les cartes
+          card.classList.remove('cf-card--active');
+          // Supprimer pill "ACTUEL"
+          card.querySelector('.cf-card__actuel')?.remove();
+          // Remettre le bouton en "ÉQUIPER" si non verrouillé
+          const btn = card.querySelector('.cf-card__btn--equipped');
+          if (btn) {
+            btn.className = 'cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn';
+            btn.innerHTML = 'Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>';
+            if (window.lucide) window.lucide.createIcons({ nodes: [btn] });
+          }
+          // Remettre le nom en couleur normale
+          const name = card.querySelector('.cf-card__name');
+          if (name) name.style.color = '';
+        });
+        // Activer la carte cliquée
+        const cfCard = row.classList.contains('cf-card') ? row : row.closest('.cf-card');
+        if (cfCard) {
+          cfCard.classList.add('cf-card--active');
+          // Ajouter pill "ACTUEL"
+          const actuelPill = document.createElement('div');
+          actuelPill.className = 'cf-card__actuel';
+          actuelPill.textContent = 'Actuel';
+          cfCard.prepend(actuelPill);
+          // Passer le bouton en "ÉQUIPÉ"
+          const activeBtn = cfCard.querySelector('.cf-card__btn');
+          if (activeBtn) {
+            activeBtn.className = 'cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active';
+            activeBtn.innerHTML = '<i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé';
+            if (window.lucide) window.lucide.createIcons({ nodes: [activeBtn] });
+          }
         }
         // Widget "Cadre actif" dans la sidebar contributions
         const activePreview = document.querySelector('.active-frame-body .active-frame-preview');
