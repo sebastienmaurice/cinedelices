@@ -3055,29 +3055,55 @@ body.modal-open { overflow: hidden; }
 
 /* ── Hero bento : 3 blocs ── */
 .ctb-hero {
-  display: grid;
-  grid-template-columns: 1fr 1.35fr 1fr;
-  gap: 14px;
   margin-bottom: 24px;
 }
-.ctb-hero__block {
+
+/* Bloc unifié avec séparateurs dorés */
+.ctb-hero__unified {
   position: relative;
-  padding: 20px 22px;
-  border-radius: 16px;
-  background: linear-gradient(160deg, rgba(10,20,34,.98), rgba(16,30,50,.96));
-  border: 1.5px solid rgba(255,255,255,.055);
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: stretch;
+  background: linear-gradient(160deg, rgba(10,20,34,.98), rgba(16,30,50,.96));
+  border: 1.5px solid rgba(196,160,82,.16);
+  border-radius: 16px;
+  overflow: hidden;
 }
-.ctb-hero__block::before {
+.ctb-hero__unified::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; height: 2px;
   background: var(--gold-gradient);
   opacity: .35;
+  z-index: 1;
 }
+
+/* Sections internes */
+.ctb-hero__section {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.ctb-hero__section--frame  { flex: 1; }
+.ctb-hero__section--xp     { flex: 1.5; background: linear-gradient(160deg, rgba(16,28,48,.5), rgba(24,40,66,.4) 70%); }
+.ctb-hero__section--streak { flex: 0.85; }
+
+/* Séparateur doré vertical */
+.ctb-hero__sep {
+  width: 1px;
+  flex-shrink: 0;
+  margin: 0;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(196,160,82,.55) 15%,
+    rgba(196,160,82,.55) 85%,
+    transparent 100%
+  );
+}
+
+/* Rétro-compat pour les anciens selectors CSS qui ciblaient .ctb-hero__block */
+.ctb-hero__block { display: flex; flex-direction: column; gap: 14px; }
 .ctb-hero__eyebrow {
   font-family: var(--f-title);
   font-size: .58rem;
@@ -3244,6 +3270,272 @@ body.modal-open { overflow: hidden; }
   letter-spacing: .04em;
 }
 
+/* ── MÉDAILLON DE NIVEAU v2 ──────────────────────────────── */
+.level-medallion {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+  cursor: default;
+}
+
+/* Anneau extérieur métallique */
+.level-medallion__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 8px; /* épaisseur du ring */
+  background: conic-gradient(from -30deg,
+    #5A4010 0%, #C4A052 18%, #FFE085 30%,
+    #C4A052 42%, #7A5A14 55%, #C4A052 68%,
+    #FFE085 80%, #C4A052 92%, #5A4010 100%
+  );
+  box-shadow:
+    0 0 0 1.5px rgba(242,200,75,.18),      /* liseré extérieur fin */
+    inset 0 0 0 1px rgba(255,255,255,.08); /* liseré intérieur */
+}
+/* Reflet lumineux sur le ring */
+.level-medallion__ring::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg,
+    transparent 0%, rgba(255,255,255,.18) 15%,
+    transparent 30%, transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Face intérieure sombre */
+.level-medallion__face {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,220,80,.06) 0%, transparent 50%),
+    radial-gradient(circle, #1e1508 0%, #100c04 45%, #060502 100%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    inset 0 0 0 2px rgba(242,200,75,.12),
+    inset 0 3px 12px rgba(0,0,0,.7),
+    inset 0 -1px 4px rgba(255,200,50,.05);
+}
+
+/* Numéro */
+.level-medallion__num {
+  font-family: var(--f-display);
+  font-size: 4rem;
+  line-height: 1;
+  background: linear-gradient(170deg,
+    #FFF0A0 0%, #FFE085 20%,
+    #F2C84B 50%, #C4A052 75%, #8B6A20 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.65));
+  position: relative; z-index: 1;
+}
+
+/* Gemmes cardinales — plus grandes et visibles */
+.level-medallion__gem {
+  position: absolute;
+  width: 18px; height: 18px;
+  transform: rotate(45deg);
+  left: 50%; margin-left: -9px;
+  z-index: 3;
+  border-radius: 2px;
+}
+.level-medallion__gem--top    { top: -5px; }
+.level-medallion__gem--bottom { bottom: -5px; }
+/* Reflet interne sur la gemme */
+.level-medallion__gem::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: rgba(255,255,255,.35);
+  border-radius: 1px;
+}
+
+/* Hover */
+.level-medallion:hover { transform: translateY(-2px); transition: transform .3s ease; }
+.level-medallion:hover .level-medallion__ring { filter: brightness(1.18) saturate(1.1); }
+
+/* ── ANIMATIONS IDLE ── */
+@keyframes medallion-glow-gold {
+  0%,100% { filter: drop-shadow(0 0 12px rgba(242,200,75,.40)) drop-shadow(0 4px 20px rgba(196,160,82,.22)); }
+  50%      { filter: drop-shadow(0 0 20px rgba(242,200,75,.70)) drop-shadow(0 4px 32px rgba(196,160,82,.38)); }
+}
+@keyframes medallion-glow-bronze {
+  0%,100% { filter: drop-shadow(0 0 12px rgba(196,135,74,.40)) drop-shadow(0 4px 20px rgba(140,80,30,.22)); }
+  50%      { filter: drop-shadow(0 0 20px rgba(196,135,74,.70)) drop-shadow(0 4px 32px rgba(140,80,30,.38)); }
+}
+@keyframes medallion-glow-silver {
+  0%,100% { filter: drop-shadow(0 0 10px rgba(160,180,192,.35)) drop-shadow(0 4px 18px rgba(100,130,148,.18)); }
+  50%      { filter: drop-shadow(0 0 18px rgba(160,180,192,.65)) drop-shadow(0 4px 28px rgba(100,130,148,.32)); }
+}
+@keyframes medallion-glow-legendary {
+  0%,100% { filter: drop-shadow(0 0 14px rgba(155,126,208,.50)) drop-shadow(0 4px 24px rgba(196,160,82,.22)); }
+  50%      { filter: drop-shadow(0 0 24px rgba(155,126,208,.85)) drop-shadow(0 4px 40px rgba(196,160,82,.40)); }
+}
+
+/* ── VARIANTES ── */
+/* Bronze */
+.level-medallion--bronze { animation: medallion-glow-bronze 3.2s ease-in-out infinite; }
+.level-medallion--bronze .level-medallion__ring {
+  background: conic-gradient(from -30deg,
+    #3A2010 0%, #C4874A 18%, #F0C080 30%,
+    #C4874A 42%, #5A3018 55%, #C4874A 68%,
+    #F0C080 80%, #C4874A 92%, #3A2010 100%
+  );
+}
+.level-medallion--bronze .level-medallion__face {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(200,100,40,.07) 0%, transparent 50%),
+    radial-gradient(circle, #1a0e06 0%, #0d0804 45%, #060402 100%);
+  box-shadow: inset 0 0 0 2px rgba(196,135,74,.12), inset 0 3px 12px rgba(0,0,0,.7);
+}
+.level-medallion--bronze .level-medallion__num {
+  background: linear-gradient(170deg, #F8D0A0 0%, #E8A060 30%, #C4874A 60%, #7A4018 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.level-medallion--bronze .level-medallion__gem {
+  background: linear-gradient(135deg, #F0A060, #A05020);
+  box-shadow: 0 0 10px rgba(196,135,74,.85), 0 0 20px rgba(196,135,74,.40);
+}
+
+/* Argent */
+.level-medallion--silver { animation: medallion-glow-silver 3.5s ease-in-out infinite; }
+.level-medallion--silver .level-medallion__ring {
+  background: conic-gradient(from -30deg,
+    #28384A 0%, #A0B4C0 18%, #F0F6FA 30%,
+    #A0B4C0 42%, #28384A 55%, #A0B4C0 68%,
+    #F0F6FA 80%, #A0B4C0 92%, #28384A 100%
+  );
+}
+.level-medallion--silver .level-medallion__face {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(160,200,230,.06) 0%, transparent 50%),
+    radial-gradient(circle, #121c24 0%, #080e16 45%, #040810 100%);
+  box-shadow: inset 0 0 0 2px rgba(160,180,192,.12), inset 0 3px 12px rgba(0,0,0,.7);
+}
+.level-medallion--silver .level-medallion__num {
+  background: linear-gradient(170deg, #FAFEFF 0%, #D0E0EA 30%, #A0B8C8 60%, #607080 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.level-medallion--silver .level-medallion__gem {
+  background: linear-gradient(135deg, #E8F4FC, #6080A0);
+  box-shadow: 0 0 10px rgba(160,180,192,.80), 0 0 20px rgba(160,180,192,.38);
+}
+
+/* Or — défaut */
+.level-medallion--gold { animation: medallion-glow-gold 3s ease-in-out infinite; }
+.level-medallion--gold .level-medallion__gem {
+  background: linear-gradient(135deg, #FFE8A0, #8B6014);
+  box-shadow: 0 0 10px rgba(242,200,75,.90), 0 0 22px rgba(196,160,82,.45);
+}
+
+/* Légendaire */
+.level-medallion--legendary { animation: medallion-glow-legendary 2.8s ease-in-out infinite; }
+.level-medallion--legendary .level-medallion__ring {
+  background: conic-gradient(from -30deg,
+    #5A4010 0%, #C4A052 15%, #9B7ED0 28%,
+    #C4A052 40%, #5A4010 55%, #C4A052 68%,
+    #B89AE8 80%, #F2C84B 92%, #5A4010 100%
+  );
+}
+.level-medallion--legendary .level-medallion__face {
+  background:
+    radial-gradient(circle at 35% 28%, rgba(155,126,208,.10) 0%, transparent 50%),
+    radial-gradient(circle, #180e2c 0%, #0c0618 45%, #060210 100%);
+  box-shadow: inset 0 0 0 2px rgba(155,126,208,.18), inset 0 3px 12px rgba(0,0,0,.72);
+}
+.level-medallion--legendary .level-medallion__num {
+  background: linear-gradient(170deg, #F2C84B 0%, #D4A843 25%, #9B7ED0 60%, #C4A052 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.level-medallion--legendary .level-medallion__gem {
+  background: linear-gradient(135deg, #E8C050, #9B7ED0);
+  box-shadow: 0 0 12px rgba(155,126,208,.90), 0 0 24px rgba(155,126,208,.48);
+}
+
+/* ── Layout XP bloc avec médaillon ── */
+.ctb-hero__xp-inner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+}
+.ctb-hero__xp-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ctb-hero__xp-label {
+  font-family: var(--f-title);
+  font-size: .46rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(196,160,82,.42);
+}
+.ctb-hero__lvl-name {
+  font-family: var(--f-display);
+  font-size: 1.6rem;
+  letter-spacing: .06em;
+  line-height: 1;
+  color: var(--dore-clair, #f2e5c2);
+}
+.ctb-hero__xp-ratio {
+  font-size: .58rem;
+  color: rgba(232,232,232,.45);
+}
+.ctb-hero__xp-ratio strong { color: var(--dore-clair); font-weight: 700; }
+
+/* Prochain palier */
+.ctb-hero__next-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.ctb-hero__next-label {
+  font-family: var(--f-title);
+  font-size: .44rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(196,160,82,.38);
+}
+.ctb-hero__next-lvl {
+  font-family: var(--f-title);
+  font-size: .58rem;
+  font-weight: 600;
+  color: rgba(232,232,232,.65);
+}
+.ctb-hero__next-reward {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 3px;
+  font-size: .52rem;
+  color: rgba(196,160,82,.55);
+}
+.ctb-hero__next-thumb {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(196,160,82,.3);
+}
+.ctb-hero__next-reward-name {
+  color: var(--or-titre);
+  font-weight: 600;
+  font-size: .55rem;
+}
+
 /* Bloc 3 : Streak + cadres débloqués */
 .ctb-hero__block--streak {
   background: linear-gradient(160deg, rgba(28,14,8,.94), rgba(48,20,10,.86));
@@ -3271,11 +3563,64 @@ body.modal-open { overflow: hidden; }
   0%,100% { transform: scaleY(1) scaleX(1); opacity: 1; }
   50%     { transform: scaleY(1.12) scaleX(.92); opacity: .75; }
 }
+/* Section streak agrandie pour accueillir milestone + guide */
+.ctb-hero__section--streak { flex: 1.1; }
+
 .ctb-hero__streak-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
+/* Séparateur interne vertical dans streak-row */
+.ctb-hero__streak-sep {
+  width: 1px; height: 30px;
+  background: rgba(196,160,82,.2);
+  margin: 0 4px;
+}
+
+/* ── Milestone compact ── */
+.ctb-hero__milestone-compact {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(196,160,82,.06);
+  border: 1px solid rgba(196,160,82,.15);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.ctb-hero__milestone-title {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--f-title); font-size: .55rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--or-titre);
+}
+.ctb-hero__milestone-title svg { color: rgba(196,160,82,.6); flex-shrink: 0; }
+.ctb-hero__milestone-xp {
+  font-size: .6rem; color: rgba(232,232,232,.55);
+}
+.ctb-hero__milestone-xp strong { color: var(--dore-clair); }
+.ctb-hero__milestone-reward {
+  font-size: .55rem; color: rgba(196,160,82,.55);
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── Guide XP compact ── */
+.ctb-hero__xp-guide-compact {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-top: auto;
+}
+.ctb-hero__xp-guide-title {
+  font-family: var(--f-title); font-size: .44rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(196,160,82,.35); margin-bottom: 2px;
+}
+.ctb-hero__xp-guide-rows { display: flex; flex-direction: column; gap: 4px; }
+.ctb-hero__xp-guide-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: .58rem; color: rgba(232,232,232,.5);
+}
+.ctb-hero__xp-guide-row svg { color: rgba(196,160,82,.45); flex-shrink: 0; }
+.ctb-hero__xp-guide-row span { flex: 1; }
+.ctb-hero__xp-guide-row strong { color: var(--dore-clair); font-weight: 700; font-size: .6rem; }
 .ctb-hero__streak-big {
   font-family: var(--f-display);
   font-size: 2.8rem;
@@ -3332,34 +3677,25 @@ body.modal-open { overflow: hidden; }
 }
 
 /* ── Main : timeline 2/3 + sidebar 1/3 ── */
-.ctb-main {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 24px;
-  margin-bottom: 28px;
-}
-.ctb-side-col     { order: 1; }
-.ctb-timeline-col { min-width: 0; order: 2; }
-.ctb-side-col {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+/* Timeline pleine largeur — sidebar supprimée */
+.ctb-timeline-col--full { width: 100%; min-width: 0; margin-bottom: 28px; }
 
-/* ── Timeline ── */
+/* ── Timeline grid 2-3 colonnes ── */
 .ctb-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px 14px;
   position: relative;
 }
 .ctb-tl-item {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 12px;
+  display: flex;
+  gap: 0;
   opacity: 0;
   animation: ctbTlIn .42s cubic-bezier(.22,1,.36,1) forwards;
 }
+/* Rail masqué en mode grid */
+.ctb-tl-rail { display: none; }
+.ctb-tl-item:last-child .ctb-tl-line { display: none; }
 @keyframes ctbTlIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -3391,13 +3727,13 @@ body.modal-open { overflow: hidden; }
   margin-top: 4px;
   min-height: 18px;
 }
-.ctb-tl-item:last-child .ctb-tl-line { display: none; }
 .ctb-tl-card {
   display: flex;
   align-items: center;
   gap: 14px;
   padding: 12px 16px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  width: 100%;
   background: linear-gradient(135deg, rgba(10,20,34,.94), rgba(16,30,50,.9));
   border: 1px solid rgba(255,255,255,.045);
   border-radius: 12px;
@@ -3634,6 +3970,209 @@ body.modal-open { overflow: hidden; }
 
 /* ── Frames section (gallery bento) ── */
 .ctb-frames-section { margin-bottom: 24px; }
+
+/* ── En-tête Collection de cadres ── */
+.cfc-header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  margin-bottom: 20px;
+}
+.cfc-header__left {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.cfc-header__left > i { color: var(--or-titre); margin-top: 2px; flex-shrink: 0; }
+.cfc-header__title {
+  font-family: var(--f-display);
+  font-size: 1.3rem; letter-spacing: .08em;
+  color: var(--argent-ecran); margin: 0 0 3px;
+}
+.cfc-header__sub {
+  font-size: .65rem; font-weight: 300;
+  color: rgba(232,232,232,.38); margin: 0;
+}
+.cfc-header__count {
+  font-family: var(--f-title); font-size: .55rem; font-weight: 700;
+  letter-spacing: .08em; color: rgba(232,232,232,.45);
+  white-space: nowrap; padding-top: 4px;
+}
+.cfc-header__count strong { color: var(--or-titre); }
+
+/* ── Grille de cartes cadres ── */
+.cf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  padding-top: 16px; /* espace pour le pill ACTUEL qui déborde en haut */
+}
+
+/* ── Carte cadre ── */
+.cf-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px;
+  padding: 20px 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(10,20,36,.99), rgba(16,30,50,.98));
+  border: 1.5px solid rgba(196,160,82,.28);
+  cursor: pointer;
+  transition: border-color .28s, transform .28s, box-shadow .28s;
+  box-shadow:
+    0 0 0 1px rgba(196,160,82,.05),
+    inset 0 0 0 1px rgba(196,160,82,.04),
+    inset 0 1px 0 rgba(255,240,180,.05),
+    0 8px 28px rgba(0,0,0,.45);
+  overflow: visible; /* pill ACTUEL déborde en haut — ne pas clipper */
+}
+/* Barre dorée haut — centrée */
+.cf-card::before {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,200,75,.6) 30%, rgba(255,224,133,.7) 50%, rgba(242,200,75,.6) 70%, transparent);
+  border-radius: 0 0 1px 1px;
+  z-index: 1;
+}
+.cf-card:hover:not(.cf-card--active) {
+  border-color: rgba(196,160,82,.55);
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(196,160,82,.12),
+    inset 0 0 0 1px rgba(196,160,82,.08),
+    inset 0 1px 0 rgba(255,240,180,.08),
+    0 0 18px rgba(196,160,82,.12),
+    0 16px 40px rgba(0,0,0,.55);
+}
+
+/* Carte active — border doré visible + halo lumineux + fond ambré */
+/* Note: .frame-row--active force du bleu en !important → on surcharge avec sélecteur double */
+.cf-card.cf-card--active,
+.cf-card--active {
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(196,160,82,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(196,160,82,.10) 0%, transparent 65%),
+    linear-gradient(160deg, rgba(14,24,42,.99) 0%, rgba(12,22,38,.99) 100%) !important;
+  border: 2px solid rgba(196,160,82,.92) !important;
+  border-color: rgba(196,160,82,.92) !important;
+  box-shadow:
+    0 0 0 1px rgba(242,200,75,.25),
+    inset 0 0 0 1px rgba(242,200,75,.15),
+    inset 0 0 40px rgba(196,160,82,.10),
+    inset 0 1px 0 rgba(255,240,180,.25),
+    0 0 24px rgba(196,160,82,.28),
+    0 0 48px rgba(196,160,82,.10),
+    0 20px 50px rgba(0,0,0,.55);
+}
+/* Barre haut lumineuse et bien visible */
+.cf-card--active::before {
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(242,200,75,.85) 20%,
+    rgba(255,245,140,1) 50%,
+    rgba(242,200,75,.85) 80%,
+    transparent 100%
+  );
+}
+/* Bouton ÉQUIPÉ — bordure or */
+.cf-card--active .cf-card__btn--equipped {
+  border-color: rgba(196,160,82,.6) !important;
+  color: var(--dore-clair) !important;
+  background: rgba(196,160,82,.08) !important;
+}
+
+/* Pill "Actuel" */
+.cf-card__actuel {
+  position: absolute;
+  top: -12px; left: 50%; transform: translateX(-50%);
+  padding: 3px 14px; border-radius: 999px;
+  background: var(--gold-gradient);
+  color: var(--bleu-nuit);
+  font-family: var(--f-title); font-size: .44rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(196,160,82,.45);
+  z-index: 2;
+}
+
+/* Preview wrapper */
+.cf-card__preview-wrap {
+  width: 100px; height: 100px;
+  flex-shrink: 0;
+}
+.cf-card__preview-inner {
+  width: 100% !important; height: 100% !important;
+}
+.cf-card__preview-inner .bsp {
+  width: 58px !important; height: 58px !important;
+  top: 21px !important; left: 21px !important;
+}
+.cf-card__preview-inner--locked { opacity: .55; }
+.cf-card__lock-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(232,232,232,.6);
+  z-index: 3;
+}
+.cf-card__preview-icon {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+}
+
+/* Nom + thème */
+.cf-card__name {
+  font-family: var(--f-title);
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .06em; text-align: center;
+  color: var(--argent-ecran);
+  line-height: 1.3;
+}
+.cf-card--active .cf-card__name { color: var(--dore-clair); }
+.cf-card__theme {
+  font-size: .54rem; font-weight: 300;
+  color: rgba(232,232,232,.40); text-align: center;
+}
+
+/* Boutons */
+.cf-card__action { margin-top: auto; width: 100%; }
+.cf-card__btn {
+  width: 100%; padding: 8px 10px; border-radius: 8px;
+  font-family: var(--f-title); font-size: .52rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; border: 1.5px solid; transition: all .22s;
+}
+.cf-card__btn--equip {
+  background: transparent;
+  border-color: rgba(196,160,82,.4);
+  color: var(--or-titre);
+}
+.cf-card__btn--equip:hover {
+  background: rgba(196,160,82,.12);
+  border-color: rgba(196,160,82,.7);
+  color: var(--dore-clair);
+  transform: translateY(-1px);
+}
+.cf-card__btn--equipped {
+  background: rgba(10,18,30,.85);
+  border-color: rgba(196,160,82,.5);
+  color: var(--dore-clair);
+  cursor: default;
+}
+.cf-card__btn--locked {
+  background: transparent;
+  border-color: rgba(255,255,255,.08);
+  color: rgba(232,232,232,.3);
+  cursor: default;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .cf-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+  .cf-card { padding: 16px 10px 12px; }
+  .cf-card__preview-wrap { width: 80px; height: 80px; }
+}
 .ctb-frames-count {
   font-family: var(--f-title);
   font-size: .55rem;
