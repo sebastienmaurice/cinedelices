@@ -118,40 +118,29 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
           pill.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg><span>Équipé</span>';
         }
 
-        // ── 1b. Mise à jour nouveaux cf-card (design premium) ─────
-        newList.querySelectorAll('.cf-card').forEach(card => {
-          // Retirer état actif de toutes les cartes
+        // ── 1b. Mise à jour cf-card (design premium) ─────────────
+        // Utilise document.querySelectorAll pour cibler toutes les cartes réelles du DOM
+        document.querySelectorAll('.cf-card').forEach(card => {
           card.classList.remove('cf-card--active');
-          // Supprimer pill "ACTUEL"
           card.querySelector('.cf-card__actuel')?.remove();
-          // Remettre le bouton en "ÉQUIPER" si non verrouillé
-          const btn = card.querySelector('.cf-card__btn--equipped');
-          if (btn) {
-            btn.className = 'cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn';
-            btn.innerHTML = 'Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>';
-            if (window.lucide) window.lucide.createIcons({ nodes: [btn] });
+          const equippedBtn = card.querySelector('.cf-card__btn--equipped');
+          if (equippedBtn) {
+            equippedBtn.className = 'cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok';
+            equippedBtn.innerHTML = 'Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>';
           }
-          // Remettre le nom en couleur normale
-          const name = card.querySelector('.cf-card__name');
-          if (name) name.style.color = '';
         });
-        // Activer la carte cliquée
-        const cfCard = row.classList.contains('cf-card') ? row : row.closest('.cf-card');
-        if (cfCard) {
-          cfCard.classList.add('cf-card--active');
-          // Ajouter pill "ACTUEL"
-          const actuelPill = document.createElement('div');
-          actuelPill.className = 'cf-card__actuel';
-          actuelPill.textContent = 'Actuel';
-          cfCard.prepend(actuelPill);
-          // Passer le bouton en "ÉQUIPÉ"
-          const activeBtn = cfCard.querySelector('.cf-card__btn');
-          if (activeBtn) {
-            activeBtn.className = 'cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active';
-            activeBtn.innerHTML = '<i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé';
-            if (window.lucide) window.lucide.createIcons({ nodes: [activeBtn] });
-          }
+        // Activer directement `row` (le cf-card cliqué)
+        row.classList.add('cf-card--active');
+        const actuelPill = document.createElement('div');
+        actuelPill.className = 'cf-card__actuel';
+        actuelPill.textContent = 'Actuel';
+        row.prepend(actuelPill);
+        const activeBtn = row.querySelector('.cf-card__btn');
+        if (activeBtn) {
+          activeBtn.className = 'cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active';
+          activeBtn.innerHTML = '<i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé';
         }
+        if (window.lucide) window.lucide.createIcons();
         // Widget "Cadre actif" dans la sidebar contributions
         const activePreview = document.querySelector('.active-frame-body .active-frame-preview');
         if (activePreview) {
