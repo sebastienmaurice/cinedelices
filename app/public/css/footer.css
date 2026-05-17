@@ -359,11 +359,30 @@
 }
 @media (max-width: 768px) {
   :root { --ft-px: 18px; }
+
+  /* Préfooter : ajuster le fond pour layout 1 colonne */
+  .ft__pre-bg {
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.55) 50%, rgba(0,0,0,.75) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.55) 50%, rgba(0,0,0,.75) 100%);
+  }
+  .ft__pre::before {
+    background: rgba(10,18,32,.78);
+  }
   .ft__pre-title   { font-size: 2rem; }
+  .ft__pre-stats   { flex-wrap: wrap; gap: 16px 24px; }
+
+  /* Main footer : 1 colonne */
   .ft__main        { grid-template-columns: 1fr; }
   .ft__col         { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.04); padding: 20px 0; }
   .ft__col:last-child { border-bottom: none; }
+
+  /* Stats : 2 colonnes, padding symétrique */
   .ft__stats-inner { grid-template-columns: repeat(2,1fr); }
+  .ft__stat        { padding: 18px 16px; }
+  .ft__stat:first-child { padding-left: 16px; }  /* annule le padding-left:0 desktop */
+  .ft__stat:nth-child(2) { border-right: none; }
+
+  /* Bottom bar */
   .ft__bottom      { flex-wrap: wrap; gap: 12px; }
   .ft__copy        { order: 3; width: 100%; text-align: center; margin-right: 0; }
   .ft__legal       { order: 1; margin: 0 auto; }
@@ -371,5 +390,20 @@
 }
 @media (max-width: 520px) {
   .ft__stats-inner { grid-template-columns: 1fr 1fr; }
-  .ft__stat        { padding: 16px 12px; gap: 10px; }
+  .ft__stat        { padding: 14px 12px; gap: 10px; }
+  .ft__stat:first-child { padding-left: 12px; }
+  .ft__stat-n      { font-size: 1.3rem; }
+  .ft__pre-ctas    { flex-direction: column; }
+  .ft__pre-btn-main,
+  .ft__pre-btn-sec { width: 100%; justify-content: center; }
+}
+@media (max-width: 420px) {
+  :root { --ft-px: 14px; }
+  .ft__pre-title   { font-size: 1.75rem; }
+  .ft__pre-stat-n  { font-size: 1.6rem; }
+  .ft__pre-desc    { font-size: 0.76rem; }
+  .ft__stats-inner { grid-template-columns: 1fr; }
+  .ft__stat        { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .ft__stat:last-child { border-bottom: none; }
+  .ft__stat:nth-child(n+3) { border-top: none; }
 }
