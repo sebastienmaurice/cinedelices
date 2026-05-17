@@ -4176,24 +4176,32 @@ body.modal-open { overflow: hidden; }
   z-index: 2;
 }
 
-/* Preview wrapper */
+/* Preview wrapper — contexte de positionnement explicite */
 .cf-card__preview-wrap {
   width: 100px; height: 100px;
   flex-shrink: 0;
+  position: relative;  /* contexte pour les éléments absolute internes */
 }
-.cf-card__preview-inner {
-  width: 100% !important; height: 100% !important;
+/* Le frame-row-badge-static remplit exactement le wrapper */
+.cf-card__preview-wrap .frame-row-badge-static {
+  position: absolute !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
 }
+/* Photo : centrée dans les 100px */
 .cf-card__preview-inner .bsp {
   width: 58px !important; height: 58px !important;
   top: 21px !important; left: 21px !important;
 }
-/* bsf : contenir le PNG sans distorsion (important pour Sherlock 1440px) */
+/* Frame PNG : sans distorsion (critique pour Sherlock 1440px) */
 .cf-card__preview-inner .bsf {
   object-fit: contain !important;
 }
-/* Ring "Sans Cadre" recalibré pour preview 100px
-   Photo: 58px → rayon 29px → ring à 31-34px (1px gap + 3px ring) */
+/* Ring "Sans Cadre" : rayon photo 29px → ring à 31-34px */
+.cf-card__preview-wrap .frame-row-badge-static--noframe {
+  border-radius: 0 !important;  /* pas de clip sur le container */
+}
 .cf-card__preview-wrap .frame-row-badge-static--noframe::after {
   mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
   -webkit-mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
