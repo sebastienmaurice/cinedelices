@@ -4464,3 +4464,58 @@ body.modal-open { overflow: hidden; }
   .ctb-side-col { flex-direction: column; }
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   PTAB — GRID & CARDS PREMIUM (tous onglets profil)
+══════════════════════════════════════════════════════════════ */
+.ptab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 28px;
+}
+.ptab-grid--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Spans */
+.ptab-card--span2 { grid-column: span 2; }
+.ptab-card--full  { grid-column: 1 / -1; }
+
+/* Card premium — même identité que ctb2-card */
+.ptab-card {
+  position: relative;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 55% 60% at 10% 40%, rgba(196,160,82,.04) 0%, transparent 55%),
+    linear-gradient(160deg, rgba(10,20,36,.99) 0%, rgba(16,30,50,.98) 100%);
+  border: 1.5px solid rgba(196,160,82,.28);
+  box-shadow:
+    0 0 0 1px rgba(196,160,82,.05),
+    inset 0 0 0 1px rgba(196,160,82,.04),
+    inset 0 1px 0 rgba(255,240,180,.05),
+    0 8px 28px rgba(0,0,0,.45);
+  overflow: hidden;
+}
+/* Barre dorée haut */
+.ptab-card::before {
+  content: '';
+  position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,200,75,.6) 30%, rgba(255,224,133,.7) 50%, rgba(242,200,75,.6) 70%, transparent);
+}
+/* Reset des widgets et sections à l'intérieur des ptab-card */
+.ptab-card .widget        { background: none; border: none; box-shadow: none; padding: 0; }
+.ptab-card .widget-head   { padding: 0 0 12px; }
+.ptab-card > section      { padding: 0; }
+.ptab-card .sec-eyebrow   { margin-bottom: 4px; }
+.ptab-card .sec-header    { margin-bottom: 10px; }
+
+/* Créations — col 1 sidebar spans multiple rows, sections en col 2-3 */
+#creations .ptab-card:not(.ptab-card--span2) { grid-column: 1; }
+#creations .ptab-card--span2 { grid-column: 2 / span 2; }
+
+/* Favoris — accès rapide col 1 */
+#favoris .ptab-card:not(.ptab-card--span2) { grid-column: 1; }
+#favoris .ptab-card--span2 { grid-column: 2 / span 2; }

@@ -264,13 +264,11 @@
             </div>
           </div>
 
-          <!-- LAYOUT 2 COLONNES -->
-          <div class="crea-layout">
+          <!-- GRILLE 3 COLONNES -->
+          <div class="ptab-grid">
 
-            <!-- ── SIDEBAR ── -->
-            <aside class="crea-sidebar">
-
-              <!-- Ma progression -->
+            <!-- Ma progression -->
+            <div class="ptab-card">
               <div class="widget">
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
@@ -326,34 +324,10 @@
                 </div>
               </div>
 
-              <!-- Raccourcis -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Navigation rapide</span>
-                </div>
-                <div class="quick-actions">
-                  <button class="qa-btn qa-btn--gold" onclick="document.querySelector('[data-tab=\'creations\']').click()">
-                    <div class="qa-icon"><i data-lucide="plus" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Mes créations</div><div class="qa-sub">Recettes, films et avis</div></div>
-                  </button>
-                  <button class="qa-btn qa-btn--violet" onclick="document.querySelector('[data-tab=\'favoris\']').click()">
-                    <div class="qa-icon"><i data-lucide="heart" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
-                  </button>
-                  <button class="qa-btn qa-btn--vert" onclick="document.querySelector('[data-tab=\'contributions\']').click()">
-                    <div class="qa-icon"><i data-lucide="star" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Contributions</div><div class="qa-sub">XP, niveaux et cadres</div></div>
-                  </button>
-                </div>
-              </div>
+            </div><!-- /ptab-card Ma progression -->
 
-            </aside>
-
-            <!-- ── COLONNE PRINCIPALE ── -->
-            <div class="crea-main">
-
-              <!-- DERNIÈRES RECETTES -->
+            <!-- Dernières recettes (span 2) -->
+            <div class="ptab-card ptab-card--span2">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -408,9 +382,35 @@
                   <% } %>
                 </div>
               </section>
+            </div><!-- /ptab-card Recettes -->
+
+            <!-- Navigation rapide -->
+            <div class="ptab-card">
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="widget-head__line"></div>
+                  <span class="widget-head__title">Navigation rapide</span>
+                </div>
+                <div class="quick-actions">
+                  <button class="qa-btn qa-btn--gold" onclick="document.querySelector('[data-tab=\'creations\']').click()">
+                    <div class="qa-icon"><i data-lucide="plus" aria-hidden="true"></i></div>
+                    <div class="qa-text"><div class="qa-title">Mes créations</div><div class="qa-sub">Recettes, films et avis</div></div>
+                  </button>
+                  <button class="qa-btn qa-btn--violet" onclick="document.querySelector('[data-tab=\'favoris\']').click()">
+                    <div class="qa-icon"><i data-lucide="heart" aria-hidden="true"></i></div>
+                    <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
+                  </button>
+                  <button class="qa-btn qa-btn--vert" onclick="document.querySelector('[data-tab=\'contributions\']').click()">
+                    <div class="qa-icon"><i data-lucide="star" aria-hidden="true"></i></div>
+                    <div class="qa-text"><div class="qa-title">Contributions</div><div class="qa-sub">XP, niveaux et cadres</div></div>
+                  </button>
+                </div>
+              </div>
+            </div><!-- /ptab-card Navigation -->
 
               <!-- FILMS RÉCENTS -->
               <% if (userMovies && userMovies.length > 0) { %>
+              <div class="ptab-card">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -454,10 +454,12 @@
                   <% }) %>
                 </div>
               </section>
+              </div><!-- /ptab-card Films -->
               <% } %>
 
               <!-- DERNIERS AVIS -->
               <% if (userNotices && userNotices.length > 0) { %>
+              <div class="ptab-card">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -504,11 +506,10 @@
                   <% }) %>
                 </div>
               </section>
+              </div><!-- /ptab-card Avis -->
               <% } %>
 
-            </div><!-- /crea-main -->
-
-          </div><!-- /crea-layout -->
+          </div><!-- /ptab-grid overview -->
 
         </div><!-- /tab-pane#overview -->
 
@@ -558,14 +559,11 @@
             </div>
           </div>
 
-          <!-- LAYOUT 2 COLONNES -->
-          <div class="crea-layout">
+          <!-- GRILLE 3 COLONNES -->
+          <div class="ptab-grid">
 
-            <!-- ── SIDEBAR (gauche, étroite) : zone danger ── -->
-            <aside class="crea-sidebar">
-
-              <!-- ═══ CARD SUPPRIMER MON COMPTE ═══ -->
-              <div class="delacc-card" role="region" aria-labelledby="delacc-title">
+            <!-- Zone danger (col 3, affichée après Informations via CSS order) -->
+            <div class="ptab-card" style="order:2;grid-row:1;grid-column:3;">
                 <div class="delacc-card__shimmer" aria-hidden="true"></div>
                 <div class="delacc-card__inner">
                   <div class="delacc-card__head">
@@ -586,13 +584,10 @@
                   </button>
                 </div>
               </div>
+            </div><!-- /ptab-card danger -->
 
-            </aside>
-
-            <!-- ── COLONNE PRINCIPALE (droite, large) : formulaire + préférences ── -->
-            <div class="crea-main">
-
-              <!-- INFORMATIONS -->
+            <!-- Informations (col 1-2) -->
+            <div class="ptab-card ptab-card--span2" style="order:1;grid-row:1;grid-column:1/span 2;">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -656,44 +651,44 @@
                 </div>
               </section>
 
-              <!-- PRÉFÉRENCES NOTIFICATIONS -->
+            </div><!-- /ptab-card Informations -->
+
+            <!-- Préférences (span 2) -->
+            <div class="ptab-card ptab-card--span2">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
                   <span class="sec-eyebrow__label">Notifications</span>
                 </div>
                 <div class="sec-title" style="font-family:var(--f-display);font-size:1.4rem;letter-spacing:.08em;color:#fff;margin-bottom:12px;">PRÉFÉRENCES</div>
-                <div class="widget">
-                  <div class="widget__form-body">
-                    <form id="profilePrefsForm">
-                      <div class="pf-notif-row">
-                        <div class="pf-notif-info">
-                          <span class="pf-notif-label">Nouvelles recettes</span>
-                          <span class="pf-notif-sub">Nouvelles recettes sur vos films favoris</span>
-                        </div>
-                        <label class="toggle">
-                          <input type="checkbox" name="notify_recipes" <%= user.notify_recipes ? 'checked' : '' %> disabled />
-                          <span class="toggle-slider"></span>
-                        </label>
+                <div class="widget"><div class="widget__form-body">
+                  <form id="profilePrefsForm">
+                    <div class="pf-notif-row">
+                      <div class="pf-notif-info">
+                        <span class="pf-notif-label">Nouvelles recettes</span>
+                        <span class="pf-notif-sub">Nouvelles recettes sur vos films favoris</span>
                       </div>
-                      <div class="pf-notif-row">
-                        <div class="pf-notif-info">
-                          <span class="pf-notif-label">Nouveaux films</span>
-                          <span class="pf-notif-sub">Nouveaux films ajoutés à la collection</span>
-                        </div>
-                        <label class="toggle">
-                          <input type="checkbox" name="notify_cinema" <%= user.notify_cinema ? 'checked' : '' %> disabled />
-                          <span class="toggle-slider"></span>
-                        </label>
+                      <label class="toggle">
+                        <input type="checkbox" name="notify_recipes" <%= user.notify_recipes ? 'checked' : '' %> disabled />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div class="pf-notif-row">
+                      <div class="pf-notif-info">
+                        <span class="pf-notif-label">Nouveaux films</span>
+                        <span class="pf-notif-sub">Nouveaux films ajoutés à la collection</span>
                       </div>
-                    </form>
-                  </div>
-                </div>
+                      <label class="toggle">
+                        <input type="checkbox" name="notify_cinema" <%= user.notify_cinema ? 'checked' : '' %> disabled />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </form>
+                </div></div>
               </section>
+            </div><!-- /ptab-card Prefs -->
 
-            </div>
-
-          </div><!-- /crea-layout -->
+          </div><!-- /ptab-grid profil -->
 
         </div><!-- /tab-pane#profil -->
 
@@ -743,13 +738,11 @@
             </div>
           </div>
 
-          <!-- LAYOUT 2 COLONNES -->
-          <div class="crea-layout">
+          <!-- GRILLE 3 COLONNES -->
+          <div class="ptab-grid">
 
-            <!-- ── SIDEBAR ── -->
-            <aside class="crea-sidebar">
-
-              <!-- Navigation sections -->
+            <!-- Accès rapide (col 1) -->
+            <div class="ptab-card">
               <div class="widget">
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
@@ -771,11 +764,10 @@
                 </div>
               </div>
 
-            </aside>
+            </div><!-- /ptab-card Accès rapide -->
 
-            <!-- ── COLONNE PRINCIPALE ── -->
-            <div class="crea-main">
-
+            <!-- Films favoris (span 2) -->
+            <div class="ptab-card ptab-card--span2">
               <!-- FILMS FAVORIS -->
               <section id="favFilmsSection">
                 <div class="sec-eyebrow">
@@ -821,7 +813,10 @@
                 </div>
               </section>
 
-              <!-- RECETTES FAVORITES -->
+            </div><!-- /ptab-card Films favoris -->
+
+            <!-- Recettes favorites (span 2) -->
+            <div class="ptab-card ptab-card--span2">
               <section id="favRecettesSection">
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -866,7 +861,10 @@
                 </div>
               </section>
 
-              <!-- FILMS NOTÉS -->
+            </div><!-- /ptab-card Recettes favorites -->
+
+            <!-- Films notés -->
+            <div class="ptab-card">
               <section id="notedFilmsSection">
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -907,7 +905,10 @@
                 </div>
               </section>
 
-              <!-- RECETTES NOTÉES -->
+            </div><!-- /ptab-card Films notés -->
+
+            <!-- Recettes notées (span 2) -->
+            <div class="ptab-card ptab-card--span2">
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
@@ -948,9 +949,9 @@
                 </div>
               </section>
 
-            </div><!-- /crea-main -->
+            </div><!-- /ptab-card Recettes notées -->
 
-          </div><!-- /crea-layout -->
+          </div><!-- /ptab-grid favoris -->
 
         </div><!-- /tab-pane#favoris -->
 
@@ -1017,13 +1018,11 @@
             </div>
           </div>
 
-          <!-- ═══ LAYOUT 2 COLONNES ═══ -->
-          <div class="crea-layout">
+          <!-- GRILLE 3 COLONNES -->
+          <div class="ptab-grid">
 
-            <!-- ── SIDEBAR ── -->
-            <aside class="crea-sidebar">
-
-              <!-- STATISTIQUES -->
+            <!-- Mes chiffres (col 1) -->
+            <div class="ptab-card">
               <div class="widget">
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
@@ -1061,6 +1060,10 @@
                 </div>
               </div>
 
+            </div><!-- /ptab-card Mes chiffres -->
+
+            <!-- Statut + Actions + Films proposés (col 1) -->
+            <div class="ptab-card">
               <!-- STATUT DES RECETTES -->
               <div class="widget">
                 <div class="widget-head">
@@ -1157,11 +1160,11 @@
               </div>
               <% } %>
 
-            </aside>
+            </div><!-- /ptab-card Statut+Actions+Films -->
 
-            <!-- ── COLONNE PRINCIPALE ── -->
-            <div class="crea-main">
+            <!-- MES RECETTES (col 1) — span 2 mais après le 1er ptab-card -->
 
+            <div class="ptab-card ptab-card--span2">
               <!-- ═══ MES RECETTES ═══ -->
               <section id="creaRecettesSection">
                 <div class="sec-eyebrow">
@@ -1270,6 +1273,9 @@
                 </div>
               </section>
 
+            </div><!-- /ptab-card MES RECETTES -->
+
+            <div class="ptab-card ptab-card--span2">
               <!-- ═══ MES FILMS ═══ -->
               <section id="creaFilmsSection">
                 <div class="sec-eyebrow">
@@ -1350,6 +1356,9 @@
                 </div>
               </section>
 
+            </div><!-- /ptab-card MES FILMS -->
+
+            <div class="ptab-card ptab-card--span2">
               <!-- ═══ MES AVIS ═══ -->
               <section id="creaAvisSection">
                 <div class="sec-eyebrow">
@@ -1422,9 +1431,9 @@
                 </div>
               </section>
 
-            </div><!-- /crea-main -->
+            </div><!-- /ptab-card MES AVIS -->
 
-          </div><!-- /crea-layout -->
+          </div><!-- /ptab-grid creations -->
 
         </div><!-- /tab-pane#creations -->
 
