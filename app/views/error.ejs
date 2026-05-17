@@ -67,7 +67,7 @@ body {
   font-family: var(--f-body);
   color: var(--argent);
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 /* ── CANVAS PARTICULES ── */
@@ -210,7 +210,7 @@ body {
 /* SOUS-TITRE */
 .error-sub {
   font-family: var(--f-editorial); font-style: italic; font-weight: 400;
-  font-size: clamp(.95rem, 1.8vw, 1.1rem); color: rgba(232,232,232,.45);
+  font-size: clamp(.9rem, 1.8vw + .5rem, 1.1rem); color: rgba(232,232,232,.45);
   max-width: 500px; line-height: 1.65; margin-bottom: 38px;
   animation: fadeUp .6s cubic-bezier(.22,1,.36,1) .46s both;
 }
@@ -244,6 +244,19 @@ body {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  :root { --page-px: 24px; }
+  .site-nav { padding: 0 20px; }
+}
+@media (max-width: 480px) {
+  :root { --page-px: 16px; }
+  .error-number { font-size: clamp(5.5rem, 22vw, 8rem); }
+  .cta-group { flex-direction: column; width: 100%; max-width: 320px; }
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  .reel--a { width: 260px; height: 260px; right: -100px; }
+  .reel--b { width: 200px; height: 200px; left: -80px; }
 }
 </style>
 </head>
@@ -314,8 +327,8 @@ body {
           Rechercher un film
         </a>
       <% } %>
-
-  </div>
+    </div><!-- /.cta-group -->
+  </div><!-- /.error-content -->
 </main>
 
 <script>
