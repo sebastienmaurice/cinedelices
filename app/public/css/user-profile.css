@@ -2776,8 +2776,24 @@ body.modal-open { overflow: hidden; }
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
+/* Dans la grille 2 colonnes, les boutons passent sous le contenu */
+.list-grid .list-row {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.list-grid .list-row__body {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.list-grid .list-row__actions {
+  flex: 0 0 100%;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
 @media (max-width: 700px) {
   .list-grid { grid-template-columns: 1fr; }
+  .list-grid .list-row { flex-wrap: nowrap; align-items: center; }
+  .list-grid .list-row__actions { flex: 0 0 auto; margin-top: 0; }
 }
 .list-row {
   display: flex; align-items: center; gap: 14px; padding: 11px 14px;
