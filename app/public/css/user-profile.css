@@ -2602,28 +2602,30 @@ body.modal-open { overflow: hidden; }
   .ptab { flex-shrink: 0; }
 }
 @media (max-width: 640px) {
-  /* Hero : hauteur augmentée pour respiration */
-  .profile-hero { height: 295px; }
+  /* Hero : hauteur augmentée pour les boutons en dessous de l'avatar */
+  .profile-hero { height: 320px; }
   .hero-banner-status { right: 16px; top: 14px; gap: 4px; }
   .hero-author-link   { left: 16px;  top: 14px; }
   .banner-btn { padding: 5px 10px; font-size: .54rem; }
   .author-link { padding: 5px 10px 5px 9px; font-size: .54rem; }
 
-  /* Layout horizontal : avatar GAUCHE | identity DROITE
-     padding-top laisse de la place aux boutons absolus en haut du hero */
-  .hero-content { padding-top: 76px; padding-bottom: 14px; }
-  .hero-row {
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 10px;
-  }
+  /* Layout horizontal : avatar GAUCHE (plus grand) | identity DROITE */
+  .hero-content { padding-top: 72px; padding-bottom: 10px; }
+  .hero-row { flex-direction: row; align-items: flex-end; gap: 12px; }
   .hero-identity { flex: 1; min-width: 0; }
 
-  /* Avatar-actions repositionnées en bas-droite du bloc avatar */
+  /* Avatar : plus grand + overflow visible pour les boutons en dessous */
+  .avatar-block { width: 92px; height: 130px; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.354); transform-origin: top left; }
+
+  /* Avatar-actions : EN DESSOUS du cercle, centrés
+     top: 276px dans l'espace 260px → visuel: 276*0.354 ≈ 98px (juste sous les 92px du badge) */
   .avatar-actions {
-    right: 0;
-    transform: scale(2.9);
-    transform-origin: bottom right;
+    top: 276px; left: 50%;
+    right: auto; bottom: auto;
+    flex-direction: row; gap: 6px;
+    transform: translateX(-50%) scale(2.82);
+    transform-origin: top center;
   }
 
   /* Tabs : icônes seules */
@@ -2635,16 +2637,23 @@ body.modal-open { overflow: hidden; }
 }
 @media (max-width: 480px) {
   /* Hero compact */
-  .profile-hero { height: 265px; }
-  .hero-content { padding-top: 70px; }
+  .profile-hero { height: 295px; }
+  .hero-content { padding-top: 68px; }
   .hero-row { gap: 8px; }
   /* Avatar légèrement plus petit */
-  .avatar-block { width: 68px; height: 68px; }
-  .profile-badge-hero { transform: scale(0.262); transform-origin: top left; }
-  .avatar-actions { right: 0; transform: scale(2.9); transform-origin: bottom right; }
-  /* Pseudo : réduire la taille minimale du clamp */
+  .avatar-block { width: 78px; height: 112px; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.300); transform-origin: top left; }
+  /* 260 * 0.300 = 78px. actions: 1/0.300 = 3.33 */
+  .avatar-actions {
+    top: 274px; left: 50%;
+    right: auto; bottom: auto;
+    flex-direction: row; gap: 6px;
+    transform: translateX(-50%) scale(3.33);
+    transform-origin: top center;
+  }
+  /* Pseudo */
   .hero-pseudo { font-size: clamp(1.6rem, 7vw, 2.8rem); }
-  /* Boutons bannière tronqués sur très petit écran */
+  /* Boutons bannière tronqués */
   .hero-banner-status .banner-btn--pending,
   .hero-banner-status .banner-btn--rejected { max-width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
@@ -4176,14 +4185,18 @@ body.modal-open { overflow: hidden; }
   width: 100% !important; height: 100% !important;
 }
 .cf-card__preview-inner .bsp {
-  width: 62px !important; height: 62px !important;
-  top: 19px !important; left: 19px !important;
+  width: 58px !important; height: 58px !important;
+  top: 21px !important; left: 21px !important;
+}
+/* bsf : contenir le PNG sans distorsion (important pour Sherlock 1440px) */
+.cf-card__preview-inner .bsf {
+  object-fit: contain !important;
 }
 /* Ring "Sans Cadre" recalibré pour preview 100px
-   Photo: 62px → rayon 31px → ring à 33-36px (1px gap + 3px ring) */
+   Photo: 58px → rayon 29px → ring à 31-34px (1px gap + 3px ring) */
 .cf-card__preview-wrap .frame-row-badge-static--noframe::after {
-  mask: radial-gradient(circle at 50% 50%, transparent 32px, black 33px, black 36px, transparent 37px) !important;
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 32px, black 33px, black 36px, transparent 37px) !important;
+  mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
 }
 .cf-card__preview-inner--locked { opacity: .55; }
 .cf-card__lock-icon {
