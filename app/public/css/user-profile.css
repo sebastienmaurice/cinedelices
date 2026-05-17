@@ -2602,13 +2602,33 @@ body.modal-open { overflow: hidden; }
   .ptab { flex-shrink: 0; }
 }
 @media (max-width: 640px) {
-  .ptab span.ptab-text {
-    display: none;
-  }
-  .ptab {
-    padding: 14px 14px;
-    gap: 4px;
-  }
+  /* Hero : hauteur réduite, boutons positionnés */
+  .profile-hero { height: 260px; }
+  .hero-banner-status { right: 16px; top: 14px; gap: 4px; }
+  .hero-author-link   { left: 16px;  top: 14px; }
+  .banner-btn { padding: 5px 10px; font-size: .54rem; }
+  .author-link { padding: 5px 10px 5px 9px; font-size: .54rem; }
+
+  /* Tabs : icônes seules */
+  .ptab span.ptab-text { display: none; }
+  .ptab { padding: 14px 14px; gap: 4px; }
+
+  /* Formulaire profil : champs pleine largeur */
+  .ci-ef-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  /* Hero encore plus compact */
+  .profile-hero { height: 230px; }
+  .hero-row { gap: 8px; }
+  /* Avatar légèrement plus petit */
+  .avatar-block { width: 68px; height: 68px; }
+  .profile-badge-hero { transform: scale(0.262); }
+  .avatar-actions { right: -28px; transform: scale(3.82); }
+  /* Pseudo : réduire la taille minimale du clamp */
+  .hero-pseudo { font-size: clamp(1.9rem, 7vw, 2.8rem); }
+  /* Masquer les boutons banner sur très petit écran : trop d'infos */
+  .hero-banner-status .banner-btn--pending,
+  .hero-banner-status .banner-btn--rejected { max-width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
 
 /* ═══════════════════════════════════════════════════
