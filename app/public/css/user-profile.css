@@ -3777,15 +3777,21 @@ body.modal-open { overflow: hidden; }
   left: 0; top: 0; bottom: 0;
   width: 2.5px;
   background: currentColor;
-  opacity: 0;
+  border-radius: 12px 0 0 12px;
+  opacity: .28;
   transition: opacity .25s ease;
 }
 .ctb-tl-item:hover .ctb-tl-card {
-  border-color: rgba(196,160,82,.18);
   transform: translateX(2px);
   background: linear-gradient(135deg, rgba(12,24,40,.96), rgba(18,34,56,.94));
 }
-.ctb-tl-item:hover .ctb-tl-card::before { opacity: .55; }
+.ctb-tl-item:hover .ctb-tl-card::before { opacity: .65; }
+/* Hover border : couleur selon le type */
+.ctb-tl-item[data-type="recipe"]:hover  .ctb-tl-card { border-color: rgba(201,123,58,.28); }
+.ctb-tl-item[data-type="notice"]:hover  .ctb-tl-card { border-color: rgba(196,160,82,.28); }
+.ctb-tl-item[data-type="movie"]:hover   .ctb-tl-card { border-color: rgba(155,121,224,.28); }
+.ctb-tl-item[data-type="comment"]:hover .ctb-tl-card { border-color: rgba(140,180,225,.28); }
+/* Couleur icon par type */
 .ctb-tl-item[data-type="recipe"]  .ctb-tl-card { color: var(--caramel, #c97b3a); }
 .ctb-tl-item[data-type="notice"]  .ctb-tl-card { color: var(--or-titre); }
 .ctb-tl-item[data-type="movie"]   .ctb-tl-card { color: var(--violet-clair, #9b79e0); }
@@ -4492,6 +4498,14 @@ body.modal-open { overflow: hidden; }
   .ctb-tl-xp { padding-left: 8px; }
   .ctb-tl-xp__val { font-size: .95rem; }
   .ctb-side-col { flex-direction: column; }
+}
+@media (max-width: 500px) {
+  /* Timeline : 1 colonne sur mobile étroit */
+  .ctb-timeline { grid-template-columns: 1fr; }
+  /* cf-grid cadres : 2 colonnes max */
+  .cf-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* Masquer XP dans la timeline pour gagner de l'espace */
+  .ctb-tl-xp { display: none; }
 }
 
 
