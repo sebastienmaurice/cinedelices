@@ -5069,11 +5069,69 @@ main {
   border-color: rgba(194, 48, 24, 0.5);
   color: #e84020;
 }
+/* ── Bloc utilisateur dans le drawer ── */
+.mobile-drawer__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.1);
+  background: rgba(196, 160, 82, 0.04);
+}
+.mobile-drawer__user-av {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.mobile-drawer__user-photo {
+  position: absolute;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  top: 7px; left: 7px;
+  z-index: 1;
+}
+.mobile-drawer__user-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.mobile-drawer__user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.mobile-drawer__user-name {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  letter-spacing: .06em;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mobile-drawer__user-role {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--f-title);
+  font-size: .44rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.55);
+}
+
 .mobile-drawer__nav {
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex: 1;
 }
 .mobile-drawer__link {
   display: flex;
@@ -5132,10 +5190,11 @@ main {
   background: rgba(194, 48, 24, 0.08);
 }
 .mobile-drawer__actions {
-  padding: 20px 24px;
+  padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 .mobile-drawer__btn-connect {
   display: flex;
@@ -5159,6 +5218,31 @@ main {
 }
 .mobile-drawer__btn-connect:hover {
   filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.mobile-drawer__btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  height: 44px;
+  border-radius: 9px;
+  background: transparent;
+  border: 1px solid rgba(194, 48, 24, 0.38);
+  cursor: pointer;
+  font-family: var(--f-title);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 90, 70, 0.82);
+  transition: all 0.25s;
+}
+.mobile-drawer__btn-logout:hover {
+  background: rgba(194, 48, 24, 0.12);
+  border-color: rgba(194, 48, 24, 0.65);
+  color: #e84020;
   transform: translateY(-1px);
 }
 
