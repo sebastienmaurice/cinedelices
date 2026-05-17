@@ -4176,32 +4176,28 @@ body.modal-open { overflow: hidden; }
   z-index: 2;
 }
 
-/* Preview wrapper — contexte de positionnement explicite */
+/* Preview wrapper — 100px fixe, contexte de positionnement */
 .cf-card__preview-wrap {
   width: 100px; height: 100px;
   flex-shrink: 0;
-  position: relative;  /* contexte pour les éléments absolute internes */
+  position: relative;
 }
-/* Le frame-row-badge-static remplit exactement le wrapper */
+/* frame-row-badge-static dans la preview : remplit exactement les 100px */
 .cf-card__preview-wrap .frame-row-badge-static {
-  position: absolute !important;
-  inset: 0 !important;
-  width: auto !important;
-  height: auto !important;
+  position: relative !important;
+  width: 100px !important;
+  height: 100px !important;
 }
-/* Photo : centrée dans les 100px */
+/* Photo centrée dans 100px */
 .cf-card__preview-inner .bsp {
   width: 58px !important; height: 58px !important;
   top: 21px !important; left: 21px !important;
 }
-/* Frame PNG : sans distorsion (critique pour Sherlock 1440px) */
+/* Frame PNG sans distorsion (Sherlock = 1440px) */
 .cf-card__preview-inner .bsf {
   object-fit: contain !important;
 }
-/* Ring "Sans Cadre" : rayon photo 29px → ring à 31-34px */
-.cf-card__preview-wrap .frame-row-badge-static--noframe {
-  border-radius: 0 !important;  /* pas de clip sur le container */
-}
+/* Ring "Sans Cadre" — rayon photo 29px → ring à 31-34px */
 .cf-card__preview-wrap .frame-row-badge-static--noframe::after {
   mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
   -webkit-mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
@@ -4270,9 +4266,10 @@ body.modal-open { overflow: hidden; }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .cf-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-  .cf-card { padding: 16px 10px 12px; }
-  .cf-card__preview-wrap { width: 80px; height: 80px; }
+  .cf-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cf-card { padding: 14px 10px 12px; }
+  /* Garder 100px pour que les cadres restent correctement proportionnés */
+  .cf-card__preview-wrap { width: 100px; height: 100px; position: relative; }
 }
 .ctb-frames-count {
   font-family: var(--f-title);
