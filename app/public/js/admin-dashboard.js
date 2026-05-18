@@ -949,7 +949,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const STATUS_LABELS = { approved: "Validée", pending: "En attente", rejected: "Refusée" };
   const STATUS_COLORS = { approved: "rgba(0,200,100,.8)", pending: "rgba(196,160,82,.9)", rejected: "rgba(220,60,60,.8)" };
 
-  const POSITION_LABELS = { 1: "Galerie 1", 2: "Galerie 2", 3: "Galerie 3" };
+  const POSITION_LABELS = { 1: "Photo Principale", 2: "Photo Secondaire", 3: "Photo de Détail" };
 
   const renderPhotoCard = (pic) => {
     const div = document.createElement("div");
