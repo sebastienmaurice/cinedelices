@@ -978,34 +978,52 @@ document.addEventListener("DOMContentLoaded", () => {
     return div;
   };
 
+  // Slot vide : upload si débloqué, grisé sinon
+  const renderEmptySlot = (position, disabled) => {
+    const posLabel = POSITION_LABELS[position] || `Photo ${position}`;
+    const div = document.createElement("div");
+    div.style.cssText = `width:160px; flex-shrink:0; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; ${disabled ? "background:rgba(255,255,255,.02); border:1px dashed rgba(255,255,255,.08);" : "background:rgba(255,255,255,.04); border:1px dashed rgba(196,160,82,.25);"}`;
+    if (disabled) {
+      div.innerHTML = `<div style="text-align:center; padding:16px; opacity:.3; font-size:.6rem; line-height:1.5;">${posLabel}<br><span style="font-size:.55rem;">Ajoutez la photo<br>précédente d'abord</span></div>`;
+    } else {
+      div.innerHTML = `
+        <div style="padding:12px; display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; box-sizing:border-box;">
+          <div style="font-size:.62rem; font-weight:700; color:rgba(196,160,82,.8); text-align:center; letter-spacing:.06em;">${posLabel}</div>
+          <input type="file" id="slot-upload-${position}" accept="image/jpeg,image/jpg,image/png,image/webp" style="font-size:.62rem; width:100%;" />
+          <button type="button" class="act-btn act-btn--approve" style="font-size:.6rem; padding:5px 10px; width:100%; margin-top:2px;" data-slot-add="${position}">
+            + Ajouter
+          </button>
+        </div>`;
+    }
+    return div;
+  };
+
   const refreshPhotosPanel = async (recipeId) => {
     if (!photosGrid) return;
     photosGrid.innerHTML = `<span style="font-size:.7rem; opacity:.35; align-self:center;">Chargement…</span>`;
+    if (photoAddZone)   photoAddZone.style.display = "none";
+    if (photosLimitMsg) photosLimitMsg.style.display = "none";
 
     try {
       const res  = await fetch(`/admin/recipes/${recipeId}/pictures`);
       const data = await res.json();
       photosGrid.innerHTML = "";
 
-      if (!data.success || !data.pictures.length) {
-        photosGrid.innerHTML = `<span style="font-size:.7rem; opacity:.35; align-self:center;">Aucune photo liée.</span>`;
-        if (photosCountBadge) photosCountBadge.textContent = "0 / 3";
-        if (photoAddZone)    photoAddZone.style.display = "block";
-        if (photosLimitMsg)  photosLimitMsg.style.display = "none";
-        return;
-      }
+      const pics = data.success ? data.pictures : [];
+      const byPos = {};
+      pics.forEach(p => byPos[p.position] = p);
+      const count = pics.length;
 
-      const count = data.pictures.length;
       if (photosCountBadge) photosCountBadge.textContent = `${count} / 3`;
 
-      data.pictures.forEach((pic) => photosGrid.appendChild(renderPhotoCard(pic)));
-
-      if (count >= 3) {
-        if (photoAddZone)   photoAddZone.style.display = "none";
-        if (photosLimitMsg) photosLimitMsg.style.display = "block";
-      } else {
-        if (photoAddZone)   photoAddZone.style.display = "block";
-        if (photosLimitMsg) photosLimitMsg.style.display = "none";
+      // 3 slots fixes : rempli ou upload
+      for (let pos = 1; pos <= 3; pos++) {
+        if (byPos[pos]) {
+          photosGrid.appendChild(renderPhotoCard(byPos[pos]));
+        } else {
+          const disabled = pos > 1 && !byPos[pos - 1];
+          photosGrid.appendChild(renderEmptySlot(pos, disabled));
+        }
       }
     } catch {
       photosGrid.innerHTML = `<span style="font-size:.7rem; color:rgba(220,60,60,.7);">Erreur de chargement.</span>`;
@@ -1068,20 +1086,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Ajouter nouvelle photo
-  photoAddBtn?.addEventListener("click", async () => {
-    if (!photoAddInput?.files?.[0] || !currentRecipeId) return;
+  // Ajouter photo via slot
+  document.addEventListener("click", async (e) => {
+    const slotBtn = e.target.closest("[data-slot-add]");
+    if (!slotBtn || !currentRecipeId) return;
+    const pos = slotBtn.dataset.slotAdd;
+    const fileInput = document.getElementById(`slot-upload-${pos}`);
+    if (!fileInput?.files?.[0]) { showToast("Sélectionnez une image", "error"); return; }
+    slotBtn.disabled = true;
+    slotBtn.textContent = "Upload…";
     const fd = new FormData();
-    fd.append("picture", photoAddInput.files[0]);
+    fd.append("picture", fileInput.files[0]);
     const res  = await fetch(`/admin/recipes/${currentRecipeId}/pictures/add`, { method: "POST", body: fd });
     const data = await res.json();
-    if (data.success) {
-      showToast("Photo ajoutée", "success");
-      if (photoAddInput) photoAddInput.value = "";
-      refreshPhotosPanel(currentRecipeId);
-    } else {
-      showToast(data.message || "Erreur lors de l'ajout", "error");
-    }
+    if (data.success) { showToast("Photo ajoutée", "success"); refreshPhotosPanel(currentRecipeId); }
+    else { showToast(data.message || "Erreur", "error"); slotBtn.disabled = false; slotBtn.textContent = "+ Ajouter"; }
   });
 
   console.log("✅ Admin dashboard v2 initialisé.");
