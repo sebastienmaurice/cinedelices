@@ -60,6 +60,7 @@ async function getTopContributors() {
      FROM   users u
      JOIN   recipes r ON r.id_user = u.id AND r.status = 'approved'
      LEFT JOIN user_points up ON up.id_user = u.id
+     WHERE  u.role NOT IN ('admin', 'superadmin', 'super_admin')
      GROUP  BY u.id, u.pseudo, u.picture, up.active_frame_code
      ORDER  BY COUNT(r.id) DESC
      LIMIT  3`,
