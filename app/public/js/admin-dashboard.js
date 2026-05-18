@@ -949,32 +949,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const STATUS_LABELS = { approved: "Validée", pending: "En attente", rejected: "Refusée" };
   const STATUS_COLORS = { approved: "rgba(0,200,100,.8)", pending: "rgba(196,160,82,.9)", rejected: "rgba(220,60,60,.8)" };
 
+  const POSITION_LABELS = { 1: "Principale", 2: "Secondaire", 3: "Détail" };
+
   const renderPhotoCard = (pic) => {
     const div = document.createElement("div");
     div.dataset.picId = pic.id;
-    div.style.cssText = "width:100px; flex-shrink:0; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:8px; overflow:hidden; display:flex; flex-direction:column;";
+    div.style.cssText = "width:160px; flex-shrink:0; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:10px; overflow:hidden; display:flex; flex-direction:column;";
 
-    const date = pic.created_at ? new Date(pic.created_at).toLocaleDateString("fr-FR") : "—";
     const statusLabel = STATUS_LABELS[pic.status] || pic.status;
     const statusColor = STATUS_COLORS[pic.status] || "rgba(255,255,255,.5)";
-    const canDelete = pic.position >= 2;
+    const posLabel    = POSITION_LABELS[pic.position] || `Photo ${pic.position}`;
+    const canDelete   = pic.position >= 2;
 
     div.innerHTML = `
-      <div style="height:80px; overflow:hidden; position:relative; background:rgba(0,0,0,.3);">
-        <img src="${pic.file_path}" alt="Photo ${pic.position}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" />
-        <span style="position:absolute; top:4px; left:4px; font-size:.55rem; font-weight:700; background:rgba(0,0,0,.7); color:${statusColor}; border-radius:3px; padding:2px 5px;">${statusLabel}</span>
+      <div style="height:120px; overflow:hidden; position:relative; background:rgba(0,0,0,.3); cursor:pointer;" onclick="window.open('${pic.file_path}','_blank')">
+        <img src="${pic.file_path}" alt="${posLabel}" style="width:100%; height:100%; object-fit:cover;" loading="lazy" />
+        <span style="position:absolute; top:6px; left:6px; font-size:.55rem; font-weight:700; background:rgba(0,0,0,.75); color:${statusColor}; border-radius:4px; padding:2px 6px;">${statusLabel}</span>
+        <span style="position:absolute; bottom:6px; left:6px; font-size:.55rem; font-weight:700; background:rgba(0,0,0,.75); color:rgba(255,255,255,.8); border-radius:4px; padding:2px 6px;">${posLabel}</span>
       </div>
-      <div style="padding:6px 6px 4px; font-size:.6rem; color:rgba(255,255,255,.4); line-height:1.4;">
-        <div>Photo ${pic.position}</div>
-        <div>${date}</div>
-      </div>
-      <div style="padding:0 6px 6px; display:flex; flex-direction:column; gap:4px;">
-        ${pic.status === "pending" ? `<button type="button" class="act-btn act-btn--approve" style="font-size:.58rem; padding:3px 6px;" data-photo-approve="${pic.id}">Approuver</button>` : ""}
-        <label class="act-btn" style="font-size:.58rem; padding:3px 6px; cursor:pointer; text-align:center; background:rgba(196,160,82,.15); color:rgba(196,160,82,.9); border:1px solid rgba(196,160,82,.25);">
-          Remplacer
+      <div style="padding:6px 8px; display:flex; flex-direction:column; gap:4px;">
+        ${pic.status === "pending" ? `<button type="button" class="act-btn act-btn--approve" style="font-size:.58rem; padding:4px 6px;" data-photo-approve="${pic.id}">✓ Approuver</button>` : ""}
+        <label class="act-btn" style="font-size:.58rem; padding:4px 6px; cursor:pointer; text-align:center; background:rgba(196,160,82,.12); color:rgba(196,160,82,.9); border:1px solid rgba(196,160,82,.22); border-radius:5px;">
+          ↺ Remplacer
           <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;" data-photo-replace="${pic.id}" />
         </label>
-        ${canDelete ? `<button type="button" class="act-btn act-btn--delete" style="font-size:.58rem; padding:3px 6px;" data-photo-delete="${pic.id}">Supprimer</button>` : ""}
+        ${canDelete ? `<button type="button" class="act-btn act-btn--delete" style="font-size:.58rem; padding:4px 6px;" data-photo-delete="${pic.id}">✕ Supprimer</button>` : ""}
       </div>`;
     return div;
   };
