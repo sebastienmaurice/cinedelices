@@ -23,7 +23,7 @@ import { logAdminAction } from "../utils/admin-logger.js";
 import { awardActionXP } from "../services/gamification.service.js";
 import searchCache from "../utils/search-cache.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
-import { deleteAsset, uploadToCloudinary } from "../utils/asset-manager.js";
+import { deleteAsset, uploadToCloudinary, uploadBufferToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
