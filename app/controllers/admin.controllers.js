@@ -1313,10 +1313,12 @@ const adminController = {
         updateData.preparation = trimmedPrep;
       }
 
-      // Photo uploadée par l'admin — upload buffer vers Cloudinary
+      // Photo uploadée par l'admin — diskStorage → lire depuis disk puis Cloudinary
       if (req.file) {
         if (recipe.picture) await deleteAsset(recipe.picture);
-        const result = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+        const buf = fs.readFileSync(req.file.path);
+        fs.unlink(req.file.path, () => {});
+        const result = await uploadBufferToCloudinary(buf, { folder: "cinedelices/recipes" });
         updateData.picture = result.secure_url;
       }
 
@@ -1608,7 +1610,10 @@ const adminController = {
 
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
 
-      const cloudResult = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+      // diskStorage → lire depuis le disk puis uploader le buffer sur Cloudinary
+      const buffer = fs.readFileSync(req.file.path);
+      fs.unlink(req.file.path, () => {});
+      const cloudResult = await uploadBufferToCloudinary(buffer, { folder: "cinedelices/recipes" });
       const cloudinaryUrl = cloudResult.secure_url;
 
       const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId } });
@@ -1626,7 +1631,7 @@ const adminController = {
       logAdminAction({ adminId: req.userId, action: "add_recipe_picture", targetType: "photo", targetId: pic.id, detail: `recipe #${recipeId}` });
       return res.json({ success: true, picture: pic });
     } catch (error) {
-      if (req.file) fs.unlink(req.file.path, () => {}); // nettoyer le fichier temp
+      if (req.file?.path) fs.unlink(req.file.path, () => {});
       return res.json({ success: false, message: error.message });
     }
   },
@@ -1686,8 +1691,10 @@ const adminController = {
       }
       if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
 
-      // Upload la nouvelle photo sur Cloudinary, supprime l'ancienne
-      const replaceResult = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/recipes" });
+      // diskStorage → lire depuis le disk puis uploader le buffer sur Cloudinary
+      const replaceBuffer = fs.readFileSync(req.file.path);
+      fs.unlink(req.file.path, () => {});
+      const replaceResult = await uploadBufferToCloudinary(replaceBuffer, { folder: "cinedelices/recipes" });
       const newPath = replaceResult.secure_url;
       await deleteAsset(pic.file_path);
 
