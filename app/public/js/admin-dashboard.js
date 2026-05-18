@@ -978,23 +978,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return div;
   };
 
-  // Slot vide : upload si débloqué, grisé sinon
-  const renderEmptySlot = (position, disabled) => {
+  // Slot vide : auto-upload dès la sélection du fichier
+  const renderEmptySlot = (position) => {
     const posLabel = POSITION_LABELS[position] || `Photo ${position}`;
     const div = document.createElement("div");
-    div.style.cssText = `width:160px; flex-shrink:0; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; ${disabled ? "background:rgba(255,255,255,.02); border:1px dashed rgba(255,255,255,.08);" : "background:rgba(255,255,255,.04); border:1px dashed rgba(196,160,82,.25);"}`;
-    if (disabled) {
-      div.innerHTML = `<div style="text-align:center; padding:16px; opacity:.3; font-size:.6rem; line-height:1.5;">${posLabel}<br><span style="font-size:.55rem;">Ajoutez la photo<br>précédente d'abord</span></div>`;
-    } else {
-      div.innerHTML = `
-        <div style="padding:12px; display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; box-sizing:border-box;">
-          <div style="font-size:.62rem; font-weight:700; color:rgba(196,160,82,.8); text-align:center; letter-spacing:.06em;">${posLabel}</div>
-          <input type="file" id="slot-upload-${position}" accept="image/jpeg,image/jpg,image/png,image/webp" style="font-size:.62rem; width:100%;" />
-          <button type="button" class="act-btn act-btn--approve" style="font-size:.6rem; padding:5px 10px; width:100%; margin-top:2px;" data-slot-add="${position}">
-            + Ajouter
-          </button>
-        </div>`;
-    }
+    div.dataset.slotPos = position;
+    div.style.cssText = "width:160px; flex-shrink:0; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; background:rgba(255,255,255,.04); border:1px dashed rgba(196,160,82,.25);";
+    div.innerHTML = `
+      <div style="padding:12px; display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; box-sizing:border-box;">
+        <div style="font-size:.62rem; font-weight:700; color:rgba(196,160,82,.8); text-align:center; letter-spacing:.06em;">${posLabel}</div>
+        <div id="slot-preview-${position}" style="width:100%; height:90px; border-radius:6px; overflow:hidden; display:none; background:rgba(0,0,0,.3);">
+          <img style="width:100%; height:100%; object-fit:cover;" />
+        </div>
+        <label style="font-size:.6rem; padding:5px 10px; width:100%; box-sizing:border-box; text-align:center; background:rgba(196,160,82,.12); border:1px solid rgba(196,160,82,.3); border-radius:6px; color:rgba(196,160,82,.9); cursor:pointer;">
+          Choisir une photo
+          <input type="file" id="slot-upload-${position}" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;" />
+        </label>
+        <div id="slot-status-${position}" style="font-size:.58rem; color:rgba(255,255,255,.4); display:none; text-align:center;"></div>
+      </div>`;
     return div;
   };
 
@@ -1085,21 +1086,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Ajouter photo via slot
-  document.addEventListener("click", async (e) => {
-    const slotBtn = e.target.closest("[data-slot-add]");
-    if (!slotBtn || !currentRecipeId) return;
-    const pos = slotBtn.dataset.slotAdd;
-    const fileInput = document.getElementById(`slot-upload-${pos}`);
-    if (!fileInput?.files?.[0]) { showToast("Sélectionnez une image", "error"); return; }
-    slotBtn.disabled = true;
-    slotBtn.textContent = "Upload…";
+  // Auto-upload dès qu'un fichier est sélectionné dans un slot
+  document.addEventListener("change", async (e) => {
+    const slotInput = e.target.closest("[id^='slot-upload-']");
+    if (!slotInput || !currentRecipeId) return;
+    const pos = slotInput.id.replace("slot-upload-", "");
+    const file = slotInput.files?.[0];
+    if (!file) return;
+
+    // Aperçu local immédiat
+    const preview = document.getElementById(`slot-preview-${pos}`);
+    const status  = document.getElementById(`slot-status-${pos}`);
+    if (preview) {
+      preview.querySelector("img").src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    }
+    if (status) { status.textContent = "Upload en cours…"; status.style.display = "block"; status.style.color = "rgba(196,160,82,.8)"; }
+
     const fd = new FormData();
-    fd.append("picture", fileInput.files[0]);
-    const res  = await fetch(`/admin/recipes/${currentRecipeId}/pictures/add`, { method: "POST", body: fd });
-    const data = await res.json();
-    if (data.success) { showToast("Photo ajoutée", "success"); refreshPhotosPanel(currentRecipeId); }
-    else { showToast(data.message || "Erreur", "error"); slotBtn.disabled = false; slotBtn.textContent = "+ Ajouter"; }
+    fd.append("picture", file);
+    try {
+      const res  = await fetch(`/admin/recipes/${currentRecipeId}/pictures/add`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) { showToast("Photo ajoutée", "success"); refreshPhotosPanel(currentRecipeId); }
+      else {
+        if (status) { status.textContent = data.message || "Erreur"; status.style.color = "rgba(220,60,60,.8)"; }
+        showToast(data.message || "Erreur", "error");
+      }
+    } catch {
+      if (status) { status.textContent = "Erreur réseau"; status.style.color = "rgba(220,60,60,.8)"; }
+    }
   });
 
   console.log("✅ Admin dashboard v2 initialisé.");
