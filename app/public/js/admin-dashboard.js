@@ -949,7 +949,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const STATUS_LABELS = { approved: "Validée", pending: "En attente", rejected: "Refusée" };
   const STATUS_COLORS = { approved: "rgba(0,200,100,.8)", pending: "rgba(196,160,82,.9)", rejected: "rgba(220,60,60,.8)" };
 
-  const POSITION_LABELS = { 1: "Principale", 2: "Secondaire", 3: "Détail" };
+  const POSITION_LABELS = { 1: "Galerie 1", 2: "Galerie 2", 3: "Galerie 3" };
 
   const renderPhotoCard = (pic) => {
     const div = document.createElement("div");
@@ -1016,13 +1016,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (photosCountBadge) photosCountBadge.textContent = `${count} / 3`;
 
-      // 3 slots fixes : rempli ou upload
+      // 3 slots fixes : rempli ou upload (tous toujours actifs)
       for (let pos = 1; pos <= 3; pos++) {
         if (byPos[pos]) {
           photosGrid.appendChild(renderPhotoCard(byPos[pos]));
         } else {
-          const disabled = pos > 1 && !byPos[pos - 1];
-          photosGrid.appendChild(renderEmptySlot(pos, disabled));
+          photosGrid.appendChild(renderEmptySlot(pos, false));
         }
       }
     } catch {
