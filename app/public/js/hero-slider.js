@@ -84,10 +84,10 @@
     const sl = document.getElementById('slide-' + current);
     if (fg && sl && sl._entryDone) {
       if (current === 2) {
-        /* Passeport : rotation 3D douce — like turning an object in your hand */
+        /* Passeport : rotation 3D douce — stoppe le float, applique la 3D */
         fg.style.animation = 'none';
         fg.style.transition = 'transform .12s ease-out';
-        fg.style.transform = `scale(1.08) rotateY(${dx * -22}deg) rotateX(${dy * 14}deg) translate(${dx * 18}px,${dy * 10}px)`;
+        fg.style.transform = `scale(0.9) rotateY(${dx * -22}deg) rotateX(${dy * 14}deg) translate(${dx * 18}px,${dy * 10}px)`;
       } else {
         fg.style.transition = 'transform .08s ease-out,bottom 2.0s cubic-bezier(.22,1,.36,1) .20s,opacity 1.4s cubic-bezier(.22,1,.36,1) .20s';
         fg.style.transform = `scale(1.18) translate(${dx * 52}px,${dy * 28}px)`;

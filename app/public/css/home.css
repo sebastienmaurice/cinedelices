@@ -525,21 +525,44 @@ main {
   0%,100% { opacity:.6; transform:scale(1); }
   50%      { opacity:1;  transform:scale(1.3); }
 }
-/* Foreground passeport — centré, perspective 3D activée */
+/* Foreground passeport — plus petit, plus centré, perspective 3D */
 .hero__fg--welcome {
-  right: 14%;
-  max-height: 95%;
+  right: 8%;
+  height: 78%;
+  bottom: -130%;
+  transform: scale(0.55) translateY(100px);
   transform-style: preserve-3d;
   will-change: transform;
 }
-/* Flottement de base au repos (une fois entré) */
+/* Entrée : grandit en même temps que le BG dézoome */
+.hero__slide.active .hero__fg--welcome {
+  opacity: 1;
+  bottom: 2%;
+  transform: scale(0.9) translateY(0);
+}
+/* Flottement doux — démarre après la fin de l'entrée (2.5s) */
 .hero__slide--welcome.active .hero__fg--welcome {
-  animation: passportFloat 4.5s ease-in-out infinite;
+  animation: passportFloat 4.5s ease-in-out 2.5s infinite;
 }
 @keyframes passportFloat {
-  0%, 100% { transform: scale(1.08) translateY(0)    rotate(-0.5deg); }
-  33%       { transform: scale(1.08) translateY(-12px) rotate(0.8deg); }
-  66%       { transform: scale(1.08) translateY(-6px)  rotate(-0.3deg); }
+  0%, 100% { transform: scale(0.9)  translateY(0)     rotate(-0.5deg); }
+  33%       { transform: scale(0.92) translateY(-14px)  rotate(0.8deg);  }
+  66%       { transform: scale(0.91) translateY(-7px)   rotate(-0.3deg); }
+}
+/* Bouton primaire doré sur slide bienvenue */
+.hero__slide--welcome .hero__btn-primary {
+  background: linear-gradient(135deg, #9a7832 0%, #c4a052 40%, #f2c84b 65%, #c4a052 100%);
+  color: #0a1220;
+  box-shadow: 0 4px 20px rgba(196,160,82,.4);
+  border-color: transparent;
+}
+.hero__slide--welcome .hero__btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 32px rgba(196,160,82,.55);
+}
+/* Texte description légèrement plus grand */
+.hero__slide--welcome .hero__desc {
+  font-size: .92rem;
 }
 
 /* Watermark */
