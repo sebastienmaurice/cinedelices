@@ -7,7 +7,7 @@
   const dots   = document.querySelectorAll('.hero__dot');
   const hero   = document.getElementById('hero');
   if (!hero || !slides.length) return;
-  let current = 0, timer = null, isTransitioning = false;
+  let current = 0, timer = null, isTransitioning = false, floatTimer = null;
   const counterCur = document.getElementById('heroCounterCur');
   const counterTot = document.getElementById('heroCounterTot');
   if (counterTot) counterTot.textContent = String(slides.length).padStart(2, '0');
@@ -47,7 +47,8 @@
       if (current === 0) {
         const fg0 = document.getElementById('fg-0');
         if (fg0) fg0.classList.remove('passport-floating');
-        setTimeout(() => { if (fg0) fg0.classList.add('passport-floating'); cSlide._entryDone = true; }, 2000);
+        if (floatTimer) clearTimeout(floatTimer);
+        floatTimer = setTimeout(() => { if (fg0 && current === 0) { fg0.classList.add('passport-floating'); cSlide._entryDone = true; } }, 2000);
       } else {
         setTimeout(() => { cSlide._entryDone = true; }, 1800);
       }
@@ -67,7 +68,9 @@
   requestAnimationFrame(() => {
     slides[0].classList.add('active');
     dots[0].classList.add('active');
-    setTimeout(() => {
+    if (floatTimer) clearTimeout(floatTimer);
+    floatTimer = setTimeout(() => {
+      if (current !== 0) return;
       const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
       const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
     }, 2200);
@@ -84,10 +87,14 @@
   }, { passive: true });
   hero.addEventListener('mouseleave', () => {
     mX = .5; mY = .5;
-    /* Remet le float du passeport quand la souris sort */
+    /* Remet le float uniquement si l'entrée est terminée */
     if (current === 0) {
       const fg0 = document.getElementById('fg-0');
-      if (fg0) { fg0.style.transform = ''; fg0.classList.add('passport-floating'); }
+      const sl0 = document.getElementById('slide-0');
+      if (fg0 && sl0 && sl0._entryDone) {
+        fg0.style.transform = '';
+        fg0.classList.add('passport-floating');
+      }
     }
     if (!rafId) rafId = requestAnimationFrame(applyParallax);
   }, { passive: true });
