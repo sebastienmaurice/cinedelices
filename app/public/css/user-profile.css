@@ -4088,6 +4088,61 @@ body.modal-open { overflow: hidden; }
   padding-top: 16px; /* espace pour le pill ACTUEL qui déborde en haut */
 }
 
+/* ── Card "À venir" ── */
+.cf-card--coming-soon {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 20px 14px;
+  border-radius: 14px; overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(196,160,82,.18) 0%, rgba(120,90,20,.12) 50%, rgba(196,160,82,.14) 100%),
+    rgba(10,16,28,.7);
+  border: 1px solid rgba(196,160,82,.4);
+  box-shadow: 0 0 24px rgba(196,160,82,.08), inset 0 1px 0 rgba(255,220,100,.08);
+  text-align: center; cursor: default;
+}
+.cf-card--coming-soon::before {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,200,75,.8) 30%, rgba(255,224,133,.9) 50%, rgba(242,200,75,.8) 70%, transparent);
+}
+.cf-card__coming-shimmer {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,220,80,.06) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: comingShimmer 3s ease-in-out infinite;
+}
+@keyframes comingShimmer {
+  0%, 100% { background-position: 200% 0; }
+  50%       { background-position: -200% 0; }
+}
+.cf-card__coming-img-wrap {
+  position: relative; z-index: 1;
+  width: 80px; height: 80px; flex-shrink: 0;
+}
+.cf-card__coming-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+  border: 1px solid rgba(196,160,82,.3);
+}
+.cf-card__coming-img-placeholder {
+  width: 80px; height: 80px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle, rgba(196,160,82,.15), rgba(10,16,28,.4));
+  border: 1px dashed rgba(196,160,82,.35);
+  color: rgba(196,160,82,.6);
+}
+.cf-card__coming-body { position: relative; z-index: 1; }
+.cf-card__coming-eyebrow {
+  display: inline-block; margin-bottom: 8px;
+  font-family: var(--font-title); font-size: 0.48rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--or-titre); opacity: .9;
+}
+.cf-card__coming-text {
+  font-size: 0.68rem; font-weight: 300; line-height: 1.55;
+  color: rgba(212,220,232,.45);
+}
+
 /* ── Carte cadre ── */
 .cf-card {
   position: relative;
