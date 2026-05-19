@@ -28,6 +28,8 @@
     /* Reset FG sortant */
     const pFg = document.getElementById('fg-' + prev);
     if (pFg) { pFg.style.transition = ''; pFg.style.transform = ''; }
+    /* Passeport : stoppe le float quand on quitte slide-0 */
+    if (prev === 0) { const pfg0 = document.getElementById('fg-0'); if (pfg0) pfg0.classList.remove('passport-floating'); }
     /* Reset BG sortant à 1.18 immédiatement (prêt pour prochain passage) */
     const pBg = document.getElementById('bg-' + prev);
     if (pBg) { pBg.style.scale = '1.18'; requestAnimationFrame(() => { if (pBg) pBg.style.scale = ''; }); }
