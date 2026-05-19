@@ -620,49 +620,47 @@ body.contact-about-page .ca-main {
 /* ── Groupe champ ── */
 .ca-fg { display: flex; flex-direction: column; gap: 5px; }
 
-/* Labels sombres — lisibles sur le fond doré */
+/* Labels — fond sombre */
 .ca-fg label {
   font-family: var(--f-title);
   font-size: 0.58rem; font-weight: 800;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(20, 10, 0, 0.62);
+  color: rgba(196,160,82,.75);
 }
 
-/* ── Inputs : verre fumé chaud sur fond doré ── */
+/* ── Inputs : fond sombre ── */
 .ca-fi {
-  background: rgba(255, 255, 255, 0.28);
-  border: 1.5px solid rgba(20, 10, 0, 0.18);
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(196,160,82,.2);
   border-radius: 9px;
   padding: 10px 14px;
-  font-family: var(--f-body); font-size: 0.86rem; font-weight: 500;
-  color: rgba(20, 10, 0, 0.88);
+  font-family: var(--f-body); font-size: 0.86rem; font-weight: 400;
+  color: rgba(212,220,232,.9);
   outline: none; width: 100%;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .ca-fi:hover:not(:focus) {
-  background: rgba(255, 255, 255, 0.38);
-  border-color: rgba(20, 10, 0, 0.28);
+  background: rgba(255,255,255,.09);
+  border-color: rgba(196,160,82,.35);
 }
 .ca-fi:focus {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(20, 10, 0, 0.55);
-  box-shadow: 0 0 0 3px rgba(20, 10, 0, 0.1);
+  background: rgba(255,255,255,.1);
+  border-color: rgba(196,160,82,.65);
+  box-shadow: 0 0 0 3px rgba(196,160,82,.1);
 }
-.ca-fi::placeholder { color: rgba(20, 10, 0, 0.32); }
+.ca-fi::placeholder { color: rgba(212,220,232,.28); }
 textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
-.ca-fi.is-err { border-color: rgba(140, 20, 10, 0.6); background: rgba(255,220,210,0.35); }
-.ca-fi.is-ok  { border-color: rgba(20, 100, 40, 0.5); }
-.ca-fi-err { font-size: 0.6rem; color: rgba(120,10,0,0.9); margin-top: 2px; display: none; font-weight: 700; }
+.ca-fi.is-err { border-color: rgba(194,48,24,.7); background: rgba(194,48,24,.06); }
+.ca-fi.is-ok  { border-color: rgba(40,160,80,.5); }
+.ca-fi-err { font-size: 0.6rem; color: rgba(220,80,60,.9); margin-top: 2px; display: none; font-weight: 700; }
 .ca-fi.is-err + .ca-fi-err { display: block; }
 
-/* ── Bouton envoi : bleu nuit contrasté sur fond doré ── */
+/* ── Bouton envoi : rouge ── */
 .ca-btn-send {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 0 28px; height: 44px; border-radius: 9px; border: none; cursor: pointer;
-  background: linear-gradient(135deg, #0a1220 0%, #162336 60%, #1c2d42 100%);
-  color: var(--ca-gold-hi);
+  background: linear-gradient(135deg, #a02010 0%, #c23018 50%, #d84020 100%);
+  color: #fff;
   font-family: var(--f-title); font-size: 0.64rem; font-weight: 800;
   letter-spacing: 0.14em; text-transform: uppercase;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(196,160,82,0.12);
@@ -671,10 +669,16 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
 }
 .ca-btn-send svg { width: 14px; height: 14px; }
 .ca-btn-send:hover {
-  background: linear-gradient(135deg, #0d1b2a 0%, #0a1220 100%);
-  box-shadow: 0 6px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(196,160,82,0.2);
+  background: linear-gradient(135deg, #c23018 0%, #e84020 100%);
+  box-shadow: 0 6px 28px rgba(194,48,24,.4);
   transform: translateY(-2px);
   color: #fff;
+}
+/* État succès : vert */
+.ca-btn-send.is-sent {
+  background: linear-gradient(135deg, #1a6630 0%, #228844 100%);
+  box-shadow: 0 4px 18px rgba(34,136,68,.3);
+  pointer-events: none;
 }
 .ca-btn-send:active { transform: translateY(0); }
 .ca-btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -709,46 +713,44 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
   position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;
 }
 
-/* Cartes sujet : verre fumé chaud */
+/* Cartes sujet : fond sombre, bordure dorée */
 .ca-subj-card {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 6px; padding: 11px 6px;
   border-radius: 8px;
-  border: 1.5px solid rgba(20, 10, 0, 0.18);
-  background: rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(196,160,82,.25);
+  background: rgba(255,255,255,.04);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
   text-align: center; user-select: none;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 .ca-subj-card svg {
   width: 18px; height: 18px;
-  stroke: rgba(20, 10, 0, 0.45);
+  stroke: rgba(196,160,82,.55);
   transition: stroke 0.2s; flex-shrink: 0;
 }
 .ca-subj-card span {
   font-family: var(--f-title);
   font-size: 0.56rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
-  color: rgba(20, 10, 0, 0.5);
+  color: rgba(196,160,82,.6);
   transition: color 0.2s; line-height: 1.2;
 }
 .ca-subj-card:hover {
-  border-color: rgba(20, 10, 0, 0.38);
-  background: rgba(255, 255, 255, 0.38);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.14);
+  border-color: rgba(196,160,82,.55);
+  background: rgba(196,160,82,.08);
+  box-shadow: 0 2px 12px rgba(196,160,82,.1);
   transform: translateY(-1px);
 }
-.ca-subj-card:hover svg { stroke: rgba(20, 10, 0, 0.72); }
-.ca-subj-card:hover span { color: rgba(20, 10, 0, 0.75); }
+.ca-subj-card:hover svg { stroke: rgba(196,160,82,.9); }
+.ca-subj-card:hover span { color: rgba(196,160,82,.9); }
 
-/* Sélectionné : fond sombre contrasté */
+/* Sélectionné : doré plein */
 .ca-subj-item input[type="radio"]:checked + .ca-subj-card {
-  border-color: rgba(20, 10, 0, 0.65);
-  background: rgba(20, 10, 0, 0.72);
-  box-shadow: 0 2px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
+  border-color: rgba(196,160,82,.8);
+  background: rgba(196,160,82,.14);
+  box-shadow: 0 0 16px rgba(196,160,82,.18), inset 0 1px 0 rgba(255,255,255,.06);
 }
 .ca-subj-item input[type="radio"]:checked + .ca-subj-card svg { stroke: var(--ca-gold-hi); }
 .ca-subj-item input[type="radio"]:checked + .ca-subj-card span { color: var(--ca-gold-hi); font-weight: 800; }
