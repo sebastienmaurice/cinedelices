@@ -13,7 +13,7 @@
 /* ═══════════════════════════════════════════════════════════════
    HERO — helpers rebuild (utilisés aussi par le handler equip)
 ═══════════════════════════════════════════════════════════════ */
-const ANIMATED_FRAMES = ['sherlock', 'matrix', 'indiana', 'harry'];
+const ANIMATED_FRAMES = ['sherlock', 'matrix', 'indiana', 'harry', 'cine'];
 
 function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
   // Détruire le moteur animé existant si présent
