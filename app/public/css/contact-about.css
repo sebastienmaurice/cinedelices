@@ -596,7 +596,7 @@ body.contact-about-page .ca-main {
 /* ── Corps du formulaire : même gradient doré que la card "Nous écrire" ── */
 .ca-cform__body {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 280px 1fr;
   overflow: hidden; flex: 1;
   background: rgba(14,24,38,0.98);
   position: relative;
@@ -605,12 +605,24 @@ body.contact-about-page .ca-main {
 /* ── Colonne image gauche ── */
 .ca-cform__img {
   position: relative; overflow: hidden;
-  border-right: 1px solid rgba(196,160,82,.12);
 }
 .ca-cform__img img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: center;
+  object-fit: cover; object-position: center top;
+  filter: brightness(.85);
+}
+/* Fondu droit pour fondre l'image dans le formulaire */
+.ca-cform__img::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 55%, rgba(14,24,38,.85) 80%, rgba(14,24,38,1) 100%);
+}
+/* Liseré doré en bas */
+.ca-cform__img::before {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px; z-index: 1;
+  background: linear-gradient(to right, rgba(196,160,82,.4), transparent);
 }
 
 /* ── Colonne formulaire droite ── */
