@@ -100,6 +100,33 @@ const BADGE_CONFIGS = {
     ],
     pipePt: { x: 210, y: 190 },
   },
+
+  cine: {
+    badge:  { width: 260, height: 260 },
+    frame:  { src: '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.png' },
+    photo:  { size: 143, left: 59, top: 66 },
+    ring:   { cx: 130, cy: 137, r: 71 },
+    palette: {
+      primary:   [255, 220,  80],
+      secondary: [255, 255, 200],
+      glow:      [255, 180,  40],
+      star:      [255, 240, 120],
+    },
+    effectTypes: {
+      effect_1: { name: 'Brillance étoile', behavior: 'starlight' },
+    },
+    effects: [
+      { type: 'effect_1', behavior: 'starlight', x: 106, y: 210 },
+      { type: 'effect_1', behavior: 'starlight', x: 174, y: 202 },
+      { type: 'effect_1', behavior: 'starlight', x: 156, y: 211 },
+      { type: 'effect_1', behavior: 'starlight', x:  89, y: 202 },
+      { type: 'effect_1', behavior: 'starlight', x: 179, y:  71 },
+      { type: 'effect_1', behavior: 'starlight', x:  82, y:  71 },
+      { type: 'effect_1', behavior: 'starlight', x: 211, y: 121 },
+      { type: 'effect_1', behavior: 'starlight', x: 168, y:  40 },
+      { type: 'effect_1', behavior: 'starlight', x: 102, y:  45 },
+    ],
+  },
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -619,6 +646,146 @@ class SherlockBadge {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   CINÉ DÉLICES — étoiles scintillantes dorées (starlight)
+═══════════════════════════════════════════════════════════════ */
+class CineBadge {
+  constructor(el, cfg, photoSrc) {
+    this.cfg = cfg;
+    this.BW  = cfg.badge.width;
+    this.BH  = cfg.badge.height;
+    this.ring = cfg.ring;
+    this.pal  = cfg.palette;
+    this.OX   = Math.round(40 * this.BW / 512);
+    this.OY   = Math.round(40 * this.BH / 512);
+    this.CVW  = this.BW + this.OX * 2;
+    this.CVH  = this.BH + this.OY * 2;
+    this.pts  = cfg.effects.map(e => ({
+      x: e.x, y: e.y, behavior: e.behavior,
+      nextFlash: Math.floor(Math.random() * 120),
+      cooldown: 0, intensity: 0,
+      phase: Math.random() * Math.PI * 2,
+      starSize: (2.5 + Math.random() * 2) * (this.BW / 512),
+    }));
+    this.particles = [];
+    this.hovered   = false;
+    this.frame     = 0;
+    this._buildDOM(el, photoSrc);
+    el.addEventListener('mouseenter', () => this.hovered = true);
+    el.addEventListener('mouseleave', () => this.hovered = false);
+    this._tick = this._tick.bind(this);
+    this._animId = requestAnimationFrame(this._tick);
+  }
+  _buildDOM(el, photoSrc) {
+    const c = this.cfg;
+    el.style.width = this.BW + 'px'; el.style.height = this.BH + 'px';
+    const img = document.createElement('img');
+    img.className = 'badge__photo'; img.alt = '';
+    img.style.cssText = `width:${c.photo.size}px;height:${c.photo.size}px;left:${c.photo.left}px;top:${c.photo.top}px;position:absolute;border-radius:50%;object-fit:cover;z-index:10;`;
+    img.src = photoSrc || '';
+    el.appendChild(img);
+    const fr = document.createElement('img');
+    fr.className = 'badge__frame'; fr.src = c.frame.src;
+    fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:20;pointer-events:none;';
+    el.appendChild(fr);
+    const cv = document.createElement('canvas');
+    cv.width = this.CVW; cv.height = this.CVH;
+    cv.style.cssText = `position:absolute;width:${this.CVW}px;height:${this.CVH}px;top:${-this.OY}px;left:${-this.OX}px;z-index:30;pointer-events:none;`;
+    el.appendChild(cv);
+    this.cv = cv; this.ctx = cv.getContext('2d');
+  }
+  _c(key, a) {
+    const c = this.pal[key] || this.pal.primary;
+    return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  }
+  _drawStarFlash(ctx, x, y, size, intensity) {
+    if (intensity <= 0.01) return;
+    const s = size * intensity;
+    const h = this.hovered ? 1.45 : 1.0;
+    const a = Math.min(1, intensity * h);
+    const cx = x + this.OX, cy = y + this.OY;
+    ctx.save();
+    const haloR = s * 5.5;
+    const hg = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR);
+    hg.addColorStop(0,    this._c('star',    Math.min(1, a * 0.55)));
+    hg.addColorStop(0.25, this._c('glow',    Math.min(1, a * 0.28)));
+    hg.addColorStop(0.6,  this._c('primary', Math.min(1, a * 0.10)));
+    hg.addColorStop(1,    this._c('glow', 0));
+    ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+    ctx.fillStyle = hg; ctx.fill();
+    for (const angle of [0, Math.PI/2, Math.PI, Math.PI*3/2]) {
+      const len = s * 4.5;
+      const ex = cx + Math.cos(angle) * len, ey = cy + Math.sin(angle) * len;
+      const lg = ctx.createLinearGradient(cx, cy, ex, ey);
+      lg.addColorStop(0,    `rgba(255,255,255,${Math.min(1, a * 0.95)})`);
+      lg.addColorStop(0.15, this._c('secondary', Math.min(1, a * 0.85)));
+      lg.addColorStop(0.5,  this._c('star',      Math.min(1, a * 0.45)));
+      lg.addColorStop(1,    this._c('glow', 0));
+      ctx.shadowColor = this._c('glow', Math.min(1, a * 0.6));
+      ctx.shadowBlur  = s * 4;
+      ctx.strokeStyle = lg; ctx.lineWidth = s * 0.9; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+    }
+    for (const angle of [Math.PI/4, Math.PI*3/4, Math.PI*5/4, Math.PI*7/4]) {
+      const len = s * 2.8;
+      ctx.shadowBlur  = s * 2;
+      ctx.strokeStyle = this._c('secondary', Math.min(1, a * 0.55));
+      ctx.lineWidth   = s * 0.5;
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle)*len, cy + Math.sin(angle)*len); ctx.stroke();
+    }
+    const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 1.2);
+    cg.addColorStop(0,    `rgba(255,255,255,${Math.min(1, a)})`);
+    cg.addColorStop(0.35, this._c('secondary', Math.min(1, a * 0.85)));
+    cg.addColorStop(1,    this._c('star', 0));
+    ctx.shadowColor = `rgba(255,255,255,${Math.min(1, a * 0.8)})`; ctx.shadowBlur = s * 5;
+    ctx.beginPath(); ctx.arc(cx, cy, s * 1.2, 0, Math.PI * 2);
+    ctx.fillStyle = cg; ctx.fill();
+    ctx.restore();
+  }
+  _spawnSparks(pt) {
+    const cx = pt.x + this.OX, cy = pt.y + this.OY;
+    const n = 3 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < n; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const spd   = (0.3 + Math.random() * 0.8) * (this.BW / 512);
+      this.particles.push({ x: cx, y: cy, vx: Math.cos(angle)*spd, vy: Math.sin(angle)*spd, life: 0, max: 20+Math.floor(Math.random()*30), sz: (0.6+Math.random()*1.2)*(this.BW/512) });
+    }
+  }
+  _tick() {
+    this.frame++;
+    const ctx = this.ctx, h = this.hovered;
+    ctx.clearRect(0, 0, this.CVW, this.CVH);
+    for (const pt of this.pts) {
+      pt.phase += 0.022;
+      if (pt.cooldown > 0) { pt.cooldown--; }
+      else if (pt.nextFlash <= 0) {
+        pt.intensity = 1.0;
+        pt.cooldown  = h ? 15+Math.floor(Math.random()*30) : 40+Math.floor(Math.random()*100);
+        pt.nextFlash = pt.cooldown;
+        this._spawnSparks(pt);
+      } else { pt.nextFlash--; }
+      if (pt.intensity > 0) pt.intensity = Math.max(0, pt.intensity - (h ? 0.038 : 0.028));
+      const baseGlow = (0.06 + 0.04 * Math.sin(pt.phase)) * (h ? 1.8 : 1.0);
+      this._drawStarFlash(ctx, pt.x, pt.y, pt.starSize, baseGlow + pt.intensity);
+    }
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      const t = p.life / p.max;
+      const a = (1 - t) * Math.min(1, t * 5) * (h ? 0.9 : 0.65);
+      if (a > 0.01) {
+        ctx.save(); ctx.shadowColor = this._c('glow', a * 0.7); ctx.shadowBlur = 5;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * (1 - t * 0.5), 0, Math.PI * 2);
+        ctx.fillStyle = this._c('secondary', a); ctx.fill(); ctx.restore();
+      }
+      p.x += p.vx; p.y += p.vy; p.vy += 0.008; p.vx *= 0.97; p.life++;
+      if (p.life >= p.max) this.particles.splice(i, 1);
+    }
+    this._animId = requestAnimationFrame(this._tick);
+  }
+  destroy() { cancelAnimationFrame(this._animId); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    DISPATCHER — window.BadgeEngine
    Usage : new BadgeEngine(containerEl, frameCode, photoSrc)
 ═══════════════════════════════════════════════════════════════ */
@@ -627,6 +794,7 @@ const _BADGE_CLASSES = {
   matrix:   MatrixBadge,
   indiana:  IndiaBadge,
   sherlock: window.SherlockBadge || SherlockBadge,
+  cine:     CineBadge,
 };
 
 class BadgeEngine {

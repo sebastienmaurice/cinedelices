@@ -79,7 +79,7 @@ export const FRAME_UNLOCKS = [
     minLvl:   1,
     pngUrl:   '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.png',
     thumbUrl: '/images/cadres-gamification/thumbs/thumb-cine.jpg',
-    hasAnim:  false,
+    hasAnim:  true,
   },
   {
     code:     'sherlock',
