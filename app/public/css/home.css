@@ -525,30 +525,34 @@ main {
   0%,100% { opacity:.6; transform:scale(1); }
   50%      { opacity:1;  transform:scale(1.3); }
 }
-/* Foreground passeport */
+/* Foreground passeport — zoom depuis le centre */
 .hero__fg--welcome {
   right: 16%;
   left: auto;
-  height: 92%;
-  bottom: -130%;
-  transform: scale(0.55) translateY(100px);
+  height: 100%;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%) scale(0.25);
+  transform-origin: center center;
   transform-style: preserve-3d;
   will-change: transform;
+  transition:
+    opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s,
+    transform 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
 }
-/* Entrée : grandit en même temps que le BG dézoome */
+/* Entrée : zoom depuis le centre en même temps que le BG dézoome */
 .hero__slide.active .hero__fg--welcome {
   opacity: 1;
-  bottom: 4%;
-  transform: scale(0.9) translateY(-8%);
+  transform: translateY(-50%) scale(0.95);
 }
-/* Flottement doux — démarre après la fin de l'entrée (2.5s) */
+/* Flottement autonome — démarre après la fin de l'entrée (2.2s) */
 .hero__slide--welcome.active .hero__fg--welcome {
-  animation: passportFloat 4.5s ease-in-out 2.5s infinite;
+  animation: passportFloat 5s ease-in-out 2.2s infinite;
 }
 @keyframes passportFloat {
-  0%, 100% { transform: scale(0.9)  translateY(0)     rotate(-0.5deg); }
-  33%       { transform: scale(0.92) translateY(-14px)  rotate(0.8deg);  }
-  66%       { transform: scale(0.91) translateY(-7px)   rotate(-0.3deg); }
+  0%, 100% { transform: translateY(calc(-50% + 0px))   scale(0.95) rotate(-0.4deg); }
+  33%       { transform: translateY(calc(-50% - 16px))  scale(0.97) rotate(0.7deg);  }
+  66%       { transform: translateY(calc(-50% - 8px))   scale(0.96) rotate(-0.3deg); }
 }
 /* Bouton primaire doré sur slide bienvenue */
 .hero__slide--welcome .hero__btn-primary {
