@@ -77,7 +77,7 @@ export const FRAME_UNLOCKS = [
     theme:    'Cinéma',
     icon:     '🎬',
     minLvl:   1,
-    pngUrl:   '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-2.png',
+    pngUrl:   '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.png',
     thumbUrl: '/images/cadres-gamification/thumbs/thumb-cine.jpg',
     hasAnim:  false,
   },
