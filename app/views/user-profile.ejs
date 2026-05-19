@@ -1487,6 +1487,129 @@
             const _cp2pct = Math.round((_cp2xp - _xpFloor) / _xpNeeded * 100);
             const _cp3pct = Math.round((_cp3xp - _xpFloor) / _xpNeeded * 100);
           %>
+          <section class="ctb-frames-section" aria-label="Collection de cadres">
+            <!-- En-tête section -->
+            <div class="cfc-header">
+              <div class="cfc-header__left">
+                <i data-lucide="layout-grid" width="18" height="18" aria-hidden="true"></i>
+                <div>
+                  <h3 class="cfc-header__title">Collection de cadres</h3>
+                  <p class="cfc-header__sub">Collectionnez et équipez vos cadres pour afficher votre style.</p>
+                </div>
+              </div>
+              <span class="cfc-header__count"><strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués</span>
+            </div>
+
+            <!-- Grille de cartes -->
+            <div class="cf-grid" id="contrib-frames-list">
+              <% _allFrames.forEach(function(fr) {
+                const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
+                const _isActive   = fr.id === _activeFrame.id;
+              %>
+              <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
+                data-frame-id="<%= fr.id %>"
+                data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>">
+
+                <!-- Pill ACTUEL (carte active uniquement) -->
+                <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
+
+                <!-- Preview circulaire -->
+                <div class="cf-card__preview-wrap">
+                  <% if (fr.id === 'none') { %>
+                  <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                  </div>
+                  <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+                  <div class="frame-row-badge-static cf-card__preview-inner">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+                  </div>
+                  <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+                  <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
+                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+                    <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
+                  </div>
+                  <% } else { %>
+                  <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
+                    <span><%= fr.icon %></span>
+                  </div>
+                  <% } %>
+                </div>
+
+                <!-- Nom + thème -->
+                <div class="cf-card__name"><%= fr.label %></div>
+                <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
+
+                <!-- Bouton équiper -->
+                <div class="cf-card__action">
+                  <% if (_isActive) { %>
+                  <button class="cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active" aria-disabled="true">
+                    <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé
+                  </button>
+                  <% } else if (_isUnlocked) { %>
+                  <button class="cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn">
+                    Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>
+                  </button>
+                  <% } else { %>
+                  <button class="cf-card__btn cf-card__btn--locked frame-row-check frame-row-check--locked" disabled>
+                    <i data-lucide="lock" width="13" height="13" aria-hidden="true"></i> Niv. <%= fr.minLvl %>
+                  </button>
+                  <% } %>
+                </div>
+
+                <!-- Tooltip (verrouillés) -->
+                <% if (!_isUnlocked) {
+                  const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
+                  const _xpGap      = Math.max(0, _xpForFrame - _xp);
+                  const _recipesNeeded = Math.ceil(_xpGap / 50);
+                  const _reviewsNeeded = Math.ceil(_xpGap / 10);
+                  const _lvlsToGo   = fr.minLvl - _lvl;
+                %>
+                <div class="frame-tile__tooltip" role="tooltip">
+                  <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
+                  <div class="frame-tile__tooltip-row">
+                    <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
+                    Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
+                  </div>
+                  <div class="frame-tile__tooltip-row">
+                    <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
+                    <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
+                  </div>
+                  <div class="frame-tile__tooltip-hint">
+                    <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
+                  </div>
+                </div>
+                <% } %>
+
+              </div>
+              <% }); %>
+
+              <!-- Card "À venir" -->
+              <div class="cf-card cf-card--coming-soon">
+                <div class="cf-card__coming-shimmer" aria-hidden="true"></div>
+                <div class="cf-card__coming-img-wrap">
+                  <!-- Image placeholder — à remplacer par une vraie image -->
+                  <div class="cf-card__coming-img-placeholder" aria-hidden="true">
+                    <i data-lucide="sparkles" width="32" height="32" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <div class="cf-card__coming-body">
+                  <span class="cf-card__coming-eyebrow">Bientôt disponible</span>
+                  <p class="cf-card__coming-text">De nouveaux cadres arrivent prochainement. Continuez à contribuer pour les débloquer.</p>
+                  <a href="/contact-about/#contact" class="cf-card__coming-btn">
+                    <i data-lucide="message-circle" width="11" height="11" aria-hidden="true"></i>
+                    Suggérer un thème
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ═══════════════════════════════════════════════════
+               GALERIE DE CADRES — bento
+          ═══════════════════════════════════════════════════ -->
           <section class="ctb-hero" aria-label="Progression et niveau">
             <div class="ctb-hero__unified ctb2-card">
 
@@ -1649,129 +1772,6 @@
 
             </div><!-- /ctb2-main-row -->
             </div><!-- /ctb-hero__unified -->
-          </section>
-
-          <!-- ═══════════════════════════════════════════════════
-               GALERIE DE CADRES — bento
-          ═══════════════════════════════════════════════════ -->
-          <section class="ctb-frames-section" aria-label="Collection de cadres">
-            <!-- En-tête section -->
-            <div class="cfc-header">
-              <div class="cfc-header__left">
-                <i data-lucide="layout-grid" width="18" height="18" aria-hidden="true"></i>
-                <div>
-                  <h3 class="cfc-header__title">Collection de cadres</h3>
-                  <p class="cfc-header__sub">Collectionnez et équipez vos cadres pour afficher votre style.</p>
-                </div>
-              </div>
-              <span class="cfc-header__count"><strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués</span>
-            </div>
-
-            <!-- Grille de cartes -->
-            <div class="cf-grid" id="contrib-frames-list">
-              <% _allFrames.forEach(function(fr) {
-                const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
-                const _isActive   = fr.id === _activeFrame.id;
-              %>
-              <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
-                data-frame-id="<%= fr.id %>"
-                data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>">
-
-                <!-- Pill ACTUEL (carte active uniquement) -->
-                <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
-
-                <!-- Preview circulaire -->
-                <div class="cf-card__preview-wrap">
-                  <% if (fr.id === 'none') { %>
-                  <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
-                  </div>
-                  <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-                  <div class="frame-row-badge-static cf-card__preview-inner">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
-                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-                  </div>
-                  <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-                  <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
-                    <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-                    <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
-                  </div>
-                  <% } else { %>
-                  <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
-                    <span><%= fr.icon %></span>
-                  </div>
-                  <% } %>
-                </div>
-
-                <!-- Nom + thème -->
-                <div class="cf-card__name"><%= fr.label %></div>
-                <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
-
-                <!-- Bouton équiper -->
-                <div class="cf-card__action">
-                  <% if (_isActive) { %>
-                  <button class="cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active" aria-disabled="true">
-                    <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé
-                  </button>
-                  <% } else if (_isUnlocked) { %>
-                  <button class="cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn">
-                    Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>
-                  </button>
-                  <% } else { %>
-                  <button class="cf-card__btn cf-card__btn--locked frame-row-check frame-row-check--locked" disabled>
-                    <i data-lucide="lock" width="13" height="13" aria-hidden="true"></i> Niv. <%= fr.minLvl %>
-                  </button>
-                  <% } %>
-                </div>
-
-                <!-- Tooltip (verrouillés) -->
-                <% if (!_isUnlocked) {
-                  const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
-                  const _xpGap      = Math.max(0, _xpForFrame - _xp);
-                  const _recipesNeeded = Math.ceil(_xpGap / 50);
-                  const _reviewsNeeded = Math.ceil(_xpGap / 10);
-                  const _lvlsToGo   = fr.minLvl - _lvl;
-                %>
-                <div class="frame-tile__tooltip" role="tooltip">
-                  <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
-                  <div class="frame-tile__tooltip-row">
-                    <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
-                    Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
-                  </div>
-                  <div class="frame-tile__tooltip-row">
-                    <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
-                    <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
-                  </div>
-                  <div class="frame-tile__tooltip-hint">
-                    <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
-                  </div>
-                </div>
-                <% } %>
-
-              </div>
-              <% }); %>
-
-              <!-- Card "À venir" -->
-              <div class="cf-card cf-card--coming-soon">
-                <div class="cf-card__coming-shimmer" aria-hidden="true"></div>
-                <div class="cf-card__coming-img-wrap">
-                  <!-- Image placeholder — à remplacer par une vraie image -->
-                  <div class="cf-card__coming-img-placeholder" aria-hidden="true">
-                    <i data-lucide="sparkles" width="32" height="32" aria-hidden="true"></i>
-                  </div>
-                </div>
-                <div class="cf-card__coming-body">
-                  <span class="cf-card__coming-eyebrow">Bientôt disponible</span>
-                  <p class="cf-card__coming-text">De nouveaux cadres arrivent prochainement. Continuez à contribuer pour les débloquer.</p>
-                  <a href="/contact-about/#contact" class="cf-card__coming-btn">
-                    <i data-lucide="message-circle" width="11" height="11" aria-hidden="true"></i>
-                    Suggérer un thème
-                  </a>
-                </div>
-              </div>
-
-            </div>
           </section>
 
           <!-- ═══════════════════════════════════════════════════
