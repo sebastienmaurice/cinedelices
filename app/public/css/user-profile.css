@@ -1751,6 +1751,21 @@ body.profile-page main {
   color: rgba(255,255,255,.7);
 }
 .ctb-invite__btn--ghost:hover { border-color: rgba(255,255,255,.45); color: #fff; transform: translateY(-2px); }
+/* Image de fond droite avec fondu vers la gauche */
+.ctb-invite__bg-img {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 55%;
+  z-index: 0; pointer-events: none;
+}
+.ctb-invite__bg-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center right;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.6) 35%, black 70%);
+          mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.6) 35%, black 70%);
+}
+.ctb-invite__inner { position: relative; z-index: 1; }
+
 .ctb-invite__right {
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: flex-end;
