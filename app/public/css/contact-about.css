@@ -595,22 +595,33 @@ body.contact-about-page .ca-main {
 .ca-cform__desc { font-size: 0.72rem; font-weight: 300; font-style: italic; color: var(--ca-muted); }
 /* ── Corps du formulaire : même gradient doré que la card "Nous écrire" ── */
 .ca-cform__body {
-  padding: 26px 28px 28px;
-  display: flex; flex-direction: column; gap: 15px;
-  overflow-y: auto; flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  overflow: hidden; flex: 1;
   background: rgba(14,24,38,0.98);
   position: relative;
 }
 
-/* Même grain fractal que la card */
-.ca-cform__body::before {
-  content: "";
-  position: absolute; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px; opacity: 0.045;
-  pointer-events: none; z-index: 0;
+/* ── Colonne image gauche ── */
+.ca-cform__img {
+  position: relative; overflow: hidden;
+  border-right: 1px solid rgba(196,160,82,.12);
 }
-.ca-cform__body > * { position: relative; z-index: 1; }
+.ca-cform__img img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+
+/* ── Colonne formulaire droite ── */
+.ca-cform__form-col {
+  padding: 26px 28px 28px;
+  display: flex; flex-direction: column; gap: 15px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.ca-cform__form-col > * { position: relative; z-index: 1; }
 
 /* ── Grille Nom / Prénom ── */
 .ca-frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -851,6 +862,8 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
   .ca-hero__tabs { justify-content: center; }
 }
 @media (max-width: 768px) {
+  .ca-cform__body { grid-template-columns: 1fr; }
+  .ca-cform__img { display: none; }
   /* --ca-px supprimé : gutters gérés par width: min() */
   .ca-hero { padding: 36px 0; }
   .ca-hero__title { font-size: clamp(2.2rem, 8vw, 3.2rem); }
