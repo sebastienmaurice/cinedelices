@@ -77,8 +77,10 @@
     const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
     const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
   }, 2200);
-  /* Dezoom initial slide-0 (active dès le HTML, pas de transition CSS au chargement) */
-  triggerBgDezoom(document.getElementById('bg-0'));
+  /* Dezoom initial slide-0 — décalé après le premier paint pour que la transition CSS se déclenche */
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    triggerBgDezoom(document.getElementById('bg-0'));
+  }));
 
   /* Parallaxe souris — BG : translate seul (scale géré par CSS)
                        FG : transform complet après entry */
