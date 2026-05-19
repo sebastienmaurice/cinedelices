@@ -61,28 +61,15 @@
   document.getElementById('heroPrev')?.addEventListener('click', () => goTo(current - 1));
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
   resetTimer();
-  /* Apparition initiale du passeport : force l'état petit/invisible, puis déclenche la transition */
-  const fg0init = document.getElementById('fg-0');
-  if (fg0init) {
-    fg0init.style.transition = 'none';
-    fg0init.style.transform  = 'translateY(-50%) scale(0.25)';
-    fg0init.style.opacity    = '0';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      fg0init.style.transition = '';
-      fg0init.style.transform  = '';
-      fg0init.style.opacity    = '';
-    }));
-  }
-  setTimeout(() => {
-    const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
-    const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
-  }, 2200);
-  /* Dezoom initial bg-0 — force scale:1.18 d'abord, puis laisse la transition CSS aller vers 0.96 */
-  const bg0 = document.getElementById('bg-0');
-  if (bg0) {
-    bg0.style.scale = '1.18';
-    setTimeout(() => { bg0.style.scale = ''; }, 80);
-  }
+  /* Initialisation slide-0 : JS ajoute active après un frame → toutes les transitions CSS se déclenchent */
+  requestAnimationFrame(() => {
+    slides[0].classList.add('active');
+    dots[0].classList.add('active');
+    setTimeout(() => {
+      const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
+      const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
+    }, 2200);
+  });
 
   /* Parallaxe souris — BG : translate seul (scale géré par CSS)
                        FG : transform complet après entry */
