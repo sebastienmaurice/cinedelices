@@ -42,10 +42,10 @@
     if (cSlide) {
       cSlide._entryDone = false;
       /* Passeport : retire le float, le remet après la fin de la transition d'entrée */
-      if (current === 2) {
-        const fg2 = document.getElementById('fg-2');
-        if (fg2) fg2.classList.remove('passport-floating');
-        setTimeout(() => { if (fg2) fg2.classList.add('passport-floating'); cSlide._entryDone = true; }, 2000);
+      if (current === 0) {
+        const fg0 = document.getElementById('fg-0');
+        if (fg0) fg0.classList.remove('passport-floating');
+        setTimeout(() => { if (fg0) fg0.classList.add('passport-floating'); cSlide._entryDone = true; }, 2000);
       } else {
         setTimeout(() => { cSlide._entryDone = true; }, 1800);
       }
@@ -61,7 +61,11 @@
   document.getElementById('heroPrev')?.addEventListener('click', () => goTo(current - 1));
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
   resetTimer();
-  setTimeout(() => { const s = document.getElementById('slide-0'); if (s) s._entryDone = true; }, 1800);
+  setTimeout(() => {
+    const s = document.getElementById('slide-0'); if (s) s._entryDone = true;
+    /* Passeport : float après chargement initial */
+    const fg0 = document.getElementById('fg-0'); if (fg0) fg0.classList.add('passport-floating');
+  }, 2000);
   /* Dezoom initial slide-0 (active dès le HTML, pas de transition CSS au chargement) */
   triggerBgDezoom(document.getElementById('bg-0'));
 
@@ -77,9 +81,9 @@
   hero.addEventListener('mouseleave', () => {
     mX = .5; mY = .5;
     /* Remet le float du passeport quand la souris sort */
-    if (current === 2) {
-      const fg2 = document.getElementById('fg-2');
-      if (fg2) { fg2.style.transform = ''; fg2.classList.add('passport-floating'); }
+    if (current === 0) {
+      const fg0 = document.getElementById('fg-0');
+      if (fg0) { fg0.style.transform = ''; fg0.classList.add('passport-floating'); }
     }
     if (!rafId) rafId = requestAnimationFrame(applyParallax);
   }, { passive: true });
@@ -93,7 +97,7 @@
     const fg = document.getElementById('fg-' + current);
     const sl = document.getElementById('slide-' + current);
     if (fg && sl && sl._entryDone) {
-      if (current === 2) {
+      if (current === 0) {
         /* Passeport : stoppe le float CSS, applique la rotation 3D */
         fg.classList.remove('passport-floating');
         fg.style.transition = 'transform .12s ease-out';
