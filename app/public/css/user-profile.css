@@ -1682,17 +1682,32 @@ body.profile-page main {
 /* ── CTA INVITER ── */
 .ctb-invite {
   margin-top: 40px;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  background-color: rgba(10,18,30,.96);
-  background-image: linear-gradient(135deg, rgba(196,160,82,.12) 0%, rgba(196,160,82,.04) 50%, transparent 100%);
-  border: 1px solid rgba(196,160,82,.2);
+  background: linear-gradient(135deg, #5c0b05 0%, #8b1c13 28%, #c23018 58%, #d43a20 80%, #e04422 100%);
+  border: 1px solid rgba(194,48,24,.42);
+  box-shadow: 0 20px 60px rgba(194,48,24,.28), 0 8px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
   position: relative;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;
 }
+.ctb-invite:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 80px rgba(194,48,24,.40), 0 12px 32px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.11);
+}
+/* Shimmer au hover */
 .ctb-invite::before {
   content: "";
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(196,160,82,.6) 30%, rgba(255,224,133,.7) 50%, rgba(196,160,82,.6) 70%, transparent);
+  position: absolute; top: 0; bottom: 0; width: 40%; z-index: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+.ctb-invite:hover::before {
+  animation: ctbInviteShimmer .75s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes ctbInviteShimmer {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(340%)  skewX(-18deg); }
 }
 .ctb-invite__inner {
   display: flex; align-items: center; justify-content: space-between;
@@ -1703,7 +1718,7 @@ body.profile-page main {
   display: inline-block; margin-bottom: 10px;
   font-family: var(--f-title); font-size: .5rem; font-weight: 700;
   letter-spacing: .22em; text-transform: uppercase;
-  color: rgba(196,160,82,.65);
+  color: rgba(255,255,255,.65);
 }
 .ctb-invite__title {
   font-family: var(--f-display); font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -1723,17 +1738,19 @@ body.profile-page main {
   transition: all .22s; cursor: pointer; border: none;
 }
 .ctb-invite__btn--primary {
-  background: linear-gradient(135deg, #9a7832 0%, #c4a052 40%, #f2c84b 65%, #c4a052 100%);
-  color: #0a1220;
-  box-shadow: 0 4px 20px rgba(196,160,82,.25);
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.35);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  backdrop-filter: blur(4px);
 }
-.ctb-invite__btn--primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.ctb-invite__btn--primary:hover { background: rgba(255,255,255,.28); transform: translateY(-2px); }
 .ctb-invite__btn--ghost {
   background: transparent;
-  border: 1px solid rgba(212,220,232,.2);
-  color: rgba(212,220,232,.65);
+  border: 1px solid rgba(255,255,255,.2);
+  color: rgba(255,255,255,.7);
 }
-.ctb-invite__btn--ghost:hover { border-color: rgba(212,220,232,.45); color: #fff; transform: translateY(-2px); }
+.ctb-invite__btn--ghost:hover { border-color: rgba(255,255,255,.45); color: #fff; transform: translateY(-2px); }
 .ctb-invite__right {
   flex-shrink: 0; opacity: .08;
   color: rgba(196,160,82,1);
