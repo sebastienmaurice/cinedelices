@@ -661,10 +661,10 @@ class CineBadge {
     this.CVH  = this.BH + this.OY * 2;
     this.pts  = cfg.effects.map(e => ({
       x: e.x, y: e.y, behavior: e.behavior,
-      nextFlash: Math.floor(Math.random() * 120),
+      nextFlash: Math.floor(Math.random() * 180),
       cooldown: 0, intensity: 0,
       phase: Math.random() * Math.PI * 2,
-      starSize: (2.5 + Math.random() * 2) * (this.BW / 512),
+      starSize: (1.2 + Math.random() * 0.8) * (this.BW / 512),
     }));
     this.particles = [];
     this.hovered   = false;
@@ -760,12 +760,12 @@ class CineBadge {
       if (pt.cooldown > 0) { pt.cooldown--; }
       else if (pt.nextFlash <= 0) {
         pt.intensity = 1.0;
-        pt.cooldown  = h ? 15+Math.floor(Math.random()*30) : 40+Math.floor(Math.random()*100);
+        pt.cooldown  = h ? 40+Math.floor(Math.random()*60) : 100+Math.floor(Math.random()*200);
         pt.nextFlash = pt.cooldown;
         this._spawnSparks(pt);
       } else { pt.nextFlash--; }
-      if (pt.intensity > 0) pt.intensity = Math.max(0, pt.intensity - (h ? 0.038 : 0.028));
-      const baseGlow = (0.06 + 0.04 * Math.sin(pt.phase)) * (h ? 1.8 : 1.0);
+      if (pt.intensity > 0) pt.intensity = Math.max(0, pt.intensity - (h ? 0.018 : 0.012));
+      const baseGlow = (0.04 + 0.02 * Math.sin(pt.phase)) * (h ? 1.5 : 1.0);
       this._drawStarFlash(ctx, pt.x, pt.y, pt.starSize, baseGlow + pt.intensity);
     }
     for (let i = this.particles.length - 1; i >= 0; i--) {
