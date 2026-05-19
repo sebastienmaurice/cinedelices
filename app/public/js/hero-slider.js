@@ -39,7 +39,17 @@
     /* Déclenche le dezoom du BG entrant */
     triggerBgDezoom(document.getElementById('bg-' + current));
     const cSlide = document.getElementById('slide-' + current);
-    if (cSlide) { cSlide._entryDone = false; setTimeout(() => { cSlide._entryDone = true; }, 1800); }
+    if (cSlide) {
+      cSlide._entryDone = false;
+      /* Passeport : retire le float, le remet après la fin de la transition d'entrée */
+      if (current === 2) {
+        const fg2 = document.getElementById('fg-2');
+        if (fg2) fg2.classList.remove('passport-floating');
+        setTimeout(() => { if (fg2) fg2.classList.add('passport-floating'); cSlide._entryDone = true; }, 2000);
+      } else {
+        setTimeout(() => { cSlide._entryDone = true; }, 1800);
+      }
+    }
     setTimeout(() => isTransitioning = false, 950);
     resetTimer();
   }
@@ -66,10 +76,10 @@
   }, { passive: true });
   hero.addEventListener('mouseleave', () => {
     mX = .5; mY = .5;
-    /* Remet l'animation flottement du passeport quand la souris sort */
+    /* Remet le float du passeport quand la souris sort */
     if (current === 2) {
       const fg2 = document.getElementById('fg-2');
-      if (fg2) { fg2.style.animation = ''; fg2.style.transform = ''; }
+      if (fg2) { fg2.style.transform = ''; fg2.classList.add('passport-floating'); }
     }
     if (!rafId) rafId = requestAnimationFrame(applyParallax);
   }, { passive: true });
@@ -84,8 +94,8 @@
     const sl = document.getElementById('slide-' + current);
     if (fg && sl && sl._entryDone) {
       if (current === 2) {
-        /* Passeport : rotation 3D douce — stoppe le float, applique la 3D */
-        fg.style.animation = 'none';
+        /* Passeport : stoppe le float CSS, applique la rotation 3D */
+        fg.classList.remove('passport-floating');
         fg.style.transition = 'transform .12s ease-out';
         fg.style.transform = `translateY(-50%) scale(0.95) rotateY(${dx * -22}deg) rotateX(${dy * 14}deg) translate(${dx * 18}px,${dy * 10}px)`;
       } else {
