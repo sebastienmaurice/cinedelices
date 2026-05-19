@@ -61,11 +61,22 @@
   document.getElementById('heroPrev')?.addEventListener('click', () => goTo(current - 1));
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
   resetTimer();
+  /* Apparition initiale du passeport : force l'état petit/invisible, puis déclenche la transition */
+  const fg0init = document.getElementById('fg-0');
+  if (fg0init) {
+    fg0init.style.transition = 'none';
+    fg0init.style.transform  = 'translateY(-50%) scale(0.25)';
+    fg0init.style.opacity    = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fg0init.style.transition = '';
+      fg0init.style.transform  = '';
+      fg0init.style.opacity    = '';
+    }));
+  }
   setTimeout(() => {
-    const s = document.getElementById('slide-0'); if (s) s._entryDone = true;
-    /* Passeport : float après chargement initial */
-    const fg0 = document.getElementById('fg-0'); if (fg0) fg0.classList.add('passport-floating');
-  }, 2000);
+    const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
+    const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
+  }, 2200);
   /* Dezoom initial slide-0 (active dès le HTML, pas de transition CSS au chargement) */
   triggerBgDezoom(document.getElementById('bg-0'));
 
