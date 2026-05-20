@@ -724,18 +724,6 @@ body.movies-page main {
   }
   .films-grid.list-view .fcard__btn-mobile { width: 100%; justify-content: center; }
 
-  /* 2. CTA banner rouge — layout compact sur mobile */
-  .fcard--cta__link {
-    flex-direction: column; align-items: flex-start;
-    padding: 24px 20px; min-height: unset; gap: 12px;
-  }
-  .fcard--cta__body { flex: unset; padding-right: 0; width: 100%; }
-  .fcard--cta__eyebrow { display: none; }
-  .fcard--cta__title { font-size: 1.5rem; line-height: 1.1; }
-  .fcard--cta__title em { display: inline; }
-  .fcard--cta__desc { font-size: 0.72rem; }
-  .fcard--cta__poster-row { display: none; }
-  .fcard--cta__action { align-self: stretch; justify-content: center; }
 }
 
 /* ── FCARD HOVER OVERLAY (lien "Voir les recettes" — dans le poster) ── */
@@ -1042,4 +1030,26 @@ body.movies-page main {
 .add-film-card-inject-inner:hover .add-film-card-inject-btn {
   background: var(--gold-gradient); color: var(--bleu-nuit);
   border-color: rgba(212,168,67,.5);
+}
+
+/* ══ BANNER CTA MOBILE — placé après les composants pour écraser flex:0 0 42% ══ */
+@media (max-width: 480px) {
+  .fcard--cta__link {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+    min-height: unset;
+    gap: 12px;
+  }
+  .fcard--cta__body {
+    flex: 1 1 100% !important;
+    width: 100%;
+    padding-right: 0;
+  }
+  .fcard--cta__eyebrow { display: none; }
+  .fcard--cta__title { font-size: 1.6rem; line-height: 1.1; }
+  .fcard--cta__title em { display: inline; }
+  .fcard--cta__desc { font-size: 0.72rem; }
+  .fcard--cta__poster-row { display: none; }
+  .fcard--cta__action { align-self: stretch; justify-content: center; }
 }
