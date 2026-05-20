@@ -911,3 +911,24 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
   .ca-hstat__n { font-size: 1.3rem; }
   .ca-mission-item { padding: 14px 14px; }
 }
+
+/* ══ FIXES MOBILE — en fin de fichier pour priorité CSS ══ */
+@media (max-width: 480px) {
+  /* 1. Portraits — grille 2×2 au lieu du scroll horizontal */
+  .ca-portraits-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow-x: visible;
+    flex-wrap: unset;
+    gap: 8px;
+  }
+  .ca-portrait {
+    flex: unset;
+    aspect-ratio: 3/4;
+    width: 100%;
+  }
+
+  /* 2. ca-sh__hint — masqué sur mobile (white-space:nowrap déborde) */
+  .ca-sh__hint { display: none; }
+  .ca-sh { gap: 12px; }
+}
