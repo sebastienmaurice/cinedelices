@@ -4309,6 +4309,9 @@ a.genres-see-all:focus-visible::after {
    FIXES RESPONSIVE MOBILE (≤ 480px)
 ══════════════════════════════════════════════ */
 @media (max-width: 480px) {
+  /* 1. Hero — stats masquées (chevauchement sur mobile) */
+  .hero__stats { display: none; }
+
   /* Hero — bouton secondaire masqué */
   .hero__btn-secondary { display: none; }
 
@@ -4316,10 +4319,20 @@ a.genres-see-all:focus-visible::after {
   .hero__actions { flex-direction: column; align-items: flex-start; gap: 10px; }
   .hero__btn-primary { width: 100%; justify-content: center; }
 
-  /* Duo du jour — corrige le débordement droit de djc-film */
-  .djc-film { min-height: 280px; max-width: 100%; }
-
-  /* Genres — "Voir toutes les recettes" passe sous le titre */
+  /* 2. Genres — titre aligné correctement */
   .section-header-wrap { overflow: visible; }
+  .genres-header { flex-direction: column; align-items: flex-start; gap: 6px; }
   .genres-see-all { display: none; }
+
+  /* 3. Duo du jour — espace entre djc-explain et djc-cta */
+  .djc-explain { margin-bottom: 16px; }
+  .djc-cta-col { gap: 16px; }
+
+  /* 4. djc-film — pleine largeur, hauteur correcte */
+  .djc-film {
+    min-height: 380px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .duo-jour-grid { gap: 16px; }
 }
