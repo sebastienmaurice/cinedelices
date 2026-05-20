@@ -716,24 +716,26 @@ body.movies-page main {
   .fcard__btn-mobile { display: inline-flex; }
   .fcard__hover-overlay { display: none; }
 
-  /* 1. List view — bouton contenu dans la card */
+  /* 1. List view — footer empilé verticalement, bouton pleine largeur */
   .films-grid.list-view .fcard { overflow: hidden; }
   .films-grid.list-view .fcard__body { overflow: hidden; padding: 12px 14px; }
-  .btn-vr { max-width: 100%; }
+  .films-grid.list-view .fcard__footer {
+    flex-direction: column; align-items: flex-start; gap: 8px;
+  }
+  .films-grid.list-view .fcard__btn-mobile { width: 100%; justify-content: center; }
 
-  /* 2. CTA banner rouge — vertical sur mobile */
+  /* 2. CTA banner rouge — layout compact sur mobile */
   .fcard--cta__link {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 28px 24px;
-    min-height: unset;
-    gap: 16px;
+    flex-direction: column; align-items: flex-start;
+    padding: 24px 20px; min-height: unset; gap: 12px;
   }
   .fcard--cta__body { flex: unset; padding-right: 0; width: 100%; }
-  .fcard--cta__title { font-size: 1.8rem; line-height: 1.05; }
+  .fcard--cta__eyebrow { display: none; }
+  .fcard--cta__title { font-size: 1.5rem; line-height: 1.1; }
+  .fcard--cta__title em { display: inline; }
+  .fcard--cta__desc { font-size: 0.72rem; }
   .fcard--cta__poster-row { display: none; }
-  .fcard--cta__action { width: 100%; }
-  .fcard--cta__action .btn-vr { width: 100%; justify-content: center; padding: 0 16px; height: 44px; }
+  .fcard--cta__action { align-self: stretch; justify-content: center; }
 }
 
 /* ── FCARD HOVER OVERLAY (lien "Voir les recettes" — dans le poster) ── */
