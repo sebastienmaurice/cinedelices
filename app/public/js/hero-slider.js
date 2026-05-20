@@ -7,7 +7,7 @@
   const dots   = document.querySelectorAll('.hero__dot');
   const hero   = document.getElementById('hero');
   if (!hero || !slides.length) return;
-  let current = 0, timer = null, isTransitioning = false, floatTimer = null;
+  let current = 0, timer = null, isTransitioning = false;
   const counterCur = document.getElementById('heroCounterCur');
   const counterTot = document.getElementById('heroCounterTot');
   if (counterTot) counterTot.textContent = String(slides.length).padStart(2, '0');
@@ -28,8 +28,6 @@
     /* Reset FG sortant */
     const pFg = document.getElementById('fg-' + prev);
     if (pFg) { pFg.style.transition = ''; pFg.style.transform = ''; }
-    /* Passeport : stoppe le float quand on quitte slide-0 */
-    if (prev === 0) { const pfg0 = document.getElementById('fg-0'); if (pfg0) pfg0.classList.remove('passport-floating'); }
     /* Reset BG sortant à 1.18 immédiatement (prêt pour prochain passage) */
     const pBg = document.getElementById('bg-' + prev);
     if (pBg) { pBg.style.scale = '1.18'; requestAnimationFrame(() => { if (pBg) pBg.style.scale = ''; }); }
@@ -44,14 +42,7 @@
     if (cSlide) {
       cSlide._entryDone = false;
       /* Passeport : retire le float, le remet après la fin de la transition d'entrée */
-      if (current === 0) {
-        const fg0 = document.getElementById('fg-0');
-        if (fg0) fg0.classList.remove('passport-floating');
-        if (floatTimer) clearTimeout(floatTimer);
-        floatTimer = setTimeout(() => { if (fg0 && current === 0) { fg0.classList.add('passport-floating'); cSlide._entryDone = true; } }, 2000);
-      } else {
-        setTimeout(() => { cSlide._entryDone = true; }, 1800);
-      }
+      setTimeout(() => { cSlide._entryDone = true; }, 1800);
     }
     setTimeout(() => isTransitioning = false, 950);
     resetTimer();
@@ -64,16 +55,11 @@
   document.getElementById('heroPrev')?.addEventListener('click', () => goTo(current - 1));
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
   resetTimer();
-  /* Initialisation slide-0 : JS ajoute active après un frame → toutes les transitions CSS se déclenchent */
+  /* Initialisation slide-0 : JS ajoute active après un frame → transitions CSS naturelles */
   requestAnimationFrame(() => {
     slides[0].classList.add('active');
     dots[0].classList.add('active');
-    if (floatTimer) clearTimeout(floatTimer);
-    floatTimer = setTimeout(() => {
-      if (current !== 0) return;
-      const s   = document.getElementById('slide-0'); if (s) s._entryDone = true;
-      const fg0 = document.getElementById('fg-0');   if (fg0) fg0.classList.add('passport-floating');
-    }, 2200);
+    setTimeout(() => { const s = document.getElementById('slide-0'); if (s) s._entryDone = true; }, 1800);
   });
 
   /* Parallaxe souris — BG : translate seul (scale géré par CSS)
@@ -87,15 +73,6 @@
   }, { passive: true });
   hero.addEventListener('mouseleave', () => {
     mX = .5; mY = .5;
-    /* Remet le float uniquement si l'entrée est terminée */
-    if (current === 0) {
-      const fg0 = document.getElementById('fg-0');
-      const sl0 = document.getElementById('slide-0');
-      if (fg0 && sl0 && sl0._entryDone) {
-        fg0.style.transform = '';
-        fg0.classList.add('passport-floating');
-      }
-    }
     if (!rafId) rafId = requestAnimationFrame(applyParallax);
   }, { passive: true });
   function applyParallax() {
@@ -108,15 +85,8 @@
     const fg = document.getElementById('fg-' + current);
     const sl = document.getElementById('slide-' + current);
     if (fg && sl && sl._entryDone) {
-      if (current === 0) {
-        /* Passeport : stoppe le float CSS, applique la rotation 3D */
-        fg.classList.remove('passport-floating');
-        fg.style.transition = 'transform .12s ease-out';
-        fg.style.transform = `translateY(-50%) scale(0.82) rotateY(${dx * -22}deg) rotateX(${dy * 14}deg) translate(${dx * 18}px,${dy * 10}px)`;
-      } else {
-        fg.style.transition = 'transform .08s ease-out,bottom 2.0s cubic-bezier(.22,1,.36,1) .20s,opacity 1.4s cubic-bezier(.22,1,.36,1) .20s';
-        fg.style.transform = `scale(1.18) translate(${dx * 52}px,${dy * 28}px)`;
-      }
+      fg.style.transition = 'transform .08s ease-out';
+      fg.style.transform = `scale(1.08) translate(${dx * 35}px,${dy * 20}px)`;
     }
     if (Math.abs(mX - lX) > .001 || Math.abs(mY - lY) > .001) rafId = requestAnimationFrame(applyParallax);
   }
