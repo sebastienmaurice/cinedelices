@@ -495,3 +495,31 @@ body.author-page main {
   .author-page .hero-pseudo--static { font-size: clamp(1.5rem, 8vw, 1.8rem); }
   .author-quick-tags .quick-tags-row { gap: 4px; }
 }
+
+/* ══ MOBILE FIXES — placés après les composants pour priorité CSS ══ */
+@media (max-width: 480px) {
+  /* 1. Banner CTA rouge — même fix que movies.css */
+  .author-cta-wrap .fcard--cta__link {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+    min-height: unset;
+    gap: 12px;
+  }
+  .author-cta-wrap .fcard--cta__body {
+    flex: 1 1 100% !important;
+    width: 100%;
+    padding-right: 0;
+  }
+  .author-cta-wrap .fcard--cta__eyebrow { display: none; }
+  .author-cta-wrap .fcard--cta__title { font-size: 1.6rem; line-height: 1.1; }
+  .author-cta-wrap .fcard--cta__title em { display: inline; }
+  .author-cta-wrap .fcard--cta__desc { font-size: 0.72rem; }
+  .author-cta-wrap .fcard--cta__poster-row { display: none; }
+  .author-cta-wrap .fcard--cta__action { align-self: stretch; justify-content: center; }
+
+  /* 2. Grille recettes — moins de marges latérales */
+  .author-recipes-section {
+    width: min(1440px, 100% - 2 * 1rem);
+  }
+}
