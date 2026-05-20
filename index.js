@@ -26,6 +26,9 @@ import { injectLocals } from "./app/middlewares/inject-locals.middleware.js";
 
 const app = express();
 
+// Render est derrière un reverse proxy — nécessaire pour express-rate-limit et IP réelle
+app.set('trust proxy', 1);
+
 // Sécurité HTTP — headers de protection (X-Frame-Options, CSP, HSTS, etc.)
 app.use(helmet({
   // CSP souple pour autoriser les ressources Cloudinary, Google Fonts, TMDB
