@@ -25,7 +25,9 @@ for (const { name, url } of PAGES) {
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-      .exclude('#cookie-banner')      // géré séparément
+      .exclude('#cookie-banner')    // géré séparément
+      .exclude('.ca-sh__num')       // grand chiffre décoratif (aria-hidden)
+      .exclude('.section-num')      // numéro décoratif section (aria-hidden)
       .analyze();
 
     // Affiche le détail des violations
