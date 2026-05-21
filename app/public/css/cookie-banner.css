@@ -136,6 +136,67 @@
 
 .ck-desc a:hover { color: #1a0e02; }
 
+/* ── Choix granulaires RGPD ──────────────────────────────────── */
+.ck-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(20,10,0,0.15);
+}
+
+.ck-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+}
+.ck-choice--disabled { cursor: default; opacity: 0.7; }
+
+.ck-choice input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+
+/* Checkbox custom */
+.ck-choice__box {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border-radius: 5px;
+  border: 2px solid rgba(20,10,0,0.45);
+  background: rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.18s, border-color 0.18s;
+  margin-top: 1px;
+}
+.ck-choice input:checked + .ck-choice__box {
+  background: rgba(20,10,0,0.82);
+  border-color: rgba(20,10,0,0.82);
+}
+.ck-choice input:checked + .ck-choice__box::after {
+  content: '';
+  width: 5px; height: 9px;
+  border: 2px solid #c4a052;
+  border-top: none; border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+}
+.ck-choice input:focus-visible + .ck-choice__box {
+  outline: 3px solid rgba(20,10,0,0.7);
+  outline-offset: 2px;
+}
+
+.ck-choice__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.68rem;
+  color: rgba(20,10,0,0.85);
+  line-height: 1.3;
+}
+.ck-choice__label strong { font-weight: 700; font-size: 0.7rem; }
+.ck-choice__label span   { font-weight: 300; color: rgba(20,10,0,0.62); }
+
 /* ── Actions ──────────────────────────────────────────────────── */
 .ck-actions {
   display: flex;
@@ -176,6 +237,16 @@
   box-shadow: 0 6px 20px rgba(0,0,0,.45);
 }
 
+/* Bouton "Enregistrer mes choix" — intermédiaire */
+.ck-btn--save {
+  background: rgba(20, 10, 2, 0.45);
+  color: rgba(20, 10, 0, 0.9);
+  border: 1px solid rgba(20, 10, 2, 0.45);
+}
+.ck-btn--save:hover {
+  background: rgba(20, 10, 2, 0.6);
+}
+
 /* Bouton "Refuser" — transparent (CNIL : aussi visible qu'Accepter) */
 .ck-btn--refuse {
   background: rgba(20, 10, 2, 0.18);
@@ -203,4 +274,6 @@
     width: 100%;
   }
   .ck-btn { flex: 1; min-width: 0; font-size: 0.68rem; white-space: normal; text-align: center; }
+  .ck-choices { flex-direction: row; gap: 12px; }
+  .ck-choice { flex: 1; }
 }
