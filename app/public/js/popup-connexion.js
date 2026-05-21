@@ -13,17 +13,22 @@ const goToLogin = document.getElementById("goToLogin");
 let lastFocusedElement;
 
 // ---------------------- FONCTIONS ----------------------
+const modalTitle = document.getElementById("auth-modal-title");
+
 const openModal = (form) => {
   lastFocusedElement = document.activeElement;
   modal.classList.add("active");
-  document.body.style.overflow = "hidden"; // Bloque scroll
+  modal.removeAttribute("aria-hidden");            // modal visible pour screen readers
+  document.body.style.overflow = "hidden";
   if (form === "login") {
     loginForm.classList.add("active");
     registerForm.classList.remove("active");
+    if (modalTitle) modalTitle.textContent = "Connexion";
     loginForm.querySelector("input")?.focus();
   } else {
     registerForm.classList.add("active");
     loginForm.classList.remove("active");
+    if (modalTitle) modalTitle.textContent = "Inscription";
     registerForm.querySelector("input")?.focus();
   }
 };
@@ -35,6 +40,7 @@ const closeModal = () => {
   if (!modal.classList.contains("active")) return;
 
   modal.classList.add("fade-out");
+  modal.setAttribute("aria-hidden", "true");       // masque pour screen readers à la fermeture
   document.body.style.overflow = "";
 
   setTimeout(() => {

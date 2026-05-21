@@ -131,5 +131,14 @@
   });
 
   resize();
-  animId = requestAnimationFrame(frame);
+
+  /* prefers-reduced-motion : frame statique unique, pas de boucle */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    ctx.clearRect(0, 0, W, H);
+    drawBg();
+    /* Dessine les particules à un instant t fixe — pas d'animation */
+    drawParticles(0);
+  } else {
+    animId = requestAnimationFrame(frame);
+  }
 })();

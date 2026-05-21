@@ -163,10 +163,12 @@ class HarryBadge {
     const fr = document.createElement('img');
     fr.className = 'badge__frame'; fr.src = c.frame.src;
     fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:20;pointer-events:none;';
+    fr.setAttribute('aria-hidden', 'true'); fr.alt = '';
     el.appendChild(fr);
     const cv = document.createElement('canvas');
     cv.width = this.CVW; cv.height = this.CVH;
     cv.style.cssText = `position:absolute;width:${this.CVW}px;height:${this.CVH}px;top:${-this.OY}px;left:${-this.OX}px;z-index:30;pointer-events:none;`;
+    cv.setAttribute('aria-hidden', 'true');
     el.appendChild(cv);
     this.cv = cv; this.ctx = cv.getContext('2d');
   }
@@ -330,6 +332,7 @@ class MatrixBadge {
     const fr = document.createElement('img');
     fr.className = 'badge__frame'; fr.src = c.frame.src;
     fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:20;pointer-events:none;';
+    fr.setAttribute('aria-hidden', 'true'); fr.alt = '';
     el.appendChild(fr);
     const cvB = document.createElement('canvas');
     cvB.width = this.CVW; cvB.height = this.CVH;
@@ -686,10 +689,12 @@ class CineBadge {
     const fr = document.createElement('img');
     fr.className = 'badge__frame'; fr.src = c.frame.src;
     fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:20;pointer-events:none;';
+    fr.setAttribute('aria-hidden', 'true'); fr.alt = '';
     el.appendChild(fr);
     const cv = document.createElement('canvas');
     cv.width = this.CVW; cv.height = this.CVH;
     cv.style.cssText = `position:absolute;width:${this.CVW}px;height:${this.CVH}px;top:${-this.OY}px;left:${-this.OX}px;z-index:30;pointer-events:none;`;
+    cv.setAttribute('aria-hidden', 'true');
     el.appendChild(cv);
     this.cv = cv; this.ctx = cv.getContext('2d');
   }

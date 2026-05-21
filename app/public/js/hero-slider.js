@@ -32,6 +32,7 @@
     const pBg = document.getElementById('bg-' + prev);
     if (pBg) { pBg.style.scale = '1.18'; requestAnimationFrame(() => { if (pBg) pBg.style.scale = ''; }); }
     slides[current].classList.add('active'); dots[current].classList.add('active');
+    dots.forEach((d, i) => d.setAttribute('aria-current', i === current ? 'true' : 'false'));
     if (counterCur) counterCur.textContent = String(current + 1).padStart(2, '0');
     /* Flash cinéma — bref éclat doré au moment de la coupe */
     const flash = document.querySelector('.hero__cut-flash');
@@ -54,6 +55,25 @@
   document.getElementById('heroNext')?.addEventListener('click', () => goTo(current + 1));
   document.getElementById('heroPrev')?.addEventListener('click', () => goTo(current - 1));
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
+
+  /* Navigation clavier (WCAG 2.1 SC 2.1.1) */
+  hero.setAttribute('tabindex', '0');
+  hero.setAttribute('role', 'region');
+  hero.setAttribute('aria-label', 'Carrousel de slides — utilisez les touches fléchées');
+  hero.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+  });
+
+  /* aria-live sur le compteur (annonce le changement de slide) */
+  if (counterCur) {
+    counterCur.setAttribute('aria-live', 'polite');
+    counterCur.setAttribute('aria-atomic', 'true');
+  }
+
+  /* aria-current initial */
+  dots.forEach((d, i) => d.setAttribute('aria-current', i === 0 ? 'true' : 'false'));
+
   resetTimer();
   /* Initialisation slide-0 : JS ajoute active après un frame → transitions CSS naturelles */
   requestAnimationFrame(() => {
@@ -62,10 +82,12 @@
     setTimeout(() => { const s = document.getElementById('slide-0'); if (s) s._entryDone = true; }, 1800);
   });
 
-  /* Parallaxe souris — BG : translate seul (scale géré par CSS)
-                       FG : transform complet après entry */
+  /* Parallaxe souris — désactivé si prefers-reduced-motion */
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   let mX = .5, mY = .5, lX = .5, lY = .5, rafId = null;
   hero.addEventListener('mousemove', e => {
+    if (prefersReduced) return;
     const r = hero.getBoundingClientRect();
     mX = (e.clientX - r.left) / r.width;
     mY = (e.clientY - r.top) / r.height;

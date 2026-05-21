@@ -5714,3 +5714,77 @@ main {
 @media (max-width: 480px) {
   #cd-toast-container { bottom: 14px; right: 14px; left: 14px; width: auto; max-width: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FOCUS-VISIBLE GLOBAL — Cohérence clavier (WCAG 2.4.7 / 2.4.11)
+   Outline or doré sur tous les éléments interactifs
+══════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 3px solid var(--or-100, #d4a843);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Supprime l'outline natif si focus-visible est actif */
+:focus:not(:focus-visible) { outline: none; }
+
+/* Variante subtile pour les éléments déjà stylisés */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--or-100, #d4a843);
+  outline-offset: 3px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SR-ONLY — Texte visible uniquement pour les lecteurs d'écran
+══════════════════════════════════════════════════════════════ */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SKIP LINK — Navigation clavier (WCAG 2.4.1)
+══════════════════════════════════════════════════════════════ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--or-100, #d4a843);
+  color: #0a1220;
+  font-family: var(--f-title);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  transition: top 0.15s ease;
+  outline: none;
+}
+.skip-link:focus { top: 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION — Protection animations (WCAG 2.1 SC 2.3.3)
+   Désactive toutes les animations non-fonctionnelles pour les
+   utilisateurs sensibles (épilepsie, vertiges vestibulaires)
+══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+  /* Exceptions fonctionnelles : spinners, progress bars */
+  .spinner,
+  .progress-bar,
+  .hero__xp__fill { animation-duration: 1s !important; }
+}
