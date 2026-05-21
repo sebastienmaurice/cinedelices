@@ -124,14 +124,12 @@ const authController = {
   async register(req, res) {
     // Extraction des données du formulaire d'inscription
     // Note : sanitization à prévoir pour le pseudo (futur amélioration sécurité)
-    const { first_name, last_name, pseudo, email, password, role } = req.body;
+    const { pseudo, email, password } = req.body;
 
     try {
       const hash = await argon2.hash(password);
 
       const user = await User.create({
-        first_name: first_name,
-        last_name: last_name,
         pseudo: pseudo,
         email: email,
         password: hash,
