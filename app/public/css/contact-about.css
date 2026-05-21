@@ -932,13 +932,31 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
   .ca-sh__hint { display: none; }
   .ca-sh { gap: 12px; }
 
-  /* 3. ca-mcard — socials séparés des tags, pills non coupées */
+  /* 3. ca-mcard — hauteur auto + socials au-dessus de la pellicule + couleurs visibles */
+  .ca-mcard { height: auto; }
+
+  /* Socials : descend sous la pellicule (::before = 14px) + contraste renforcé */
   .ca-mcard__socials {
     flex-direction: row;
-    top: 12px;
+    top: 18px;
     bottom: auto;
-    right: 12px;
+    right: 10px;
+    gap: 6px;
   }
+  .ca-msocial {
+    width: 34px; height: 34px;
+    background: rgba(6, 12, 24, 0.88);
+    border: 1.5px solid rgba(196,160,82,0.7);
+    color: var(--ca-gold);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .ca-msocial:hover {
+    background: rgba(196,160,82,0.2);
+    border-color: var(--ca-gold);
+    color: var(--ca-gold-hi);
+    transform: scale(1.1);
+  }
+
   .ca-mcard__tags {
     flex-direction: row;
     bottom: 12px;
@@ -948,7 +966,5 @@ textarea.ca-fi { resize: vertical; min-height: 95px; line-height: 1.55; }
     overflow-y: visible;
     max-height: none;
   }
-  .ca-mcard__pills {
-    flex-wrap: wrap;
-  }
+  .ca-mcard__pills { flex-wrap: wrap; }
 }
