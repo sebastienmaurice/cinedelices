@@ -124,7 +124,15 @@ const authController = {
   async register(req, res) {
     // Extraction des données du formulaire d'inscription
     // Note : sanitization à prévoir pour le pseudo (futur amélioration sécurité)
-    const { pseudo, email, password } = req.body;
+    const { pseudo, email, password, rgpd_consent } = req.body;
+
+    // Vérification consentement RGPD obligatoire
+    if (!rgpd_consent) {
+      return res.status(400).json({
+        success: false,
+        message: "Vous devez accepter la politique de confidentialité pour créer un compte."
+      });
+    }
 
     try {
       const hash = await argon2.hash(password);
