@@ -197,7 +197,7 @@ const homeController = {
       const BASE = process.env.BASE_URL || "https://cinedelices.com";
       const now  = new Date().toISOString().split("T")[0];
 
-      const [movies, recipes, authors] = await Promise.all([
+      const [movies, recipes] = await Promise.all([
         Movie.findAll({
           where: { status: "approved" },
           attributes: ["id", "slug", "updatedAt"],
@@ -205,20 +205,18 @@ const homeController = {
         Recipe.findAll({
           where: { status: "approved" },
           attributes: ["id", "slug", "updatedAt"],
-          include: [{ model: Movie, attributes: ["id"], required: true }],
-        }),
-        // Auteurs : membres avec au moins une recette approuvée
-        User.findAll({
-          attributes: ["id", "updatedAt"],
-          include: [{
-            model: Recipe,
-            as: "recipes",
-            where: { status: "approved" },
-            attributes: [],
-            required: true,
-          }],
         }),
       ]);
+
+      // Auteurs distincts ayant au moins une recette approuvée
+      const recipeAuthors = await Recipe.findAll({
+        where: { status: "approved" },
+        attributes: ["id_user"],
+      });
+      const authorIds = [...new Set(recipeAuthors.map(r => r.id_user).filter(Boolean))];
+      const authors = authorIds.length > 0
+        ? await User.findAll({ where: { id: authorIds }, attributes: ["id", "updatedAt"] })
+        : [];
 
       const url = (loc, freq, priority, lastmod = now) =>
         `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
@@ -247,6 +245,7 @@ ${authorUrls}
       res.header("Cache-Control", "public, max-age=3600");
       res.send(xml);
     } catch (error) {
+      console.error("[sitemap] Erreur :", error);
       res.status(500).send("Erreur génération sitemap");
     }
   },
