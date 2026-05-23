@@ -99,8 +99,14 @@ const favoritesController = {
           entity_id: entityId,
         });
 
-        // XP pour les membres uniquement (fire-and-forget)
+        // XP pour celui qui ajoute en favori
         const xpResult = await awardActionXP(userId, req.userRole, "favorite_added").catch(() => null);
+
+        // XP pour l'auteur du contenu (like_received) — sauf s'il se met en favori lui-même
+        const authorId = entity.id_user ?? entity.dataValues?.id_user;
+        if (authorId && authorId !== userId) {
+          awardActionXP(authorId, "user", "like_received").catch(() => {});
+        }
 
         return res.json({
           success: true,

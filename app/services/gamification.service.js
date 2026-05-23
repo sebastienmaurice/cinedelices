@@ -180,7 +180,7 @@ export async function awardWeeklyLoginXP(userId) {
     return false;
   }
 
-  const newPoints = row.points + XP_ACTIONS.daily_login;
+  const newPoints = row.points + XP_ACTIONS.weekly_login;
   const newLevel  = computeLevel(newPoints);
   await row.update({
     points:               newPoints,

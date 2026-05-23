@@ -54,7 +54,7 @@ export const XP_ACTIONS = {
   like_received:      2,
   favorite_added:     1,
   rating_given:       2,
-  daily_login:        1,
+  weekly_login:       1,
   streak_7_days:      10,
   first_recipe_month: 20,
 };

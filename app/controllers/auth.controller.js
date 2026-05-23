@@ -104,7 +104,7 @@ const authController = {
       });
 
       // XP hebdomadaire — réservé aux membres classiques uniquement
-      if (user.role !== "admin" && user.role !== "superadmin") {
+      if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
         awardWeeklyLoginXP(user.id).catch((e) => console.error("Weekly XP login:", e.message));
       }
 
@@ -1569,7 +1569,7 @@ const authController = {
           await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
         }
         authController._issueJwt(res, user);
-        if (user.role !== "admin" && user.role !== "superadmin") {
+        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
           awardWeeklyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
@@ -1642,7 +1642,7 @@ const authController = {
           await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
         }
         authController._issueJwt(res, user);
-        if (user.role !== "admin" && user.role !== "superadmin") {
+        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
           awardWeeklyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
