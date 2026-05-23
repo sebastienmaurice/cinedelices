@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
     <link rel="stylesheet" href="/css/author-page.css" />
+    <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
       .recipe-card .recipe-card__title-row {
@@ -129,6 +130,19 @@
 
           <!-- Avatar badge + cadre gamification -->
           <div class="avatar-block">
+            <% if (typeof userActiveFrameId !== 'undefined' && userActiveFrameId === 'strange') { %>
+            <!-- Dr Strange — badge CSS animé -->
+            <div class="profile-badge-hero profile-badge-hero--css-only"
+                 id="authorBadgeHero"
+                 data-frame-code="strange"
+                 data-photo-src="<%= author.picture || '/images/image-default-profile.jpg' %>">
+              <%- include('partials/badge-strange-avatar', {
+                photoSrc: author.picture || '/images/image-default-profile.jpg',
+                photoAlt: 'Avatar de ' + author.pseudo
+              }) %>
+            </div>
+            <% } else { %>
+            <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
             <div class="profile-badge-hero"
                  id="authorBadgeHero"
                  data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
@@ -145,6 +159,7 @@
               <div class="pbh-ring"></div>
               <% } %>
             </div>
+            <% } %>
           </div>
 
           <!-- Identité -->

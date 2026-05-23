@@ -1,0 +1,171 @@
+<%#
+  Partial : badge-strange-avatar.ejs
+  Variables attendues :
+    - photoSrc (string) — URL de la photo de profil
+    - photoAlt (string) — texte alternatif (optionnel)
+  Taille fixe : 260 × 260 px (.bds-badge--profile)
+  CSS requis  : /css/badge-strange.css
+%>
+<div class="bds-badge bds-badge--profile" aria-label="Badge Doctor Strange — L'Œil d'Agamotto" role="img">
+
+  <!-- Sparks directionnels -->
+  <div class="bds-badge__sparks" aria-hidden="true">
+    <span class="bds-spark"></span><span class="bds-spark"></span>
+    <span class="bds-spark"></span><span class="bds-spark"></span>
+    <span class="bds-spark"></span><span class="bds-spark"></span>
+    <span class="bds-spark"></span><span class="bds-spark"></span>
+  </div>
+
+  <!-- Brume ascendante -->
+  <div class="bds-badge__smoke" aria-hidden="true">
+    <span class="bds-smoke-p"></span><span class="bds-smoke-p"></span>
+    <span class="bds-smoke-p"></span><span class="bds-smoke-p"></span>
+    <span class="bds-smoke-p"></span><span class="bds-smoke-p"></span>
+  </div>
+
+  <!-- Photo centrale -->
+  <img class="bds-badge__photo"
+       src="<%= photoSrc %>"
+       alt="<%= typeof photoAlt !== 'undefined' ? photoAlt : 'Photo de profil' %>"
+  />
+
+  <!-- SVG Base : anneaux + glyphes (z=5) -->
+  <div class="bds-badge__svg-base" style="width:260px;height:260px;" aria-hidden="true">
+    <svg viewBox="0 0 320 320" width="260" height="260" xmlns="http://www.w3.org/2000/svg" style="overflow:hidden;display:block;">
+      <defs>
+        <filter id="bds-gf" x="0%" y="0%" width="100%" height="100%">
+          <feGaussianBlur stdDeviation="1.2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="bds-gg" x="0%" y="0%" width="100%" height="100%">
+          <feGaussianBlur stdDeviation="1.8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="bds-gs" x="0%" y="0%" width="100%" height="100%">
+          <feGaussianBlur stdDeviation="0.8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="bds-cp"><circle cx="160" cy="160" r="136"/></clipPath>
+        <path id="bds-gp" d="M160,160 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"/>
+      </defs>
+      <g clip-path="url(#bds-cp)">
+
+        <!-- Onde temporelle r=85 -->
+        <circle cx="160" cy="160" r="85" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.18"
+          stroke-dasharray="3 6"
+          style="color:var(--bds-ring); animation: bds-time-ripple 6s linear infinite;"/>
+
+        <!-- Ring 1 r=92 CW -->
+        <g style="animation: bds-cw var(--bds-dur-r1) cubic-bezier(.45,.05,.55,.95) infinite; transform-origin:160px 160px;">
+          <circle cx="160" cy="160" r="92" fill="none" stroke="currentColor" stroke-width="1.1" filter="url(#bds-gf)"
+            style="color:var(--bds-ring); animation: bds-breathe-slow 5.2s ease-in-out infinite;"/>
+          <circle cx="160" cy="160" r="89" fill="none" stroke="currentColor" stroke-width=".4" stroke-dasharray="2 18" opacity=".4"
+            style="color:var(--bds-ring); animation: bds-breathe-fast 7.5s ease-in-out infinite;"/>
+          <g style="color:var(--bds-ring); stroke:currentColor;">
+            <line x1="160" y1="68" x2="160" y2="76" stroke-width="1.2" opacity=".95"/>
+            <line x1="160" y1="68" x2="160" y2="73" stroke-width=".7" opacity=".65" transform="rotate(45,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="76" stroke-width="1.2" opacity=".95" transform="rotate(90,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="73" stroke-width=".7" opacity=".65" transform="rotate(135,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="76" stroke-width="1.2" opacity=".95" transform="rotate(180,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="73" stroke-width=".7" opacity=".65" transform="rotate(225,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="76" stroke-width="1.2" opacity=".95" transform="rotate(270,160,160)"/>
+            <line x1="160" y1="68" x2="160" y2="73" stroke-width=".7" opacity=".65" transform="rotate(315,160,160)"/>
+          </g>
+        </g>
+
+        <!-- Ring 2 r=104 CCW + losanges -->
+        <g style="animation: bds-ccw var(--bds-dur-r2) cubic-bezier(.5,0,.5,1) infinite; transform-origin:160px 160px;">
+          <circle cx="160" cy="160" r="104" fill="none" stroke="currentColor" stroke-width="1.4" filter="url(#bds-gf)"
+            style="color:var(--bds-ring); animation: bds-breathe-slow 6.3s ease-in-out infinite;"/>
+          <circle cx="160" cy="160" r="104" fill="none" stroke="currentColor" stroke-width="2.8" stroke-dasharray="3 14" opacity=".3"
+            style="color:var(--bds-ring); animation: bds-breathe-fast 9.1s ease-in-out infinite;"/>
+          <g style="color:var(--bds-ring); fill:currentColor;">
+            <polygon points="160,100.5 163.5,104 160,107.5 156.5,104" opacity=".88"/>
+            <polygon points="233.7,133.7 236.2,136.2 233.7,138.7 231.2,136.2" opacity=".62"/>
+            <polygon points="264,160 267.5,163.5 264,167 260.5,163.5" opacity=".88"/>
+            <polygon points="233.7,186.3 236.2,188.8 233.7,191.3 231.2,188.8" opacity=".62"/>
+            <polygon points="160,212.5 163.5,216 160,219.5 156.5,216" opacity=".88"/>
+            <polygon points="86.3,186.3 88.8,188.8 86.3,191.3 83.8,188.8" opacity=".62"/>
+            <polygon points="56,160 59.5,163.5 56,167 52.5,163.5" opacity=".88"/>
+            <polygon points="86.3,133.7 88.8,136.2 86.3,138.7 83.8,136.2" opacity=".62"/>
+          </g>
+        </g>
+
+        <!-- Bande de glyphes runiques -->
+        <g style="animation: bds-cw var(--bds-dur-rb) linear infinite; transform-origin:160px 160px;">
+          <circle cx="160" cy="160" r="114" fill="none" stroke="currentColor" stroke-width="20" opacity=".02" style="color:var(--bds-ring);"/>
+          <circle cx="160" cy="160" r="104.5" fill="none" stroke="currentColor" stroke-width=".6" opacity=".5" style="color:var(--bds-ring);"/>
+          <circle cx="160" cy="160" r="123.5" fill="none" stroke="currentColor" stroke-width=".6" opacity=".5" style="color:var(--bds-ring);"/>
+          <text fill="currentColor" font-family="Georgia,'Times New Roman',serif" font-size="16"
+            filter="url(#bds-gg)" style="color:var(--bds-glyph); animation: bds-glyph-flicker 4.2s ease-in-out infinite;">
+            <textPath href="#bds-gp" startOffset="0%" textLength="672" lengthAdjust="spacing">ᚠ⌖ᚦᚨᛉ☽ᚱ⊕ᛒᛏ△ᚷᛚ⟁ᚹᛜ✦ᚺ⌘ᚾᛞ⊗ᛁᛃ⧖ᛇᛈ⊛ᛉ☿ᚠ⌖ᚦᛟ△ᚨᛊ⟁ᚱ⌘ᚲᛗ⊕ᚷᛖ☽ᚹᚺ⊗ᚾ</textPath>
+          </text>
+        </g>
+
+        <!-- Ring 3 r=124 CCW + fractal pulse -->
+        <g style="animation: bds-ccw var(--bds-dur-r3) cubic-bezier(.4,.1,.6,.9) infinite; transform-origin:160px 160px;">
+          <circle cx="160" cy="160" r="124" fill="none" stroke="currentColor" stroke-width="1.5" filter="url(#bds-gf)"
+            style="color:var(--bds-ring); animation: bds-fractal-pulse 3.5s ease-in-out infinite;"/>
+          <circle cx="160" cy="160" r="124" fill="none" stroke="currentColor" stroke-width=".4" stroke-dasharray="1 4.5" opacity=".32"
+            style="color:var(--bds-ring); animation: bds-breathe-fast 8.4s ease-in-out infinite;"/>
+          <g style="color:var(--bds-ring); fill:currentColor;">
+            <circle cx="160" cy="36"  r="2.5" opacity=".88"/>
+            <circle cx="284" cy="160" r="2.5" opacity=".88"/>
+            <circle cx="160" cy="284" r="2.5" opacity=".88"/>
+            <circle cx="36"  cy="160" r="2.5" opacity=".88"/>
+            <circle cx="247.8" cy="72.2"  r="1.5" opacity=".55"/>
+            <circle cx="247.8" cy="247.8" r="1.5" opacity=".55"/>
+            <circle cx="72.2"  cy="247.8" r="1.5" opacity=".55"/>
+            <circle cx="72.2"  cy="72.2"  r="1.5" opacity=".55"/>
+          </g>
+        </g>
+
+        <!-- Ring 4 r=136 CW -->
+        <g style="animation: bds-cw var(--bds-dur-r4) cubic-bezier(.45,.05,.55,.95) infinite; transform-origin:160px 160px;">
+          <circle cx="160" cy="160" r="136" fill="none" stroke="currentColor" stroke-width=".7" stroke-dasharray="3 8" opacity=".38"
+            style="color:var(--bds-ring); animation: bds-breathe-fast 6.2s ease-in-out infinite;"/>
+          <circle cx="160" cy="160" r="136" fill="none" stroke="currentColor" stroke-width=".3" stroke-dasharray="1 3" opacity=".18"
+            style="color:var(--bds-ring);"/>
+        </g>
+
+        <!-- Étoile — carré A CW -->
+        <g style="animation: bds-cw var(--bds-dur-sqa) cubic-bezier(.3,.1,.7,.9) infinite; transform-origin:160px 160px;" filter="url(#bds-gs)">
+          <rect x="92.1" y="92.1" width="135.8" height="135.8" fill="none" stroke="currentColor"
+            style="color:var(--bds-star); animation: bds-star-pulse-a 3.8s ease-in-out infinite;"/>
+        </g>
+        <!-- Étoile — carré B CCW décalé -->
+        <g style="animation: bds-ccw var(--bds-dur-sqb) cubic-bezier(.6,0,.4,1) infinite; transform-origin:160px 160px;" filter="url(#bds-gs)">
+          <rect x="92.1" y="92.1" width="135.8" height="135.8" fill="none" stroke="currentColor"
+            transform="rotate(22.5,160,160)"
+            style="color:var(--bds-star); animation: bds-star-pulse-b 5.1s ease-in-out infinite .9s;"/>
+        </g>
+
+      </g>
+    </svg>
+  </div>
+
+  <!-- SVG Overlay : étoile devant photo (z=25) -->
+  <div class="bds-badge__svg-over" style="width:260px;height:260px;" aria-hidden="true">
+    <svg viewBox="0 0 320 320" width="260" height="260" xmlns="http://www.w3.org/2000/svg" style="overflow:hidden;display:block;">
+      <defs>
+        <filter id="bds-gso" x="0%" y="0%" width="100%" height="100%">
+          <feGaussianBlur stdDeviation="0.8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="bds-cpo"><circle cx="160" cy="160" r="136"/></clipPath>
+      </defs>
+      <g clip-path="url(#bds-cpo)">
+        <g style="animation: bds-cw var(--bds-dur-sqa) cubic-bezier(.3,.1,.7,.9) infinite; transform-origin:160px 160px;" filter="url(#bds-gso)">
+          <rect x="92.1" y="92.1" width="135.8" height="135.8" fill="none" stroke="currentColor"
+            style="color:var(--bds-star); animation: bds-star-pulse-a 3.8s ease-in-out infinite;"/>
+        </g>
+        <g style="animation: bds-ccw var(--bds-dur-sqb) cubic-bezier(.6,0,.4,1) infinite; transform-origin:160px 160px;" filter="url(#bds-gso)">
+          <rect x="92.1" y="92.1" width="135.8" height="135.8" fill="none" stroke="currentColor"
+            transform="rotate(22.5,160,160)"
+            style="color:var(--bds-star); animation: bds-star-pulse-b 5.1s ease-in-out infinite .9s;"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>

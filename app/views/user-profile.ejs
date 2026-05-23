@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/user-profile.css" />
     <link rel="stylesheet" href="/css/ctb2-hero.css" />
     <link rel="stylesheet" href="/css/rte-mini.css" />
+    <link rel="stylesheet" href="/css/badge-strange.css" />
   </head>
 
   <body class="profile-page" data-user-role="<%= user.role %>">
@@ -75,19 +76,47 @@
 
           <!-- Avatar -->
           <div class="avatar-block">
+            <% if (typeof userActiveFrameId !== 'undefined' && userActiveFrameId === 'strange') { %>
+            <!-- Dr Strange — badge CSS animé -->
+            <div class="profile-badge-hero profile-badge-hero--css-only"
+                 id="profileBadgeHero"
+                 data-frame-code="strange"
+                 data-photo-src="<%= user.picture || '/images/image-default-profile.jpg' %>">
+              <%- include('partials/badge-strange-avatar', {
+                photoSrc: user.picture || '/images/image-default-profile.jpg',
+                photoAlt: 'Avatar de ' + user.pseudo
+              }) %>
+              <!-- Statut photo -->
+              <% if (user.picture_status === 'pending' || user.picture_status === 'rejected') { %>
+              <span class="avatar-photo-status avatar-photo-status--<%= user.picture_status === 'pending' ? 'pending' : 'rejected' %>">
+                <span class="b-dot"></span>
+                <%= user.picture_status === 'pending' ? 'En attente' : 'Refusée' %>
+              </span>
+              <% } %>
+              <!-- Actions -->
+              <div class="avatar-actions">
+                <label for="avatar" class="av-btn av-btn--upload" title="Changer la photo">
+                  <i data-lucide="upload" aria-hidden="true"></i>
+                </label>
+                <input type="file" id="avatar" name="avatar" accept="image/*" hidden />
+                <button type="button" class="av-btn av-btn--del" id="removeAvatarBtn" title="Supprimer la photo">
+                  <i data-lucide="trash-2" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <% } else { %>
+            <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
             <div class="profile-badge-hero"
                id="profileBadgeHero"
                data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
                data-photo-src="<%= user.picture || '/images/image-default-profile.jpg' %>">
 
-              <!-- Photo statique (remplacée par BadgeEngine si frame animée) -->
               <img
                 id="pbhPhoto"
                 class="pbh-photo"
                 src="<%= user.picture || '/images/image-default-profile.jpg' %>"
                 alt="Avatar de <%= user.pseudo %>"
               />
-              <!-- Cadre PNG overlay -->
               <% if (typeof userActiveFrame !== 'undefined' && userActiveFrame) { %>
               <img class="pbh-frame" src="<%= userActiveFrame %>" alt="" aria-hidden="true" />
               <% } else { %>
@@ -113,6 +142,7 @@
                 </button>
               </div>
             </div>
+            <% } %>
           </div>
 
           <!-- Identité -->
@@ -1464,9 +1494,10 @@
               { id:'none',    label:'Sans cadre',      theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
               { id:'cine',    label:'Ciné Délices',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Cin\u00e9 D\u00e9lices/img/cadre-cine-delices-v2.png' },
               { id:'sherlock',label:'Sherlock Holmes',theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png' },
-              { id:'matrix',  label:'Matrix',         theme:'Science-Fiction',  icon:'🟢', minLvl:4, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
-              { id:'indiana', label:'Indiana Jones',  theme:'Aventure',         icon:'🎩', minLvl:6, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
-              { id:'harry',   label:'Harry Potter',   theme:'Magie',            icon:'⚡', minLvl:8, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
+              { id:'matrix',  label:'Matrix',         theme:'Science-Fiction',  icon:'🟢', minLvl:3, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
+              { id:'indiana', label:'Indiana Jones',  theme:'Aventure',         icon:'🎩', minLvl:4, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
+              { id:'harry',   label:'Harry Potter',   theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
+              { id:'strange', label:'Doctor Strange', theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
             ];
             const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
             const _locked      = _allFrames.filter(f => _lvl < f.minLvl  && !_unlockedIds.includes(f.id));
