@@ -21,6 +21,25 @@
     <meta name="twitter:image"       content="<%= siteUrl %>/images/background-page.jpg" />
     <!-- Canonical -->
     <link rel="canonical" href="<%= siteUrl %>/" />
+    <!-- JSON-LD WebSite Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Ciné Délices",
+      "url": "<%= siteUrl %>/",
+      "description": "Découvrez des recettes inspirées de vos films cultes. Cuisinez comme au cinéma !",
+      "inLanguage": "fr-FR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "<%= siteUrl %>/movies?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
     <link rel="stylesheet" href="/css/home.css" />
     <!-- Preload LCP : image hero slide 0 (fond + foreground) -->
     <link rel="preload" as="image" href="/images/event/hero-slide-bienvenue-membres-bg.webp" fetchpriority="high">
