@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -1499,13 +1499,13 @@
             const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
               ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
             const _allFrames = [
-              { id:'none',    label:'Sans cadre',      theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
-              { id:'cine',    label:'Ciné Délices',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Cin\u00e9 D\u00e9lices/img/cadre-cine-delices-v2.png' },
-              { id:'sherlock',label:'Sherlock Holmes',theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png' },
-              { id:'matrix',  label:'Matrix',         theme:'Science-Fiction',  icon:'🟢', minLvl:3, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
-              { id:'indiana', label:'Indiana Jones',  theme:'Aventure',         icon:'🎩', minLvl:4, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
-              { id:'harry',   label:'Harry Potter',   theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
-              { id:'strange', label:'Doctor Strange', theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
+              { id:'none',    label:'Sans cadre',      subLabel:'Profil épuré',             theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
+              { id:'cine',    label:'Ciné Délices',   subLabel:'Le Sceau du Cinéphile',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.png' },
+              { id:'sherlock',label:'Sherlock Holmes', subLabel:'La Loupe de Baker Street', theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png' },
+              { id:'matrix',  label:'Matrix',          subLabel:'La Pilule Rouge',           theme:'Science-Fiction',  icon:'🟢', minLvl:3, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
+              { id:'indiana', label:'Indiana Jones',   subLabel:"L'Artefact Légendaire",    theme:'Aventure',         icon:'🎩', minLvl:4, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
+              { id:'harry',   label:'Harry Potter',    subLabel:'Le Cercle de Poudlard',    theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
+              { id:'strange', label:'Doctor Strange',  subLabel:"L'Œil d'Agamotto",         theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
             ];
             const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
             const _locked      = _allFrames.filter(f => _lvl < f.minLvl  && !_unlockedIds.includes(f.id));
@@ -1577,8 +1577,11 @@
                   <% } %>
                 </div>
 
-                <!-- Nom + thème -->
+                <!-- Nom + sous-titre + thème -->
                 <div class="cf-card__name"><%= fr.label %></div>
+                <% if (fr.subLabel) { %>
+                <div class="cf-card__sublabel"><%= fr.subLabel %></div>
+                <% } %>
                 <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
 
                 <!-- Bouton équiper -->
