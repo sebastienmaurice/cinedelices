@@ -26,15 +26,25 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
     heroEl._badgeEngineInner = null;
   }
 
-  // Retirer les éléments statiques
+  // Retirer tous les éléments précédents (statiques, animés, CSS)
   heroEl.querySelector('#pbhPhoto')?.remove();
   heroEl.querySelector('.pbh-frame')?.remove();
   heroEl.querySelector('.pbh-ring')?.remove();
+  heroEl.querySelector('.bds-badge')?.remove();
 
   const actions = heroEl.querySelector('.avatar-actions');
 
-  if (ANIMATED_FRAMES.includes(frameCode) && window.BadgeEngine) {
-    // Cadre animé
+  if (frameCode === 'strange') {
+    // Cadre CSS pur — cloner le template pré-rendu
+    const tpl = document.getElementById('bds-badge-tpl');
+    if (tpl) {
+      const clone = tpl.content.cloneNode(true);
+      const photo = clone.querySelector('.bds-badge__photo');
+      if (photo) photo.src = photoSrc;
+      heroEl.insertBefore(clone, actions || null);
+    }
+  } else if (ANIMATED_FRAMES.includes(frameCode) && window.BadgeEngine) {
+    // Cadre animé canvas
     const inner = document.createElement('div');
     inner.style.cssText = 'position:absolute;inset:0;width:260px;height:260px;overflow:visible;';
     heroEl.insertBefore(inner, actions || null);
