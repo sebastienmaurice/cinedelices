@@ -215,7 +215,7 @@ const homeController = {
       });
       const authorIds = [...new Set(recipeAuthors.map(r => r.id_user).filter(Boolean))];
       const authors = authorIds.length > 0
-        ? await User.findAll({ where: { id: authorIds }, attributes: ["id", "updatedAt"] })
+        ? await User.findAll({ where: { id: authorIds }, attributes: ["id"] })
         : [];
 
       const url = (loc, freq, priority, lastmod = now) =>
