@@ -27,7 +27,7 @@
   to   { stroke-dashoffset: 60; }
 }
 
-/* ── Keyframes sparks ── */
+/* ── Keyframes sparks internes ── */
 @keyframes bds-spark-fly-1  { 0%{transform:translate(0,0) scale(1);opacity:.9}  100%{transform:translate(28px,-52px) scale(.1);opacity:0} }
 @keyframes bds-spark-fly-2  { 0%{transform:translate(0,0) scale(1);opacity:.85} 100%{transform:translate(-22px,-58px) scale(.1);opacity:0} }
 @keyframes bds-spark-fly-3  { 0%{transform:translate(0,0) scale(1);opacity:.9}  100%{transform:translate(55px,-8px) scale(.1);opacity:0} }
@@ -38,7 +38,7 @@
 @keyframes bds-spark-fly-8  { 0%{transform:translate(0,0) scale(1);opacity:.7}  100%{transform:translate(-10px,60px) scale(.08);opacity:0} }
 @keyframes bds-spark-spawn  { 0%,8%{opacity:1} 80%,100%{opacity:0} }
 
-/* ── Keyframes fumée ── */
+/* ── Keyframes fumée interne ── */
 @keyframes bds-smoke-1 { 0%{transform:translate(-12px,0) scale(.6);opacity:.22}  100%{transform:translate(-18px,-45px) scale(1.4);opacity:0} }
 @keyframes bds-smoke-2 { 0%{transform:translate(8px,0) scale(.5);opacity:.18}    100%{transform:translate(14px,-50px) scale(1.6);opacity:0} }
 @keyframes bds-smoke-3 { 0%{transform:translate(-4px,0) scale(.7);opacity:.25}   100%{transform:translate(4px,-42px) scale(1.3);opacity:0} }
@@ -46,123 +46,103 @@
 @keyframes bds-smoke-5 { 0%{transform:translate(-20px,0) scale(.6);opacity:.16}  100%{transform:translate(-26px,-44px) scale(1.2);opacity:0} }
 @keyframes bds-smoke-6 { 0%{transform:translate(2px,0) scale(.65);opacity:.22}   100%{transform:translate(-6px,-52px) scale(1.4);opacity:0} }
 
-/* ── Keyframes aura externe ── */
-@keyframes bds-glow-breathe {
-  0%,100% {
-    filter:
-      drop-shadow(0 0 5px rgba(63,224,161,.50))
-      drop-shadow(0 0 14px rgba(63,224,161,.22))
-      drop-shadow(0 0 30px rgba(63,224,161,.09));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 9px rgba(63,224,161,.70))
-      drop-shadow(0 0 22px rgba(63,224,161,.36))
-      drop-shadow(0 0 48px rgba(63,224,161,.15));
-  }
+/* ── Keyframes braises externes (drift radial hors cercle) ──
+   Positionnées sur le pourtour du cercle 260px (r=130, centre=130,130)
+   Chaque keyframe = direction radiale unique + légère dérive ──  */
+@keyframes bds-ef1  { 0%{transform:translate(0,0) scale(1.4);opacity:.85} 100%{transform:translate(3px,-26px)  scale(.12);opacity:0} }
+@keyframes bds-ef2  { 0%{transform:translate(0,0) scale(1.3);opacity:.78} 100%{transform:translate(14px,-20px) scale(.10);opacity:0} }
+@keyframes bds-ef3  { 0%{transform:translate(0,0) scale(1.4);opacity:.88} 100%{transform:translate(22px,-7px)  scale(.12);opacity:0} }
+@keyframes bds-ef4  { 0%{transform:translate(0,0) scale(1.3);opacity:.80} 100%{transform:translate(26px,4px)   scale(.10);opacity:0} }
+@keyframes bds-ef5  { 0%{transform:translate(0,0) scale(1.4);opacity:.82} 100%{transform:translate(20px,17px)  scale(.12);opacity:0} }
+@keyframes bds-ef6  { 0%{transform:translate(0,0) scale(1.3);opacity:.86} 100%{transform:translate(-2px,26px)  scale(.10);opacity:0} }
+@keyframes bds-ef7  { 0%{transform:translate(0,0) scale(1.4);opacity:.75} 100%{transform:translate(-18px,20px) scale(.12);opacity:0} }
+@keyframes bds-ef8  { 0%{transform:translate(0,0) scale(1.3);opacity:.83} 100%{transform:translate(-26px,-3px) scale(.10);opacity:0} }
+@keyframes bds-ef9  { 0%{transform:translate(0,0) scale(1.4);opacity:.79} 100%{transform:translate(-18px,-18px)scale(.12);opacity:0} }
+@keyframes bds-ef10 { 0%{transform:translate(0,0) scale(1.3);opacity:.87} 100%{transform:translate(-7px,-24px) scale(.10);opacity:0} }
+@keyframes bds-ef11 { 0%{transform:translate(0,0) scale(1.4);opacity:.76} 100%{transform:translate(6px,-25px)  scale(.12);opacity:0} }
+@keyframes bds-ef12 { 0%{transform:translate(0,0) scale(1.3);opacity:.84} 100%{transform:translate(24px,-10px) scale(.10);opacity:0} }
+
+/* ── Keyframe glow du badge (subtil, respire) ── */
+@keyframes bds-badge-glow {
+  0%,100% { filter: drop-shadow(0 0 4px rgba(63,224,161,.45)) drop-shadow(0 0 10px rgba(63,224,161,.18)); }
+  50%     { filter: drop-shadow(0 0 7px rgba(63,224,161,.65)) drop-shadow(0 0 18px rgba(63,224,161,.28)); }
 }
-@keyframes bds-glow-hover {
-  0%,100% {
-    filter:
-      drop-shadow(0 0 10px rgba(253,107,4,.80))
-      drop-shadow(0 0 24px rgba(253,107,4,.52))
-      drop-shadow(0 0 52px rgba(253,107,4,.24))
-      drop-shadow(0 0 80px rgba(253,107,4,.10));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 16px rgba(253,107,4,.95))
-      drop-shadow(0 0 36px rgba(253,150,50,.65))
-      drop-shadow(0 0 72px rgba(253,107,4,.32))
-      drop-shadow(0 0 110px rgba(253,107,4,.14));
-  }
-}
-@keyframes bds-corona-breathe {
-  0%,100% { opacity: .50; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.06); }
-}
-@keyframes bds-corona-hover {
-  0%,100% { opacity: .80; transform: scale(1.02); }
-  50%      { opacity: 1;   transform: scale(1.10); }
+@keyframes bds-badge-glow-hover {
+  0%,100% { filter: drop-shadow(0 0 9px rgba(253,107,4,.78)) drop-shadow(0 0 22px rgba(253,107,4,.42)) drop-shadow(0 0 48px rgba(253,107,4,.18)); }
+  50%     { filter: drop-shadow(0 0 14px rgba(253,107,4,.95)) drop-shadow(0 0 34px rgba(253,107,4,.58)) drop-shadow(0 0 70px rgba(253,107,4,.26)); }
 }
 
 /* ════════════════════════════════════════════════
-   WRAPPER AURA — permet les effets hors overflow
+   WRAPPER AURA
 ════════════════════════════════════════════════ */
 .bds-badge-aura {
   position: relative;
   width: 260px;
   height: 260px;
   flex-shrink: 0;
+  /* Couleurs braises — changent au hover */
+  --bds-ember1: rgba(166,255,216,.88);
+  --bds-ember2: rgba(63,224,161,.70);
 }
 
-/* Halo interne — anneau de lumière juste autour du cercle */
-.bds-badge-aura::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    transparent 40%,
-    rgba(63,224,161,.05) 50%,
-    rgba(63,224,161,.12) 56%,
-    rgba(63,224,161,.05) 63%,
-    transparent 72%
-  );
-  animation: bds-corona-breathe 5s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Nébuleuse externe — halo diffus plus large */
-.bds-badge-aura::after {
-  content: '';
-  position: absolute;
-  inset: -44px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    transparent 46%,
-    rgba(63,224,161,.03) 54%,
-    rgba(63,224,161,.07) 60%,
-    rgba(63,224,161,.02) 68%,
-    transparent 76%
-  );
-  animation: bds-corona-breathe 8s ease-in-out infinite reverse;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Glow vivant sur le badge (drop-shadow passe outre overflow:hidden) */
+/* Glow vivant sur le badge (drop-shadow traverse overflow:hidden) */
 .bds-badge-aura .bds-badge {
   position: relative;
   z-index: 1;
-  animation: bds-glow-breathe 4.5s ease-in-out infinite;
-  transition: filter .5s ease;
+  animation: bds-badge-glow 5s ease-in-out infinite;
 }
 
-/* ── HOVER aura — corona orange ── */
-.bds-badge-aura:hover::before {
-  background: radial-gradient(circle,
-    transparent 40%,
-    rgba(253,107,4,.10) 50%,
-    rgba(253,180,50,.22) 56%,
-    rgba(253,107,4,.09) 63%,
-    transparent 72%
-  );
-  animation: bds-corona-hover 2s ease-in-out infinite;
-}
-.bds-badge-aura:hover::after {
-  background: radial-gradient(circle,
-    transparent 44%,
-    rgba(253,107,4,.07) 53%,
-    rgba(253,150,30,.15) 60%,
-    rgba(253,107,4,.04) 68%,
-    transparent 77%
-  );
-  animation: bds-corona-hover 2.8s ease-in-out infinite reverse;
+/* ── HOVER aura ── */
+.bds-badge-aura:hover {
+  --bds-ember1: rgba(253,190,80,.95);
+  --bds-ember2: rgba(253,107,4,.82);
 }
 .bds-badge-aura:hover .bds-badge {
-  animation: bds-glow-hover 1.8s ease-in-out infinite;
+  animation: bds-badge-glow-hover 2s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════════
+   BRAISES EXTERNES
+   Positionnées hors de .bds-badge (pas de overflow:hidden)
+   sur le pourtour du cercle : r=130, centre=(130,130)
+════════════════════════════════════════════════ */
+.bds-embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bds-ember {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--bds-ember1);
+  box-shadow: 0 0 3px var(--bds-ember2), 0 0 6px var(--bds-ember2);
+  opacity: 0;
+}
+
+/* Positions sur le bord du cercle (px, badge 260px) + animation radiale */
+/* Angle  0° top         */ .bds-ember:nth-child(1)  { left:129px; top:-1px;   animation: bds-ef1  3.2s 0.0s infinite ease-out; }
+/* Angle 30°              */ .bds-ember:nth-child(2)  { left:194px; top:16px;   animation: bds-ef2  2.9s 0.5s infinite ease-out; }
+/* Angle 60°              */ .bds-ember:nth-child(3)  { left:242px; top:64px;   animation: bds-ef3  3.5s 1.2s infinite ease-out; }
+/* Angle 90° right        */ .bds-ember:nth-child(4)  { left:259px; top:129px;  animation: bds-ef4  2.7s 0.8s infinite ease-out; }
+/* Angle 120°             */ .bds-ember:nth-child(5)  { left:242px; top:194px;  animation: bds-ef5  3.1s 1.7s infinite ease-out; }
+/* Angle 150°             */ .bds-ember:nth-child(6)  { left:194px; top:242px;  animation: bds-ef6  3.0s 0.3s infinite ease-out; }
+/* Angle 180° bottom      */ .bds-ember:nth-child(7)  { left:129px; top:259px;  animation: bds-ef7  3.4s 1.0s infinite ease-out; }
+/* Angle 210°             */ .bds-ember:nth-child(8)  { left:64px;  top:242px;  animation: bds-ef8  2.8s 1.9s infinite ease-out; }
+/* Angle 240°             */ .bds-ember:nth-child(9)  { left:16px;  top:194px;  animation: bds-ef9  3.3s 0.6s infinite ease-out; }
+/* Angle 270° left        */ .bds-ember:nth-child(10) { left:-1px;  top:129px;  animation: bds-ef10 2.6s 1.4s infinite ease-out; }
+/* Angle 315° top-left    */ .bds-ember:nth-child(11) { left:38px;  top:38px;   animation: bds-ef11 3.6s 0.9s infinite ease-out; }
+/* Angle 345° near top    */ .bds-ember:nth-child(12) { left:96px;  top:3px;    animation: bds-ef12 3.0s 2.1s infinite ease-out; }
+
+/* ── Hover braises : plus grandes, plus lumineuses, plus rapides ── */
+.bds-badge-aura:hover .bds-ember {
+  width: 3px;
+  height: 3px;
+  box-shadow: 0 0 5px var(--bds-ember2), 0 0 10px var(--bds-ember2), 0 0 18px var(--bds-ember1);
+  animation-duration: 1.4s !important;
 }
 
 /* ════════════════════════════════════════════════
@@ -212,7 +192,6 @@
   --bds-smoke:     rgba(253,107,4,.22);
   --bds-spark1:    rgba(253,190,80,.95);
   --bds-spark2:    rgba(253,107,4,.8);
-  /* Accélération des anneaux au hover */
   --bds-dur-r1:  9s;
   --bds-dur-r2:  6s;
   --bds-dur-rb: 18s;
@@ -232,19 +211,14 @@
   border: 2px solid var(--bds-photo-bdr);
   box-shadow: inset 0 0 10px var(--bds-halo);
   transition: border-color .5s ease, box-shadow .5s ease;
-  /* taille + position calculées pour 260px : photo=132px, offset=64px */
   width: 132px;
   height: 132px;
   top: 64px;
   left: 64px;
 }
-
-/* Photo hover — halo renforcé */
 .bds-badge:hover .bds-badge__photo,
 .bds-badge-aura:hover .bds-badge__photo {
-  box-shadow:
-    inset 0 0 18px var(--bds-halo),
-    inset 0 0 6px rgba(255,255,255,.08);
+  box-shadow: inset 0 0 18px var(--bds-halo), inset 0 0 6px rgba(255,255,255,.08);
 }
 
 /* ── Couches SVG ── */
@@ -258,7 +232,7 @@
 .bds-badge__svg-base { z-index: 5;  }
 .bds-badge__svg-over { z-index: 25; }
 
-/* ── Sparks ── */
+/* ── Sparks internes ── */
 .bds-badge__sparks {
   position: absolute;
   inset: 0;
@@ -283,7 +257,7 @@
 .bds-spark:nth-child(7) { top:17%;    left:23%;    animation: bds-spark-spawn 2.0s 1.5s  infinite, bds-spark-fly-7 2.0s 1.5s  infinite; }
 .bds-spark:nth-child(8) { top:83%;    left:77%;    animation: bds-spark-spawn 2.5s .2s   infinite, bds-spark-fly-8 2.5s .2s   infinite; }
 
-/* ── Fumée ── */
+/* ── Fumée interne ── */
 .bds-badge__smoke {
   position: absolute;
   pointer-events: none;
@@ -307,17 +281,15 @@
 .bds-smoke-p:nth-child(5) { width:13px; height:13px; margin:-6.5px; animation: bds-smoke-5 4.9s .4s  infinite ease-out; }
 .bds-smoke-p:nth-child(6) { width:11px; height:11px; margin:-5.5px; animation: bds-smoke-6 4.1s 3.0s infinite ease-out; }
 
-/* ── Hover : sparks plus grands + lumineux + accélérés ── */
+/* ── Hover sparks internes ── */
 .bds-badge:hover .bds-spark,
 .bds-badge-aura:hover .bds-spark {
-  width: 4px;
-  height: 4px;
-  background: var(--bds-spark1);
+  width: 4px; height: 4px;
   box-shadow: 0 0 4px var(--bds-spark2), 0 0 8px rgba(255,200,80,.3);
   animation-duration: .9s !important;
 }
 
-/* ── Hover : fumée accélérée ── */
+/* ── Hover fumée interne accélérée ── */
 .bds-badge:hover .bds-smoke-p,
 .bds-badge-aura:hover .bds-smoke-p               { animation-duration: 2.2s !important; }
 .bds-badge:hover .bds-smoke-p:nth-child(1),
