@@ -27,6 +27,19 @@ const UserPoints = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    login_streak: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    last_daily_login_at: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    last_monthly_recipe_at: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
   },
   {
     tableName: "user_points",

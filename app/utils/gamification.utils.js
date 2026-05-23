@@ -57,7 +57,6 @@ export const RANK_TITLES = {
 
 export const XP_ACTIONS = {
   recipe_published:   50,
-  recipe_approved:    30,
   movie_accepted:     25,
   review_approved:    10,
   comment_posted:     5,

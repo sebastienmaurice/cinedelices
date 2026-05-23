@@ -20,7 +20,7 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
-import { awardActionXP } from "../services/gamification.service.js";
+import { awardActionXP, checkFirstRecipeMonth } from "../services/gamification.service.js";
 import searchCache from "../utils/search-cache.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import { deleteAsset, uploadToCloudinary, uploadBufferToCloudinary } from "../utils/asset-manager.js";
@@ -728,7 +728,8 @@ const adminController = {
 
       // XP bonus au contributeur pour recette validée
       if (recipe?.id_user) {
-        awardActionXP(recipe.id_user, "user", "recipe_approved").catch(() => {});
+        awardActionXP(recipe.id_user, "user", "recipe_published").catch(() => {});
+        checkFirstRecipeMonth(recipe.id_user).catch(() => {});
       }
 
       logAdminAction({ adminId: req.userId, action: "approve_recipe", targetType: "recipe", targetId: recipeId });

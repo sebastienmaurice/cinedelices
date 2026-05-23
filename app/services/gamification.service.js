@@ -188,3 +188,77 @@ export async function awardWeeklyLoginXP(userId) {
   });
   return true;
 }
+
+/**
+ * Suivi du streak de connexion quotidien.
+ * - Connexion quotidienne : incrémente login_streak
+ * - Streak atteint 7 : +10 XP et remise à zéro
+ * - Interruption (> 1 jour) : reset à 1
+ * Idempotent : sans effet si déjà appelé aujourd'hui.
+ */
+export async function awardDailyLoginXP(userId) {
+  const [row] = await UserPoints.findOrCreate({
+    where:    { id_user: userId },
+    defaults: { points: 0, level_code: "1", active_frame_code: "cine", login_streak: 0 },
+  });
+
+  const todayStr     = new Date().toISOString().slice(0, 10);
+  const lastStr      = row.last_daily_login_at
+    ? new Date(row.last_daily_login_at).toISOString().slice(0, 10)
+    : null;
+
+  if (lastStr === todayStr) return { streakDay: row.login_streak, xpGained: 0 };
+
+  const yesterdayStr = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const newStreak    = lastStr === yesterdayStr ? row.login_streak + 1 : 1;
+
+  let xpGained   = 0;
+  let resetStreak = newStreak;
+
+  if (newStreak >= 7) {
+    xpGained   = XP_ACTIONS.streak_7_days;
+    resetStreak = 0;
+  }
+
+  const newPoints = row.points + xpGained;
+  const newLevel  = computeLevel(newPoints);
+  await row.update({
+    points:              newPoints,
+    level_code:          newLevel.toString(),
+    login_streak:        resetStreak,
+    last_daily_login_at: todayStr,
+  });
+
+  return { streakDay: newStreak, xpGained };
+}
+
+/**
+ * Bonus "première recette du mois" (+20 XP).
+ * Appelé quand l'admin approuve une recette.
+ * Idempotent : une seule fois par mois civil.
+ */
+export async function checkFirstRecipeMonth(userId) {
+  const [row] = await UserPoints.findOrCreate({
+    where:    { id_user: userId },
+    defaults: { points: 0, level_code: "1", active_frame_code: "cine" },
+  });
+
+  const now      = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const lastMonth = row.last_monthly_recipe_at
+    ? new Date(row.last_monthly_recipe_at).toISOString().slice(0, 7)
+    : null;
+
+  if (lastMonth === thisMonth) return { xpGained: 0 };
+
+  const xpGained  = XP_ACTIONS.first_recipe_month;
+  const newPoints = row.points + xpGained;
+  const newLevel  = computeLevel(newPoints);
+  await row.update({
+    points:                 newPoints,
+    level_code:             newLevel.toString(),
+    last_monthly_recipe_at: now,
+  });
+
+  return { xpGained };
+}

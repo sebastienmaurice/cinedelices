@@ -1,6 +1,6 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
-import { getUserGamificationData, awardWeeklyLoginXP } from "../services/gamification.service.js";
+import { getUserGamificationData, awardWeeklyLoginXP, awardDailyLoginXP } from "../services/gamification.service.js";
 import { isStaffRole } from "../utils/gamification.utils.js";
 import {
   createAndSendResetToken,
@@ -104,9 +104,10 @@ const authController = {
         maxAge: 1000 * 60 * 60 * 2, // 1000 milliseconde = 1 seconde * 60 secondes = 1 minute * 60 minutes = 1 heure * 2 = 2 heures
       });
 
-      // XP hebdomadaire — réservé aux membres classiques uniquement
+      // XP de connexion — réservé aux membres classiques uniquement
       if (!isStaffRole(user.role)) {
         awardWeeklyLoginXP(user.id).catch((e) => console.error("Weekly XP login:", e.message));
+        awardDailyLoginXP(user.id).catch((e) => console.error("Daily streak XP:", e.message));
       }
 
       res.status(StatusCodes.OK).redirect("/");
@@ -1572,6 +1573,7 @@ const authController = {
         authController._issueJwt(res, user);
         if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
+          awardDailyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
       }
@@ -1645,6 +1647,7 @@ const authController = {
         authController._issueJwt(res, user);
         if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
+          awardDailyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
       }
@@ -1771,6 +1774,7 @@ const authController = {
         authController._issueJwt(res, user);
         if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
+          awardDailyLoginXP(user.id).catch(() => {});
         }
         return res.redirect('/');
       }

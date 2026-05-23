@@ -15,6 +15,9 @@ if (missingEnv.length > 0) {
   process.exit(1);
 }
 
+import { runStartupMigration } from "./app/database/migrate.js";
+await runStartupMigration();
+
 import express from "express";
 import helmet from "helmet";
 import { xss } from "express-xss-sanitizer";
