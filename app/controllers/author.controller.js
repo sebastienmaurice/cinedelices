@@ -123,10 +123,10 @@ const authorController = {
       const ctaMovies = enrichMoviesWithImagePaths(ctaMoviesRaw);
 
       const gamif = await getUserGamificationData(userId, {
-        recipes: allRecipes,
-        movies: allMovies,
-        notices: allNotices,
-        isSuperAdmin: author.role === "superadmin",
+        recipes:  allRecipes,
+        movies:   allMovies,
+        notices:  allNotices,
+        userRole: author.role,
       });
 
       const xpProg = xpProgress(gamif.xp, gamif.level);

@@ -1,5 +1,5 @@
 import { UserPoints } from "../models/index.model.js";
-import { computeLevel, FRAME_UNLOCKS } from "../utils/gamification.utils.js";
+import { computeLevel, FRAME_UNLOCKS, isSuperAdminRole } from "../utils/gamification.utils.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -28,7 +28,7 @@ const gamificationController = {
       const level = computeLevel(row.points);
       const frame = FRAME_UNLOCKS.find((f) => f.code === frameCode);
 
-      if (level < frame.minLvl && req.userRole !== "superadmin") {
+      if (level < frame.minLvl && !isSuperAdminRole(req.userRole)) {
         return res.status(StatusCodes.FORBIDDEN).json({
           error: `Niveau ${frame.minLvl} requis pour ce cadre (vous êtes niveau ${level}).`,
         });

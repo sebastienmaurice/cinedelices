@@ -1,7 +1,5 @@
 import { UserPoints } from "../models/index.model.js";
-import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS } from "../utils/gamification.utils.js";
-
-const STAFF_ROLES = new Set(["admin", "superadmin", "super_admin"]);
+import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS, isStaffRole, isSuperAdminRole } from "../utils/gamification.utils.js";
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -70,7 +68,7 @@ export async function syncUserXP(userId, { recipes = [], movies = [], notices = 
  * @returns {{ xpGained:number, newXP:number, newLevel:number, leveledUp:boolean, rank:string }}
  */
 export async function awardActionXP(userId, userRole, actionCode) {
-  if (STAFF_ROLES.has(userRole)) return { xpGained: 0, newXP: 0, newLevel: 0, leveledUp: false, rank: "" };
+  if (isStaffRole(userRole)) return { xpGained: 0, newXP: 0, newLevel: 0, leveledUp: false, rank: "" };
 
   const xpGained = XP_ACTIONS[actionCode] ?? 0;
   if (xpGained <= 0) return { xpGained: 0, newXP: 0, newLevel: 0, leveledUp: false, rank: "" };
@@ -109,16 +107,17 @@ export async function awardActionXP(userId, userRole, actionCode) {
  *   activity: Array,
  * }}
  */
-export async function getUserGamificationData(userId, { recipes = [], movies = [], notices = [], isSuperAdmin = false }) {
+export async function getUserGamificationData(userId, { recipes = [], movies = [], notices = [], isSuperAdmin = false, userRole = "" }) {
   const { xp, level, row } = await syncUserXP(userId, { recipes, movies, notices });
 
   const rank            = RANK_TITLES[level] ?? RANK_TITLES[1];
   const activeFrameCode = row.active_frame_code ?? "cine";
 
-  // Cadres enrichis avec état débloqué (super_admin débloque tout)
+  // Cadres enrichis — super_admin/superadmin débloque tout, admin reste à son niveau réel
+  const allUnlocked = isSuperAdmin || isSuperAdminRole(userRole);
   const frames = FRAME_UNLOCKS.map((f) => ({
     ...f,
-    unlocked: isSuperAdmin || level >= f.minLvl,
+    unlocked: allUnlocked || level >= f.minLvl,
     isActive: f.code === activeFrameCode,
   }));
 

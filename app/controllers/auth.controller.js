@@ -1,6 +1,7 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { getUserGamificationData, awardWeeklyLoginXP } from "../services/gamification.service.js";
+import { isStaffRole } from "../utils/gamification.utils.js";
 import {
   createAndSendResetToken,
   findActiveToken,
@@ -104,7 +105,7 @@ const authController = {
       });
 
       // XP hebdomadaire — réservé aux membres classiques uniquement
-      if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
+      if (!isStaffRole(user.role)) {
         awardWeeklyLoginXP(user.id).catch((e) => console.error("Weekly XP login:", e.message));
       }
 
@@ -301,10 +302,10 @@ const authController = {
 
       // Gamification — calcul XP + cadres + activité
       const gamif = await getUserGamificationData(user.id, {
-        recipes:      userRecipes,
-        movies:       userMovies,
-        notices:      userNotices,
-        isSuperAdmin: req.userRole === "superadmin" || req.userRole === "super_admin",
+        recipes:  userRecipes,
+        movies:   userMovies,
+        notices:  userNotices,
+        userRole: req.userRole,
       });
 
       // Rendu de la vue avec les données utilisateur
@@ -1569,7 +1570,7 @@ const authController = {
           await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
         }
         authController._issueJwt(res, user);
-        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
+        if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
@@ -1642,7 +1643,7 @@ const authController = {
           await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
         }
         authController._issueJwt(res, user);
-        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
+        if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
         }
         return res.json({ status: "ok" });
@@ -1768,7 +1769,7 @@ const authController = {
       if (user) {
         if (!user.google_id) await user.update({ google_id: googleId, avatar_url: picture || user.avatar_url });
         authController._issueJwt(res, user);
-        if (user.role !== "admin" && user.role !== "superadmin" && user.role !== "super_admin") {
+        if (!isStaffRole(user.role)) {
           awardWeeklyLoginXP(user.id).catch(() => {});
         }
         return res.redirect('/');

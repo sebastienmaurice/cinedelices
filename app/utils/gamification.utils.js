@@ -1,6 +1,16 @@
 // utils/xp.js — Source de vérité unique pour le système de progression
 // Partagé entre gamification.service.js (backend) et user-profile.ejs (EJS inline)
 
+/** Rôles exclus de tout gain XP. */
+export const STAFF_ROLES = new Set(["admin", "superadmin", "super_admin"]);
+
+/** Rôles pour lesquels tous les cadres sont débloqués (sans contrainte de niveau). */
+export const SUPERADMIN_ROLES = new Set(["superadmin", "super_admin"]);
+
+/** Helper utilisé partout où il faut savoir si un rôle est staff. */
+export const isStaffRole     = (role) => STAFF_ROLES.has(role);
+export const isSuperAdminRole = (role) => SUPERADMIN_ROLES.has(role);
+
 export const XP_TABLE = [
   0,      // niv. 1
   100,    // niv. 2
