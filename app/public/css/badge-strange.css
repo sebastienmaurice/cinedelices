@@ -8,7 +8,7 @@
 @keyframes bds-cw  { to { transform: rotate( 360deg); } }
 @keyframes bds-ccw { to { transform: rotate(-360deg); } }
 
-/* ── Keyframes respirations ── */
+/* ── Keyframes respirations internes ── */
 @keyframes bds-breathe-slow { 0%,100%{opacity:.92} 50%{opacity:.55} }
 @keyframes bds-breathe-fast { 0%,100%{opacity:.88} 50%{opacity:.42} }
 @keyframes bds-glyph-flicker {
@@ -46,7 +46,128 @@
 @keyframes bds-smoke-5 { 0%{transform:translate(-20px,0) scale(.6);opacity:.16}  100%{transform:translate(-26px,-44px) scale(1.2);opacity:0} }
 @keyframes bds-smoke-6 { 0%{transform:translate(2px,0) scale(.65);opacity:.22}   100%{transform:translate(-6px,-52px) scale(1.4);opacity:0} }
 
-/* ── Conteneur principal ── */
+/* ── Keyframes aura externe ── */
+@keyframes bds-glow-breathe {
+  0%,100% {
+    filter:
+      drop-shadow(0 0 5px rgba(63,224,161,.50))
+      drop-shadow(0 0 14px rgba(63,224,161,.22))
+      drop-shadow(0 0 30px rgba(63,224,161,.09));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 9px rgba(63,224,161,.70))
+      drop-shadow(0 0 22px rgba(63,224,161,.36))
+      drop-shadow(0 0 48px rgba(63,224,161,.15));
+  }
+}
+@keyframes bds-glow-hover {
+  0%,100% {
+    filter:
+      drop-shadow(0 0 10px rgba(253,107,4,.80))
+      drop-shadow(0 0 24px rgba(253,107,4,.52))
+      drop-shadow(0 0 52px rgba(253,107,4,.24))
+      drop-shadow(0 0 80px rgba(253,107,4,.10));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 16px rgba(253,107,4,.95))
+      drop-shadow(0 0 36px rgba(253,150,50,.65))
+      drop-shadow(0 0 72px rgba(253,107,4,.32))
+      drop-shadow(0 0 110px rgba(253,107,4,.14));
+  }
+}
+@keyframes bds-corona-breathe {
+  0%,100% { opacity: .50; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.06); }
+}
+@keyframes bds-corona-hover {
+  0%,100% { opacity: .80; transform: scale(1.02); }
+  50%      { opacity: 1;   transform: scale(1.10); }
+}
+
+/* ════════════════════════════════════════════════
+   WRAPPER AURA — permet les effets hors overflow
+════════════════════════════════════════════════ */
+.bds-badge-aura {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  flex-shrink: 0;
+}
+
+/* Halo interne — anneau de lumière juste autour du cercle */
+.bds-badge-aura::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    transparent 40%,
+    rgba(63,224,161,.05) 50%,
+    rgba(63,224,161,.12) 56%,
+    rgba(63,224,161,.05) 63%,
+    transparent 72%
+  );
+  animation: bds-corona-breathe 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Nébuleuse externe — halo diffus plus large */
+.bds-badge-aura::after {
+  content: '';
+  position: absolute;
+  inset: -44px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    transparent 46%,
+    rgba(63,224,161,.03) 54%,
+    rgba(63,224,161,.07) 60%,
+    rgba(63,224,161,.02) 68%,
+    transparent 76%
+  );
+  animation: bds-corona-breathe 8s ease-in-out infinite reverse;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow vivant sur le badge (drop-shadow passe outre overflow:hidden) */
+.bds-badge-aura .bds-badge {
+  position: relative;
+  z-index: 1;
+  animation: bds-glow-breathe 4.5s ease-in-out infinite;
+  transition: filter .5s ease;
+}
+
+/* ── HOVER aura — corona orange ── */
+.bds-badge-aura:hover::before {
+  background: radial-gradient(circle,
+    transparent 40%,
+    rgba(253,107,4,.10) 50%,
+    rgba(253,180,50,.22) 56%,
+    rgba(253,107,4,.09) 63%,
+    transparent 72%
+  );
+  animation: bds-corona-hover 2s ease-in-out infinite;
+}
+.bds-badge-aura:hover::after {
+  background: radial-gradient(circle,
+    transparent 44%,
+    rgba(253,107,4,.07) 53%,
+    rgba(253,150,30,.15) 60%,
+    rgba(253,107,4,.04) 68%,
+    transparent 77%
+  );
+  animation: bds-corona-hover 2.8s ease-in-out infinite reverse;
+}
+.bds-badge-aura:hover .bds-badge {
+  animation: bds-glow-hover 1.8s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════════
+   CONTENEUR BADGE
+════════════════════════════════════════════════ */
 .bds-badge {
   position: relative;
   border-radius: 50%;
@@ -72,8 +193,15 @@
   --bds-dur-sqb: 21s;
 }
 
+/* Taille pour l'avatar-block profil/auteur */
+.bds-badge--profile {
+  width: 260px;
+  height: 260px;
+}
+
 /* ── Hover : bascule vers palette orange Strange ── */
-.bds-badge:hover {
+.bds-badge:hover,
+.bds-badge-aura:hover .bds-badge {
   cursor: pointer;
   --bds-ring:      #fd6b04;
   --bds-ring-dim:  #d94e00;
@@ -94,12 +222,6 @@
   --bds-dur-sqb: 10s;
 }
 
-/* Taille pour l'avatar-block profil/auteur */
-.bds-badge--profile {
-  width: 260px;
-  height: 260px;
-}
-
 /* ── Photo centrale ── */
 .bds-badge__photo {
   position: absolute;
@@ -118,7 +240,8 @@
 }
 
 /* Photo hover — halo renforcé */
-.bds-badge:hover .bds-badge__photo {
+.bds-badge:hover .bds-badge__photo,
+.bds-badge-aura:hover .bds-badge__photo {
   box-shadow:
     inset 0 0 18px var(--bds-halo),
     inset 0 0 6px rgba(255,255,255,.08);
@@ -185,18 +308,27 @@
 .bds-smoke-p:nth-child(6) { width:11px; height:11px; margin:-5.5px; animation: bds-smoke-6 4.1s 3.0s infinite ease-out; }
 
 /* ── Hover : sparks plus grands + lumineux + accélérés ── */
-.bds-badge:hover .bds-spark {
+.bds-badge:hover .bds-spark,
+.bds-badge-aura:hover .bds-spark {
   width: 4px;
   height: 4px;
   background: var(--bds-spark1);
   box-shadow: 0 0 4px var(--bds-spark2), 0 0 8px rgba(255,200,80,.3);
   animation-duration: .9s !important;
 }
+
 /* ── Hover : fumée accélérée ── */
-.bds-badge:hover .bds-smoke-p { animation-duration: 2.2s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(1) { animation-duration: 2.0s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(2) { animation-duration: 1.8s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(3) { animation-duration: 2.3s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(4) { animation-duration: 1.7s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(5) { animation-duration: 2.1s !important; }
-.bds-badge:hover .bds-smoke-p:nth-child(6) { animation-duration: 1.9s !important; }
+.bds-badge:hover .bds-smoke-p,
+.bds-badge-aura:hover .bds-smoke-p               { animation-duration: 2.2s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(1),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(1)  { animation-duration: 2.0s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(2),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(2)  { animation-duration: 1.8s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(3),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(3)  { animation-duration: 2.3s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(4),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(4)  { animation-duration: 1.7s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(5),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(5)  { animation-duration: 2.1s !important; }
+.bds-badge:hover .bds-smoke-p:nth-child(6),
+.bds-badge-aura:hover .bds-smoke-p:nth-child(6)  { animation-duration: 1.9s !important; }

@@ -30,7 +30,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
   heroEl.querySelector('#pbhPhoto')?.remove();
   heroEl.querySelector('.pbh-frame')?.remove();
   heroEl.querySelector('.pbh-ring')?.remove();
-  heroEl.querySelector('.bds-badge')?.remove();
+  (heroEl.querySelector('.bds-badge-aura') ?? heroEl.querySelector('.bds-badge'))?.remove();
 
   const actions = heroEl.querySelector('.avatar-actions');
 
