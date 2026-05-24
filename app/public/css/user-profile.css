@@ -2730,59 +2730,61 @@ body.modal-open { overflow: hidden; }
   .ptab { flex-shrink: 0; }
 }
 @media (max-width: 640px) {
-  /* Hero : plus haut pour laisser le cadre respirer */
-  .profile-hero { height: 360px; }
+  /* Hero : hauteur auto — laisse le layout colonne respirer */
+  .profile-hero { height: auto; min-height: 480px; }
   .hero-banner-status { right: 16px; top: 14px; gap: 4px; }
   .hero-author-link   { left: 16px;  top: 14px; }
   .banner-btn { padding: 5px 10px; font-size: .54rem; }
   .author-link { padding: 5px 10px 5px 9px; font-size: .54rem; }
 
-  /* Layout : avatar GAUCHE (dominant) | identity DROITE (secondaire) */
-  .hero-content { padding-top: 72px; padding-bottom: 10px; }
-  .hero-row { flex-direction: row; align-items: flex-end; gap: 14px; }
-  .hero-identity { flex: 1; min-width: 0; }
+  /* Layout : colonne centrée — avatar en haut, identity en bas */
+  .hero-content { padding-top: 80px; padding-bottom: 24px; width: 100%; }
+  .hero-row { flex-direction: column; align-items: center; gap: 16px; width: 100%; }
+  .hero-identity { flex: unset; width: 100%; min-width: 0; text-align: center; }
 
-  /* Avatar : ~160px — cadre bien visible (scale 160/260 = 0.615) */
-  .avatar-block { width: 160px; height: 200px; overflow: visible; }
-  .profile-badge-hero { transform: scale(0.615); transform-origin: top left; }
+  /* Avatar : ~200px — cadre gamification bien visible (scale 200/260 = 0.770) */
+  .avatar-block { width: 200px; height: 250px; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.770); transform-origin: top left; }
 
-  /* Avatar-actions : EN DESSOUS, centrés (counter-scale 1/0.615 = 1.626) */
+  /* Avatar-actions : rangée horizontale sous le badge (counter-scale 1/0.770 = 1.299) */
   .avatar-actions {
     top: 272px; left: 50%;
     right: auto; bottom: auto;
-    flex-direction: row; gap: 6px;
-    transform: translateX(-50%) scale(1.626);
+    flex-direction: row; gap: 8px;
+    transform: translateX(-50%) scale(1.299);
     transform-origin: top center;
   }
 
-  /* Identity : textes réduits pour laisser de la place */
+  /* Identity : pseudo et stats centrés */
   .hero-pseudo { font-size: clamp(1.4rem, 5.5vw, 2.5rem); }
+  .hero-pseudo-row { justify-content: center; }
+  .hero-sub { justify-content: center; }
+  .hero-stats-row { justify-content: center; gap: 20px; }
 
-  /* Tabs : icônes seules */
+  /* Tabs : icônes seules, pleine largeur équitable */
+  .profile-tabs { width: 100%; }
   .ptab span.ptab-text { display: none; }
-  .ptab { padding: 14px 14px; gap: 4px; }
+  .ptab { flex: 1; padding: 15px 8px; gap: 4px; justify-content: center; }
 
   /* Formulaire profil : champs pleine largeur */
   .ci-ef-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
-  /* Avatar : ~130px sur petits écrans (scale 130/260 = 0.500) */
-  .profile-hero { height: 330px; }
-  .hero-content { padding-top: 68px; }
-  .hero-row { gap: 10px; }
-  .avatar-block { width: 130px; height: 165px; overflow: visible; }
-  .profile-badge-hero { transform: scale(0.500); transform-origin: top left; }
-  /* counter-scale: 1/0.500 = 2.0 */
+  /* Avatar légèrement réduit sur petits écrans (scale 0.650 = 169px) */
+  .profile-hero { min-height: 440px; }
+  .hero-content { padding-top: 72px; }
+  .hero-row { gap: 12px; }
+  .avatar-block { width: 170px; height: 220px; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.650); transform-origin: top left; }
+  /* counter-scale: 1/0.650 = 1.538 */
   .avatar-actions {
     top: 272px; left: 50%;
     right: auto; bottom: auto;
     flex-direction: row; gap: 6px;
-    transform: translateX(-50%) scale(2.0);
+    transform: translateX(-50%) scale(1.538);
     transform-origin: top center;
   }
-  /* Pseudo encore réduit */
   .hero-pseudo { font-size: clamp(1.2rem, 6vw, 1.8rem); }
-  /* Boutons bannière tronqués */
   .hero-banner-status .banner-btn--pending,
   .hero-banner-status .banner-btn--rejected { max-width: 110px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
