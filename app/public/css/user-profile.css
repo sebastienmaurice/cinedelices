@@ -2739,29 +2739,29 @@ body.modal-open { overflow: hidden; }
 
   /* Layout : colonne centrée — avatar en haut, identity en bas */
   .hero-content { padding-top: 80px; padding-bottom: 24px; width: 100%; }
-  .hero-row { flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+  .hero-row { flex-direction: column; align-items: center; gap: 6px; width: 100%; }
   .hero-identity { flex: unset; width: 100%; min-width: 0; text-align: center; }
 
-  /* Avatar : ~247px — cadre gamification dominant (scale 247/260 = 0.950) */
+  /* Avatar : 260px plein format — cadre gamification dominant (scale 1.0) */
   /* height: auto réinitialise le height: 80px du breakpoint 900px */
-  .avatar-block { width: 248px; height: auto; overflow: visible; }
-  .profile-badge-hero { transform: scale(0.950); transform-origin: top left; }
+  .avatar-block { width: 260px; height: auto; overflow: visible; }
+  .profile-badge-hero { transform: scale(1.0); transform-origin: top left; }
 
-  /* Avatar-actions : colonne verticale à droite du badge (counter-scale 1/0.950 = 1.053) */
-  /* left: 270px original → visual 270×0.950 = 256px, soit 9px à droite du badge visuel 247px */
+  /* Avatar-actions : colonne verticale à droite du badge */
+  /* left: 270px → 10px à droite du bord du badge ; scale 1.0 → pas de counter-scale */
   .avatar-actions {
     left: 270px; top: 50%;
     right: auto; bottom: auto;
     flex-direction: column; gap: 8px;
-    transform: translateY(-50%) scale(1.053);
+    transform: translateY(-50%);
     transform-origin: left center;
   }
 
-  /* Identity : pseudo et stats bien lisibles, centrés */
-  .hero-pseudo { font-size: clamp(2rem, 8vw, 3.5rem); }
+  /* Identity : pseudo dominant, sub bien lisible */
+  .hero-pseudo { font-size: clamp(3rem, 9vw, 4.5rem); }
   .hero-pseudo-row { justify-content: center; }
-  .hero-sub { justify-content: center; font-size: 1rem; }
-  .hero-sub__lvl { font-size: 0.7rem; padding: 3px 9px; }
+  .hero-sub { justify-content: center; font-size: 1.2rem; }
+  .hero-sub__lvl { font-size: 0.75rem; padding: 3px 9px; }
   .hero-stats-row { justify-content: center; gap: 20px; }
 
   /* Tabs : icônes seules, pleine largeur équitable */
@@ -2773,23 +2773,23 @@ body.modal-open { overflow: hidden; }
   .ci-ef-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
-  /* Avatar réduit sur petits écrans (scale 0.850 = 221px) */
+  /* Avatar sur petits écrans (scale 0.950 = 247px) */
   .profile-hero { min-height: 460px; }
   .hero-content { padding-top: 72px; }
-  .hero-row { gap: 16px; }
-  .avatar-block { width: 222px; height: auto; overflow: visible; }
-  .profile-badge-hero { transform: scale(0.850); transform-origin: top left; }
-  /* left: 270px original → visual 270×0.850 = 229px, soit 8px à droite du badge visuel 221px */
-  /* counter-scale: 1/0.850 = 1.176 */
+  .hero-row { gap: 4px; }
+  .avatar-block { width: 248px; height: auto; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.950); transform-origin: top left; }
+  /* left: 270px original → visual 270×0.950 = 256px, soit 9px à droite du badge visuel 247px */
+  /* counter-scale: 1/0.950 = 1.053 */
   .avatar-actions {
     left: 270px; top: 50%;
     right: auto; bottom: auto;
     flex-direction: column; gap: 8px;
-    transform: translateY(-50%) scale(1.176);
+    transform: translateY(-50%) scale(1.053);
     transform-origin: left center;
   }
-  .hero-pseudo { font-size: clamp(1.7rem, 7vw, 2.8rem); }
-  .hero-sub { font-size: 0.9rem; }
+  .hero-pseudo { font-size: clamp(2.4rem, 8vw, 3.5rem); }
+  .hero-sub { font-size: 1rem; }
   .hero-banner-status .banner-btn--pending,
   .hero-banner-status .banner-btn--rejected { max-width: 110px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
