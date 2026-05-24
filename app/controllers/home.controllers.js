@@ -150,6 +150,25 @@ const homeController = {
         Movie.count({ where: { status: "approved" } }),
       ]);
 
+      // Stats réelles pour les slides hero (Breaking Bad, Ratatouille)
+      const heroMovieData = await Movie.findAll({
+        where: { slug: { [Op.in]: ["breaking-bad", "ratatouille"] }, status: "approved" },
+        attributes: ["id", "slug", "year"],
+      });
+      const heroStats = {};
+      await Promise.all(heroMovieData.map(async (movie) => {
+        const [recipeCount, avgResult] = await Promise.all([
+          Recipe.count({ where: { status: "approved", id_movie: movie.id } }),
+          Recipe.findOne({
+            where: { status: "approved", id_movie: movie.id },
+            attributes: [[Sequelize.fn("AVG", Sequelize.col("quote")), "avg_quote"]],
+            raw: true,
+          }),
+        ]);
+        const avg = avgResult?.avg_quote ? parseFloat(avgResult.avg_quote).toFixed(1) : null;
+        heroStats[movie.slug] = { recipes: recipeCount, note: avg, year: movie.year };
+      }));
+
       // Top 3 contributeurs (classés par nombre de recettes approuvées, admins exclus)
       const topContributors = await User.findAll({
         attributes: [
@@ -185,6 +204,7 @@ const homeController = {
         totalRecipes,
         totalMovies,
         topContributors: topContributors.map((u) => u.toJSON()),
+        heroStats,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
