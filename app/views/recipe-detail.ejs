@@ -474,7 +474,7 @@
               <div class="avis-grid" id="avisGrid">
                 <% notices.slice(0, 6).forEach((notice, i) => {
                   const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
-                  const userName   = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
+                  const userName   = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
                   const isAdmin    = notice.User && notice.User.role === 'admin';
                   const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
                   const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
@@ -554,7 +554,7 @@
               <div class="avis-grid" id="avisGridExtra" hidden>
                 <% notices.slice(6).forEach((notice) => {
                   const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
-                  const userName   = notice.User ? (notice.User.pseudo || (notice.User.first_name + ' ' + notice.User.last_name)) : 'Visiteur';
+                  const userName   = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
                   const isAdmin    = notice.User && notice.User.role === 'admin';
                   const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
                   const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';

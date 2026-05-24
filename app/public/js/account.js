@@ -332,14 +332,10 @@
       showToast("Enregistrement en cours...");
 
       const formData = new FormData();
-      const firstName = document.getElementById("firstname")?.value?.trim();
-      const lastName = document.getElementById("lastname")?.value?.trim();
       const email = document.getElementById("email")?.value?.trim();
       const pseudo = document.getElementById("username")?.value?.trim();
       const password = document.getElementById("password")?.value?.trim();
 
-      if (firstName) formData.append("first_name", firstName);
-      if (lastName) formData.append("last_name", lastName);
       if (email) formData.append("email", email);
       // N'envoyer le pseudo que s'il a été explicitement modifié
       const origPseudo = (_origValues["username"] || "").trim();
