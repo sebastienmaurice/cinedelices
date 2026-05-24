@@ -63,7 +63,7 @@
         { n: 'API REST',   f: false },
         { n: 'Git',        f: true  },
       ],
-      films: ['Ratatouille', 'Amélie Poulain', 'Le Dîner de Cons', 'Titanic'],
+      films: ['Pulp Fiction', 'La Cité de la Peur', 'Astérix : Mission Cléopâtre', 'Friends', 'La Casa de Papel'],
       li:    'https://www.linkedin.com/in/richard-francois-6b5a80235/',
       gh:    'https://github.com/Richard-Francois-3842',
     },
