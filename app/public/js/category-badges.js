@@ -318,7 +318,7 @@ document.querySelectorAll('.badge:not([data-clone-of])').forEach(b => {
 const outer = document.getElementById('carouselOuter');
 const BASE_SPEED = 0.061, SLOW_SPEED = 0.014;
 let txPx = 0, halfW = 0, currentSpeed = BASE_SPEED, targetSpeed = BASE_SPEED;
-let mouseProx = 0, isDragging = false, touchLastX = 0, touchVel = 0;
+let mouseProx = 0, isDragging = false, touchLastX = 0, touchStartX = 0, touchStartY = 0, touchVel = 0, swipeAxis = null;
 let drivePhase = 0;
 
 function measureHalf() {
@@ -336,13 +336,26 @@ outer.addEventListener('focusin', () => { isKeyboardInteracting = true; });
 outer.addEventListener('focusout', e => {
   if (!outer.contains(e.relatedTarget)) isKeyboardInteracting = false;
 });
-outer.addEventListener('touchstart', e => { touchLastX = e.touches[0].clientX; touchVel = 0; isDragging = true; }, { passive: true });
+outer.addEventListener('touchstart', e => {
+  touchStartX = touchLastX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchVel = 0; isDragging = true; swipeAxis = null;
+}, { passive: true });
 outer.addEventListener('touchmove', e => {
   if (!isDragging) return;
-  const dx = e.touches[0].clientX - touchLastX;
-  touchVel = dx; txPx -= dx; touchLastX = e.touches[0].clientX;
-}, { passive: true });
-outer.addEventListener('touchend', () => { isDragging = false; });
+  const dx = e.touches[0].clientX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+  if (!swipeAxis && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+    swipeAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
+  if (swipeAxis === 'y') return; // scroll vertical — laisser la page défiler
+  if (swipeAxis === 'x') {
+    e.preventDefault(); // swipe horizontal — capturer pour le carousel
+    const delta = e.touches[0].clientX - touchLastX;
+    touchVel = delta; txPx -= delta; touchLastX = e.touches[0].clientX;
+  }
+}, { passive: false });
+outer.addEventListener('touchend', () => { isDragging = false; swipeAxis = null; });
 
 /* ══ BORDER CANVAS SYSTEM ══ */
 function rrp(ctx, x, y, w, h, r) {
