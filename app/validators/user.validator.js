@@ -9,13 +9,11 @@ import Joi from "joi";
 
 function validateUserRegister(req, res, next) {
   const registerSchema = Joi.object({
-    first_name: Joi.string().max(100).trim().required().messages({
-      "string.empty": "Le prénom est obligatoire.",
+    first_name: Joi.string().max(100).trim().optional().allow("").messages({
       "string.max": "Le prénom ne peut pas dépasser 100 caractères.",
     }),
 
-    last_name: Joi.string().max(100).trim().required().messages({
-      "string.empty": "Le nom est obligatoire.",
+    last_name: Joi.string().max(100).trim().optional().allow("").messages({
       "string.max": "Le nom ne peut pas dépasser 100 caractères.",
     }),
 

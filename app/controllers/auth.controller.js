@@ -140,6 +140,8 @@ const authController = {
       const hash = await argon2.hash(password);
 
       const user = await User.create({
+        first_name: "",
+        last_name: "",
         pseudo: pseudo,
         email: email,
         password: hash,
