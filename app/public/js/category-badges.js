@@ -130,33 +130,7 @@ function buildTooltipContent(badge) {
   const filmsHtml = films.length
     ? films.map(f => `<div class="tooltip__film">
         <span class="tooltip__film-title">${f.t}</span>
-        <span class="tooltip__film-note">★ ${f.n} recette${f.n > 1 ? 's' : ''}</span>
-      </div>`).join('')
-    : '<p class="tooltip__no-films">Aucun film disponible</p>';
-  globalTT.innerHTML = `
-    <div class="tooltip__band"></div>
-    <div class="tooltip__body">
-      <div class="tooltip__genre">
-        ${genre.toUpperCase()}
-        <span class="tooltip__genre-badge">GENRE</span>
-      </div>
-      <div class="tooltip__films">${filmsHtml}</div>
-      <p class="tooltip__hint">Cliquer pour explorer →</p>
-    </div>`;
-}
-
-function buildTooltipContent(badge) {
-  const genre = badge.dataset.genre || '';
-  const rgb   = badge.style.getPropertyValue('--glow-rgb') || '196,160,82';
-  const moviesLink = buildGenreMoviesLink(genre);
-  let films = [];
-  try { films = JSON.parse(badge.dataset.films || '[]'); } catch(e) {}
-  globalTT.style.setProperty('--tt-rgb', rgb);
-  globalTT.style.borderColor = `rgba(${rgb},.28)`;
-  const filmsHtml = films.length
-    ? films.map(f => `<div class="tooltip__film">
-        <span class="tooltip__film-title">${f.t}</span>
-        <span class="tooltip__film-note">â˜… ${f.n} recette${f.n > 1 ? 's' : ''}</span>
+        <span class="tooltip__film-note">★ ${f.n} recette${parseInt(f.n) > 1 ? 's' : ''}</span>
       </div>`).join('')
     : '<p class="tooltip__no-films">Aucun film disponible</p>';
   globalTT.innerHTML = `
@@ -170,7 +144,7 @@ function buildTooltipContent(badge) {
       <div class="tooltip__actions">
         <a class="tooltip__cta" href="${moviesLink}">Voir les films</a>
       </div>
-      <p class="tooltip__hint">Cliquer pour explorer</p>
+      <p class="tooltip__hint">Cliquer pour explorer →</p>
     </div>`;
 }
 

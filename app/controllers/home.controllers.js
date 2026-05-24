@@ -124,22 +124,27 @@ const homeController = {
         raw: true,
       });
 
-      // Top 3 films par genre pour les tooltips du carrousel
-      const genreTopMoviesRaw = await Movie.findAll({
+      // Top 3 films par genre pour les tooltips du carrousel (2 queries simples, sans JOIN)
+      const allMoviesForGenre = await Movie.findAll({
         where: { status: "approved", id: { [Op.in]: movieIdsWithApprovedRecipes } },
-        include: [{ model: Recipe, where: { status: "approved" }, attributes: [] }],
-        attributes: ["genre", "title", [Sequelize.fn("COUNT", Sequelize.col("Recipes.id")), "recipeCount"]],
-        group: ["Movie.id"],
-        order: [["genre", "ASC"], [Sequelize.fn("COUNT", Sequelize.col("Recipes.id")), "DESC"]],
-        subQuery: false,
+        attributes: ["id", "genre", "title"],
         raw: true,
       });
-      // Grouper par genre, garder max 3 films par genre
+      const allMovieIds = allMoviesForGenre.map(m => m.id);
+      const allRecipeCounts = await Recipe.findAll({
+        where: { status: "approved", id_movie: { [Op.in]: allMovieIds } },
+        attributes: ["id_movie", [Sequelize.fn("COUNT", Sequelize.col("id")), "count"]],
+        group: ["id_movie"],
+        raw: true,
+      });
+      const allCountMap = {};
+      allRecipeCounts.forEach(r => { allCountMap[r.id_movie] = parseInt(r.count, 10); });
+      const sortedMoviesForGenre = allMoviesForGenre.sort((a, b) => (allCountMap[b.id] || 0) - (allCountMap[a.id] || 0));
       const genreFilmsMap = {};
-      for (const m of genreTopMoviesRaw) {
+      for (const m of sortedMoviesForGenre) {
         if (!genreFilmsMap[m.genre]) genreFilmsMap[m.genre] = [];
         if (genreFilmsMap[m.genre].length < 3) {
-          genreFilmsMap[m.genre].push({ t: m.title, n: String(m.recipeCount) });
+          genreFilmsMap[m.genre].push({ t: m.title, n: String(allCountMap[m.id] || 0) });
         }
       }
 
