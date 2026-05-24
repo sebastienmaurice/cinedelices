@@ -13,7 +13,7 @@
       role:  'Développeur Front-End UI · Intégrateur Web · UI Designer',
       tag1:  'Développeur Full Stack',
       tag2:  'Front-end',
-      bio:   "Avec 15 ans à sculpter des interfaces, Seb le Fourbe traduit chaque maquette Figma en code pixel-perfect, du premier trait au dernier commit. Développeur front-end et UI designer de métier, il conjugue esthétique cinématographique et JavaScript propre pour faire de Ciné Délices une expérience aussi immersive qu'un générique de film.",
+      bio:   "Avec 15 ans à sculpter des interfaces, Seb le Fourbe traduit chaque maquette Figma en code pixel-perfect, du premier trait au dernier commit. Graphiste de formation, développeur front-end et UI designer de métier, il maîtrise l'intégration responsive et l'accessibilité autant que la typographie et la direction artistique. Sur Ciné Délices, il orchestre l'expérience visuelle de la charte graphique aux animations canvas, avec une obsession simple : que chaque page soit aussi immersive qu'un générique de film.",
       portfolio: 'https://sebastienmaurice.github.io/',
       tech:  [
         { n: 'HTML5',      f: true  },
@@ -122,7 +122,7 @@
     }).join('');
 
     $('caMFilms').innerHTML = d.films.map(function (f) {
-      return '<span class="ca-film-tag">' + f + '</span>';
+      return '<a class="ca-film-tag" href="https://www.themoviedb.org/search?query=' + encodeURIComponent(f) + '&language=fr" target="_blank" rel="noopener noreferrer">' + f + '</a>';
     }).join('');
 
     /* Ré-animation */
