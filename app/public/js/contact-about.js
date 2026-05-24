@@ -13,7 +13,7 @@
       role:  'Développeur Front-End UI · Intégrateur Web · UI Designer',
       tag1:  'Développeur Full Stack',
       tag2:  'Front-end',
-      bio:   "Avec 15 ans à sculpter des interfaces, Seb le Fourbe traduit chaque maquette Figma en code pixel-perfect, du premier trait au dernier commit. Graphiste de formation, développeur front-end et UI designer de métier, il maîtrise l'intégration responsive et l'accessibilité autant que la typographie et la direction artistique. Sur Ciné Délices, il orchestre l'expérience visuelle de la charte graphique aux animations canvas, avec une obsession simple : que chaque page soit aussi immersive qu'un générique de film.",
+      bio:   "Avec 15 ans à sculpter des interfaces, Seb le Fourbe traduit chaque maquette Figma en code pixel-perfect, du premier trait au dernier commit. Graphiste de formation reconverti développeur front-end, il réunit une double compétence rare : la rigueur technique de l'intégration HTML5, CSS3 et JavaScript, alliée à une sensibilité design affûtée pour la typographie, la charte graphique et l'UX. Capable de concevoir des composants Svelte réutilisables et des interfaces responsives et accessibles, il pilote ses projets en totale autonomie. Sur Ciné Délices, il orchestre l'expérience visuelle de bout en bout, de la direction artistique aux animations canvas, avec une obsession : que chaque page soit aussi immersive qu'un générique de film.",
       portfolio: 'https://sebastienmaurice.github.io/',
       tech:  [
         { n: 'HTML5',      f: true  },
