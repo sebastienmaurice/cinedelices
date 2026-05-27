@@ -457,25 +457,54 @@ function formatIngredientsBlocks(ingredients) {
 }
 
 /**
+ * Extrait le titre d'une étape depuis son HTML.
+ * Cherche un <strong> en début de contenu : "1. Titre" → title="Titre", body=reste.
+ * @param {string} html
+ * @returns {{ title: string, body: string }}
+ */
+function extractStepTitle(html) {
+  const m = html.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+  if (!m) return { title: '', body: html };
+
+  // Nettoyer le titre : retirer "N. " ou "N - " en tête
+  const title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+
+  // Nettoyer le début du body : retirer <br> et tiret éventuels
+  const body = m[2]
+    .replace(/^(<br\s*\/?>\s*)+/i, '')
+    .replace(/^\s*[-–—]\s*/, '')
+    .trim();
+
+  return { title, body: body || m[2].trim() };
+}
+
+/**
  * Formate la préparation en étapes.
  * Accepte le nouveau format JSON ["étape1","étape2"] ou l'ancien format texte brut.
+ * Retourne des objets { title, body } pour le rendu dans la vue.
  * @param {string} preparation
- * @returns {Array<string>}
+ * @returns {Array<{title: string, body: string}>}
  */
 function formatPreparationBlocks(preparation) {
   const raw = (preparation || "").trim();
+  let steps = [];
+
   if (raw.startsWith("[")) {
     try {
-      return JSON.parse(raw).map((s) => String(s).trim()).filter(Boolean);
+      steps = JSON.parse(raw).map((s) => String(s).trim()).filter(Boolean);
     } catch (_) {}
   }
-  // Ancien format : paragraphes doubles puis lignes simples
-  return raw
-    .replace(/\r\n/g, "\n")
-    .split(/\n{2,}/)
-    .flatMap((chunk) => chunk.split(/\n/))
-    .map((step) => step.trim())
-    .filter(Boolean);
+
+  if (!steps.length) {
+    steps = raw
+      .replace(/\r\n/g, "\n")
+      .split(/\n{2,}/)
+      .flatMap((chunk) => chunk.split(/\n/))
+      .map((step) => step.trim())
+      .filter(Boolean);
+  }
+
+  return steps.map(extractStepTitle);
 }
 
 // Ajouter submitNotice dans l'objet recipesController
