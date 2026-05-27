@@ -1159,26 +1159,37 @@
       /* ── Sérialisation JSON depuis le contenteditable (HTML préservé) ──
          mode 'ingredients' : chaque bloc → 1 item JSON ; h3 → item titre rendu côté template
          mode 'preparation' : blocs entre séparateurs → 1 item JSON (jointure <br>)
+         Le titre saisi dans chaque séparateur est préfixé en <strong> dans l'item suivant.
          Les balises <strong>, <em>, <ul>, <li> etc. sont conservées pour le rendu.
          Les blocs visuellement vides (<p><br></p>) sont ignorés. */
       function rteToJson(rte, mode) {
         var items = [];
         var group = [];
+        var pendingTitle = '';
 
         function flushGroup() {
-          // Ignorer les entrées visuellement vides (juste <br> ou whitespace)
           var cleaned = group.filter(function(s) {
             return s.replace(/<br\s*\/?>/gi, '').trim().length > 0;
           });
           var t = cleaned.join('<br>').replace(/(<br>\s*)+$/, '').trim();
-          if (t) items.push(t);
+          if (t || pendingTitle) {
+            var item = pendingTitle
+              ? '<strong>' + pendingTitle + '</strong>' + (t ? '<br>' + t : '')
+              : t;
+            if (item) items.push(item);
+            pendingTitle = '';
+          }
           group = [];
         }
 
         [].slice.call(rte.childNodes).forEach(function (node) {
-          // Séparateur d'étape → délimite le groupe en cours
+          // Séparateur d'étape → délimite le groupe en cours + capture le titre
           if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
-            if (mode === 'preparation') flushGroup();
+            if (mode === 'preparation') {
+              flushGroup();
+              var titleInput = node.querySelector('.arm-step-sep__title');
+              pendingTitle = titleInput ? titleInput.value.trim() : '';
+            }
             return;
           }
           // Éléments non-éditables → ignorer
@@ -1219,14 +1230,20 @@
       }
 
       /* ── Séparateur d'étape : insertion, suppression, renumérotation ── */
-      function makeSepEl(num) {
+      function makeSepEl(num, title) {
         var sep = document.createElement('div');
         sep.className = 'arm-step-sep';
         sep.setAttribute('contenteditable', 'false');
 
         var label = document.createElement('span');
         label.className = 'arm-step-sep__label';
-        label.textContent = 'fin étape ' + num;
+        label.textContent = 'Étape ' + num + ' —';
+
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'arm-step-sep__title';
+        input.placeholder = 'titre de l\'étape (optionnel)';
+        if (title) input.value = title;
 
         var del = document.createElement('button');
         del.className = 'arm-step-sep__del';
@@ -1235,6 +1252,7 @@
         del.innerHTML = '&#x2715;'; // ✕
 
         sep.appendChild(label);
+        sep.appendChild(input);
         sep.appendChild(del);
         return sep;
       }
@@ -1242,12 +1260,12 @@
       function renumberStepSeps(rte) {
         [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep, idx) {
           var lbl = sep.querySelector('.arm-step-sep__label');
-          if (lbl) lbl.textContent = 'fin étape ' + (idx + 1);
+          if (lbl) lbl.textContent = 'Étape ' + (idx + 2) + ' —';
         });
       }
 
       function insertSeparator(rte) {
-        var stepNum = rte.querySelectorAll('.arm-step-sep').length + 1;
+        var stepNum = rte.querySelectorAll('.arm-step-sep').length + 2;
         var sep = makeSepEl(stepNum);
 
         var sel = window.getSelection();

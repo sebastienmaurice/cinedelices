@@ -6,29 +6,53 @@
 (function (global) {
   'use strict';
 
+  /* ── Extraction du titre d'une étape (client-side mirror du helper serveur) ── */
+  function extractStepTitle(html) {
+    var m = html.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+    if (!m) return { title: '', body: html };
+    var title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+    var body = m[2]
+      .replace(/^(<br\s*\/?>\s*)+/i, '')
+      .replace(/^\s*[-–—]\s*/, '')
+      .trim();
+    return { title: title, body: body || m[2].trim() };
+  }
+
   /* ── Sérialisation (contenteditable → tableau JSON) ──────────────────
      mode 'ingredients' : chaque bloc de haut niveau → 1 item
                           <h3> → item titre de groupe
      mode 'preparation' : blocs entre séparateurs .rte-mini-sep → 1 item (jointure <br>)
+                          Le titre saisi dans chaque séparateur est préfixé en <strong>
                           <ul>/<ol> → outerHTML conservé pour le rendu côté template
   ─────────────────────────────────────────────────────────────────────── */
   function rteToJson(rte, mode) {
     var items = [];
     var group = [];
+    var pendingTitle = '';
 
     function flushGroup() {
       var cleaned = group.filter(function (s) {
         return s.replace(/<br\s*\/?>/gi, '').replace(/<[^>]+>/g, '').trim().length > 0;
       });
       var t = cleaned.join('<br>').replace(/(<br>\s*)+$/, '').trim();
-      if (t) items.push(t);
+      if (t || pendingTitle) {
+        var item = pendingTitle
+          ? '<strong>' + pendingTitle + '</strong>' + (t ? '<br>' + t : '')
+          : t;
+        if (item) items.push(item);
+        pendingTitle = '';
+      }
       group = [];
     }
 
     [].slice.call(rte.childNodes).forEach(function (node) {
-      // Séparateur d'étape → délimite le groupe préparation en cours
+      // Séparateur d'étape → délimite le groupe préparation en cours + capture le titre
       if (node.nodeType === 1 && node.classList && node.classList.contains('rte-mini-sep')) {
-        if (mode === 'preparation') flushGroup();
+        if (mode === 'preparation') {
+          flushGroup();
+          var titleInput = node.querySelector('.rte-mini-sep__title');
+          pendingTitle = titleInput ? titleInput.value.trim() : '';
+        }
         return;
       }
       // Éléments non-éditables → ignorer
@@ -113,20 +137,21 @@
     } else {
       // Préparation : chaque item = 1 étape, séparé par un séparateur visuel
       items.forEach(function (step, idx) {
+        var s = String(step);
+        var extracted = extractStepTitle(s);
+        // Séparateur AVANT chaque étape sauf la première, avec son titre extrait
+        if (idx > 0) {
+          rte.appendChild(makeSepEl(idx + 1, extracted.title));
+        }
+        var stepHtml = extracted.body || s;
         var tmp = document.createElement('div');
-        // Convertit les <br> en fins de paragraphe pour une édition confortable
-        var html = String(step).replace(/<br\s*\/?>/gi, '</p><p>');
+        var html = stepHtml.replace(/<br\s*\/?>/gi, '</p><p>');
         tmp.innerHTML = '<p>' + html + '</p>';
-        // Nettoie les <p> vides résultants
         [].slice.call(tmp.querySelectorAll('p')).forEach(function (p) {
           if (!p.textContent.trim() && !p.querySelector('ul,ol')) p.remove();
         });
         if (!tmp.childNodes.length) tmp.appendChild(emptyP());
         while (tmp.firstChild) rte.appendChild(tmp.firstChild);
-        // Ajouter un séparateur après chaque étape sauf la dernière
-        if (idx < items.length - 1) {
-          rte.appendChild(makeSepEl(idx + 1));
-        }
       });
       // Paragraphe vide final pour le curseur
       rte.appendChild(emptyP());
@@ -134,14 +159,20 @@
   }
 
   /* ── Séparateur d'étape ──────────────────────────────────────────── */
-  function makeSepEl(num) {
+  function makeSepEl(num, title) {
     var sep = document.createElement('div');
     sep.className = 'rte-mini-sep';
     sep.setAttribute('contenteditable', 'false');
 
     var label = document.createElement('span');
     label.className = 'rte-mini-sep__label';
-    label.textContent = 'fin étape ' + num;
+    label.textContent = 'Étape ' + num + ' —';
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'rte-mini-sep__title';
+    input.placeholder = 'titre de l\'étape (optionnel)';
+    if (title) input.value = title;
 
     var del = document.createElement('button');
     del.className = 'rte-mini-sep__del';
@@ -150,6 +181,7 @@
     del.innerHTML = '&#x2715;';
 
     sep.appendChild(label);
+    sep.appendChild(input);
     sep.appendChild(del);
     return sep;
   }
@@ -157,12 +189,12 @@
   function renumberStepSeps(rte) {
     [].slice.call(rte.querySelectorAll('.rte-mini-sep')).forEach(function (sep, idx) {
       var lbl = sep.querySelector('.rte-mini-sep__label');
-      if (lbl) lbl.textContent = 'fin étape ' + (idx + 1);
+      if (lbl) lbl.textContent = 'Étape ' + (idx + 2) + ' —';
     });
   }
 
   function insertSeparator(rte) {
-    var stepNum = rte.querySelectorAll('.rte-mini-sep').length + 1;
+    var stepNum = rte.querySelectorAll('.rte-mini-sep').length + 2;
     var sep = makeSepEl(stepNum);
 
     var sel = window.getSelection();

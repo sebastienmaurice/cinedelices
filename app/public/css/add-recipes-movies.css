@@ -2084,7 +2084,7 @@ body.arm-full-bleed {
   margin: 1px 0;
 }
 
-/* Séparateur visuel "fin étape X" (non-éditable, insertion manuelle — preparation) */
+/* Séparateur d'étape avec titre éditable (insertion manuelle — préparation) */
 .arm-step-sep {
   display: flex;
   align-items: center;
@@ -2095,14 +2095,8 @@ body.arm-full-bleed {
   padding: 5px 10px 5px 16px;
   margin: 8px 0;
   user-select: none;
-  pointer-events: auto; /* nécessaire pour le bouton ✕ */
+  pointer-events: auto;
   color: var(--or-titre, #c4a052);
-}
-.arm-step-sep::before {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(196, 160, 82, 0.28);
 }
 .arm-step-sep__label {
   font-size: 0.7rem;
@@ -2110,7 +2104,29 @@ body.arm-full-bleed {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
+  flex-shrink: 0;
   pointer-events: none;
+}
+.arm-step-sep__title {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.25);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.78rem;
+  font-family: inherit;
+  padding: 2px 5px;
+  outline: none;
+  pointer-events: auto;
+}
+.arm-step-sep__title::placeholder {
+  color: rgba(196, 160, 82, 0.38);
+  font-style: italic;
+}
+.arm-step-sep__title:focus {
+  border-bottom-color: rgba(196, 160, 82, 0.6);
+  color: rgba(255, 255, 255, 0.95);
 }
 .arm-step-sep__del {
   display: flex;
