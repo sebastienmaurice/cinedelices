@@ -1324,9 +1324,16 @@
         var tb  = document.getElementById(cfg.tbId);
         if (!rte || !ta || !tb) return;
 
-        // Ajouter le header fixe Étape 1 en haut de la zone préparation
+        // Ajouter le header fixe Étape 1 + paragraphe éditable en dessous
         if (cfg.mode === 'preparation' && !rte.querySelector('.arm-step-sep--first')) {
-          rte.insertBefore(makeSepEl(1, '', true), rte.firstChild);
+          var firstHeader = makeSepEl(1, '', true);
+          rte.insertBefore(firstHeader, rte.firstChild);
+          // Paragraphe vide après le header pour accueillir le curseur
+          if (!firstHeader.nextSibling) {
+            var initP = document.createElement('p');
+            initP.appendChild(document.createElement('br'));
+            rte.appendChild(initP);
+          }
         }
 
         function refresh() {
