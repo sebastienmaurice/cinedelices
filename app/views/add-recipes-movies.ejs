@@ -1183,12 +1183,13 @@
         }
 
         [].slice.call(rte.childNodes).forEach(function (node) {
-          // Séparateur d'étape → délimite le groupe en cours + capture le titre
+          // Séparateur d'étape (fixe step-1 ou régulier)
           if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
             if (mode === 'preparation') {
-              flushGroup();
               var titleInput = node.querySelector('.arm-step-sep__title');
-              pendingTitle = titleInput ? titleInput.value.trim() : '';
+              var t = titleInput ? titleInput.value.trim() : '';
+              if (!node.classList.contains('arm-step-sep--first')) flushGroup();
+              pendingTitle = t;
             }
             return;
           }
@@ -1230,9 +1231,10 @@
       }
 
       /* ── Séparateur d'étape : insertion, suppression, renumérotation ── */
-      function makeSepEl(num, title) {
+      // isFirst=true → header fixe Étape 1 sans bouton suppression
+      function makeSepEl(num, title, isFirst) {
         var sep = document.createElement('div');
-        sep.className = 'arm-step-sep';
+        sep.className = isFirst ? 'arm-step-sep arm-step-sep--first' : 'arm-step-sep';
         sep.setAttribute('contenteditable', 'false');
 
         var label = document.createElement('span');
@@ -1245,27 +1247,36 @@
         input.placeholder = 'titre de l\'étape (optionnel)';
         if (title) input.value = title;
 
-        var del = document.createElement('button');
-        del.className = 'arm-step-sep__del';
-        del.type = 'button';
-        del.setAttribute('aria-label', 'Supprimer ce séparateur');
-        del.innerHTML = '&#x2715;'; // ✕
-
         sep.appendChild(label);
         sep.appendChild(input);
-        sep.appendChild(del);
+
+        if (!isFirst) {
+          var del = document.createElement('button');
+          del.className = 'arm-step-sep__del';
+          del.type = 'button';
+          del.setAttribute('aria-label', 'Supprimer ce séparateur');
+          del.innerHTML = '&#x2715;'; // ✕
+          sep.appendChild(del);
+        }
+
         return sep;
       }
 
       function renumberStepSeps(rte) {
-        [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep, idx) {
+        var regIdx = 0;
+        [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep) {
           var lbl = sep.querySelector('.arm-step-sep__label');
-          if (lbl) lbl.textContent = 'Étape ' + (idx + 2) + ' —';
+          if (sep.classList.contains('arm-step-sep--first')) {
+            if (lbl) lbl.textContent = 'Étape 1 —';
+            return;
+          }
+          if (lbl) lbl.textContent = 'Étape ' + (regIdx + 2) + ' —';
+          regIdx++;
         });
       }
 
       function insertSeparator(rte) {
-        var stepNum = rte.querySelectorAll('.arm-step-sep').length + 2;
+        var stepNum = rte.querySelectorAll('.arm-step-sep:not(.arm-step-sep--first)').length + 2;
         var sep = makeSepEl(stepNum);
 
         var sel = window.getSelection();
@@ -1312,6 +1323,11 @@
         var ta  = document.getElementById(cfg.taId);
         var tb  = document.getElementById(cfg.tbId);
         if (!rte || !ta || !tb) return;
+
+        // Ajouter le header fixe Étape 1 en haut de la zone préparation
+        if (cfg.mode === 'preparation' && !rte.querySelector('.arm-step-sep--first')) {
+          rte.insertBefore(makeSepEl(1, '', true), rte.firstChild);
+        }
 
         function refresh() {
           document.getElementById(cfg.countId).textContent = rteToJson(rte, cfg.mode).length;

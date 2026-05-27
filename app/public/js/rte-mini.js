@@ -46,12 +46,14 @@
     }
 
     [].slice.call(rte.childNodes).forEach(function (node) {
-      // Séparateur d'étape → délimite le groupe préparation en cours + capture le titre
+      // Séparateur d'étape (fixe step-1 ou régulier)
       if (node.nodeType === 1 && node.classList && node.classList.contains('rte-mini-sep')) {
         if (mode === 'preparation') {
-          flushGroup();
           var titleInput = node.querySelector('.rte-mini-sep__title');
-          pendingTitle = titleInput ? titleInput.value.trim() : '';
+          var t = titleInput ? titleInput.value.trim() : '';
+          // Le header fixe de l'étape 1 ne délimite pas un groupe précédent
+          if (!node.classList.contains('rte-mini-sep--first')) flushGroup();
+          pendingTitle = t;
         }
         return;
       }
@@ -109,6 +111,7 @@
     }
 
     if (!items || !items.length) {
+      if (mode === 'preparation') rte.appendChild(makeSepEl(1, '', true));
       rte.appendChild(emptyP());
       return;
     }
@@ -135,14 +138,12 @@
         }
       });
     } else {
-      // Préparation : chaque item = 1 étape, séparé par un séparateur visuel
+      // Préparation : chaque item = 1 étape, précédé de son header de titre
       items.forEach(function (step, idx) {
         var s = String(step);
         var extracted = extractStepTitle(s);
-        // Séparateur AVANT chaque étape sauf la première, avec son titre extrait
-        if (idx > 0) {
-          rte.appendChild(makeSepEl(idx + 1, extracted.title));
-        }
+        // Header fixe (Étape 1) ou séparateur régulier (Étape 2+)
+        rte.appendChild(makeSepEl(idx + 1, extracted.title, idx === 0));
         var stepHtml = extracted.body || s;
         var tmp = document.createElement('div');
         var html = stepHtml.replace(/<br\s*\/?>/gi, '</p><p>');
@@ -159,9 +160,10 @@
   }
 
   /* ── Séparateur d'étape ──────────────────────────────────────────── */
-  function makeSepEl(num, title) {
+  // isFirst=true → header fixe Étape 1 sans bouton suppression
+  function makeSepEl(num, title, isFirst) {
     var sep = document.createElement('div');
-    sep.className = 'rte-mini-sep';
+    sep.className = isFirst ? 'rte-mini-sep rte-mini-sep--first' : 'rte-mini-sep';
     sep.setAttribute('contenteditable', 'false');
 
     var label = document.createElement('span');
@@ -174,27 +176,36 @@
     input.placeholder = 'titre de l\'étape (optionnel)';
     if (title) input.value = title;
 
-    var del = document.createElement('button');
-    del.className = 'rte-mini-sep__del';
-    del.type = 'button';
-    del.setAttribute('aria-label', 'Supprimer ce séparateur');
-    del.innerHTML = '&#x2715;';
-
     sep.appendChild(label);
     sep.appendChild(input);
-    sep.appendChild(del);
+
+    if (!isFirst) {
+      var del = document.createElement('button');
+      del.className = 'rte-mini-sep__del';
+      del.type = 'button';
+      del.setAttribute('aria-label', 'Supprimer ce séparateur');
+      del.innerHTML = '&#x2715;';
+      sep.appendChild(del);
+    }
+
     return sep;
   }
 
   function renumberStepSeps(rte) {
-    [].slice.call(rte.querySelectorAll('.rte-mini-sep')).forEach(function (sep, idx) {
+    var regIdx = 0;
+    [].slice.call(rte.querySelectorAll('.rte-mini-sep')).forEach(function (sep) {
       var lbl = sep.querySelector('.rte-mini-sep__label');
-      if (lbl) lbl.textContent = 'Étape ' + (idx + 2) + ' —';
+      if (sep.classList.contains('rte-mini-sep--first')) {
+        if (lbl) lbl.textContent = 'Étape 1 —';
+        return;
+      }
+      if (lbl) lbl.textContent = 'Étape ' + (regIdx + 2) + ' —';
+      regIdx++;
     });
   }
 
   function insertSeparator(rte) {
-    var stepNum = rte.querySelectorAll('.rte-mini-sep').length + 2;
+    var stepNum = rte.querySelectorAll('.rte-mini-sep:not(.rte-mini-sep--first)').length + 2;
     var sep = makeSepEl(stepNum);
 
     var sel = window.getSelection();
