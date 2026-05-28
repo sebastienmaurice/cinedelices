@@ -13,11 +13,13 @@ import favoritesRouter from "./favorites.route.js";
 import ratingsRouter from "./ratings.route.js";
 import authorRouter from "./author.route.js";
 import mentionsLegalesRouter from "./mentions-legales.route.js";
+import sitemapRouter from "./sitemap.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
 const router = Router();
 
+router.use(sitemapRouter);
 router.use("/auth", authRouter);
 router.use(homeRouter);
 
