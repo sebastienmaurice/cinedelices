@@ -39,6 +39,7 @@ router.get("/sitemap.xml", async (req, res) => {
     const recipes = await Recipe.findAll({
       where: { status: "approved", slug: { [Op.not]: null } },
       attributes: ["slug", "validated_at", "updatedAt"],
+      raw: true,
     });
 
     // Genres distincts des films approuvés (≥1 recette approuvée)
