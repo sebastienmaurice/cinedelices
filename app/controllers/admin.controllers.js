@@ -1528,6 +1528,14 @@ const adminController = {
       const user = await User.findByPk(userId);
       if (!user) return res.json({ success: false, message: "Utilisateur introuvable." });
 
+      const callerIsSuperAdmin = req.userRole === "superadmin" || req.userRole === "super_admin";
+      const targetIsSuperAdmin = user.role === "superadmin" || user.role === "super_admin";
+
+      // Seul un super administrateur peut modifier un compte super administrateur
+      if (targetIsSuperAdmin && !callerIsSuperAdmin) {
+        return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier ce compte." });
+      }
+
       const { pseudo, email, password, role } = req.body;
       const updateData = {};
 
@@ -1544,6 +1552,11 @@ const adminController = {
       }
       if (role) {
         const ALLOWED_ROLES = ["user", "editor", "admin", "superadmin", "super_admin"];
+        const PRIVILEGED_ROLES = ["admin", "superadmin", "super_admin"];
+        // Seul un super administrateur peut attribuer un rôle admin ou super administrateur
+        if (PRIVILEGED_ROLES.includes(role) && !callerIsSuperAdmin) {
+          return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut attribuer ce rôle." });
+        }
         if (ALLOWED_ROLES.includes(role)) updateData.role = role;
       }
 
