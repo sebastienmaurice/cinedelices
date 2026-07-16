@@ -10,6 +10,7 @@ const BASE_URL = "https://cinedelices.com";
 const STATIC_PAGES = [
   { url: "/",               priority: "1.0", changefreq: "weekly"  },
   { url: "/movies",         priority: "0.9", changefreq: "weekly"  },
+  { url: "/recipes-movie",  priority: "0.9", changefreq: "weekly"  },
   { url: "/contact-about",  priority: "0.5", changefreq: "monthly" },
   { url: "/mentions-legales", priority: "0.3", changefreq: "yearly" },
 ];
@@ -42,14 +43,12 @@ router.get("/sitemap.xml", async (req, res) => {
       raw: true,
     });
 
-    // Genres distincts des films approuvés (≥1 recette approuvée)
+    // Films approuvés ayant un slug (pages "recettes du film")
     const movies = await Movie.findAll({
-      where: { status: "approved" },
-      attributes: ["genre"],
+      where: { status: "approved", slug: { [Op.not]: null } },
+      attributes: ["slug", "updatedAt"],
+      raw: true,
     });
-    const genres = [...new Set(
-      movies.map(m => (m.genre || "").toLowerCase().trim()).filter(Boolean)
-    )];
 
     const entries = [];
 
@@ -62,11 +61,19 @@ router.get("/sitemap.xml", async (req, res) => {
       }));
     }
 
-    // Pages genres
-    for (const genre of genres) {
+    // Pages "recettes du film" (/recipes-movie/:slug)
+    // NB : les URLs /movies/:genre ont été retirées du sitemap — cette route
+    // redirige toujours (302) vers /movies?genre=..., ce qui n'a rien à faire
+    // dans un sitemap (Search Console signale ces entrées comme des redirections
+    // et cela dégrade la confiance accordée au sitemap dans son ensemble).
+    for (const movie of movies) {
+      const lastmod = movie.updatedAt
+        ? new Date(movie.updatedAt).toISOString().split("T")[0]
+        : undefined;
       entries.push(urlEntry({
-        loc: BASE_URL + "/movies/" + encodeURIComponent(genre),
-        changefreq: "weekly",
+        loc: BASE_URL + "/recipes-movie/" + movie.slug,
+        lastmod,
+        changefreq: "monthly",
         priority: "0.7",
       }));
     }

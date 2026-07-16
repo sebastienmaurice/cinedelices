@@ -11,13 +11,16 @@
     <meta property="og:locale"      content="fr_FR" />
     <meta property="og:title"       content="<%= author.pseudo %> — Ciné Délices" />
     <meta property="og:description" content="Découvrez les <%= recipesCount %> recette<%= recipesCount > 1 ? 's' : '' %> de <%= author.pseudo %> inspirées du cinéma." />
-    <meta property="og:image"       content="<%= siteUrl %><%= author.picture || '/images/image-default-profile.jpg' %>" />
+    <% const _authorImgRaw = author.picture || '/images/image-default-profile.jpg'; %>
+    <% const _authorImg = /^https?:\/\//i.test(_authorImgRaw) ? _authorImgRaw : (siteUrl + _authorImgRaw); %>
+    <meta property="og:image"       content="<%= _authorImg %>" />
     <meta property="og:url"         content="<%= siteUrl %>/auteur/<%= author.id %>" />
     <meta name="twitter:card"        content="summary" />
     <meta name="twitter:title"       content="<%= author.pseudo %> — Ciné Délices" />
     <meta name="twitter:description" content="Découvrez les recettes cinéphiles de <%= author.pseudo %>." />
     <link rel="canonical" href="<%= siteUrl %>/auteur/<%= author.id %>" />
 
+    <% const suppressCanonical = true; %>
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->

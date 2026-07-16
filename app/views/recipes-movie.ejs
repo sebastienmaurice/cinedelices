@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -10,9 +10,11 @@
     <title><%= movie ? `${movie.title} — Recettes · Ciné Délices` : 'Recettes - Ciné Délices' %></title>
 
     <!-- Ressources globales : Google Fonts, FontAwesome, base.css -->
+    <% const suppressCanonical = true; %>
     <%- include("partials/head-resources") %>
     <% if (movie) { %>
-    <% const _ogImg = movie.bannerPath || movie.cardPath || movie.picture || '/images/image-banner-movie-default.jpg'; %>
+    <% const _ogImgRaw = movie.bannerPath || movie.cardPath || movie.picture || '/images/image-banner-movie-default.jpg'; %>
+    <% const _ogImg = /^https?:\/\//i.test(_ogImgRaw) ? _ogImgRaw : (siteUrl + _ogImgRaw); %>
     <% const _ogDesc = movie.synopsis ? movie.synopsis.slice(0, 155) : `Découvrez les recettes inspirées de ${movie.title} sur Ciné Délices.`; %>
     <!-- SEO — Open Graph -->
     <meta property="og:type"        content="video.movie" />
@@ -20,13 +22,13 @@
     <meta property="og:locale"      content="fr_FR" />
     <meta property="og:title"       content="<%= movie.title %> — Recettes · Ciné Délices" />
     <meta property="og:description" content="<%= _ogDesc %>" />
-    <meta property="og:image"       content="<%= siteUrl %><%= _ogImg %>" />
+    <meta property="og:image"       content="<%= _ogImg %>" />
     <meta property="og:url"         content="<%= siteUrl %>/recipes-movie/<%= movie.slug || movie.id %>" />
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="<%= movie.title %> — Recettes · Ciné Délices" />
     <meta name="twitter:description" content="<%= _ogDesc %>" />
-    <meta name="twitter:image"       content="<%= siteUrl %><%= _ogImg %>" />
+    <meta name="twitter:image"       content="<%= _ogImg %>" />
     <!-- Canonical -->
     <link rel="canonical" href="<%= siteUrl %>/recipes-movie/<%= movie.slug || movie.id %>" />
     <% } else { %>
@@ -36,12 +38,12 @@
     <meta property="og:title"       content="Recettes de cinéma — Ciné Délices" />
     <meta property="og:description" content="Découvrez toutes les recettes inspirées des films et séries cultes." />
     <meta property="og:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
-    <meta property="og:url"         content="<%= siteUrl %>/recipes" />
+    <meta property="og:url"         content="<%= siteUrl %>/recipes-movie" />
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="Recettes de cinéma — Ciné Délices" />
     <meta name="twitter:description" content="Découvrez toutes les recettes inspirées des films et séries cultes." />
     <meta name="twitter:image"       content="<%= siteUrl %>/images/image-banner-movie-default.jpg" />
-    <link rel="canonical" href="<%= siteUrl %>/recipes" />
+    <link rel="canonical" href="<%= siteUrl %>/recipes-movie" />
     <% } %>
 
     <!-- styles-->
@@ -102,9 +104,9 @@
 
       <% if (movie) { %>
 
-        <!-- ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔
+        <!-- ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔
              VUE FICHE FILM — Design cinématographique
-        ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔ -->
+        ╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔╔ -->
 
         <!-- ID film (caché) — nécessaire pour filtred-category.js -->
         <div id="movie" data-id="<%= movie.id %>" style="display:none" aria-hidden="true"></div>
@@ -120,7 +122,7 @@
           </nav>
         </div>
 
-        <!-- ╔╔ HERO FILM ╔╔ -->
+        <!-- ╔╔ HERO FILM ╔╔ -->
         <section class="film-hero" aria-labelledby="filmTitle">
           <div class="film-hero__bg" style="background-image: url('<%= bannerImage %>')"></div>
           <div class="film-hero__overlay"></div>
@@ -230,11 +232,11 @@
           </div>
         </section>
 
-        <!-- ╔╔ MAIN CONTENT ╔╔ -->
+        <!-- ╔╔ MAIN CONTENT ╔╔ -->
         <div class="film-main" id="film-recipes">
           <div class="film-main__inner">
 
-            <!-- ╔╔ RECETTES DU FILM ╔╔ -->
+            <!-- ╔╔ RECETTES DU FILM ╔╔ -->
             <section id="recipes" aria-labelledby="recipes-title">
 
               <!-- Header section + toolbar -->

@@ -4,8 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Canonical : indique à Google l'URL de référence -->
-<link rel="canonical" href="https://cinedelices.com<%= typeof canonicalPath !== 'undefined' ? canonicalPath : (locals.path || '') %>" />
+<!-- Canonical : indique à Google l'URL de référence
+     Ignoré si la page définit déjà sa propre balise canonical (suppressCanonical = true),
+     pour éviter deux balises <link rel="canonical"> contradictoires sur la même page. -->
+<% if (typeof suppressCanonical === 'undefined' || !suppressCanonical) { %>
+<link rel="canonical" href="https://cinedelices.com<%= typeof canonicalPath !== 'undefined' ? canonicalPath : (locals.path || '/') %>" />
+<% } %>
 
 <!-- Fonts Google -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />

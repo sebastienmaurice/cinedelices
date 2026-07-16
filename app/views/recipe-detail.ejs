@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%
       const _rdDesc  = (recipe.description || recipe.anecdote || `Recette inspirée du film ${(movie && movie.title) || 'cinéma'} — à cuisiner sur Ciné Délices.`).slice(0, 155);
-      const _rdImg   = recipe.picture || '/images/image-default-recipe-1.jpg';
+      const _rdImgRaw = recipe.picture || '/images/image-default-recipe-1.jpg';
+      const _rdImg   = /^https?:\/\//i.test(_rdImgRaw) ? _rdImgRaw : (siteUrl + _rdImgRaw);
       const _rdSlug  = recipe.slug || recipe.id;
       const _rdAuthor = (typeof contributor !== 'undefined' && contributor) ? contributor.pseudo : 'Ciné Délices';
     %>
     <meta name="description" content="<%= _rdDesc %>" />
     <title><%= recipe.name %> - Ciné Délices</title>
 
+    <% const suppressCanonical = true; %>
     <%- include("partials/head-resources") %>
     <!-- SEO — Open Graph -->
     <meta property="og:type"        content="article" />
@@ -19,13 +21,13 @@
     <meta property="og:locale"      content="fr_FR" />
     <meta property="og:title"       content="<%= recipe.name %> — Ciné Délices" />
     <meta property="og:description" content="<%= _rdDesc %>" />
-    <meta property="og:image"       content="<%= siteUrl %><%= _rdImg %>" />
+    <meta property="og:image"       content="<%= _rdImg %>" />
     <meta property="og:url"         content="<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>" />
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="<%= recipe.name %> — Ciné Délices" />
     <meta name="twitter:description" content="<%= _rdDesc %>" />
-    <meta name="twitter:image"       content="<%= siteUrl %><%= _rdImg %>" />
+    <meta name="twitter:image"       content="<%= _rdImg %>" />
     <!-- Canonical -->
     <link rel="canonical" href="<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>" />
     <!-- JSON-LD Recipe Schema -->
@@ -35,7 +37,7 @@
       "@type": "Recipe",
       "name": "<%- (recipe.name || '').replace(/"/g, '&quot;') %>",
       "description": "<%- _rdDesc.replace(/"/g, '&quot;') %>",
-      "image": "<%= siteUrl %><%= _rdImg %>",
+      "image": "<%= _rdImg %>",
       "author": {
         "@type": "Person",
         "name": "<%- _rdAuthor.replace(/"/g, '&quot;') %>"

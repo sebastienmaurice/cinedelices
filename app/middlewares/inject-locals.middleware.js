@@ -109,7 +109,7 @@ async function injectLocals(req, res, next) {
   res.locals.userId         = req.userId   || null;
   res.locals.siteUrl        = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
   res.locals.googleClientId = process.env.GOOGLE_CLIENT_ID || '';
-  res.locals.path           = req.path === '/' ? '' : req.path;
+  res.locals.path           = req.path;
 
   // Données asynchrones — silencieuses en cas d'erreur
   try {
