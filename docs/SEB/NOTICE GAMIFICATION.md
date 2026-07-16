@@ -1,100 +1,141 @@
 # Système de Gamification — Ciné Délices
 
-> **Version :** 3.0
-> **Fichiers concernés :** `xpService.js`, `UserPoints.model.js`, `xp.js`, `user-profile.ejs`
+> **Version :** 4.0 — Mise à jour 2026-05-15
+> **Fichiers concernés :** `gamification.utils.js`, `gamification.service.js`, `UserPoints.model.js`, `user-profile.ejs`
 
 ---
 
 ## Table des matières
 
 1. [Vue d'ensemble](#1-vue-densemble)
-2. [Système XP et niveaux](#2-système-xp-et-niveaux)
-3. [Cadres de profil](#3-cadres-de-profil)
-4. [Base de données](#4-base-de-données)
-5. [Fichiers clés](#5-fichiers-clés)
-6. [Ajouter un nouveau cadre](#6-ajouter-un-nouveau-cadre)
-7. [Étendre les niveaux](#7-étendre-les-niveaux)
+2. [Actions XP](#2-actions-xp)
+3. [Niveaux et titres de rang](#3-niveaux-et-titres-de-rang)
+4. [Cadres de profil](#4-cadres-de-profil)
+5. [Base de données](#5-base-de-données)
+6. [Fichiers clés](#6-fichiers-clés)
+7. [Ajouter un nouveau cadre](#7-ajouter-un-nouveau-cadre)
+8. [Étendre les niveaux](#8-étendre-les-niveaux)
+9. [Dashboard admin — Gamification](#9-dashboard-admin--gamification)
 
 ---
 
 ## 1. Vue d'ensemble
 
-La gamification récompense les utilisateurs pour leurs contributions au site :
+La gamification récompense les membres pour leurs contributions. Le système repose sur deux mécanismes complémentaires :
 
-| Action | XP gagnés |
-|--------|-----------|
-| Recette publiée et approuvée | +50 XP |
-| Film soumis et accepté | +25 XP |
-| Avis (notice) approuvé | +10 XP |
+- **`syncUserXP`** — recalcul dynamique depuis le contenu approuvé (idempotent, appelé à chaque visite du profil). Garantit que les points ne dérivent jamais en dessous du contenu réel.
+- **`awardActionXP`** — points bonus cumulatifs pour des actions ponctuelles (connexion, favoris, notes…). S'ajoutent au-dessus du contenu XP.
 
-Le calcul des XP est **dynamique et idempotent** : il est recalculé depuis les données existantes à chaque visite du profil. Aucun risque de dérive ou de double comptage.
+Le niveau est calculé automatiquement depuis le total de points via `computeLevel()`. Aucun recalcul manuel nécessaire.
 
 ---
 
-## 2. Système XP et niveaux
+## 2. Actions XP
 
-### Paliers XP (`app/utils/xp.js` — `XP_TABLE`)
+### Tableau complet (`app/utils/gamification.utils.js` — `XP_ACTIONS`)
 
-| Niveau | XP requis | Titre |
-|--------|-----------|-------|
+| Code action | Points | Déclencheur |
+|---|---|---|
+| `recipe_published` | +50 | Recette approuvée (via `syncUserXP`, calculé depuis le contenu) |
+| `recipe_approved` | +30 | Bonus immédiat quand l'admin valide une recette |
+| `movie_accepted` | +25 | Bonus immédiat quand l'admin valide un film |
+| `review_approved` | +10 | Bonus immédiat quand l'admin valide un avis |
+| `comment_posted` | +5 | Réservé — non encore déclenché |
+| `favorite_added` | +1 | Membre ajoute un favori |
+| `rating_given` | +2 | Membre donne une note (première fois seulement) |
+| `like_received` | +2 | Réservé — non encore déclenché |
+| `daily_login` | +3 | Connexion hebdomadaire (une fois par semaine max) |
+| `streak_7_days` | +15 | Réservé — non encore déclenché |
+| `first_recipe_month` | +20 | Réservé — non encore déclenché |
+
+### Où sont déclenchés les XP
+
+| Fichier | Action déclenchée |
+|---|---|
+| `admin.controllers.js` → `validateRecipe` | `recipe_approved` (+30) pour le contributeur |
+| `admin.controllers.js` → `validateNotice` | `review_approved` (+10) pour le contributeur |
+| `admin.controllers.js` → `validateMovie` | `movie_accepted` (+25) pour le contributeur |
+| `favorites.controllers.js` | `favorite_added` (+1) pour le membre |
+| `ratings.controllers.js` | `rating_given` (+2) à la création uniquement |
+| `auth.controller.js` → `login` | `daily_login` (+3) via `awardWeeklyLoginXP` |
+
+> **Note :** `syncUserXP` est appelé automatiquement à chaque visite du profil et recalcule le minimum XP garanti depuis le contenu approuvé. Le total final est toujours `Math.max(points_db, content_xp)`.
+
+---
+
+## 3. Niveaux et titres de rang
+
+### Paliers XP (`app/utils/gamification.utils.js` — `XP_TABLE`)
+
+| Niveau | XP requis | Titre (`RANK_TITLES`) |
+|---|---|---|
 | 1 | 0 | Spectateur Curieux |
 | 2 | 100 | Cinéphile Amateur |
-| 3 | 300 | Critique en Herbe |
-| 4 | 600 | Gastronome Éclairé |
-| 5 | 1 100 | Connaisseur du 7e Art |
-| 6 | 1 800 | Chroniqueur Passionné |
-| 7 | 2 800 | Expert Culinaire |
-| 8 | 4 200 | Maître des Saveurs |
-| 9 | 6 000 | Ambassadeur Cinéphile |
-| 10 | 8 500 | Légende du Ciné-Délices |
-| 11 | 11 500 | — |
-| 12 | 15 000 | — |
-| 13 | 20 000 | — |
-| 14 | 26 000 | — |
-| 15 | 33 000 | — |
-| 16 | 41 000 | — |
-| 17 | 50 000 | — |
-| 18 | 60 000 | — |
-| 19 | 72 000 | — |
+| 3 | 300 | Fin Palais |
+| 4 | 600 | Analyste du Goût |
+| 5 | 1 100 | Connaisseur |
+| 6 | 1 800 | Explorateur Cuisinier |
+| 7 | 2 800 | Détective des Saveurs |
+| 8 | 4 200 | Critique Éclairé |
+| 9 | 6 000 | Maître Cinéaste |
+| 10 | 8 500 | Grand Gastronome |
+| 11 | 11 500 | Virtuose Cinéphile |
+| 12 | 15 000 | Légende de Ciné Délices |
+| 13 | 20 000 | Ambassadeur |
+| 14 | 26 000 | Visionnaire |
+| 15 | 33 000 | Architecte des Saveurs |
+| 16 | 41 000 | Maître des Écrans |
+| 17 | 50 000 | Gardien du Temple |
+| 18 | 60 000 | Élu de Ciné Délices |
+| 19 | 72 000 | Mythe Vivant |
 
-> Les niveaux 11–19 n'ont pas encore de titre ni de cadre associé — voir [§7 Étendre les niveaux](#7-étendre-les-niveaux).
+> ⚠️ Les titres de rang sont la **source de vérité** dans `RANK_TITLES` (gamification.utils.js). L'EJS (user-profile.ejs) utilise le même tableau dans les deux sections hero et contributions — toute modification doit se faire dans `gamification.utils.js` uniquement.
 
-### Fonctions utilitaires (`app/utils/xp.js`)
+### Temps estimé pour atteindre les cadres (membre actif)
 
-```js
-computeLevel(xp)          // retourne le niveau (1–19) depuis un total XP
-xpProgress(xp, level)     // retourne { current, needed, percent } pour la barre de progression
-```
+Un membre actif (1 recette/mois + connexions régulières + quelques favoris) gagne environ **150–200 pts/mois**.
+
+| Cadre | Niveau | Estimation |
+|---|---|---|
+| Sherlock Holmes | 2 | ~2 semaines ✅ |
+| Matrix | 4 | ~3 mois |
+| Indiana Jones | 5 | ~5 mois |
+| Harry Potter | 7 | ~10 mois |
 
 ---
 
-## 3. Cadres de profil
+## 4. Cadres de profil
 
-Les cadres sont des overlays visuels affichés autour de la photo de profil. Ils se débloquent automatiquement lorsque l'utilisateur atteint le niveau minimum requis.
+Les cadres sont des overlays PNG affichés autour de la photo de profil. Ils se débloquent automatiquement quand le membre atteint le niveau requis. Le membre peut ensuite les équiper depuis l'onglet **Contributions** de son profil.
 
 ### Cadres disponibles
 
-| Code | Label | Niveau min | Animation canvas |
-|------|-------|-----------|-----------------|
-| `cine` | Ciné Délices | 1 | Non (défaut, toujours disponible) |
-| `sherlock` | Sherlock Holmes | 2 | Oui (brouillard) |
-| `matrix` | Matrix | 4 | Oui (pluie de code) |
-| `indiana` | Indiana Jones | 6 | Oui (flammes) |
-| `harry` | Harry Potter | 8 | Oui (sorts magiques) |
+| Code | Label | Niveau min | Animation |
+|---|---|---|---|
+| `none` | Sans cadre | 1 | Non |
+| `cine` | Ciné Délices | 1 | Non |
+| `sherlock` | Sherlock Holmes | 2 | Oui |
+| `matrix` | Matrix | 4 | Oui |
+| `indiana` | Indiana Jones | **5** | Oui |
+| `harry` | Harry Potter | **7** | Oui |
 
 ### Logique de déverrouillage
 
-Le déverrouillage est **passif et automatique** — aucune action utilisateur requise. À chaque chargement du profil, `xpService.js` calcule quels cadres sont accessibles :
-
 ```js
+// Dans gamification.service.js
 const unlockedFrames = FRAME_UNLOCKS.filter(f => userLevel >= f.minLvl);
 ```
 
-L'utilisateur peut ensuite **équiper** un cadre débloqué via le bouton "Équiper" dans l'onglet `#contributions`. Le cadre actif est stocké en base (`active_frame_code` dans `user_points`).
+Le cadre actif est stocké dans `user_points.active_frame_code`. L'équipement se fait via `POST /auth/equip-frame`.
+
+### Tooltip sur les cadres verrouillés
+
+Chaque cadre verrouillé affiche au hover un tooltip avec :
+- Niveau requis
+- XP manquants (calculé depuis `XP_TABLE[fr.minLvl - 1] - xp_actuel`)
+- Équivalent concret : *≈ X recettes validées* ou *≈ Y avis approuvés*
 
 ### Assets requis par cadre
-
-Chaque cadre doit avoir :
 
 ```
 app/public/images/cadres-gamification/
@@ -103,99 +144,98 @@ app/public/images/cadres-gamification/
         └── cadre-[code]-260x260.png   ← overlay PNG transparent 260×260px
 ```
 
-Si le cadre a une animation canvas (`hasAnim: true`), un fichier HTML de référence peut exister dans :
-
-```
-docs/cadres-gamification/[NomDuFilm].html
-```
-
 ---
 
-## 4. Base de données
+## 5. Base de données
 
 ### Table `user_points`
 
 | Colonne | Type | Description |
-|---------|------|-------------|
+|---|---|---|
+| `id` | INTEGER | PK |
 | `id_user` | INTEGER | FK vers `users.id` |
-| `points` | INTEGER | Total XP calculé |
-| `level_code` | VARCHAR(20) | Slug du niveau actuel (ex: `maitre`) |
-| `active_frame_code` | VARCHAR(20) | Code du cadre équipé (ex: `matrix`) |
-| `last_weekly_login_at` | DATE | Dernière connexion hebdomadaire |
+| `points` | INTEGER | Total de points accumulés |
+| `level_code` | VARCHAR | Niveau actuel en string (`"1"`, `"2"`, etc.) |
+| `active_frame_code` | VARCHAR | Code du cadre équipé (`"sherlock"`, `"matrix"`…) |
+| `last_weekly_login_at` | TIMESTAMP | Date de la dernière attribution XP de connexion |
+| `updated_at` | TIMESTAMP | Dernière mise à jour |
 
-> La colonne `active_frame_code` est ajoutée par la migration `app/data/migration_add_gamif_columns.sql`.
+> `level_code` est stocké comme string numérique (`"2"` pas `"niveau_2"`). Il est recalculé et mis à jour automatiquement par `awardActionXP` et `syncUserXP`.
 
 ---
 
-## 5. Fichiers clés
+## 6. Fichiers clés
 
 | Fichier | Rôle |
-|---------|------|
-| `app/utils/xp.js` | Source de vérité : `XP_TABLE`, `RANK_TITLES`, `XP_ACTIONS`, `computeLevel()`, `xpProgress()` |
-| `app/models/UserPoints.model.js` | Modèle Sequelize pour `user_points` |
-| `app/services/xpService.js` | Calcul XP, liste des cadres, activity feed — fonctions `syncUserXP()` et `getUserGamificationData()` |
-| `app/controllers/auth.controller.js` | Appel `getUserGamificationData()` dans `profil()`, passage des variables au template |
-| `app/views/user-profile.ejs` | Onglet `#contributions` : affichage XP, cadres, activity feed. Tableau `_allFrames` à maintenir en sync avec `FRAME_UNLOCKS` |
-| `app/routes/gamification.route.js` | Route `POST /auth/equip-frame` |
-| `app/public/js/contributions.js` | Client-side : animation barres XP, filtres activité, clic "Équiper" |
-| `app/public/js/badge-engine.js` | Moteur canvas générique pour les animations de cadres |
-| `app/data/migration_add_gamif_columns.sql` | Migration SQL à exécuter une fois en production |
+|---|---|
+| `app/utils/gamification.utils.js` | **Source de vérité** : `XP_TABLE`, `RANK_TITLES`, `XP_ACTIONS`, `FRAME_UNLOCKS`, `computeLevel()`, `xpProgress()` |
+| `app/services/gamification.service.js` | Logique métier : `syncUserXP()`, `awardActionXP()`, `awardWeeklyLoginXP()`, `getUserGamificationData()` |
+| `app/models/UserPoints.model.js` | Modèle Sequelize pour la table `user_points` |
+| `app/controllers/auth.controller.js` | Appel `getUserGamificationData()` dans `profil()` + `awardWeeklyLoginXP()` au login |
+| `app/controllers/admin.controllers.js` | `awardActionXP` déclenché lors de la validation de recette/avis/film |
+| `app/controllers/favorites.controllers.js` | `awardActionXP("favorite_added")` à l'ajout d'un favori |
+| `app/controllers/ratings.controllers.js` | `awardActionXP("rating_given")` à la création d'une note |
+| `app/views/user-profile.ejs` | Onglet `#contributions` : XP, cadres, milestone card, tooltip déblocage. Le tableau `_allFrames` doit rester synchronisé avec `FRAME_UNLOCKS` |
+| `app/routes/auth.route.js` | Route `POST /auth/equip-frame` |
+| `app/public/js/admin-dashboard.js` | Chargement des stats gamification via `loadGamificationStats()` |
 
 ---
 
-## 6. Ajouter un nouveau cadre
+## 7. Ajouter un nouveau cadre
 
-Exemple : ajouter un cadre **"Interstellar"** qui se déverrouille au niveau 10.
+Exemple : ajouter un cadre **"Interstellar"** au niveau 10.
 
 ### Étape 1 — Préparer l'asset PNG
-
-Créer un overlay PNG transparent **260×260px** :
 
 ```
 app/public/images/cadres-gamification/Interstellar/img/cadre-interstellar-260x260.png
 ```
+PNG transparent 260×260px — seul le cadre/bordure est dessiné, la photo de profil s'affiche en dessous.
 
-Le PNG doit avoir le fond transparent — seul le cadre/bordure est dessiné. La photo de profil de l'utilisateur s'affiche en dessous.
+### Étape 2 — Déclarer dans `FRAME_UNLOCKS`
 
-### Étape 2 — Déclarer le cadre dans le service XP
-
-Dans `app/services/xpService.js`, ajouter une entrée à `FRAME_UNLOCKS` :
+Dans `app/utils/gamification.utils.js` :
 
 ```js
-const FRAME_UNLOCKS = [
-  { code:'cine',         label:'Ciné Délices',   minLvl:1,  pngUrl:'/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-2.png',        hasAnim:false },
-  { code:'sherlock',     label:'Sherlock Holmes', minLvl:2,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png', hasAnim:true  },
-  { code:'matrix',       label:'Matrix',          minLvl:4,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png',               hasAnim:true  },
-  { code:'indiana',      label:'Indiana Jones',   minLvl:6,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png',  hasAnim:true  },
-  { code:'harry',        label:'Harry Potter',    minLvl:8,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png',    hasAnim:true  },
-  // ✦ Nouveau cadre :
-  { code:'interstellar', label:'Interstellar',    minLvl:10, pngUrl:'/images/cadres-gamification/Interstellar/img/cadre-interstellar-260x260.png',   hasAnim:false },
+export const FRAME_UNLOCKS = [
+  // ... cadres existants ...
+  {
+    code:     'interstellar',
+    label:    'Interstellar',
+    theme:    'Science-Fiction',
+    icon:     '🌌',
+    minLvl:   10,
+    pngUrl:   '/images/cadres-gamification/Interstellar/img/cadre-interstellar-260x260.png',
+    thumbUrl: '/images/cadres-gamification/thumbs/thumb-interstellar.jpg',
+    hasAnim:  false,
+  },
 ];
 ```
 
-### Étape 3 — Déclarer le cadre dans le template EJS
+### Étape 3 — Déclarer dans `_allFrames` (EJS)
 
-Dans `app/views/user-profile.ejs`, ajouter une entrée à `_allFrames` (section script de l'onglet contributions) :
+Dans `app/views/user-profile.ejs`, section script onglet contributions :
 
 ```js
 const _allFrames = [
-  { id:'cine',         label:'Ciné Délices',   theme:'Cinéma',         icon:'🎬', minLvl:1,  bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:false },
-  { id:'sherlock',     label:'Sherlock Holmes', theme:'Policier',        icon:'🔍', minLvl:2,  bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true  },
-  { id:'matrix',       label:'Matrix',          theme:'Science-Fiction', icon:'🟢', minLvl:4,  bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true  },
-  { id:'indiana',      label:'Indiana Jones',   theme:'Aventure',        icon:'🎩', minLvl:6,  bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true  },
-  { id:'harry',        label:'Harry Potter',    theme:'Magie',           icon:'⚡', minLvl:8,  bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true  },
-  // ✦ Nouveau cadre :
-  { id:'interstellar', label:'Interstellar',    theme:'Science-Fiction', icon:'🌌', minLvl:10, bg:'rgba(20,30,80,.28)',   border:'rgba(80,120,255,.45)', hasRealFrame:true  },
+  // ... cadres existants ...
+  {
+    id: 'interstellar', label: 'Interstellar', theme: 'Science-Fiction',
+    icon: '🌌', minLvl: 10,
+    bg: 'rgba(20,30,80,.28)', border: 'rgba(80,120,255,.45)',
+    hasRealFrame: true,
+    pngUrl: '/images/cadres-gamification/Interstellar/img/cadre-interstellar-260x260.png'
+  },
 ];
 ```
 
 ### Étape 4 (optionnel) — Animation canvas
 
-Si le cadre doit avoir une animation canvas (`hasAnim: true`), ajouter un cas dans `app/public/js/badge-engine.js` :
+Si `hasAnim: true`, implémenter le cas dans `app/public/js/badge-engine.js` :
 
 ```js
 case 'interstellar':
-  this._initInterstellar(); // implémenter l'animation
+  this._initInterstellar();
   break;
 ```
 
@@ -203,49 +243,55 @@ case 'interstellar':
 
 ```
 ✅ Asset PNG 260×260 transparent
-✅ Une ligne dans FRAME_UNLOCKS  (xpService.js)
-✅ Une ligne dans _allFrames     (user-profile.ejs)
-⬜ Animation canvas              (badge-engine.js) — optionnel
+✅ Entrée dans FRAME_UNLOCKS  (gamification.utils.js)
+✅ Entrée dans _allFrames     (user-profile.ejs)
+⬜ Animation canvas            (badge-engine.js) — optionnel
 ```
 
-Aucune migration SQL, aucun changement de logique. Le déverrouillage est automatique.
+Aucune migration SQL. Le déverrouillage est automatique.
 
 ---
 
-## 7. Étendre les niveaux
+## 8. Étendre les niveaux
 
-Le système supporte jusqu'au **niveau 19** nativement. Pour aller au-delà ou ajouter des titres aux niveaux 11–19 :
+Le système supporte jusqu'au **niveau 19** nativement. Pour ajouter des niveaux supplémentaires :
 
-### Ajouter des titres de rang (`app/utils/xp.js`)
+### Ajouter des paliers XP
 
-```js
-export const RANK_TITLES = {
-  1:  'Spectateur Curieux',
-  2:  'Cinéphile Amateur',
-  3:  'Critique en Herbe',
-  4:  'Gastronome Éclairé',
-  5:  'Connaisseur du 7e Art',
-  6:  'Chroniqueur Passionné',
-  7:  'Expert Culinaire',
-  8:  'Maître des Saveurs',
-  9:  'Ambassadeur Cinéphile',
-  10: 'Légende du Ciné-Délices',
-  // Compléter à partir d'ici :
-  11: '...',
-};
-```
-
-### Ajouter des paliers XP au-delà du niveau 19
-
-Dans `XP_TABLE`, chaque valeur est le seuil cumulé pour atteindre ce niveau. Il suffit d'appender des valeurs :
+Dans `app/utils/gamification.utils.js` — `XP_TABLE` :
 
 ```js
 export const XP_TABLE = [
   0, 100, 300, 600, 1100, 1800, 2800, 4200, 6000, 8500,
   11500, 15000, 20000, 26000, 33000, 41000, 50000, 60000, 72000,
-  // Niveau 20 → 21 → ...
+  // Niveau 20, 21...
   86000, 102000,
 ];
 ```
 
-`computeLevel()` s'adapte automatiquement à la longueur du tableau — aucune autre modification requise.
+`computeLevel()` s'adapte automatiquement à la longueur du tableau.
+
+### Ajouter des titres de rang
+
+```js
+export const RANK_TITLES = {
+  // ... existants ...
+  20: 'Titre niveau 20',
+};
+```
+
+> Mettre à jour également le tableau `_heroRanks` dans `user-profile.ejs` (section hero) pour qu'il reste synchronisé avec `RANK_TITLES`.
+
+---
+
+## 9. Dashboard admin — Gamification
+
+L'onglet **Gamification** du dashboard admin (`/admin` → sidebar) affiche en temps réel :
+
+- **XP total distribué** — somme des points de toute la communauté
+- **Membres avec XP** — nombre de lignes dans `user_points`
+- **XP moyen / membre**
+- **Niveau moyen**
+- **Top 15 membres par points** — pseudo, avatar, niveau, points
+
+Les données sont chargées à la demande via `GET /admin/gamification/stats` (contrôleur `getGamificationStats`). Aucun chargement au démarrage — le fetch se déclenche au premier clic sur l'onglet.
