@@ -35,7 +35,7 @@
   let debounceTimer = null;
   let lastKeyTime = Date.now();
   let currentSearchQuery = "";
-  let isSearching = false;
+  let searchAbortController = null; // annule la recherche en vol si une nouvelle est lancée
   let currentResults = [];
   let selectedIndex = -1; // Pour la navigation clavier
 
@@ -210,16 +210,21 @@
    * Effectue la recherche via l'API avancée
    */
   async function performSearch(query) {
-    if (isSearching) return;
+    // Annule la recherche précédente si elle est encore en vol : la plus
+    // récente saisie gagne toujours, au lieu d'être silencieusement ignorée
+    // (comportement précédent avec le flag isSearching).
+    searchAbortController?.abort();
+    const controller = new AbortController();
+    searchAbortController = controller;
 
     currentSearchQuery = query;
-    isSearching = true;
     selectedIndex = -1;
     showLoading();
 
     try {
       const response = await fetch(
-        `${API_ENDPOINT}?query=${encodeURIComponent(query)}`
+        `${API_ENDPOINT}?query=${encodeURIComponent(query)}`,
+        { signal: controller.signal }
       );
 
       if (!response.ok) {
@@ -243,11 +248,16 @@
         showError(data.message || "Erreur lors de la recherche");
       }
     } catch (error) {
+      if (error.name === "AbortError") return; // requête volontairement remplacée par une plus récente
       console.error("❌ Erreur lors de la recherche:", error);
       showError("Erreur de connexion. Veuillez réessayer.");
     } finally {
-      isSearching = false;
-      hideLoading();
+      // Ne nettoie l'état "chargement" que si cette requête est toujours la
+      // plus récente — une requête annulée ne doit pas masquer le spinner
+      // de celle qui l'a remplacée.
+      if (searchAbortController === controller) {
+        hideLoading();
+      }
     }
   }
 

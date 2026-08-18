@@ -84,6 +84,22 @@
       scene.addEventListener('mouseenter', () => this.isHovered = true);
       scene.addEventListener('mouseleave', () => this.isHovered = false);
 
+      /* Dernier filtre/transform écrits — évite de réécrire le style à
+         chaque frame quand la valeur n'a pas changé de façon perceptible */
+      this._lastFilter    = '';
+      this._lastTransform = '';
+
+      /* Pause quand la scène n'est pas dans le viewport (ex : logo du
+         footer, quasi jamais visible) — économise le rendu canvas + les
+         écritures de style pendant tout le temps où on ne la voit pas */
+      this.inView = true;
+      if ('IntersectionObserver' in window) {
+        this._io = new IntersectionObserver((entries) => {
+          this.inView = entries[0].isIntersecting;
+        }, { threshold: 0 });
+        this._io.observe(scene);
+      }
+
       this.valid = true;
     }
 
@@ -351,17 +367,32 @@
 
     updateHoverGlow() {
       const h = this.hoverIntensity, s = this.s;
+      let filter, transform;
       if (h > 0.04) {
-        this.logoImg.style.filter    = `drop-shadow(0 0 ${sc(8+18*h,s).toFixed(1)}px rgba(255,55,20,${(0.22+0.30*h).toFixed(2)})) drop-shadow(0 0 ${sc(22+32*h,s).toFixed(1)}px rgba(255,70,20,${(0.08+0.14*h).toFixed(2)})) brightness(${(1+0.20*h).toFixed(2)})`;
-        this.logoImg.style.transform = `scale(${(1 + h * 0.055).toFixed(3)}) translateY(${(-h * 2).toFixed(1)}px)`;
+        filter    = `drop-shadow(0 0 ${sc(8+18*h,s).toFixed(1)}px rgba(255,55,20,${(0.22+0.30*h).toFixed(2)})) drop-shadow(0 0 ${sc(22+32*h,s).toFixed(1)}px rgba(255,70,20,${(0.08+0.14*h).toFixed(2)})) brightness(${(1+0.20*h).toFixed(2)})`;
+        transform = `scale(${(1 + h * 0.055).toFixed(3)}) translateY(${(-h * 2).toFixed(1)}px)`;
       } else {
-        this.logoImg.style.filter    = `drop-shadow(0 0 ${sc(6,s).toFixed(1)}px rgba(255,45,15,0.10)) brightness(1)`;
-        this.logoImg.style.transform = '';
+        filter    = `drop-shadow(0 0 ${sc(6,s).toFixed(1)}px rgba(255,45,15,0.10)) brightness(1)`;
+        transform = '';
+      }
+      // N'écrit dans le DOM que si la valeur a réellement changé — évite de
+      // réécrire un style quasi-identique à chaque frame (60x/s) au repos.
+      if (filter !== this._lastFilter) {
+        this.logoImg.style.filter = filter;
+        this._lastFilter = filter;
+      }
+      if (transform !== this._lastTransform) {
+        this.logoImg.style.transform = transform;
+        this._lastTransform = transform;
       }
     }
 
     tick() {
       if (!this.valid) return;
+      // Hors du viewport (ex : logo du footer, visible seulement en bas de
+      // page) : on ne dessine rien tant qu'on ne le voit pas — le canvas
+      // garde son dernier état, invisible de toute façon.
+      if (!this.inView) return;
       this.ctxU.clearRect(0, 0, this.W, this.H);
       this.ctxO.clearRect(0, 0, this.W, this.H);
       this.hoverIntensity += ((this.isHovered ? 1 : 0) - this.hoverIntensity) * 0.07;
@@ -419,6 +450,13 @@
     scenes.forEach(s => s.tick());
     requestAnimationFrame(loop);
   }
-  if (scenes.length) loop();
+
+  // Respect de la préférence système "réduire les animations" : le logo
+  // reste visible (image statique), seuls les effets décoratifs canvas
+  // (néons, particules, sweep) sont désactivés.
+  const prefersReducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (scenes.length && !prefersReducedMotion) loop();
 
 })();
