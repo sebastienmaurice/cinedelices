@@ -245,63 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ── Carrousel poster hero ──
-document.addEventListener("DOMContentLoaded", () => {
-  const track   = document.getElementById('rh-poster-track');
-  if (!track) return;
-  const slides  = Array.from(track.querySelectorAll('.rh-poster__img-btn'));
-  if (slides.length <= 1) return;
-
-  const btnPrev = document.getElementById('rh-nav-prev');
-  const btnNext = document.getElementById('rh-nav-next');
-  const dots    = Array.from(document.querySelectorAll('.rh-poster__dot'));
-  const curEl   = document.getElementById('rh-poster-cur');
-  let current   = 0;
-
-  const AUTOPLAY_DELAY = 3800;
-  let autoplayTimer = null;
-  let isProgrammatic = false;
-
-  function goTo(idx) {
-    current = ((idx % slides.length) + slides.length) % slides.length;
-    isProgrammatic = true;
-    track.scrollTo({ left: current * track.clientWidth, behavior: 'smooth' });
-    setTimeout(() => { isProgrammatic = false; }, 700);
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
-    if (curEl) curEl.textContent = current + 1;
-    if (btnPrev) btnPrev.disabled = false;
-    if (btnNext) btnNext.disabled = false;
-  }
-
-  function startAutoplay() {
-    stopAutoplay();
-    autoplayTimer = setInterval(() => goTo(current + 1), AUTOPLAY_DELAY);
-  }
-  function stopAutoplay() {
-    if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-  }
-
-  btnPrev && btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goTo(current - 1); startAutoplay(); });
-  btnNext && btnNext.addEventListener('click', (e) => { e.stopPropagation(); goTo(current + 1); startAutoplay(); });
-  dots.forEach((d) => d.addEventListener('click', () => { goTo(parseInt(d.dataset.idx, 10)); startAutoplay(); }));
-
-  track.addEventListener('scroll', () => {
-    if (isProgrammatic) return;
-    const idx = Math.round(track.scrollLeft / track.clientWidth);
-    if (idx !== current) goTo(idx);
-  }, { passive: true });
-
-  // Pause au survol
-  const posterEl = track.closest('.rh-poster');
-  if (posterEl) {
-    posterEl.addEventListener('mouseenter', stopAutoplay);
-    posterEl.addEventListener('mouseleave', startAutoplay);
-  }
-
-  goTo(0);
-  startAutoplay();
-});
-
 // ── "Charger plus" avis ──
 document.addEventListener("DOMContentLoaded", () => {
   const seeMoreBtn = document.getElementById("seeMoreAvis");
@@ -406,18 +349,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ── Hero parallax ──
+// Applique le décalage sur .recipe-hero__media (image + fondu ensemble),
+// pas sur .recipe-hero__img directement, pour ne pas entrer en conflit avec
+// sa transition CSS de hover (scale au survol). Désactivé sous 1100px : le
+// hero passe en image fixe pleine largeur au-dessus du texte (voir CSS).
 document.addEventListener("DOMContentLoaded", () => {
-  const heroBg = document.querySelector('.recipe-hero__bg');
-  if (!heroBg) return;
+  const heroMedia = document.querySelector('.recipe-hero__media');
+  if (!heroMedia) return;
+  const mq = window.matchMedia('(min-width: 1100.1px)');
   // Batching via requestAnimationFrame : évite d'écrire le style à chaque
   // event scroll brut (qui peut se déclencher plus souvent que le taux de
   // rafraîchissement de l'écran), pour un rendu plus fluide au scroll.
   let ticking = false;
   window.addEventListener('scroll', () => {
+    if (!mq.matches) return;
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      heroBg.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+      heroMedia.style.transform = `scale(1.05) translateY(${window.scrollY * 0.08}px)`;
       ticking = false;
     });
   }, { passive: true });

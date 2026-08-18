@@ -100,8 +100,24 @@
            RECIPE HERO + INFO-BAR INTÉGRÉE
       ════════════════════════════════════════ -->
       <section class="recipe-hero" aria-labelledby="recipe-title">
-        <div class="recipe-hero__bg" style="background-image: url('<%= movieImage %>')" aria-hidden="true"></div>
-        <div class="recipe-hero__overlay" aria-hidden="true"></div>
+        <!-- Image plein cadre à droite — photo principale de la recette.
+             <img> natif (pas de background-image CSS) : fetchpriority="high" +
+             pas de lazy-load, car c'est l'élément LCP probable de la page. -->
+        <div class="recipe-hero__media">
+          <button
+            type="button"
+            class="recipe-hero__img-btn"
+            data-lightbox-trigger
+            data-lightbox-image="<%= cldFull(mainGalSrc) %>"
+            data-lightbox-alt="<%= recipe.name %>"
+            aria-label="Voir la photo de <%= recipe.name %> en plein écran"
+          >
+            <img class="recipe-hero__img" src="<%= cldFull(mainGalSrc) %>" alt="<%= recipe.name %>" fetchpriority="high" />
+          </button>
+          <!-- Fondu bleu nuit — du centre-gauche vers la gauche, ~55% de la largeur du hero,
+               pour que le contenu rh-info reste lisible par-dessus l'image -->
+          <div class="recipe-hero__fade" aria-hidden="true"></div>
+        </div>
 
         <div class="recipe-hero__scanlines" aria-hidden="true"></div>
         <div class="recipe-hero__vignette" aria-hidden="true"></div>
@@ -170,75 +186,27 @@
             </div>
           </div>
 
-          <!-- Poster — carrousel jusqu'à 3 photos -->
-          <%
-            const posterPhotos = [{ src: mainGalSrc, alt: recipe.name }];
-            if (galPic2) posterPhotos.push({ src: galPic2.file_path, alt: 'Photo 2 — ' + recipe.name });
-            if (galPic3) posterPhotos.push({ src: galPic3.file_path, alt: 'Photo 3 — ' + recipe.name });
-            const multiPoster = posterPhotos.length > 1;
-          %>
-          <div class="rh-poster-wrap">
-            <div class="rh-poster">
-              <div class="rh-poster__film rh-poster__film--t" aria-hidden="true">
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
-              </div>
+        </div>
 
-              <div class="rh-poster__track" id="rh-poster-track" role="region" aria-label="Photos de la recette">
-                <% posterPhotos.forEach((photo, i) => { %>
-                <button
-                  type="button"
-                  class="rh-poster__img-btn"
-                  data-lightbox-trigger
-                  data-lightbox-image="<%= photo.src %>"
-                  data-lightbox-alt="<%= photo.alt %>"
-                  aria-label="Voir <%= photo.alt %> en plein écran"
-                >
-                  <img src="<%= photo.src %>" alt="<%= photo.alt %>" loading="<%= i === 0 ? 'eager' : 'lazy' %>" />
-                </button>
-                <% }) %>
-              </div>
-
-              <% if (multiPoster) { %>
-              <button class="rh-poster__nav rh-poster__nav--prev" id="rh-nav-prev" aria-label="Photo précédente">‹</button>
-              <button class="rh-poster__nav rh-poster__nav--next" id="rh-nav-next" aria-label="Photo suivante">›</button>
-              <div class="rh-poster__counter" aria-live="polite">
-                <span id="rh-poster-cur">1</span>/<%= posterPhotos.length %>
-              </div>
-              <div class="rh-poster__dots" aria-hidden="true">
-                <% posterPhotos.forEach((_, i) => { %>
-                <span class="rh-poster__dot<%= i === 0 ? ' is-active' : '' %>" data-idx="<%= i %>"></span>
-                <% }) %>
-              </div>
-              <% } %>
-
-              <div class="rh-poster__film rh-poster__film--b" aria-hidden="true">
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
-                <div class="rh-perf"></div><div class="rh-perf"></div><div class="rh-perf"></div>
-              </div>
+        <!-- Stat dorée — Golden Ticket — flotte sur l'image, en bas à droite -->
+        <div class="rh-poster__stat">
+          <div class="rh-poster__stat-inner">
+            <div class="rh-ps-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="3"/>
+                <circle cx="12" cy="5"  r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="5"  cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
             </div>
-
-            <!-- Stat dorée — Golden Ticket -->
-            <div class="rh-poster__stat">
-              <div class="rh-poster__stat-inner">
-                <div class="rh-ps-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="3"/>
-                    <circle cx="12" cy="5"  r="1.2" fill="currentColor" stroke="none"/>
-                    <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>
-                    <circle cx="5"  cy="12" r="1.2" fill="currentColor" stroke="none"/>
-                    <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/>
-                  </svg>
-                </div>
-                <div class="rh-ps-text">
-                  <span class="rh-ps-num"><%= averageQuote || 0 %><span style="font-size:.6em;opacity:.5">/5</span></span>
-                  <span class="rh-ps-label">Note</span>
-                </div>
-              </div>
-              <span class="rh-ps-watermark" aria-hidden="true">★</span>
+            <div class="rh-ps-text">
+              <span class="rh-ps-num"><%= averageQuote || 0 %><span style="font-size:.6em;opacity:.5">/5</span></span>
+              <span class="rh-ps-label">Note</span>
             </div>
           </div>
+          <span class="rh-ps-watermark" aria-hidden="true">★</span>
         </div>
 
         <div class="rd-hero-footer" aria-hidden="true"></div>
