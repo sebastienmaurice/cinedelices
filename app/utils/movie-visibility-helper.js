@@ -12,6 +12,15 @@
 import { Recipe } from "../models/index.model.js";
 import { Op } from "sequelize";
 
+// Cache mémoire — même pattern que inject-locals.middleware.js.
+// getPublicMovieIds() était appelée sans cache sur quasi toutes les routes
+// films (accueil, listing, recherche — y compris à chaque frappe débouncée),
+// recalculant à chaque fois un GROUP BY sur toute la table recipes alors que
+// le résultat ne change qu'à la validation/rejet d'une recette par un admin.
+const CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+let _cache = null;
+let _cacheTime = 0;
+
 /**
  * Récupérer tous les IDs de films qui ont ≥1 recette approuvée
  * Utile pour filtrer les films visibles
@@ -19,6 +28,10 @@ import { Op } from "sequelize";
  * @returns {Promise<number[]>} Array d'IDs de films visibles
  */
 export async function getPublicMovieIds() {
+  if (_cache && Date.now() - _cacheTime < CACHE_TTL) {
+    return _cache;
+  }
+
   const moviesWithApprovedRecipes = await Recipe.findAll({
     where: { status: "approved" },
     attributes: ["id_movie"],
@@ -26,9 +39,17 @@ export async function getPublicMovieIds() {
     raw: true,
   });
 
-  return moviesWithApprovedRecipes
+  _cache = moviesWithApprovedRecipes
     .map((r) => r.id_movie)
     .filter(Boolean); // Filtre les null/undefined
+  _cacheTime = Date.now();
+  return _cache;
+}
+
+/** Invalide le cache — à appeler après validation/rejet d'une recette par un admin. */
+export function invalidatePublicMovieIdsCache() {
+  _cache = null;
+  _cacheTime = 0;
 }
 
 /**
@@ -116,6 +137,7 @@ export async function getApprovedRecipeCounts(movieIds) {
 
 export default {
   getPublicMovieIds,
+  invalidatePublicMovieIdsCache,
   isMoviePublic,
   filterPublicMovies,
   getPublicMoviesCondition,

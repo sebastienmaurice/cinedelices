@@ -409,8 +409,17 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const heroBg = document.querySelector('.recipe-hero__bg');
   if (!heroBg) return;
+  // Batching via requestAnimationFrame : évite d'écrire le style à chaque
+  // event scroll brut (qui peut se déclencher plus souvent que le taux de
+  // rafraîchissement de l'écran), pour un rendu plus fluide au scroll.
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    heroBg.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      heroBg.style.transform = `scale(1.08) translateY(${window.scrollY * 0.15}px)`;
+      ticking = false;
+    });
   }, { passive: true });
 });
 

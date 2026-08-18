@@ -22,6 +22,7 @@ import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
 import { awardActionXP, checkFirstRecipeMonth } from "../services/gamification.service.js";
 import searchCache from "../utils/search-cache.js";
+import { invalidatePublicMovieIdsCache } from "../utils/movie-visibility-helper.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import { deleteAsset, uploadToCloudinary, uploadBufferToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
@@ -732,6 +733,7 @@ const adminController = {
         checkFirstRecipeMonth(recipe.id_user).catch(() => {});
       }
 
+      invalidatePublicMovieIdsCache(); // une recette approuvée peut rendre son film public
       logAdminAction({ adminId: req.userId, action: "approve_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_validated");
     } catch (error) {
@@ -869,6 +871,7 @@ const adminController = {
         { where: { id: recipeId } },
       );
 
+      invalidatePublicMovieIdsCache(); // une recette rejetée peut retirer son film de la liste publique
       logAdminAction({ adminId: req.userId, action: "reject_recipe", targetType: "recipe", targetId: recipeId });
       res.redirect("/admin?success=recipe_rejected");
     } catch (error) {

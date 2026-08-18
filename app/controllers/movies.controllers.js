@@ -690,13 +690,9 @@ const moviesController = {
   async moviesList(req, res) {
     try {
       // Récupérer uniquement les films qui ont au moins une recette approuvée
-      const moviesWithRecipes = await Recipe.findAll({
-        where: { status: "approved" },
-        attributes: ["id_movie"],
-        group: ["id_movie"],
-        raw: true,
-      });
-      const movieIdsWithApprovedRecipes = moviesWithRecipes.map((r) => r.id_movie).filter(Boolean);
+      // (mise en cache via getPublicMovieIds() — évite de refaire ce GROUP BY
+      // à chaque affichage de la liste des films)
+      const movieIdsWithApprovedRecipes = await getPublicMovieIds();
 
       const movies = await Movie.findAll({
         where: {

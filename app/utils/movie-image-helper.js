@@ -488,16 +488,26 @@ export function enrichMovieWithImagePaths(movie) {
   let cardPath = getMovieCardPath(originalPath, title);
   const originalPathEnriched = getMovieOriginalPath(originalPath, title);
 
-  // ÉTAPE 3b : Fallback vers l'image originale si card/banner n'existe pas sur disque
-  // Les images uploadées via l'admin n'ont pas forcément de version card/banner générée.
-  // Depuis la migration Cloudinary, `originalPath` est le plus souvent une URL
-  // https://res.cloudinary.com/... (jamais un fichier local) : on applique alors une
-  // transformation Cloudinary à la volée pour ne pas retomber sur l'image pleine taille.
-  if (cardPath && !existsSync(join(PUBLIC_DIR, cardPath))) {
+  // ÉTAPE 3b : Fallback vers l'image originale si card/banner n'existe pas sur disque.
+  // Depuis la migration Cloudinary, `originalPath` est presque toujours une URL
+  // https://res.cloudinary.com/... — dans ce cas, un fichier local card/banner ne
+  // peut structurellement pas exister : on applique directement la transformation
+  // Cloudinary à la volée, sans passer par un `fs.existsSync()` synchrone et
+  // bloquant voué à l'échec (ancien pipeline local `cards/`/`banners/`, remplacé).
+  const isRemoteOriginal = typeof originalPath === "string" && originalPath.startsWith("http");
+
+  if (isRemoteOriginal) {
     cardPath = originalPath ? cldOptimize(originalPath, 400) : DEFAULT_MOVIE_IMAGE;
-  }
-  if (bannerPath && !existsSync(join(PUBLIC_DIR, bannerPath))) {
     bannerPath = originalPath ? cldOptimize(originalPath, 1200) : DEFAULT_MOVIE_IMAGE;
+  } else {
+    // Chemin local (legacy/dev) : la vérification disque reste pertinente ici,
+    // un vrai fichier card/banner généré localement peut exister.
+    if (cardPath && !existsSync(join(PUBLIC_DIR, cardPath))) {
+      cardPath = originalPath || DEFAULT_MOVIE_IMAGE;
+    }
+    if (bannerPath && !existsSync(join(PUBLIC_DIR, bannerPath))) {
+      bannerPath = originalPath || DEFAULT_MOVIE_IMAGE;
+    }
   }
 
   // ÉTAPE 4 : Création de l'objet enrichi

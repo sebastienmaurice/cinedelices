@@ -16,4 +16,18 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration user_points :", err.message);
   }
+
+  // Index de performance (audit technique 18/08/2026) — voir
+  // app/database/migrations/20260818-add-perf-indexes.sql
+  try {
+    await sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_recipes_status       ON recipes(status);
+      CREATE INDEX IF NOT EXISTS idx_recipes_id_movie     ON recipes(id_movie);
+      CREATE INDEX IF NOT EXISTS idx_recipes_movie_status ON recipes(id_movie, status);
+      CREATE INDEX IF NOT EXISTS idx_movies_status        ON movies(status);
+    `);
+    console.log("✅ Migration index perf : recipes/movies OK");
+  } catch (err) {
+    console.error("⚠️  Migration index perf :", err.message);
+  }
 }
