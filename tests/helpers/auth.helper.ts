@@ -21,6 +21,7 @@ export async function registerViaAPI(
       pseudo: user.pseudo,
       email: user.email,
       password: user.password,
+      rgpd_consent: 'on', // requis côté serveur depuis l'ajout du consentement RGPD
     },
   });
 }
