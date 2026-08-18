@@ -17,6 +17,7 @@
 import { existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { cldOptimize } from "./cloudinary-url.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -488,12 +489,15 @@ export function enrichMovieWithImagePaths(movie) {
   const originalPathEnriched = getMovieOriginalPath(originalPath, title);
 
   // ÉTAPE 3b : Fallback vers l'image originale si card/banner n'existe pas sur disque
-  // Les images uploadées via l'admin n'ont pas forcément de version card/banner générée
+  // Les images uploadées via l'admin n'ont pas forcément de version card/banner générée.
+  // Depuis la migration Cloudinary, `originalPath` est le plus souvent une URL
+  // https://res.cloudinary.com/... (jamais un fichier local) : on applique alors une
+  // transformation Cloudinary à la volée pour ne pas retomber sur l'image pleine taille.
   if (cardPath && !existsSync(join(PUBLIC_DIR, cardPath))) {
-    cardPath = originalPath || DEFAULT_MOVIE_IMAGE;
+    cardPath = originalPath ? cldOptimize(originalPath, 400) : DEFAULT_MOVIE_IMAGE;
   }
   if (bannerPath && !existsSync(join(PUBLIC_DIR, bannerPath))) {
-    bannerPath = originalPath || DEFAULT_MOVIE_IMAGE;
+    bannerPath = originalPath ? cldOptimize(originalPath, 1200) : DEFAULT_MOVIE_IMAGE;
   }
 
   // ÉTAPE 4 : Création de l'objet enrichi

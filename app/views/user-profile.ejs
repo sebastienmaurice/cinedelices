@@ -81,9 +81,9 @@
             <div class="profile-badge-hero profile-badge-hero--css-only"
                  id="profileBadgeHero"
                  data-frame-code="strange"
-                 data-photo-src="<%= user.picture || '/images/image-default-profile.jpg' %>">
+                 data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
               <%- include('partials/badge-strange-avatar', {
-                photoSrc: user.picture || '/images/image-default-profile.jpg',
+                photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
                 photoAlt: 'Avatar de ' + user.pseudo
               }) %>
               <!-- Statut photo -->
@@ -109,12 +109,12 @@
             <div class="profile-badge-hero"
                id="profileBadgeHero"
                data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
-               data-photo-src="<%= user.picture || '/images/image-default-profile.jpg' %>">
+               data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
 
               <img
                 id="pbhPhoto"
                 class="pbh-photo"
-                src="<%= user.picture || '/images/image-default-profile.jpg' %>"
+                src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>"
                 alt="Avatar de <%= user.pseudo %>"
               />
               <% if (typeof userActiveFrame !== 'undefined' && userActiveFrame) { %>
@@ -148,7 +148,7 @@
           <!-- Template caché : badge Dr Strange CSS — cloné par gamification.js lors d'un changement de cadre -->
           <template id="bds-badge-tpl">
             <%- include('partials/badge-strange-avatar', {
-              photoSrc: user.picture || '/images/image-default-profile.jpg',
+              photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
               photoAlt: 'Avatar de ' + user.pseudo
             }) %>
           </template>
@@ -410,7 +410,7 @@
                     %>
                     <div class="list-row list-row--recette">
                       <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
                       <% } else { %>
                       <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
                       <% } %>
@@ -865,7 +865,7 @@
                     <% favoriteRecipes.slice(0, 8).forEach(function(recipe) { %>
                     <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="list-row list-row--recette list-row--link">
                       <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
                       <% } else { %>
                       <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
                       <% } %>
@@ -951,7 +951,7 @@
                     <% ratedRecipes.slice(0, 8).forEach(function(recipe) { %>
                     <a href="/recipes-movie/details/<%= recipe.slug || recipe.id %>" class="list-row list-row--recette list-row--link">
                       <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
                       <% } else { %>
                       <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
                       <% } %>
@@ -1238,7 +1238,7 @@
                       data-pictures="<%= encodeURIComponent(JSON.stringify((recipe.RecipePictures || []).sort((a,b)=>a.position-b.position).map(p=>p.file_path))) %>"
                     >
                       <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= recipe.picture %>" alt="<%= recipe.name %>" loading="lazy" />
+                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
                       <% } else { %>
                       <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
                       <% } %>
@@ -1547,16 +1547,16 @@
                 <div class="cf-card__preview-wrap">
                   <% if (fr.id === 'none') { %>
                   <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
                   </div>
                   <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
                   <div class="frame-row-badge-static cf-card__preview-inner">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
                     <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
                   </div>
                   <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
                   <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
-                    <img class="bsp" src="<%= user.picture || '/images/image-default-profile.jpg' %>" alt="" />
+                    <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
                     <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
                     <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
                   </div>
