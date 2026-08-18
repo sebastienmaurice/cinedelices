@@ -213,7 +213,7 @@
             <!-- ① FILM — affiche 2:3 cadrée — film du duo (lié à topRecipe) -->
             <% if (duoFilm) { %>
             <a href="/recipes-movie/<%= duoFilm.slug || duoFilm.id %>" class="djc-film" data-reveal="left" aria-label="Voir les recettes de <%= duoFilm.title %>">
-              <img class="djc-film__img" src="<%= duoFilm.cardPath || duoFilm.picture %>" alt="Affiche <%= duoFilm.title %>" loading="lazy">
+              <img class="djc-film__img" src="<%= duoFilm.cardPath || cldCard(duoFilm.picture) %>" alt="Affiche <%= duoFilm.title %>" loading="lazy">
               <div class="djc-film__overlay"></div>
               <!-- Hover CTA — icon doré centré -->
               <div class="djc-film__hover-cta" aria-hidden="true">
@@ -291,7 +291,7 @@
                 <div class="djc-cta__membres">
                   <% [0,1,2].forEach(function(i) { %>
                     <% const tc = topContributors && topContributors[i]; %>
-                    <img src="<%= tc && tc.picture ? tc.picture : '/images/image-default-profile.jpg' %>" alt="" class="djc-cta__av" loading="lazy">
+                    <img src="<%= cldAvatar(tc && tc.picture ? tc.picture : '/images/image-default-profile.jpg') %>" alt="" class="djc-cta__av" loading="lazy">
                   <% }); %>
                   <span class="djc-cta__av-txt">+<%= totalUsers %> membres actifs</span>
                 </div>
@@ -540,7 +540,7 @@
                 <!-- Stretched link -->
                 <a href="/recipes-movie/details/<%= recipes[2].slug || recipes[2].id %>" class="top3-card__link" aria-label="Voir la recette <%= recipes[2].name %>"></a>
                 <div class="top3-card__img-wrap">
-                  <img class="top3-card__img" src="<%= recipes[2].picture %>" alt="<%= recipes[2].name %>" loading="lazy">
+                  <img class="top3-card__img" src="<%= cldCard(recipes[2].picture) %>" alt="<%= recipes[2].name %>" loading="lazy">
                   <div class="top3-card__overlay"></div>
                   <!-- Overlay hover doré — centré sur l'image -->
                   <div class="cd-hover-overlay">
