@@ -15,6 +15,7 @@ import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { User, Recipe, Movie } from "../models/index.model.js";
 import { FRAME_UNLOCKS } from "../utils/gamification.utils.js";
+import { cldCard, cldAvatar, cldFull } from "../utils/cloudinary-url.js";
 
 /* ──────────────────────────────────────────────────────────────
    Cache en mémoire — évite de refaire les COUNT à chaque requête
@@ -110,6 +111,10 @@ async function injectLocals(req, res, next) {
   res.locals.siteUrl        = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
   res.locals.googleClientId = process.env.GOOGLE_CLIENT_ID || '';
   res.locals.path           = req.path;
+  // Helpers Cloudinary — variantes redimensionnées à la volée (voir cloudinary-url.js)
+  res.locals.cldCard        = cldCard;
+  res.locals.cldAvatar      = cldAvatar;
+  res.locals.cldFull        = cldFull;
 
   // Données asynchrones — silencieuses en cas d'erreur
   try {
