@@ -111,9 +111,16 @@ body.recipe-page main {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center 38%;
   display: block;
-  transition: transform .6s ease;
+  transform-origin: left center; /* le zoom "grandit" depuis le bord gauche, sous le fondu */
+  animation: heroImgZoom 26s ease-in-out infinite alternate;
 }
-.recipe-hero__img-btn:hover .recipe-hero__img { transform: scale(1.015); }
+@keyframes heroImgZoom {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .recipe-hero__img { animation: none; }
+}
 
 /* Fondu bleu nuit — opaque à gauche, transparent dès ~65% (l'image reste
    nette sur sa moitié droite). Utilise les tokens --bleu-nuit-* existants
