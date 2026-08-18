@@ -45,8 +45,12 @@ const PORT = process.env.PORT || 3000;
 
 // Configuration de cookie-parser AVANT les middlewares/routes
 app.use(cookieParser());
-// Servir CSS, JS, images...
-app.use(express.static("./app/public"));
+// Servir CSS, JS, images... — cache long (30j) pour que le navigateur et Cloudflare
+// mettent réellement les assets en cache au lieu de revalider à chaque requête.
+app.use(express.static("./app/public", {
+  maxAge: "30d",
+  etag: true,
+}));
 
 app.use(express.urlencoded({ extended: true })); // pour parser les données des formulaires
 app.use(express.json()); // permet de parser le JSON

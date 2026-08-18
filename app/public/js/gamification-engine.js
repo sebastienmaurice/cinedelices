@@ -79,7 +79,7 @@ const BADGE_CONFIGS = {
 
   sherlock: {
     badge: { width: 260, height: 260 },
-    frame: { src: '/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png' },
+    frame: { src: '/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.webp' },
     photo: { size: 150, left: 56, top: 56 },
     ring:  { cx: 130, cy: 130, r: 75 },
     pal: {
@@ -103,7 +103,7 @@ const BADGE_CONFIGS = {
 
   cine: {
     badge:  { width: 260, height: 260 },
-    frame:  { src: '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.png' },
+    frame:  { src: '/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.webp' },
     photo:  { size: 143, left: 59, top: 66 },
     ring:   { cx: 130, cy: 137, r: 71 },
     palette: {

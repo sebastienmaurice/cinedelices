@@ -156,7 +156,7 @@ class SherlockBadge {
     this.profileImg = photo; inner.appendChild(photo);
 
     const frame = document.createElement('img');
-    frame.src = '/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.png'; frame.alt = '';
+    frame.src = '/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.webp'; frame.alt = '';
     frame.style.cssText = `position:absolute;top:0;left:0;width:${N}px;height:${N}px;z-index:20;pointer-events:none;`;
     this.frameImg = frame; inner.appendChild(frame);
 
