@@ -51,13 +51,11 @@ body.recipe-page main {
 /* ====================================================== */
 
 @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
 @keyframes shimmerGold { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:200% 50%} }
 @keyframes ctaShimmer  { 0%{transform:translateX(-120%) skewX(-18deg)} 100%{transform:translateX(340%) skewX(-18deg)} }
 @keyframes barGrow     { from{transform:scaleX(0)} to{transform:scaleX(1)} }
 @keyframes cardReveal  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 @keyframes pulse-glow  { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.0)} 50%{box-shadow:0 0 20px 4px rgba(212,168,67,.18)} }
-@keyframes heroZoom    { from{transform:scale(1.18) translateY(-6%)} to{transform:scale(1.06) translateY(6%)} }
 @keyframes ingReveal   { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* ====================================================== */
@@ -93,21 +91,50 @@ body.recipe-page main {
 
 .recipe-hero {
   position: relative; width: 100%;
-  overflow: hidden; background: #070f1c;
+  overflow: hidden; background: var(--bleu-nuit);
   padding-bottom: 0;
+  min-height: 560px;
 }
-.recipe-hero__bg {
-  position: absolute; inset: -6%;
-  background-size: cover; background-position: center 30%;
-  filter: brightness(.22) saturate(.45) sepia(.35);
-  transform: scale(1.08);
-  animation: heroZoom 22s ease-in-out infinite alternate;
+
+/* Image plein cadre à droite — <img> natif (pas de background-image CSS) :
+   fetchpriority="high" côté HTML, pas de lazy-load — c'est l'élément LCP
+   probable de la page. Le fondu bleu (.recipe-hero__fade) assure la lisibilité
+   du contenu texte (.rh-info) par-dessus, sans assombrir toute l'image. */
+.recipe-hero__media {
+  position: absolute; inset: 0; z-index: 0;
 }
-.recipe-hero__overlay {
-  position: absolute; inset: 0;
-  background:
-    linear-gradient(to right,rgba(6,13,24,.98) 0%,rgba(6,13,24,.84) 38%,rgba(6,13,24,.25) 66%,transparent 100%),
-    linear-gradient(to top,rgba(6,13,24,.98) 0%,rgba(6,13,24,.2) 32%,transparent 60%);
+.recipe-hero__img-btn {
+  display: block; width: 100%; height: 100%;
+  border: none; padding: 0; margin: 0; background: none; cursor: zoom-in;
+}
+.recipe-hero__img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 38%;
+  display: block;
+  transform-origin: left center; /* le zoom "grandit" depuis le bord gauche, sous le fondu */
+  animation: heroImgZoom 26s ease-in-out infinite alternate;
+}
+@keyframes heroImgZoom {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .recipe-hero__img { animation: none; }
+}
+
+/* Fondu bleu nuit — opaque à gauche, transparent dès ~65% (l'image reste
+   nette sur sa moitié droite). Utilise les tokens --bleu-nuit-* existants
+   (voir base.css) plutôt que des rgba() inventés. */
+.recipe-hero__fade {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--bleu-nuit-95) 0%,
+    var(--bleu-nuit-92) 20%,
+    var(--bleu-nuit-70) 38%,
+    var(--bleu-nuit-30) 54%,
+    transparent 68%
+  );
 }
 .recipe-hero__scanlines {
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
@@ -120,9 +147,9 @@ body.recipe-page main {
 .recipe-hero__content {
   position: relative; z-index: 5;
   max-width: var(--max-w); margin: 0 auto;
-  padding: 64px 2.5rem 0;
-  display: grid; grid-template-columns: 1fr 400px; gap: 60px;
-  align-items: center; min-height: 460px;
+  padding: 64px 2.5rem;
+  display: flex; align-items: center;
+  min-height: 560px;
 }
 /* Bandeau auteur + favori — positionné en haut à droite du hero */
 .hero-banner-row {
@@ -173,7 +200,10 @@ body.recipe-page main {
 .rh-ctx-extra .rh-ctx-text { -webkit-line-clamp: unset; display: block; overflow: visible; }
 
 /* Colonne info gauche */
-.rh-info { display: flex; flex-direction: column; gap: 16px; }
+.rh-info {
+  display: flex; flex-direction: column; gap: 16px;
+  max-width: 560px; /* reste dans la zone lisible du fondu, ~55% du hero */
+}
 .rh-badge-film {
   display: inline-flex; align-items: center; gap: 8px; width: fit-content;
   padding: 5px 14px 5px 10px; border-radius: 7px;
@@ -219,94 +249,10 @@ body.recipe-page main {
   animation: fadeUp .5s cubic-bezier(.22,1,.36,1) .5s both;
 }
 
-/* Poster droit — carrousel */
-.rh-poster-wrap {
-  position: relative;
-  animation: fadeIn .7s cubic-bezier(.22,1,.36,1) .35s both;
-  padding-bottom: 20px; /* espace pour la stat badge qui déborde */
-}
-.rh-poster {
-  width: 100%; border-radius: 14px; overflow: hidden; position: relative;
-  box-shadow: 0 32px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(196,160,82,.12), 0 0 60px rgba(196,160,82,.05);
-  aspect-ratio: 3/2;
-}
-.rh-poster__film {
-  position: absolute; left: 0; right: 0; height: 22px;
-  background: rgba(4,9,16,.96);
-  display: flex; align-items: center; justify-content: space-around; z-index: 4;
-}
-.rh-poster__film--t { top: 0; }
-.rh-poster__film--b { bottom: 0; }
-.rh-perf {
-  width: 11px; height: 9px; border-radius: 2px;
-  background: rgba(196,160,82,.08); border: 1px solid rgba(196,160,82,.06);
-}
-
-/* Track carrousel */
-.rh-poster__track {
-  display: flex; width: 100%; height: 100%;
-  overflow-x: scroll; scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.rh-poster__track::-webkit-scrollbar { display: none; }
-
-.rh-poster__img-btn {
-  flex-shrink: 0; width: 100%; height: 100%;
-  scroll-snap-align: start;
-  border: none; background: none; padding: 0; cursor: zoom-in;
-  display: block;
-}
-.rh-poster__img-btn img {
-  width: 100%; height: 100%; object-fit: cover;
-  object-position: center; filter: saturate(.85) brightness(.92);
-  display: block; transition: filter .5s ease, transform .6s ease;
-}
-.rh-poster__img-btn:hover img { filter: saturate(1) brightness(1); transform: scale(1.02); }
-
-/* Flèches de navigation */
-.rh-poster__nav {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
-  width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(4,9,16,.72); backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,.14);
-  color: rgba(255,255,255,.8); font-size: 1rem; line-height: 1;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all .2s ease; opacity: 0; padding: 0;
-}
-.rh-poster:hover .rh-poster__nav { opacity: 1; }
-.rh-poster__nav--prev { left: 10px; }
-.rh-poster__nav--next { right: 10px; }
-.rh-poster__nav:hover { background: rgba(196,160,82,.28); border-color: rgba(196,160,82,.5); color: var(--dore-clair); }
-.rh-poster__nav:disabled { opacity: 0 !important; pointer-events: none; }
-
-/* Compteur photo */
-.rh-poster__counter {
-  position: absolute; top: 28px; right: 10px; z-index: 5;
-  font-family: var(--f-display); font-size: .62rem; letter-spacing: .1em;
-  color: rgba(255,255,255,.55);
-  background: rgba(4,9,16,.58); backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 4px; padding: 2px 7px; pointer-events: none;
-}
-
-/* Dots navigation */
-.rh-poster__dots {
-  position: absolute; bottom: 27px; left: 50%; transform: translateX(-50%); z-index: 5;
-  display: flex; gap: 5px; align-items: center;
-}
-.rh-poster__dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(255,255,255,.3); transition: all .3s cubic-bezier(.22,1,.36,1);
-  cursor: pointer;
-}
-.rh-poster__dot.is-active {
-  background: var(--or-titre); width: 14px; border-radius: 3px;
-}
-
-/* Stat dorée — Gold Ticket */
-/* Stat dorée — style Golden Ticket */
+/* Stat dorée — style Golden Ticket — flotte sur l'image, en bas à droite du hero */
 .rh-poster__stat {
-  position: absolute; bottom: -18px; left: -18px; z-index: 10;
+  position: absolute; z-index: 10;
+  bottom: 28px; right: 2.5rem;
   border-radius: 14px; overflow: hidden;
   background: var(--gold-card-gradient);
   box-shadow: 0 16px 48px rgba(184,136,42,.55), 0 4px 16px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.28);
@@ -1445,14 +1391,23 @@ body.lightbox-open { overflow: hidden; }
 /* ====================================================== */
 
 @media (max-width: 1100px) {
-  .recipe-hero__content { grid-template-columns: 1fr; gap: 0; padding: 44px 2rem 0; }
-  .rh-poster-wrap { display: none; }
+  /* Hero : image passe en haut, pleine largeur, hauteur réduite — le texte
+     (.rh-info) suit en dessous dans le flux normal au lieu d'être superposé.
+     Le fondu passe d'horizontal (gauche→droite) à vertical (image→texte)
+     puisque l'image n'est plus partagée avec le texte sur la même ligne. */
+  .recipe-hero { display: flex; flex-direction: column; min-height: 0; }
+  .recipe-hero__media { position: relative; inset: auto; width: 100%; height: 300px; flex-shrink: 0; }
+  .recipe-hero__fade {
+    background: linear-gradient(to bottom, transparent 45%, var(--bleu-nuit-80) 82%, var(--bleu-nuit) 100%);
+  }
+  .recipe-hero__content { position: relative; min-height: 0; padding: 28px 2rem 0; }
+  .rh-info { max-width: none; gap: 12px; }
+  .rh-poster__stat { bottom: 16px; right: 1.5rem; }
   .recipe-main-grid { grid-template-columns: 1fr; }
   /* Hero compact : contexte tronqué à 2 lignes, tags scrollables */
   .rh-ctx-lead { -webkit-line-clamp: 2; }
   .rh-tags { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
   .rh-tags::-webkit-scrollbar { display: none; }
-  .rh-info { gap: 12px; }
   .rd-sidebar { position: static; }
   .avis-grid { grid-template-columns: 1fr; }
   .avis-card--featured { grid-column: 1; grid-template-columns: 1fr; }
@@ -1472,7 +1427,9 @@ body.lightbox-open { overflow: hidden; }
   .rd-steps-header-row { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 540px) {
-  .recipe-hero__content { padding: 32px 1rem 0; }
+  .recipe-hero__media { height: 240px; }
+  .recipe-hero__content { padding: 24px 1rem 0; }
+  .rh-poster__stat { right: 1rem; }
   .rh-title { font-size: clamp(1.7rem,7vw,2.4rem); }
 }
 
