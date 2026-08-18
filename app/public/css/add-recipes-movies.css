@@ -648,6 +648,13 @@ body.arm-full-bleed {
   font-size: 0.6rem;
 }
 
+.arm-optional {
+  color: rgba(232, 232, 232, 0.28);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
 .arm-hint {
   font-size: 0.6rem;
   font-weight: 300;
@@ -1591,6 +1598,42 @@ body.arm-full-bleed {
   opacity: 0;
   pointer-events: none;
 }
+
+/* Champ "Étape n°" — slots de photos de préparation uniquement */
+.arm-step-num-field {
+  position: absolute;
+  top: 6px; right: 7px; z-index: 6;
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(8, 14, 24, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+.arm-step-num-field label {
+  font-family: var(--f-title, "Cinzel", serif);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.55);
+  white-space: nowrap;
+}
+.arm-step-num-input {
+  width: 28px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.35);
+  color: var(--or-titre, #c4a052);
+  font-family: var(--f-display, "Bebas Neue", cursive);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0;
+}
+.arm-step-num-input:focus { outline: none; border-bottom-color: var(--or-titre, #c4a052); }
+/* Masque les flèches natives du input[type=number] — champ trop petit pour elles */
+.arm-step-num-input::-webkit-outer-spin-button,
+.arm-step-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.arm-step-num-input[type=number] { -moz-appearance: textfield; }
 
 .arm-slot-act {
   display: flex;

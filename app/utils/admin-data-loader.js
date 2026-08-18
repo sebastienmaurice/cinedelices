@@ -32,7 +32,7 @@ export async function loadAdminData() {
     where: { status: "pending" },
     include: [
       { model: Movie, attributes: ["title", "picture", "year", "genre"] },
-      { model: RecipePicture, as: "RecipePictures", attributes: ["id", "file_path", "position"] },
+      { model: RecipePicture, as: "RecipePictures", attributes: ["id", "file_path", "position", "step_number"] },
       { model: User, as: "contributor", attributes: ["id", "pseudo"] },
     ],
   });
@@ -109,7 +109,7 @@ export async function loadAdminData() {
     where: { status: "approved" },
     include: [
       { model: Movie, attributes: ["id", "title"] },
-      { model: RecipePicture, as: "RecipePictures", attributes: ["id", "file_path", "position"] },
+      { model: RecipePicture, as: "RecipePictures", attributes: ["id", "file_path", "position", "step_number"] },
       { model: User, as: "contributor", attributes: ["id", "pseudo"] },
     ],
     order: [["id", "DESC"]],

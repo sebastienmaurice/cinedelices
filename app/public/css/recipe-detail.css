@@ -558,6 +558,21 @@ body.recipe-page main {
   transition: background .22s;
   cursor: pointer;
 }
+/* Étape avec photo de préparation (optionnelle) — 3ᵉ colonne insérée entre
+   le numéro et le texte */
+.rd-step-item--has-img { grid-template-columns: 64px 116px 1fr; }
+.rd-step-img-wrap {
+  display: flex; align-items: center;
+  padding: 14px 0;
+}
+.rd-step-img {
+  width: 108px; height: 78px; object-fit: cover;
+  border-radius: 8px; display: block; cursor: zoom-in;
+  border: 1px solid rgba(196,160,82,.18);
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+  transition: transform .3s cubic-bezier(.22,1,.36,1);
+}
+.rd-step-img:hover { transform: scale(1.05); }
 .rd-step-item:not(:last-child) {
   border-bottom: 1px solid rgba(65,90,119,.1);
 }
@@ -1431,6 +1446,9 @@ body.lightbox-open { overflow: hidden; }
   .recipe-hero__content { padding: 24px 1rem 0; }
   .rh-poster__stat { right: 1rem; }
   .rh-title { font-size: clamp(1.7rem,7vw,2.4rem); }
+  /* Photo d'étape réduite — laisse plus de place au texte sur petit écran */
+  .rd-step-item--has-img { grid-template-columns: 48px 84px 1fr; }
+  .rd-step-img { width: 76px; height: 60px; }
 }
 
 @media (max-width: 480px) {

@@ -35,7 +35,20 @@ const upload = multer({
   limits: { fileSize: MAX_FILE_SIZE },
 });
 
-// Upload multi-photos pour la création de recette (max 3 fichiers, champ "pictures")
-export const uploadRecipePhotos = upload.array("pictures", 3);
+// Upload multi-photos pour la création de recette :
+//   - "pictures"      : jusqu'à 3 photos principales (galerie), format paysage strict
+//   - "stepPicture1"…"stepPicture6" : photos de préparation (optionnelles, 1 champ par
+//     emplacement plutôt qu'un tableau — permet d'associer chaque fichier à son numéro
+//     d'étape (stepNumber1…stepNumber6) sans ambiguïté même si des emplacements sont
+//     laissés vides (un tableau partagé aurait décalé l'ordre).
+export const uploadRecipePhotos = upload.fields([
+  { name: "pictures", maxCount: 3 },
+  { name: "stepPicture1", maxCount: 1 },
+  { name: "stepPicture2", maxCount: 1 },
+  { name: "stepPicture3", maxCount: 1 },
+  { name: "stepPicture4", maxCount: 1 },
+  { name: "stepPicture5", maxCount: 1 },
+  { name: "stepPicture6", maxCount: 1 },
+]);
 
 export default upload;

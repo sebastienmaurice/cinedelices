@@ -76,12 +76,21 @@
         const preparationCount = preparationBlocks ? preparationBlocks.length : 0;
         const displayServings  = recipe.servings || 4;
 
-        /* Photos de la galerie : position 1 = principale, 2 = secondaire, 3 = détail */
+        /* Photos de la galerie : position 1 = principale, 2 = secondaire, 3 = détail
+           (le filtre !p.step_number exclut explicitement les photos d'étapes, qui
+           utilisent une position décalée 100+N mais ne devraient de toute façon
+           jamais entrer en collision avec 1/2/3) */
         const allPics = recipePictures || [];
-        const galPic1 = allPics.find(p => p.position === 1) || null;
-        const galPic2 = allPics.find(p => p.position === 2) || null;
-        const galPic3 = allPics.find(p => p.position === 3) || null;
+        const galPic1 = allPics.find(p => p.position === 1 && !p.step_number) || null;
+        const galPic2 = allPics.find(p => p.position === 2 && !p.step_number) || null;
+        const galPic3 = allPics.find(p => p.position === 3 && !p.step_number) || null;
         const mainGalSrc = galPic1 ? galPic1.file_path : recipeImage;
+
+        /* Photos de préparation — une par étape (optionnelle), numéro choisi
+           librement par le contributeur à l'upload (pas forcément 1:1 avec
+           la position d'upload). */
+        const stepPicsMap = {};
+        allPics.forEach(p => { if (p.step_number) stepPicsMap[p.step_number] = p.file_path; });
       %>
 
       <!-- ══ BREADCRUMB ══ -->
@@ -240,11 +249,26 @@
               <div class="rd-steps-card">
                 <div class="rd-steps-list">
                   <% if (preparationBlocks && preparationBlocks.length) { %>
-                  <% preparationBlocks.forEach((step, index) => { %>
-                  <div class="rd-step-item" data-step="<%= index + 1 %>">
+                  <% preparationBlocks.forEach((step, index) => {
+                       const stepImg = stepPicsMap[index + 1] || null;
+                  %>
+                  <div class="rd-step-item<%= stepImg ? ' rd-step-item--has-img' : '' %>" data-step="<%= index + 1 %>">
                     <div class="rd-step-num-wrap">
                       <div class="rd-step-num" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></div>
                     </div>
+                    <% if (stepImg) { %>
+                    <div class="rd-step-img-wrap">
+                      <img
+                        class="rd-step-img"
+                        src="<%= cldCard(stepImg) %>"
+                        alt="Photo — étape <%= index + 1 %>"
+                        loading="lazy"
+                        data-lightbox-trigger
+                        data-lightbox-image="<%= cldFull(stepImg) %>"
+                        data-lightbox-alt="Photo — étape <%= index + 1 %>"
+                      />
+                    </div>
+                    <% } %>
                     <div class="rd-step-body">
                       <p class="rd-step-title">
                         Étape <%= index + 1 %><% if (step.title) { %> — <%= step.title %><% } %>

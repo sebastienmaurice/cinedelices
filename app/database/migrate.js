@@ -30,4 +30,15 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration index perf :", err.message);
   }
+
+  // Photos de préparation (une par étape, optionnelles) — voir
+  // app/database/migrations/20260819-add-recipe-step-pictures.sql
+  try {
+    await sequelize.query(`
+      ALTER TABLE recipe_pictures ADD COLUMN IF NOT EXISTS step_number INT NULL;
+    `);
+    console.log("✅ Migration recipe_pictures.step_number OK");
+  } catch (err) {
+    console.error("⚠️  Migration recipe_pictures.step_number :", err.message);
+  }
 }
