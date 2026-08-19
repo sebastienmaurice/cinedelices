@@ -414,3 +414,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+/* Bouton "Partager" — Web Share API si disponible (mobile principalement),
+   sinon copie du lien dans le presse-papiers avec confirmation visuelle. */
+document.addEventListener("DOMContentLoaded", () => {
+  const shareBtn = document.querySelector(".js-share-recipe");
+  if (!shareBtn) return;
+
+  shareBtn.addEventListener("click", async () => {
+    const shareData = {
+      title: shareBtn.dataset.shareTitle || document.title,
+      text: shareBtn.dataset.shareText || "",
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // Annulation utilisateur ou erreur — silencieux, pas de fallback nécessaire
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      const original = shareBtn.innerHTML;
+      shareBtn.innerHTML = '<i data-lucide="check" width="15" height="15" aria-hidden="true"></i> Lien copié !';
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        shareBtn.innerHTML = original;
+        if (window.lucide) window.lucide.createIcons();
+      }, 2000);
+    } catch (err) {
+      // Presse-papiers indisponible — dernier recours silencieux
+    }
+  });
+});
