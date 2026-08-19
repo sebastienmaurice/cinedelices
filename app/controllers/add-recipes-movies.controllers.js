@@ -4,6 +4,7 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
 import {
   processRecipeImages,
+  processStepImages,
   cleanupFiles,
 } from "../utils/recipe-image-processor.js";
 import fs from "fs";
@@ -11,6 +12,25 @@ import slugify from "slugify";
 
 function acceptsJson(req) {
   return req.xhr || req.headers.accept?.includes("application/json");
+}
+
+/**
+ * Extrait les photos de préparation envoyées (jusqu'à 6, chacune dans son
+ * propre champ stepPicture1…stepPicture6 — voir upload.middleware.js) et
+ * leur numéro d'étape associé (stepNumber1…stepNumber6, saisi librement par
+ * le contributeur — ne correspond pas forcément à la position de l'emplacement).
+ * @returns {{file: Express.Multer.File, stepNumber: number}[]}
+ */
+function extractStepFiles(req) {
+  const entries = [];
+  for (let i = 1; i <= 6; i++) {
+    const file = req.files?.[`stepPicture${i}`]?.[0];
+    if (!file) continue;
+    const raw = parseInt(req.body?.[`stepNumber${i}`], 10);
+    const stepNumber = Number.isInteger(raw) && raw > 0 ? raw : i;
+    entries.push({ file, stepNumber });
+  }
+  return entries;
 }
 
 function buildRetainFilm(body) {
@@ -138,7 +158,8 @@ const addRecipesMoviesController = {
    * - RecipePictures : toutes les photos ordonnées par position
    */
   async addRecipe(req, res) {
-    const files = req.files || [];
+    const files = req.files?.pictures || [];
+    const stepFileEntries = extractStepFiles(req);
     try {
       const {
         name,
@@ -156,6 +177,7 @@ const addRecipesMoviesController = {
       const parsedServings = servings ? parseInt(servings, 10) : null;
 
       if (!files.length) {
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -171,6 +193,8 @@ const addRecipesMoviesController = {
         !preparation ||
         !difficulty
       ) {
+        cleanupFiles(files);
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -179,6 +203,8 @@ const addRecipesMoviesController = {
       }
 
       if (Number.isNaN(parsedTime) || parsedTime < 1) {
+        cleanupFiles(files);
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -192,6 +218,7 @@ const addRecipesMoviesController = {
           processed = await processRecipeImages(files);
         } catch (err) {
           cleanupFiles(files);
+          cleanupFiles(stepFileEntries.map((s) => s.file));
           if (err.message === "invalid_image") {
             return renderClientError(
               req,
@@ -210,6 +237,33 @@ const addRecipesMoviesController = {
             );
           }
           throw err;
+        }
+      }
+
+      // Photos de préparation (optionnelles, jusqu'à 6, une par étape)
+      let processedSteps = [];
+      if (stepFileEntries.length > 0) {
+        try {
+          const rawProcessed = await processStepImages(
+            stepFileEntries.map((s) => s.file),
+          );
+          processedSteps = rawProcessed.map((p, idx) => ({
+            ...p,
+            stepNumber: stepFileEntries[idx].stepNumber,
+          }));
+        } catch (err) {
+          if (err.message === "invalid_image") {
+            return renderClientError(
+              req,
+              res,
+              `La photo de préparation "${err.filename}" n'est pas une image valide. Utilisez JPG, PNG ou WEBP.`,
+            );
+          }
+          return renderClientError(
+            req,
+            res,
+            `Impossible de traiter la photo de préparation "${err.filename}". Vérifiez le format et réessayez.`,
+          );
         }
       }
 
@@ -239,6 +293,18 @@ const addRecipesMoviesController = {
           })),
         );
       }
+      // Photos de préparation — position décalée (100+N) pour ne jamais
+      // collisionner avec les positions 1-3 de la galerie.
+      if (processedSteps.length > 0) {
+        await RecipePicture.bulkCreate(
+          processedSteps.map(({ relPath, stepNumber }) => ({
+            recipe_id: newRecipe.id,
+            file_path: relPath,
+            position: 100 + stepNumber,
+            step_number: stepNumber,
+          })),
+        );
+      }
 
       const warningMessage = collectImageWarning(processed);
       return renderClientSuccess(req, res, {
@@ -247,6 +313,7 @@ const addRecipesMoviesController = {
       });
     } catch (error) {
       cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
+      cleanupFiles(stepFileEntries.map((s) => s.file).filter((f) => fs.existsSync(f.path)));
       return renderServerError(res, error);
     }
   },
@@ -256,7 +323,8 @@ const addRecipesMoviesController = {
    * Formulaire unifié film + recette.
    */
   async addMovieAndRecipe(req, res) {
-    const files = req.files || [];
+    const files = req.files?.pictures || [];
+    const stepFileEntries = extractStepFiles(req);
     try {
       const {
         filmId,
@@ -290,6 +358,7 @@ const addRecipesMoviesController = {
         !difficulty
       ) {
         cleanupFiles(files);
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -299,6 +368,7 @@ const addRecipesMoviesController = {
 
       if (parsedTime < 1 || Number.isNaN(parsedTime)) {
         cleanupFiles(files);
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -307,6 +377,7 @@ const addRecipesMoviesController = {
       }
 
       if (files.length === 0) {
+        cleanupFiles(stepFileEntries.map((s) => s.file));
         return renderClientError(
           req,
           res,
@@ -336,6 +407,7 @@ const addRecipesMoviesController = {
       if (!movie) {
         if (!title || !year || !genre) {
           cleanupFiles(files);
+          cleanupFiles(stepFileEntries.map((s) => s.file));
           return renderClientError(
             req,
             res,
@@ -374,6 +446,7 @@ const addRecipesMoviesController = {
           processed = await processRecipeImages(files);
         } catch (err) {
           cleanupFiles(files);
+          cleanupFiles(stepFileEntries.map((s) => s.file));
           if (err.message === "invalid_image") {
             return renderClientError(
               req,
@@ -392,6 +465,33 @@ const addRecipesMoviesController = {
             );
           }
           throw err;
+        }
+      }
+
+      // Photos de préparation (optionnelles, jusqu'à 6, une par étape)
+      let processedSteps = [];
+      if (stepFileEntries.length > 0) {
+        try {
+          const rawProcessed = await processStepImages(
+            stepFileEntries.map((s) => s.file),
+          );
+          processedSteps = rawProcessed.map((p, idx) => ({
+            ...p,
+            stepNumber: stepFileEntries[idx].stepNumber,
+          }));
+        } catch (err) {
+          if (err.message === "invalid_image") {
+            return renderClientError(
+              req,
+              res,
+              `La photo de préparation "${err.filename}" n'est pas une image valide. Utilisez JPG, PNG ou WEBP.`,
+            );
+          }
+          return renderClientError(
+            req,
+            res,
+            `Impossible de traiter la photo de préparation "${err.filename}". Vérifiez le format et réessayez.`,
+          );
         }
       }
 
@@ -421,6 +521,18 @@ const addRecipesMoviesController = {
           })),
         );
       }
+      // Photos de préparation — position décalée (100+N) pour ne jamais
+      // collisionner avec les positions 1-3 de la galerie.
+      if (processedSteps.length > 0) {
+        await RecipePicture.bulkCreate(
+          processedSteps.map(({ relPath, stepNumber }) => ({
+            recipe_id: newRecipe.id,
+            file_path: relPath,
+            position: 100 + stepNumber,
+            step_number: stepNumber,
+          })),
+        );
+      }
 
       const enrichedMovie = enrichMovieWithImagePaths(movie);
       const warningMessage = collectImageWarning(processed);
@@ -431,6 +543,7 @@ const addRecipesMoviesController = {
       });
     } catch (error) {
       cleanupFiles(files.filter((f) => fs.existsSync(f.path)));
+      cleanupFiles(stepFileEntries.map((s) => s.file).filter((f) => fs.existsSync(f.path)));
       return renderServerError(res, error);
     }
   },

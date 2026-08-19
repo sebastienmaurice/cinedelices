@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260328" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260819h" />
   </head>
 
   <body class="recipe-page">
@@ -76,12 +76,37 @@
         const preparationCount = preparationBlocks ? preparationBlocks.length : 0;
         const displayServings  = recipe.servings || 4;
 
-        /* Photos de la galerie : position 1 = principale, 2 = secondaire, 3 = détail */
+        /* Photos de la galerie : position 1 = principale, 2 = secondaire, 3 = détail
+           (le filtre !p.step_number exclut explicitement les photos d'étapes, qui
+           utilisent une position décalée 100+N mais ne devraient de toute façon
+           jamais entrer en collision avec 1/2/3) */
         const allPics = recipePictures || [];
-        const galPic1 = allPics.find(p => p.position === 1) || null;
-        const galPic2 = allPics.find(p => p.position === 2) || null;
-        const galPic3 = allPics.find(p => p.position === 3) || null;
+        const galPic1 = allPics.find(p => p.position === 1 && !p.step_number) || null;
+        const galPic2 = allPics.find(p => p.position === 2 && !p.step_number) || null;
+        const galPic3 = allPics.find(p => p.position === 3 && !p.step_number) || null;
         const mainGalSrc = galPic1 ? galPic1.file_path : recipeImage;
+
+        /* Photos de préparation — une par étape (optionnelle), numéro choisi
+           librement par le contributeur à l'upload (pas forcément 1:1 avec
+           la position d'upload). */
+        const stepPicsMap = {};
+        allPics.forEach(p => { if (p.step_number) stepPicsMap[p.step_number] = p.file_path; });
+
+        /* Découpe "quantité + nom" pour l'affichage en 2 colonnes des
+           ingrédients (ex. "400 g Spaghetti" → "400 g" | "Spaghetti").
+           Best-effort : ne s'applique qu'au texte brut sans mise en forme
+           (gras/italique via l'éditeur riche) et seulement si une quantité
+           reconnaissable est trouvée en tête — sinon on retombe sur
+           l'affichage pleine largeur existant (ex. "Sel", "Poivre"). */
+        function splitIngredient(raw) {
+          const s = String(raw).trim();
+          if (/<[^>]+>/.test(s)) return null;
+          const unit = '(?:g|kg|mg|ml|cl|l|c\\.\\s*à\\s*(?:soupe|café)|cuill[eè]res?\\s*(?:à|a)\\s*(?:soupe|café)|gousses?|poign[ée]es?|pinc[ée]es?|tranches?|feuilles?|branches?|sachets?|verres?|tasses?)';
+          const re = new RegExp('^(\\d+(?:[.,]\\d+)?(?:\\/\\d+)?\\s*' + unit + '?)\\s+(.+)$', 'i');
+          const m = s.match(re);
+          if (!m) return null;
+          return { qty: m[1].trim(), name: m[2].trim() };
+        }
       %>
 
       <!-- ══ BREADCRUMB ══ -->
@@ -174,6 +199,15 @@
               </a>
               <a href="#avis" class="btn btn--outline">Donner mon avis</a>
               <button
+                type="button"
+                class="btn btn--outline js-share-recipe"
+                data-share-title="<%= recipe.name %>"
+                data-share-text="<%= _rdDesc %>"
+              >
+                <i data-lucide="share-2" width="15" height="15" aria-hidden="true"></i>
+                Partager
+              </button>
+              <button
                 class="btn-fav"
                 data-entity-id="<%= recipe.id %>"
                 data-entity-type="recipe"
@@ -216,55 +250,193 @@
            MAIN LAYOUT
       ════════════════════════════════════════ -->
       <div class="recipe-main">
-        <div class="recipe-main-grid">
-
-          <!-- ═══ COLONNE PRINCIPALE ═══ -->
           <div class="recipe-main-col">
 
-            <!-- ── PRÉPARATION ── -->
-            <section id="preparation" class="rd-steps-section" aria-label="Étapes de préparation">
-              <div class="rd-sec-h">
-                <p class="rd-sec-h__eye">Recette complète</p>
-                <h2 class="rd-sec-h__title"><span>Préparation</span></h2>
-                <div class="rd-sec-h__rule"></div>
+            <!-- ── AUTEUR ── -->
+            <% if (contributor) { %>
+            <a
+              class="rd-author-badge rd-author-badge--standalone"
+              href="/auteur/<%= contributor.id %>"
+              aria-label="Voir le profil de <%= contributorName %>"
+            >
+              <div class="rd-author-avatar">
+                <img src="<%= cldAvatar(contributorImage) %>" alt="<%= contributorName %>" loading="lazy" />
               </div>
-
-              <div class="rd-steps-header-row">
-                <div class="rd-steps-count">
-                  <i data-lucide="clipboard-check" width="14" height="14" aria-hidden="true"></i>
-                  <%= preparationCount %> étape<%= preparationCount > 1 ? 's' : '' %><% if (recipe.time) { %> · <%= recipe.time %> min<% } %>
-                </div>
-                <div class="rd-steps-progress" id="steps-progress">0 / <%= preparationCount %> étapes</div>
+              <div class="rd-author-info">
+                <span class="rd-author-label">Recette proposée par</span>
+                <span class="rd-author-name">
+                  <%= contributorName %>
+                  <% if (contributor.role === "admin" || contributor.role === "superadmin") { %>
+                  <span class="rd-author-official gamification-badge gamification-badge--official">✦ Ciné Délices</span>
+                  <% } %>
+                </span>
               </div>
+              <span class="rd-author-arrow">›</span>
+            </a>
+            <% } %>
 
-              <div class="rd-steps-card">
-                <div class="rd-steps-list">
-                  <% if (preparationBlocks && preparationBlocks.length) { %>
-                  <% preparationBlocks.forEach((step, index) => { %>
-                  <div class="rd-step-item" data-step="<%= index + 1 %>">
-                    <div class="rd-step-num-wrap">
-                      <div class="rd-step-num" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></div>
+            <!-- ── INSPIRATION + INGRÉDIENTS ── -->
+            <section class="rd-combo-section" aria-label="Inspiration et ingrédients">
+              <div class="rd-combo-card">
+                <div class="rd-combo-col rd-combo-col--inspiration">
+                  <% if (descriptionBlocks && descriptionBlocks.length) { %>
+                  <% const inspImg = galPic2 || galPic3 || galPic1; %>
+                  <p class="rd-combo-col__eye">Anecdote</p>
+                  <h2 class="rd-combo-col__title rd-combo-col__title--sm">L'inspiration</h2>
+                  <div class="rd-inspiration__card">
+                    <div class="rd-inspiration__text">
+                      <% descriptionBlocks.forEach(p => { %>
+                      <p><%= p %></p>
+                      <% }) %>
                     </div>
-                    <div class="rd-step-body">
-                      <p class="rd-step-title">
-                        Étape <%= index + 1 %><% if (step.title) { %> — <%= step.title %><% } %>
-                        <button class="rd-step-check" aria-label="Marquer l'étape comme faite" aria-pressed="false">
-                          <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
-                        </button>
-                      </p>
-                      <div class="rd-step-text"><%- step.body %></div>
+                    <% if (inspImg) { %>
+                    <div
+                      class="rd-inspiration__media"
+                      role="button" tabindex="0"
+                      aria-label="Agrandir la photo"
+                      data-lightbox-trigger
+                      data-lightbox-image="<%= cldFull(inspImg.file_path) %>"
+                      data-lightbox-alt="Inspiration — <%= recipe.name %>"
+                    >
+                      <img src="<%= cldCard(inspImg.file_path) %>" alt="Inspiration — <%= recipe.name %>" loading="lazy" />
                     </div>
-                  </div>
-                  <% }) %>
-                  <% } else { %>
-                  <div class="rd-step-item" data-step="1">
-                    <div class="rd-step-num-wrap"><div class="rd-step-num" aria-hidden="true">1</div></div>
-                    <div class="rd-step-body">
-                      <p class="rd-step-text">Le détail de cette préparation arrive bientôt.</p>
-                    </div>
+                    <% } %>
                   </div>
                   <% } %>
                 </div>
+
+                <div class="rd-combo-divider" aria-hidden="true"></div>
+
+                <div class="rd-combo-col rd-combo-col--ingredients">
+                  <div class="rd-ingredients__header">
+                    <div class="rd-ingredients__icon">
+                      <i data-lucide="shopping-basket" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                      <div class="rd-ingredients__title rd-combo-col__title--sm">INGRÉDIENTS</div>
+                      <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
+                    </div>
+                    <div class="rd-ing-portions-ctrl">
+                      <button class="rd-srv-btn" id="rd-srv-minus2" aria-label="Moins de portions" type="button">−</button>
+                      <span class="rd-ing-portions-ctrl__val" id="rd-ing-portions-val" data-base="<%= displayServings %>"><%= displayServings %> pers.</span>
+                      <button class="rd-srv-btn" id="rd-srv-plus2" aria-label="Plus de portions" type="button">+</button>
+                    </div>
+                  </div>
+
+                  <div class="rd-ing-progress">
+                    <div class="rd-ing-progress__bar">
+                      <div class="rd-ing-progress__fill" id="ing-progress-fill"></div>
+                    </div>
+                    <span class="rd-ing-progress__label" id="ing-progress-label">0 / <%= ingredientsCount %></span>
+                  </div>
+
+                  <div class="rd-ing-list">
+                    <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
+                    <% ingredientsBlocks.forEach((ingredient) => {
+                         const parsed = String(ingredient).startsWith('<h3') ? null : splitIngredient(ingredient);
+                    %>
+                    <% if (String(ingredient).startsWith('<h3')) { %>
+                    <div class="rd-ing-group-hd"><%- ingredient %></div>
+                    <% } else if (parsed) { %>
+                    <div class="rd-ing-item rd-ing-item--split" role="checkbox" aria-checked="false" tabindex="0">
+                      <div class="rd-ing-chk" aria-hidden="true">
+                        <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
+                      </div>
+                      <span class="rd-ing-qty"><%= parsed.qty %></span>
+                      <span class="rd-ing-text"><%= parsed.name %></span>
+                    </div>
+                    <% } else { %>
+                    <div class="rd-ing-item" role="checkbox" aria-checked="false" tabindex="0">
+                      <div class="rd-ing-chk" aria-hidden="true">
+                        <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
+                      </div>
+                      <span class="rd-ing-text"><%- ingredient %></span>
+                    </div>
+                    <% } %>
+                    <% }) %>
+                    <% } else { %>
+                    <div class="rd-ing-item">
+                      <span class="rd-ing-text">Les ingrédients seront bientôt disponibles.</span>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ── PRÉPARATION ── -->
+            <section id="preparation" class="rd-steps-section" aria-label="Étapes de préparation">
+              <div class="rd-combo-card rd-steps-split">
+                <!-- Colonne gauche : liste des étapes (texte uniquement) -->
+                <div class="rd-combo-col">
+                  <p class="rd-combo-col__eye">Recette complète</p>
+                  <div class="rd-combo-col__title-row">
+                    <h3 class="rd-combo-col__title rd-combo-col__title--sm">Étapes de préparation</h3>
+                    <div class="rd-steps-header-row">
+                      <div class="rd-steps-count">
+                        <i data-lucide="clipboard-check" width="14" height="14" aria-hidden="true"></i>
+                        <%= preparationCount %> étape<%= preparationCount > 1 ? 's' : '' %><% if (recipe.time) { %> · <%= recipe.time %> min<% } %>
+                      </div>
+                      <div class="rd-steps-progress" id="steps-progress">0 / <%= preparationCount %> étapes</div>
+                    </div>
+                  </div>
+                  <div class="rd-steps-list">
+                    <% if (preparationBlocks && preparationBlocks.length) { %>
+                    <% preparationBlocks.forEach((step, index) => {
+                         const rowNum = index + 1;
+                    %>
+                    <div class="rd-step-item" data-step="<%= rowNum %>">
+                      <div class="rd-step-num-wrap">
+                        <div class="rd-step-num" aria-hidden="true"><%= String(rowNum).padStart(2, '0') %></div>
+                      </div>
+                      <div class="rd-step-body">
+                        <p class="rd-step-title">
+                          Étape <%= rowNum %><% if (step.title) { %> — <%= step.title %><% } %>
+                          <button class="rd-step-check" aria-label="Marquer l'étape comme faite" aria-pressed="false">
+                            <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
+                          </button>
+                        </p>
+                        <div class="rd-step-text"><%- step.body %></div>
+                      </div>
+                    </div>
+                    <% }) %>
+                    <% } else { %>
+                    <div class="rd-step-item" data-step="1">
+                      <div class="rd-step-num-wrap"><div class="rd-step-num" aria-hidden="true">1</div></div>
+                      <div class="rd-step-body">
+                        <p class="rd-step-text">Le détail de cette préparation arrive bientôt.</p>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+
+                <% const stepPhotoEntries = Object.keys(stepPicsMap).map(Number).sort((a, b) => a - b); %>
+                <% if (stepPhotoEntries.length) { %>
+                <div class="rd-combo-divider" aria-hidden="true"></div>
+
+                <!-- Colonne droite : photos de préparation (grille libre, numérotées) -->
+                <div class="rd-combo-col rd-combo-col--photos">
+                  <p class="rd-combo-col__eye">Aperçu</p>
+                  <h3 class="rd-combo-col__title rd-combo-col__title--sm">Photos de préparation</h3>
+                  <div class="rd-steps-photos-grid">
+                    <% stepPhotoEntries.forEach((n) => { %>
+                    <div class="rd-step-photo-cell">
+                      <span class="rd-step-photo-num"><%= n %></span>
+                      <img
+                        class="rd-step-img"
+                        src="<%= cldCard(stepPicsMap[n]) %>"
+                        alt="Photo — étape <%= n %>"
+                        loading="lazy"
+                        data-lightbox-trigger
+                        data-lightbox-image="<%= cldFull(stepPicsMap[n]) %>"
+                        data-lightbox-alt="Photo — étape <%= n %>"
+                      />
+                    </div>
+                    <% }) %>
+                  </div>
+                </div>
+                <% } %>
               </div>
             </section>
 
@@ -279,6 +451,7 @@
               <%
                 const galCount = [galPic1, galPic2, galPic3].filter(Boolean).length || 1;
               %>
+              <div class="rd-combo-card rd-combo-card--single">
               <div class="rd-gallery rd-gallery--<%= galCount %>">
                 <!-- Photo principale -->
                 <div
@@ -350,6 +523,7 @@
                 </div>
                 <% } %>
               </div>
+              </div>
             </div>
 
             <!-- ── NAV RECETTES ── -->
@@ -364,13 +538,27 @@
               </a>
             </div>
 
-            <!-- ══ SECTION AVIS ══ -->
+            <!-- ══ FILM ASSOCIÉ (affiche) + BANNIÈRE AVIS, côte à côte ══ -->
             <%
               const starCounts = [0,0,0,0,0];
               if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
               const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
             %>
-            <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
+            <div class="rd-movie-avis-row">
+              <!-- ── FILM ASSOCIÉ (affiche 2:3) ── -->
+              <% if (movie) { %>
+              <div class="rd-movie-section">
+                <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="rd-movie-poster" style="background-image:url('<%= movieImage %>')" aria-label="Voir les recettes du film <%= movie.title %>">
+                  <div class="rd-movie-poster__overlay"></div>
+                  <div class="rd-movie-poster__body">
+                    <span class="rd-movie-poster__eye">Film associé</span>
+                    <p class="rd-movie-poster__title"><%= movie.title %></p>
+                    <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
+                  </div>
+                  <span class="rd-movie-poster__cta">Voir les recettes →</span>
+                </a>
+              </div>
+              <% } %>
 
               <!-- Bannière dorée Golden Ticket -->
               <div class="avis-banner">
@@ -438,7 +626,9 @@
                   </div>
                 </div>
               </div>
+            </div><!-- /rd-movie-avis-row -->
 
+            <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
               <!-- Grille des avis -->
               <% if (notices && notices.length > 0) { %>
               <div class="avis-grid" id="avisGrid">
@@ -609,121 +799,6 @@
             </section>
 
           </div><!-- /recipe-main-col -->
-
-          <!-- ═══ SIDEBAR DROITE ═══ -->
-          <aside class="rd-sidebar">
-
-            <!-- ① Auteur -->
-            <% if (contributor) { %>
-            <a
-              class="rd-author-badge rd-author-badge--sidebar"
-              href="/auteur/<%= contributor.id %>"
-              aria-label="Voir le profil de <%= contributorName %>"
-            >
-              <div class="rd-author-avatar">
-                <img src="<%= cldAvatar(contributorImage) %>" alt="<%= contributorName %>" loading="lazy" />
-              </div>
-              <div class="rd-author-info">
-                <span class="rd-author-label">Recette proposée par</span>
-                <span class="rd-author-name">
-                  <%= contributorName %>
-                  <% if (contributor.role === "admin" || contributor.role === "superadmin") { %>
-                  <span class="rd-author-official gamification-badge gamification-badge--official">✦ Ciné Délices</span>
-                  <% } %>
-                </span>
-              </div>
-              <span class="rd-author-arrow">›</span>
-            </a>
-            <% } %>
-
-            <!-- ③ Ingrédients -->
-            <div class="rd-ingredients">
-              <div class="rd-ingredients__inner">
-                <div class="rd-ingredients__header">
-                  <div class="rd-ingredients__icon">
-                    <i data-lucide="shopping-basket" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
-                  </div>
-                  <div>
-                    <div class="rd-ingredients__title">INGRÉDIENTS</div>
-                    <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
-                  </div>
-                  <div class="rd-ing-portions-ctrl">
-                    <button class="rd-srv-btn" id="rd-srv-minus2" aria-label="Moins de portions" type="button">−</button>
-                    <span class="rd-ing-portions-ctrl__val" id="rd-ing-portions-val" data-base="<%= displayServings %>"><%= displayServings %> pers.</span>
-                    <button class="rd-srv-btn" id="rd-srv-plus2" aria-label="Plus de portions" type="button">+</button>
-                  </div>
-                </div>
-
-                <div class="rd-ing-progress">
-                  <div class="rd-ing-progress__bar">
-                    <div class="rd-ing-progress__fill" id="ing-progress-fill"></div>
-                  </div>
-                  <span class="rd-ing-progress__label" id="ing-progress-label">0 / <%= ingredientsCount %></span>
-                </div>
-
-                <div class="rd-ing-list">
-                  <% if (ingredientsBlocks && ingredientsBlocks.length) { %>
-                  <% ingredientsBlocks.forEach((ingredient) => { %>
-                  <% if (String(ingredient).startsWith('<h3')) { %>
-                  <div class="rd-ing-group-hd"><%- ingredient %></div>
-                  <% } else { %>
-                  <div class="rd-ing-item" role="checkbox" aria-checked="false" tabindex="0">
-                    <div class="rd-ing-chk" aria-hidden="true">
-                      <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
-                    </div>
-                    <span class="rd-ing-text"><%- ingredient %></span>
-                  </div>
-                  <% } %>
-                  <% }) %>
-                  <% } else { %>
-                  <div class="rd-ing-item">
-                    <span class="rd-ing-text">Les ingrédients seront bientôt disponibles.</span>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-
-            <!-- ③ Film associé — affiche cinématographique 2:3 -->
-            <% if (movie) { %>
-            <div class="rd-movie-card">
-              <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="rd-movie-poster" style="background-image:url('<%= movieImage %>')" aria-label="Voir les recettes du film <%= movie.title %>">
-                <div class="rd-movie-poster__overlay"></div>
-                <div class="rd-movie-poster__body">
-                  <span class="rd-movie-poster__eye">Film associé</span>
-                  <p class="rd-movie-poster__title"><%= movie.title %></p>
-                  <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
-                </div>
-                <span class="rd-movie-poster__cta">Voir les recettes →</span>
-              </a>
-            </div>
-            <% } %>
-
-            <!-- ④ Note communauté -->
-            <div class="rd-sidebar-card rd-rating-card">
-              <div class="rd-rating-summary" aria-label="Note communauté : <%= averageQuote || 0 %> sur 5">
-                <div class="rd-rating-big">
-                  <%= averageQuote || '—' %>
-                  <span class="rd-rating-denom">/5</span>
-                </div>
-                <div class="rd-rating-right">
-                  <div class="rd-rating-stars-row">
-                    <% for (let i = 1; i <= 5; i++) { %>
-                    <span class="rating-star<%= i <= Math.round(averageQuote || 0) ? ' is-active' : '' %>">★</span>
-                    <% } %>
-                  </div>
-                  <p class="rd-rating-sub"><%= notices && notices.length > 0 ? notices.length + ' avis' : 'Aucun avis pour l\'instant' %></p>
-                </div>
-              </div>
-              <a href="#avis" class="btn btn--primary btn--sm rd-rating-cta">
-                <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
-                Donner mon avis
-              </a>
-            </div>
-
-          </aside><!-- /rd-sidebar -->
-
-        </div><!-- /recipe-main-grid -->
       </div><!-- /recipe-main -->
 
       <!-- ══ LIGHTBOX ══ -->

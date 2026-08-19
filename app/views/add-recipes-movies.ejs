@@ -801,6 +801,66 @@
                 </div>
               </div>
 
+              <!-- Photos de préparation — optionnelles, jusqu'à 6, une par étape.
+                   Placées entre Ingrédients et Préparation : visibles dans le même
+                   champ de vision pendant la rédaction des étapes. -->
+              <div class="arm-editor arm-editor--steps">
+                <div class="arm-editor__header">
+                  <div class="arm-editor__icon">
+                    <i data-lucide="images" stroke-width="1.8" aria-hidden="true"></i>
+                  </div>
+                  <span class="arm-editor__title">PHOTOS</span>
+                  <span class="arm-editor__hint">Optionnel</span>
+                </div>
+                <div class="arm-editor__guide" role="note">
+                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+                  <span>Jusqu'à 6 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre d'ajout n'a pas d'importance. 8 Mo max/photo.</span>
+                </div>
+                <div class="arm-editor__body arm-editor__body--steps">
+                  <div class="arm-upload-grid arm-upload-grid--steps arm-upload-grid--steps-vert" id="arm-stepUploadGrid">
+                    <% for (let i = 1; i <= 6; i++) { %>
+                    <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>">
+                      <input
+                        type="file"
+                        name="stepPicture<%= i %>"
+                        id="stepPictureInput<%= i %>"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        class="arm-upload-slot__input"
+                      />
+                      <div class="arm-step-num-field" title="Numéro de l'étape illustrée">
+                        <label for="stepNumber<%= i %>">Étape n°</label>
+                        <input
+                          type="number"
+                          name="stepNumber<%= i %>"
+                          id="stepNumber<%= i %>"
+                          class="arm-step-num-input"
+                          min="1"
+                          max="50"
+                          value="<%= i %>"
+                        />
+                      </div>
+                      <div class="arm-upload-slot__ico">
+                        <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
+                      </div>
+                      <span class="arm-upload-slot__lbl">Photo</span>
+                      <div class="arm-upload-slot__prev" id="arm-stepPrev<%= i %>"></div>
+                      <div class="arm-upload-slot__acts">
+                        <button class="arm-slot-act" type="button" id="arm-stepChg<%= i %>" title="Changer">
+                          <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
+                        </button>
+                        <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-stepDel<%= i %>" title="Supprimer">
+                          <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+                  <p id="arm-step-dup-warn" class="arm-ratio-warn" style="display:none">
+                    ⚠ Deux photos sont assignées au même numéro d'étape.
+                  </p>
+                </div>
+              </div>
+
               <!-- Préparation -->
               <div class="arm-editor">
                 <div class="arm-editor__header">
@@ -1106,6 +1166,113 @@
             else if (photoCount === 2) lblEl.textContent = '2 photos ajoutées — Vous pouvez en ajouter 1 de plus';
             else lblEl.textContent = '3 photos ajoutées ✓';
           }
+        }
+      })();
+    </script>
+
+    <!-- Photos de préparation — 6 slots optionnels, format libre (pas de contrôle de ratio) -->
+    <script>
+      (function () {
+        var toastEl = document.getElementById('arm-upload-toast');
+
+        function showStepToast(message, slot) {
+          if (!toastEl) return;
+          var msgEl = document.getElementById('arm-toast-msg');
+          if (msgEl) msgEl.textContent = message;
+          toastEl.classList.remove('is-hidden', 'is-hiding');
+          if (slot) {
+            slot.classList.remove('has-error');
+            void slot.offsetWidth;
+            slot.classList.add('has-error');
+            setTimeout(function () { slot.classList.remove('has-error'); }, 800);
+          }
+          clearTimeout(showStepToast._t);
+          showStepToast._t = setTimeout(function () {
+            toastEl.classList.add('is-hiding');
+            setTimeout(function () {
+              toastEl.classList.remove('is-hiding');
+              toastEl.classList.add('is-hidden');
+            }, 260);
+          }, 5000);
+        }
+
+        function checkDuplicateSteps() {
+          var warnEl = document.getElementById('arm-step-dup-warn');
+          var seen = {};
+          var dup = false;
+          for (var i = 1; i <= 6; i++) {
+            var slot = document.getElementById('arm-stepSlot' + i);
+            var numInput = document.getElementById('stepNumber' + i);
+            if (!slot || !numInput || !slot.classList.contains('has-photo')) continue;
+            var v = numInput.value;
+            if (seen[v]) dup = true;
+            seen[v] = true;
+          }
+          if (warnEl) warnEl.style.display = dup ? '' : 'none';
+        }
+
+        for (var n = 1; n <= 6; n++) {
+          (function (n) {
+            var slot = document.getElementById('arm-stepSlot' + n);
+            var input = document.getElementById('stepPictureInput' + n);
+            var prev = document.getElementById('arm-stepPrev' + n);
+            var chgBtn = document.getElementById('arm-stepChg' + n);
+            var delBtn = document.getElementById('arm-stepDel' + n);
+            var numInput = document.getElementById('stepNumber' + n);
+            if (!slot || !input || !prev) return;
+
+            slot.addEventListener('click', function (e) {
+              if (chgBtn && (e.target === chgBtn || chgBtn.contains(e.target))) return;
+              if (delBtn && (e.target === delBtn || delBtn.contains(e.target))) return;
+              if (numInput && (e.target === numInput || numInput.contains(e.target))) return;
+              if (!slot.classList.contains('has-photo')) input.click();
+            });
+
+            if (chgBtn) chgBtn.addEventListener('click', function (e) { e.stopPropagation(); input.click(); });
+
+            if (delBtn) {
+              delBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (!slot.classList.contains('has-photo')) return;
+                input.value = '';
+                prev.style.backgroundImage = '';
+                prev.classList.remove('on');
+                slot.classList.remove('has-photo');
+                checkDuplicateSteps();
+              });
+            }
+
+            if (numInput) {
+              numInput.addEventListener('click', function (e) { e.stopPropagation(); });
+              numInput.addEventListener('change', checkDuplicateSteps);
+            }
+
+            input.addEventListener('change', function (e) {
+              var file = e.target.files[0];
+              if (!file) return;
+              var ok = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+              if (!ok.includes(file.type)) {
+                showStepToast('Format non supporté. Utilisez JPG, PNG ou WEBP.', slot);
+                input.value = '';
+                return;
+              }
+              if (file.size > 8 * 1024 * 1024) {
+                showStepToast('Fichier trop volumineux (max 8 Mo par photo).', slot);
+                input.value = '';
+                return;
+              }
+              // Pas de contrôle de ratio : une photo de préparation peut être
+              // carrée, portrait ou paysage (contrairement aux 3 photos principales).
+              var reader = new FileReader();
+              reader.onload = function (ev) {
+                prev.style.backgroundImage = 'url("' + ev.target.result + '")';
+                prev.classList.add('on');
+                slot.classList.add('has-photo');
+                checkDuplicateSteps();
+              };
+              reader.readAsDataURL(file);
+            });
+          })(n);
         }
       })();
     </script>

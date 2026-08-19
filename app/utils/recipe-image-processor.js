@@ -138,6 +138,95 @@ export async function processRecipeImages(files) {
   return processed;
 }
 
+/**
+ * Traite les photos de préparation (une par étape, optionnelles) — pipeline
+ * allégé par rapport à processRecipeImages() : pas de validation de ratio
+ * (une photo d'étape peut légitimement être carrée, portrait ou paysage,
+ * contrairement aux 3 photos principales qui exigent un format paysage
+ * strict pour la galerie/le hero). `fit: "inside"` préserve l'orientation
+ * d'origine au lieu de forcer un recadrage 3:2 — le cadrage en vignette est
+ * géré côté CSS (object-fit: cover) sur la page recette, tandis que la
+ * lightbox affiche l'image complète, non recadrée.
+ *
+ * @param {Express.Multer.File[]} files
+ * @returns {Promise<{relPath: string, filename: string}[]>}
+ */
+export async function processStepImages(files) {
+  const processed = [];
+
+  for (const file of files) {
+    let meta;
+    try {
+      meta = await sharp(file.path).metadata();
+    } catch (error) {
+      console.error("Step image invalid metadata:", {
+        filename: file.originalname,
+        path: file.path,
+        error: error.stack || error,
+      });
+      cleanupFiles([file]);
+      const err = new Error("invalid_image");
+      err.filename = file.originalname;
+      err.originalError = error;
+      throw err;
+    }
+
+    if (!meta?.width || !meta?.height) {
+      console.error("Step image invalid dimensions:", {
+        filename: file.originalname,
+        metadata: meta,
+      });
+      cleanupFiles([file]);
+      const err = new Error("invalid_image");
+      err.filename = file.originalname;
+      throw err;
+    }
+
+    let buffer;
+    try {
+      buffer = await sharp(file.path)
+        .resize(1000, 1000, { fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 78 })
+        .toBuffer();
+
+      fs.unlink(file.path, () => {});
+    } catch (error) {
+      console.error("Step image processing failed:", {
+        filename: file.originalname,
+        error: error.stack || error,
+      });
+      cleanupFiles([file]);
+      const err = new Error("image_processing");
+      err.filename = file.originalname;
+      err.originalError = error;
+      throw err;
+    }
+
+    let cloudinaryResult;
+    try {
+      cloudinaryResult = await uploadBufferToCloudinary(buffer, {
+        folder: "cinedelices/recipes",
+      });
+    } catch (error) {
+      console.error("Step image Cloudinary upload failed:", {
+        filename: file.originalname,
+        error: error.stack || error,
+      });
+      const err = new Error("image_processing");
+      err.filename = file.originalname;
+      err.originalError = error;
+      throw err;
+    }
+
+    processed.push({
+      relPath: cloudinaryResult.secure_url,
+      filename: file.originalname,
+    });
+  }
+
+  return processed;
+}
+
 /** Supprime les fichiers temporaires Multer encore sur disque (nettoyage d'urgence) */
 export function cleanupFiles(files) {
   if (!files || files.length === 0) return;
