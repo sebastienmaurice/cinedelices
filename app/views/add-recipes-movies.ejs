@@ -685,65 +685,6 @@
               </span>
             </div>
 
-            <!-- Photos de préparation — optionnelles, jusqu'à 6, une par étape -->
-            <div class="arm-field">
-              <label class="arm-label">
-                <i data-lucide="images" aria-hidden="true"></i>
-                Photos de préparation
-                <span class="arm-optional">(optionnel)</span>
-              </label>
-
-              <div class="arm-photos-info">
-                <i data-lucide="circle-alert" width="14" height="14" stroke-width="2" aria-hidden="true" style="flex-shrink:0;margin-top:2px"></i>
-                <span>
-                  Illustrez jusqu'à 6 étapes de votre préparation (facultatif, n'importe quel format accepté). Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre dans lequel vous les ajoutez ici n'a pas d'importance. Taille max : 8 Mo par photo.
-                </span>
-              </div>
-
-              <div class="arm-upload-grid arm-upload-grid--steps" id="arm-stepUploadGrid">
-                <% for (let i = 1; i <= 6; i++) { %>
-                <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>">
-                  <input
-                    type="file"
-                    name="stepPicture<%= i %>"
-                    id="stepPictureInput<%= i %>"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    class="arm-upload-slot__input"
-                  />
-                  <div class="arm-step-num-field" title="Numéro de l'étape illustrée">
-                    <label for="stepNumber<%= i %>">Étape n°</label>
-                    <input
-                      type="number"
-                      name="stepNumber<%= i %>"
-                      id="stepNumber<%= i %>"
-                      class="arm-step-num-input"
-                      min="1"
-                      max="50"
-                      value="<%= i %>"
-                    />
-                  </div>
-                  <div class="arm-upload-slot__ico">
-                    <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
-                  </div>
-                  <span class="arm-upload-slot__lbl">Photo</span>
-                  <div class="arm-upload-slot__prev" id="arm-stepPrev<%= i %>"></div>
-                  <div class="arm-upload-slot__acts">
-                    <button class="arm-slot-act" type="button" id="arm-stepChg<%= i %>" title="Changer">
-                      <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
-                    </button>
-                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-stepDel<%= i %>" title="Supprimer">
-                      <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
-                    </button>
-                  </div>
-                </div>
-                <% } %>
-              </div><!-- /arm-upload-grid--steps -->
-
-              <p id="arm-step-dup-warn" class="arm-ratio-warn" style="display:none">
-                ⚠ Deux photos sont assignées au même numéro d'étape — une seule sera visible sur la fiche recette.
-              </p>
-            </div>
-
             <!-- Contexte cinématographique -->
             <div class="arm-field">
               <label for="recipe-context" class="arm-label">
@@ -857,6 +798,66 @@
                 </div>
                 <div class="arm-editor__footer">
                   <span class="arm-line-counter"><span id="ingCount">0</span> ingrédient(s)</span>
+                </div>
+              </div>
+
+              <!-- Photos de préparation — optionnelles, jusqu'à 6, une par étape.
+                   Placées entre Ingrédients et Préparation : visibles dans le même
+                   champ de vision pendant la rédaction des étapes. -->
+              <div class="arm-editor arm-editor--steps">
+                <div class="arm-editor__header">
+                  <div class="arm-editor__icon">
+                    <i data-lucide="images" stroke-width="1.8" aria-hidden="true"></i>
+                  </div>
+                  <span class="arm-editor__title">PHOTOS</span>
+                  <span class="arm-editor__hint">Optionnel</span>
+                </div>
+                <div class="arm-editor__guide" role="note">
+                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+                  <span>Jusqu'à 6 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre d'ajout n'a pas d'importance. 8 Mo max/photo.</span>
+                </div>
+                <div class="arm-editor__body arm-editor__body--steps">
+                  <div class="arm-upload-grid arm-upload-grid--steps arm-upload-grid--steps-vert" id="arm-stepUploadGrid">
+                    <% for (let i = 1; i <= 6; i++) { %>
+                    <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>">
+                      <input
+                        type="file"
+                        name="stepPicture<%= i %>"
+                        id="stepPictureInput<%= i %>"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        class="arm-upload-slot__input"
+                      />
+                      <div class="arm-step-num-field" title="Numéro de l'étape illustrée">
+                        <label for="stepNumber<%= i %>">Étape n°</label>
+                        <input
+                          type="number"
+                          name="stepNumber<%= i %>"
+                          id="stepNumber<%= i %>"
+                          class="arm-step-num-input"
+                          min="1"
+                          max="50"
+                          value="<%= i %>"
+                        />
+                      </div>
+                      <div class="arm-upload-slot__ico">
+                        <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
+                      </div>
+                      <span class="arm-upload-slot__lbl">Photo</span>
+                      <div class="arm-upload-slot__prev" id="arm-stepPrev<%= i %>"></div>
+                      <div class="arm-upload-slot__acts">
+                        <button class="arm-slot-act" type="button" id="arm-stepChg<%= i %>" title="Changer">
+                          <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
+                        </button>
+                        <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-stepDel<%= i %>" title="Supprimer">
+                          <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+                  <p id="arm-step-dup-warn" class="arm-ratio-warn" style="display:none">
+                    ⚠ Deux photos sont assignées au même numéro d'étape.
+                  </p>
                 </div>
               </div>
 
