@@ -53,8 +53,9 @@ export async function runStartupMigration() {
       ALTER TABLE movies ADD COLUMN IF NOT EXISTS composer       VARCHAR(255) NULL;
       ALTER TABLE movies ADD COLUMN IF NOT EXISTS main_cast      VARCHAR(500) NULL;
       ALTER TABLE movies ADD COLUMN IF NOT EXISTS tmdb_synced_at TIMESTAMP    NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS runtime        INT          NULL;
     `);
-    console.log("✅ Migration movies.tmdb_rating/trailer_key/director/composer/main_cast OK");
+    console.log("✅ Migration movies.tmdb_rating/trailer_key/director/composer/main_cast/runtime OK");
   } catch (err) {
     console.error("⚠️  Migration movies TMDB details :", err.message);
   }

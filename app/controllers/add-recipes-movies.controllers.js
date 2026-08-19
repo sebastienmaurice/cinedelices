@@ -24,7 +24,7 @@ function acceptsJson(req) {
  */
 function extractStepFiles(req) {
   const entries = [];
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 8; i++) {
     const file = req.files?.[`stepPicture${i}`]?.[0];
     if (!file) continue;
     const raw = parseInt(req.body?.[`stepNumber${i}`], 10);

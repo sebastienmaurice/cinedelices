@@ -761,13 +761,12 @@ body.recipe-page main {
 }
 .rd-inspiration__text {
   display: flex; flex-direction: column; justify-content: center; gap: 12px;
-  font-size: .92rem; font-weight: 300; line-height: 1.85;
-  color: rgba(232,232,232,.75);
+  font-family: var(--f-editorial); font-style: italic;
+  font-size: .9rem; font-weight: 400; line-height: 1.7;
+  color: rgba(255,255,255,.85);
 }
-.rd-inspiration__text p:first-child {
-  font-family: var(--f-title); font-style: italic; font-size: 1.02rem;
-  color: rgba(255,232,168,.9);
-}
+.rd-inspiration__text p:first-child::before { content: "« "; }
+.rd-inspiration__text p:last-child::after { content: " »"; }
 .rd-inspiration__media {
   border-radius: 10px; overflow: hidden; cursor: zoom-in;
   border: 1px solid rgba(196,160,82,.16);
@@ -987,6 +986,86 @@ body.recipe-page main {
 .global-note { font-family: var(--f-display); font-size: 2.6rem; letter-spacing: .06em; color: var(--bleu-nuit); line-height: 1; }
 .global-note__max { font-size: 1rem; color: rgba(20,10,0,.38); }
 .global-note__lbl { font-family: var(--f-title); font-size: .58rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(20,10,0,.36); }
+
+/* ── Bannière dorée — variante verticale (colonne "Le film") ── */
+.avis-banner--vertical { margin-bottom: 0; }
+.avis-banner__inner--vertical {
+  display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 24px 26px; position: relative; z-index: 5;
+}
+.avis-banner__title--vertical { font-size: 3.2rem; }
+.avis-banner--vertical .avis-banner__sub { margin-bottom: 10px; }
+.avis-banner__eyebrow--vertical { justify-content: center; }
+.avis-banner__eyebrow--vertical::after { content: ""; display: block; width: 20px; height: 1px; background: rgba(20,10,0,.28); }
+/* Perforation horizontale "ticket" — en flux normal (pas de position absolute)
+   afin de rester au bon endroit quel que soit le nombre d'avis affichés. */
+.avis-banner__tear--vertical {
+  position: relative; top: auto; left: auto; right: auto;
+  width: calc(100% + 52px); margin: 12px -26px; height: 1px;
+  background: repeating-linear-gradient(90deg,rgba(20,10,0,.2) 0,rgba(20,10,0,.2) 6px,transparent 6px,transparent 12px);
+}
+.avis-banner__tear--vertical::before,.avis-banner__tear--vertical::after {
+  content: ""; position: absolute; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bleu-nuit); box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+}
+.avis-banner__tear--vertical::before { left: -7px; }
+.avis-banner__tear--vertical::after  { right: -7px; left: auto; }
+.avis-banner__note--vertical {
+  flex-direction: row; align-items: center; text-align: left; padding: 0 0 0 28px; margin: 0 0 12px; gap: 16px;
+}
+.avis-banner__note--vertical .global-note { font-size: 3.6rem; }
+.avis-banner__note-meta { display: flex; flex-direction: column; gap: 6px; }
+.avis-banner__note--vertical .global-stars { font-size: 1.55rem; }
+.avis-banner__note--vertical .global-note__lbl {
+  font-family: var(--f-editorial); font-style: italic; font-weight: 400;
+  font-size: .78rem; letter-spacing: normal; text-transform: none; color: rgba(20,10,0,.55);
+}
+.avis-banner--vertical .avis-distrib { margin-top: 0; gap: 4px; }
+.avis-banner--vertical .distrib-row { grid-template-columns: 36px 1fr 32px; }
+.avis-banner--vertical .distrib-bar-track { background: rgba(20,10,0,.22); }
+.avis-banner__thanks {
+  display: flex; align-items: center; gap: 10px; margin-top: 24px;
+  font-family: var(--f-editorial); font-style: italic; font-size: .8rem;
+  color: rgba(20,10,0,.62); text-decoration: none;
+}
+.avis-banner--vertical .avis-banner__thanks { margin-top: 14px; margin-bottom: 80px; padding-top: 0; border-top: none; }
+.avis-banner__thanks-icon {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--bleu-nuit); border: 1.5px solid rgba(20,10,0,.2);
+  color: var(--or-titre);
+  font-size: 1rem;
+}
+
+/* ── Derniers avis (aperçu) ── */
+.rd-derniers-avis__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+.rd-derniers-avis__head .rd-combo-col__title { margin-bottom: 0; }
+.rd-derniers-avis__link {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  font-family: var(--f-title); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--or-titre); text-decoration: none; transition: gap .2s, color .2s;
+}
+.rd-derniers-avis__link:hover { gap: 9px; color: #fff; }
+.rd-derniers-avis__list { display: flex; flex-direction: column; }
+.rd-derniers-avis__item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(196,160,82,.08); }
+.rd-derniers-avis__item:last-child { border-bottom: none; padding-bottom: 0; }
+.rd-derniers-avis__item:first-child { padding-top: 0; }
+.rd-derniers-avis__avatar {
+  width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  border: 2px solid rgba(196,160,82,.3);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(196,160,82,.5); background: rgba(196,160,82,.06);
+}
+.rd-derniers-avis__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.rd-derniers-avis__body { flex: 1; min-width: 0; }
+.rd-derniers-avis__item-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 5px; }
+.rd-derniers-avis__item-name { font-size: .85rem; font-weight: 600; color: rgba(232,232,232,.9); }
+.rd-derniers-avis__item-stars { font-size: .68rem; letter-spacing: 1px; }
+.rd-derniers-avis__item-stars .s { color: var(--or-titre); }
+.rd-derniers-avis__item-stars .se { color: rgba(196,160,82,.2); }
+.rd-derniers-avis__item-date { font-size: .64rem; color: rgba(196,160,82,.4); margin-left: auto; }
+.rd-derniers-avis__item-text { font-size: .82rem; font-weight: 300; line-height: 1.6; color: rgba(232,232,232,.65); }
+.rd-derniers-avis__empty { font-size: .82rem; color: rgba(232,232,232,.5); font-style: italic; }
 
 /* Grille avis */
 .avis-grid {
@@ -1344,7 +1423,7 @@ body.recipe-page main {
 /* Liste ingrédients avec checkboxes */
 .rd-ing-list { display: flex; flex-direction: column; }
 .rd-ing-item {
-  display: flex; align-items: center; gap: 10px; padding: 9px 4px;
+  display: flex; align-items: flex-start; gap: 10px; padding: 9px 4px;
   border-bottom: 1px solid rgba(196,160,82,.07);
   cursor: pointer;
   transition: background .15s, padding-left .15s;
@@ -1363,6 +1442,7 @@ body.recipe-page main {
   background: transparent; display: flex; align-items: center; justify-content: center;
   transition: all .2s ease; color: transparent;
   cursor: pointer;
+  margin-top: 1px; /* aligne visuellement avec la 1ère ligne du texte, même si celui-ci s'enroule sur 2 lignes */
 }
 .rd-ing-chk svg { width: 11px; height: 11px; }
 .rd-ing-item:hover .rd-ing-chk { border-color: var(--or-titre); background: rgba(196,160,82,.06); }
@@ -1375,10 +1455,14 @@ body.recipe-page main {
   font-size: .78rem; font-weight: 300; color: rgba(255,232,168,.7); line-height: 1.45;
   flex: 1; transition: color .2s, opacity .2s;
 }
-/* Ligne "quantité + nom" alignée en 2 colonnes (best-effort, cf. splitIngredient) */
+/* Quantité + nom sur une même ligne (best-effort, cf. splitIngredient) —
+   la quantité reste compacte et se colle au nom, sans colonne de largeur fixe
+   qui laisserait un espace vide avant le nom quand la quantité est courte (ex. "1"). */
+.rd-ing-item__body { display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 5px; flex: 1; min-width: 0; }
 .rd-ing-qty {
-  font-size: .74rem; font-weight: 600; color: rgba(196,160,82,.85);
-  flex: 0 0 auto; min-width: 74px; white-space: nowrap;
+  flex-shrink: 0;
+  font-size: .68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: rgba(196,160,82,.65);
 }
 .rd-ing-item--split .rd-ing-text { color: rgba(232,232,232,.82); font-weight: 400; }
 .rd-ing-item.is-checked .rd-ing-qty { color: rgba(196,160,82,.3); }
@@ -1580,6 +1664,216 @@ body.recipe-page main {
 body.lightbox-open { overflow: hidden; }
 
 /* ====================================================== */
+/* 13bis. GRILLE 3 COLONNES (galerie+auteur / ingrédients+
+   inspiration / étapes+photos / film+avis)                */
+/* ====================================================== */
+
+.rd-3col-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+.rd-top-row { margin-bottom: 24px; align-items: stretch; }
+.rd-author-xp-block { display: flex; flex-direction: column; }
+.rd-gallery-block { grid-column: 1 / 3; }
+.rd-content-row { margin-bottom: 52px; }
+.rd-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+/* Panneau générique — remplace le chrome de .rd-combo-card pour des
+   colonnes indépendantes (plus de carte commune partagée entre colonnes). */
+.rd-panel {
+  background: rgba(13,27,42,.4);
+  border: 1px solid rgba(196,160,82,.12);
+  border-radius: 14px;
+  padding: 22px;
+}
+.rd-panel--ingredients .rd-ingredients__header {
+  margin-bottom: 4px;
+}
+.rd-panel--ingredients .rd-ingredients__title {
+  flex: 1; min-width: 0; letter-spacing: .02em;
+  font-size: 1.1rem !important;
+}
+/* Compacté pour tenir sur la même ligne que le titre dans la colonne étroite */
+.rd-panel--ingredients .rd-ing-portions-ctrl { margin-left: auto; gap: 4px; flex-shrink: 0; }
+.rd-panel--ingredients .rd-srv-btn { width: 18px; height: 18px; font-size: .72rem; }
+.rd-panel--ingredients .rd-ing-portions-ctrl__val { font-size: .72rem; white-space: nowrap; }
+.rd-panel--ingredients .rd-ingredients__sub { margin: 0 0 14px 48px; }
+
+/* Icône devant le titre — même style que .rd-ingredients__icon, réutilisée
+   pour Étapes, Film, Avis et Inspiration (cohérence visuelle entre panneaux). */
+.rd-panel__head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.rd-panel__icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: rgba(196,160,82,.12); border: 1px solid rgba(196,160,82,.28);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--or-titre); flex-shrink: 0;
+}
+.rd-panel__head .rd-combo-col__eye { margin-bottom: 2px; }
+.rd-panel__head .rd-combo-col__title { margin-bottom: 0; }
+
+/* ── Auteur + XP condensé ── */
+.rd-author-xp-block { grid-column: 3; }
+.rd-author-xp-card {
+  display: flex; flex-direction: column; gap: 14px; justify-content: center;
+  flex: 1; /* étire la carte pour occuper toute la hauteur disponible du bloc (cf. .rd-author-xp-block) */
+  background: rgba(13,27,42,.4);
+  border: 1px solid rgba(196,160,82,.14);
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-decoration: none;
+  transition: border-color .25s, background .25s;
+}
+.rd-author-xp-card:hover { border-color: rgba(196,160,82,.32); background: rgba(13,27,42,.6); }
+.rd-author-xp-card__head { display: flex; align-items: center; gap: 12px; }
+.rd-author-xp-card .rd-author-avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid rgba(196,160,82,.35); }
+.rd-author-xp-card .rd-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.rd-author-xp-card__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rd-author-xp-card__bar { display: flex; align-items: center; gap: 10px; }
+.rd-author-xp-card__lvl {
+  font-family: var(--f-title); font-size: .6rem; font-weight: 700;
+  color: var(--or-titre); white-space: nowrap;
+}
+.rd-author-xp-track {
+  flex: 1; height: 6px; border-radius: 3px; overflow: hidden;
+  background: rgba(196,160,82,.1);
+}
+.rd-author-xp-track .xp-fill {
+  height: 100%; border-radius: 3px;
+  background: var(--gold-gradient-h);
+  transition: width .6s cubic-bezier(.22,1,.36,1);
+}
+.rd-author-xp-card__pct { font-size: .58rem; color: rgba(196,160,82,.55); white-space: nowrap; }
+.rd-author-xp-card__frames { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(196,160,82,.1); }
+.rd-author-frames-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.rd-author-frame-pill {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid rgba(196,160,82,.3);
+  background-color: rgba(196,160,82,.07);
+  background-size: cover; background-position: center;
+  font-size: .78rem; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), border-color .25s;
+}
+.rd-author-xp-card:hover .rd-author-frame-pill { border-color: rgba(196,160,82,.5); }
+.rd-author-xp-card__frames-lbl { font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(196,160,82,.4); }
+
+/* ── Étapes + photos, panneau unique ── */
+.rd-steps-photos-eye { margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(196,160,82,.1); }
+.rd-steps-photos-grid--flow {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;
+}
+
+/* ── Film (colonne 3) ── */
+.rd-movie-poster--col3 { width: 100%; }
+.rd-film-score {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 14px; padding: 10px 12px; border-radius: 10px;
+  background: rgba(76,175,80,.06); border: 1px solid rgba(76,175,80,.22);
+}
+.rd-film-score__stars { font-size: .8rem; letter-spacing: 1px; }
+.rd-film-score__stars .s { color: #7ed88a; }
+.rd-film-score__stars .sh { color: rgba(196,160,82,.2); }
+.rd-film-score__val { font-size: .68rem; font-weight: 600; color: rgba(232,232,232,.7); white-space: nowrap; }
+.rd-film-score__val em { font-style: normal; color: rgba(196,160,82,.5); font-size: .6rem; }
+.rd-film-info-table { margin-top: 14px; display: flex; flex-direction: column; }
+.rd-film-info-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 8px 0; border-bottom: 1px solid rgba(196,160,82,.08);
+  font-size: .78rem;
+}
+.rd-film-info-row:last-child { border-bottom: none; }
+.rd-film-info-row span { color: rgba(196,160,82,.55); flex-shrink: 0; }
+.rd-film-info-row strong { color: rgba(232,232,232,.82); font-weight: 400; text-align: right; }
+.rd-panel--film .rd-movie-meta__trailer { margin-top: 16px; width: 100%; justify-content: center; }
+
+/* ── Aperçu des avis (colonne 3) ── */
+.rd-avis-preview__summary { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.rd-avis-preview__note {
+  font-family: var(--f-display); font-size: 1.8rem; color: var(--or-titre); line-height: 1;
+}
+.rd-avis-preview__note em { font-style: normal; font-size: .9rem; opacity: .5; margin-left: 2px; }
+.rd-avis-preview__count { font-size: .68rem; color: rgba(196,160,82,.5); margin-top: 3px; }
+.rd-avis-preview__list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+.rd-avis-preview__item { padding-bottom: 14px; border-bottom: 1px solid rgba(196,160,82,.08); }
+.rd-avis-preview__item:last-child { border-bottom: none; padding-bottom: 0; }
+.rd-avis-preview__item-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.rd-avis-preview__item-name { font-size: .74rem; font-weight: 600; color: rgba(232,232,232,.85); }
+.rd-avis-preview__item-stars { font-size: .62rem; letter-spacing: 1px; }
+.rd-avis-preview__item-stars .s { color: var(--or-titre); }
+.rd-avis-preview__item-stars .se { color: rgba(196,160,82,.2); }
+.rd-avis-preview__item-text {
+  font-size: .78rem; font-weight: 300; font-style: italic; color: rgba(232,232,232,.65);
+  line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rd-avis-preview__cta { width: 100%; justify-content: center; }
+
+/* ── Bannière avis + formulaire côte à côte ── */
+.rd-avis-row {
+  display: grid; grid-template-columns: 60fr 40fr; gap: 24px; align-items: stretch;
+  margin-bottom: 52px;
+}
+/* Bannière avis recréée pour la hauteur compacte de cette rangée (à côté
+   du formulaire) : watermark réduit, distribution des notes qui utilise
+   toute la largeur disponible plutôt qu'un espace vide à droite. */
+.rd-avis-row .avis-banner { margin-bottom: 0; height: 100%; display: flex; }
+.rd-avis-row .avis-banner::after { font-size: 4.5rem; bottom: -4px; right: 10px; }
+.rd-avis-row .avis-banner__title { font-size: clamp(1.3rem, 2vw, 1.7rem); margin-bottom: 4px; }
+.rd-avis-row .avis-banner__sub { font-size: .74rem; }
+.rd-avis-row .avis-banner__eyebrow { margin-bottom: 4px; }
+.rd-avis-row .avis-banner__inner {
+  grid-template-columns: 1fr auto; align-items: center;
+  padding: 28px 32px; gap: 24px; width: 100%;
+}
+.rd-avis-row .avis-banner__reel, .rd-avis-row .avis-banner__note, .rd-avis-row .avis-banner__stamp { display: none; }
+.rd-avis-row .avis-distrib { max-width: none; margin-top: 6px; }
+.rd-avis-row .distrib-row { grid-template-columns: 44px 1fr 24px; gap: 8px; }
+.rd-avis-row .avis-banner__stats { padding: 8px 24px; }
+.rd-avis-row .avis-stat__num { font-size: 1.9rem; }
+.rd-avis-row .avis-form-block { margin-bottom: 0; height: 100%; }
+.rd-avis-row .avis-form-block__inner { height: 100%; display: flex; flex-direction: column; }
+
+/* ── Recettes recommandées — carrousel défilant, jusqu'à 8 recettes ── */
+.rd-reco-section { margin-bottom: 52px; }
+.rd-reco-carousel-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
+.rd-reco-carousel {
+  display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth;
+  scroll-snap-type: x proximity; padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.rd-reco-carousel::-webkit-scrollbar { display: none; }
+.rd-reco-nav {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(13,27,42,.7); border: 1px solid rgba(196,160,82,.25);
+  color: var(--or-titre); cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.rd-reco-nav:hover { background: rgba(196,160,82,.15); border-color: rgba(196,160,82,.5); }
+.rd-reco-nav:disabled { opacity: .3; cursor: default; pointer-events: none; }
+.rd-reco-card {
+  display: block; text-decoration: none; flex: 0 0 260px; scroll-snap-align: start;
+  background: rgba(13,27,42,.4); border: 1px solid rgba(196,160,82,.12);
+  border-radius: 14px; overflow: hidden;
+  transition: transform .3s cubic-bezier(.22,1,.36,1), border-color .25s;
+}
+.rd-reco-card:hover { transform: translateY(-4px); border-color: rgba(196,160,82,.3); }
+.rd-reco-card__img { position: relative; aspect-ratio: 4/3; }
+.rd-reco-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rd-reco-card__cat {
+  position: absolute; top: 10px; left: 10px;
+  padding: 3px 10px; border-radius: 12px;
+  font-family: var(--f-title); font-size: .5rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  background: rgba(4,9,18,.75); color: var(--or-titre); border: 1px solid rgba(196,160,82,.3);
+}
+.rd-reco-card__body { padding: 14px 16px; }
+.rd-reco-card__name { font-family: var(--f-editorial); font-style: italic; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 3px; }
+.rd-reco-card__movie { font-size: .68rem; color: rgba(196,160,82,.55); margin-bottom: 8px; }
+.rd-reco-card__meta { display: flex; align-items: center; gap: 12px; font-size: .68rem; color: rgba(232,232,232,.5); }
+.rd-reco-card__meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ====================================================== */
 /* 14. RESPONSIVE                                         */
 /* ====================================================== */
 
@@ -1602,41 +1896,46 @@ body.lightbox-open { overflow: hidden; }
   .rh-tags { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
   .rh-tags::-webkit-scrollbar { display: none; }
   .rd-sidebar { position: static; }
-  .rd-steps-split,
-  .rd-combo-card.rd-steps-split { grid-template-columns: 1fr auto 300px; }
   .avis-grid { grid-template-columns: 1fr; }
   .avis-card--featured { grid-column: 1; grid-template-columns: 1fr; }
-  .avis-banner__inner { grid-template-columns: auto 1fr auto; gap: 24px; padding-right: 100px; }
+  .avis-banner__inner,
+  .rd-avis-row .avis-banner__inner { grid-template-columns: auto 1fr auto; gap: 24px; padding-right: 100px; }
   .avis-banner__note { display: none; }
+  .avis-banner__note.avis-banner__note--vertical { display: flex; } /* la variante verticale utilise ce bloc comme note principale, pas un doublon */
+  .rd-avis-row .avis-banner__reel { display: flex; }
+  .rd-avis-row .avis-banner__stamp { display: block; }
+  /* Grille 3 colonnes → empilée dès 1100px (trop étroit pour 3 pistes) */
+  .rd-3col-grid { grid-template-columns: 1fr; }
+  .rd-gallery-block { grid-column: 1; }
+  .rd-author-xp-block { grid-column: 1; }
+  .rd-avis-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
   .recipe-main { padding: 32px 1rem 60px; }
-  .avis-banner__inner { grid-template-columns: 1fr; padding: 28px 36px 28px 28px; gap: 18px; }
+  .avis-banner__inner,
+  .rd-avis-row .avis-banner__inner { grid-template-columns: 1fr; padding: 28px 36px 28px 28px; gap: 18px; }
   .avis-banner__reel { display: none; }
   .avis-banner__stats { flex-direction: row; border-left: none; border-right: none; border-top: 1px solid rgba(20,10,0,.13); padding: 14px 0 0; justify-content: flex-start; gap: 24px; }
   .avis-banner__note,.avis-banner__stamp { display: none; }
+  .avis-banner__note.avis-banner__note--vertical { display: flex; }
   .avis-form-block__inner { padding: 20px 20px 24px 24px; }
   .rd-context-section,.rd-steps-section,.rd-nav-actions,.avis-section,.rd-gallery-section { margin-bottom: 36px !important; }
   .rd-gallery { grid-template-columns: 1fr; }
   .rd-gallery__main { grid-column: 1; }
   .rd-steps-header-row { flex-direction: column; align-items: flex-start; }
-  /* Sections combo (Inspiration+Ingrédients, Étapes+Photos) empilées sur tablette/mobile */
-  .rd-combo-card { grid-template-columns: 1fr; }
-  .rd-combo-divider { width: auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(196,160,82,.2) 15%, rgba(196,160,82,.2) 85%, transparent); }
-  .rd-steps-split,
-  .rd-combo-card.rd-steps-split { grid-template-columns: 1fr; }
   .rd-combo-col__title-row { align-items: flex-start; }
-  .rd-steps-photos-grid { grid-template-columns: repeat(3, 1fr); }
-  .rd-inspiration__card { grid-template-columns: 1fr; }
-  .rd-inspiration__media { order: -1; min-height: 200px; }
-  .rd-inspiration__media.rd-movie-poster { display: none; } /* affiche redondante avec le hero sur petit écran */
+  .rd-steps-photos-grid--flow { grid-template-columns: repeat(3, 1fr); }
+  .rd-avis-row { grid-template-columns: 1fr; }
+  .rd-reco-card { flex-basis: 220px; }
 }
 @media (max-width: 540px) {
   .recipe-hero__media { height: 240px; }
   .recipe-hero__content { padding: 24px 1rem 0; }
   .rh-poster__stat { right: 1rem; }
   .rh-title { font-size: clamp(1.7rem,7vw,2.4rem); }
-  .rd-steps-photos-grid { grid-template-columns: repeat(2, 1fr); }
+  .rd-steps-photos-grid--flow { grid-template-columns: repeat(2, 1fr); }
+  .rd-reco-card { flex-basis: 200px; }
+  .rd-reco-nav { width: 32px; height: 32px; }
 }
 
 @media (max-width: 480px) {

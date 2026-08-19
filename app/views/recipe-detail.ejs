@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260826a" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260827n" />
   </head>
 
   <body class="recipe-page">
@@ -117,6 +117,12 @@
           if (!m) return null;
           return { qty: m[1].trim(), name: m[2].trim() };
         }
+
+        /* Répartition des notes (1-5 étoiles) — utilisée par la bannière
+           dorée, déplacée dans la colonne "Le film" (voir plus bas). */
+        const starCounts = [0, 0, 0, 0, 0];
+        if (notices) notices.forEach((n) => { const q = parseInt(n.quote); if (q >= 1 && q <= 5) starCounts[q - 1]++; });
+        const pct = (n) => (totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0);
       %>
 
       <!-- ══ BREADCRUMB ══ -->
@@ -262,107 +268,163 @@
       <div class="recipe-main">
           <div class="recipe-main-col">
 
-            <!-- ── AUTEUR ── -->
-            <% if (contributor) { %>
-            <a
-              class="rd-author-badge rd-author-badge--standalone"
-              href="/auteur/<%= contributor.id %>"
-              aria-label="Voir le profil de <%= contributorName %>"
-            >
-              <div class="rd-author-avatar">
-                <img src="<%= cldAvatar(contributorImage) %>" alt="<%= contributorName %>" loading="lazy" />
-              </div>
-              <div class="rd-author-info">
-                <span class="rd-author-label">Recette proposée par</span>
-                <span class="rd-author-name">
-                  <%= contributorName %>
-                  <% if (contributor.role === "admin" || contributor.role === "superadmin") { %>
-                  <span class="rd-author-official gamification-badge gamification-badge--official">✦ Ciné Délices</span>
-                  <% } %>
-                </span>
-              </div>
-              <span class="rd-author-arrow">›</span>
-            </a>
-            <% } %>
+            <%
+              const stepPhotoEntries = Object.keys(stepPicsMap).map(Number).sort((a, b) => a - b);
+              const galCount = [galPic1, galPic2, galPic3].filter(Boolean).length || 1;
+            %>
 
-            <!-- ── INSPIRATION + INGRÉDIENTS ── -->
-            <section class="rd-combo-section" aria-label="Inspiration et ingrédients">
-              <div class="rd-combo-card">
-                <div class="rd-combo-col rd-combo-col--inspiration">
-                  <% if (descriptionBlocks && descriptionBlocks.length) { %>
-                  <p class="rd-combo-col__eye">Anecdote</p>
-                  <h2 class="rd-combo-col__title rd-combo-col__title--sm">L'inspiration</h2>
-                  <div class="rd-inspiration__card">
-                    <div class="rd-inspiration__text">
-                      <% descriptionBlocks.forEach(p => { %>
-                      <p><%= p %></p>
-                      <% }) %>
-                    </div>
-                    <% if (movie) { %>
-                    <a
-                      href="/recipes-movie/<%= movie.slug || movie.id %>"
-                      class="rd-inspiration__media rd-movie-poster"
-                      style="background-image:url('<%= movieImage %>')"
-                      aria-label="Voir les recettes du film <%= movie.title %>"
-                    >
-                      <div class="rd-movie-poster__overlay"></div>
-                      <div class="rd-movie-poster__body">
-                        <span class="rd-movie-poster__eye">Film associé</span>
-                        <p class="rd-movie-poster__title"><%= movie.title %></p>
-                        <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
-                      </div>
-                      <span class="rd-movie-poster__cta">Voir les recettes →</span>
-                    </a>
-                    <% } %>
-                  </div>
-                  <% } %>
+            <!-- ═══ RANGÉE 1 : GALERIE + AUTEUR/XP ═══ -->
+            <div class="rd-3col-grid rd-top-row">
 
-                  <!-- Données TMDB (score, équipe technique, casting, bande-annonce) —
-                       attribution TMDB requise, voir partials/footer -->
-                  <% if (movie && (movie.tmdb_rating || movie.director || movie.composer || movie.main_cast || movie.trailer_key)) { %>
-                  <div class="rd-movie-meta">
-                    <% if (movie.tmdb_rating) { %>
-                    <div class="rd-movie-meta__score" title="Score TMDB">
-                      <span class="rd-movie-meta__score-val"><%= Math.round(movie.tmdb_rating * 10) %>%</span>
-                      <span class="rd-movie-meta__score-lbl">Score TMDB</span>
-                    </div>
-                    <% } %>
-                    <div class="rd-movie-meta__info">
-                      <% if (movie.director) { %><p><strong>Réalisateur</strong> <%= movie.director %></p><% } %>
-                      <% if (movie.composer) { %><p><strong>Compositeur</strong> <%= movie.composer %></p><% } %>
-                      <% if (movie.main_cast) { %><p><strong>Avec</strong> <%= movie.main_cast %></p><% } %>
-                    </div>
-                    <% if (movie.trailer_key) { %>
-                    <a
-                      href="https://www.youtube.com/watch?v=<%= movie.trailer_key %>"
-                      target="_blank" rel="noopener noreferrer"
-                      class="rd-movie-meta__trailer"
-                    >
-                      <i data-lucide="play-circle" width="15" height="15" aria-hidden="true"></i>
-                      Bande-annonce
-                    </a>
-                    <% } %>
-                  </div>
-                  <% } %>
+              <!-- Galerie (3 photos de la recette) -->
+              <div class="rd-gallery-block">
+                <div class="rd-sec-h">
+                  <p class="rd-sec-h__eye">Médias de la recette</p>
+                  <h2 class="rd-sec-h__title">La <span>Galerie</span></h2>
+                  <div class="rd-sec-h__rule"></div>
                 </div>
+                <div class="rd-combo-card rd-combo-card--single">
+                  <div class="rd-gallery rd-gallery--<%= galCount %>">
+                    <!-- Photo principale -->
+                    <div
+                      class="rd-gallery__main"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Agrandir la photo principale"
+                      data-lightbox-trigger
+                      data-lightbox-image="<%= cldFull(mainGalSrc) %>"
+                      data-lightbox-alt="Photo principale — <%= recipe.name %>"
+                    >
+                      <img src="<%= cldFull(mainGalSrc) %>" alt="Photo principale — <%= recipe.name %>" loading="lazy" />
+                      <div class="rd-gallery__label">
+                        <div class="rd-gallery__label-text">
+                          <span class="rd-gallery__label-num">01</span>
+                          <span class="rd-gallery__label-name">Photo principale</span>
+                        </div>
+                        <button class="rd-gallery__zoom" aria-label="Agrandir">
+                          <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
 
-                <div class="rd-combo-divider" aria-hidden="true"></div>
+                    <!-- Photo secondaire -->
+                    <% if (galPic2) { %>
+                    <div
+                      class="rd-gallery__secondary"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Agrandir la photo secondaire"
+                      data-lightbox-trigger
+                      data-lightbox-image="<%= cldFull(galPic2.file_path) %>"
+                      data-lightbox-alt="Photo secondaire — <%= recipe.name %>"
+                    >
+                      <img src="<%= cldFull(galPic2.file_path) %>" alt="Photo secondaire — <%= recipe.name %>" loading="lazy" />
+                      <div class="rd-gallery__label">
+                        <div class="rd-gallery__label-text">
+                          <span class="rd-gallery__label-num">02</span>
+                          <span class="rd-gallery__label-name">Photo secondaire</span>
+                        </div>
+                        <button class="rd-gallery__zoom" aria-label="Agrandir">
+                          <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
 
-                <div class="rd-combo-col rd-combo-col--ingredients">
+                    <!-- Photo détail -->
+                    <% if (galPic3) { %>
+                    <div
+                      class="rd-gallery__detail"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Agrandir la photo détail"
+                      data-lightbox-trigger
+                      data-lightbox-image="<%= cldFull(galPic3.file_path) %>"
+                      data-lightbox-alt="Photo détail — <%= recipe.name %>"
+                    >
+                      <img src="<%= cldFull(galPic3.file_path) %>" alt="Photo détail — <%= recipe.name %>" loading="lazy" />
+                      <div class="rd-gallery__label">
+                        <div class="rd-gallery__label-text">
+                          <span class="rd-gallery__label-num">03</span>
+                          <span class="rd-gallery__label-name">Photo détail</span>
+                        </div>
+                        <button class="rd-gallery__zoom" aria-label="Agrandir">
+                          <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Auteur + progression XP (version condensée du composant profil) -->
+              <% if (contributor) { %>
+              <div class="rd-author-xp-block">
+                <div class="rd-sec-h">
+                  <p class="rd-sec-h__eye">Contributeur</p>
+                  <h2 class="rd-sec-h__title">Créé <span>par</span></h2>
+                  <div class="rd-sec-h__rule"></div>
+                </div>
+              <a href="/auteur/<%= contributor.id %>" class="rd-author-xp-card" aria-label="Voir le profil de <%= contributorName %>">
+                <div class="rd-author-xp-card__head">
+                  <div class="rd-author-avatar">
+                    <img src="<%= cldAvatar(contributorImage) %>" alt="<%= contributorName %>" loading="lazy" />
+                  </div>
+                  <div class="rd-author-xp-card__info">
+                    <span class="rd-author-label">Recette proposée par</span>
+                    <span class="rd-author-name">
+                      <%= contributorName %>
+                      <% if (contributor.role === "admin" || contributor.role === "superadmin") { %>
+                      <span class="rd-author-official gamification-badge gamification-badge--official">✦ Ciné Délices</span>
+                      <% } %>
+                    </span>
+                  </div>
+                </div>
+                <div class="rd-author-xp-card__bar">
+                  <span class="rd-author-xp-card__lvl">Niv. <%= contributor.level %></span>
+                  <div class="xp-track rd-author-xp-track">
+                    <div class="xp-fill" style="width:<%= contributor.xpProgress.pct %>%"></div>
+                  </div>
+                  <span class="rd-author-xp-card__pct"><%= contributor.xpProgress.current %>/<%= contributor.xpProgress.span %> XP</span>
+                </div>
+                <% if (contributor.frames && contributor.frames.length) { %>
+                <div class="rd-author-xp-card__frames">
+                  <div class="rd-author-frames-row">
+                    <% contributor.frames.forEach((f) => { %>
+                    <span
+                      class="rd-author-frame-pill"
+                      title="<%= f.label %>"
+                      <% if (f.thumbUrl) { %>style="background-image:url('<%= f.thumbUrl %>')"<% } %>
+                    ><% if (!f.thumbUrl) { %><%= f.icon %><% } %></span>
+                    <% }) %>
+                  </div>
+                  <span class="rd-author-xp-card__frames-lbl">Cadres de contribution</span>
+                </div>
+                <% } %>
+              </a>
+              </div>
+              <% } %>
+            </div>
+
+            <!-- ═══ RANGÉE 2 : 3 COLONNES ═══ -->
+            <div class="rd-3col-grid rd-content-row">
+
+              <!-- COLONNE 1 : INGRÉDIENTS + INSPIRATION -->
+              <div class="rd-col rd-col--left">
+                <div class="rd-panel rd-panel--ingredients">
                   <div class="rd-ingredients__header">
                     <div class="rd-ingredients__icon">
                       <i data-lucide="shopping-basket" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
                     </div>
-                    <div>
-                      <div class="rd-ingredients__title rd-combo-col__title--sm">INGRÉDIENTS</div>
-                      <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
-                    </div>
+                    <div class="rd-ingredients__title rd-combo-col__title--sm">INGRÉDIENTS</div>
                     <div class="rd-ing-portions-ctrl">
                       <button class="rd-srv-btn" id="rd-srv-minus2" aria-label="Moins de portions" type="button">−</button>
                       <span class="rd-ing-portions-ctrl__val" id="rd-ing-portions-val" data-base="<%= displayServings %>"><%= displayServings %> pers.</span>
                       <button class="rd-srv-btn" id="rd-srv-plus2" aria-label="Plus de portions" type="button">+</button>
                     </div>
                   </div>
+                  <div class="rd-ingredients__sub"><%= ingredientsCount %> ingrédient<%= ingredientsCount > 1 ? 's' : '' %></div>
 
                   <div class="rd-ing-progress">
                     <div class="rd-ing-progress__bar">
@@ -383,8 +445,10 @@
                       <div class="rd-ing-chk" aria-hidden="true">
                         <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
                       </div>
-                      <span class="rd-ing-qty"><%= parsed.qty %></span>
-                      <span class="rd-ing-text"><%= parsed.name %></span>
+                      <div class="rd-ing-item__body">
+                        <span class="rd-ing-qty"><%= parsed.qty %></span>
+                        <span class="rd-ing-text"><%= parsed.name %></span>
+                      </div>
                     </div>
                     <% } else { %>
                     <div class="rd-ing-item" role="checkbox" aria-checked="false" tabindex="0">
@@ -402,17 +466,37 @@
                     <% } %>
                   </div>
                 </div>
-              </div>
-            </section>
 
-            <!-- ── PRÉPARATION ── -->
-            <section id="preparation" class="rd-steps-section" aria-label="Étapes de préparation">
-              <div class="rd-combo-card rd-steps-split">
-                <!-- Colonne gauche : liste des étapes (texte uniquement) -->
-                <div class="rd-combo-col">
-                  <p class="rd-combo-col__eye">Recette complète</p>
+                <% if (descriptionBlocks && descriptionBlocks.length) { %>
+                <div class="rd-panel rd-panel--inspiration">
+                  <div class="rd-panel__head">
+                    <div class="rd-panel__icon">
+                      <i data-lucide="sparkles" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                      <p class="rd-combo-col__eye">Anecdote</p>
+                      <h2 class="rd-combo-col__title rd-combo-col__title--sm">L'inspiration</h2>
+                    </div>
+                  </div>
+                  <div class="rd-inspiration__text">
+                    <% descriptionBlocks.forEach(p => { %>
+                    <p><%= p %></p>
+                    <% }) %>
+                  </div>
+                </div>
+                <% } %>
+              </div>
+
+              <!-- COLONNE 2 : ÉTAPES DE PRÉPARATION + PHOTOS -->
+              <div class="rd-col rd-col--center" id="preparation">
+                <div class="rd-panel rd-panel--steps">
                   <div class="rd-combo-col__title-row">
-                    <h3 class="rd-combo-col__title rd-combo-col__title--sm">Étapes de préparation</h3>
+                    <div class="rd-panel__head" style="margin-bottom:0">
+                      <div class="rd-panel__icon">
+                        <i data-lucide="chef-hat" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
+                      </div>
+                      <h3 class="rd-combo-col__title rd-combo-col__title--sm">Étapes de préparation</h3>
+                    </div>
                     <div class="rd-steps-header-row">
                       <div class="rd-steps-count">
                         <i data-lucide="clipboard-check" width="14" height="14" aria-hidden="true"></i>
@@ -450,17 +534,10 @@
                     </div>
                     <% } %>
                   </div>
-                </div>
 
-                <% const stepPhotoEntries = Object.keys(stepPicsMap).map(Number).sort((a, b) => a - b); %>
-                <% if (stepPhotoEntries.length) { %>
-                <div class="rd-combo-divider" aria-hidden="true"></div>
-
-                <!-- Colonne droite : photos de préparation (grille libre, numérotées) -->
-                <div class="rd-combo-col rd-combo-col--photos">
-                  <p class="rd-combo-col__eye">Aperçu</p>
-                  <h3 class="rd-combo-col__title rd-combo-col__title--sm">Photos de préparation</h3>
-                  <div class="rd-steps-photos-grid">
+                  <% if (stepPhotoEntries.length) { %>
+                  <p class="rd-combo-col__eye rd-steps-photos-eye">Aperçu — <%= stepPhotoEntries.length %> photo<%= stepPhotoEntries.length > 1 ? 's' : '' %> de la recette</p>
+                  <div class="rd-steps-photos-grid rd-steps-photos-grid--flow">
                     <% stepPhotoEntries.forEach((n) => { %>
                     <div class="rd-step-photo-cell">
                       <span class="rd-step-photo-num"><%= n %></span>
@@ -476,94 +553,118 @@
                     </div>
                     <% }) %>
                   </div>
+                  <% } %>
                 </div>
-                <% } %>
-              </div>
-            </section>
-
-            <!-- ── GALERIE PHOTOS ── -->
-            <div class="rd-gallery-section">
-              <div class="rd-sec-h">
-                <p class="rd-sec-h__eye">Médias de la recette</p>
-                <h2 class="rd-sec-h__title">La <span>Galerie</span></h2>
-                <div class="rd-sec-h__rule"></div>
               </div>
 
-              <%
-                const galCount = [galPic1, galPic2, galPic3].filter(Boolean).length || 1;
-              %>
-              <div class="rd-combo-card rd-combo-card--single">
-              <div class="rd-gallery rd-gallery--<%= galCount %>">
-                <!-- Photo principale -->
-                <div
-                  class="rd-gallery__main"
-                  role="button"
-                  tabindex="0"
-                  aria-label="Agrandir la photo principale"
-                  data-lightbox-trigger
-                  data-lightbox-image="<%= cldFull(mainGalSrc) %>"
-                  data-lightbox-alt="Photo principale — <%= recipe.name %>"
-                >
-                  <img src="<%= cldFull(mainGalSrc) %>" alt="Photo principale — <%= recipe.name %>" loading="lazy" />
-                  <div class="rd-gallery__label">
-                    <div class="rd-gallery__label-text">
-                      <span class="rd-gallery__label-num">01</span>
-                      <span class="rd-gallery__label-name">Photo principale</span>
+              <!-- COLONNE 3 : LE FILM + AVIS -->
+              <div class="rd-col rd-col--right">
+                <% if (movie) { %>
+                <div class="rd-panel rd-panel--film">
+                  <div class="rd-panel__head">
+                    <div class="rd-panel__icon">
+                      <i data-lucide="clapperboard" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
                     </div>
-                    <button class="rd-gallery__zoom" aria-label="Agrandir">
-                      <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
-                    </button>
+                    <div>
+                      <p class="rd-combo-col__eye">Film associé</p>
+                      <h3 class="rd-combo-col__title rd-combo-col__title--sm">Le film</h3>
+                    </div>
                   </div>
-                </div>
+                  <a
+                    href="/recipes-movie/<%= movie.slug || movie.id %>"
+                    class="rd-movie-poster rd-movie-poster--col3"
+                    style="background-image:url('<%= movieImage %>')"
+                    aria-label="Voir les recettes du film <%= movie.title %>"
+                  >
+                    <div class="rd-movie-poster__overlay"></div>
+                    <div class="rd-movie-poster__body">
+                      <p class="rd-movie-poster__title"><%= movie.title %></p>
+                      <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
+                    </div>
+                  </a>
 
-                <!-- Photo secondaire -->
-                <% if (galPic2) { %>
-                <div
-                  class="rd-gallery__secondary"
-                  role="button"
-                  tabindex="0"
-                  aria-label="Agrandir la photo secondaire"
-                  data-lightbox-trigger
-                  data-lightbox-image="<%= cldFull(galPic2.file_path) %>"
-                  data-lightbox-alt="Photo secondaire — <%= recipe.name %>"
-                >
-                  <img src="<%= cldFull(galPic2.file_path) %>" alt="Photo secondaire — <%= recipe.name %>" loading="lazy" />
-                  <div class="rd-gallery__label">
-                    <div class="rd-gallery__label-text">
-                      <span class="rd-gallery__label-num">02</span>
-                      <span class="rd-gallery__label-name">Photo secondaire</span>
+                  <% if (movie.tmdb_rating) { %>
+                  <div class="rd-film-score" title="Score TMDB">
+                    <% const _tmdbStars = Math.round(movie.tmdb_rating / 2); %>
+                    <div class="rd-film-score__stars">
+                      <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= _tmdbStars ? 's' : 'sh' %>">★</span><% } %>
                     </div>
-                    <button class="rd-gallery__zoom" aria-label="Agrandir">
-                      <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
-                    </button>
+                    <span class="rd-film-score__val"><%= movie.tmdb_rating %>/10 <em>TMDB</em></span>
                   </div>
+                  <% } %>
+
+                  <div class="rd-film-info-table">
+                    <% if (movie.director) { %><div class="rd-film-info-row"><span>Réalisateur</span><strong><%= movie.director %></strong></div><% } %>
+                    <% if (movie.composer) { %><div class="rd-film-info-row"><span>Compositeur</span><strong><%= movie.composer %></strong></div><% } %>
+                    <% if (movie.runtime) { %><div class="rd-film-info-row"><span>Durée</span><strong><%= Math.floor(movie.runtime / 60) %>h<%= String(movie.runtime % 60).padStart(2,'0') %></strong></div><% } %>
+                    <% if (movie.genre) { %><div class="rd-film-info-row"><span>Genre</span><strong><%= movie.genre %></strong></div><% } %>
+                    <% if (movie.year) { %><div class="rd-film-info-row"><span>Année</span><strong><%= movie.year %></strong></div><% } %>
+                    <% if (movie.main_cast) { %><div class="rd-film-info-row"><span>Avec</span><strong><%= movie.main_cast %></strong></div><% } %>
+                  </div>
+
+                  <% if (movie.trailer_key) { %>
+                  <a
+                    href="https://www.youtube.com/watch?v=<%= movie.trailer_key %>"
+                    target="_blank" rel="noopener noreferrer"
+                    class="rd-movie-meta__trailer"
+                  >
+                    <i data-lucide="play-circle" width="15" height="15" aria-hidden="true"></i>
+                    Bande-annonce
+                  </a>
+                  <% } %>
                 </div>
                 <% } %>
 
-                <!-- Photo détail -->
-                <% if (galPic3) { %>
-                <div
-                  class="rd-gallery__detail"
-                  role="button"
-                  tabindex="0"
-                  aria-label="Agrandir la photo détail"
-                  data-lightbox-trigger
-                  data-lightbox-image="<%= cldFull(galPic3.file_path) %>"
-                  data-lightbox-alt="Photo détail — <%= recipe.name %>"
-                >
-                  <img src="<%= cldFull(galPic3.file_path) %>" alt="Photo détail — <%= recipe.name %>" loading="lazy" />
-                  <div class="rd-gallery__label">
-                    <div class="rd-gallery__label-text">
-                      <span class="rd-gallery__label-num">03</span>
-                      <span class="rd-gallery__label-name">Photo détail</span>
+                <!-- Bannière dorée Golden Ticket — résumé des avis, format vertical -->
+                <div class="avis-banner avis-banner--vertical">
+                  <div class="avis-banner__shimmer"></div>
+                  <div class="avis-banner__inner avis-banner__inner--vertical">
+                    <p class="avis-banner__eyebrow avis-banner__eyebrow--vertical">Communauté</p>
+                    <h2 class="avis-banner__title avis-banner__title--vertical" id="avis-section-title">Avis de la<br/>communauté</h2>
+                    <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
+                    <div class="avis-banner__tear avis-banner__tear--vertical"></div>
+                    <div class="avis-banner__note avis-banner__note--vertical">
+                      <span class="global-note"><%= averageQuote || 0 %></span>
+                      <div class="avis-banner__note-meta">
+                        <div class="global-stars">
+                          <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
+                        </div>
+                        <span class="global-note__lbl">Note moyenne globale (<%= totalAvis %> avis)</span>
+                      </div>
                     </div>
-                    <button class="rd-gallery__zoom" aria-label="Agrandir">
-                      <i data-lucide="zoom-in" width="13" height="13" aria-hidden="true"></i>
-                    </button>
+                    <div class="avis-distrib">
+                      <div class="distrib-row">
+                        <span class="distrib-label">5 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[4]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">4 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[3]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">3 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[2]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">2 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[1]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">1 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[0]) %>%</span>
+                      </div>
+                    </div>
+                    <a href="#avis" class="avis-banner__thanks">
+                      <span class="avis-banner__thanks-icon">♡</span>
+                      Merci pour vos partages et votre enthousiasme !
+                    </a>
                   </div>
                 </div>
-                <% } %>
-              </div>
               </div>
             </div>
 
@@ -579,80 +680,93 @@
               </a>
             </div>
 
-            <!-- ══ BANNIÈRE AVIS ══ -->
-            <%
-              const starCounts = [0,0,0,0,0];
-              if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
-              const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
-            %>
-            <div class="rd-movie-avis-row">
-              <!-- Bannière dorée Golden Ticket -->
-              <div class="avis-banner">
-                <div class="avis-banner__tear"></div>
-                <div class="avis-banner__stamp">
-                  <div class="avis-banner__stamp-inner">CINÉ<br/>DÉLICES<br/>✦</div>
+            <!-- ══ DERNIERS AVIS + FORMULAIRE, côte à côte ══ -->
+            <div class="rd-avis-row">
+              <!-- Derniers avis (aperçu, renvoie vers la liste complète) -->
+              <div class="rd-panel rd-panel--derniers-avis">
+                <div class="rd-derniers-avis__head">
+                  <h2 class="rd-combo-col__title rd-combo-col__title--sm" id="avis-section-title">Derniers avis</h2>
+                  <a href="#avis" class="rd-derniers-avis__link">Voir tous les avis <i data-lucide="arrow-right" width="14" height="14" aria-hidden="true"></i></a>
                 </div>
-                <div class="avis-banner__shimmer"></div>
-                <div class="avis-banner__inner">
-                  <div class="avis-banner__reel">
-                    <span class="avis-banner__reel-icon">💬</span>
-                  </div>
-                  <div class="avis-banner__text">
-                    <p class="avis-banner__eyebrow">Communauté · Critiques &amp; Impressions</p>
-                    <h2 class="avis-banner__title" id="avis-section-title">AVIS DE LA COMMUNAUTÉ</h2>
-                    <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
-                    <div class="avis-distrib">
-                      <div class="distrib-row">
-                        <span class="distrib-label"><span class="fs">★</span> 5</span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
-                        <span class="distrib-count"><%= starCounts[4] %></span>
+                <% if (notices && notices.length > 0) { %>
+                <div class="rd-derniers-avis__list">
+                  <% notices.slice(0, 3).forEach((notice) => {
+                       const avatarSrc = notice.User && notice.User.picture ? notice.User.picture : null;
+                       const userName = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
+                       const nd = notice.createdAt ? new Date(notice.createdAt) : null;
+                       const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                  %>
+                  <div class="rd-derniers-avis__item">
+                    <div class="rd-derniers-avis__avatar">
+                      <% if (avatarSrc) { %>
+                      <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
+                      <% } else { %>
+                      <i data-lucide="user" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
+                      <% } %>
+                    </div>
+                    <div class="rd-derniers-avis__body">
+                      <div class="rd-derniers-avis__item-head">
+                        <span class="rd-derniers-avis__item-name"><%= userName %></span>
+                        <span class="rd-derniers-avis__item-stars">
+                          <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
+                        </span>
+                        <span class="rd-derniers-avis__item-date"><%= noticeDate %></span>
                       </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label"><span class="fs">★</span> 4</span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
-                        <span class="distrib-count"><%= starCounts[3] %></span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label"><span class="fs">★</span> 3</span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
-                        <span class="distrib-count"><%= starCounts[2] %></span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label"><span class="fs">★</span> 2</span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
-                        <span class="distrib-count"><%= starCounts[1] %></span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label"><span class="fs">★</span> 1</span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
-                        <span class="distrib-count"><%= starCounts[0] %></span>
-                      </div>
+                      <p class="rd-derniers-avis__item-text"><%= notice.content %></p>
                     </div>
                   </div>
-                  <div class="avis-banner__stats">
-                    <div class="avis-stat">
-                      <span class="avis-stat__num"><%= totalAvis %></span>
-                      <span class="avis-stat__lbl">Avis publiés</span>
-                    </div>
-                    <div class="avis-stat-sep"></div>
-                    <div class="avis-stat">
-                      <span class="avis-stat__num"><%= averageQuote || 0 %></span>
-                      <span class="avis-stat__lbl">Note moyenne</span>
+                  <% }) %>
+                </div>
+                <% } else { %>
+                <p class="rd-derniers-avis__empty">Aucun avis pour l'instant — soyez le premier à partager votre expérience !</p>
+                <% } %>
+              </div>
+
+              <!-- Formulaire / état non connecté -->
+              <div class="avis-form-block" id="avisFormBlock">
+                <div class="avis-form-block__inner">
+                  <div class="avis-form-block__head">
+                    <div class="avis-form-block__icon">✍️</div>
+                    <div>
+                      <h3 class="avis-form-block__title">LAISSER UN AVIS</h3>
+                      <p class="avis-form-block__sub">Partagez votre expérience avec la communauté</p>
                     </div>
                   </div>
-                  <div class="avis-banner__note">
-                    <div class="global-stars">
-                      <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
+                  <% if (typeof userId !== 'undefined' && userId) { %>
+                  <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
+                    <input type="hidden" id="avisQuoteInput" name="quote" value="" />
+                    <div class="star-picker">
+                      <span class="star-picker__lbl">Note :</span>
+                      <span class="star-pick" data-v="1">★</span>
+                      <span class="star-pick" data-v="2">★</span>
+                      <span class="star-pick" data-v="3">★</span>
+                      <span class="star-pick" data-v="4">★</span>
+                      <span class="star-pick" data-v="5">★</span>
                     </div>
-                    <div style="display:flex;align-items:baseline;gap:3px">
-                      <span class="global-note"><%= averageQuote || 0 %></span>
-                      <span class="global-note__max">/ 5</span>
+                    <div class="form-g">
+                      <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
+                      <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
                     </div>
-                    <span class="global-note__lbl">Note moyenne</span>
+                    <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
+                    <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
+                    <div class="form-actions">
+                      <span class="form-hint-global">Votre avis sera relu avant publication.</span>
+                      <button class="btn-submit-avis" type="submit" id="avisSubmitBtn">✦ Publier mon avis</button>
+                    </div>
+                  </form>
+                  <% } else { %>
+                  <div class="avis-locked">
+                    <i data-lucide="lock" width="32" height="32" stroke-width="1.5" aria-hidden="true"></i>
+                    <p class="avis-locked__text">Connectez-vous pour partager votre avis,<br>une suggestion ou une variante de cette recette.</p>
+                    <div class="avis-locked__actions">
+                      <a href="#" class="btn btn--red js-open-login">Se connecter</a>
+                      <a href="#" class="btn btn--outline js-open-register">Créer un compte</a>
+                    </div>
                   </div>
+                  <% } %>
                 </div>
               </div>
-            </div><!-- /rd-movie-avis-row -->
+            </div><!-- /rd-avis-row -->
 
             <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
               <!-- Grille des avis -->
@@ -777,52 +891,44 @@
               <% } %>
               <% } %>
 
-              <!-- Formulaire / état non connecté -->
-              <div class="avis-form-block" id="avisFormBlock">
-                <div class="avis-form-block__inner">
-                  <div class="avis-form-block__head">
-                    <div class="avis-form-block__icon">✍️</div>
-                    <div>
-                      <h3 class="avis-form-block__title">LAISSER UN AVIS</h3>
-                      <p class="avis-form-block__sub">Partagez votre expérience avec la communauté</p>
-                    </div>
-                  </div>
-                  <% if (typeof userId !== 'undefined' && userId) { %>
-                  <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
-                    <input type="hidden" id="avisQuoteInput" name="quote" value="" />
-                    <div class="star-picker">
-                      <span class="star-picker__lbl">Note :</span>
-                      <span class="star-pick" data-v="1">★</span>
-                      <span class="star-pick" data-v="2">★</span>
-                      <span class="star-pick" data-v="3">★</span>
-                      <span class="star-pick" data-v="4">★</span>
-                      <span class="star-pick" data-v="5">★</span>
-                    </div>
-                    <div class="form-g">
-                      <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
-                      <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
-                    </div>
-                    <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
-                    <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
-                    <div class="form-actions">
-                      <span class="form-hint-global">Votre avis sera relu avant publication.</span>
-                      <button class="btn-submit-avis" type="submit" id="avisSubmitBtn">✦ Publier mon avis</button>
-                    </div>
-                  </form>
-                  <% } else { %>
-                  <div class="avis-locked">
-                    <i data-lucide="lock" width="32" height="32" stroke-width="1.5" aria-hidden="true"></i>
-                    <p class="avis-locked__text">Connectez-vous pour partager votre avis,<br>une suggestion ou une variante de cette recette.</p>
-                    <div class="avis-locked__actions">
-                      <a href="#" class="btn btn--red js-open-login">Se connecter</a>
-                      <a href="#" class="btn btn--outline js-open-register">Créer un compte</a>
-                    </div>
-                  </div>
-                  <% } %>
-                </div>
-              </div>
-
             </section>
+
+            <!-- ══ RECETTES RECOMMANDÉES ══ -->
+            <% if (recommendedRecipes && recommendedRecipes.length) { %>
+            <section class="rd-reco-section" aria-label="Recettes recommandées">
+              <div class="rd-sec-h">
+                <p class="rd-sec-h__eye">À découvrir aussi</p>
+                <h2 class="rd-sec-h__title">Vous <span>aimerez aussi</span></h2>
+                <div class="rd-sec-h__rule"></div>
+              </div>
+              <div class="rd-reco-carousel-wrap">
+                <button type="button" class="rd-reco-nav rd-reco-nav--prev" id="rdRecoPrev" aria-label="Recettes précédentes">
+                  <i data-lucide="chevron-left" width="20" height="20" aria-hidden="true"></i>
+                </button>
+                <div class="rd-reco-carousel" id="rdRecoCarousel">
+                  <% recommendedRecipes.forEach((r) => { %>
+                  <a href="/recipes-movie/details/<%= r.slug || r.id %>" class="rd-reco-card">
+                    <div class="rd-reco-card__img">
+                      <img src="<%= cldCard(r.picture || '/images/image-default-recipe-1.jpg') %>" alt="<%= r.name %>" loading="lazy" />
+                      <% if (r.category) { %><span class="rd-reco-card__cat"><%= r.category %></span><% } %>
+                    </div>
+                    <div class="rd-reco-card__body">
+                      <p class="rd-reco-card__name"><%= r.name %></p>
+                      <% if (r.Movie) { %><p class="rd-reco-card__movie">Comme dans <%= r.Movie.title %></p><% } %>
+                      <div class="rd-reco-card__meta">
+                        <% if (r.time) { %><span><i data-lucide="clock" width="11" height="11" aria-hidden="true"></i> <%= r.time %> min</span><% } %>
+                        <% if (r.difficulty) { %><span><%= r.difficulty %></span><% } %>
+                      </div>
+                    </div>
+                  </a>
+                  <% }) %>
+                </div>
+                <button type="button" class="rd-reco-nav rd-reco-nav--next" id="rdRecoNext" aria-label="Recettes suivantes">
+                  <i data-lucide="chevron-right" width="20" height="20" aria-hidden="true"></i>
+                </button>
+              </div>
+            </section>
+            <% } %>
 
           </div><!-- /recipe-main-col -->
       </div><!-- /recipe-main -->
@@ -847,7 +953,7 @@
         userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
       };
     </script>
-    <script src="/js/recipe-detail.js" defer></script>
+    <script src="/js/recipe-detail.js?v=20260827a" defer></script>
     <script src="/js/favorites.js" defer></script>
   </body>
 </html>

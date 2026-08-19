@@ -37,6 +37,7 @@ Movie.init(
     composer: { type: DataTypes.STRING(255), allowNull: true },
     main_cast: { type: DataTypes.STRING(500), allowNull: true },
     tmdb_synced_at: { type: DataTypes.DATE, allowNull: true },
+    runtime: { type: DataTypes.INTEGER, allowNull: true }, // durée en minutes
     id_user: { type: DataTypes.INTEGER, allowNull: true },
     type: {
       // <== Décommenté et activé

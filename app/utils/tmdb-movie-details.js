@@ -13,7 +13,7 @@
 export async function fetchTmdbMovieDetails(tmdbId, mediaType) {
   const apiKey = process.env.TMDB_API_KEY;
   const apiUrl = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
-  const empty = { director: null, composer: null, main_cast: null, trailer_key: null, tmdb_rating: null };
+  const empty = { director: null, composer: null, main_cast: null, trailer_key: null, tmdb_rating: null, runtime: null };
 
   if (!apiKey || !tmdbId) return empty;
   const kind = mediaType === "tv" ? "tv" : "movie";
@@ -51,6 +51,10 @@ export async function fetchTmdbMovieDetails(tmdbId, mediaType) {
       main_cast: mainCast,
       trailer_key: trailer ? trailer.key : null,
       tmdb_rating: typeof details.vote_average === "number" ? Math.round(details.vote_average * 10) / 10 : null,
+      // TV : "episode_run_time" (tableau) ; Film : "runtime" (minutes)
+      runtime: typeof details.runtime === "number"
+        ? details.runtime
+        : (Array.isArray(details.episode_run_time) && details.episode_run_time[0]) || null,
     };
   } catch (error) {
     console.error("⚠️  fetchTmdbMovieDetails:", error.message);

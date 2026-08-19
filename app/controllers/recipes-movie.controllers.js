@@ -1,8 +1,9 @@
 import { Op, fn, col } from "sequelize";
-import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture, UserPoints } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { awardActionXP } from "../services/gamification.service.js";
+import { computeLevel, xpProgress, FRAME_UNLOCKS } from "../utils/gamification.utils.js";
 
 /**
  * Récupère les IDs des recettes favorites de l'utilisateur
@@ -378,6 +379,46 @@ const recipesController = {
         raw: true,
       });
 
+      // Progression XP/niveau du contributeur — version condensée (avatar,
+      // pseudo, niveau, barre XP) affichée à côté de la galerie. Lecture
+      // seule du total de points déjà calculé (pas de recomputation ici,
+      // contrairement à syncUserXP() utilisé sur la page profil).
+      const contributorPoints = contributor
+        ? await UserPoints.findOne({ where: { id_user: contributor.id }, raw: true })
+        : null;
+      const contributorXp = contributorPoints ? contributorPoints.points : 0;
+      const contributorLevel = computeLevel(contributorXp);
+      const contributorXpProgress = xpProgress(contributorXp, contributorLevel);
+      // Cadres débloqués — même logique que getUserGamificationData(), sans
+      // le recalcul XP complet (lecture seule, cf. commentaire plus haut).
+      const contributorFrames = FRAME_UNLOCKS.filter(
+        (f) => f.code !== "none" && contributorLevel >= f.minLvl
+      );
+
+      // Recettes recommandées — priorité aux autres recettes du même film,
+      // repli sur la même catégorie si besoin, jusqu'à 8 résultats (carrousel).
+      const RECO_LIMIT = 8;
+      let recommendedRecipes = [];
+      if (plainRecipe.id_movie) {
+        recommendedRecipes = await Recipe.findAll({
+          where: { id_movie: plainRecipe.id_movie, id: { [Op.ne]: plainRecipe.id }, status: "approved" },
+          include: [{ model: Movie, attributes: ["title", "slug", "id"] }],
+          limit: RECO_LIMIT,
+          order: [["id", "DESC"]],
+        });
+      }
+      if (recommendedRecipes.length < RECO_LIMIT && plainRecipe.category) {
+        const excludeIds = [plainRecipe.id, ...recommendedRecipes.map((r) => r.id)];
+        const fallback = await Recipe.findAll({
+          where: { category: plainRecipe.category, id: { [Op.notIn]: excludeIds }, status: "approved" },
+          include: [{ model: Movie, attributes: ["title", "slug", "id"] }],
+          limit: RECO_LIMIT - recommendedRecipes.length,
+          order: [["id", "DESC"]],
+        });
+        recommendedRecipes = [...recommendedRecipes, ...fallback];
+      }
+      const plainRecommended = recommendedRecipes.map((r) => r.get({ plain: true }));
+
       res.render("recipe-detail", {
         recipe: {
           ...plainRecipe,
@@ -400,7 +441,12 @@ const recipesController = {
           pseudo:
             contributor.pseudo ||
             [contributor.first_name, contributor.last_name].filter(Boolean).join(" "),
+          level: contributorLevel,
+          xp: contributorXp,
+          xpProgress: contributorXpProgress,
+          frames: contributorFrames,
         },
+        recommendedRecipes: plainRecommended,
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()

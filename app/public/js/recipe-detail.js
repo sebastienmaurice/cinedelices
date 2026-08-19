@@ -449,3 +449,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+/* Carrousel "Vous aimerez aussi" — flèches latérales, défilement d'environ
+   une carte et demie par clic. */
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("rdRecoCarousel");
+  const prevBtn = document.getElementById("rdRecoPrev");
+  const nextBtn = document.getElementById("rdRecoNext");
+  if (!track || !prevBtn || !nextBtn) return;
+
+  const scrollByCard = (dir) => {
+    const card = track.querySelector(".rd-reco-card");
+    const step = card ? card.getBoundingClientRect().width + 20 : 280;
+    track.scrollBy({ left: dir * step * 1.5, behavior: "smooth" });
+  };
+
+  prevBtn.addEventListener("click", () => scrollByCard(-1));
+  nextBtn.addEventListener("click", () => scrollByCard(1));
+
+  const updateNavState = () => {
+    const max = track.scrollWidth - track.clientWidth - 2;
+    prevBtn.disabled = track.scrollLeft <= 0;
+    nextBtn.disabled = track.scrollLeft >= max;
+  };
+  track.addEventListener("scroll", updateNavState, { passive: true });
+  window.addEventListener("resize", updateNavState);
+  updateNavState();
+});

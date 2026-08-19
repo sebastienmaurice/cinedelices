@@ -814,11 +814,11 @@
                 </div>
                 <div class="arm-editor__guide" role="note">
                   <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Jusqu'à 6 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre d'ajout n'a pas d'importance. 8 Mo max/photo.</span>
+                  <span>Jusqu'à 8 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre d'ajout n'a pas d'importance. 8 Mo max/photo.</span>
                 </div>
                 <div class="arm-editor__body arm-editor__body--steps">
                   <div class="arm-upload-grid arm-upload-grid--steps arm-upload-grid--steps-vert" id="arm-stepUploadGrid">
-                    <% for (let i = 1; i <= 6; i++) { %>
+                    <% for (let i = 1; i <= 8; i++) { %>
                     <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>">
                       <input
                         type="file"
@@ -1200,7 +1200,7 @@
           var warnEl = document.getElementById('arm-step-dup-warn');
           var seen = {};
           var dup = false;
-          for (var i = 1; i <= 6; i++) {
+          for (var i = 1; i <= 8; i++) {
             var slot = document.getElementById('arm-stepSlot' + i);
             var numInput = document.getElementById('stepNumber' + i);
             if (!slot || !numInput || !slot.classList.contains('has-photo')) continue;
@@ -1211,7 +1211,7 @@
           if (warnEl) warnEl.style.display = dup ? '' : 'none';
         }
 
-        for (var n = 1; n <= 6; n++) {
+        for (var n = 1; n <= 8; n++) {
           (function (n) {
             var slot = document.getElementById('arm-stepSlot' + n);
             var input = document.getElementById('stepPictureInput' + n);
