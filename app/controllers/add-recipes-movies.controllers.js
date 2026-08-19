@@ -2,6 +2,7 @@ import { Recipe, Movie, RecipePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
+import { fetchTmdbMovieDetails } from "../utils/tmdb-movie-details.js";
 import {
   processRecipeImages,
   processStepImages,
@@ -127,8 +128,10 @@ const addRecipesMoviesController = {
       const { title, year, genre, synopsis, tmdb_id, type } = req.body;
 
       let picturePath = null;
+      let tmdbExtras = {};
       if (tmdb_id) {
         picturePath = await downloadTmdbPoster(parseInt(tmdb_id), type, title);
+        tmdbExtras = await fetchTmdbMovieDetails(parseInt(tmdb_id), type);
       }
 
       const newMovie = await Movie.create({
@@ -139,6 +142,8 @@ const addRecipesMoviesController = {
         id_user: req.userId,
         tmdb_id: tmdb_id ? parseInt(tmdb_id) : null,
         picture: picturePath,
+        ...tmdbExtras,
+        ...(tmdb_id ? { tmdb_synced_at: new Date() } : {}),
       });
 
       const enrichedMovie = enrichMovieWithImagePaths(newMovie);
@@ -416,12 +421,14 @@ const addRecipesMoviesController = {
         }
         // Télécharger l'affiche TMDB avant de créer le film
         let picturePath = null;
+        let tmdbExtras = {};
         if (parsedTmdbId) {
           picturePath = await downloadTmdbPoster(
             parsedTmdbId,
             req.body.type,
             title,
           );
+          tmdbExtras = await fetchTmdbMovieDetails(parsedTmdbId, req.body.type);
         }
 
         // Les films TMDB sont auto-approuvés (source fiable) — pas de validation admin requise
@@ -433,8 +440,9 @@ const addRecipesMoviesController = {
           id_user: req.userId,
           tmdb_id: parsedTmdbId || null,
           picture: picturePath, // 🎯 Ajouter l'affiche téléchargée
+          ...tmdbExtras,
           ...(parsedTmdbId
-            ? { status: "approved", validated_at: new Date() }
+            ? { status: "approved", validated_at: new Date(), tmdb_synced_at: new Date() }
             : {}),
         });
       }

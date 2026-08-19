@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260819h" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260826a" />
   </head>
 
   <body class="recipe-page">
@@ -85,6 +85,16 @@
         const galPic2 = allPics.find(p => p.position === 2 && !p.step_number) || null;
         const galPic3 = allPics.find(p => p.position === 3 && !p.step_number) || null;
         const mainGalSrc = galPic1 ? galPic1.file_path : recipeImage;
+
+        /* Synopsis du film — affiché dans le hero (à la place du contexte de
+           la recette, qui reste dans la carte Inspiration plus bas afin
+           d'éviter la duplication de texte). Même découpage en paragraphes
+           que formatDescriptionBlocks() côté contrôleur. */
+        const synopsisBlocks = ((movie && movie.synopsis) || "")
+          .replace(/\r\n/g, "\n")
+          .split(/\n{2,}/)
+          .map((p) => p.trim())
+          .filter(Boolean);
 
         /* Photos de préparation — une par étape (optionnelle), numéro choisi
            librement par le contributeur à l'upload (pas forcément 1:1 avec
@@ -157,17 +167,17 @@
             </div>
             <% } %>
             <h1 class="rh-title" id="recipe-title"><%= recipe.name %></h1>
-            <% if (descriptionBlocks && descriptionBlocks.length) { %>
+            <% if (synopsisBlocks && synopsisBlocks.length) { %>
             <%
-              const ctxNeedsToggle = descriptionBlocks.length > 1 || descriptionBlocks[0].length > 140;
+              const ctxNeedsToggle = synopsisBlocks.length > 1 || synopsisBlocks[0].length > 140;
             %>
             <div class="rh-context-preview">
-              <p class="rh-ctx-label">Contexte de la recette</p>
+              <p class="rh-ctx-label">Synopsis du film</p>
               <div class="rh-ctx-body" id="rh-ctx-body">
-                <p class="rh-ctx-text rh-ctx-lead"><%= descriptionBlocks[0] %></p>
-                <% if (descriptionBlocks.length > 1) { %>
+                <p class="rh-ctx-text rh-ctx-lead"><%= synopsisBlocks[0] %></p>
+                <% if (synopsisBlocks.length > 1) { %>
                 <div class="rh-ctx-extra" id="rh-ctx-extra" hidden>
-                  <% descriptionBlocks.slice(1).forEach(p => { %>
+                  <% synopsisBlocks.slice(1).forEach(p => { %>
                   <p class="rh-ctx-text"><%= p %></p>
                   <% }) %>
                 </div>
@@ -280,7 +290,6 @@
               <div class="rd-combo-card">
                 <div class="rd-combo-col rd-combo-col--inspiration">
                   <% if (descriptionBlocks && descriptionBlocks.length) { %>
-                  <% const inspImg = galPic2 || galPic3 || galPic1; %>
                   <p class="rd-combo-col__eye">Anecdote</p>
                   <h2 class="rd-combo-col__title rd-combo-col__title--sm">L'inspiration</h2>
                   <div class="rd-inspiration__card">
@@ -289,17 +298,49 @@
                       <p><%= p %></p>
                       <% }) %>
                     </div>
-                    <% if (inspImg) { %>
-                    <div
-                      class="rd-inspiration__media"
-                      role="button" tabindex="0"
-                      aria-label="Agrandir la photo"
-                      data-lightbox-trigger
-                      data-lightbox-image="<%= cldFull(inspImg.file_path) %>"
-                      data-lightbox-alt="Inspiration — <%= recipe.name %>"
+                    <% if (movie) { %>
+                    <a
+                      href="/recipes-movie/<%= movie.slug || movie.id %>"
+                      class="rd-inspiration__media rd-movie-poster"
+                      style="background-image:url('<%= movieImage %>')"
+                      aria-label="Voir les recettes du film <%= movie.title %>"
                     >
-                      <img src="<%= cldCard(inspImg.file_path) %>" alt="Inspiration — <%= recipe.name %>" loading="lazy" />
+                      <div class="rd-movie-poster__overlay"></div>
+                      <div class="rd-movie-poster__body">
+                        <span class="rd-movie-poster__eye">Film associé</span>
+                        <p class="rd-movie-poster__title"><%= movie.title %></p>
+                        <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
+                      </div>
+                      <span class="rd-movie-poster__cta">Voir les recettes →</span>
+                    </a>
+                    <% } %>
+                  </div>
+                  <% } %>
+
+                  <!-- Données TMDB (score, équipe technique, casting, bande-annonce) —
+                       attribution TMDB requise, voir partials/footer -->
+                  <% if (movie && (movie.tmdb_rating || movie.director || movie.composer || movie.main_cast || movie.trailer_key)) { %>
+                  <div class="rd-movie-meta">
+                    <% if (movie.tmdb_rating) { %>
+                    <div class="rd-movie-meta__score" title="Score TMDB">
+                      <span class="rd-movie-meta__score-val"><%= Math.round(movie.tmdb_rating * 10) %>%</span>
+                      <span class="rd-movie-meta__score-lbl">Score TMDB</span>
                     </div>
+                    <% } %>
+                    <div class="rd-movie-meta__info">
+                      <% if (movie.director) { %><p><strong>Réalisateur</strong> <%= movie.director %></p><% } %>
+                      <% if (movie.composer) { %><p><strong>Compositeur</strong> <%= movie.composer %></p><% } %>
+                      <% if (movie.main_cast) { %><p><strong>Avec</strong> <%= movie.main_cast %></p><% } %>
+                    </div>
+                    <% if (movie.trailer_key) { %>
+                    <a
+                      href="https://www.youtube.com/watch?v=<%= movie.trailer_key %>"
+                      target="_blank" rel="noopener noreferrer"
+                      class="rd-movie-meta__trailer"
+                    >
+                      <i data-lucide="play-circle" width="15" height="15" aria-hidden="true"></i>
+                      Bande-annonce
+                    </a>
                     <% } %>
                   </div>
                   <% } %>
@@ -538,28 +579,13 @@
               </a>
             </div>
 
-            <!-- ══ FILM ASSOCIÉ (affiche) + BANNIÈRE AVIS, côte à côte ══ -->
+            <!-- ══ BANNIÈRE AVIS ══ -->
             <%
               const starCounts = [0,0,0,0,0];
               if (notices) notices.forEach(n => { const q = parseInt(n.quote); if(q>=1&&q<=5) starCounts[q-1]++; });
               const pct = (n) => totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0;
             %>
             <div class="rd-movie-avis-row">
-              <!-- ── FILM ASSOCIÉ (affiche 2:3) ── -->
-              <% if (movie) { %>
-              <div class="rd-movie-section">
-                <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="rd-movie-poster" style="background-image:url('<%= movieImage %>')" aria-label="Voir les recettes du film <%= movie.title %>">
-                  <div class="rd-movie-poster__overlay"></div>
-                  <div class="rd-movie-poster__body">
-                    <span class="rd-movie-poster__eye">Film associé</span>
-                    <p class="rd-movie-poster__title"><%= movie.title %></p>
-                    <p class="rd-movie-poster__meta"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></p>
-                  </div>
-                  <span class="rd-movie-poster__cta">Voir les recettes →</span>
-                </a>
-              </div>
-              <% } %>
-
               <!-- Bannière dorée Golden Ticket -->
               <div class="avis-banner">
                 <div class="avis-banner__tear"></div>

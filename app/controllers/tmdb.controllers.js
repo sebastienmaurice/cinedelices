@@ -5,6 +5,7 @@
 
 import "dotenv/config";
 import tmdbGenreMap from "../utils/tmdb-genre-map.js";
+import { fetchTmdbMovieDetails } from "../utils/tmdb-movie-details.js";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_API_URL = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
@@ -164,6 +165,9 @@ async function searchMovie(req, res) {
           : null,
         release_date: result.release_date || null,
         media_type: result.media_type,
+        // Déjà inclus par l'endpoint de recherche TMDB — pas d'appel
+        // supplémentaire nécessaire pour le score.
+        vote_average: typeof result.vote_average === "number" ? result.vote_average : null,
       });
     }
 
@@ -184,8 +188,47 @@ async function searchMovie(req, res) {
   }
 }
 
+/**
+ * Récupérer les détails complémentaires d'un film/série TMDB : réalisateur,
+ * compositeur, casting principal et bande-annonce YouTube.
+ * GET /api/tmdb/details?tmdb_id=123&media_type=movie|tv
+ *
+ * Deux appels supplémentaires à l'API TMDB (credits + videos), déclenchés
+ * uniquement quand un contributeur sélectionne un film précis dans le
+ * formulaire d'ajout — pas à chaque frappe de recherche.
+ */
+async function getMovieDetails(req, res) {
+  try {
+    const { tmdb_id, media_type } = req.query;
+
+    if (!TMDB_API_KEY) {
+      console.error("❌ TMDB_API_KEY non configurée dans .env");
+      return res.status(500).json({ success: false, error: "Configuration API manquante" });
+    }
+    if (!tmdb_id || !/^\d+$/.test(String(tmdb_id))) {
+      return res.status(400).json({ success: false, error: "Le paramètre 'tmdb_id' est requis" });
+    }
+
+    const extras = await fetchTmdbMovieDetails(Number(tmdb_id), media_type);
+
+    return res.json({
+      success: true,
+      tmdb_id: Number(tmdb_id),
+      ...extras,
+    });
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des détails TMDB:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Erreur serveur lors de la récupération des détails",
+      message: error.message,
+    });
+  }
+}
+
 const tmdbController = {
   searchMovie,
+  getMovieDetails,
 };
 
 export default tmdbController;

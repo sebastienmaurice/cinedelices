@@ -27,6 +27,16 @@ Movie.init(
     delete_request_by: { type: DataTypes.INTEGER, allowNull: true },
     delete_request_at: { type: DataTypes.DATE, allowNull: true },
     tmdb_id: { type: DataTypes.INTEGER, allowNull: true, unique: true },
+    // Données TMDB additionnelles (score, bande-annonce, équipe technique,
+    // casting) — récupérées via l'API officielle à la création du film.
+    // Conformité CGU TMDB : rafraîchies périodiquement (cf. tmdb_synced_at),
+    // affichées avec l'attribution requise (voir partials/footer.ejs).
+    tmdb_rating: { type: DataTypes.DECIMAL(3, 1), allowNull: true },
+    trailer_key: { type: DataTypes.STRING(50), allowNull: true },
+    director: { type: DataTypes.STRING(255), allowNull: true },
+    composer: { type: DataTypes.STRING(255), allowNull: true },
+    main_cast: { type: DataTypes.STRING(500), allowNull: true },
+    tmdb_synced_at: { type: DataTypes.DATE, allowNull: true },
     id_user: { type: DataTypes.INTEGER, allowNull: true },
     type: {
       // <== Décommenté et activé

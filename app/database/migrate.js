@@ -41,4 +41,21 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration recipe_pictures.step_number :", err.message);
   }
+
+  // Données TMDB additionnelles (score, bande-annonce, réalisateur,
+  // compositeur, casting) — voir
+  // app/database/migrations/20260826-add-movie-tmdb-details.sql
+  try {
+    await sequelize.query(`
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS tmdb_rating    NUMERIC(3,1) NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS trailer_key    VARCHAR(50)  NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS director       VARCHAR(255) NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS composer       VARCHAR(255) NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS main_cast      VARCHAR(500) NULL;
+      ALTER TABLE movies ADD COLUMN IF NOT EXISTS tmdb_synced_at TIMESTAMP    NULL;
+    `);
+    console.log("✅ Migration movies.tmdb_rating/trailer_key/director/composer/main_cast OK");
+  } catch (err) {
+    console.error("⚠️  Migration movies TMDB details :", err.message);
+  }
 }
