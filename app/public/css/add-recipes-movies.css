@@ -1466,6 +1466,22 @@ body.arm-full-bleed {
   gap: 12px;
 }
 
+/* Grille des 6 photos de préparation — une seule ligne, cases plus compactes
+   (contenu secondaire par rapport aux 3 photos principales) */
+.arm-upload-grid--steps {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+.arm-upload-grid--steps .arm-upload-slot {
+  aspect-ratio: 1/1;
+  gap: 4px;
+}
+.arm-upload-grid--steps .arm-upload-slot__ico svg { width: 15px; height: 15px; }
+.arm-upload-grid--steps .arm-upload-slot__lbl { font-size: 0.5rem; letter-spacing: 0.06em; }
+.arm-upload-grid--steps .arm-step-num-field { padding: 2px 4px; gap: 2px; top: 4px; right: 4px; }
+.arm-upload-grid--steps .arm-step-num-field label { font-size: 0.42rem; }
+.arm-upload-grid--steps .arm-step-num-input { width: 20px; font-size: 0.62rem; }
+
 .arm-upload-slot {
   position: relative;
   aspect-ratio: 3/2;
@@ -2864,6 +2880,10 @@ body.arm-full-bleed {
   }
   .arm-upload-grid {
     grid-template-columns: 1fr 1fr;
+  }
+  /* Sous 760px, une ligne de 6 serait illisible — retour à 3 colonnes (2 lignes) */
+  .arm-upload-grid--steps {
+    grid-template-columns: repeat(3, 1fr);
   }
   .arm-ticket {
     flex-direction: column;
