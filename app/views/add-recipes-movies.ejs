@@ -757,43 +757,14 @@
                     <i data-lucide="shopping-bag" stroke-width="1.8" aria-hidden="true"></i>
                   </div>
                   <span class="arm-editor__title">INGRÉDIENTS</span>
-                  <span class="arm-editor__hint">1 ligne = 1 ingrédient · T pour un titre</span>
-                </div>
-                <!-- Barre d'outils -->
-                <div class="arm-toolbar" id="ing-toolbar" role="toolbar" aria-label="Mise en forme ingrédients">
-                  <button type="button" class="arm-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)">
-                    <i data-lucide="bold" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)">
-                    <i data-lucide="italic" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="heading" title="Titre de section">
-                    <span class="arm-tb-T">T</span>
-                  </button>
-                  <div class="arm-tb-sep" aria-hidden="true"></div>
-                  <button type="button" class="arm-tb-btn" data-cmd="bulletList" title="Liste à puces">
-                    <i data-lucide="list" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="orderedList" title="Liste numérotée">
-                    <i data-lucide="list-ordered" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <div class="arm-editor__guide" role="note">
-                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Tapez <strong>1 ingrédient par ligne</strong>. Cliquez sur <strong>T</strong> pour ajouter un titre de section (ex : <em>Pâte sablée</em>, <em>Garniture</em>).</span>
+                  <span class="arm-editor__hint">Glissez pour réorganiser</span>
                 </div>
                 <div class="arm-editor__body">
-                  <div
-                    class="arm-rte"
-                    id="ing-rte"
-                    contenteditable="true"
-                    spellcheck="true"
-                    lang="fr"
-                    role="textbox"
-                    aria-multiline="true"
-                    aria-label="Ingrédients"
-                    data-placeholder="🥧 Pâte sablée&#10;250 g farine&#10;125 g beurre froid (en dés)&#10;80 g sucre glace&#10;1 œuf · 1 pincée de sel&#10;&#10;🍯 Garniture&#10;300 g golden syrup&#10;150 g chapelure&#10;1 citron (zeste + jus)&#10;1 œuf · 30 g beurre fondu"
-                  ></div>
+                  <div class="arm-ing-list" id="ing-list"></div>
+                  <button type="button" class="arm-add-row-btn" id="ing-add-btn">
+                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
+                    Ajouter un ingrédient
+                  </button>
                   <textarea name="ingredients" id="ingredients" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
@@ -801,9 +772,8 @@
                 </div>
               </div>
 
-              <!-- Photos de préparation — optionnelles, jusqu'à 6, une par étape.
-                   Placées entre Ingrédients et Préparation : visibles dans le même
-                   champ de vision pendant la rédaction des étapes. -->
+              <!-- Photos de préparation — optionnelles, jusqu'à 8, une par étape.
+                   Révélées progressivement (2 au départ) via "Ajouter une photo". -->
               <div class="arm-editor arm-editor--steps">
                 <div class="arm-editor__header">
                   <div class="arm-editor__icon">
@@ -814,12 +784,15 @@
                 </div>
                 <div class="arm-editor__guide" role="note">
                   <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Jusqu'à 8 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée sous chaque photo — l'ordre d'ajout n'a pas d'importance. 8 Mo max/photo.</span>
+                  <span>Jusqu'à 8 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée — glissez pour réorganiser. 8 Mo max/photo.</span>
                 </div>
                 <div class="arm-editor__body arm-editor__body--steps">
                   <div class="arm-upload-grid arm-upload-grid--steps arm-upload-grid--steps-vert" id="arm-stepUploadGrid">
                     <% for (let i = 1; i <= 8; i++) { %>
-                    <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>">
+                    <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>" draggable="false" data-slot-index="<%= i %>" hidden>
+                      <button type="button" class="arm-upload-slot__drag" aria-label="Réorganiser cette photo">
+                        <i data-lucide="grip-vertical" width="14" height="14" stroke-width="2" aria-hidden="true"></i>
+                      </button>
                       <input
                         type="file"
                         name="stepPicture<%= i %>"
@@ -855,6 +828,10 @@
                     </div>
                     <% } %>
                   </div>
+                  <button type="button" class="arm-add-row-btn" id="arm-stepAddBtn">
+                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
+                    Ajouter une photo
+                  </button>
                   <p id="arm-step-dup-warn" class="arm-ratio-warn" style="display:none">
                     ⚠ Deux photos sont assignées au même numéro d'étape.
                   </p>
@@ -868,48 +845,14 @@
                     <i data-lucide="lightbulb" stroke-width="1.8" aria-hidden="true"></i>
                   </div>
                   <span class="arm-editor__title">PRÉPARATION</span>
-                  <span class="arm-editor__hint">Séparateur d'étape pour délimiter</span>
-                </div>
-                <!-- Barre d'outils -->
-                <div class="arm-toolbar" id="prep-toolbar" role="toolbar" aria-label="Mise en forme préparation">
-                  <button type="button" class="arm-tb-btn" data-cmd="bold" title="Gras (Ctrl+B)">
-                    <i data-lucide="bold" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="italic" title="Italique (Ctrl+I)">
-                    <i data-lucide="italic" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="heading" title="Titre de section">
-                    <span class="arm-tb-T">T</span>
-                  </button>
-                  <div class="arm-tb-sep" aria-hidden="true"></div>
-                  <button type="button" class="arm-tb-btn" data-cmd="bulletList" title="Liste à puces">
-                    <i data-lucide="list" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="arm-tb-btn" data-cmd="orderedList" title="Liste numérotée">
-                    <i data-lucide="list-ordered" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                  </button>
-                  <div class="arm-tb-sep" aria-hidden="true"></div>
-                  <button type="button" class="arm-tb-btn arm-tb-btn--sep" data-cmd="separator" title="Délimite la fin d'une étape — raccourci : Ctrl+Entrée">
-                    <i data-lucide="arrow-left-right" width="11" height="11" stroke-width="2" aria-hidden="true"></i>
-                    Séparateur d'étape
-                  </button>
-                </div>
-                <div class="arm-editor__guide" role="note">
-                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Écrivez votre préparation ligne par ligne. Cliquez sur <strong>Séparateur d'étape</strong> (ou <kbd>Ctrl+Entrée</kbd>) pour créer l'étape suivante. Le premier <strong>Titre T</strong> de chaque étape devient son en-tête affiché sur la page recette.</span>
+                  <span class="arm-editor__hint">Glissez pour réorganiser</span>
                 </div>
                 <div class="arm-editor__body">
-                  <div
-                    class="arm-rte"
-                    id="prep-rte"
-                    contenteditable="true"
-                    spellcheck="true"
-                    lang="fr"
-                    role="textbox"
-                    aria-multiline="true"
-                    aria-label="Préparation"
-                    data-placeholder="Préparer la pâte&#10;Mélanger la farine, le beurre coupé en dés et le sucre glace du bout des doigts jusqu'à obtenir une texture sableuse. Ajouter l'œuf et malaxer brièvement.&#10;Former une boule, emballer et réfrigérer 30 min.&#10;&#10;[cliquez Séparateur d'étape ici]&#10;&#10;Foncer le moule&#10;Étaler la pâte froide sur un plan fariné. Garnir un moule de 22 cm. Piquer le fond à la fourchette.&#10;Enfourner 15 min à 180 °C à blanc (avec des billes de cuisson)."
-                  ></div>
+                  <div class="arm-step-list" id="prep-list"></div>
+                  <button type="button" class="arm-add-row-btn" id="prep-add-btn">
+                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
+                    Ajouter une étape
+                  </button>
                   <textarea name="preparation" id="preparation" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
@@ -1211,6 +1154,103 @@
           if (warnEl) warnEl.style.display = dup ? '' : 'none';
         }
 
+        /* ── Révélation progressive des slots (2 au départ, jusqu'à 8) ── */
+        var addBtn = document.getElementById('arm-stepAddBtn');
+        function slotEls(n) {
+          return {
+            slot: document.getElementById('arm-stepSlot' + n),
+            input: document.getElementById('stepPictureInput' + n),
+          };
+        }
+        function revealedCount() {
+          var c = 0;
+          for (var i = 1; i <= 8; i++) {
+            var s = document.getElementById('arm-stepSlot' + i);
+            if (s && !s.hasAttribute('hidden')) c++;
+          }
+          return c;
+        }
+        function revealNextSlot(focusInput) {
+          for (var i = 1; i <= 8; i++) {
+            var s = document.getElementById('arm-stepSlot' + i);
+            if (s && s.hasAttribute('hidden')) {
+              s.removeAttribute('hidden');
+              if (focusInput) {
+                var inp = document.getElementById('stepPictureInput' + i);
+                if (inp) inp.click();
+              }
+              if (revealedCount() >= 8 && addBtn) addBtn.style.display = 'none';
+              return true;
+            }
+          }
+          return false;
+        }
+        for (var initN = 1; initN <= 2; initN++) revealNextSlot(false);
+        if (addBtn) addBtn.addEventListener('click', function () { revealNextSlot(true); });
+
+        /* ── Glisser-déposer pour réorganiser (échange le contenu des 2 slots) ── */
+        var dragSrcIndex = null;
+        function slotData(n) {
+          var el = slotEls(n);
+          return {
+            hasPhoto: el.slot.classList.contains('has-photo'),
+            files: el.input.files,
+            bg: document.getElementById('arm-stepPrev' + n).style.backgroundImage,
+            stepNum: document.getElementById('stepNumber' + n).value,
+          };
+        }
+        function applySlotData(n, data) {
+          var el = slotEls(n);
+          var prev = document.getElementById('arm-stepPrev' + n);
+          var numInput = document.getElementById('stepNumber' + n);
+          if (data.hasPhoto && data.files && data.files.length) {
+            var dt = new DataTransfer();
+            dt.items.add(data.files[0]);
+            el.input.files = dt.files;
+            prev.style.backgroundImage = data.bg;
+            prev.classList.add('on');
+            el.slot.classList.add('has-photo');
+          } else {
+            el.input.value = '';
+            prev.style.backgroundImage = '';
+            prev.classList.remove('on');
+            el.slot.classList.remove('has-photo');
+          }
+          numInput.value = data.stepNum;
+        }
+        function swapSlots(a, b) {
+          if (a === b) return;
+          var dA = slotData(a);
+          var dB = slotData(b);
+          applySlotData(a, dB);
+          applySlotData(b, dA);
+        }
+        for (var dn = 1; dn <= 8; dn++) {
+          (function (dn) {
+            var slot = document.getElementById('arm-stepSlot' + dn);
+            if (!slot) return;
+            slot.addEventListener('mousedown', function (e) {
+              slot.draggable = !!(e.target.closest && e.target.closest('.arm-upload-slot__drag'));
+            });
+            slot.addEventListener('dragstart', function (e) {
+              dragSrcIndex = dn;
+              slot.classList.add('is-dragging');
+              e.dataTransfer.effectAllowed = 'move';
+            });
+            slot.addEventListener('dragend', function () {
+              slot.classList.remove('is-dragging');
+              dragSrcIndex = null;
+            });
+            slot.addEventListener('dragover', function (e) { e.preventDefault(); slot.classList.add('is-drag-over'); });
+            slot.addEventListener('dragleave', function () { slot.classList.remove('is-drag-over'); });
+            slot.addEventListener('drop', function (e) {
+              e.preventDefault();
+              slot.classList.remove('is-drag-over');
+              if (dragSrcIndex !== null) { swapSlots(dragSrcIndex, dn); checkDuplicateSteps(); }
+            });
+          })(dn);
+        }
+
         for (var n = 1; n <= 8; n++) {
           (function (n) {
             var slot = document.getElementById('arm-stepSlot' + n);
@@ -1225,6 +1265,7 @@
               if (chgBtn && (e.target === chgBtn || chgBtn.contains(e.target))) return;
               if (delBtn && (e.target === delBtn || delBtn.contains(e.target))) return;
               if (numInput && (e.target === numInput || numInput.contains(e.target))) return;
+              if (e.target.closest && e.target.closest('.arm-upload-slot__drag')) return;
               if (!slot.classList.contains('has-photo')) input.click();
             });
 
@@ -1313,104 +1354,223 @@
 
     </script>
 
-    <!-- ═══════════ ÉDITEUR RICHE (contenteditable natif, sans CDN) ═══════════ -->
+    <!-- ═══════════ ÉDITEURS STRUCTURÉS — INGRÉDIENTS & PRÉPARATION ═══════════ -->
     <script>
     (function () {
       'use strict';
 
-      var EDITORS = [
-        { rteId: 'ing-rte',  taId: 'ingredients', tbId: 'ing-toolbar',  countId: 'ingCount',  mode: 'ingredients' },
-        { rteId: 'prep-rte', taId: 'preparation', tbId: 'prep-toolbar', countId: 'prepCount', mode: 'preparation' },
-      ];
+      function uid() { return 'r' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
-      /* ── Sérialisation JSON depuis le contenteditable (HTML préservé) ──
-         mode 'ingredients' : chaque bloc → 1 item JSON ; h3 → item titre rendu côté template
-         mode 'preparation' : blocs entre séparateurs → 1 item JSON (jointure <br>)
-         Le titre saisi dans chaque séparateur est préfixé en <strong> dans l'item suivant.
-         Les balises <strong>, <em>, <ul>, <li> etc. sont conservées pour le rendu.
-         Les blocs visuellement vides (<p><br></p>) sont ignorés. */
-      function rteToJson(rte, mode) {
-        var items = [];
-        var group = [];
-        var pendingTitle = '';
-        var pendingType = '';
-        var pendingDuration = '';
-
-        function flushGroup() {
-          var cleaned = group.filter(function(s) {
-            return s.replace(/<br\s*\/?>/gi, '').trim().length > 0;
-          });
-          var t = cleaned.join('<br>').replace(/(<br>\s*)+$/, '').trim();
-          if (t || pendingTitle || pendingType || pendingDuration) {
-            var attrs = [];
-            if (pendingType) attrs.push('data-type="' + pendingType + '"');
-            if (pendingDuration) attrs.push('data-duration="' + pendingDuration + '"');
-            var needsStrong = pendingTitle || pendingType || pendingDuration;
-            var item = needsStrong
-              ? '<strong' + (attrs.length ? ' ' + attrs.join(' ') : '') + '>' + pendingTitle + '</strong>' + (t ? '<br>' + t : '')
-              : t;
-            if (item) items.push(item);
-            pendingTitle = '';
-            pendingType = '';
-            pendingDuration = '';
-          }
-          group = [];
-        }
-
-        [].slice.call(rte.childNodes).forEach(function (node) {
-          // Séparateur d'étape (fixe step-1 ou régulier)
-          if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
-            if (mode === 'preparation') {
-              var titleInput = node.querySelector('.arm-step-sep__title');
-              var typeSelect = node.querySelector('.arm-step-sep__type');
-              var durationInput = node.querySelector('.arm-step-sep__duration');
-              var t = titleInput ? titleInput.value.trim() : '';
-              if (!node.classList.contains('arm-step-sep--first')) flushGroup();
-              pendingTitle = t;
-              pendingType = typeSelect ? typeSelect.value : '';
-              pendingDuration = durationInput ? durationInput.value.trim() : '';
-            }
-            return;
-          }
-          // Éléments non-éditables → ignorer
-          if (node.nodeType === 1 && node.getAttribute('contenteditable') === 'false') return;
-
-          var tag = (node.tagName || '').toLowerCase();
-          var html = (node.innerHTML !== undefined ? node.innerHTML : node.textContent || '').trim();
-          var textContent = (node.textContent || '').trim();
-
-          // Ignorer les blocs visuellement vides (ex : <p><br></p>)
-          if (!textContent) return;
-
-          // Titre h3 : en ingrédients → item section header ; en préparation → ignoré
-          if (tag === 'h3') {
-            if (mode === 'ingredients') items.push('<h3 class="rd-ing-group-title">' + textContent + '</h3>');
-            return;
-          }
-
-          // Listes ul/ol : chaque <li> devient un item distinct (HTML inline conservé)
-          if (tag === 'ul' || tag === 'ol') {
-            [].slice.call(node.children).forEach(function (li) {
-              var liHtml = li.innerHTML.trim();
-              var liText = (li.textContent || '').trim();
-              if (!liText) return;
-              if (mode === 'ingredients') items.push(liHtml);
-              else group.push(liHtml);
-            });
-            return;
-          }
-
-          // Bloc normal (p, div…) : HTML inline conservé (<strong>, <em>, <br>…)
-          if (mode === 'ingredients') items.push(html);
-          else group.push(html);
-        });
-
-        if (mode === 'preparation') flushGroup();
-        return items;
+      function escapeHtmlBasic(s) {
+        var div = document.createElement('div');
+        div.textContent = s == null ? '' : String(s);
+        return div.innerHTML;
       }
 
-      /* ── Séparateur d'étape : insertion, suppression, renumérotation ── */
-      // isFirst=true → header fixe Étape 1 sans bouton suppression
+      /* ══════════════════════════════════════════════════════
+         INGRÉDIENTS — liste plate, 1 ligne = icône + nom + qté + unité
+      ══════════════════════════════════════════════════════ */
+      var ING_ICONS = [
+        'wheat', 'egg', 'milk', 'beef', 'drumstick', 'fish',
+        'carrot', 'apple', 'banana', 'cherry', 'grape', 'citrus',
+        'salad', 'soup', 'cookie', 'croissant', 'cake', 'coffee',
+        'wine', 'droplet', 'flame', 'package',
+      ];
+      var ING_UNITS = [
+        { value: '', label: '—' },
+        { value: 'g', label: 'g' },
+        { value: 'kg', label: 'kg' },
+        { value: 'ml', label: 'ml' },
+        { value: 'cl', label: 'cl' },
+        { value: 'l', label: 'l' },
+        { value: 'c. à soupe', label: 'c. à soupe' },
+        { value: 'c. à café', label: 'c. à café' },
+        { value: 'pincée', label: 'pincée(s)', plural: true },
+        { value: 'gousse', label: 'gousse(s)', plural: true },
+        { value: 'tranche', label: 'tranche(s)', plural: true },
+        { value: 'sachet', label: 'sachet(s)', plural: true },
+        { value: 'verre', label: 'verre(s)', plural: true },
+        { value: 'tasse', label: 'tasse(s)', plural: true },
+        { value: 'feuille', label: 'feuille(s)', plural: true },
+        { value: 'branche', label: 'branche(s)', plural: true },
+        { value: 'poignée', label: 'poignée(s)', plural: true },
+        { value: 'pièce', label: 'pièce(s)', plural: true },
+      ];
+
+      function newIngredientRow() {
+        return { id: uid(), icon: 'wheat', name: '', qty: '', unit: '' };
+      }
+      var ingredientsState = [newIngredientRow()];
+
+      function buildIngredientString(row) {
+        var name = (row.name || '').trim();
+        if (!name) return '';
+        var qty = (row.qty || '').trim();
+        var unitDef = ING_UNITS.filter(function (u) { return u.value === row.unit; })[0];
+        var unitLabel = '';
+        if (unitDef && unitDef.value) {
+          unitLabel = unitDef.value;
+          if (unitDef.plural) {
+            var n = parseFloat(qty.replace(',', '.'));
+            if (!isNaN(n) && n > 1) unitLabel += 's';
+          }
+        }
+        var head = [qty, unitLabel].filter(Boolean).join(' ');
+        return head ? head + ' ' + name : name;
+      }
+
+      function serializeIngredients() {
+        var arr = ingredientsState.map(buildIngredientString).filter(Boolean);
+        var ta = document.getElementById('ingredients');
+        if (ta) ta.value = JSON.stringify(arr);
+        var countEl = document.getElementById('ingCount');
+        if (countEl) countEl.textContent = arr.length;
+        window.armIngredientsCount = arr.length;
+        if (window.checkS3) window.checkS3();
+        return arr;
+      }
+
+      /* ── Icon picker (popover) ── */
+      var iconPickerEl = null;
+      function closeIconPicker() {
+        if (iconPickerEl) { iconPickerEl.remove(); iconPickerEl = null; }
+        document.removeEventListener('mousedown', onDocMouseDownForPicker, true);
+      }
+      function onDocMouseDownForPicker(e) {
+        if (iconPickerEl && !iconPickerEl.contains(e.target)) closeIconPicker();
+      }
+      function openIconPicker(anchorBtn, row) {
+        closeIconPicker();
+        var pop = document.createElement('div');
+        pop.className = 'arm-icon-picker';
+        ING_ICONS.forEach(function (icon) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'arm-icon-picker__opt' + (icon === row.icon ? ' is-selected' : '');
+          b.innerHTML = '<i data-lucide="' + icon + '" width="16" height="16" stroke-width="1.8"></i>';
+          b.addEventListener('click', function (e) {
+            e.stopPropagation();
+            row.icon = icon;
+            closeIconPicker();
+            renderIngredients();
+          });
+          pop.appendChild(b);
+        });
+        document.body.appendChild(pop);
+        var rect = anchorBtn.getBoundingClientRect();
+        pop.style.top = (window.scrollY + rect.bottom + 4) + 'px';
+        pop.style.left = (window.scrollX + rect.left) + 'px';
+        if (window.lucide) lucide.createIcons();
+        iconPickerEl = pop;
+        setTimeout(function () { document.addEventListener('mousedown', onDocMouseDownForPicker, true); }, 0);
+      }
+
+      /* ── Drag reorder (générique liste d'items avec id) ── */
+      function reorderById(stateArr, srcId, targetId) {
+        if (srcId === targetId) return false;
+        var srcIdx = -1, tgtIdx = -1;
+        stateArr.forEach(function (r, i) { if (r.id === srcId) srcIdx = i; if (r.id === targetId) tgtIdx = i; });
+        if (srcIdx < 0 || tgtIdx < 0) return false;
+        var moved = stateArr.splice(srcIdx, 1)[0];
+        stateArr.splice(tgtIdx, 0, moved);
+        return true;
+      }
+
+      function buildIngredientRowEl(row) {
+        var el = document.createElement('div');
+        el.className = 'arm-ing-row';
+        el.dataset.id = row.id;
+        el.draggable = false;
+
+        var drag = document.createElement('button');
+        drag.type = 'button'; drag.className = 'arm-ing-row__drag'; drag.setAttribute('aria-label', 'Réorganiser');
+        drag.innerHTML = '<i data-lucide="grip-vertical" width="14" height="14" stroke-width="2"></i>';
+
+        var iconBtn = document.createElement('button');
+        iconBtn.type = 'button'; iconBtn.className = 'arm-ing-row__icon'; iconBtn.setAttribute('aria-label', 'Choisir une icône');
+        iconBtn.innerHTML = '<i data-lucide="' + row.icon + '" width="16" height="16" stroke-width="1.8"></i>';
+        iconBtn.addEventListener('click', function (e) { e.stopPropagation(); openIconPicker(iconBtn, row); });
+
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text'; nameInput.className = 'arm-ing-row__name'; nameInput.placeholder = 'Nom de l\'ingrédient';
+        nameInput.value = row.name;
+        nameInput.addEventListener('input', function () { row.name = nameInput.value; serializeIngredients(); });
+
+        var qtyInput = document.createElement('input');
+        qtyInput.type = 'text'; qtyInput.className = 'arm-ing-row__qty'; qtyInput.placeholder = 'Qté';
+        qtyInput.value = row.qty;
+        qtyInput.addEventListener('input', function () { row.qty = qtyInput.value; serializeIngredients(); });
+
+        var unitSelect = document.createElement('select');
+        unitSelect.className = 'arm-ing-row__unit';
+        ING_UNITS.forEach(function (u) {
+          var o = document.createElement('option');
+          o.value = u.value; o.textContent = u.label;
+          unitSelect.appendChild(o);
+        });
+        unitSelect.value = row.unit;
+        unitSelect.addEventListener('change', function () { row.unit = unitSelect.value; serializeIngredients(); });
+
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button'; delBtn.className = 'arm-ing-row__del'; delBtn.setAttribute('aria-label', 'Supprimer cet ingrédient');
+        delBtn.innerHTML = '<i data-lucide="trash-2" width="14" height="14" stroke-width="2"></i>';
+        delBtn.addEventListener('click', function () {
+          ingredientsState = ingredientsState.filter(function (r) { return r.id !== row.id; });
+          if (!ingredientsState.length) ingredientsState.push(newIngredientRow());
+          renderIngredients();
+        });
+
+        el.appendChild(drag);
+        el.appendChild(iconBtn);
+        el.appendChild(nameInput);
+        el.appendChild(qtyInput);
+        el.appendChild(unitSelect);
+        el.appendChild(delBtn);
+
+        drag.addEventListener('mousedown', function () { el.draggable = true; });
+        el.addEventListener('dragend', function () { el.draggable = false; el.classList.remove('is-dragging'); });
+        el.addEventListener('dragstart', function (e) {
+          el.classList.add('is-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', row.id);
+        });
+        el.addEventListener('dragover', function (e) { e.preventDefault(); el.classList.add('is-drag-over'); });
+        el.addEventListener('dragleave', function () { el.classList.remove('is-drag-over'); });
+        el.addEventListener('drop', function (e) {
+          e.preventDefault();
+          el.classList.remove('is-drag-over');
+          var srcId = e.dataTransfer.getData('text/plain');
+          if (reorderById(ingredientsState, srcId, row.id)) renderIngredients();
+        });
+
+        return el;
+      }
+
+      function renderIngredients() {
+        var list = document.getElementById('ing-list');
+        if (!list) return;
+        list.innerHTML = '';
+        ingredientsState.forEach(function (row) { list.appendChild(buildIngredientRowEl(row)); });
+        if (window.lucide) lucide.createIcons();
+        serializeIngredients();
+      }
+
+      var ingAddBtn = document.getElementById('ing-add-btn');
+      if (ingAddBtn) {
+        ingAddBtn.addEventListener('click', function () {
+          ingredientsState.push(newIngredientRow());
+          renderIngredients();
+          var rows = document.querySelectorAll('#ing-list .arm-ing-row__name');
+          var last = rows[rows.length - 1];
+          if (last) last.focus();
+        });
+      }
+
+      renderIngredients();
+
+      /* ══════════════════════════════════════════════════════
+         PRÉPARATION — cartes d'étape (timeline), 1 étape = 1 carte
+      ══════════════════════════════════════════════════════ */
       var STEP_TYPES = [
         { value: '', label: 'Type…' },
         { value: 'preparation', label: 'Préparation' },
@@ -1419,23 +1579,59 @@
         { value: 'service', label: 'Service' },
       ];
 
-      function makeSepEl(num, title, isFirst, type, duration) {
-        var sep = document.createElement('div');
-        sep.className = isFirst ? 'arm-step-sep arm-step-sep--first' : 'arm-step-sep';
-        sep.setAttribute('contenteditable', 'false');
+      function newStepRow() { return { id: uid(), title: '', body: '', type: '', duration: '' }; }
+      var preparationState = [newStepRow()];
+
+      function buildStepString(step) {
+        var title = (step.title || '').trim();
+        var type = step.type || '';
+        var duration = (step.duration || '').toString().trim();
+        var body = escapeHtmlBasic((step.body || '').trim()).replace(/\n/g, '<br>');
+        if (!title && !type && !duration && !body) return '';
+        var needsStrong = title || type || duration;
+        if (!needsStrong) return body;
+        var attrs = [];
+        if (type) attrs.push('data-type="' + type + '"');
+        if (duration) attrs.push('data-duration="' + duration + '"');
+        return '<strong' + (attrs.length ? ' ' + attrs.join(' ') : '') + '>' + escapeHtmlBasic(title) + '</strong>' + (body ? '<br>' + body : '');
+      }
+
+      function serializePreparation() {
+        var arr = preparationState.map(buildStepString).filter(Boolean);
+        var ta = document.getElementById('preparation');
+        if (ta) ta.value = JSON.stringify(arr);
+        var countEl = document.getElementById('prepCount');
+        if (countEl) countEl.textContent = arr.length;
+        window.armPreparationCount = arr.length;
+        if (window.checkS3) window.checkS3();
+        return arr;
+      }
+
+      function renumberStepCards() {
+        var cards = document.querySelectorAll('#prep-list .arm-step-card .arm-step-sep__num');
+        cards.forEach(function (bubble, i) { bubble.textContent = String(i + 1).padStart(2, '0'); });
+      }
+
+      function buildStepCardEl(step, idx) {
+        var card = document.createElement('div');
+        card.className = 'arm-step-card';
+        card.dataset.id = step.id;
+
+        var head = document.createElement('div');
+        head.className = 'arm-step-sep' + (idx === 0 ? ' arm-step-sep--first' : '');
 
         var bubble = document.createElement('span');
         bubble.className = 'arm-step-sep__num';
-        bubble.textContent = String(num).padStart(2, '0');
+        bubble.textContent = String(idx + 1).padStart(2, '0');
 
         var row = document.createElement('div');
         row.className = 'arm-step-sep__row';
 
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'arm-step-sep__title';
-        input.placeholder = 'Titre de l\'étape (optionnel)';
-        if (title) input.value = title;
+        var titleInput = document.createElement('input');
+        titleInput.type = 'text'; titleInput.className = 'arm-step-sep__title';
+        titleInput.placeholder = 'Titre de l\'étape (optionnel)';
+        titleInput.value = step.title;
+        titleInput.addEventListener('input', function () { step.title = titleInput.value; serializePreparation(); });
 
         var meta = document.createElement('div');
         meta.className = 'arm-step-sep__meta';
@@ -1444,21 +1640,19 @@
         typeSelect.className = 'arm-step-sep__type';
         STEP_TYPES.forEach(function (opt) {
           var o = document.createElement('option');
-          o.value = opt.value;
-          o.textContent = opt.label;
+          o.value = opt.value; o.textContent = opt.label;
           typeSelect.appendChild(o);
         });
-        if (type) typeSelect.value = type;
+        typeSelect.value = step.type;
+        typeSelect.addEventListener('change', function () { step.type = typeSelect.value; serializePreparation(); });
 
         var durationWrap = document.createElement('span');
         durationWrap.className = 'arm-step-sep__duration-wrap';
         var durationInput = document.createElement('input');
-        durationInput.type = 'number';
-        durationInput.min = '0';
-        durationInput.max = '999';
-        durationInput.className = 'arm-step-sep__duration';
-        durationInput.placeholder = '—';
-        if (duration) durationInput.value = duration;
+        durationInput.type = 'number'; durationInput.min = '0'; durationInput.max = '999';
+        durationInput.className = 'arm-step-sep__duration'; durationInput.placeholder = '—';
+        durationInput.value = step.duration;
+        durationInput.addEventListener('input', function () { step.duration = durationInput.value; serializePreparation(); });
         var durationUnit = document.createElement('span');
         durationUnit.className = 'arm-step-sep__duration-unit';
         durationUnit.textContent = 'min';
@@ -1468,170 +1662,82 @@
         meta.appendChild(typeSelect);
         meta.appendChild(durationWrap);
 
-        row.appendChild(input);
+        var drag = document.createElement('button');
+        drag.type = 'button'; drag.className = 'arm-step-sep__drag'; drag.setAttribute('aria-label', 'Réorganiser cette étape');
+        drag.innerHTML = '<i data-lucide="grip-vertical" width="14" height="14" stroke-width="2"></i>';
+
+        row.appendChild(titleInput);
         row.appendChild(meta);
+        row.appendChild(drag);
 
-        if (!isFirst) {
-          var del = document.createElement('button');
-          del.className = 'arm-step-sep__del';
-          del.type = 'button';
-          del.setAttribute('aria-label', 'Supprimer ce séparateur');
-          del.innerHTML = '&#x2715;'; // ✕
-          row.appendChild(del);
-        }
-
-        sep.appendChild(bubble);
-        sep.appendChild(row);
-
-        return sep;
-      }
-
-      function renumberStepSeps(rte) {
-        var regIdx = 0;
-        [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep) {
-          var bubble = sep.querySelector('.arm-step-sep__num');
-          if (sep.classList.contains('arm-step-sep--first')) {
-            if (bubble) bubble.textContent = '01';
-            return;
-          }
-          if (bubble) bubble.textContent = String(regIdx + 2).padStart(2, '0');
-          regIdx++;
-        });
-      }
-
-      function insertSeparator(rte) {
-        var stepNum = rte.querySelectorAll('.arm-step-sep:not(.arm-step-sep--first)').length + 2;
-        var sep = makeSepEl(stepNum);
-
-        var sel = window.getSelection();
-        var anchor = null;
-        if (sel && sel.rangeCount) {
-          var node = sel.getRangeAt(0).commonAncestorContainer;
-          while (node && node.parentNode !== rte) node = node.parentNode;
-          if (node && node.parentNode === rte) anchor = node;
-        }
-
-        rte.insertBefore(sep, anchor ? anchor.nextSibling : null);
-
-        var newP = document.createElement('p');
-        newP.appendChild(document.createElement('br'));
-        rte.insertBefore(newP, sep.nextSibling);
-
-        var range = document.createRange();
-        range.setStart(newP, 0);
-        range.collapse(true);
-        sel.removeAllRanges();
-        try { sel.addRange(range); } catch (_) {}
-      }
-
-      /* ── Sync active state des boutons toolbar ── */
-      function syncActive(tb) {
-        tb.querySelectorAll('[data-cmd]').forEach(function (btn) {
-          var cmd = btn.dataset.cmd;
-          var active = false;
-          try {
-            if      (cmd === 'bold')        active = document.queryCommandState('bold');
-            else if (cmd === 'italic')      active = document.queryCommandState('italic');
-            else if (cmd === 'heading') {
-              active = document.queryCommandValue('formatBlock').toLowerCase() === 'h3';
-            }
-            else if (cmd === 'bulletList')  active = document.queryCommandState('insertUnorderedList');
-            else if (cmd === 'orderedList') active = document.queryCommandState('insertOrderedList');
-          } catch (_) {}
-          btn.classList.toggle('is-active', active);
-        });
-      }
-
-      EDITORS.forEach(function (cfg) {
-        var rte = document.getElementById(cfg.rteId);
-        var ta  = document.getElementById(cfg.taId);
-        var tb  = document.getElementById(cfg.tbId);
-        if (!rte || !ta || !tb) return;
-
-        // Ajouter le header fixe Étape 1 + paragraphe éditable en dessous
-        if (cfg.mode === 'preparation' && !rte.querySelector('.arm-step-sep--first')) {
-          var firstHeader = makeSepEl(1, '', true);
-          rte.insertBefore(firstHeader, rte.firstChild);
-          // Paragraphe vide après le header pour accueillir le curseur
-          if (!firstHeader.nextSibling) {
-            var initP = document.createElement('p');
-            initP.appendChild(document.createElement('br'));
-            rte.appendChild(initP);
-          }
-        }
-
-        function refresh() {
-          document.getElementById(cfg.countId).textContent = rteToJson(rte, cfg.mode).length;
-          syncActive(tb);
-        }
-
-        /* Suppression d'un séparateur via le bouton ✕ */
-        rte.addEventListener('click', function (e) {
-          var delBtn = e.target.closest('.arm-step-sep__del');
-          if (!delBtn) return;
-          var sep = delBtn.closest('.arm-step-sep');
-          if (sep) { sep.remove(); renumberStepSeps(rte); refresh(); }
-        });
-
-        /* Paste : forcer le texte brut pour éviter les styles importés */
-        rte.addEventListener('paste', function (e) {
-          e.preventDefault();
-          var text = (e.clipboardData || window.clipboardData).getData('text/plain');
-          if (!text) return;
-          document.execCommand('insertText', false, text);
-          refresh();
-        });
-
-        rte.addEventListener('input', function () {
-          if (cfg.mode === 'preparation') renumberStepSeps(rte);
-          refresh();
-        });
-        rte.addEventListener('keyup',   function () { syncActive(tb); });
-        rte.addEventListener('mouseup', function () { syncActive(tb); });
-
-        /* Ctrl+Enter dans l'éditeur préparation → insérer séparateur */
-        if (cfg.mode === 'preparation') {
-          rte.addEventListener('keydown', function (e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-              e.preventDefault();
-              insertSeparator(rte);
-              renumberStepSeps(rte);
-              refresh();
-            }
+        if (preparationState.length > 1) {
+          var delBtn = document.createElement('button');
+          delBtn.type = 'button'; delBtn.className = 'arm-step-sep__del'; delBtn.setAttribute('aria-label', 'Supprimer cette étape');
+          delBtn.innerHTML = '&#x2715;';
+          delBtn.addEventListener('click', function () {
+            preparationState = preparationState.filter(function (s) { return s.id !== step.id; });
+            if (!preparationState.length) preparationState.push(newStepRow());
+            renderPreparation();
           });
+          row.appendChild(delBtn);
         }
 
-        /* Toolbar — mousedown pour ne pas perdre le focus éditeur */
-        tb.addEventListener('mousedown', function (e) {
-          e.preventDefault();
-          var btn = e.target.closest('[data-cmd]');
-          if (!btn) return;
-          var cmd = btn.dataset.cmd;
-          rte.focus();
-          if      (cmd === 'bold')        document.execCommand('bold');
-          else if (cmd === 'italic')      document.execCommand('italic');
-          else if (cmd === 'heading') {
-            var cur = document.queryCommandValue('formatBlock').toLowerCase();
-            document.execCommand('formatBlock', false, cur === 'h3' ? 'p' : 'h3');
-          }
-          else if (cmd === 'bulletList')  document.execCommand('insertUnorderedList');
-          else if (cmd === 'orderedList') document.execCommand('insertOrderedList');
-          else if (cmd === 'separator')  { insertSeparator(rte); renumberStepSeps(rte); }
-          refresh();
-        });
-      });
+        head.appendChild(bubble);
+        head.appendChild(row);
 
-      /* ── Juste avant le submit : sérialiser en JSON dans les textareas cachées ── */
-      var form = document.getElementById('unified-form');
-      if (form) {
-        form.addEventListener('submit', function () {
-          EDITORS.forEach(function (cfg) {
-            var rte = document.getElementById(cfg.rteId);
-            var ta  = document.getElementById(cfg.taId);
-            if (rte && ta) ta.value = JSON.stringify(rteToJson(rte, cfg.mode));
-          });
+        var bodyTextarea = document.createElement('textarea');
+        bodyTextarea.className = 'arm-step-card__body';
+        bodyTextarea.placeholder = 'Décrivez cette étape…';
+        bodyTextarea.value = step.body;
+        bodyTextarea.rows = 2;
+        function autoGrow() { bodyTextarea.style.height = 'auto'; bodyTextarea.style.height = bodyTextarea.scrollHeight + 'px'; }
+        bodyTextarea.addEventListener('input', function () { step.body = bodyTextarea.value; autoGrow(); serializePreparation(); });
+
+        card.appendChild(head);
+        card.appendChild(bodyTextarea);
+        setTimeout(autoGrow, 0);
+
+        /* Drag reorder — poignée dédiée pour ne pas gêner la saisie */
+        drag.addEventListener('mousedown', function () { card.draggable = true; });
+        card.addEventListener('dragend', function () { card.draggable = false; card.classList.remove('is-dragging'); });
+        card.addEventListener('dragstart', function (e) {
+          card.classList.add('is-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', step.id);
+        });
+        card.addEventListener('dragover', function (e) { e.preventDefault(); card.classList.add('is-drag-over'); });
+        card.addEventListener('dragleave', function () { card.classList.remove('is-drag-over'); });
+        card.addEventListener('drop', function (e) {
+          e.preventDefault();
+          card.classList.remove('is-drag-over');
+          var srcId = e.dataTransfer.getData('text/plain');
+          if (reorderById(preparationState, srcId, step.id)) renderPreparation();
+        });
+
+        return card;
+      }
+
+      function renderPreparation() {
+        var list = document.getElementById('prep-list');
+        if (!list) return;
+        list.innerHTML = '';
+        preparationState.forEach(function (step, idx) { list.appendChild(buildStepCardEl(step, idx)); });
+        if (window.lucide) lucide.createIcons();
+        serializePreparation();
+      }
+
+      var prepAddBtn = document.getElementById('prep-add-btn');
+      if (prepAddBtn) {
+        prepAddBtn.addEventListener('click', function () {
+          preparationState.push(newStepRow());
+          renderPreparation();
+          var textareas = document.querySelectorAll('#prep-list .arm-step-card__body');
+          var last = textareas[textareas.length - 1];
+          if (last) last.focus();
         });
       }
+
+      renderPreparation();
     })();
     </script>
 
@@ -1782,17 +1888,15 @@
         if (inp) inp.addEventListener('change', checkS2);
       });
 
-      /* ══ S3 — Ingrédients & Préparation ══ */
-      var ingRte  = document.getElementById('ing-rte');
-      var prepRte = document.getElementById('prep-rte');
+      /* ══ S3 — Ingrédients & Préparation (état géré par le script des éditeurs
+         structurés — voir window.armIngredientsCount / window.armPreparationCount) ══ */
       function checkS3() {
-        var hasIng  = ingRte  && ingRte.textContent.trim().length > 0;
-        var hasPrep = prepRte && prepRte.textContent.trim().length > 0;
+        var hasIng  = (window.armIngredientsCount  || 0) > 0;
+        var hasPrep = (window.armPreparationCount || 0) > 0;
         if (hasIng && hasPrep) setStepDone(3);
         else setStepWait(3);
       }
-      if (ingRte)  ingRte.addEventListener('input', checkS3);
-      if (prepRte) prepRte.addEventListener('input', checkS3);
+      window.checkS3 = checkS3;
 
       /* ══ Init : si film déjà confirmé côté serveur ══ */
       <% if (typeof newMovie !== 'undefined' && newMovie) { %>

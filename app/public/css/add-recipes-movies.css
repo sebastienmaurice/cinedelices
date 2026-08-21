@@ -1503,6 +1503,26 @@ body.arm-full-bleed {
   border-color: rgba(196, 160, 82, 0.48);
   background: rgba(196, 160, 82, 0.04);
 }
+.arm-upload-slot--step.is-dragging { opacity: 0.4; }
+.arm-upload-slot--step.is-drag-over { border-color: rgba(196, 160, 82, 0.7); background: rgba(196, 160, 82, 0.08); }
+.arm-upload-slot__drag {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(6, 10, 18, 0.6);
+  color: rgba(196, 160, 82, 0.7);
+  cursor: grab;
+  pointer-events: auto;
+}
+.arm-upload-slot__drag:hover { background: rgba(196, 160, 82, 0.22); color: var(--or-titre, #c4a052); }
 
 /* Input file invisible couvrant tout le slot */
 .arm-upload-slot__input {
@@ -2175,16 +2195,6 @@ body.arm-full-bleed {
   pointer-events: auto;
   color: var(--or-titre, #c4a052);
 }
-.arm-step-sep::before {
-  /* Fil de la timeline, reliant cette pastille à la précédente */
-  content: "";
-  position: absolute;
-  left: 24px;
-  top: -14px;
-  width: 1px;
-  height: 14px;
-  background: rgba(196, 160, 82, 0.28);
-}
 .arm-step-sep--first::before { display: none; }
 
 .arm-step-sep__num {
@@ -2318,10 +2328,234 @@ body.arm-full-bleed {
   background: rgba(196, 160, 82, 0.06);
 }
 
-/* Indente le corps de chaque étape sous la pastille, pour prolonger l'effet timeline
-   (uniquement l'éditeur Préparation — pas les ingrédients) */
-#prep-rte > p {
-  padding-left: 42px;
+.arm-step-sep__drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(196, 160, 82, 0.45);
+  cursor: grab;
+  flex-shrink: 0;
+  pointer-events: auto;
+  transition: background 0.15s, color 0.15s;
+}
+.arm-step-sep__drag:hover { background: rgba(196, 160, 82, 0.14); color: var(--or-titre, #c4a052); }
+
+/* ══════════════════════════════════════════════════════
+   ÉTAPES DE PRÉPARATION — cartes (remplace le contenteditable)
+══════════════════════════════════════════════════════ */
+.arm-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+.arm-step-card {
+  position: relative;
+  transition: opacity 0.15s;
+}
+.arm-step-card:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: -22px;
+  width: 1px;
+  height: 22px;
+  background: rgba(196, 160, 82, 0.28);
+}
+.arm-step-card.is-dragging { opacity: 0.4; }
+.arm-step-card.is-drag-over .arm-step-sep { border-color: rgba(196, 160, 82, 0.65); }
+.arm-step-card__body {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 6px;
+  margin-left: 42px;
+  padding: 8px 10px;
+  background: rgba(6, 10, 18, 0.4);
+  border: 1px solid rgba(196, 160, 82, 0.12);
+  border-radius: 8px;
+  color: var(--argent-ecran);
+  font-family: var(--font-body, "Lato", sans-serif);
+  font-size: 0.84rem;
+  font-weight: 300;
+  line-height: 1.7;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.arm-step-card__body:focus { border-color: rgba(196, 160, 82, 0.35); }
+.arm-step-card__body::placeholder { color: rgba(232, 232, 232, 0.2); }
+
+/* ══════════════════════════════════════════════════════
+   INGRÉDIENTS — lignes structurées (remplace le contenteditable)
+══════════════════════════════════════════════════════ */
+.arm-ing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.arm-ing-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(6, 10, 18, 0.4);
+  border: 1px solid rgba(196, 160, 82, 0.12);
+  border-radius: 8px;
+  padding: 6px 8px;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.arm-ing-row:focus-within { border-color: rgba(196, 160, 82, 0.35); }
+.arm-ing-row.is-dragging { opacity: 0.4; }
+.arm-ing-row.is-drag-over { border-color: rgba(196, 160, 82, 0.65); }
+.arm-ing-row__drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgba(196, 160, 82, 0.4);
+  cursor: grab;
+  flex-shrink: 0;
+}
+.arm-ing-row__drag:hover { color: var(--or-titre, #c4a052); }
+.arm-ing-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  background: rgba(196, 160, 82, 0.1);
+  border: 1px solid rgba(196, 160, 82, 0.22);
+  color: var(--or-titre, #c4a052);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.arm-ing-row__icon:hover { background: rgba(196, 160, 82, 0.2); }
+.arm-ing-row__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(196, 160, 82, 0.15);
+  color: var(--argent-ecran);
+  font-size: 0.8rem;
+  font-family: inherit;
+  padding: 4px 4px;
+  outline: none;
+}
+.arm-ing-row__name:focus { border-bottom-color: rgba(196, 160, 82, 0.5); }
+.arm-ing-row__name::placeholder { color: rgba(232, 232, 232, 0.2); }
+.arm-ing-row__qty {
+  width: 50px;
+  flex-shrink: 0;
+  background: rgba(196, 160, 82, 0.06);
+  border: 1px solid rgba(196, 160, 82, 0.16);
+  border-radius: 5px;
+  color: var(--argent-ecran);
+  font-size: 0.76rem;
+  font-family: inherit;
+  padding: 4px 6px;
+  text-align: center;
+  outline: none;
+}
+.arm-ing-row__qty:focus { border-color: rgba(196, 160, 82, 0.45); }
+.arm-ing-row__unit {
+  flex-shrink: 0;
+  max-width: 92px;
+  background: rgba(196, 160, 82, 0.06);
+  border: 1px solid rgba(196, 160, 82, 0.16);
+  border-radius: 5px;
+  color: rgba(232, 232, 232, 0.75);
+  font-size: 0.68rem;
+  font-family: inherit;
+  padding: 4px 4px;
+  outline: none;
+  cursor: pointer;
+}
+.arm-ing-row__unit:focus { border-color: rgba(196, 160, 82, 0.45); }
+.arm-ing-row__del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(196, 160, 82, 0.4);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.arm-ing-row__del:hover { background: rgba(194, 48, 24, 0.16); color: #e0632f; }
+
+/* Bouton "+ Ajouter..." partagé (ingrédient / étape / photo) */
+.arm-add-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px;
+  background: rgba(196, 160, 82, 0.06);
+  border: 1px dashed rgba(196, 160, 82, 0.3);
+  border-radius: 8px;
+  color: var(--or-titre, #c4a052);
+  font-family: var(--f-title, "Cinzel", serif);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.arm-add-row-btn:hover { background: rgba(196, 160, 82, 0.12); border-color: rgba(196, 160, 82, 0.5); }
+
+/* Popover de sélection d'icône (ingrédients) */
+.arm-icon-picker {
+  position: absolute;
+  z-index: 400;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  padding: 8px;
+  background: #0c1420;
+  border: 1px solid rgba(196, 160, 82, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.arm-icon-picker__opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: rgba(196, 160, 82, 0.06);
+  color: rgba(232, 232, 232, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.arm-icon-picker__opt:hover { background: rgba(196, 160, 82, 0.16); color: var(--or-titre, #c4a052); }
+.arm-icon-picker__opt.is-selected {
+  background: rgba(196, 160, 82, 0.22);
+  border-color: rgba(196, 160, 82, 0.5);
+  color: var(--or-titre, #c4a052);
 }
 
 /* ══════════════════════════════════════════════════════
