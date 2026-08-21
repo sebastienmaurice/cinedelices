@@ -289,6 +289,45 @@
             <div class="filter-bar">
               <input type="text" class="filter-bar__search" placeholder="Filtrer les recettes…" data-filter-input="recettes-pending" />
             </div>
+            <%
+              // ── Rendu lisible des ingrédients/préparation (au lieu du JSON brut) ──
+              // Miroir des helpers côté client (add-recipes-movies-textarea.js / recipe-detail.ejs)
+              function rvParseJsonArray(str) {
+                try { const v = JSON.parse(str); return Array.isArray(v) ? v : null; }
+                catch (e) { return null; }
+              }
+              function rvSplitIngredient(raw) {
+                const s = String(raw).trim();
+                if (/<[^>]+>/.test(s)) return null;
+                const unit = '(?:g|kg|mg|ml|cl|l|c\\.\\s*à\\s*(?:soupe|café)|cuill[eè]res?\\s*(?:à|a)\\s*(?:soupe|café)|gousses?|poign[ée]es?|pinc[ée]es?|tranches?|feuilles?|branches?|sachets?|verres?|tasses?)';
+                const re = new RegExp('^(\\d+(?:[.,]\\d+)?(?:\\/\\d+)?\\s*' + unit + '?)\\s+(.+)$', 'i');
+                const m = s.match(re);
+                return m ? { qty: m[1].trim(), name: m[2].trim() } : null;
+              }
+              function rvParseIngredients(jsonStr) {
+                const arr = rvParseJsonArray(jsonStr);
+                if (!arr) return null;
+                return arr.map(function (raw) {
+                  const s = String(raw);
+                  const h3m = s.match(/^<h3[^>]*>(.*?)<\/h3>$/i);
+                  if (h3m) return { type: 'title', text: h3m[1] };
+                  const split = rvSplitIngredient(s);
+                  return split ? { type: 'item', qty: split.qty, name: split.name } : { type: 'item', qty: null, name: s };
+                });
+              }
+              function rvExtractStepTitle(html) {
+                const m = String(html).match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+                if (!m) return { title: '', body: html };
+                const title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+                const body = m[2].replace(/^(<br\s*\/?>\s*)+/i, '').replace(/^\s*[-–—]\s*/, '').trim();
+                return { title: title, body: body || m[2].trim() };
+              }
+              function rvParsePreparation(jsonStr) {
+                const arr = rvParseJsonArray(jsonStr);
+                if (!arr) return null;
+                return arr.map(function (raw) { return rvExtractStepTitle(String(raw)); });
+              }
+            %>
             <% recipesPending.forEach(function(recipe) { %>
             <div class="recipe-val-panel" data-search-item="<%= (recipe.name || '').toLowerCase() %>">
               <div class="recipe-val-panel__header">
@@ -337,16 +376,48 @@
               <% } %>
 
               <% if (recipe.ingredients) { %>
+              <% const rvIngredients = rvParseIngredients(recipe.ingredients); %>
               <div class="recipe-val-panel__section">
-                <h4 class="recipe-val-panel__section-title">Ingrédients</h4>
+                <h4 class="recipe-val-panel__section-title">
+                  Ingrédients<% if (rvIngredients) { %> (<%= rvIngredients.filter(i => i.type === 'item').length %>)<% } %>
+                </h4>
+                <% if (rvIngredients) { %>
+                <div class="rv-ing-list">
+                  <% rvIngredients.forEach(function (it) { %>
+                    <% if (it.type === 'title') { %>
+                    <h5 class="rv-ing-group"><%= it.text %></h5>
+                    <% } else { %>
+                    <div class="rv-ing-item">
+                      <% if (it.qty) { %><span class="rv-ing-qty"><%= it.qty %></span><% } %>
+                      <span class="rv-ing-name"><%- it.name %></span>
+                    </div>
+                    <% } %>
+                  <% }) %>
+                </div>
+                <% } else { %>
                 <pre class="recipe-val-panel__pre"><%= recipe.ingredients %></pre>
+                <% } %>
               </div>
               <% } %>
 
               <% if (recipe.preparation) { %>
+              <% const rvSteps = rvParsePreparation(recipe.preparation); %>
               <div class="recipe-val-panel__section">
-                <h4 class="recipe-val-panel__section-title">Préparation</h4>
+                <h4 class="recipe-val-panel__section-title">
+                  Préparation<% if (rvSteps) { %> (<%= rvSteps.length %> étape<%= rvSteps.length > 1 ? 's' : '' %>)<% } %>
+                </h4>
+                <% if (rvSteps) { %>
+                <ol class="rv-prep-list">
+                  <% rvSteps.forEach(function (s) { %>
+                  <li>
+                    <% if (s.title) { %><strong class="rv-prep-title"><%= s.title %></strong><% } %>
+                    <span class="rv-prep-body"><%- s.body %></span>
+                  </li>
+                  <% }) %>
+                </ol>
+                <% } else { %>
                 <pre class="recipe-val-panel__pre"><%= recipe.preparation %></pre>
+                <% } %>
               </div>
               <% } %>
 
