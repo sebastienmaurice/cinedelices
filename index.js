@@ -56,7 +56,12 @@ app.use(express.urlencoded({ extended: true })); // pour parser les données des
 app.use(express.json()); // permet de parser le JSON
 app.use(verifyToken); // Middleware global pour vérifier le token et définir req.user si connecté
 app.use(injectLocals); // Middleware global pour injecter les variables locales dans les vues
-app.use(xss()); // Middleware global : nettoie automatiquement req.body, req.query, req.params
+// Middleware global : nettoie automatiquement req.body, req.query, req.params.
+// "query" est exclu : c'est un terme de recherche (TMDB / SQL LIKE via Sequelize,
+// jamais réinjecté tel quel dans une vue HTML) — le sanitizer HTML-encodait les
+// caractères comme "&" (ex: "Julie & Julia" → "Julie &amp; Julia"), ce qui cassait
+// silencieusement toute recherche de film contenant ce caractère.
+app.use(xss({ allowedKeys: ["query"] }));
 
 // Healthcheck — utilisé par Render pour vérifier que le service est opérationnel
 app.get("/health", (req, res) => res.json({ status: "ok" }));
