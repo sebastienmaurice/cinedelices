@@ -1482,6 +1482,11 @@ body.arm-full-bleed {
 .arm-upload-grid--steps .arm-step-num-field label { font-size: 0.42rem; }
 .arm-upload-grid--steps .arm-step-num-input { width: 20px; font-size: 0.62rem; }
 
+.arm-upload-slot[hidden] {
+  /* L'attribut HTML [hidden] doit rester prioritaire sur le display:flex
+     ci-dessous (règle auteur) pour la révélation progressive des photos. */
+  display: none !important;
+}
 .arm-upload-slot {
   position: relative;
   aspect-ratio: 3/2;
@@ -2270,6 +2275,11 @@ body.arm-full-bleed {
   cursor: pointer;
 }
 .arm-step-sep__type:focus { border-color: rgba(196, 160, 82, 0.6); }
+.arm-step-sep__type option {
+  background: #0c1420;
+  color: var(--or-titre, #c4a052);
+  text-transform: none;
+}
 .arm-step-sep__duration-wrap {
   display: flex;
   align-items: center;
@@ -2372,7 +2382,8 @@ body.arm-full-bleed {
 .arm-step-card.is-dragging { opacity: 0.4; }
 .arm-step-card.is-drag-over .arm-step-sep { border-color: rgba(196, 160, 82, 0.65); }
 .arm-step-card__body {
-  width: 100%;
+  box-sizing: border-box;
+  width: calc(100% - 42px);
   min-height: 44px;
   margin-top: 6px;
   margin-left: 42px;
@@ -2486,6 +2497,12 @@ body.arm-full-bleed {
   cursor: pointer;
 }
 .arm-ing-row__unit:focus { border-color: rgba(196, 160, 82, 0.45); }
+/* Le popup natif du <select> ignore le fond sombre hérité — on le fixe
+   explicitement sur les <option> pour éviter du texte clair sur fond blanc. */
+.arm-ing-row__unit option {
+  background: #0c1420;
+  color: rgba(232, 232, 232, 0.85);
+}
 .arm-ing-row__del {
   display: flex;
   align-items: center;
