@@ -371,7 +371,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnMinus2 = document.getElementById('rd-srv-minus2');
   const btnPlus2  = document.getElementById('rd-srv-plus2');
   const portEl    = document.getElementById('rd-ing-portions-val');
-  const ingEls    = Array.from(document.querySelectorAll('.rd-ing-text'));
+  // La quantité (ex. "250 G", "1,2 KG") est dans .rd-ing-qty, séparée du nom
+  // de l'ingrédient (.rd-ing-text) — cf. splitIngredient() plus haut dans ce
+  // fichier EJS. Seule .rd-ing-qty doit être recalculée à chaque changement
+  // du nombre de portions.
+  const ingEls = Array.from(document.querySelectorAll('.rd-ing-qty'));
   ingEls.forEach(el => { el.dataset.original = el.textContent; });
 
   function fmtQty(n) {

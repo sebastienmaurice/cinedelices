@@ -415,11 +415,14 @@ const recipesController = {
       });
 
       //! Calcul de la moyenne des notes (avis racines uniquement, notés 1-5)
-
+      // Moyenne décimale (ex. "4.3") — plus précise et cohérente avec la note
+      // TMDB des films ("7.8/10") et avgRating des recettes (déjà en .toFixed(1)).
+      // Les étoiles pleines/vides continuent d'utiliser Math.round(averageQuote)
+      // à l'affichage : la précision décimale ne concerne que le chiffre affiché.
       let averageQuote = 0; // Valeur par défaut si pas d'avis
       if (plainNotices.length > 0) {
         const sum = plainNotices.reduce((acc, n) => acc + (n.quote || 0), 0); // Somme des notes
-        averageQuote = Math.round(sum / plainNotices.length); // Moyenne arrondie a l'entier le plus proche
+        averageQuote = (sum / plainNotices.length).toFixed(1); // ex. "4.3" (toujours 1 décimale)
       }
 
       // Vérifier si cette recette est en favori et récupérer les notes

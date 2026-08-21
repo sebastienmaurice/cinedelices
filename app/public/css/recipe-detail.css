@@ -253,55 +253,85 @@ body.recipe-page main {
 .rh-poster__stat {
   position: absolute; z-index: 10;
   bottom: 28px; right: 2.5rem;
-  border-radius: 14px; overflow: hidden;
-  background: var(--gold-card-gradient);
-  box-shadow: 0 16px 48px rgba(184,136,42,.55), 0 4px 16px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.28);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(184,136,42,.55), 0 4px 16px rgba(0,0,0,.55);
   transition: transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s;
   cursor: default;
 }
+/* Ligne de séparation perforée entre l'icône et le texte — effet "souche
+   de ticket détachable". */
+.rh-poster__stat-tear {
+  align-self: stretch; width: 1px; flex-shrink: 0;
+  background: repeating-linear-gradient(180deg, rgba(20,10,0,.28) 0, rgba(20,10,0,.28) 4px, transparent 4px, transparent 8px);
+}
 .rh-poster__stat:hover {
   transform: translateY(-3px);
-  box-shadow: 0 26px 64px rgba(184,136,42,.7), 0 6px 22px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.32);
+  box-shadow: 0 26px 64px rgba(184,136,42,.7), 0 6px 22px rgba(0,0,0,.6);
 }
-/* Texture bruit */
-.rh-poster__stat::before {
+/* Perforations réelles : la matière dorée est réellement absente à cet
+   endroit (la photo derrière se voit), pas un rond de couleur posé dessus.
+   Technique : 2 calques identiques (dégradé + texture + shimmer), chacun
+   percé d'UN seul trou (mask-image à 1 calque — fiable dans tous les
+   navigateurs, contrairement à un mask à 2 trous combinés qui pose des
+   soucis de mask-composite), puis chacun découpé via clip-path pour ne
+   peindre que sa moitié — les deux moitiés se recollent sans joint visible
+   puisqu'elles partagent le même dégradé positionné à l'identique. */
+.rh-poster__stat-half {
+  position: absolute; inset: 0; z-index: 0; border-radius: inherit; overflow: hidden;
+  background: var(--gold-card-gradient);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28);
+}
+.rh-poster__stat-half--l {
+  clip-path: inset(0 50% 0 0);
+  mask-image: radial-gradient(circle 7px at 0 50%, transparent 7px, black 7.5px);
+  -webkit-mask-image: radial-gradient(circle 7px at 0 50%, transparent 7px, black 7.5px);
+}
+.rh-poster__stat-half--r {
+  clip-path: inset(0 0 0 50%);
+  mask-image: radial-gradient(circle 7px at 100% 50%, transparent 7px, black 7.5px);
+  -webkit-mask-image: radial-gradient(circle 7px at 100% 50%, transparent 7px, black 7.5px);
+}
+/* Texture bruit — dupliquée sur chaque moitié pour rester continue */
+.rh-poster__stat-half::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .05;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px;
 }
-/* Shimmer hover */
-.rh-poster__stat::after {
+/* Shimmer hover — dupliqué sur chaque moitié pour rester continu */
+.rh-poster__stat-half::after {
   content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
   background: linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
   transform: translateX(-120%) skewX(-18deg);
 }
-.rh-poster__stat:hover::after { animation: ctaShimmer .7s cubic-bezier(.22,1,.36,1) forwards; }
+.rh-poster__stat:hover .rh-poster__stat-half::after { animation: ctaShimmer .7s cubic-bezier(.22,1,.36,1) forwards; }
+.rh-poster__stat-content { position: relative; z-index: 2; }
 
 .rh-poster__stat-inner {
   position: relative; z-index: 2;
-  display: flex; align-items: center; gap: 9px;
-  padding: 8px 12px 8px 8px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px 14px 18px;
 }
 .rh-ps-icon {
-  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
   background: rgba(20,10,0,.14);
-  border: 1.5px solid rgba(20,10,0,.18);
+  border: 1.5px solid rgba(20,10,0,.2);
   display: flex; align-items: center; justify-content: center;
   color: rgba(20,10,0,.68);
 }
-.rh-ps-text { display: flex; flex-direction: column; gap: 1px; }
+.rh-ps-icon svg { width: 20px; height: 20px; }
+.rh-ps-text { display: flex; flex-direction: column; gap: 2px; }
 .rh-ps-num {
-  font-family: var(--f-display); font-size: 1.15rem; letter-spacing: .05em;
+  font-family: var(--f-display); font-size: 1.65rem; letter-spacing: .05em;
   color: var(--bleu-nuit); line-height: 1;
 }
 .rh-ps-label {
-  font-family: var(--f-title); font-size: .44rem; font-weight: 700;
-  letter-spacing: .2em; text-transform: uppercase; color: rgba(20,10,0,.4);
+  font-family: var(--f-title); font-size: .56rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase; color: rgba(20,10,0,.45);
 }
 /* Filigrane décoratif */
 .rh-ps-watermark {
-  position: absolute; bottom: -3px; right: 7px; z-index: 0;
-  font-family: var(--f-display); font-size: 2.2rem; letter-spacing: .06em; line-height: 1;
+  position: absolute; bottom: -6px; right: 10px; z-index: 0;
+  font-family: var(--f-display); font-size: 3.1rem; letter-spacing: .06em; line-height: 1;
   color: rgba(20,10,0,.07); pointer-events: none; user-select: none;
 }
 
@@ -1298,7 +1328,7 @@ body.recipe-page main {
   background: rgba(20,10,0,.08); border: 1px solid rgba(20,10,0,.18);
   display: flex; align-items: center; justify-content: center; color: var(--bleu-nuit);
 }
-.avis-stat-block strong { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--bleu-nuit); line-height: 1.1; }
+.avis-stat-block strong { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--bleu-nuit); line-height: 1.1; margin-top: 25px; }
 .avis-stat-block span { font-size: .6rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(20,10,0,.5); }
 
 @media (max-width: 900px) {
