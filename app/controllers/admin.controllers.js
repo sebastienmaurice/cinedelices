@@ -1351,7 +1351,7 @@ const adminController = {
         return res.redirect("/admin?success=admin_notice_update_error");
       }
 
-      const { content, quote } = req.body;
+      const { content, quote, highlight } = req.body;
       const updateData = {};
 
       if (content) updateData.content = content.trim();
@@ -1361,6 +1361,12 @@ const adminController = {
           return res.redirect("/admin?success=admin_notice_update_error");
         }
         updateData.quote = quoteValue;
+      }
+      // Badge éditorial "Coup de cœur" / "Astuce utile" — posé/retiré en
+      // modération. "none" (ou vide) efface le badge existant.
+      if (highlight !== undefined) {
+        const allowed = ["coup_de_coeur", "astuce_utile"];
+        updateData.highlight = allowed.includes(highlight) ? highlight : null;
       }
 
       if (Object.keys(updateData).length === 0) {

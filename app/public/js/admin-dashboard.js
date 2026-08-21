@@ -640,10 +640,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const contentTextarea = document.getElementById("edit-notice-content");
       const authorDisplay = document.getElementById("edit-notice-author-display");
       const recipeDisplay = document.getElementById("edit-notice-recipe-display");
+      const highlightSelect = document.getElementById("edit-notice-highlight");
       if (quoteInput) quoteInput.value = data.quote || "";
       if (contentTextarea) contentTextarea.value = data.content || "";
       if (authorDisplay) authorDisplay.textContent = data.author || "—";
       if (recipeDisplay) recipeDisplay.textContent = data.recipe || "—";
+      if (highlightSelect) highlightSelect.value = data.highlight || "none";
     }
   };
 
@@ -746,6 +748,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.quote = btn.dataset.editQuote;
         data.author = btn.dataset.editAuthor;
         data.recipe = btn.dataset.editRecipe;
+        data.highlight = btn.dataset.editHighlight;
       }
       openEditModal(type, data);
     });

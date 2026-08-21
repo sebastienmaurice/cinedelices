@@ -7,13 +7,13 @@
  *   role, userId
  *
  * Données asynchrones enrichies (silencieuses si indisponibles) :
- *   footerStats      — { members, recipes, films } — cache 5 min
+ *   footerStats      — { members, recipes, films, avis } — cache 5 min
  *   topContributors  — top 3 par recettes approuvées — cache 5 min
  */
 
 import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
-import { User, Recipe, Movie } from "../models/index.model.js";
+import { User, Recipe, Movie, Notice } from "../models/index.model.js";
 import { FRAME_UNLOCKS } from "../utils/gamification.utils.js";
 import { cldCard, cldAvatar, cldFull } from "../utils/cloudinary-url.js";
 
@@ -40,12 +40,13 @@ async function getGlobalStats() {
   if (_statsCache && Date.now() - _statsCacheTime < CACHE_TTL) {
     return _statsCache;
   }
-  const [members, recipes, films] = await Promise.all([
+  const [members, recipes, films, avis] = await Promise.all([
     User.count(),
     Recipe.count({ where: { status: "approved" } }),
     Movie.count({ where: { status: "approved" } }),
+    Notice.count({ where: { status: "approved", parent_id: null } }),
   ]);
-  _statsCache     = { members, recipes, films };
+  _statsCache     = { members, recipes, films, avis };
   _statsCacheTime = Date.now();
   return _statsCache;
 }

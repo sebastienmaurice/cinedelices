@@ -1068,12 +1068,16 @@ body.recipe-page main {
 .rd-derniers-avis__empty { font-size: .82rem; color: rgba(232,232,232,.5); font-style: italic; }
 
 /* Grille avis */
+/* Masonry via colonnes CSS — chaque card garde sa hauteur naturelle
+   (variable selon photos/réponses), sans les grands trous qu'un grid à
+   lignes strictes laisserait entre cards de tailles différentes. */
 .avis-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  column-count: 3; column-gap: 16px;
   margin-bottom: 24px;
 }
+@media (min-width: 1400px) { .avis-grid { column-count: 4; } }
+@media (max-width: 1100px) { .avis-grid { column-count: 2; } }
+@media (max-width: 720px)  { .avis-grid { column-count: 1; } }
 .avis-card {
   position: relative;
   background: linear-gradient(160deg,#0f1e30 0%,#142234 100%);
@@ -1083,6 +1087,7 @@ body.recipe-page main {
   box-shadow: 0 8px 30px rgba(0,2,12,.48), inset 0 1px 0 rgba(255,255,255,.03);
   transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .35s ease;
   animation: cardReveal .5s cubic-bezier(.22,1,.36,1) both; overflow: hidden;
+  break-inside: avoid; margin-bottom: 16px;
 }
 .avis-card:nth-child(2){animation-delay:.07s} .avis-card:nth-child(3){animation-delay:.14s}
 .avis-card::before {
@@ -1102,10 +1107,9 @@ body.recipe-page main {
 }
 .avis-card:hover::after { background: radial-gradient(circle at top right,rgba(196,160,82,.22) 0%,transparent 70%); }
 
-/* Card vedette 2 colonnes */
+/* Card vedette — même structure/largeur que les autres cards du masonry
+   (une seule colonne), seule la teinte dorée la distingue visuellement. */
 .avis-card--featured {
-  grid-column: 1 / -1;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
   background: linear-gradient(155deg, rgba(20,14,4,.98) 0%, rgba(16,9,2,.96) 60%, rgba(14,8,1,.94) 100%);
   border-color: rgba(196,160,82,.32);
   box-shadow: 0 16px 56px rgba(212,168,67,.22), 0 4px 14px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04);
@@ -1119,37 +1123,43 @@ body.recipe-page main {
 }
 .avis-card--featured:hover { box-shadow: 0 28px 80px rgba(212,168,67,.34), 0 6px 22px rgba(0,0,0,.65); }
 
-.avis-card:nth-child(2) {
+/* Alternance de teintes sur TOUTES les cards (pas seulement les 3 premières)
+   — cycle de 3 couleurs (bleu par défaut / violet / vert) qui se répète sur
+   toute la liste, quel que soit le nombre d'avis. */
+.avis-card:nth-child(3n+2) {
   background: linear-gradient(160deg, #0f1e30 0%, #141624 60%, #120f1a 100%);
   border-color: rgba(107,79,160,.2);
 }
-.avis-card:nth-child(2)::before {
+.avis-card:nth-child(3n+2)::before {
   background: linear-gradient(180deg,transparent 0%,rgba(107,79,160,.12) 15%,rgba(107,79,160,.6) 38%,rgba(155,126,208,.72) 50%,rgba(107,79,160,.6) 62%,rgba(107,79,160,.12) 85%,transparent 100%);
 }
-.avis-card:nth-child(2)::after { background: radial-gradient(circle at top right,rgba(107,79,160,.14) 0%,transparent 70%); }
-.avis-card:nth-child(2):hover { border-color: rgba(107,79,160,.45); box-shadow: 0 20px 56px rgba(107,79,160,.18), 0 4px 14px rgba(0,0,0,.6); }
-.avis-card:nth-child(2) .avis-stars .s { color: var(--dore-clair); filter: drop-shadow(0 0 4px rgba(212,168,67,.3)); }
+.avis-card:nth-child(3n+2)::after { background: radial-gradient(circle at top right,rgba(107,79,160,.14) 0%,transparent 70%); }
+.avis-card:nth-child(3n+2):hover { border-color: rgba(107,79,160,.45); box-shadow: 0 20px 56px rgba(107,79,160,.18), 0 4px 14px rgba(0,0,0,.6); }
+.avis-card:nth-child(3n+2) .avis-stars .s { color: var(--dore-clair); filter: drop-shadow(0 0 4px rgba(212,168,67,.3)); }
 
-.avis-card:nth-child(3) {
+.avis-card:nth-child(3n) {
   background: linear-gradient(160deg, #111a1f 0%, #131d16 60%, #0d1810 100%);
   border-color: rgba(42,122,80,.22);
 }
-.avis-card:nth-child(3)::before {
+.avis-card:nth-child(3n)::before {
   background: linear-gradient(180deg,transparent 0%,rgba(42,122,80,.12) 15%,rgba(42,122,80,.62) 38%,rgba(61,170,114,.72) 50%,rgba(42,122,80,.62) 62%,rgba(42,122,80,.12) 85%,transparent 100%);
 }
-.avis-card:nth-child(3)::after { background: radial-gradient(circle at top right,rgba(42,122,80,.14) 0%,transparent 70%); }
-.avis-card:nth-child(3):hover { border-color: rgba(42,122,80,.45); box-shadow: 0 20px 56px rgba(42,122,80,.15), 0 4px 14px rgba(0,0,0,.6); }
-.avis-card:nth-child(3) .avis-stars .s { color: var(--dore-clair); }
-.avis-card:nth-child(3) .avis-stars .se { color: rgba(196,160,82,.2); }
+.avis-card:nth-child(3n)::after { background: radial-gradient(circle at top right,rgba(42,122,80,.14) 0%,transparent 70%); }
+.avis-card:nth-child(3n):hover { border-color: rgba(42,122,80,.45); box-shadow: 0 20px 56px rgba(42,122,80,.15), 0 4px 14px rgba(0,0,0,.6); }
+.avis-card:nth-child(3n) .avis-stars .s { color: var(--dore-clair); }
+.avis-card:nth-child(3n) .avis-stars .se { color: rgba(196,160,82,.2); }
+/* La card vedette (toujours en 1ère position) garde son propre style doré/sombre */
+.avis-card--featured { background: linear-gradient(155deg, rgba(20,14,4,.98) 0%, rgba(16,9,2,.96) 60%, rgba(14,8,1,.94) 100%) !important; }
 
-.avis-card--featured .avis-card__left { display: flex; flex-direction: column; gap: 14px; }
-.avis-card--featured .avis-card__right { display: flex; flex-direction: column; gap: 14px; }
-.avis-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; position: relative; z-index: 2; }
-.avis-card__user { display: flex; align-items: center; gap: 10px; }
+.avis-card__head { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 2; }
+.avis-card__badge-row { display: flex; justify-content: flex-end; }
+.avis-card__user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.avis-card__user > div { min-width: 0; }
 .avis-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; background: rgba(196,160,82,.08); border: 1.5px solid rgba(196,160,82,.22); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 10px rgba(196,160,82,.08); color: rgba(196,160,82,.45); }
 .avis-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .avis-avatar--gold { border-color: var(--or-titre); box-shadow: 0 0 18px rgba(196,160,82,.28); }
-.avis-user__name { font-family: var(--f-title); font-size: .68rem; font-weight: 600; letter-spacing: .04em; color: var(--argent); line-height: 1.2; }
+.avis-user__name { font-family: var(--f-title); font-size: .68rem; font-weight: 600; letter-spacing: .04em; color: var(--argent); line-height: 1.2; overflow-wrap: break-word; }
+.avis-card--featured .avis-user__name { font-size: .92rem; }
 .avis-user__level { font-size: .56rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(196,160,82,.5); margin-top: 1px; }
 .avis-user__level--legend { color: #f7c948; }
 .avis-featured-badge { padding: 4px 10px; border-radius: 5px; font-family: var(--f-title); font-size: .56rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: rgba(196,160,82,.12); border: 1px solid rgba(196,160,82,.38); color: var(--or-titre); white-space: nowrap; flex-shrink: 0; }
@@ -1245,6 +1255,235 @@ body.recipe-page main {
   transform: scale(1.18);
   filter: drop-shadow(0 0 5px rgba(242, 200, 75, 0.5));
 }
+.star-picker__hint { margin-left: 10px; font-size: .68rem; font-style: italic; color: rgba(232,232,232,.3); }
+
+/* ══ Bannière stats — en-tête de la section avis ══
+   Même "ticket doré" que .avis-banner--vertical (même dégradé, même texture,
+   mêmes teintes de texte sombres sur fond clair) mais en format horizontal,
+   avec l'image d'ambiance ciné en fondu à droite. */
+.avis-stats-banner { margin-bottom: 24px; }
+.avis-stats-banner::after { content: none; } /* pas de filigrane "AVIS" ici — l'image tient ce rôle */
+.avis-stats-banner__bg {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 52%; z-index: 1;
+  object-fit: cover; object-position: 80% center; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.5) 35%, #000 65%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.5) 35%, #000 65%);
+}
+/* Encoches de billet — 2 demi-cercles découpés dans les bords gauche/droit */
+.avis-stats-banner__notch {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--bleu-nuit); box-shadow: inset 0 1px 4px rgba(0,0,0,.35);
+}
+.avis-stats-banner__notch--l { left: -13px; }
+.avis-stats-banner__notch--r { right: -13px; }
+.avis-stats-banner__inner {
+  grid-template-columns: auto 1fr; gap: 28px;
+  padding: 34px 44px; position: relative; z-index: 2;
+}
+/* Icône badge — cercle sombre + icône claire, contraste fort sur le doré (cf. maquette) */
+.avis-stats-banner .avis-banner__reel {
+  background: var(--bleu-nuit); border-color: rgba(20,10,0,.3);
+  box-shadow: 0 4px 14px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.avis-stats-banner .avis-banner__reel::before { border-color: rgba(196,160,82,.35); }
+.avis-stats-banner .avis-banner__reel-icon { color: var(--or-titre); }
+.avis-stats-banner .avis-banner__text { padding-right: 8%; }
+.avis-stats-banner .avis-banner__title { margin-bottom: 6px; }
+.avis-stats-banner .avis-banner__sub { margin-bottom: 20px; }
+.avis-stats-banner__stats { display: flex; flex-wrap: wrap; gap: 28px; }
+.avis-stat-block { display: flex; align-items: center; gap: 10px; }
+.avis-stat-block__icon {
+  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+  background: rgba(20,10,0,.08); border: 1px solid rgba(20,10,0,.18);
+  display: flex; align-items: center; justify-content: center; color: var(--bleu-nuit);
+}
+.avis-stat-block strong { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--bleu-nuit); line-height: 1.1; }
+.avis-stat-block span { font-size: .6rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(20,10,0,.5); }
+
+@media (max-width: 900px) {
+  .avis-stats-banner__bg { width: 40%; }
+  .avis-stats-banner .avis-banner__text { padding-right: 4%; }
+}
+@media (max-width: 720px) {
+  .avis-stats-banner__inner { grid-template-columns: auto 1fr; padding: 28px 26px; gap: 18px; }
+  .avis-stats-banner__bg { display: none; }
+  .avis-stats-banner .avis-banner__text { padding-right: 0; }
+}
+@media (max-width: 560px) {
+  .avis-stats-banner__stats { gap: 16px 22px; }
+}
+
+/* ══ Avatar en anneau + niveau (avis) ══ */
+.avis-avatar-ring {
+  position: relative; flex-shrink: 0; border-radius: 50%;
+  background-size: cover; background-position: center;
+  display: flex; align-items: center; justify-content: center;
+}
+.avis-avatar-ring--sm { width: 44px; height: 44px; }
+.avis-avatar-ring--md { width: 48px; height: 48px; }
+.avis-avatar-ring--lg { width: 68px; height: 68px; }
+.avis-avatar-ring--lg .avis-avatar-ring__lvl { width: 22px; height: 22px; min-width: 22px; font-size: .68rem; line-height: 22px; bottom: -4px; }
+.avis-avatar-ring__pic {
+  width: 72%; height: 72%; border-radius: 50%; overflow: hidden;
+  background: rgba(196,160,82,.1); border: 1.5px solid rgba(196,160,82,.25);
+  display: flex; align-items: center; justify-content: center; color: rgba(196,160,82,.45);
+}
+.avis-avatar-ring__pic img { width: 100%; height: 100%; object-fit: cover; }
+.avis-avatar-ring__lvl {
+  position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+  min-width: 17px; height: 17px; padding: 0 3px; border-radius: 9px;
+  background: var(--gold-card-gradient); color: #18100a;
+  font-family: var(--f-display); font-size: .58rem; font-weight: 700; line-height: 17px; text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+
+/* ══ Badge éditorial (coup de cœur / astuce utile) ══ */
+.avis-highlight-tag {
+  display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px;
+  font-family: var(--f-title); font-size: .56rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  background: rgba(196,160,82,.14); border: 1px solid rgba(196,160,82,.35); color: var(--or-titre);
+  white-space: nowrap;
+}
+.avis-highlight-tag--astuce_utile { background: rgba(76,175,80,.12); border-color: rgba(76,175,80,.4); color: #7ed88a; }
+.avis-featured-badge--astuce_utile { background: rgba(76,175,80,.12); border-color: rgba(76,175,80,.4); color: #7ed88a; }
+
+/* ══ Photos jointes à un avis ══ */
+.avis-card__photos, .rd-derniers-avis__item .avis-card__photos {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0;
+}
+.avis-card__photo {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; cursor: zoom-in;
+  border: 1px solid rgba(196,160,82,.14); transition: transform .25s;
+}
+.avis-card__photo:hover { transform: scale(1.03); }
+
+/* ══ Actions (like / répondre) ══ */
+.avis-card__actions, .rd-derniers-avis__item .avis-card__actions {
+  display: flex; align-items: center; gap: 16px; margin-top: 10px;
+  position: relative; z-index: 2;
+}
+.avis-like-btn, .avis-reply-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: var(--f-title); font-size: .64rem; font-weight: 600; letter-spacing: .02em;
+  color: rgba(232,232,232,.4); transition: color .2s;
+}
+.avis-like-btn:hover, .avis-reply-btn:hover { color: var(--argent); }
+.avis-like-btn.is-liked { color: var(--or-titre); }
+.avis-like-btn.is-liked svg { fill: var(--or-titre); }
+
+/* ══ Réponses — même doré que la bannière "avis-banner__inner--vertical" ══ */
+.avis-card__replies, .rd-derniers-avis__item .avis-card__replies {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 14px; padding: 16px 18px; border-radius: 12px;
+  background: var(--gold-card-gradient);
+  box-shadow: 0 4px 16px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.avis-reply { display: flex; gap: 10px; }
+.avis-reply:not(:last-child) { padding-bottom: 12px; border-bottom: 1px solid rgba(20,10,0,.14); }
+.avis-reply__body { flex: 1; min-width: 0; }
+.avis-reply__head { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.avis-reply__name { font-size: .74rem; font-weight: 700; color: var(--bleu-nuit); }
+.avis-reply__date { font-size: .58rem; color: rgba(20,10,0,.5); }
+.avis-reply__text { font-size: .78rem; font-weight: 400; line-height: 1.6; color: rgba(20,10,0,.72); }
+/* Actions (like) d'une réponse — adaptées au fond doré */
+.avis-card__replies .avis-like-btn,
+.avis-card__replies .avis-reply-btn { color: rgba(20,10,0,.5); }
+.avis-card__replies .avis-like-btn:hover,
+.avis-card__replies .avis-reply-btn:hover { color: var(--bleu-nuit); }
+.avis-card__replies .avis-like-btn.is-liked { color: var(--bleu-nuit); }
+.avis-card__replies .avis-avatar-ring__pic { background: rgba(20,10,0,.08); border-color: rgba(20,10,0,.25); }
+
+/* ══ Formulaire de réponse (cloné depuis <template>) ══ */
+.avis-reply-form {
+  margin-top: 10px; padding: 12px; border-radius: 10px;
+  background: rgba(15,26,42,.6); border: 1px solid rgba(196,160,82,.16);
+}
+.avis-reply-form textarea {
+  width: 100%; background: rgba(7,13,26,.6); border: 1px solid rgba(196,160,82,.18);
+  border-radius: 8px; padding: 8px 10px; color: var(--argent); font-size: .8rem;
+  font-family: inherit; resize: vertical; margin-bottom: 8px;
+}
+.avis-reply-form__actions { display: flex; justify-content: flex-end; gap: 8px; }
+.avis-reply-form__error { font-size: .74rem; color: var(--rouge-cta); margin-bottom: 8px; }
+.avis-reply-form__sent { font-size: .8rem; font-style: italic; color: var(--vert-ok,#4caf50); }
+
+/* ══ Upload photo + case anonyme (formulaire "Laisser un avis") ══ */
+.avis-photo-upload { margin-bottom: 14px; }
+.avis-photo-upload__btn {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 8px 14px; border-radius: 8px;
+  background: rgba(196,160,82,.08); border: 1px solid rgba(196,160,82,.25);
+  font-family: var(--f-title); font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--or-titre); transition: background .2s, border-color .2s;
+}
+.avis-photo-upload__btn:hover { background: rgba(196,160,82,.14); border-color: rgba(196,160,82,.4); }
+.avis-photo-upload__previews { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.avis-photo-upload__preview { position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; }
+.avis-photo-upload__preview img { width: 100%; height: 100%; object-fit: cover; }
+.avis-photo-upload__preview button {
+  position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(4,10,22,.85); border: none; color: #fff; font-size: .8rem; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.avis-anonymous-toggle {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px; cursor: pointer;
+  font-size: .78rem; color: rgba(232,232,232,.55);
+}
+.avis-anonymous-toggle input { accent-color: var(--or-titre); width: 15px; height: 15px; }
+
+/* ══ En-tête de la section "Tous les avis" — titre, tri, bascule vue ══ */
+.avis-section__head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.avis-section__count { color: rgba(196,160,82,.5); font-weight: 400; }
+.avis-section__sub { font-size: .8rem; color: rgba(232,232,232,.45); margin-top: 4px; }
+.avis-section__tools { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.avis-sort { display: flex; align-items: center; gap: 8px; font-size: .68rem; color: rgba(196,160,82,.5); }
+.avis-sort select {
+  background: rgba(15,26,42,.8); border: 1px solid rgba(196,160,82,.22); border-radius: 8px;
+  padding: 6px 10px; color: var(--argent); font-size: .74rem; font-family: inherit; cursor: pointer;
+}
+.avis-view-toggle { display: flex; gap: 4px; background: rgba(15,26,42,.6); border: 1px solid rgba(196,160,82,.16); border-radius: 8px; padding: 3px; }
+.avis-view-btn {
+  display: flex; align-items: center; justify-content: center; width: 30px; height: 28px; border-radius: 6px;
+  background: none; border: none; color: rgba(232,232,232,.35); cursor: pointer; transition: background .2s, color .2s;
+}
+.avis-view-btn.is-active { background: rgba(196,160,82,.16); color: var(--or-titre); }
+
+/* ══ Pagination des avis ══ */
+.avis-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 28px;
+}
+.avis-pagination__arrow {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(15,26,42,.6); border: 1px solid rgba(196,160,82,.25);
+  color: var(--or-titre); cursor: pointer; transition: background .2s, border-color .2s;
+}
+.avis-pagination__arrow:hover:not(:disabled) { background: rgba(196,160,82,.14); border-color: rgba(196,160,82,.4); }
+.avis-pagination__arrow:disabled { opacity: .3; cursor: default; }
+.avis-pagination__pages { display: flex; align-items: center; gap: 6px; }
+.avis-pagination__page {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 34px; height: 34px; padding: 0 6px; border-radius: 50%;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--f-title); font-size: .82rem; font-weight: 600; color: rgba(232,232,232,.55);
+  transition: background .2s, color .2s;
+}
+.avis-pagination__page:hover { color: var(--argent); }
+.avis-pagination__page.is-active {
+  background: var(--gold-card-gradient); color: #18100a;
+  box-shadow: 0 2px 10px rgba(196,160,82,.35);
+}
+.avis-pagination__ellipsis { color: rgba(232,232,232,.3); padding: 0 2px; font-size: .82rem; }
+
+/* Vue "liste" — une seule colonne, cards pleine largeur */
+.avis-grid--list { column-count: 2 !important; }
+@media (max-width: 720px) { .avis-grid--list { column-count: 1 !important; } }
 
 /* Inputs formulaire */
 .form-g {
@@ -1663,6 +1902,44 @@ body.recipe-page main {
 .recipe-lightbox__close:hover { background: var(--or-200); color: var(--bleu-nuit); transform: scale(1.08); }
 body.lightbox-open { overflow: hidden; }
 
+/* Badge pill "Étape N" — centré en haut de la photo, uniquement pour le
+   groupe de photos de préparation (masqué pour les photos de galerie). */
+.recipe-lightbox__step-badge {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 3; display: none;
+  padding: 5px 16px; border-radius: 20px;
+  background: var(--gold-card-gradient); color: #18100a;
+  font-family: var(--f-display); font-size: .8rem; font-weight: 700; letter-spacing: .04em;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  white-space: nowrap;
+}
+.recipe-lightbox__step-badge.is-visible { display: block; }
+
+/* Flèches de navigation prev/next — parcourent les photos d'un même groupe
+   (les 8 photos de préparation) sans fermer la lightbox. Masquées quand le
+   groupe ne contient qu'une seule image (ex. photos de galerie). */
+.recipe-lightbox__nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 3; display: none;
+  width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  background: rgba(13,27,42,.72); border: 1px solid rgba(255,255,255,.18);
+  color: var(--argent); cursor: pointer;
+  align-items: center; justify-content: center;
+  transition: background .25s, transform .25s, border-color .25s;
+}
+.recipe-lightbox__nav.is-visible { display: flex; }
+.recipe-lightbox__nav:hover { background: var(--or-200); color: var(--bleu-nuit); border-color: transparent; }
+.recipe-lightbox__nav--prev { left: .75rem; }
+.recipe-lightbox__nav--next { right: .75rem; }
+.recipe-lightbox__nav:active { transform: translateY(-50%) scale(.92); }
+
+@media (max-width: 640px) {
+  .recipe-lightbox__nav { width: 2.35rem; height: 2.35rem; }
+  .recipe-lightbox__nav--prev { left: .4rem; }
+  .recipe-lightbox__nav--next { right: .4rem; }
+  .recipe-lightbox__step-badge { font-size: .72rem; padding: 4px 13px; top: 10px; }
+}
+
 /* ====================================================== */
 /* 13bis. GRILLE 3 COLONNES (galerie+auteur / ingrédients+
    inspiration / étapes+photos / film+avis)                */
@@ -1679,6 +1956,12 @@ body.lightbox-open { overflow: hidden; }
 .rd-gallery-block { grid-column: 1 / 3; }
 .rd-content-row { margin-bottom: 52px; }
 .rd-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+/* La colonne centrale (étapes) s'étire pour matcher la hauteur de la colonne
+   la plus haute (ex. "Le film" + bannière avis) — évite un grand vide de
+   fond d'écran sous le cadre quand la recette a peu d'étapes. Les 2 autres
+   colonnes gardent leur hauteur naturelle (align-items:start du parent). */
+.rd-col--center { align-self: stretch; }
+.rd-col--center .rd-panel--steps { flex: 1; }
 
 /* Panneau générique — remplace le chrome de .rd-combo-card pour des
    colonnes indépendantes (plus de carte commune partagée entre colonnes). */
@@ -1745,7 +2028,19 @@ body.lightbox-open { overflow: hidden; }
   transition: width .6s cubic-bezier(.22,1,.36,1);
 }
 .rd-author-xp-card__pct { font-size: .58rem; color: rgba(196,160,82,.55); white-space: nowrap; }
-.rd-author-xp-card__frames { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(196,160,82,.1); }
+.rd-author-xp-card__rank {
+  font-family: var(--f-editorial); font-style: italic; font-weight: 400;
+  font-size: .68rem; color: rgba(232,232,232,.55); margin-top: 1px;
+}
+.rd-author-xp-card__stats {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 0; border-top: 1px solid rgba(196,160,82,.1); border-bottom: 1px solid rgba(196,160,82,.1);
+}
+.rd-author-xp-card__stat { display: flex; flex-direction: column; gap: 1px; }
+.rd-author-xp-card__stat strong { font-family: var(--f-display); font-size: 1.15rem; color: var(--or-titre); line-height: 1; }
+.rd-author-xp-card__stat span { font-size: .56rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(196,160,82,.45); }
+.rd-author-xp-card__stat-sep { width: 1px; height: 24px; background: rgba(196,160,82,.14); flex-shrink: 0; }
+.rd-author-xp-card__frames { margin-top: auto; padding-top: 14px; }
 .rd-author-frames-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
 .rd-author-frame-pill {
   display: flex; align-items: center; justify-content: center;
@@ -1896,8 +2191,6 @@ body.lightbox-open { overflow: hidden; }
   .rh-tags { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
   .rh-tags::-webkit-scrollbar { display: none; }
   .rd-sidebar { position: static; }
-  .avis-grid { grid-template-columns: 1fr; }
-  .avis-card--featured { grid-column: 1; grid-template-columns: 1fr; }
   .avis-banner__inner,
   .rd-avis-row .avis-banner__inner { grid-template-columns: auto 1fr auto; gap: 24px; padding-right: 100px; }
   .avis-banner__note { display: none; }

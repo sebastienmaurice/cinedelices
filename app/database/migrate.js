@@ -59,4 +59,36 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration movies TMDB details :", err.message);
   }
+
+  // Avis enrichis : réponses, likes, photos jointes, anonymat, badge éditorial
+  // — voir app/database/migrations/20260828-add-notice-social-features.sql
+  try {
+    await sequelize.query(`
+      ALTER TABLE notices ADD COLUMN IF NOT EXISTS parent_id    INT     NULL REFERENCES notices(id) ON DELETE CASCADE;
+      ALTER TABLE notices ADD COLUMN IF NOT EXISTS is_anonymous BOOLEAN NOT NULL DEFAULT false;
+      ALTER TABLE notices ADD COLUMN IF NOT EXISTS highlight    VARCHAR(20) NULL;
+      ALTER TABLE notices ADD COLUMN IF NOT EXISTS likes_count  INT     NOT NULL DEFAULT 0;
+      CREATE INDEX IF NOT EXISTS idx_notices_parent_id ON notices(parent_id);
+
+      CREATE TABLE IF NOT EXISTS notice_likes (
+        id         SERIAL PRIMARY KEY,
+        id_notice  INT NOT NULL REFERENCES notices(id) ON DELETE CASCADE,
+        id_user    INT NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        UNIQUE (id_notice, id_user)
+      );
+
+      CREATE TABLE IF NOT EXISTS notice_pictures (
+        id         SERIAL PRIMARY KEY,
+        id_notice  INT NOT NULL REFERENCES notices(id) ON DELETE CASCADE,
+        file_path  VARCHAR(255) NOT NULL,
+        position   INT NOT NULL DEFAULT 1,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_notice_pictures_notice_id ON notice_pictures(id_notice);
+    `);
+    console.log("✅ Migration notices (réponses/likes/photos/anonymat/badge) OK");
+  } catch (err) {
+    console.error("⚠️  Migration notices social features :", err.message);
+  }
 }

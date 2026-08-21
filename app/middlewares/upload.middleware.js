@@ -53,4 +53,10 @@ export const uploadRecipePhotos = upload.fields([
   { name: "stepPicture8", maxCount: 1 },
 ]);
 
+// Upload photos jointes à un avis — jusqu'à 3, cf. NOTICE_MAX_PICTURES dans
+// recipes-movie.controllers.js (submitNotice).
+export const uploadNoticePhotos = upload.fields([
+  { name: "noticePictures", maxCount: 3 },
+]);
+
 export default upload;

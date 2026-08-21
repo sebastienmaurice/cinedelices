@@ -510,7 +510,7 @@
                 <% avisPending.forEach(function(notice) { %>
                 <tr class="admin-list-item" data-search="<%= notice.id %>">
                   <td class="user-cell"><%= notice.User?.pseudo || notice.User?.email || notice.id_user || '—' %></td>
-                  <td><%= notice.id_recipe || '—' %></td>
+                  <td><%= notice.Recipe?.name || notice.id_recipe || '—' %></td>
                   <td class="score-cell">
                     <% if (notice.quote) { %>
                     <span class="score-badge"><%= notice.quote %>/5</span>
@@ -536,7 +536,8 @@
                       data-edit-content="<%= String(notice.content || '').replace(/"/g, '&quot;') %>"
                       data-edit-quote="<%= notice.quote || '' %>"
                       data-edit-author="<%= notice.id_user || '' %>"
-                      data-edit-recipe="<%= notice.id_recipe || '' %>">
+                      data-edit-recipe="<%= notice.id_recipe || '' %>"
+                      data-edit-highlight="<%= notice.highlight || 'none' %>">
                       <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                     </button>
                     <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
@@ -1275,14 +1276,21 @@
                 </tr>
               </thead>
               <tbody>
-                <% validatedNotices.forEach(function(notice) { %>
-                <tr class="admin-list-item" data-search="<%= (notice.user || notice.author || '').toLowerCase() + ' ' + (notice.recipe || '').toLowerCase() %>">
-                  <td class="user-cell"><%= notice.user || notice.author || '—' %></td>
-                  <td><%= notice.recipe || '—' %></td>
+                <% validatedNotices.forEach(function(notice) {
+                  const noticeAuthor = notice.User ? notice.User.pseudo : (notice.user || notice.author || '');
+                  const noticeRecipe = notice.Recipe ? notice.Recipe.name : (notice.recipe || '');
+                %>
+                <tr class="admin-list-item" data-search="<%= noticeAuthor.toLowerCase() + ' ' + noticeRecipe.toLowerCase() %>">
+                  <td class="user-cell"><%= noticeAuthor || '—' %></td>
+                  <td><%= noticeRecipe || '—' %></td>
                   <td class="score-cell">
-                    <% if (notice.rating || notice.note) { %><span class="score-badge"><%= notice.rating || notice.note %>/5</span><% } else { %>—<% } %>
+                    <% if (notice.quote) { %><span class="score-badge"><%= notice.quote %>/5</span><% } else { %>—<% } %>
                   </td>
-                  <td><span class="cell-excerpt"><%= ((notice.content || notice.comment || notice.quote || '') + '').substring(0, 60) %>…</span></td>
+                  <td>
+                    <span class="cell-excerpt"><%= ((notice.content || notice.comment || notice.quote || '') + '').substring(0, 60) %>…</span>
+                    <% if (notice.highlight === 'coup_de_coeur') { %><span class="score-badge" style="margin-left:6px;">✦ Coup de cœur</span><% } %>
+                    <% if (notice.highlight === 'astuce_utile') { %><span class="score-badge" style="margin-left:6px;">💡 Astuce utile</span><% } %>
+                  </td>
                   <td class="actions-cell">
                     <button type="button" class="act-btn act-btn--edit act-btn--sm"
                       data-edit-btn
@@ -1290,8 +1298,9 @@
                       data-edit-id="<%= notice.id %>"
                       data-edit-content="<%= String(notice.content || notice.comment || '').replace(/"/g, '&quot;') %>"
                       data-edit-quote="<%= String(notice.quote || '').replace(/"/g, '&quot;') %>"
-                      data-edit-author="<%= notice.user || notice.author || '' %>"
-                      data-edit-recipe="<%= notice.recipe || '' %>">
+                      data-edit-author="<%= noticeAuthor %>"
+                      data-edit-recipe="<%= noticeRecipe %>"
+                      data-edit-highlight="<%= notice.highlight || 'none' %>">
                       <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                     </button>
                     <form action="/admin/notices/<%= notice.id %>/delete/direct" method="POST" style="display:inline;">
@@ -1648,6 +1657,14 @@
             <div class="admin-modal__field">
               <label class="admin-modal__label" for="edit-notice-content">Commentaire</label>
               <textarea id="edit-notice-content" name="content" class="admin-modal__textarea admin-modal__textarea--autosize" rows="4"></textarea>
+            </div>
+            <div class="admin-modal__field">
+              <label class="admin-modal__label" for="edit-notice-highlight">Badge éditorial</label>
+              <select id="edit-notice-highlight" name="highlight" class="admin-modal__input">
+                <option value="none">Aucun</option>
+                <option value="coup_de_coeur">✦ Coup de cœur</option>
+                <option value="astuce_utile">💡 Astuce utile</option>
+              </select>
             </div>
           </div>
 

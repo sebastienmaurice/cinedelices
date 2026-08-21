@@ -123,6 +123,7 @@ export async function loadAdminData() {
         attributes: ["id", "name"],
         include: [{ model: Movie, attributes: ["id", "title"] }],
       },
+      { model: User, attributes: ["id", "pseudo"] },
     ],
     order: [["id", "DESC"]],
   });
@@ -143,7 +144,10 @@ export async function loadAdminData() {
 
   // Récupérer tous les avis (notices)
   const avis = await Notice.findAll({
-    include: [{ model: User, attributes: ["id", "pseudo", "email"] }],
+    include: [
+      { model: User, attributes: ["id", "pseudo", "email"] },
+      { model: Recipe, attributes: ["id", "name"] },
+    ],
     order: [
       ["status", "ASC"],
       ["id", "DESC"],

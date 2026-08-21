@@ -1,9 +1,14 @@
 import { Op, fn, col } from "sequelize";
-import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture, UserPoints } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, Favorite, Rating, RecipePicture, UserPoints, NoticeLike, NoticePicture } from "../models/index.model.js";
 import { enrichMovieWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { awardActionXP } from "../services/gamification.service.js";
-import { computeLevel, xpProgress, FRAME_UNLOCKS } from "../utils/gamification.utils.js";
+import { computeLevel, xpProgress, FRAME_UNLOCKS, RANK_TITLES } from "../utils/gamification.utils.js";
+import { processStepImages, cleanupFiles } from "../utils/recipe-image-processor.js";
+import { timeAgo } from "../utils/time-ago.js";
+
+// Nombre maximum de photos jointes à un avis (cf. uploadNoticePhotos, champ "noticePictures").
+const NOTICE_MAX_PICTURES = 3;
 
 /**
  * Récupère les IDs des recettes favorites de l'utilisateur
@@ -341,28 +346,81 @@ const recipesController = {
         plainRecipe.preparation
       );
 
-      // Récupérer les avis associés à la recette avec les infos utilisateur SEB le 21 Nov à 14h07
+      // Récupérer les avis associés à la recette (racines uniquement — les
+      // réponses sont chargées à part via l'association "replies") avec les
+      // infos utilisateur, les photos jointes et les réponses.
+      const noticeUserAttrs = ["id", "pseudo", "first_name", "last_name", "picture", "role"];
       const notices = await Notice.findAll({
-        where: { id_recipe: plainRecipe.id, status: "approved" },
+        where: { id_recipe: plainRecipe.id, status: "approved", parent_id: null },
         include: [
+          { model: User, attributes: noticeUserAttrs },
+          { model: NoticePicture, as: "pictures", attributes: ["file_path", "position"] },
           {
-            model: User,
-            attributes: ["id", "pseudo", "first_name", "last_name", "picture", "role"],
+            model: Notice,
+            as: "replies",
+            where: { status: "approved" },
+            required: false,
+            include: [{ model: User, attributes: noticeUserAttrs }],
           },
         ],
         order: [["id", "DESC"]], // Plus récents en premier
       });
 
-      const plainNotices = notices.map((notice) => notice.get({ plain: true }));
+      // Avis likés par l'utilisateur connecté (racines + réponses)
+      let likedNoticeIds = new Set();
+      if (req.userId) {
+        const likedRows = await NoticeLike.findAll({
+          where: { id_user: req.userId },
+          attributes: ["id_notice"],
+          raw: true,
+        });
+        likedNoticeIds = new Set(likedRows.map((r) => r.id_notice));
+      }
 
-      //! Calcul de la moyenne des notes
+      // Niveau + cadre actif de chaque auteur d'avis (racines + réponses) —
+      // affiché en anneau doré autour de l'avatar, comme sur la page auteur.
+      const noticeAuthorIds = new Set();
+      notices.forEach((n) => {
+        if (n.id_user) noticeAuthorIds.add(n.id_user);
+        (n.replies || []).forEach((r) => r.id_user && noticeAuthorIds.add(r.id_user));
+      });
+      const authorPointsRows = noticeAuthorIds.size
+        ? await UserPoints.findAll({
+            where: { id_user: Array.from(noticeAuthorIds) },
+            raw: true,
+          })
+        : [];
+      const authorLevelMap = {};
+      authorPointsRows.forEach((row) => {
+        const level = computeLevel(row.points);
+        const frame = FRAME_UNLOCKS.find((f) => f.code === row.active_frame_code) || FRAME_UNLOCKS[0];
+        authorLevelMap[row.id_user] = { level, frameThumb: frame.thumbUrl };
+      });
+
+      const decorateNotice = (n) => ({
+        ...n,
+        timeAgo: timeAgo(n.createdAt),
+        likedByUser: likedNoticeIds.has(n.id),
+        authorLevel: authorLevelMap[n.id_user]?.level || 1,
+        authorFrameThumb: authorLevelMap[n.id_user]?.frameThumb || null,
+      });
+
+      const plainNotices = notices.map((notice) => {
+        const plain = notice.get({ plain: true });
+        return {
+          ...decorateNotice(plain),
+          pictures: (plain.pictures || []).sort((a, b) => a.position - b.position),
+          replies: (plain.replies || []).map(decorateNotice),
+        };
+      });
+
+      //! Calcul de la moyenne des notes (avis racines uniquement, notés 1-5)
 
       let averageQuote = 0; // Valeur par défaut si pas d'avis
       if (plainNotices.length > 0) {
         const sum = plainNotices.reduce((acc, n) => acc + (n.quote || 0), 0); // Somme des notes
         averageQuote = Math.round(sum / plainNotices.length); // Moyenne arrondie a l'entier le plus proche
       }
-      // Refactoring : suppression du console.log de debug
 
       // Vérifier si cette recette est en favori et récupérer les notes
       const favoriteIds = await getUserFavoriteRecipeIds(req.userId);
@@ -394,6 +452,11 @@ const recipesController = {
       const contributorFrames = FRAME_UNLOCKS.filter(
         (f) => f.code !== "none" && contributorLevel >= f.minLvl
       );
+      const contributorRank = RANK_TITLES[contributorLevel] || RANK_TITLES[1];
+      // Nombre de recettes publiées par ce contributeur — même métrique que la page /auteur/#
+      const contributorRecipesCount = contributor
+        ? await Recipe.count({ where: { id_user: contributor.id, status: "approved" } })
+        : 0;
 
       // Recettes recommandées — priorité aux autres recettes du même film,
       // repli sur la même catégorie si besoin, jusqu'à 8 résultats (carrousel).
@@ -445,6 +508,9 @@ const recipesController = {
           xp: contributorXp,
           xpProgress: contributorXpProgress,
           frames: contributorFrames,
+          framesTotal: FRAME_UNLOCKS.length - 1, // total débloquable, hors "sans cadre"
+          rank: contributorRank,
+          recipesCount: contributorRecipesCount,
         },
         recommendedRecipes: plainRecommended,
       });
@@ -555,16 +621,29 @@ function formatPreparationBlocks(preparation) {
 
 // Ajouter submitNotice dans l'objet recipesController
 recipesController.submitNotice = async function submitNotice(req, res) {
+  const pictureFiles = req.files?.noticePictures || [];
   try {
     const param = req.params.id;
-    const { comment, quote } = req.body;
+    const { comment, quote, parentId, anonymous } = req.body;
+    const isReply = !!parentId;
     const parsedQuote = parseInt(quote, 10);
+    const isAnonymous = anonymous === "true" || anonymous === "on" || anonymous === "1";
 
     if (!comment || !comment.trim()) {
+      cleanupFiles(pictureFiles);
       return res.status(400).json({ success: false, message: "Le contenu de l'avis est obligatoire." });
     }
-    if (!parsedQuote || parsedQuote < 1 || parsedQuote > 5) {
+    // Une réponse n'a pas de note — seul l'avis racine est noté.
+    if (!isReply && (!parsedQuote || parsedQuote < 1 || parsedQuote > 5)) {
+      cleanupFiles(pictureFiles);
       return res.status(400).json({ success: false, message: "La note doit être comprise entre 1 et 5." });
+    }
+    if (pictureFiles.length > NOTICE_MAX_PICTURES) {
+      cleanupFiles(pictureFiles);
+      return res.status(400).json({
+        success: false,
+        message: `Vous pouvez joindre au maximum ${NOTICE_MAX_PICTURES} photos.`,
+      });
     }
 
     let recipe;
@@ -573,22 +652,61 @@ recipesController.submitNotice = async function submitNotice(req, res) {
     } else {
       recipe = await Recipe.findOne({ where: { slug: param, status: "approved" } });
     }
-    if (!recipe) return res.status(404).json({ success: false, message: "Recette introuvable." });
+    if (!recipe) {
+      cleanupFiles(pictureFiles);
+      return res.status(404).json({ success: false, message: "Recette introuvable." });
+    }
 
-    await Notice.create({
+    let parentNotice = null;
+    if (isReply) {
+      parentNotice = await Notice.findOne({ where: { id: parentId, id_recipe: recipe.id } });
+      if (!parentNotice) {
+        cleanupFiles(pictureFiles);
+        return res.status(404).json({ success: false, message: "Avis d'origine introuvable." });
+      }
+    }
+
+    // Traitement des photos jointes (pipeline allégé, cf. photos d'étapes de préparation)
+    let processedPictures = [];
+    if (pictureFiles.length > 0) {
+      try {
+        processedPictures = await processStepImages(pictureFiles);
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          message: `Impossible de traiter la photo "${err.filename || ""}". Vérifiez le format et réessayez.`,
+        });
+      }
+    }
+
+    const notice = await Notice.create({
       content: comment.trim(),
-      quote: parsedQuote,
+      quote: isReply ? 0 : parsedQuote,
       id_user: req.userId,
       id_recipe: recipe.id,
+      parent_id: isReply ? parentNotice.id : null,
+      is_anonymous: isAnonymous,
       status: "pending",
     });
+
+    if (processedPictures.length > 0) {
+      await NoticePicture.bulkCreate(
+        processedPictures.map((p, idx) => ({
+          id_notice: notice.id,
+          file_path: p.relPath,
+          position: idx + 1,
+        }))
+      );
+    }
 
     // XP pour les membres uniquement (fire-and-forget)
     const xpResult = await awardActionXP(req.userId, req.userRole, "comment_posted").catch(() => null);
 
     return res.json({
       success:   true,
-      message:   "Votre avis a été envoyé et sera publié après modération.",
+      message:   isReply
+        ? "Votre réponse a été envoyée et sera publiée après modération."
+        : "Votre avis a été envoyé et sera publié après modération.",
       xpGained:  xpResult?.xpGained  ?? 0,
       newXP:     xpResult?.newXP      ?? 0,
       newLevel:  xpResult?.newLevel   ?? 0,
@@ -596,6 +714,7 @@ recipesController.submitNotice = async function submitNotice(req, res) {
       rank:      xpResult?.rank       ?? "",
     });
   } catch (error) {
+    cleanupFiles(pictureFiles);
     return res.status(500).json({ success: false, message: "Erreur serveur." });
   }
 };

@@ -139,11 +139,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const imageElement = lightbox.querySelector(".recipe-lightbox__image");
   const closeElements = lightbox.querySelectorAll("[data-lightbox-close]");
+  const stepBadge = lightbox.querySelector("[data-lightbox-step-badge]");
+  const prevBtn = lightbox.querySelector("[data-lightbox-prev]");
+  const nextBtn = lightbox.querySelector("[data-lightbox-next]");
 
-  const openLightbox = (src, alt) => {
+  // Groupes de photos navigables (ex. les 8 photos de préparation) — un
+  // trigger sans data-lightbox-group reste une image isolée, sans flèches.
+  const groups = {};
+  triggers.forEach((trigger) => {
+    const group = trigger.dataset.lightboxGroup;
+    if (!group) return;
+    (groups[group] ||= []).push({
+      src: trigger.dataset.lightboxImage,
+      alt: trigger.dataset.lightboxAlt,
+      step: trigger.dataset.lightboxStep,
+    });
+  });
+
+  let currentGroup = null; // tableau de {src, alt, step} ou null (image isolée)
+  let currentIndex = 0;
+
+  const renderCurrent = () => {
+    const item = currentGroup
+      ? currentGroup[currentIndex]
+      : { src: imageElement.dataset.singleSrc, alt: imageElement.dataset.singleAlt };
+    imageElement.src = item.src;
+    imageElement.alt = item.alt || "Recette Ciné Délices";
+
+    const hasNav = !!currentGroup && currentGroup.length > 1;
+    prevBtn.classList.toggle("is-visible", hasNav);
+    nextBtn.classList.toggle("is-visible", hasNav);
+
+    const showBadge = !!currentGroup && item.step;
+    stepBadge.classList.toggle("is-visible", showBadge);
+    if (showBadge) stepBadge.textContent = `Étape ${item.step}`;
+  };
+
+  const openLightbox = (trigger) => {
+    const src = trigger.dataset.lightboxImage;
     if (!src) return;
-    imageElement.src = src;
-    imageElement.alt = alt || "Recette Ciné Délices";
+    const groupName = trigger.dataset.lightboxGroup;
+    if (groupName && groups[groupName]) {
+      currentGroup = groups[groupName];
+      currentIndex = currentGroup.findIndex((item) => item.src === src);
+      if (currentIndex < 0) currentIndex = 0;
+    } else {
+      currentGroup = null;
+      currentIndex = 0;
+      imageElement.dataset.singleSrc = src;
+      imageElement.dataset.singleAlt = trigger.dataset.lightboxAlt || "";
+    }
+    renderCurrent();
     lightbox.classList.add("is-visible");
     document.body.classList.add("lightbox-open");
   };
@@ -152,30 +198,101 @@ document.addEventListener("DOMContentLoaded", () => {
     lightbox.classList.remove("is-visible");
     document.body.classList.remove("lightbox-open");
     setTimeout(() => {
-      imageElement.src = "";
+      // Ne vide le src que si la lightbox n'a pas été rouverte entre-temps
+      // (sinon ce clear différé écraserait la photo qui vient de s'ouvrir).
+      if (!lightbox.classList.contains("is-visible")) {
+        imageElement.src = "";
+      }
     }, 300);
   };
 
+  const showDelta = (delta) => {
+    if (!currentGroup || currentGroup.length <= 1) return;
+    currentIndex = (currentIndex + delta + currentGroup.length) % currentGroup.length;
+    renderCurrent();
+  };
+
   triggers.forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      const src = trigger.dataset.lightboxImage;
-      const alt = trigger.dataset.lightboxAlt;
-      openLightbox(src, alt);
-    });
+    trigger.addEventListener("click", () => openLightbox(trigger));
   });
 
   closeElements.forEach((element) => {
     element.addEventListener("click", closeLightbox);
   });
 
+  prevBtn.addEventListener("click", () => showDelta(-1));
+  nextBtn.addEventListener("click", () => showDelta(1));
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && lightbox.classList.contains("is-visible")) {
-      closeLightbox();
-    }
+    if (!lightbox.classList.contains("is-visible")) return;
+    if (event.key === "Escape") closeLightbox();
+    if (event.key === "ArrowLeft") showDelta(-1);
+    if (event.key === "ArrowRight") showDelta(1);
   });
+
+  // Swipe tactile (mobile/tablette) — glisser horizontalement pour passer
+  // à la photo suivante/précédente du même groupe.
+  let touchStartX = null;
+  const dialog = lightbox.querySelector(".recipe-lightbox__dialog");
+  dialog.addEventListener("touchstart", (event) => {
+    touchStartX = event.touches[0].clientX;
+  }, { passive: true });
+  dialog.addEventListener("touchend", (event) => {
+    if (touchStartX === null) return;
+    const deltaX = event.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if (Math.abs(deltaX) < 40) return; // seuil anti-tap accidentel
+    showDelta(deltaX > 0 ? -1 : 1);
+  }, { passive: true });
 });
 
-// ── Soumission du formulaire d'avis via fetch ──
+// ── Photos jointes à l'avis : sélection + aperçus (jusqu'à 3) ──
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("avisPhotos");
+  const previews = document.getElementById("avisPhotoPreviews");
+  if (!input || !previews) return;
+
+  const NOTICE_MAX_PICTURES = 3;
+  let selectedFiles = [];
+
+  const renderPreviews = () => {
+    previews.innerHTML = "";
+    selectedFiles.forEach((file, idx) => {
+      const url = URL.createObjectURL(file);
+      const cell = document.createElement("div");
+      cell.className = "avis-photo-upload__preview";
+      cell.innerHTML = `<img src="${url}" alt="Aperçu photo ${idx + 1}" /><button type="button" aria-label="Retirer cette photo">&times;</button>`;
+      cell.querySelector("button").addEventListener("click", () => {
+        selectedFiles.splice(idx, 1);
+        syncInputFiles();
+        renderPreviews();
+      });
+      previews.appendChild(cell);
+    });
+  };
+
+  const syncInputFiles = () => {
+    const dt = new DataTransfer();
+    selectedFiles.forEach((f) => dt.items.add(f));
+    input.files = dt.files;
+  };
+
+  input.addEventListener("change", () => {
+    const incoming = Array.from(input.files || []);
+    selectedFiles = [...selectedFiles, ...incoming].slice(0, NOTICE_MAX_PICTURES);
+    syncInputFiles();
+    renderPreviews();
+  });
+
+  // Exposé pour être vidé après une soumission réussie (cf. handler du formulaire plus bas)
+  window._resetAvisPhotos = () => {
+    selectedFiles = [];
+    input.value = "";
+    previews.innerHTML = "";
+  };
+});
+
+// ── Soumission du formulaire d'avis via fetch (FormData — supporte les photos) ──
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("avisForm");
   if (!form) return;
@@ -207,8 +324,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(form.action, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ comment, quote }),
+        headers: { "Accept": "application/json" },
+        body: new FormData(form),
       });
       const data = await res.json();
       if (data.success) {
@@ -217,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.reset();
         document.querySelectorAll(".star-pick").forEach((s) => s.classList.remove("on"));
         if (document.getElementById("avisQuoteInput")) document.getElementById("avisQuoteInput").value = "";
+        if (window._resetAvisPhotos) window._resetAvisPhotos();
         // Toast XP (membres uniquement — xpGained = 0 pour admin/superadmin)
         if (data.xpGained) {
           const msg = data.leveledUp
@@ -242,21 +360,6 @@ document.addEventListener("DOMContentLoaded", () => {
       errorEl.style.display = "block";
       submitBtn.disabled = false;
     }
-  });
-});
-
-// ── "Charger plus" avis ──
-document.addEventListener("DOMContentLoaded", () => {
-  const seeMoreBtn = document.getElementById("seeMoreAvis");
-  const extraGrid = document.getElementById("avisGridExtra");
-  const loadmore = document.getElementById("avisLoadmore");
-
-  if (!seeMoreBtn || !extraGrid) return;
-
-  seeMoreBtn.addEventListener("click", () => {
-    extraGrid.removeAttribute("hidden");
-    loadmore.style.display = "none";
-    extraGrid.querySelector(".avis-card")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 });
 
@@ -475,4 +578,194 @@ document.addEventListener("DOMContentLoaded", () => {
   track.addEventListener("scroll", updateNavState, { passive: true });
   window.addEventListener("resize", updateNavState);
   updateNavState();
+});
+
+// ── Avis : like, réponse, tri, bascule vue grille/liste ──
+document.addEventListener("DOMContentLoaded", () => {
+  const section = document.querySelector(".avis-section");
+  const avisRow = document.querySelector(".rd-avis-row");
+  if (!section && !avisRow) return;
+
+  // -- Like (délégation sur toute la page — présent aussi dans "Derniers avis") --
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-notice-like]");
+    if (!btn) return;
+    const noticeId = btn.dataset.noticeId;
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/api/notices/${noticeId}/like`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.classList.toggle("is-liked", data.liked);
+        btn.setAttribute("aria-pressed", String(data.liked));
+        const countEl = btn.querySelector("[data-notice-like-count]");
+        if (countEl) countEl.textContent = data.likesCount;
+      } else if (res.status === 401) {
+        window._cdToast ? window._cdToast("Connectez-vous pour aimer un avis.", "error") : null;
+      }
+    } catch {
+      /* silencieux — pas bloquant pour l'utilisateur */
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // -- Répondre : clone le gabarit #avisReplyTemplate sous l'avis ciblé --
+  document.addEventListener("click", (e) => {
+    const toggleBtn = e.target.closest("[data-notice-reply-toggle]");
+    if (!toggleBtn) return;
+    const noticeId = toggleBtn.dataset.noticeId;
+
+    // Toggle : si un formulaire est déjà ouvert pour cet avis, on le referme.
+    const existing = document.querySelector(`.avis-reply-form[data-parent-id="${noticeId}"]`);
+    if (existing) {
+      existing.remove();
+      return;
+    }
+    const template = document.getElementById("avisReplyTemplate");
+    if (!template) return; // non connecté — pas de gabarit rendu
+    const form = template.content.firstElementChild.cloneNode(true);
+    form.dataset.parentId = noticeId;
+    // Insère juste après les actions (like/répondre) de cet avis
+    const actions = toggleBtn.closest(".avis-card__actions");
+    (actions || toggleBtn.parentElement).insertAdjacentElement("afterend", form);
+    form.querySelector("textarea")?.focus();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-notice-reply-cancel]")) {
+      e.target.closest(".avis-reply-form")?.remove();
+    }
+  });
+
+  document.addEventListener("submit", async (e) => {
+    const form = e.target.closest("[data-notice-reply-form]");
+    if (!form) return;
+    e.preventDefault();
+    const textarea = form.querySelector("textarea");
+    const errorEl = form.querySelector(".avis-reply-form__error");
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const comment = textarea.value.trim();
+    if (!comment) {
+      errorEl.textContent = "Écrivez votre réponse avant d'envoyer.";
+      errorEl.style.display = "block";
+      return;
+    }
+    submitBtn.disabled = true;
+    try {
+      const fd = new FormData();
+      fd.append("comment", comment);
+      fd.append("parentId", form.dataset.parentId);
+      const action = document.getElementById("avisForm")?.action
+        || window.location.pathname + "/avis";
+      const res = await fetch(action, { method: "POST", headers: { Accept: "application/json" }, body: fd });
+      const data = await res.json();
+      if (data.success) {
+        form.innerHTML = `<p class="avis-reply-form__sent">${data.message}</p>`;
+        setTimeout(() => form.remove(), 4000);
+      } else {
+        errorEl.textContent = data.message || "Une erreur est survenue.";
+        errorEl.style.display = "block";
+        submitBtn.disabled = false;
+      }
+    } catch {
+      errorEl.textContent = "Erreur de connexion. Veuillez réessayer.";
+      errorEl.style.display = "block";
+      submitBtn.disabled = false;
+    }
+  });
+
+  // -- Pagination (client-side — tous les avis sont déjà dans le DOM, cf.
+  //    recipe-detail.ejs) : évite de scroller une longue liste dès qu'une
+  //    recette a beaucoup d'avis, sans aller-retour serveur. --
+  const AVIS_PER_PAGE = 9;
+  const avisGrid = document.getElementById("avisGrid");
+  const paginationNav = document.getElementById("avisPagination");
+  const paginationPages = document.getElementById("avisPaginationPages");
+  let avisCurrentPage = 1;
+
+  function buildPageList(current, total) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages = [1];
+    if (current > 3) pages.push("…");
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) pages.push(i);
+    if (current < total - 2) pages.push("…");
+    pages.push(total);
+    return pages;
+  }
+
+  function showAvisPage(page) {
+    if (!avisGrid) return;
+    const cards = Array.from(avisGrid.querySelectorAll(":scope > .avis-card"));
+    const totalPages = Math.max(1, Math.ceil(cards.length / AVIS_PER_PAGE));
+    avisCurrentPage = Math.min(Math.max(1, page), totalPages);
+
+    cards.forEach((card, i) => {
+      const onPage = Math.floor(i / AVIS_PER_PAGE) + 1 === avisCurrentPage;
+      card.hidden = !onPage;
+    });
+
+    if (!paginationNav) return;
+    if (totalPages <= 1) {
+      paginationNav.hidden = true;
+      return;
+    }
+    paginationNav.hidden = false;
+    paginationNav.querySelector("[data-avis-page-prev]").disabled = avisCurrentPage === 1;
+    paginationNav.querySelector("[data-avis-page-next]").disabled = avisCurrentPage === totalPages;
+
+    paginationPages.innerHTML = buildPageList(avisCurrentPage, totalPages)
+      .map((p) =>
+        p === "…"
+          ? `<span class="avis-pagination__ellipsis">…</span>`
+          : `<button type="button" class="avis-pagination__page${p === avisCurrentPage ? " is-active" : ""}" data-avis-page="${p}">${p}</button>`
+      )
+      .join("");
+  }
+
+  if (avisGrid && paginationNav) {
+    showAvisPage(1);
+    paginationNav.querySelector("[data-avis-page-prev]").addEventListener("click", () => {
+      showAvisPage(avisCurrentPage - 1);
+      avisGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    paginationNav.querySelector("[data-avis-page-next]").addEventListener("click", () => {
+      showAvisPage(avisCurrentPage + 1);
+      avisGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    paginationPages.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-avis-page]");
+      if (!btn) return;
+      showAvisPage(parseInt(btn.dataset.avisPage, 10));
+      avisGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  // -- Tri (client-side, sur les cards déjà rendues) --
+  const sortSelect = document.getElementById("avisSortSelect");
+  if (sortSelect && avisGrid) {
+    sortSelect.addEventListener("change", () => {
+      const mode = sortSelect.value;
+      const cards = Array.from(avisGrid.querySelectorAll(":scope > .avis-card"));
+      cards.sort((a, b) => {
+        if (mode === "top") return (parseInt(b.dataset.rating) || 0) - (parseInt(a.dataset.rating) || 0);
+        if (mode === "liked") return (parseInt(b.dataset.likes) || 0) - (parseInt(a.dataset.likes) || 0);
+        return 0; // "recent" = ordre serveur déjà du plus récent au plus ancien
+      });
+      cards.forEach((c) => avisGrid.appendChild(c));
+      showAvisPage(1);
+    });
+  }
+
+  // -- Bascule vue grille / liste --
+  document.querySelectorAll("[data-avis-view]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-avis-view]").forEach((b) => b.classList.toggle("is-active", b === btn));
+      const isList = btn.dataset.avisView === "list";
+      document.querySelectorAll(".avis-grid").forEach((g) => g.classList.toggle("avis-grid--list", isList));
+    });
+  });
 });

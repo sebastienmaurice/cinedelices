@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260827n" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=20260828p" />
   </head>
 
   <body class="recipe-page">
@@ -123,6 +123,124 @@
         const starCounts = [0, 0, 0, 0, 0];
         if (notices) notices.forEach((n) => { const q = parseInt(n.quote); if (q >= 1 && q <= 5) starCounts[q - 1]++; });
         const pct = (n) => (totalAvis > 0 ? Math.round((n / totalAvis) * 100) : 0);
+
+        /* Nom + avatar affichés pour un avis — "Anonyme" si is_anonymous,
+           sinon pseudo/nom réel + avatar réel + anneau de cadre/niveau. */
+        function avisAuthorName(n) {
+          if (n.is_anonymous) return 'Anonyme';
+          return n.User ? (n.User.pseudo || [n.User.first_name, n.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
+        }
+        function avisAuthorAvatar(n) {
+          if (n.is_anonymous) return null;
+          return n.User && n.User.picture ? n.User.picture : null;
+        }
+        const HIGHLIGHT_LABELS = { coup_de_coeur: '♥ Coup de cœur', astuce_utile: '💡 Astuce utile' };
+        const fmtNum = (n) => (typeof n === 'number' ? n.toLocaleString('fr-FR') : '0');
+        const escHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+
+        /* Avatar en anneau doré + badge de niveau (chiffre) en bas — même
+           logique visuelle que la page auteur, appliquée à chaque avis.
+           size: 'sm' (derniers avis) | 'md' (grille "tous les avis") */
+        function avisAvatarHTML(n, size) {
+          const src = avisAuthorAvatar(n);
+          const name = escHtml(avisAuthorName(n));
+          const frameStyle = n.authorFrameThumb ? ` style="background-image:url('${n.authorFrameThumb}')"` : '';
+          const inner = src
+            ? `<img src="${escHtml(src)}" alt="${name}" loading="lazy" />`
+            : `<i data-lucide="user" width="16" height="16" stroke-width="1.5" aria-hidden="true"></i>`;
+          return `<div class="avis-avatar-ring avis-avatar-ring--${size}"${frameStyle}>
+            <div class="avis-avatar-ring__pic">${inner}</div>
+            <span class="avis-avatar-ring__lvl">${n.authorLevel || 1}</span>
+          </div>`;
+        }
+
+        /* Photos jointes à un avis (jusqu'à 3), avec lightbox. */
+        function avisPicturesHTML(n) {
+          if (!n.pictures || !n.pictures.length) return '';
+          const cells = n.pictures.map((p) => `
+            <img class="avis-card__photo" src="${cldCard(p.file_path)}" alt="Photo jointe à l'avis" loading="lazy"
+              data-lightbox-trigger data-lightbox-image="${cldFull(p.file_path)}" data-lightbox-alt="Photo jointe à l'avis" />
+          `).join('');
+          return `<div class="avis-card__photos">${cells}</div>`;
+        }
+
+        /* Like + Répondre — bas de card, identique pour avis racine et réponse. */
+        function avisFooterHTML(n) {
+          const likedClass = n.likedByUser ? ' is-liked' : '';
+          return `<div class="avis-card__actions">
+            <button type="button" class="avis-like-btn${likedClass}" data-notice-like data-notice-id="${n.id}" aria-pressed="${n.likedByUser ? 'true' : 'false'}">
+              <i data-lucide="thumbs-up" width="14" height="14" aria-hidden="true"></i>
+              <span data-notice-like-count>${n.likes_count || 0}</span>
+            </button>
+            <button type="button" class="avis-reply-btn" data-notice-reply-toggle data-notice-id="${n.id}">
+              <i data-lucide="reply" width="14" height="14" aria-hidden="true"></i> Répondre
+            </button>
+          </div>`;
+        }
+
+        /* Réponses affichées sous un avis (1 niveau, pas de photos). */
+        function avisRepliesHTML(n) {
+          if (!n.replies || !n.replies.length) return '';
+          const items = n.replies.map((r) => `
+            <div class="avis-reply">
+              ${avisAvatarHTML(r, 'sm')}
+              <div class="avis-reply__body">
+                <div class="avis-reply__head">
+                  <span class="avis-reply__name">${escHtml(avisAuthorName(r))}</span>
+                  <span class="avis-reply__date">${r.timeAgo}</span>
+                </div>
+                <p class="avis-reply__text">${escHtml(r.content)}</p>
+                ${avisFooterHTML(r)}
+              </div>
+            </div>
+          `).join('');
+          return `<div class="avis-card__replies">${items}</div>`;
+        }
+
+        /* Card complète pour la grille "Tous les avis" — factorisée pour éviter
+           la duplication entre le premier lot (avisGrid) et le lot "charger
+           plus" (avisGridExtra), et pour garder likes/réponses/photos/badge
+           cohérents partout. */
+        function avisCardHTML(notice, isFeatured) {
+          const isAdmin = notice.User && notice.User.role === 'admin';
+          const adminBadge = isAdmin
+            ? `<p class="avis-user__level avis-user__level--legend gamification-badge gamification-badge--official">✦ Équipe Ciné Délices</p>`
+            : '';
+          const stars = Array.from({ length: 5 }, (_, i) =>
+            `<span class="${i < notice.quote ? 's' : 'se'}">★</span>`
+          ).join('');
+          // Badge éditorial posé en modération admin uniquement — jamais
+          // automatique (cf. discussion : rien ne doit "décider" tout seul
+          // qu'un avis est un coup de cœur ou une astuce utile).
+          const highlight = notice.highlight && HIGHLIGHT_LABELS[notice.highlight]
+            ? `<span class="avis-featured-badge avis-featured-badge--${notice.highlight}">${HIGHLIGHT_LABELS[notice.highlight]}</span>`
+            : '';
+          const userBlock = `<div class="avis-card__user">
+            ${avisAvatarHTML(notice, 'md')}
+            <div><p class="avis-user__name">${escHtml(avisAuthorName(notice))}</p>${adminBadge}</div>
+          </div>`;
+          const text = `<p class="avis-card__text">${escHtml(notice.content)}</p>`;
+          const photos = avisPicturesHTML(notice);
+          const replies = avisRepliesHTML(notice);
+
+          // La card "vedette" garde son style doré mais la même structure en
+          // une seule colonne que les autres — sa hauteur suit son propre
+          // contenu (comme le reste du masonry) au lieu d'un vide généré par
+          // un layout 2 colonnes pleine largeur.
+          return `
+          <article class="avis-card${isFeatured ? ' avis-card--featured' : ''}" data-rating="${notice.quote}" data-likes="${notice.likes_count || 0}">
+            <div class="avis-card__head">
+              ${highlight ? `<div class="avis-card__badge-row">${highlight}</div>` : ''}
+              ${userBlock}
+            </div>
+            <div class="avis-stars">${stars}</div>
+            <div class="avis-card__quote"><span class="avis-quote-mark">"</span>${text}</div>
+            ${photos}
+            <div class="avis-card__foot"><span class="avis-date">${notice.timeAgo}</span></div>
+            ${avisFooterHTML(notice)}
+            ${replies}
+          </article>`;
+        }
       %>
 
       <!-- ══ BREADCRUMB ══ -->
@@ -379,6 +497,9 @@
                       <span class="rd-author-official gamification-badge gamification-badge--official">✦ Ciné Délices</span>
                       <% } %>
                     </span>
+                    <% if (contributor.rank) { %>
+                    <span class="rd-author-xp-card__rank"><%= contributor.rank %></span>
+                    <% } %>
                   </div>
                 </div>
                 <div class="rd-author-xp-card__bar">
@@ -387,6 +508,17 @@
                     <div class="xp-fill" style="width:<%= contributor.xpProgress.pct %>%"></div>
                   </div>
                   <span class="rd-author-xp-card__pct"><%= contributor.xpProgress.current %>/<%= contributor.xpProgress.span %> XP</span>
+                </div>
+                <div class="rd-author-xp-card__stats">
+                  <div class="rd-author-xp-card__stat">
+                    <strong><%= contributor.recipesCount %></strong>
+                    <span><%= contributor.recipesCount > 1 ? 'Recettes' : 'Recette' %></span>
+                  </div>
+                  <div class="rd-author-xp-card__stat-sep"></div>
+                  <div class="rd-author-xp-card__stat">
+                    <strong><%= contributor.frames.length %>/<%= contributor.framesTotal %></strong>
+                    <span>Cadres débloqués</span>
+                  </div>
                 </div>
                 <% if (contributor.frames && contributor.frames.length) { %>
                 <div class="rd-author-xp-card__frames">
@@ -547,6 +679,8 @@
                         alt="Photo — étape <%= n %>"
                         loading="lazy"
                         data-lightbox-trigger
+                        data-lightbox-group="steps"
+                        data-lightbox-step="<%= n %>"
                         data-lightbox-image="<%= cldFull(stepPicsMap[n]) %>"
                         data-lightbox-alt="Photo — étape <%= n %>"
                       />
@@ -559,6 +693,57 @@
 
               <!-- COLONNE 3 : LE FILM + AVIS -->
               <div class="rd-col rd-col--right">
+                <!-- Bannière dorée Golden Ticket — résumé des avis, format vertical -->
+                <div class="avis-banner avis-banner--vertical">
+                  <div class="avis-banner__shimmer"></div>
+                  <div class="avis-banner__inner avis-banner__inner--vertical">
+                    <p class="avis-banner__eyebrow avis-banner__eyebrow--vertical">Communauté</p>
+                    <h2 class="avis-banner__title avis-banner__title--vertical">Avis de la<br/>communauté</h2>
+                    <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
+                    <div class="avis-banner__tear avis-banner__tear--vertical"></div>
+                    <div class="avis-banner__note avis-banner__note--vertical">
+                      <span class="global-note"><%= averageQuote || 0 %></span>
+                      <div class="avis-banner__note-meta">
+                        <div class="global-stars">
+                          <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
+                        </div>
+                        <span class="global-note__lbl">Note moyenne globale (<%= totalAvis %> avis)</span>
+                      </div>
+                    </div>
+                    <div class="avis-distrib">
+                      <div class="distrib-row">
+                        <span class="distrib-label">5 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[4]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">4 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[3]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">3 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[2]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">2 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[1]) %>%</span>
+                      </div>
+                      <div class="distrib-row">
+                        <span class="distrib-label">1 <span class="fs">★</span></span>
+                        <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
+                        <span class="distrib-count"><%= pct(starCounts[0]) %>%</span>
+                      </div>
+                    </div>
+                    <a href="#avis" class="avis-banner__thanks">
+                      <span class="avis-banner__thanks-icon">♡</span>
+                      Merci pour vos partages et votre enthousiasme !
+                    </a>
+                  </div>
+                </div>
+
                 <% if (movie) { %>
                 <div class="rd-panel rd-panel--film">
                   <div class="rd-panel__head">
@@ -614,57 +799,6 @@
                   <% } %>
                 </div>
                 <% } %>
-
-                <!-- Bannière dorée Golden Ticket — résumé des avis, format vertical -->
-                <div class="avis-banner avis-banner--vertical">
-                  <div class="avis-banner__shimmer"></div>
-                  <div class="avis-banner__inner avis-banner__inner--vertical">
-                    <p class="avis-banner__eyebrow avis-banner__eyebrow--vertical">Communauté</p>
-                    <h2 class="avis-banner__title avis-banner__title--vertical" id="avis-section-title">Avis de la<br/>communauté</h2>
-                    <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
-                    <div class="avis-banner__tear avis-banner__tear--vertical"></div>
-                    <div class="avis-banner__note avis-banner__note--vertical">
-                      <span class="global-note"><%= averageQuote || 0 %></span>
-                      <div class="avis-banner__note-meta">
-                        <div class="global-stars">
-                          <% for (let i = 1; i <= 5; i++) { %><span class="<%= i <= Math.round(averageQuote || 0) ? 's' : 'sh' %>">★</span><% } %>
-                        </div>
-                        <span class="global-note__lbl">Note moyenne globale (<%= totalAvis %> avis)</span>
-                      </div>
-                    </div>
-                    <div class="avis-distrib">
-                      <div class="distrib-row">
-                        <span class="distrib-label">5 <span class="fs">★</span></span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d5" style="width:<%= pct(starCounts[4]) %>%"></div></div>
-                        <span class="distrib-count"><%= pct(starCounts[4]) %>%</span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label">4 <span class="fs">★</span></span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d4" style="width:<%= pct(starCounts[3]) %>%"></div></div>
-                        <span class="distrib-count"><%= pct(starCounts[3]) %>%</span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label">3 <span class="fs">★</span></span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d3" style="width:<%= pct(starCounts[2]) %>%"></div></div>
-                        <span class="distrib-count"><%= pct(starCounts[2]) %>%</span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label">2 <span class="fs">★</span></span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d2" style="width:<%= pct(starCounts[1]) %>%"></div></div>
-                        <span class="distrib-count"><%= pct(starCounts[1]) %>%</span>
-                      </div>
-                      <div class="distrib-row">
-                        <span class="distrib-label">1 <span class="fs">★</span></span>
-                        <div class="distrib-bar-track"><div class="distrib-bar-fill d1" style="width:<%= pct(starCounts[0]) %>%"></div></div>
-                        <span class="distrib-count"><%= pct(starCounts[0]) %>%</span>
-                      </div>
-                    </div>
-                    <a href="#avis" class="avis-banner__thanks">
-                      <span class="avis-banner__thanks-icon">♡</span>
-                      Merci pour vos partages et votre enthousiasme !
-                    </a>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -680,6 +814,42 @@
               </a>
             </div>
 
+            <!-- ══ BANNIÈRE STATS — en-tête de la section avis (même doré que .avis-banner) ══ -->
+            <div class="avis-banner avis-stats-banner">
+              <div class="avis-banner__shimmer"></div>
+              <div class="avis-stats-banner__notch avis-stats-banner__notch--l"></div>
+              <div class="avis-stats-banner__notch avis-stats-banner__notch--r"></div>
+              <img class="avis-stats-banner__bg" src="/images/pre-footer-bg-1.jpg" alt="" aria-hidden="true" loading="lazy" />
+              <div class="avis-banner__inner avis-stats-banner__inner">
+                <div class="avis-banner__reel">
+                  <i data-lucide="message-circle" width="30" height="30" stroke-width="1.5" class="avis-banner__reel-icon" aria-hidden="true"></i>
+                </div>
+                <div class="avis-banner__text">
+                  <p class="avis-banner__eyebrow">Communauté</p>
+                  <h2 class="avis-banner__title">Avis de la communauté</h2>
+                  <p class="avis-banner__sub">Des passionnés qui partagent leur amour du cinéma et de la gastronomie.</p>
+                  <div class="avis-stats-banner__stats">
+                    <div class="avis-stat-block">
+                      <div class="avis-stat-block__icon"><i data-lucide="message-circle" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i></div>
+                      <div><strong><%= fmtNum((typeof footerStats !== 'undefined' && footerStats && footerStats.avis) || 0) %></strong><span>Avis publiés</span></div>
+                    </div>
+                    <div class="avis-stat-block">
+                      <div class="avis-stat-block__icon"><i data-lucide="users" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i></div>
+                      <div><strong><%= fmtNum((typeof footerStats !== 'undefined' && footerStats && footerStats.members) || 0) %></strong><span>Membres</span></div>
+                    </div>
+                    <div class="avis-stat-block">
+                      <div class="avis-stat-block__icon"><i data-lucide="clapperboard" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i></div>
+                      <div><strong><%= fmtNum((typeof footerStats !== 'undefined' && footerStats && footerStats.recipes) || 0) %></strong><span>Recettes partagées</span></div>
+                    </div>
+                    <div class="avis-stat-block">
+                      <div class="avis-stat-block__icon"><i data-lucide="clapperboard" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i></div>
+                      <div><strong><%= fmtNum((typeof footerStats !== 'undefined' && footerStats && footerStats.films) || 0) %></strong><span>Films référencés</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- ══ DERNIERS AVIS + FORMULAIRE, côte à côte ══ -->
             <div class="rd-avis-row">
               <!-- Derniers avis (aperçu, renvoie vers la liste complète) -->
@@ -690,29 +860,22 @@
                 </div>
                 <% if (notices && notices.length > 0) { %>
                 <div class="rd-derniers-avis__list">
-                  <% notices.slice(0, 3).forEach((notice) => {
-                       const avatarSrc = notice.User && notice.User.picture ? notice.User.picture : null;
-                       const userName = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
-                       const nd = notice.createdAt ? new Date(notice.createdAt) : null;
-                       const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-                  %>
+                  <% notices.slice(0, 3).forEach((notice) => { %>
                   <div class="rd-derniers-avis__item">
-                    <div class="rd-derniers-avis__avatar">
-                      <% if (avatarSrc) { %>
-                      <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                      <% } else { %>
-                      <i data-lucide="user" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
-                      <% } %>
-                    </div>
+                    <%- avisAvatarHTML(notice, 'sm') %>
                     <div class="rd-derniers-avis__body">
                       <div class="rd-derniers-avis__item-head">
-                        <span class="rd-derniers-avis__item-name"><%= userName %></span>
+                        <span class="rd-derniers-avis__item-name"><%= avisAuthorName(notice) %></span>
                         <span class="rd-derniers-avis__item-stars">
                           <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
                         </span>
-                        <span class="rd-derniers-avis__item-date"><%= noticeDate %></span>
+                        <% if (notice.highlight && HIGHLIGHT_LABELS[notice.highlight]) { %>
+                        <span class="avis-highlight-tag avis-highlight-tag--<%= notice.highlight %>"><%= HIGHLIGHT_LABELS[notice.highlight] %></span>
+                        <% } %>
+                        <span class="rd-derniers-avis__item-date"><%= notice.timeAgo %></span>
                       </div>
                       <p class="rd-derniers-avis__item-text"><%= notice.content %></p>
+                      <%- avisFooterHTML(notice) %>
                     </div>
                   </div>
                   <% }) %>
@@ -729,11 +892,11 @@
                     <div class="avis-form-block__icon">✍️</div>
                     <div>
                       <h3 class="avis-form-block__title">LAISSER UN AVIS</h3>
-                      <p class="avis-form-block__sub">Partagez votre expérience avec la communauté</p>
+                      <p class="avis-form-block__sub">Partagez votre expérience avec la communauté Ciné Délices</p>
                     </div>
                   </div>
                   <% if (typeof userId !== 'undefined' && userId) { %>
-                  <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" novalidate>
+                  <form id="avisForm" action="/recipes-movie/details/<%= recipe.slug || recipe.id %>/avis" method="post" enctype="multipart/form-data" novalidate>
                     <input type="hidden" id="avisQuoteInput" name="quote" value="" />
                     <div class="star-picker">
                       <span class="star-picker__lbl">Note :</span>
@@ -742,11 +905,23 @@
                       <span class="star-pick" data-v="3">★</span>
                       <span class="star-pick" data-v="4">★</span>
                       <span class="star-pick" data-v="5">★</span>
+                      <span class="star-picker__hint">Cliquez sur une étoile pour noter</span>
                     </div>
                     <div class="form-g">
                       <label class="form-lbl" for="avisTexte">Votre avis <span style="color:var(--rouge-cta)">*</span></label>
-                      <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre expérience, vos conseils, ce qui vous a touché dans ce plat ou ce film…" required></textarea>
+                      <textarea class="form-inp form-ta" id="avisTexte" name="comment" rows="4" maxlength="500" placeholder="Partagez votre avis sur la recette, le film, vos astuces…" required></textarea>
                     </div>
+                    <div class="avis-photo-upload">
+                      <input type="file" id="avisPhotos" name="noticePictures" accept="image/*" multiple hidden />
+                      <label for="avisPhotos" class="avis-photo-upload__btn">
+                        <i data-lucide="camera" width="15" height="15" aria-hidden="true"></i> Ajouter une photo
+                      </label>
+                      <div class="avis-photo-upload__previews" id="avisPhotoPreviews"></div>
+                    </div>
+                    <label class="avis-anonymous-toggle">
+                      <input type="checkbox" name="anonymous" value="true" />
+                      <span>Avis anonyme</span>
+                    </label>
                     <div id="avisFormError" class="form-error" style="display:none;color:var(--rouge-cta);font-size:.85rem;margin-bottom:.5rem"></div>
                     <div id="avisFormSuccess" class="form-success" style="display:none;color:var(--vert-ok,#4caf50);font-size:.85rem;margin-bottom:.5rem"></div>
                     <div class="form-actions">
@@ -769,126 +944,48 @@
             </div><!-- /rd-avis-row -->
 
             <section class="avis-section" id="avis" aria-labelledby="avis-section-title">
-              <!-- Grille des avis -->
+              <div class="avis-section__head">
+                <div>
+                  <h2 class="rd-combo-col__title rd-combo-col__title--sm">Tous les avis <span class="avis-section__count">(<%= notices ? notices.length : 0 %>)</span></h2>
+                  <p class="avis-section__sub">Découvrez les retours et partages de la communauté sur cette recette et le film.</p>
+                </div>
+                <div class="avis-section__tools">
+                  <label class="avis-sort">
+                    <span>Trier par</span>
+                    <select id="avisSortSelect">
+                      <option value="recent">Plus récents</option>
+                      <option value="top">Mieux notés</option>
+                      <option value="liked">Plus aimés</option>
+                    </select>
+                  </label>
+                  <div class="avis-view-toggle" role="group" aria-label="Mode d'affichage">
+                    <button type="button" class="avis-view-btn is-active" data-avis-view="grid" aria-label="Vue grille">
+                      <i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="avis-view-btn" data-avis-view="list" aria-label="Vue liste">
+                      <i data-lucide="list" width="16" height="16" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Grille des avis (tous chargés, paginés côté client — cf.
+                   recipe-detail.js — pour éviter de tout recharger au clic
+                   sur une page tout en gardant un rendu léger par page). -->
               <% if (notices && notices.length > 0) { %>
               <div class="avis-grid" id="avisGrid">
-                <% notices.slice(0, 6).forEach((notice, i) => {
-                  const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
-                  const userName   = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
-                  const isAdmin    = notice.User && notice.User.role === 'admin';
-                  const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
-                  const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-                  const isFeatured = i === 0;
-                %>
-                <article class="avis-card<%= isFeatured ? ' avis-card--featured' : '' %>" data-rating="<%= notice.quote %>">
-                  <% if (isFeatured) { %>
-                  <!-- Card vedette : 2 colonnes -->
-                  <div class="avis-card__left">
-                    <div class="avis-card__head">
-                      <div class="avis-card__user">
-                        <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
-                          <% if (avatarSrc) { %>
-                          <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                          <% } else { %>
-                          <i data-lucide="user" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
-                          <% } %>
-                        </div>
-                        <div>
-                          <p class="avis-user__name"><%= userName %></p>
-                          <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend gamification-badge gamification-badge--official">✦ Équipe Ciné Délices</p><% } %>
-                        </div>
-                      </div>
-                      <span class="avis-featured-badge">✦ Coup de cœur</span>
-                    </div>
-                    <div class="avis-stars">
-                      <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
-                    </div>
-                  </div>
-                  <div class="avis-card__right">
-                    <div class="avis-card__quote">
-                      <span class="avis-quote-mark">"</span>
-                      <p class="avis-card__text"><%= notice.content %></p>
-                    </div>
-                    <div class="avis-card__foot">
-                      <span class="avis-date"><%= noticeDate %></span>
-                    </div>
-                  </div>
-                  <% } else { %>
-                  <!-- Cards normales -->
-                  <div class="avis-card__head">
-                    <div class="avis-card__user">
-                      <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
-                        <% if (avatarSrc) { %>
-                        <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                        <% } else { %>
-                        <i data-lucide="user" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
-                        <% } %>
-                      </div>
-                      <div>
-                        <p class="avis-user__name"><%= userName %></p>
-                        <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend gamification-badge gamification-badge--official">✦ Équipe Ciné Délices</p><% } %>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="avis-stars">
-                    <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
-                  </div>
-                  <div class="avis-card__quote">
-                    <span class="avis-quote-mark">"</span>
-                    <p class="avis-card__text"><%= notice.content %></p>
-                  </div>
-                  <div class="avis-card__foot">
-                    <span class="avis-date"><%= noticeDate %></span>
-                  </div>
-                  <% } %>
-                </article>
+                <% notices.forEach((notice) => { %>
+                <%- avisCardHTML(notice, notice.highlight === 'coup_de_coeur') %>
                 <% }) %>
               </div>
-
-              <% if (notices.length > 6) { %>
-              <div class="avis-loadmore" id="avisLoadmore">
-                <div class="load-bar"></div>
-                <p class="load-info" id="avisLoadInfo">6 avis affichés sur <%= notices.length %></p>
-                <button class="btn-more" id="seeMoreAvis" type="button">↓ Charger plus d'avis</button>
-              </div>
-              <div class="avis-grid" id="avisGridExtra" hidden>
-                <% notices.slice(6).forEach((notice) => {
-                  const avatarSrc  = notice.User && notice.User.picture ? notice.User.picture : null;
-                  const userName   = notice.User ? (notice.User.pseudo || [notice.User.first_name, notice.User.last_name].filter(Boolean).join(' ') || 'Visiteur') : 'Visiteur';
-                  const isAdmin    = notice.User && notice.User.role === 'admin';
-                  const nd         = notice.createdAt ? new Date(notice.createdAt) : null;
-                  const noticeDate = nd ? nd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-                %>
-                <article class="avis-card" data-rating="<%= notice.quote %>">
-                  <div class="avis-card__head">
-                    <div class="avis-card__user">
-                      <div class="avis-avatar<%= isAdmin ? ' avis-avatar--gold' : '' %>">
-                        <% if (avatarSrc) { %>
-                        <img src="<%= avatarSrc %>" alt="<%= userName %>" loading="lazy" />
-                        <% } else { %>
-                        <i data-lucide="user" width="18" height="18" stroke-width="1.5" aria-hidden="true"></i>
-                        <% } %>
-                      </div>
-                      <div>
-                        <p class="avis-user__name"><%= userName %></p>
-                        <% if (isAdmin) { %><p class="avis-user__level avis-user__level--legend gamification-badge gamification-badge--official">✦ Équipe Ciné Délices</p><% } %>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="avis-stars">
-                    <% for (let s = 1; s <= 5; s++) { %><span class="<%= s <= notice.quote ? 's' : 'se' %>">★</span><% } %>
-                  </div>
-                  <div class="avis-card__quote">
-                    <span class="avis-quote-mark">"</span>
-                    <p class="avis-card__text"><%= notice.content %></p>
-                  </div>
-                  <div class="avis-card__foot">
-                    <span class="avis-date"><%= noticeDate %></span>
-                  </div>
-                </article>
-                <% }) %>
-              </div>
-              <% } %>
+              <nav class="avis-pagination" id="avisPagination" aria-label="Pages des avis" hidden>
+                <button type="button" class="avis-pagination__arrow" data-avis-page-prev aria-label="Page précédente">
+                  <i data-lucide="chevron-left" width="18" height="18" aria-hidden="true"></i>
+                </button>
+                <div class="avis-pagination__pages" id="avisPaginationPages"></div>
+                <button type="button" class="avis-pagination__arrow" data-avis-page-next aria-label="Page suivante">
+                  <i data-lucide="chevron-right" width="18" height="18" aria-hidden="true"></i>
+                </button>
+              </nav>
               <% } %>
 
             </section>
@@ -933,11 +1030,32 @@
           </div><!-- /recipe-main-col -->
       </div><!-- /recipe-main -->
 
+      <!-- Gabarit de formulaire de réponse à un avis, cloné par JS (recipe-detail.js) -->
+      <% if (typeof userId !== 'undefined' && userId) { %>
+      <template id="avisReplyTemplate">
+        <form class="avis-reply-form" data-notice-reply-form>
+          <textarea class="form-inp form-ta" rows="2" maxlength="500" placeholder="Écrire une réponse…" required></textarea>
+          <div class="avis-reply-form__error" style="display:none"></div>
+          <div class="avis-reply-form__actions">
+            <button type="button" class="btn btn--outline" data-notice-reply-cancel>Annuler</button>
+            <button type="submit" class="btn btn--red">Répondre</button>
+          </div>
+        </form>
+      </template>
+      <% } %>
+
       <!-- ══ LIGHTBOX ══ -->
       <div class="recipe-lightbox" id="recipe-lightbox" aria-hidden="true">
         <div class="recipe-lightbox__backdrop" data-lightbox-close aria-hidden="true"></div>
         <div class="recipe-lightbox__dialog" role="dialog" aria-modal="true">
           <button type="button" class="recipe-lightbox__close" aria-label="Fermer l'aperçu" data-lightbox-close>&times;</button>
+          <span class="recipe-lightbox__step-badge" data-lightbox-step-badge></span>
+          <button type="button" class="recipe-lightbox__nav recipe-lightbox__nav--prev" aria-label="Photo précédente" data-lightbox-prev>
+            <i data-lucide="chevron-left" width="20" height="20" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="recipe-lightbox__nav recipe-lightbox__nav--next" aria-label="Photo suivante" data-lightbox-next>
+            <i data-lucide="chevron-right" width="20" height="20" aria-hidden="true"></i>
+          </button>
           <img src="" alt="Recette Ciné Délices" class="recipe-lightbox__image" loading="lazy" />
         </div>
       </div>
@@ -953,7 +1071,7 @@
         userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
       };
     </script>
-    <script src="/js/recipe-detail.js?v=20260827a" defer></script>
+    <script src="/js/recipe-detail.js?v=20260828d" defer></script>
     <script src="/js/favorites.js" defer></script>
   </body>
 </html>

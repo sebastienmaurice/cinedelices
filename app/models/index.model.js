@@ -10,6 +10,8 @@ import Rating from './rating.model.js';
 import UserPoints from './UserPoints.model.js';
 import RecipePicture from './RecipePicture.model.js';
 import PasswordReset from './password_reset.model.js';
+import NoticeLike from './notice-like.model.js';
+import NoticePicture from './notice-picture.model.js';
 
 
 // Définition des relations entre les modèles
@@ -74,8 +76,22 @@ RecipePicture.belongsTo(Recipe, { foreignKey: 'recipe_id' });
 User.hasMany(PasswordReset, { foreignKey: 'user_id' });
 PasswordReset.belongsTo(User, { foreignKey: 'user_id' });
 
+// Réponses à un avis (1 niveau) — auto-relation via parent_id.
+Notice.hasMany(Notice, { foreignKey: 'parent_id', as: 'replies' });
+Notice.belongsTo(Notice, { foreignKey: 'parent_id', as: 'parent' });
+
+// Likes sur un avis
+Notice.hasMany(NoticeLike, { foreignKey: 'id_notice', as: 'likes' });
+NoticeLike.belongsTo(Notice, { foreignKey: 'id_notice' });
+User.hasMany(NoticeLike, { foreignKey: 'id_user' });
+NoticeLike.belongsTo(User, { foreignKey: 'id_user' });
+
+// Photos jointes à un avis
+Notice.hasMany(NoticePicture, { foreignKey: 'id_notice', as: 'pictures' });
+NoticePicture.belongsTo(Notice, { foreignKey: 'id_notice' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture };
 
 
 

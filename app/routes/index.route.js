@@ -11,6 +11,7 @@ import contactAboutRouter from "./contact-about.route.js";
 import tmdbRouter from "./tmdb.route.js";
 import favoritesRouter from "./favorites.route.js";
 import ratingsRouter from "./ratings.route.js";
+import noticesRouter from "./notices.route.js";
 import authorRouter from "./author.route.js";
 import mentionsLegalesRouter from "./mentions-legales.route.js";
 import sitemapRouter from "./sitemap.route.js";
@@ -31,6 +32,7 @@ router.use("/contact-about", contactAboutRouter); // Route pour la page de conta
 router.use("/api/tmdb", isLogged, tmdbRouter); // Route API pour TMDB (protégée par authentification)
 router.use("/api/favorites", favoritesRouter); // Route API pour les favoris
 router.use("/api/ratings", ratingsRouter); // Route API pour les notes
+router.use("/api/notices", noticesRouter); // Route API pour les interactions sur les avis (like)
 router.use("/auteur", authorRouter); // Page publique auteur (gamification)
 router.use("/mentions-legales", mentionsLegalesRouter); // Page mentions légales
 
