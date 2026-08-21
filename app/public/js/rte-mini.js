@@ -8,14 +8,17 @@
 
   /* ── Extraction du titre d'une étape (client-side mirror du helper serveur) ── */
   function extractStepTitle(html) {
-    var m = html.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
-    if (!m) return { title: '', body: html };
-    var title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
-    var body = m[2]
+    // Tolère un <strong> avec attributs (ex : data-type/data-duration ajoutés
+    // par /add-recipes-movies/) — non éditables ici, mais préservés tels quels
+    // via reconstructStepStrong() pour ne pas perdre l'info en cas de resauvegarde.
+    var m = html.match(/^<strong([^>]*)>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+    if (!m) return { title: '', body: html, attrs: '' };
+    var title = m[2].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+    var body = m[3]
       .replace(/^(<br\s*\/?>\s*)+/i, '')
       .replace(/^\s*[-–—]\s*/, '')
       .trim();
-    return { title: title, body: body || m[2].trim() };
+    return { title: title, body: body || m[3].trim(), attrs: m[1] || '' };
   }
 
   /* ── Sérialisation (contenteditable → tableau JSON) ──────────────────

@@ -1333,18 +1333,26 @@
         var items = [];
         var group = [];
         var pendingTitle = '';
+        var pendingType = '';
+        var pendingDuration = '';
 
         function flushGroup() {
           var cleaned = group.filter(function(s) {
             return s.replace(/<br\s*\/?>/gi, '').trim().length > 0;
           });
           var t = cleaned.join('<br>').replace(/(<br>\s*)+$/, '').trim();
-          if (t || pendingTitle) {
-            var item = pendingTitle
-              ? '<strong>' + pendingTitle + '</strong>' + (t ? '<br>' + t : '')
+          if (t || pendingTitle || pendingType || pendingDuration) {
+            var attrs = [];
+            if (pendingType) attrs.push('data-type="' + pendingType + '"');
+            if (pendingDuration) attrs.push('data-duration="' + pendingDuration + '"');
+            var needsStrong = pendingTitle || pendingType || pendingDuration;
+            var item = needsStrong
+              ? '<strong' + (attrs.length ? ' ' + attrs.join(' ') : '') + '>' + pendingTitle + '</strong>' + (t ? '<br>' + t : '')
               : t;
             if (item) items.push(item);
             pendingTitle = '';
+            pendingType = '';
+            pendingDuration = '';
           }
           group = [];
         }
@@ -1354,9 +1362,13 @@
           if (node.nodeType === 1 && node.classList && node.classList.contains('arm-step-sep')) {
             if (mode === 'preparation') {
               var titleInput = node.querySelector('.arm-step-sep__title');
+              var typeSelect = node.querySelector('.arm-step-sep__type');
+              var durationInput = node.querySelector('.arm-step-sep__duration');
               var t = titleInput ? titleInput.value.trim() : '';
               if (!node.classList.contains('arm-step-sep--first')) flushGroup();
               pendingTitle = t;
+              pendingType = typeSelect ? typeSelect.value : '';
+              pendingDuration = durationInput ? durationInput.value.trim() : '';
             }
             return;
           }
@@ -1399,23 +1411,65 @@
 
       /* ── Séparateur d'étape : insertion, suppression, renumérotation ── */
       // isFirst=true → header fixe Étape 1 sans bouton suppression
-      function makeSepEl(num, title, isFirst) {
+      var STEP_TYPES = [
+        { value: '', label: 'Type…' },
+        { value: 'preparation', label: 'Préparation' },
+        { value: 'cuisson', label: 'Cuisson' },
+        { value: 'repos', label: 'Repos' },
+        { value: 'service', label: 'Service' },
+      ];
+
+      function makeSepEl(num, title, isFirst, type, duration) {
         var sep = document.createElement('div');
         sep.className = isFirst ? 'arm-step-sep arm-step-sep--first' : 'arm-step-sep';
         sep.setAttribute('contenteditable', 'false');
 
-        var label = document.createElement('span');
-        label.className = 'arm-step-sep__label';
-        label.textContent = 'Étape ' + num + ' —';
+        var bubble = document.createElement('span');
+        bubble.className = 'arm-step-sep__num';
+        bubble.textContent = String(num).padStart(2, '0');
+
+        var row = document.createElement('div');
+        row.className = 'arm-step-sep__row';
 
         var input = document.createElement('input');
         input.type = 'text';
         input.className = 'arm-step-sep__title';
-        input.placeholder = 'titre de l\'étape (optionnel)';
+        input.placeholder = 'Titre de l\'étape (optionnel)';
         if (title) input.value = title;
 
-        sep.appendChild(label);
-        sep.appendChild(input);
+        var meta = document.createElement('div');
+        meta.className = 'arm-step-sep__meta';
+
+        var typeSelect = document.createElement('select');
+        typeSelect.className = 'arm-step-sep__type';
+        STEP_TYPES.forEach(function (opt) {
+          var o = document.createElement('option');
+          o.value = opt.value;
+          o.textContent = opt.label;
+          typeSelect.appendChild(o);
+        });
+        if (type) typeSelect.value = type;
+
+        var durationWrap = document.createElement('span');
+        durationWrap.className = 'arm-step-sep__duration-wrap';
+        var durationInput = document.createElement('input');
+        durationInput.type = 'number';
+        durationInput.min = '0';
+        durationInput.max = '999';
+        durationInput.className = 'arm-step-sep__duration';
+        durationInput.placeholder = '—';
+        if (duration) durationInput.value = duration;
+        var durationUnit = document.createElement('span');
+        durationUnit.className = 'arm-step-sep__duration-unit';
+        durationUnit.textContent = 'min';
+        durationWrap.appendChild(durationInput);
+        durationWrap.appendChild(durationUnit);
+
+        meta.appendChild(typeSelect);
+        meta.appendChild(durationWrap);
+
+        row.appendChild(input);
+        row.appendChild(meta);
 
         if (!isFirst) {
           var del = document.createElement('button');
@@ -1423,8 +1477,11 @@
           del.type = 'button';
           del.setAttribute('aria-label', 'Supprimer ce séparateur');
           del.innerHTML = '&#x2715;'; // ✕
-          sep.appendChild(del);
+          row.appendChild(del);
         }
+
+        sep.appendChild(bubble);
+        sep.appendChild(row);
 
         return sep;
       }
@@ -1432,12 +1489,12 @@
       function renumberStepSeps(rte) {
         var regIdx = 0;
         [].slice.call(rte.querySelectorAll('.arm-step-sep')).forEach(function (sep) {
-          var lbl = sep.querySelector('.arm-step-sep__label');
+          var bubble = sep.querySelector('.arm-step-sep__num');
           if (sep.classList.contains('arm-step-sep--first')) {
-            if (lbl) lbl.textContent = 'Étape 1 —';
+            if (bubble) bubble.textContent = '01';
             return;
           }
-          if (lbl) lbl.textContent = 'Étape ' + (regIdx + 2) + ' —';
+          if (bubble) bubble.textContent = String(regIdx + 2).padStart(2, '0');
           regIdx++;
         });
       }

@@ -571,26 +571,47 @@ function formatIngredientsBlocks(ingredients) {
     .filter(Boolean);
 }
 
+// Libellés affichés pour le type d'étape (voir add-recipes-movies.ejs STEP_TYPES)
+const STEP_TYPE_LABELS = {
+  preparation: "Préparation",
+  cuisson: "Cuisson",
+  repos: "Repos",
+  service: "Service",
+};
+
 /**
- * Extrait le titre d'une étape depuis son HTML.
- * Cherche un <strong> en début de contenu : "1. Titre" → title="Titre", body=reste.
+ * Extrait le titre (+ type/durée éventuels) d'une étape depuis son HTML.
+ * Cherche un <strong [data-type="..."] [data-duration="..."]> en début de
+ * contenu : "1. Titre" → title="Titre", body=reste.
  * @param {string} html
- * @returns {{ title: string, body: string }}
+ * @returns {{ title: string, body: string, type: string|null, typeLabel: string|null, duration: number|null }}
  */
 function extractStepTitle(html) {
-  const m = html.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
-  if (!m) return { title: '', body: html };
+  const m = html.match(/^<strong([^>]*)>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+  if (!m) return { title: '', body: html, type: null, typeLabel: null, duration: null };
+
+  const attrs = m[1] || '';
+  const typeMatch = attrs.match(/data-type="([^"]*)"/);
+  const durationMatch = attrs.match(/data-duration="([^"]*)"/);
+  const type = typeMatch && typeMatch[1] ? typeMatch[1] : null;
+  const duration = durationMatch && durationMatch[1] ? parseInt(durationMatch[1], 10) : null;
 
   // Nettoyer le titre : retirer "N. " ou "N - " en tête
-  const title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+  const title = m[2].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
 
   // Nettoyer le début du body : retirer <br> et tiret éventuels
-  const body = m[2]
+  const body = m[3]
     .replace(/^(<br\s*\/?>\s*)+/i, '')
     .replace(/^\s*[-–—]\s*/, '')
     .trim();
 
-  return { title, body: body || m[2].trim() };
+  return {
+    title,
+    body: body || m[3].trim(),
+    type,
+    typeLabel: type && STEP_TYPE_LABELS[type] ? STEP_TYPE_LABELS[type] : null,
+    duration: Number.isFinite(duration) ? duration : null,
+  };
 }
 
 /**

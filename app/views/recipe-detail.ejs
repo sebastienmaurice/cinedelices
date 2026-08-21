@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=202608291" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=202608292" />
   </head>
 
   <body class="recipe-page">
@@ -653,7 +653,12 @@
                       </div>
                       <div class="rd-step-body">
                         <p class="rd-step-title">
-                          Étape <%= rowNum %><% if (step.title) { %> — <%= step.title %><% } %>
+                          <span class="rd-step-title__txt">Étape <%= rowNum %><% if (step.title) { %> — <%= step.title %><% } %></span>
+                          <% if (step.typeLabel || step.duration) { %>
+                          <span class="rd-step-badge">
+                            <% if (step.typeLabel) { %><%= step.typeLabel %><% } %><% if (step.typeLabel && step.duration) { %> · <% } %><% if (step.duration) { %><%= step.duration %> min<% } %>
+                          </span>
+                          <% } %>
                           <button class="rd-step-check" aria-label="Marquer l'étape comme faite" aria-pressed="false">
                             <i data-lucide="check" width="11" height="11" stroke-width="2.5" aria-hidden="true"></i>
                           </button>

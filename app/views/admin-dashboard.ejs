@@ -315,12 +315,21 @@
                   return split ? { type: 'item', qty: split.qty, name: split.name } : { type: 'item', qty: null, name: s };
                 });
               }
+              const RV_STEP_TYPE_LABELS = { preparation: 'Préparation', cuisson: 'Cuisson', repos: 'Repos', service: 'Service' };
               function rvExtractStepTitle(html) {
-                const m = String(html).match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);
-                if (!m) return { title: '', body: html };
-                const title = m[1].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
-                const body = m[2].replace(/^(<br\s*\/?>\s*)+/i, '').replace(/^\s*[-–—]\s*/, '').trim();
-                return { title: title, body: body || m[2].trim() };
+                const m = String(html).match(/^<strong([^>]*)>([\s\S]*?)<\/strong>([\s\S]*)$/i);
+                if (!m) return { title: '', body: html, typeLabel: null, duration: null };
+                const attrs = m[1] || '';
+                const typeMatch = attrs.match(/data-type="([^"]*)"/);
+                const durationMatch = attrs.match(/data-duration="([^"]*)"/);
+                const title = m[2].replace(/^\d+[\s.]*[-–—]?\s*/, '').trim();
+                const body = m[3].replace(/^(<br\s*\/?>\s*)+/i, '').replace(/^\s*[-–—]\s*/, '').trim();
+                return {
+                  title: title,
+                  body: body || m[3].trim(),
+                  typeLabel: typeMatch && RV_STEP_TYPE_LABELS[typeMatch[1]] ? RV_STEP_TYPE_LABELS[typeMatch[1]] : null,
+                  duration: durationMatch && durationMatch[1] ? parseInt(durationMatch[1], 10) : null,
+                };
               }
               function rvParsePreparation(jsonStr) {
                 const arr = rvParseJsonArray(jsonStr);
@@ -410,7 +419,14 @@
                 <ol class="rv-prep-list">
                   <% rvSteps.forEach(function (s) { %>
                   <li>
-                    <% if (s.title) { %><strong class="rv-prep-title"><%= s.title %></strong><% } %>
+                    <% if (s.title || s.typeLabel || s.duration) { %>
+                    <div class="rv-prep-head">
+                      <% if (s.title) { %><strong class="rv-prep-title"><%= s.title %></strong><% } %>
+                      <% if (s.typeLabel || s.duration) { %>
+                      <span class="rv-prep-badge"><% if (s.typeLabel) { %><%= s.typeLabel %><% } %><% if (s.typeLabel && s.duration) { %> · <% } %><% if (s.duration) { %><%= s.duration %> min<% } %></span>
+                      <% } %>
+                    </div>
+                    <% } %>
                     <span class="rv-prep-body"><%- s.body %></span>
                   </li>
                   <% }) %>
