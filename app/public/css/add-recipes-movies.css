@@ -2382,12 +2382,41 @@ body.arm-full-bleed {
 }
 .arm-step-card.is-dragging { opacity: 0.4; }
 .arm-step-card.is-drag-over .arm-step-sep { border-color: rgba(196, 160, 82, 0.65); }
-.arm-step-card__body {
-  box-sizing: border-box;
-  width: calc(100% - 42px);
-  min-height: 44px;
+/* ── Lignes de description réorganisables au sein d'une étape ── */
+.arm-step-lines {
   margin-top: 6px;
   margin-left: 42px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.arm-step-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  transition: opacity 0.15s;
+}
+.arm-step-line.is-dragging { opacity: 0.4; }
+.arm-step-line.is-drag-over .arm-step-line__text { border-color: rgba(196, 160, 82, 0.6); }
+.arm-step-line__drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 30px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: rgba(196, 160, 82, 0.35);
+  cursor: grab;
+  margin-top: 4px;
+}
+.arm-step-line__drag:hover { color: var(--or-titre, #c4a052); }
+.arm-step-line__text {
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
   padding: 8px 10px;
   background: rgba(6, 10, 18, 0.4);
   border: 1px solid rgba(196, 160, 82, 0.12);
@@ -2401,7 +2430,39 @@ body.arm-full-bleed {
   outline: none;
   transition: border-color 0.2s;
 }
-.arm-step-card__body:focus { border-color: rgba(196, 160, 82, 0.35); }
+.arm-step-line__text:focus { border-color: rgba(196, 160, 82, 0.35); }
+.arm-step-line__text::placeholder { color: rgba(232, 232, 232, 0.2); }
+.arm-step-line__del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 4px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(196, 160, 82, 0.35);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.arm-step-line__del:hover { background: rgba(194, 48, 24, 0.16); color: #e0632f; }
+.arm-step-lines__add {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0 0 42px;
+  background: transparent;
+  border: none;
+  color: rgba(196, 160, 82, 0.55);
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.15s;
+}
+.arm-step-lines__add:hover { color: var(--or-titre, #c4a052); }
 .arm-step-card__body::placeholder { color: rgba(232, 232, 232, 0.2); }
 
 /* ══════════════════════════════════════════════════════
@@ -2627,9 +2688,12 @@ body.arm-full-bleed {
   position: absolute;
   z-index: 400;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   padding: 8px;
+  max-width: 280px;
+  max-height: 260px;
+  overflow-y: auto;
   background: #0c1420;
   border: 1px solid rgba(196, 160, 82, 0.3);
   border-radius: 10px;

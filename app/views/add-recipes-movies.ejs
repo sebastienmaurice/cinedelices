@@ -1366,10 +1366,14 @@
          INGRÉDIENTS — liste plate, 1 ligne = icône + nom + qté + unité
       ══════════════════════════════════════════════════════ */
       var ING_ICONS = [
-        'wheat', 'egg', 'milk', 'beef', 'drumstick', 'fish',
+        'wheat', 'wheat-off', 'egg', 'egg-fried', 'milk', 'milk-off',
+        'beef', 'drumstick', 'fish', 'fish-off', 'ham', 'shrimp',
         'carrot', 'apple', 'banana', 'cherry', 'grape', 'citrus',
-        'salad', 'soup', 'cookie', 'croissant', 'cake', 'coffee',
-        'wine', 'droplet', 'flame', 'package',
+        'leafy-green', 'salad', 'soup', 'sandwich', 'pizza', 'cookie',
+        'croissant', 'cake', 'cake-slice', 'candy', 'candy-cane', 'lollipop',
+        'popcorn', 'ice-cream-cone', 'ice-cream-bowl', 'coffee', 'cup-soda', 'wine',
+        'beer', 'martini', 'utensils', 'utensils-crossed', 'chef-hat', 'cooking-pot',
+        'flame', 'droplet', 'nut-off', 'bean', 'package',
       ];
       var ING_UNITS = [
         { value: '', label: '—' },
@@ -1663,14 +1667,18 @@
         { value: 'service', label: 'Service' },
       ];
 
-      function newStepRow() { return { id: uid(), title: '', body: '', type: '', duration: '' }; }
+      function newStepLine() { return { id: uid(), text: '' }; }
+      function newStepRow() { return { id: uid(), title: '', type: '', duration: '', lines: [newStepLine()] }; }
       var preparationState = [newStepRow()];
 
       function buildStepString(step) {
         var title = (step.title || '').trim();
         var type = step.type || '';
         var duration = (step.duration || '').toString().trim();
-        var body = escapeHtmlBasic((step.body || '').trim()).replace(/\n/g, '<br>');
+        var bodyLines = step.lines
+          .map(function (l) { return escapeHtmlBasic((l.text || '').trim()).replace(/\n/g, '<br>'); })
+          .filter(Boolean);
+        var body = bodyLines.join('<br>');
         if (!title && !type && !duration && !body) return '';
         var needsStrong = title || type || duration;
         if (!needsStrong) return body;
@@ -1694,6 +1702,69 @@
       function renumberStepCards() {
         var cards = document.querySelectorAll('#prep-list .arm-step-card .arm-step-sep__num');
         cards.forEach(function (bubble, i) { bubble.textContent = String(i + 1).padStart(2, '0'); });
+      }
+
+      /* ── Réorganise les lignes AU SEIN d'une même étape (pas entre étapes) ── */
+      function moveStepLine(step, srcId, targetId) {
+        return reorderById(step.lines, srcId, targetId);
+      }
+
+      function buildStepLineEl(step, line) {
+        var lineEl = document.createElement('div');
+        lineEl.className = 'arm-step-line';
+        lineEl.dataset.id = line.id;
+
+        var drag = document.createElement('button');
+        drag.type = 'button'; drag.className = 'arm-step-line__drag'; drag.setAttribute('aria-label', 'Réorganiser cette ligne');
+        drag.innerHTML = '<i data-lucide="grip-vertical" width="12" height="12" stroke-width="2"></i>';
+
+        var textarea = document.createElement('textarea');
+        textarea.className = 'arm-step-line__text';
+        textarea.placeholder = 'Décrivez cette étape…';
+        textarea.value = line.text;
+        textarea.rows = 1;
+        function autoGrow() { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; }
+        textarea.addEventListener('input', function () { line.text = textarea.value; autoGrow(); serializePreparation(); });
+
+        lineEl.appendChild(drag);
+        lineEl.appendChild(textarea);
+
+        if (step.lines.length > 1) {
+          var delBtn = document.createElement('button');
+          delBtn.type = 'button'; delBtn.className = 'arm-step-line__del'; delBtn.setAttribute('aria-label', 'Supprimer cette ligne');
+          delBtn.innerHTML = '<i data-lucide="x" width="12" height="12" stroke-width="2.5"></i>';
+          delBtn.addEventListener('click', function () {
+            step.lines = step.lines.filter(function (l) { return l.id !== line.id; });
+            if (!step.lines.length) step.lines.push(newStepLine());
+            renderPreparation();
+          });
+          lineEl.appendChild(delBtn);
+        }
+
+        setTimeout(autoGrow, 0);
+
+        drag.addEventListener('mousedown', function () { lineEl.draggable = true; });
+        lineEl.addEventListener('dragend', function () { lineEl.draggable = false; lineEl.classList.remove('is-dragging'); });
+        lineEl.addEventListener('dragstart', function (e) {
+          e.stopPropagation();
+          lineEl.classList.add('is-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/x-step-line', line.id);
+        });
+        lineEl.addEventListener('dragover', function (e) {
+          if (e.dataTransfer.types.includes('text/x-step-line')) { e.preventDefault(); e.stopPropagation(); lineEl.classList.add('is-drag-over'); }
+        });
+        lineEl.addEventListener('dragleave', function () { lineEl.classList.remove('is-drag-over'); });
+        lineEl.addEventListener('drop', function (e) {
+          if (!e.dataTransfer.types.includes('text/x-step-line')) return;
+          e.preventDefault();
+          e.stopPropagation();
+          lineEl.classList.remove('is-drag-over');
+          var srcId = e.dataTransfer.getData('text/x-step-line');
+          if (moveStepLine(step, srcId, line.id)) renderPreparation();
+        });
+
+        return lineEl;
       }
 
       function buildStepCardEl(step, idx) {
@@ -1769,17 +1840,24 @@
         head.appendChild(bubble);
         head.appendChild(row);
 
-        var bodyTextarea = document.createElement('textarea');
-        bodyTextarea.className = 'arm-step-card__body';
-        bodyTextarea.placeholder = 'Décrivez cette étape…';
-        bodyTextarea.value = step.body;
-        bodyTextarea.rows = 2;
-        function autoGrow() { bodyTextarea.style.height = 'auto'; bodyTextarea.style.height = bodyTextarea.scrollHeight + 'px'; }
-        bodyTextarea.addEventListener('input', function () { step.body = bodyTextarea.value; autoGrow(); serializePreparation(); });
+        var linesWrap = document.createElement('div');
+        linesWrap.className = 'arm-step-lines';
+        step.lines.forEach(function (line) { linesWrap.appendChild(buildStepLineEl(step, line)); });
+
+        var addLineBtn = document.createElement('button');
+        addLineBtn.type = 'button'; addLineBtn.className = 'arm-step-lines__add';
+        addLineBtn.innerHTML = '<i data-lucide="plus" width="11" height="11" stroke-width="2.5"></i> Ajouter une ligne';
+        addLineBtn.addEventListener('click', function () {
+          step.lines.push(newStepLine());
+          renderPreparation();
+          var lineEls = document.querySelectorAll('.arm-step-card[data-id="' + step.id + '"] .arm-step-line__text');
+          var lastLine = lineEls[lineEls.length - 1];
+          if (lastLine) lastLine.focus();
+        });
 
         card.appendChild(head);
-        card.appendChild(bodyTextarea);
-        setTimeout(autoGrow, 0);
+        card.appendChild(linesWrap);
+        card.appendChild(addLineBtn);
 
         /* Drag reorder — poignée dédiée pour ne pas gêner la saisie */
         drag.addEventListener('mousedown', function () { card.draggable = true; });
@@ -1815,7 +1893,7 @@
         prepAddBtn.addEventListener('click', function () {
           preparationState.push(newStepRow());
           renderPreparation();
-          var textareas = document.querySelectorAll('#prep-list .arm-step-card__body');
+          var textareas = document.querySelectorAll('#prep-list .arm-step-line__text');
           var last = textareas[textareas.length - 1];
           if (last) last.focus();
         });
