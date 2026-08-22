@@ -12,8 +12,15 @@
     <!-- Ressources globales -->
     <%- include("partials/head-resources") %>
 
+    <!-- Polices dédiées à la refonte "Velours & Projecteur" de cette page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@200;300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608294" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608296" />
   </head>
   <body class="arm-full-bleed">
     <!-- HEADER -->
@@ -63,37 +70,59 @@
       </div>
     </section>
 
-    <!-- ═══════════ STEPPER STICKY ═══════════ -->
-    <div class="arm-stepper-wrap">
-      <nav class="arm-stepper" aria-label="Progression du formulaire">
-        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--done<% } else { %>arm-step--active<% } %>" href="#arm-s1" id="tab1">
-          <div class="arm-step__bubble">
+    <!-- ═══════════ BANDEAU ÉTAPE + COMPTEURS ═══════════ -->
+    <div class="dc-band">
+      <div class="dc-band__eyebrow">
+        <span class="dc-band__rule" aria-hidden="true"></span>
+        <span id="dcStepEyebrow"><% if (typeof newMovie !== 'undefined' && newMovie) { %>ÉTAPE 2 SUR 3<% } else { %>ÉTAPE 1 SUR 3<% } %></span>
+      </div>
+      <div class="dc-band__counters" id="dcCounters" hidden>
+        <span class="dc-pill dc-pill--sage">
+          <i data-lucide="shopping-basket" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+          <span id="dcCountIng">0</span> ingrédients
+        </span>
+        <span class="dc-pill dc-pill--wine">
+          <i data-lucide="images" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+          <span id="dcCountPhotos">0/8</span> photos
+        </span>
+        <span class="dc-pill dc-pill--gold">
+          <i data-lucide="list-ordered" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+          <span id="dcCountSteps">0</span> étapes · <span id="dcCountMin">0</span> min
+        </span>
+      </div>
+    </div>
+
+    <!-- ═══════════ BARRE D'ONGLETS ═══════════ -->
+    <div class="dc-tabbar-wrap">
+      <nav class="dc-tabbar arm-stepper" role="tablist" aria-label="Progression du formulaire">
+        <button type="button" class="dc-tab arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--done<% } else { %>arm-step--active<% } %>" id="tab1" role="tab" aria-controls="arm-s1" aria-selected="<% if (typeof newMovie !== 'undefined' && newMovie) { %>false<% } else { %>true<% } %>">
+          <span class="dc-tab__bubble arm-step__bubble">
             <% if (typeof newMovie !== 'undefined' && newMovie) { %>
             <i data-lucide="check" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
-            <% } else { %>1<% } %>
-          </div>
-          <div class="arm-step__info">
-            <span class="arm-step__label">Étape 1 / 3</span>
-            <span class="arm-step__name">Mon film ou ma série</span>
-          </div>
-          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog1" <% if (typeof newMovie !== 'undefined' && newMovie) { %>style="width:100%;background:linear-gradient(90deg,#2a7a50,#3daa72)"<% } %>></div></div>
-        </a>
-        <a class="arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--active<% } %>" href="#arm-s2" id="tab2">
-          <div class="arm-step__bubble">2</div>
-          <div class="arm-step__info">
-            <span class="arm-step__label">Étape 2 / 3</span>
-            <span class="arm-step__name">Ma recette</span>
-          </div>
-          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog2"></div></div>
-        </a>
-        <a class="arm-step" href="#arm-s3" id="tab3">
-          <div class="arm-step__bubble">3</div>
-          <div class="arm-step__info">
-            <span class="arm-step__label">Étape 3 / 3</span>
-            <span class="arm-step__name">Ingrédients &amp; préparation</span>
-          </div>
-          <div class="arm-step__progress"><div class="arm-step__progress-bar" id="prog3"></div></div>
-        </a>
+            <% } else { %>01<% } %>
+          </span>
+          <span class="dc-tab__info arm-step__info">
+            <span class="dc-tab__eyebrow arm-step__label">Étape 01 / 03</span>
+            <span class="dc-tab__name arm-step__name">Mon film ou ma série</span>
+          </span>
+          <span class="dc-tab__state" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="dc-tab arm-step <% if (typeof newMovie !== 'undefined' && newMovie) { %>arm-step--active<% } else { %>dc-tab--locked<% } %>" id="tab2" role="tab" aria-controls="arm-s2" aria-selected="<% if (typeof newMovie !== 'undefined' && newMovie) { %>true<% } else { %>false<% } %>">
+          <span class="dc-tab__bubble arm-step__bubble">02</span>
+          <span class="dc-tab__info arm-step__info">
+            <span class="dc-tab__eyebrow arm-step__label">Étape 02 / 03</span>
+            <span class="dc-tab__name arm-step__name">Ma recette</span>
+          </span>
+          <span class="dc-tab__state" aria-hidden="true"><% if (typeof newMovie === 'undefined' || !newMovie) { %><i data-lucide="lock" width="13" height="13" stroke-width="2" aria-hidden="true"></i><% } %></span>
+        </button>
+        <button type="button" class="dc-tab arm-step dc-tab--locked" id="tab3" role="tab" aria-controls="arm-s3" aria-selected="false">
+          <span class="dc-tab__bubble arm-step__bubble">03</span>
+          <span class="dc-tab__info arm-step__info">
+            <span class="dc-tab__eyebrow arm-step__label">Étape 03 / 03</span>
+            <span class="dc-tab__name arm-step__name">Ingrédients &amp; préparation</span>
+          </span>
+          <span class="dc-tab__state" aria-hidden="true"><i data-lucide="lock" width="13" height="13" stroke-width="2" aria-hidden="true"></i></span>
+        </button>
       </nav>
     </div>
 
@@ -712,11 +741,11 @@
             </div>
 
             <div class="arm-cta-row">
-              <a class="arm-btn-ghost" href="#arm-s1">
+              <a class="arm-btn-ghost" href="#arm-s1" data-goto-tab="1">
                 <i data-lucide="arrow-left" aria-hidden="true"></i>
                 Retour
               </a>
-              <a class="btn btn--hero arm-cta-btn" href="#arm-s3">
+              <a class="btn btn--hero arm-cta-btn" href="#arm-s3" data-goto-tab="3">
                 <i data-lucide="list" aria-hidden="true"></i>
                 Ajouter les ingrédients
               </a>
@@ -879,7 +908,7 @@
             </div><!-- /arm-ing-prep-grid -->
 
             <div class="arm-cta-row">
-              <a class="arm-btn-ghost" href="#arm-s2">
+              <a class="arm-btn-ghost" href="#arm-s2" data-goto-tab="2">
                 <i data-lucide="arrow-left" aria-hidden="true"></i>
                 Retour
               </a>
@@ -1927,6 +1956,62 @@
       /* ── État global ── */
       var steps = { s1: false, s2: false, s3: false };
 
+      /* ── Navigation par onglets — bascule les panneaux, pas de scroll ── */
+      function goToTab(n) {
+        var tab = document.getElementById('tab' + n);
+        if (n !== 1 && tab && tab.classList.contains('dc-tab--locked')) return;
+
+        for (var i = 1; i <= 3; i++) {
+          var panel = document.getElementById('arm-s' + i);
+          var t = document.getElementById('tab' + i);
+          if (panel) panel.hidden = i !== n;
+          if (t) t.setAttribute('aria-selected', i === n ? 'true' : 'false');
+        }
+
+        var eyebrow = document.getElementById('dcStepEyebrow');
+        if (eyebrow) eyebrow.textContent = 'ÉTAPE ' + n + ' SUR 3';
+        var counters = document.getElementById('dcCounters');
+        if (counters) counters.hidden = n !== 3;
+
+        var main = document.getElementById('main-content');
+        if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      window.goToTab = goToTab;
+      goToTab(<% if (typeof newMovie !== 'undefined' && newMovie) { %>2<% } else { %>1<% } %>);
+
+      /* Clic sur un onglet ou un lien "data-goto-tab" (CTA Retour / Continuer) */
+      document.addEventListener('click', function (e) {
+        var tabBtn = e.target.closest('.dc-tab');
+        if (tabBtn && tabBtn.id && /^tab[123]$/.test(tabBtn.id)) {
+          goToTab(parseInt(tabBtn.id.replace('tab', ''), 10));
+          return;
+        }
+        var gotoLink = e.target.closest('[data-goto-tab]');
+        if (gotoLink) {
+          e.preventDefault();
+          goToTab(parseInt(gotoLink.getAttribute('data-goto-tab'), 10));
+        }
+      });
+
+      /* Navigation clavier ← → entre onglets déverrouillés */
+      var dcTabbarEl = document.querySelector('.dc-tabbar');
+      if (dcTabbarEl) {
+        dcTabbarEl.addEventListener('keydown', function (e) {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          var current = document.activeElement.closest ? document.activeElement.closest('.dc-tab') : null;
+          if (!current) return;
+          var idx = parseInt(current.id.replace('tab', ''), 10);
+          var next = e.key === 'ArrowRight' ? idx + 1 : idx - 1;
+          if (next < 1 || next > 3) return;
+          var nextTabEl = document.getElementById('tab' + next);
+          if (nextTabEl && !nextTabEl.classList.contains('dc-tab--locked')) {
+            e.preventDefault();
+            nextTabEl.focus();
+            goToTab(next);
+          }
+        });
+      }
+
       /* ── SVG check ── */
       var CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>';
       var PILL_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="9" height="9"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -1972,6 +2057,8 @@
         if (tab) {
           tab.classList.remove('arm-step--active');
           tab.classList.add('arm-step--done');
+          var bubble = tab.querySelector('.dc-tab__bubble');
+          if (bubble) bubble.innerHTML = CHECK_SVG;
         }
         if (prog) { prog.style.width = '100%'; prog.style.background = 'linear-gradient(90deg,#2a7a50,#3daa72)'; }
 
@@ -1994,11 +2081,16 @@
           pill.innerHTML = PILL_CHECK + ' ' + PILL_LABELS[n - 1];
         }
 
-        /* Activer la section suivante */
+        /* Activer + déverrouiller la section suivante */
         var nextCard = document.getElementById('arm-s' + (n + 1));
         var nextTab  = document.getElementById('tab' + (n + 1));
         if (nextCard) nextCard.classList.add('arm-card--active');
-        if (nextTab && !steps['s' + (n + 1)]) nextTab.classList.add('arm-step--active');
+        if (nextTab && !steps['s' + (n + 1)]) {
+          nextTab.classList.add('arm-step--active');
+          nextTab.classList.remove('dc-tab--locked');
+          var nextState = nextTab.querySelector('.dc-tab__state');
+          if (nextState) nextState.innerHTML = '';
+        }
 
         updateTicket();
       }
@@ -2014,7 +2106,11 @@
         var prog  = document.getElementById('prog' + n);
         var pill  = document.getElementById('tpill' + n);
 
-        if (tab) { tab.classList.remove('arm-step--done'); tab.classList.add('arm-step--active'); }
+        if (tab) {
+          tab.classList.remove('arm-step--done'); tab.classList.add('arm-step--active');
+          var bubble = tab.querySelector('.dc-tab__bubble');
+          if (bubble) bubble.textContent = String(n).padStart(2, '0');
+        }
         if (prog) { prog.style.width = '35%'; prog.style.background = ''; }
         if (card) { card.classList.remove('arm-card--done'); card.classList.add('arm-card--active'); }
         if (badge) {
@@ -2026,6 +2122,17 @@
           pill.className = 'ticket-step-pill ticket-step-pill--wait';
           pill.innerHTML = PILL_WAIT + ' ' + PILL_LABELS[n - 1];
         }
+
+        /* Re-verrouiller les étapes suivantes si celle-ci redevient invalide */
+        for (var k = n + 1; k <= 3; k++) {
+          var laterTab = document.getElementById('tab' + k);
+          if (laterTab && !steps['s' + k]) {
+            laterTab.classList.add('dc-tab--locked');
+            var laterState = laterTab.querySelector('.dc-tab__state');
+            if (laterState) laterState.innerHTML = '<i data-lucide="lock" width="13" height="13" stroke-width="2" aria-hidden="true"></i>';
+          }
+        }
+        if (window.lucide) lucide.createIcons();
 
         updateTicket();
       }

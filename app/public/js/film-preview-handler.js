@@ -167,6 +167,13 @@ document.addEventListener("DOMContentLoaded", () => {
    * Faire défiler vers la section recette
    */
   function scrollToRecipe() {
+    // Navigation par onglets (refonte "Velours & Projecteur") : bascule
+    // directement sur l'onglet 2 au lieu de scroller vers une section
+    // maintenant masquée par défaut. Repli sur l'ancien scroll si absent.
+    if (window.goToTab) {
+      window.goToTab(2);
+      return;
+    }
     const recipeSection = document.getElementById("arm-s2");
     if (recipeSection) {
       recipeSection.scrollIntoView({ behavior: "smooth", block: "start" });
