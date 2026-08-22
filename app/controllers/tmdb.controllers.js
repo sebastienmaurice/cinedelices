@@ -11,6 +11,26 @@ const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_API_URL = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
 
 /**
+ * Cache mémoire simple (24h) pour les 2 endpoints proxy dédiés à l'étape 01
+ * du formulaire d'ajout ("Mon film ou ma série") — évite de re-solliciter
+ * TMDB à chaque frappe/re-render pour une même recherche ou fiche.
+ */
+const PROXY_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const proxyCache = new Map();
+function cacheGet(key) {
+  const entry = proxyCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    proxyCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+function cacheSet(key, data) {
+  proxyCache.set(key, { data, expiresAt: Date.now() + PROXY_CACHE_TTL_MS });
+}
+
+/**
  * Extraire les mots-clés d'une recherche pour améliorer la tolérance aux fautes
  * Retire les mots communs et les articles
  */
@@ -226,9 +246,134 @@ async function getMovieDetails(req, res) {
   }
 }
 
+/**
+ * Recherche TMDB dédiée à l'étape 01 du formulaire d'ajout — un seul type
+ * (movie OU tv) par appel, résultats projetés sur les seuls champs utiles
+ * à l'UI, cache 24h. Le tri par pertinence/popularité TMDB est conservé.
+ * GET /api/tmdb/search?q=<titre>&type=movie|tv
+ */
+async function proxySearch(req, res) {
+  try {
+    if (!TMDB_API_KEY) {
+      console.error("❌ TMDB_API_KEY non configurée dans .env");
+      return res.status(500).json({ success: false, error: "Configuration API manquante" });
+    }
+
+    const q = (req.query.q || req.query.query || "").trim();
+    const type = req.query.type === "tv" ? "tv" : "movie";
+
+    if (q.length < 2) {
+      return res.json({ success: true, results: [], query: q });
+    }
+
+    const cacheKey = `search:${type}:${q.toLowerCase()}`;
+    const cached = cacheGet(cacheKey);
+    if (cached) return res.json(cached);
+
+    const url = `${TMDB_API_URL}/search/${type}?api_key=${TMDB_API_KEY}&language=fr-FR&query=${encodeURIComponent(q)}`;
+    const tmdbRes = await fetch(url);
+    if (!tmdbRes.ok) {
+      return res.status(502).json({ success: false, error: "TMDB indisponible, réessayez." });
+    }
+    const data = await tmdbRes.json();
+
+    const results = (data.results || []).map((r) => ({
+      id: r.id,
+      media_type: type,
+      title: type === "movie" ? r.title : r.name,
+      year: (type === "movie" ? r.release_date : r.first_air_date)
+        ? (type === "movie" ? r.release_date : r.first_air_date).slice(0, 4)
+        : null,
+      genre_ids: r.genre_ids || [],
+      poster_thumb: r.poster_path ? `https://image.tmdb.org/t/p/w92${r.poster_path}` : null,
+      popularity: r.popularity || 0,
+    }));
+
+    const payload = { success: true, results, query: q };
+    cacheSet(cacheKey, payload);
+    return res.json(payload);
+  } catch (error) {
+    console.error("❌ Erreur proxySearch TMDB:", error);
+    return res.status(500).json({ success: false, error: "Erreur serveur lors de la recherche" });
+  }
+}
+
+/**
+ * Détail complet d'une fiche TMDB (movie ou tv), crédits inclus en un seul
+ * appel — dédié à la fiche "importée" de l'étape 01. Cache 24h.
+ * GET /api/tmdb/detail?id=<tmdb_id>&type=movie|tv
+ */
+async function proxyDetail(req, res) {
+  try {
+    if (!TMDB_API_KEY) {
+      console.error("❌ TMDB_API_KEY non configurée dans .env");
+      return res.status(500).json({ success: false, error: "Configuration API manquante" });
+    }
+
+    const id = req.query.id;
+    const type = req.query.type === "tv" ? "tv" : "movie";
+    if (!id || !/^\d+$/.test(String(id))) {
+      return res.status(400).json({ success: false, error: "Le paramètre 'id' est requis" });
+    }
+
+    const cacheKey = `detail:${type}:${id}`;
+    const cached = cacheGet(cacheKey);
+    if (cached) return res.json(cached);
+
+    const url = `${TMDB_API_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&language=fr-FR&append_to_response=credits`;
+    const tmdbRes = await fetch(url);
+    if (!tmdbRes.ok) {
+      return res.status(tmdbRes.status === 404 ? 404 : 502).json({
+        success: false,
+        error: tmdbRes.status === 404 ? "Fiche introuvable sur TMDB." : "TMDB indisponible, réessayez.",
+      });
+    }
+    const d = await tmdbRes.json();
+
+    let director = null;
+    if (type === "movie") {
+      const dir = (d.credits?.crew || []).find((c) => c.job === "Director");
+      director = dir ? dir.name : null;
+    } else {
+      director = (d.created_by || []).map((c) => c.name).join(", ") || null;
+    }
+
+    const runtime = type === "movie" ? d.runtime : (d.episode_run_time && d.episode_run_time[0]);
+    const releaseDate = type === "movie" ? d.release_date : d.first_air_date;
+    const genreIds = (d.genres || []).map((g) => g.id);
+    // Genre canonique (1er genre reconnu) pour le <select> du formulaire ;
+    // "genres" (noms complets TMDB) sert uniquement à l'affichage des pastilles.
+    const canonicalGenre = genreIds.map((id) => tmdbGenreMap[id]).find(Boolean) || null;
+
+    const payload = {
+      success: true,
+      detail: {
+        id: d.id,
+        media_type: type,
+        title: type === "movie" ? d.title : d.name,
+        year: releaseDate ? releaseDate.slice(0, 4) : null,
+        genres: (d.genres || []).map((g) => g.name),
+        genre: canonicalGenre,
+        director,
+        runtime: runtime || null,
+        vote_average: typeof d.vote_average === "number" ? d.vote_average : null,
+        overview: d.overview || "",
+        poster_path: d.poster_path ? `https://image.tmdb.org/t/p/w500${d.poster_path}` : null,
+      },
+    };
+    cacheSet(cacheKey, payload);
+    return res.json(payload);
+  } catch (error) {
+    console.error("❌ Erreur proxyDetail TMDB:", error);
+    return res.status(500).json({ success: false, error: "Erreur serveur lors de la récupération de la fiche" });
+  }
+}
+
 const tmdbController = {
   searchMovie,
   getMovieDetails,
+  proxySearch,
+  proxyDetail,
 };
 
 export default tmdbController;

@@ -20,7 +20,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608296" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608298" />
   </head>
   <body class="arm-full-bleed">
     <!-- HEADER -->
@@ -224,103 +224,88 @@
           </form>
         <% } else { %>
           <form id="film-preview-form" method="post" onsubmit="return false;">
-            <div class="arm-s1-layout">
+            <div class="dc-panel" data-accent="sage">
 
-              <!-- ── Champs formulaire ── -->
-              <div class="arm-s1-fields">
-
-                <div class="arm-hd">
-                  <div class="arm-hd__step-badge" id="s1badge">
-                    <span class="badge-num">1</span>
-                    <span class="badge-lbl">Étape</span>
-                  </div>
-                  <div class="arm-hd__text">
-                    <span class="arm-hd__step">Étape 1</span>
-                    <h2 class="arm-hd__title" id="arm-s1-title">MON FILM OU MA SÉRIE</h2>
-                    <p class="arm-hd__desc">
-                      Renseignez l'œuvre qui inspire votre recette. Titre, année,
-                      genre — ces informations apparaîtront sur votre fiche.
-                    </p>
-                  </div>
-                  <div class="arm-hd__rule"></div>
+              <div class="dc-panel__head">
+                <div class="dc-panel__icon">
+                  <i data-lucide="clapperboard" stroke-width="1.6" aria-hidden="true"></i>
                 </div>
+                <div class="dc-panel__head-text">
+                  <h2 class="dc-panel__title" id="arm-s1-title">Mon film ou ma série</h2>
+                  <p class="dc-panel__sub">Importez la fiche depuis TMDB : synopsis, année, genre, réalisateur et affiche sont récupérés automatiquement.</p>
+                </div>
+              </div>
 
-                <!-- Titre · Année · Genre -->
-                <div class="arm-row arm-row--film">
-                  <div class="arm-field">
-                    <label for="film-name" class="arm-label">
-                      <i data-lucide="film" aria-hidden="true"></i>
-                      Titre
-                      <span class="arm-req">*</span>
-                    </label>
-                    <div class="film-name-input-wrapper">
-                      <input
-                        type="text"
-                        name="title"
-                        id="film-name"
-                        class="arm-input"
-                        spellcheck="true"
-                        lang="fr en"
-                        autocomplete="off"
-                        required
-                        <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-                        placeholder="Ex: Retour vers le futur, Breaking Bad..."
-                        value=""
-                        <% } else { %>
-                        placeholder="<%= newMovie.title %>"
-                        value="<%= newMovie.title %>"
-                        <% } %>
-                      />
-                      <div
-                        id="film-search-results"
-                        class="film-search-results"
-                        aria-live="polite"
-                      ></div>
-                    </div>
-                    <span class="arm-hint">
-                      <i data-lucide="circle-alert" aria-hidden="true"></i>
-                      Film, série, anime, documentaire…
-                    </span>
-                  </div>
+              <!-- Bascule Film / Série / Animé -->
+              <div class="dc-pilltoggle" id="dcFilmTypeToggle" role="radiogroup" aria-label="Type d'œuvre">
+                <button type="button" class="dc-pilltoggle__opt is-active" data-type="movie" role="radio" aria-checked="true">Film</button>
+                <button type="button" class="dc-pilltoggle__opt" data-type="tv" role="radio" aria-checked="false">Série</button>
+                <button type="button" class="dc-pilltoggle__opt" data-type="anime" role="radio" aria-checked="false">Animé</button>
+              </div>
 
-                  <div class="arm-field arm-field--year" id="arm-field-year">
-                    <label for="film-year" class="arm-label">
-                      <i data-lucide="calendar" aria-hidden="true"></i>
-                      Année
-                      <span class="arm-req">*</span>
-                      <span class="arm-label__source">TMDB</span>
-                    </label>
+              <!-- Recherche TMDB -->
+              <div class="dc-field">
+                <label class="dc-label" for="dcFilmSearchInput">
+                  <i data-lucide="search" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+                  Rechercher sur TMDB
+                  <span class="dc-req">*</span>
+                </label>
+                <div class="dc-search-row">
+                  <div class="dc-search-input-wrap">
+                    <i data-lucide="film" width="15" height="15" stroke-width="1.8" class="dc-search-input-ico" aria-hidden="true"></i>
                     <input
-                      type="number"
-                      name="year"
-                      id="film-year"
-                      class="arm-input"
-                      min="1888"
-                      max="<%= new Date().getFullYear() + 5 %>"
-                      required
-                      <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-                      placeholder="Ex: 1985"
-                      value=""
-                      <% } else { %>
-                      placeholder="<%= newMovie.year %>"
-                      value="<%= newMovie.year %>"
-                      <% } %>
+                      type="text"
+                      id="dcFilmSearchInput"
+                      class="dc-input dc-input--search"
+                      placeholder="Titre du film ou de la série — ex. Retour vers le futur"
+                      autocomplete="off"
+                      role="combobox"
+                      aria-expanded="false"
+                      aria-controls="dcFilmResultsList"
+                      aria-autocomplete="list"
                     />
                   </div>
+                  <button type="button" class="dc-btn dc-btn--sage" id="dcFilmSearchBtn">
+                    <i data-lucide="search" width="14" height="14" stroke-width="2" aria-hidden="true"></i>
+                    Rechercher
+                  </button>
+                </div>
+                <p class="dc-hint">
+                  Données et affiches fournies par TMDB —
+                  <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">themoviedb.org</a>
+                </p>
+                <p class="dc-field-error" id="dcFilmSearchError" role="alert" hidden></p>
+              </div>
 
-                  <div class="arm-field arm-field--genre" id="arm-field-genre">
-                    <label for="film-genre" class="arm-label">
-                      <i data-lucide="tag" aria-hidden="true"></i>
-                      Genre
-                      <span class="arm-req">*</span>
-                      <span class="arm-label__source">TMDB</span>
-                    </label>
-                    <select name="genre" id="film-genre" class="arm-select" required>
-                      <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
+              <!-- Zone à 3 états : vide / résultats / fiche importée -->
+              <div id="dcFilmResultsZone">
+                <div class="dc-empty-panel" id="dcFilmEmptyState">
+                  <i data-lucide="clapperboard" width="30" height="30" stroke-width="1.3" aria-hidden="true"></i>
+                  <p class="dc-empty-panel__title">Aucune fiche importée</p>
+                  <p class="dc-empty-panel__sub">Lancez une recherche pour récupérer l'affiche et les informations du film qui inspire votre recette.</p>
+                </div>
+              </div>
+              <span class="sr-only" id="dcFilmResultsAnnounce" role="status" aria-live="polite"></span>
+
+              <button type="button" class="dc-link-btn" id="dcFilmManualLink">
+                Mon film n'est pas sur TMDB
+              </button>
+
+              <!-- Bloc de saisie / correction manuelle -->
+              <div class="dc-edit-block" id="dcFilmEditBlock" hidden>
+                <div class="dc-row dc-row--film-edit">
+                  <div class="dc-field">
+                    <label class="dc-label" for="dcEditTitle">Titre<span class="dc-req">*</span></label>
+                    <input type="text" id="dcEditTitle" class="dc-input" placeholder="Titre du film ou de la série" />
+                  </div>
+                  <div class="dc-field">
+                    <label class="dc-label" for="dcEditYear">Année<span class="dc-req">*</span></label>
+                    <input type="number" id="dcEditYear" class="dc-input" min="1888" max="<%= new Date().getFullYear() + 5 %>" />
+                  </div>
+                  <div class="dc-field">
+                    <label class="dc-label" for="dcEditGenre">Genre<span class="dc-req">*</span></label>
+                    <select id="dcEditGenre" class="dc-select">
                       <option value="" disabled selected>Choisir…</option>
-                      <% } else { %>
-                      <option value="<%= newMovie.genre %>" selected><%= newMovie.genre %></option>
-                      <% } %>
                       <option value="action">Action</option>
                       <option value="animation">Animation</option>
                       <option value="aventure">Aventure</option>
@@ -342,104 +327,33 @@
                       <option value="western">Western</option>
                     </select>
                   </div>
-                </div>
-
-                <!-- Synopsis -->
-                <div class="arm-field" id="arm-field-synopsis">
-                  <label for="film-synopsis" class="arm-label">
-                    <i data-lucide="file-text" aria-hidden="true"></i>
-                    Synopsis
-                    <span class="arm-label__source">TMDB</span>
-                  </label>
-                  <textarea
-                    name="synopsis"
-                    id="film-synopsis"
-                    class="arm-textarea"
-                    rows="3"
-                    spellcheck="true"
-                    lang="fr"
-                    maxlength="800"
-                    placeholder="Résumé court du film ou de la série — rempli automatiquement depuis TMDB…"
-                  ><% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %></textarea>
-                </div>
-
-                <!-- CTA -->
-                <div class="arm-cta-row">
-                  <span class="arm-cta-row__hint">Renseignez votre film pour continuer</span>
-                  <% if (typeof newMovie === "undefined" || !newMovie || newMovie.length === 0) { %>
-                  <button class="btn btn--hero arm-cta-btn">
-                    <i data-lucide="utensils" aria-hidden="true"></i>
-                    Je passe à la recette
-                  </button>
-                  <% } %>
-                </div>
-              </div>
-
-              <!-- ── Poster preview droite ── -->
-              <div class="arm-poster-wrap">
-                <p class="arm-poster__label">Aperçu de votre fiche film</p>
-                <div class="arm-poster-card" id="arm-posterCard">
-                  <%
-                    let hasMovieWithImage = false;
-                    if (
-                      typeof newMovie !== "undefined" &&
-                      newMovie &&
-                      (newMovie.cardPath || newMovie.picture) &&
-                      typeof (newMovie.cardPath || newMovie.picture) === "string" &&
-                      (newMovie.cardPath || newMovie.picture).trim() !== ""
-                    ) {
-                      hasMovieWithImage = true;
-                    }
-                  %>
-                  <div class="arm-poster-img film-selected-image">
-                    <% if (hasMovieWithImage) { %>
-                    <img
-                      src="<%= newMovie.cardPath || newMovie.picture %>"
-                      alt="Affiche du film ajouté"
-                      onerror="this.onerror=null;this.src='/images/movie-default-img.png'"
-                    />
-                    <% } else { %>
-                    <img
-                      src="/images/movie-default-img.png"
-                      alt="Image de film par défaut"
-                    />
-                    <% } %>
-                    <div class="arm-poster-ph" id="arm-posterPh">
-                      <i data-lucide="film" stroke-width="1" aria-hidden="true"></i>
-                    </div>
-                    <div class="arm-poster-tz">
-                      <span class="arm-poster-name" id="display-film-name">
-                        <% if (typeof newMovie !== "undefined" && newMovie && newMovie.title) { %><%= newMovie.title %><% } else { %>—<% } %>
-                      </span>
-                      <span class="arm-poster-year" id="display-film-year">
-                        <% if (typeof newMovie !== "undefined" && newMovie && newMovie.year) { %><%= newMovie.year %><% } %>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="arm-poster-body">
-                    <div class="arm-poster-genre-row" id="display-film-genre">
-                      <% if (typeof newMovie !== "undefined" && newMovie && newMovie.genre) { %>
-                      <span class="arm-genre-badge"><%= newMovie.genre %></span>
-                      <% } %>
-                    </div>
-                    <p id="display-film-synopsis" class="arm-poster-synopsis">
-                      <% if (typeof newMovie !== "undefined" && newMovie && newMovie.synopsis) { %><%= newMovie.synopsis %><% } %>
-                    </p>
-                    <% if (!hasMovieWithImage) { %>
-                    <p class="arm-hint arm-hint--italic">
-                      * L'affiche sera ajoutée par Ciné Délices
-                    </p>
-                    <% } %>
-                    <p class="arm-poster-empty" id="arm-posterEmpty">
-                      <% if (typeof newMovie === "undefined" || !newMovie || !newMovie.title) { %>
-                      Remplissez les champs pour prévisualiser
-                      <% } %>
-                    </p>
+                  <div class="dc-field">
+                    <label class="dc-label" for="dcEditDirector">Réalisateur</label>
+                    <input type="text" id="dcEditDirector" class="dc-input" placeholder="Ex : Robert Zemeckis" />
                   </div>
                 </div>
+                <div class="dc-field">
+                  <label class="dc-label" for="dcEditSynopsis">Synopsis</label>
+                  <textarea id="dcEditSynopsis" class="dc-textarea" rows="3" maxlength="800" placeholder="Résumé court du film ou de la série…"></textarea>
+                </div>
+                <p class="dc-hint">Les corrections sont enregistrées sur votre fiche uniquement, la fiche TMDB reste inchangée.</p>
               </div>
 
-            </div><!-- /arm-s1-layout -->
+              <div class="arm-cta-row">
+                <span class="arm-cta-row__hint" id="dcFilmCtaHint">Importez ou renseignez votre film pour continuer</span>
+                <button class="btn btn--hero arm-cta-btn" type="button" id="dcFilmContinueBtn">
+                  <i data-lucide="utensils" aria-hidden="true"></i>
+                  Je passe à la recette
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Contrat de soumission inchangé — lus par unified-form-handler.js -->
+            <input type="hidden" id="film-name" />
+            <input type="hidden" id="film-year" />
+            <input type="hidden" id="film-genre" />
+            <input type="hidden" id="film-synopsis" />
           </form>
         <% } %>
 
@@ -465,6 +379,7 @@
         <input type="hidden" name="titleFR" id="titleFR-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.title || '' %><% } %>" />
         <input type="hidden" name="tmdbYear" id="tmdbYear-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.year || '' %><% } %>" />
         <input type="hidden" name="tmdbGenre" id="tmdbGenre-hidden" value="<% if (typeof retainFilm !== 'undefined' && retainFilm) { %><%= retainFilm.genre || '' %><% } %>" />
+        <input type="hidden" name="type" id="film-type-hidden" value="movie" />
 
         <!-- ══════════════════════════════════════════
            SECTION 2 — MA RECETTE
@@ -994,12 +909,8 @@
     <script src="/js/utils/film-image-utils.js" defer></script>
     <script src="/js/utils/url-utils.js" defer></script>
     <script src="/js/utils/text-utils.js" defer></script>
-    <script src="/js/movie-autocomplete-form.js" defer></script>
     <script src="/js/unified-form-handler.js" defer></script>
-    <script src="/js/film-preview-handler.js" defer></script>
-    <script src="/js/tmdb-validator.js" defer></script>
-    <script src="/js/tmdb-form-prefill.js" defer></script>
-    <script src="/js/load-existing-movie-image.js" defer></script>
+    <script src="/js/add-recipes-movies-film-tab.js" defer></script>
     <script src="/js/add-recipes-movies-textarea.js" defer></script>
 
     <!-- 3-slot upload avec preview -->
@@ -1957,7 +1868,7 @@
       var steps = { s1: false, s2: false, s3: false };
 
       /* ── Navigation par onglets — bascule les panneaux, pas de scroll ── */
-      function goToTab(n) {
+      function goToTab(n, skipScroll) {
         var tab = document.getElementById('tab' + n);
         if (n !== 1 && tab && tab.classList.contains('dc-tab--locked')) return;
 
@@ -1973,11 +1884,13 @@
         var counters = document.getElementById('dcCounters');
         if (counters) counters.hidden = n !== 3;
 
-        var main = document.getElementById('main-content');
-        if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!skipScroll) {
+          var main = document.getElementById('main-content');
+          if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
       window.goToTab = goToTab;
-      goToTab(<% if (typeof newMovie !== 'undefined' && newMovie) { %>2<% } else { %>1<% } %>);
+      goToTab(<% if (typeof newMovie !== 'undefined' && newMovie) { %>2<% } else { %>1<% } %>, true);
 
       /* Clic sur un onglet ou un lien "data-goto-tab" (CTA Retour / Continuer) */
       document.addEventListener('click', function (e) {
@@ -2137,18 +2050,22 @@
         updateTicket();
       }
 
-      /* ══ S1 — Film ══ */
+      /* ══ S1 — Film (titre + année + genre non vides) ══ */
       var filmName = document.getElementById('film-name');
+      var filmYearEl = document.getElementById('film-year');
+      var filmGenreEl = document.getElementById('film-genre');
       function checkS1() {
         if (!filmName) return;
-        if (filmName.value.trim()) setStepDone(1);
+        var valid = filmName.value.trim() && filmYearEl && filmYearEl.value.trim() && filmGenreEl && filmGenreEl.value.trim();
+        if (valid) setStepDone(1);
         else setStepWait(1);
       }
+      window.checkS1 = checkS1;
       if (filmName) {
         filmName.addEventListener('input', checkS1);
         filmName.addEventListener('change', checkS1);
       }
-      // Déclencher la validation quand tmdb-form-prefill.js remplit les champs via URL params
+      // Déclenché par le nouveau JS de l'étape 01 (import TMDB / édition manuelle)
       document.addEventListener('tmdbFormPrefilled', checkS1);
       document.addEventListener('filmSelected', checkS1);
 
