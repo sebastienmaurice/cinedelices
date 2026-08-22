@@ -13,7 +13,7 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608291" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608292" />
   </head>
   <body class="arm-full-bleed">
     <!-- HEADER -->
@@ -741,8 +741,8 @@
                 <span class="arm-hd__step">Étape 3</span>
                 <h2 class="arm-hd__title" id="arm-s3-title">INGRÉDIENTS &amp; PRÉPARATION</h2>
                 <p class="arm-hd__desc">
-                  Un retour à la ligne = un élément. Décrivez clairement chaque
-                  ingrédient et chaque étape de préparation.
+                  Renseignez les ingrédients, ajoutez les photos de préparation
+                  et détaillez chaque étape.
                 </p>
               </div>
               <div class="arm-hd__rule"></div>
@@ -754,12 +754,24 @@
               <div class="arm-editor">
                 <div class="arm-editor__header">
                   <div class="arm-editor__icon">
-                    <i data-lucide="shopping-bag" stroke-width="1.8" aria-hidden="true"></i>
+                    <i data-lucide="wheat" stroke-width="1.8" aria-hidden="true"></i>
                   </div>
                   <span class="arm-editor__title">INGRÉDIENTS</span>
-                  <span class="arm-editor__hint">Glissez pour réorganiser</span>
+                  <span class="arm-editor__hint">
+                    Glissez pour réorganiser
+                    <i data-lucide="info" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <div class="arm-editor__notice">
+                  <i data-lucide="info" width="13" height="13" stroke-width="2" aria-hidden="true"></i>
+                  <span>Ajoutez chaque ingrédient avec sa quantité.</span>
                 </div>
                 <div class="arm-editor__body">
+                  <div class="arm-ing-col-labels">
+                    <span class="arm-ing-col-labels__main">Ingrédient</span>
+                    <span class="arm-ing-col-labels__qty">Quantité</span>
+                    <span class="arm-ing-col-labels__unit">Unité</span>
+                  </div>
                   <div class="arm-ing-list" id="ing-list"></div>
                   <button type="button" class="arm-add-row-btn" id="ing-add-section-btn">
                     <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
@@ -768,7 +780,7 @@
                   <textarea name="ingredients" id="ingredients" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
-                  <span class="arm-line-counter"><span id="ingCount">0</span> ingrédient(s)</span>
+                  <span class="arm-line-counter" id="ingCounter">0 ingrédient</span>
                 </div>
               </div>
 
@@ -839,14 +851,17 @@
               <div class="arm-editor">
                 <div class="arm-editor__header">
                   <div class="arm-editor__icon">
-                    <i data-lucide="lightbulb" stroke-width="1.8" aria-hidden="true"></i>
+                    <i data-lucide="chef-hat" stroke-width="1.8" aria-hidden="true"></i>
                   </div>
                   <span class="arm-editor__title">PRÉPARATION</span>
-                  <span class="arm-editor__hint">Glissez pour réorganiser</span>
+                  <span class="arm-editor__hint">
+                    Glissez pour réorganiser
+                    <i data-lucide="info" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
+                  </span>
                 </div>
-                <div class="arm-editor__guide" role="note">
-                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Une carte = une étape. Appuyez sur <strong>Entrée</strong> dans la description pour écrire plusieurs lignes au sein de la même étape.</span>
+                <div class="arm-editor__notice">
+                  <i data-lucide="info" width="13" height="13" stroke-width="2" aria-hidden="true"></i>
+                  <span>Une carte = une étape. Ajoutez plusieurs descriptions si besoin.</span>
                 </div>
                 <div class="arm-editor__body">
                   <div class="arm-step-list" id="prep-list"></div>
@@ -857,7 +872,7 @@
                   <textarea name="preparation" id="preparation" hidden aria-hidden="true"></textarea>
                 </div>
                 <div class="arm-editor__footer">
-                  <span class="arm-line-counter"><span id="prepCount">0</span> étape(s)</span>
+                  <span class="arm-line-counter" id="prepCounter">0 étape</span>
                 </div>
               </div>
 
@@ -1377,11 +1392,11 @@
       ];
       var ING_UNITS = [
         { value: '', label: '—' },
-        { value: 'g', label: 'g' },
+        { value: 'g', label: 'gr' },
         { value: 'kg', label: 'kg' },
         { value: 'ml', label: 'ml' },
         { value: 'cl', label: 'cl' },
-        { value: 'l', label: 'l' },
+        { value: 'l', label: 'L' },
         { value: 'c. à soupe', label: 'c. à soupe' },
         { value: 'c. à café', label: 'c. à café' },
         { value: 'pincée', label: 'pincée(s)', plural: true },
@@ -1394,6 +1409,7 @@
         { value: 'branche', label: 'branche(s)', plural: true },
         { value: 'poignée', label: 'poignée(s)', plural: true },
         { value: 'pièce', label: 'pièce(s)', plural: true },
+        { value: 'unité', label: 'unité(s)', plural: true },
       ];
 
       function newIngredientItem() {
@@ -1433,8 +1449,8 @@
         });
         var ta = document.getElementById('ingredients');
         if (ta) ta.value = JSON.stringify(arr);
-        var countEl = document.getElementById('ingCount');
-        if (countEl) countEl.textContent = totalItems;
+        var countEl = document.getElementById('ingCounter');
+        if (countEl) countEl.textContent = totalItems + (totalItems > 1 ? ' ingrédients' : ' ingrédient');
         window.armIngredientsCount = totalItems;
         if (window.checkS3) window.checkS3();
         return arr;
@@ -1692,8 +1708,8 @@
         var arr = preparationState.map(buildStepString).filter(Boolean);
         var ta = document.getElementById('preparation');
         if (ta) ta.value = JSON.stringify(arr);
-        var countEl = document.getElementById('prepCount');
-        if (countEl) countEl.textContent = arr.length;
+        var countEl = document.getElementById('prepCounter');
+        if (countEl) countEl.textContent = arr.length + (arr.length > 1 ? ' étapes' : ' étape');
         window.armPreparationCount = arr.length;
         if (window.checkS3) window.checkS3();
         return arr;
