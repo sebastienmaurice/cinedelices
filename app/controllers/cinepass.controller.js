@@ -1,6 +1,6 @@
 import { User, Recipe, Movie, Notice } from "../models/index.model.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
-import { xpProgress, RANK_TITLES } from "../utils/gamification.utils.js";
+import { xpProgress, RANK_TITLES, XP_TABLE } from "../utils/gamification.utils.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { MOCK_BADGES, MOCK_UNIVERS, MOCK_BADGES_TOTAL } from "../utils/cinepass-mock.js";
 
@@ -38,6 +38,13 @@ const cinepassController = {
       const xpProg = xpProgress(gamif.xp, gamif.level);
       const nextRank = RANK_TITLES[gamif.level + 1] || null;
 
+      // "Montée en niveau" — les 3 prochains paliers réels (mêmes tables que
+      // le profil / le moteur XP, aucune nouvelle règle).
+      const upcomingLevels = [];
+      for (let lvl = gamif.level + 1; lvl <= Math.min(gamif.level + 3, XP_TABLE.length); lvl++) {
+        upcomingLevels.push({ num: lvl, title: RANK_TITLES[lvl] || null, xpRequired: XP_TABLE[lvl - 1] });
+      }
+
       // Cadres — collection réelle (déjà enrichie par le service : unlocked/isActive)
       const frames = gamif.frames.filter((f) => f.code !== "none");
       const unlockedFrames = frames.filter((f) => f.unlocked);
@@ -56,6 +63,7 @@ const cinepassController = {
         rank: gamif.rank,
         nextRank,
         xpProg,
+        upcomingLevels,
         frames,
         unlockedFrames,
         nextFrame,

@@ -256,21 +256,13 @@ body.cp-page main {
 .cp-row--three { grid-template-columns: repeat(3, 1fr); }
 
 .cp-progress { text-align: center; }
-.cp-progress__medallion {
-  width: 84px; height: 84px;
-  margin: 0 auto 12px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle, rgba(196, 160, 82, 0.2), rgba(196, 160, 82, 0.03));
-  border: 2px solid rgba(196, 160, 82, 0.5);
-  animation: cpPulseGlow 3.2s ease-in-out infinite;
-}
-.cp-progress__medallion span { font-family: var(--font-h1); font-size: 2rem; font-weight: 700; color: var(--or-titre); }
-.cp-progress__medallion--gold { border-color: #d4a843; }
-.cp-progress__medallion--legendary { border-color: #f2c84b; }
+/* Médaillon — .level-medallion vient de user-profile.css (composant partagé) */
+.cp-progress .level-medallion { margin: 0 auto 16px; }
 
 .cp-progress__lvl { font-family: var(--font-h1); font-size: 1.25rem; font-weight: 700; color: var(--argent-ecran); }
-.cp-progress__rank { font-family: var(--font-body); font-size: 0.84rem; color: var(--or-titre); font-style: italic; margin-bottom: 20px; }
+.cp-progress__rank { font-family: var(--font-body); font-size: 0.84rem; color: var(--or-titre); font-style: italic; margin-bottom: 18px; }
+
+.cp-progress__xp { font-family: var(--font-body); font-size: 0.8rem; color: var(--argent-ecran); font-variant-numeric: tabular-nums; font-weight: 600; margin-bottom: 8px; }
 
 .cp-xp-track {
   position: relative;
@@ -295,30 +287,33 @@ body.cp-page main {
   background-size: 250% 100%;
   animation: cpShimmer 2.6s ease-in-out infinite;
 }
-.cp-progress__xp { font-family: var(--font-body); font-size: 0.8rem; color: var(--argent-ecran); font-variant-numeric: tabular-nums; font-weight: 600; }
-.cp-progress__left { font-family: var(--font-body); font-size: 0.72rem; color: rgba(232, 232, 232, 0.45); margin-bottom: 20px; }
+.cp-progress__left { font-family: var(--font-body); font-size: 0.72rem; color: rgba(232, 232, 232, 0.45); margin-bottom: 22px; }
+.cp-progress__left strong { color: var(--or-titre); font-weight: 700; }
 
-.cp-progress__next {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 13px 15px;
-  text-align: left;
-  transition: border-color 0.2s, background 0.2s;
+/* Montée en niveau — 3 prochains paliers réels (XP_TABLE/RANK_TITLES) */
+.cp-levelup { text-align: left; padding-top: 18px; border-top: 1px dashed rgba(255, 255, 255, 0.08); margin-bottom: 4px; }
+.cp-levelup__title {
+  font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(232, 232, 232, 0.5);
+  margin-bottom: 13px;
 }
-.cp-progress__next:hover { border-color: rgba(196, 160, 82, 0.35); background: rgba(196, 160, 82, 0.04); }
-.cp-progress__next-label { font-family: var(--font-body); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(232, 232, 232, 0.4); margin-bottom: 8px; }
-.cp-progress__next-row { display: flex; align-items: center; gap: 11px; }
-.cp-progress__next-num {
-  width: 30px; height: 30px; flex-shrink: 0;
+.cp-levelup__list { display: flex; flex-direction: column; gap: 13px; }
+.cp-levelup__row { display: flex; align-items: center; gap: 12px; }
+.cp-levelup__badge {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 8px;
-  background: rgba(196, 160, 82, 0.15);
-  border: 1px solid rgba(196, 160, 82, 0.3);
+  border-radius: 50%;
+  background: rgba(196, 160, 82, 0.1);
+  border: 1.5px solid rgba(196, 160, 82, 0.4);
   color: var(--or-titre);
-  font-family: var(--font-h1); font-weight: 700; font-size: 0.95rem;
+  font-family: var(--font-h1); font-weight: 700; font-size: 0.85rem;
 }
-.cp-progress__next-title { font-family: var(--font-body); font-size: 0.85rem; color: var(--argent-ecran); font-weight: 500; }
+.cp-levelup__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.cp-levelup__lvl { font-family: var(--font-body); font-size: 0.62rem; font-weight: 600; color: rgba(232, 232, 232, 0.4); text-transform: uppercase; letter-spacing: 0.03em; }
+.cp-levelup__rank { font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--argent-ecran); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-levelup__xp { flex-shrink: 0; font-family: var(--font-body); font-size: 0.76rem; font-weight: 600; color: rgba(232, 232, 232, 0.55); font-variant-numeric: tabular-nums; }
 
 /* Univers (mock) — cartes illustrées par genre (/images/categories/*) */
 .cp-univers__grid {
@@ -340,6 +335,11 @@ body.cp-page main {
 .cp-univers__card[data-accent="orange"]      { --cp-univers-accent: #e0954a; }
 .cp-univers__card[data-accent="blue"]        { --cp-univers-accent: #4aa8e0; }
 .cp-univers__card[data-accent="purple"]      { --cp-univers-accent: #9b79e0; }
+.cp-univers__card[data-accent="steel"]       { --cp-univers-accent: #6c88ad; }
+.cp-univers__card[data-accent="green"]       { --cp-univers-accent: #5aa66b; }
+.cp-univers__card[data-accent="pink"]        { --cp-univers-accent: #e07a9e; }
+.cp-univers__card[data-accent="teal"]        { --cp-univers-accent: #3fb8ad; }
+.cp-univers__card[data-accent="brown"]       { --cp-univers-accent: #a67a4a; }
 .cp-univers__card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.22); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4); }
 .cp-univers__card.is-mastered {
   border-color: rgba(196, 160, 82, 0.55);

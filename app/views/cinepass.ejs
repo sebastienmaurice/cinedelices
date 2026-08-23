@@ -10,7 +10,7 @@
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
     <link rel="stylesheet" href="/css/user-profile.css" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=6" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=9" />
   </head>
 
   <body class="cp-page">
@@ -139,34 +139,88 @@
       </section>
 
       <!-- ══════════════════════════════════════════
+           MA COLLECTION — Cadres (réel, même composant que /auth/profil/#contributions)
+      ══════════════════════════════════════════ -->
+      <section class="cp-card cp-card--collection cp-frames-wrap" id="cp-collection-frames">
+        <%- include('partials/frames-collection', {
+          user,
+          userLevel: level,
+          userXP: xp,
+          userActiveFrameId: activeFrameCode,
+          userFrames: frames,
+        }) %>
+      </section>
+
+      <!-- ── CTA inviter / partager — même bloc que /auth/profil/#contributions ── -->
+      <div class="ctb-invite">
+        <div class="ctb-invite__bg-img" aria-hidden="true">
+          <img src="/images/banner-gamification-section.webp" alt="" />
+        </div>
+        <div class="ctb-invite__inner">
+          <div class="ctb-invite__left">
+            <span class="ctb-invite__eyebrow">Rejoignez la communauté</span>
+            <h3 class="ctb-invite__title"><span>Partagez Ciné Délices</span><br><em>avec vos amis cinéphiles</em></h3>
+            <p class="ctb-invite__text">Invitez vos amis à rejoindre la plateforme et cuisinez ensemble les plats de vos films préférés.</p>
+            <div class="ctb-invite__actions">
+              <a href="/contact-about" class="ctb-invite__btn ctb-invite__btn--ghost">
+                <i data-lucide="share-2" width="13" height="13" aria-hidden="true"></i>
+                Partager le site
+              </a>
+              <a href="/add-recipes-movies/" class="ctb-invite__btn ctb-invite__btn--primary">
+                <i data-lucide="plus" width="13" height="13" aria-hidden="true"></i>
+                Ajouter une recette
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
            MA PROGRESSION  +  MES UNIVERS (mock)
       ══════════════════════════════════════════ -->
       <div class="cp-row cp-row--progress">
 
         <section class="cp-card cp-progress">
           <p class="cp-card__eyebrow">Ma progression</p>
-          <div class="cp-progress__medallion cp-progress__medallion--<%= cpTier %>">
-            <span><%= level %></span>
+
+          <!-- Médaillon — même composant que /auth/profil/#contributions (ctb2-main-row) -->
+          <div class="level-medallion level-medallion--<%= cpTier %>" aria-label="Niveau <%= level %>">
+            <span class="level-medallion__gem level-medallion__gem--top"></span>
+            <span class="level-medallion__gem level-medallion__gem--bottom"></span>
+            <div class="level-medallion__ring">
+              <div class="level-medallion__face">
+                <span class="level-medallion__num"><%= level %></span>
+              </div>
+            </div>
           </div>
+
           <p class="cp-progress__lvl">Niveau <%= level %></p>
           <p class="cp-progress__rank"><%= rank %></p>
 
+          <p class="cp-progress__xp"><%= xp.toLocaleString('fr-FR') %> / <%= (xp + xpProg.needed).toLocaleString('fr-FR') %> XP</p>
           <div class="cp-xp-track">
             <div class="cp-xp-fill" style="width:<%= xpProg.pct %>%"></div>
           </div>
-          <p class="cp-progress__xp"><%= xp.toLocaleString('fr-FR') %> / <%= (xp + xpProg.needed).toLocaleString('fr-FR') %> XP</p>
           <% if (xpProg.needed > 0) { %>
-          <p class="cp-progress__left"><%= xpProg.needed.toLocaleString('fr-FR') %> XP avant le niveau <%= level + 1 %></p>
+          <p class="cp-progress__left"><strong><%= xpProg.needed.toLocaleString('fr-FR') %> XP</strong> avant le niveau <%= level + 1 %></p>
           <% } else { %>
           <p class="cp-progress__left">Niveau maximum atteint</p>
           <% } %>
 
-          <% if (nextRank) { %>
-          <div class="cp-progress__next">
-            <p class="cp-progress__next-label">Montée en niveau</p>
-            <div class="cp-progress__next-row">
-              <span class="cp-progress__next-num"><%= level + 1 %></span>
-              <span class="cp-progress__next-title"><%= nextRank %></span>
+          <% if (upcomingLevels.length) { %>
+          <div class="cp-levelup">
+            <p class="cp-levelup__title">Montée en niveau</p>
+            <div class="cp-levelup__list">
+              <% upcomingLevels.forEach(function (u) { %>
+              <div class="cp-levelup__row">
+                <span class="cp-levelup__badge"><%= u.num %></span>
+                <div class="cp-levelup__info">
+                  <span class="cp-levelup__lvl">Niv. <%= u.num %></span>
+                  <span class="cp-levelup__rank"><%= u.title %></span>
+                </div>
+                <span class="cp-levelup__xp"><%= u.xpRequired.toLocaleString('fr-FR') %> XP</span>
+              </div>
+              <% }); %>
             </div>
           </div>
           <% } %>
@@ -205,19 +259,6 @@
           <p class="cp-card__mock-hint">Les Univers ne sont pas encore calculés dynamiquement — aperçu du futur système Ciné Délices.</p>
         </section>
 
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           MA COLLECTION — Cadres (réel, même composant que /auth/profil/#contributions)
-      ══════════════════════════════════════════ -->
-      <div class="cp-frames-wrap" id="cp-collection-frames">
-        <%- include('partials/frames-collection', {
-          user,
-          userLevel: level,
-          userXP: xp,
-          userActiveFrameId: activeFrameCode,
-          userFrames: frames,
-        }) %>
       </div>
 
       <!-- Badges — aperçu du futur système (mock, distinct des cadres) -->
