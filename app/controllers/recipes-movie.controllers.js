@@ -743,4 +743,36 @@ recipesController.submitNotice = async function submitNotice(req, res) {
   }
 };
 
+/**
+ * GET /recipes-movie/api/by-movie/:movieId
+ * Liste compacte des recettes déjà publiées pour un film — utilisée en
+ * étape 02 du formulaire d'ajout ("Ma recette") pour proposer les recettes
+ * existantes du film plutôt que de laisser créer un doublon.
+ */
+recipesController.recipesByMovieJson = async (req, res) => {
+  try {
+    const movieId = parseInt(req.params.movieId, 10);
+    if (!movieId) {
+      return res.status(400).json({ success: false, recipes: [] });
+    }
+    const recipes = await Recipe.findAll({
+      where: { id_movie: movieId, status: "approved" },
+      attributes: ["id", "name", "slug", "picture"],
+      order: [["validated_at", "DESC"]],
+      limit: 8,
+    });
+    return res.json({
+      success: true,
+      recipes: recipes.map((r) => ({
+        id: r.id,
+        name: r.name,
+        slug: r.slug,
+        picture: r.picture || null,
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, recipes: [] });
+  }
+};
+
 export default recipesController;

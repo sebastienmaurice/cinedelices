@@ -6,6 +6,15 @@
 import "dotenv/config";
 import tmdbGenreMap from "../utils/tmdb-genre-map.js";
 import { fetchTmdbMovieDetails } from "../utils/tmdb-movie-details.js";
+import { Movie } from "../models/index.model.js";
+
+/**
+ * Le champ Movie.type stocke "film" | "serie" (vocabulaire interne au site),
+ * distinct du media_type TMDB ("movie" | "tv") utilisé par les proxies.
+ */
+function toDbMovieType(tmdbType) {
+  return tmdbType === "tv" ? "serie" : "film";
+}
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_API_URL = process.env.TMDB_API_URL || "https://api.themoviedb.org/3";
@@ -289,6 +298,24 @@ async function proxySearch(req, res) {
       popularity: r.popularity || 0,
     }));
 
+    // Signaler les fiches déjà présentes en base Ciné Délices (par tmdb_id)
+    // pour proposer "Utiliser cette fiche existante" plutôt qu'un ré-import.
+    if (results.length) {
+      const existingMovies = await Movie.findAll({
+        where: { tmdb_id: results.map((r) => r.id), type: toDbMovieType(type) },
+        attributes: ["id", "tmdb_id", "slug"],
+      });
+      const byTmdbId = new Map(existingMovies.map((m) => [m.tmdb_id, m]));
+      results.forEach((r) => {
+        const m = byTmdbId.get(r.id);
+        if (m) {
+          r.existsInCineDelices = true;
+          r.cineDelicesId = m.id;
+          r.cineDelicesSlug = m.slug;
+        }
+      });
+    }
+
     const payload = { success: true, results, query: q };
     cacheSet(cacheKey, payload);
     return res.json(payload);
@@ -361,6 +388,19 @@ async function proxyDetail(req, res) {
         poster_path: d.poster_path ? `https://image.tmdb.org/t/p/w500${d.poster_path}` : null,
       },
     };
+
+    // Fiche déjà présente en base Ciné Délices ? → on renvoie son id pour
+    // que le formulaire réutilise directement ce film (pas de doublon créé).
+    const existingMovie = await Movie.findOne({
+      where: { tmdb_id: Number(id), type: toDbMovieType(type) },
+      attributes: ["id", "slug"],
+    });
+    if (existingMovie) {
+      payload.detail.existsInCineDelices = true;
+      payload.detail.cineDelicesId = existingMovie.id;
+      payload.detail.cineDelicesSlug = existingMovie.slug;
+    }
+
     cacheSet(cacheKey, payload);
     return res.json(payload);
   } catch (error) {

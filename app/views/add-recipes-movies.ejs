@@ -20,7 +20,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608298" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608306" />
   </head>
   <body class="arm-full-bleed">
     <!-- HEADER -->
@@ -427,6 +427,8 @@
                 <i data-lucide="lightbulb" aria-hidden="true"></i>
                 Un nom évocateur qui rappelle le film ou la scène.
               </span>
+              <!-- Recette(s) déjà publiée(s) pour ce film — voir add-recipes-movies-step2.js -->
+              <div class="dc-existing-recipes" id="dcExistingRecipes" hidden></div>
             </div>
 
             <!-- Méta : Portions | Temps | Catégorie | Difficulté -->
@@ -676,151 +678,98 @@
           <span class="arm-card__num" aria-hidden="true">03</span>
           <div class="arm-body">
 
-            <div class="arm-hd">
-              <div class="arm-hd__step-badge" id="s3badge">
-                <span class="badge-num">3</span>
-                <span class="badge-lbl">Étape</span>
-              </div>
-              <div class="arm-hd__text">
-                <span class="arm-hd__step">Étape 3</span>
-                <h2 class="arm-hd__title" id="arm-s3-title">INGRÉDIENTS &amp; PRÉPARATION</h2>
-                <p class="arm-hd__desc">
-                  Renseignez les ingrédients, ajoutez les photos de préparation
-                  et détaillez chaque étape.
-                </p>
-              </div>
-              <div class="arm-hd__rule"></div>
-            </div>
+            <h2 class="sr-only" id="arm-s3-title">Ingrédients &amp; préparation</h2>
 
-            <div class="arm-ing-prep-grid">
+            <div class="dc-s3-grid">
 
-              <!-- Ingrédients -->
-              <div class="arm-editor">
-                <div class="arm-editor__header">
-                  <div class="arm-editor__icon">
-                    <i data-lucide="wheat" stroke-width="1.8" aria-hidden="true"></i>
+              <!-- ═══ 1 · INGRÉDIENTS ═══ -->
+              <div class="dc-panel dc-panel--col" data-accent="sage">
+                <div class="dc-panel__head">
+                  <div class="dc-panel__icon">
+                    <i data-lucide="shopping-basket" stroke-width="1.7" aria-hidden="true"></i>
                   </div>
-                  <span class="arm-editor__title">INGRÉDIENTS</span>
-                  <span class="arm-editor__hint">
-                    Glissez pour réorganiser
-                    <i data-lucide="info" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  </span>
-                </div>
-                <div class="arm-editor__notice">
-                  <i data-lucide="info" width="13" height="13" stroke-width="2" aria-hidden="true"></i>
-                  <span>Ajoutez chaque ingrédient avec sa quantité.</span>
-                </div>
-                <div class="arm-editor__body">
-                  <div class="arm-ing-col-labels">
-                    <span class="arm-ing-col-labels__main">Ingrédient</span>
-                    <span class="arm-ing-col-labels__qty">Quantité</span>
-                    <span class="arm-ing-col-labels__unit">Unité</span>
+                  <div class="dc-panel__head-text">
+                    <h3 class="dc-panel__title dc-panel__title--sm">Ingrédients</h3>
+                    <p class="dc-panel__sub dc-panel__sub--sm">Icône, nom, quantité, unité</p>
                   </div>
-                  <div class="arm-ing-list" id="ing-list"></div>
-                  <button type="button" class="arm-add-row-btn" id="ing-add-section-btn">
-                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
-                    Ajouter une section d'ingrédients
-                  </button>
-                  <textarea name="ingredients" id="ingredients" hidden aria-hidden="true"></textarea>
                 </div>
-                <div class="arm-editor__footer">
-                  <span class="arm-line-counter" id="ingCounter">0 ingrédient</span>
-                </div>
+
+                <label class="dc-ing-group">
+                  <i data-lucide="tag" width="15" height="15" stroke-width="1.8" aria-hidden="true"></i>
+                  <input type="text" id="dcIngGroupTitle" placeholder="Nom du groupe (facultatif — ex. Pâte sablée)" />
+                </label>
+
+                <div class="dc-ing-list" id="dcIngList"></div>
+
+                <button type="button" class="dc-add-btn dc-add-btn--sage" id="dcIngAddBtn">
+                  <i data-lucide="plus" width="15" height="15" stroke-width="2.2" aria-hidden="true"></i>
+                  Ajouter un ingrédient
+                  <span class="dc-add-btn__kbd">Entrée</span>
+                </button>
+
+                <textarea name="ingredients" id="ingredients" hidden aria-hidden="true"></textarea>
+
+                <footer class="dc-panel__footer" id="dcIngFooter">0 ingrédient(s) dans la liste</footer>
               </div>
 
-              <!-- Photos de préparation — optionnelles, jusqu'à 8, une par étape.
-                   Révélées progressivement (2 au départ) via "Ajouter une photo". -->
-              <div class="arm-editor arm-editor--steps">
-                <div class="arm-editor__header">
-                  <div class="arm-editor__icon">
-                    <i data-lucide="images" stroke-width="1.8" aria-hidden="true"></i>
+              <!-- ═══ 2 · PHOTOS ═══ -->
+              <div class="dc-panel dc-panel--col" data-accent="wine">
+                <div class="dc-panel__head">
+                  <div class="dc-panel__icon">
+                    <i data-lucide="images" stroke-width="1.7" aria-hidden="true"></i>
                   </div>
-                  <span class="arm-editor__title">PHOTOS</span>
-                  <span class="arm-editor__hint">Optionnel</span>
-                </div>
-                <div class="arm-editor__guide" role="note">
-                  <i data-lucide="circle-alert" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  <span>Jusqu'à 8 photos, format libre. Indiquez le <strong>numéro de l'étape</strong> concernée — glissez pour réorganiser. 8 Mo max/photo.</span>
-                </div>
-                <div class="arm-editor__body arm-editor__body--steps">
-                  <div class="arm-upload-grid arm-upload-grid--steps arm-upload-grid--steps-vert" id="arm-stepUploadGrid">
-                    <% for (let i = 1; i <= 8; i++) { %>
-                    <div class="arm-upload-slot arm-upload-slot--step" id="arm-stepSlot<%= i %>" draggable="false" data-slot-index="<%= i %>" hidden>
-                      <button type="button" class="arm-upload-slot__drag" aria-label="Réorganiser cette photo">
-                        <i data-lucide="grip-vertical" width="14" height="14" stroke-width="2" aria-hidden="true"></i>
-                      </button>
-                      <input
-                        type="file"
-                        name="stepPicture<%= i %>"
-                        id="stepPictureInput<%= i %>"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                        class="arm-upload-slot__input"
-                      />
-                      <div class="arm-step-num-field" title="Numéro de l'étape illustrée — suit la position, glissez pour changer">
-                        <label for="stepNumber<%= i %>">Étape n°</label>
-                        <input
-                          type="number"
-                          name="stepNumber<%= i %>"
-                          id="stepNumber<%= i %>"
-                          class="arm-step-num-input"
-                          readonly
-                          tabindex="-1"
-                          value="<%= i %>"
-                        />
-                      </div>
-                      <div class="arm-upload-slot__ico">
-                        <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
-                      </div>
-                      <span class="arm-upload-slot__lbl">Photo</span>
-                      <div class="arm-upload-slot__prev" id="arm-stepPrev<%= i %>"></div>
-                      <div class="arm-upload-slot__acts">
-                        <button class="arm-slot-act" type="button" id="arm-stepChg<%= i %>" title="Changer">
-                          <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
-                        </button>
-                        <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-stepDel<%= i %>" title="Supprimer">
-                          <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
-                        </button>
-                      </div>
-                    </div>
-                    <% } %>
+                  <div class="dc-panel__head-text">
+                    <h3 class="dc-panel__title dc-panel__title--sm">Photos</h3>
+                    <p class="dc-panel__sub dc-panel__sub--sm">Facultatif · 8 max</p>
                   </div>
-                  <button type="button" class="arm-add-row-btn" id="arm-stepAddBtn">
-                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
-                    Ajouter une photo
-                  </button>
                 </div>
+
+                <div class="dc-photo-list" id="dcPhotoList"></div>
+
+                <button type="button" class="dc-add-btn dc-add-btn--wine" id="dcPhotoAddBtn">
+                  <i data-lucide="plus" width="15" height="15" stroke-width="2.2" aria-hidden="true"></i>
+                  Ajouter une photo
+                </button>
+
+                <!-- 8 emplacements fixes cachés — contrat de soumission inchangé,
+                     pilotés dynamiquement par dcPhotoList ci-dessus -->
+                <% for (let i = 1; i <= 8; i++) { %>
+                <input type="file" name="stepPicture<%= i %>" id="stepPictureInput<%= i %>" accept="image/jpeg,image/jpg,image/png,image/webp" hidden aria-hidden="true" />
+                <input type="hidden" name="stepNumber<%= i %>" id="stepNumber<%= i %>" value="<%= i %>" />
+                <% } %>
+
+                <footer class="dc-panel__footer" id="dcPhotoFooter">0 / 8 emplacements</footer>
               </div>
 
-              <!-- Préparation -->
-              <div class="arm-editor">
-                <div class="arm-editor__header">
-                  <div class="arm-editor__icon">
-                    <i data-lucide="chef-hat" stroke-width="1.8" aria-hidden="true"></i>
+              <!-- ═══ 3 · PRÉPARATION ═══ -->
+              <div class="dc-panel dc-panel--col dc-panel--prep" data-accent="gold">
+                <div class="dc-panel__head">
+                  <div class="dc-panel__icon">
+                    <i data-lucide="chef-hat" stroke-width="1.7" aria-hidden="true"></i>
                   </div>
-                  <span class="arm-editor__title">PRÉPARATION</span>
-                  <span class="arm-editor__hint">
-                    Glissez pour réorganiser
-                    <i data-lucide="info" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
-                  </span>
+                  <div class="dc-panel__head-text">
+                    <h3 class="dc-panel__title dc-panel__title--sm">Préparation</h3>
+                    <p class="dc-panel__sub dc-panel__sub--sm">Une étape peut contenir plusieurs descriptions</p>
+                  </div>
+                  <span class="dc-panel__head-count" id="dcPrepLineCount">0 description(s)</span>
                 </div>
-                <div class="arm-editor__notice">
-                  <i data-lucide="info" width="13" height="13" stroke-width="2" aria-hidden="true"></i>
-                  <span>Une carte = une étape. Ajoutez plusieurs descriptions si besoin.</span>
-                </div>
-                <div class="arm-editor__body">
-                  <div class="arm-step-list" id="prep-list"></div>
-                  <button type="button" class="arm-add-row-btn" id="prep-add-btn">
-                    <i data-lucide="plus" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
-                    Ajouter une étape
-                  </button>
-                  <textarea name="preparation" id="preparation" hidden aria-hidden="true"></textarea>
-                </div>
-                <div class="arm-editor__footer">
-                  <span class="arm-line-counter" id="prepCounter">0 étape</span>
-                </div>
+
+                <div class="dc-step-list" id="dcStepList"></div>
+
+                <button type="button" class="dc-add-btn dc-add-btn--gold dc-add-btn--lg" id="dcStepAddBtn">
+                  <i data-lucide="plus" width="16" height="16" stroke-width="2.2" aria-hidden="true"></i>
+                  Ajouter une étape
+                </button>
+
+                <textarea name="preparation" id="preparation" hidden aria-hidden="true"></textarea>
+
+                <footer class="dc-panel__footer dc-panel__footer--split">
+                  <span id="dcPrepFooterLeft">0 étape(s) · 0 description(s)</span>
+                  <span id="dcPrepFooterRight">Temps total 0 min</span>
+                </footer>
               </div>
 
-            </div><!-- /arm-ing-prep-grid -->
+            </div><!-- /dc-s3-grid -->
 
             <div class="arm-cta-row">
               <a class="arm-btn-ghost" href="#arm-s2" data-goto-tab="2">
@@ -910,7 +859,9 @@
     <script src="/js/utils/url-utils.js" defer></script>
     <script src="/js/utils/text-utils.js" defer></script>
     <script src="/js/unified-form-handler.js" defer></script>
-    <script src="/js/add-recipes-movies-film-tab.js" defer></script>
+    <script src="/js/add-recipes-movies-film-tab.js?v=202608309" defer></script>
+    <script src="/js/add-recipes-movies-step2.js?v=202608305" defer></script>
+    <script src="/js/add-recipes-movies-step3.js?v=202608305" defer></script>
     <script src="/js/add-recipes-movies-textarea.js" defer></script>
 
     <!-- 3-slot upload avec preview -->
@@ -1069,204 +1020,6 @@
       })();
     </script>
 
-    <!-- Photos de préparation — 6 slots optionnels, format libre (pas de contrôle de ratio) -->
-    <script>
-      (function () {
-        var toastEl = document.getElementById('arm-upload-toast');
-
-        function showStepToast(message, slot) {
-          if (!toastEl) return;
-          var msgEl = document.getElementById('arm-toast-msg');
-          if (msgEl) msgEl.textContent = message;
-          toastEl.classList.remove('is-hidden', 'is-hiding');
-          if (slot) {
-            slot.classList.remove('has-error');
-            void slot.offsetWidth;
-            slot.classList.add('has-error');
-            setTimeout(function () { slot.classList.remove('has-error'); }, 800);
-          }
-          clearTimeout(showStepToast._t);
-          showStepToast._t = setTimeout(function () {
-            toastEl.classList.add('is-hiding');
-            setTimeout(function () {
-              toastEl.classList.remove('is-hiding');
-              toastEl.classList.add('is-hidden');
-            }, 260);
-          }, 5000);
-        }
-
-        /* ── Numérotation auto : le n° d'étape suit la position visuelle,
-           pas un champ éditable — glisser une photo la renumérote. ── */
-        function renumberStepSlots() {
-          var running = 0;
-          for (var i = 1; i <= 8; i++) {
-            var slot = document.getElementById('arm-stepSlot' + i);
-            var numInput = document.getElementById('stepNumber' + i);
-            if (!slot || !numInput) continue;
-            if (slot.classList.contains('has-photo')) {
-              running++;
-              numInput.value = running;
-            }
-          }
-        }
-
-        /* ── Révélation progressive des slots (2 au départ, jusqu'à 8) ── */
-        var addBtn = document.getElementById('arm-stepAddBtn');
-        function slotEls(n) {
-          return {
-            slot: document.getElementById('arm-stepSlot' + n),
-            input: document.getElementById('stepPictureInput' + n),
-          };
-        }
-        function revealedCount() {
-          var c = 0;
-          for (var i = 1; i <= 8; i++) {
-            var s = document.getElementById('arm-stepSlot' + i);
-            if (s && !s.hasAttribute('hidden')) c++;
-          }
-          return c;
-        }
-        function revealNextSlot(focusInput) {
-          for (var i = 1; i <= 8; i++) {
-            var s = document.getElementById('arm-stepSlot' + i);
-            if (s && s.hasAttribute('hidden')) {
-              s.removeAttribute('hidden');
-              if (focusInput) {
-                var inp = document.getElementById('stepPictureInput' + i);
-                if (inp) inp.click();
-              }
-              if (revealedCount() >= 8 && addBtn) addBtn.style.display = 'none';
-              return true;
-            }
-          }
-          return false;
-        }
-        for (var initN = 1; initN <= 2; initN++) revealNextSlot(false);
-        renumberStepSlots();
-        if (addBtn) addBtn.addEventListener('click', function () { revealNextSlot(true); });
-
-        /* ── Glisser-déposer pour réorganiser (échange le contenu des 2 slots,
-           le n° d'étape est ensuite recalculé à partir de la position) ── */
-        var dragSrcIndex = null;
-        function slotData(n) {
-          var el = slotEls(n);
-          return {
-            hasPhoto: el.slot.classList.contains('has-photo'),
-            files: el.input.files,
-            bg: document.getElementById('arm-stepPrev' + n).style.backgroundImage,
-          };
-        }
-        function applySlotData(n, data) {
-          var el = slotEls(n);
-          var prev = document.getElementById('arm-stepPrev' + n);
-          if (data.hasPhoto && data.files && data.files.length) {
-            var dt = new DataTransfer();
-            dt.items.add(data.files[0]);
-            el.input.files = dt.files;
-            prev.style.backgroundImage = data.bg;
-            prev.classList.add('on');
-            el.slot.classList.add('has-photo');
-          } else {
-            el.input.value = '';
-            prev.style.backgroundImage = '';
-            prev.classList.remove('on');
-            el.slot.classList.remove('has-photo');
-          }
-        }
-        function swapSlots(a, b) {
-          if (a === b) return;
-          var dA = slotData(a);
-          var dB = slotData(b);
-          applySlotData(a, dB);
-          applySlotData(b, dA);
-        }
-        for (var dn = 1; dn <= 8; dn++) {
-          (function (dn) {
-            var slot = document.getElementById('arm-stepSlot' + dn);
-            if (!slot) return;
-            slot.addEventListener('mousedown', function (e) {
-              slot.draggable = !!(e.target.closest && e.target.closest('.arm-upload-slot__drag'));
-            });
-            slot.addEventListener('dragstart', function (e) {
-              dragSrcIndex = dn;
-              slot.classList.add('is-dragging');
-              e.dataTransfer.effectAllowed = 'move';
-            });
-            slot.addEventListener('dragend', function () {
-              slot.classList.remove('is-dragging');
-              dragSrcIndex = null;
-            });
-            slot.addEventListener('dragover', function (e) { e.preventDefault(); slot.classList.add('is-drag-over'); });
-            slot.addEventListener('dragleave', function () { slot.classList.remove('is-drag-over'); });
-            slot.addEventListener('drop', function (e) {
-              e.preventDefault();
-              slot.classList.remove('is-drag-over');
-              if (dragSrcIndex !== null) { swapSlots(dragSrcIndex, dn); renumberStepSlots(); }
-            });
-          })(dn);
-        }
-
-        for (var n = 1; n <= 8; n++) {
-          (function (n) {
-            var slot = document.getElementById('arm-stepSlot' + n);
-            var input = document.getElementById('stepPictureInput' + n);
-            var prev = document.getElementById('arm-stepPrev' + n);
-            var chgBtn = document.getElementById('arm-stepChg' + n);
-            var delBtn = document.getElementById('arm-stepDel' + n);
-            var numInput = document.getElementById('stepNumber' + n);
-            if (!slot || !input || !prev) return;
-
-            slot.addEventListener('click', function (e) {
-              if (chgBtn && (e.target === chgBtn || chgBtn.contains(e.target))) return;
-              if (delBtn && (e.target === delBtn || delBtn.contains(e.target))) return;
-              if (numInput && (e.target === numInput || numInput.contains(e.target))) return;
-              if (e.target.closest && e.target.closest('.arm-upload-slot__drag')) return;
-              if (!slot.classList.contains('has-photo')) input.click();
-            });
-
-            if (chgBtn) chgBtn.addEventListener('click', function (e) { e.stopPropagation(); input.click(); });
-
-            if (delBtn) {
-              delBtn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                if (!slot.classList.contains('has-photo')) return;
-                input.value = '';
-                prev.style.backgroundImage = '';
-                prev.classList.remove('on');
-                slot.classList.remove('has-photo');
-                renumberStepSlots();
-              });
-            }
-
-            input.addEventListener('change', function (e) {
-              var file = e.target.files[0];
-              if (!file) return;
-              var ok = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-              if (!ok.includes(file.type)) {
-                showStepToast('Format non supporté. Utilisez JPG, PNG ou WEBP.', slot);
-                input.value = '';
-                return;
-              }
-              if (file.size > 8 * 1024 * 1024) {
-                showStepToast('Fichier trop volumineux (max 8 Mo par photo).', slot);
-                input.value = '';
-                return;
-              }
-              // Pas de contrôle de ratio : une photo de préparation peut être
-              // carrée, portrait ou paysage (contrairement aux 3 photos principales).
-              var reader = new FileReader();
-              reader.onload = function (ev) {
-                prev.style.backgroundImage = 'url("' + ev.target.result + '")';
-                prev.classList.add('on');
-                slot.classList.add('has-photo');
-                renumberStepSlots();
-              };
-              reader.readAsDataURL(file);
-            });
-          })(n);
-        }
-      })();
-    </script>
 
     <!-- Stepper actif au scroll + Portions stepper + Compteurs lignes -->
     <script>
@@ -1304,560 +1057,6 @@
 
     </script>
 
-    <!-- ═══════════ ÉDITEURS STRUCTURÉS — INGRÉDIENTS & PRÉPARATION ═══════════ -->
-    <script>
-    (function () {
-      'use strict';
-
-      function uid() { return 'r' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
-
-      function escapeHtmlBasic(s) {
-        var div = document.createElement('div');
-        div.textContent = s == null ? '' : String(s);
-        return div.innerHTML;
-      }
-
-      /* ══════════════════════════════════════════════════════
-         INGRÉDIENTS — liste plate, 1 ligne = icône + nom + qté + unité
-      ══════════════════════════════════════════════════════ */
-      var ING_ICONS = [
-        'wheat', 'wheat-off', 'egg', 'egg-fried', 'milk', 'milk-off',
-        'beef', 'drumstick', 'fish', 'fish-off', 'ham', 'shrimp',
-        'carrot', 'apple', 'banana', 'cherry', 'grape', 'citrus',
-        'leafy-green', 'salad', 'soup', 'sandwich', 'pizza', 'cookie',
-        'croissant', 'cake', 'cake-slice', 'candy', 'candy-cane', 'lollipop',
-        'popcorn', 'ice-cream-cone', 'ice-cream-bowl', 'coffee', 'cup-soda', 'wine',
-        'beer', 'martini', 'utensils', 'utensils-crossed', 'chef-hat', 'cooking-pot',
-        'flame', 'droplet', 'nut-off', 'bean', 'package',
-      ];
-      var ING_UNITS = [
-        { value: '', label: '—' },
-        { value: 'g', label: 'gr' },
-        { value: 'kg', label: 'kg' },
-        { value: 'ml', label: 'ml' },
-        { value: 'cl', label: 'cl' },
-        { value: 'l', label: 'L' },
-        { value: 'c. à soupe', label: 'c. à soupe' },
-        { value: 'c. à café', label: 'c. à café' },
-        { value: 'pincée', label: 'pincée(s)', plural: true },
-        { value: 'gousse', label: 'gousse(s)', plural: true },
-        { value: 'tranche', label: 'tranche(s)', plural: true },
-        { value: 'sachet', label: 'sachet(s)', plural: true },
-        { value: 'verre', label: 'verre(s)', plural: true },
-        { value: 'tasse', label: 'tasse(s)', plural: true },
-        { value: 'feuille', label: 'feuille(s)', plural: true },
-        { value: 'branche', label: 'branche(s)', plural: true },
-        { value: 'poignée', label: 'poignée(s)', plural: true },
-        { value: 'pièce', label: 'pièce(s)', plural: true },
-        { value: 'unité', label: 'unité(s)', plural: true },
-      ];
-
-      function newIngredientItem() {
-        return { id: uid(), icon: 'wheat', name: '', qty: '', unit: '' };
-      }
-      function newIngredientSection(title) {
-        return { id: uid(), title: title || '', items: [newIngredientItem()] };
-      }
-      var ingredientsState = [newIngredientSection('')];
-
-      function buildIngredientString(item) {
-        var name = (item.name || '').trim();
-        if (!name) return '';
-        var qty = (item.qty || '').trim();
-        var unitDef = ING_UNITS.filter(function (u) { return u.value === item.unit; })[0];
-        var unitLabel = '';
-        if (unitDef && unitDef.value) {
-          unitLabel = unitDef.value;
-          if (unitDef.plural) {
-            var n = parseFloat(qty.replace(',', '.'));
-            if (!isNaN(n) && n > 1) unitLabel += 's';
-          }
-        }
-        var head = [qty, unitLabel].filter(Boolean).join(' ');
-        return head ? head + ' ' + name : name;
-      }
-
-      function serializeIngredients() {
-        var arr = [];
-        var totalItems = 0;
-        ingredientsState.forEach(function (section) {
-          var title = (section.title || '').trim();
-          var itemStrings = section.items.map(buildIngredientString).filter(Boolean);
-          if (!itemStrings.length) return;
-          if (title) arr.push('<h3 class="rd-ing-group-title">' + escapeHtmlBasic(title) + '</h3>');
-          itemStrings.forEach(function (s) { arr.push(s); totalItems++; });
-        });
-        var ta = document.getElementById('ingredients');
-        if (ta) ta.value = JSON.stringify(arr);
-        var countEl = document.getElementById('ingCounter');
-        if (countEl) countEl.textContent = totalItems + (totalItems > 1 ? ' ingrédients' : ' ingrédient');
-        window.armIngredientsCount = totalItems;
-        if (window.checkS3) window.checkS3();
-        return arr;
-      }
-
-      /* ── Icon picker (popover) ── */
-      var iconPickerEl = null;
-      function closeIconPicker() {
-        if (iconPickerEl) { iconPickerEl.remove(); iconPickerEl = null; }
-        document.removeEventListener('mousedown', onDocMouseDownForPicker, true);
-      }
-      function onDocMouseDownForPicker(e) {
-        if (iconPickerEl && !iconPickerEl.contains(e.target)) closeIconPicker();
-      }
-      function openIconPicker(anchorBtn, item) {
-        closeIconPicker();
-        var pop = document.createElement('div');
-        pop.className = 'arm-icon-picker';
-        ING_ICONS.forEach(function (icon) {
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'arm-icon-picker__opt' + (icon === item.icon ? ' is-selected' : '');
-          b.innerHTML = '<i data-lucide="' + icon + '" width="16" height="16" stroke-width="1.8"></i>';
-          b.addEventListener('click', function (e) {
-            e.stopPropagation();
-            item.icon = icon;
-            closeIconPicker();
-            renderIngredients();
-          });
-          pop.appendChild(b);
-        });
-        document.body.appendChild(pop);
-        var rect = anchorBtn.getBoundingClientRect();
-        pop.style.top = (window.scrollY + rect.bottom + 4) + 'px';
-        pop.style.left = (window.scrollX + rect.left) + 'px';
-        if (window.lucide) lucide.createIcons();
-        iconPickerEl = pop;
-        setTimeout(function () { document.addEventListener('mousedown', onDocMouseDownForPicker, true); }, 0);
-      }
-
-      /* ── Drag reorder (générique liste d'items avec id) — utilisé par Préparation ── */
-      function reorderById(stateArr, srcId, targetId) {
-        if (srcId === targetId) return false;
-        var srcIdx = -1, tgtIdx = -1;
-        stateArr.forEach(function (r, i) { if (r.id === srcId) srcIdx = i; if (r.id === targetId) tgtIdx = i; });
-        if (srcIdx < 0 || tgtIdx < 0) return false;
-        var moved = stateArr.splice(srcIdx, 1)[0];
-        stateArr.splice(tgtIdx, 0, moved);
-        return true;
-      }
-
-      /* ── Déplace un ingrédient (même section ou vers une autre section) ── */
-      function moveIngredientItem(srcId, targetId) {
-        if (srcId === targetId) return false;
-        var srcLoc = null, tgtLoc = null;
-        ingredientsState.forEach(function (sec, si) {
-          sec.items.forEach(function (it, ii) {
-            if (it.id === srcId) srcLoc = { si: si, ii: ii };
-            if (it.id === targetId) tgtLoc = { si: si, ii: ii };
-          });
-        });
-        if (!srcLoc || !tgtLoc) return false;
-        var item = ingredientsState[srcLoc.si].items.splice(srcLoc.ii, 1)[0];
-        var insertIdx = tgtLoc.ii;
-        if (srcLoc.si === tgtLoc.si && srcLoc.ii < tgtLoc.ii) insertIdx -= 1;
-        ingredientsState[tgtLoc.si].items.splice(insertIdx, 0, item);
-        return true;
-      }
-
-      function buildIngredientRowEl(item) {
-        var el = document.createElement('div');
-        el.className = 'arm-ing-row';
-        el.dataset.id = item.id;
-        el.draggable = false;
-
-        var drag = document.createElement('button');
-        drag.type = 'button'; drag.className = 'arm-ing-row__drag'; drag.setAttribute('aria-label', 'Réorganiser');
-        drag.innerHTML = '<i data-lucide="grip-vertical" width="14" height="14" stroke-width="2"></i>';
-
-        var iconBtn = document.createElement('button');
-        iconBtn.type = 'button'; iconBtn.className = 'arm-ing-row__icon'; iconBtn.setAttribute('aria-label', 'Choisir une icône');
-        iconBtn.innerHTML = '<i data-lucide="' + item.icon + '" width="16" height="16" stroke-width="1.8"></i>';
-        iconBtn.addEventListener('click', function (e) { e.stopPropagation(); openIconPicker(iconBtn, item); });
-
-        var nameInput = document.createElement('input');
-        nameInput.type = 'text'; nameInput.className = 'arm-ing-row__name'; nameInput.placeholder = 'Nom de l\'ingrédient';
-        nameInput.value = item.name;
-        nameInput.addEventListener('input', function () { item.name = nameInput.value; serializeIngredients(); });
-
-        var qtyInput = document.createElement('input');
-        qtyInput.type = 'text'; qtyInput.className = 'arm-ing-row__qty'; qtyInput.placeholder = 'Qté';
-        qtyInput.value = item.qty;
-        qtyInput.addEventListener('input', function () { item.qty = qtyInput.value; serializeIngredients(); });
-
-        var unitSelect = document.createElement('select');
-        unitSelect.className = 'arm-ing-row__unit';
-        ING_UNITS.forEach(function (u) {
-          var o = document.createElement('option');
-          o.value = u.value; o.textContent = u.label;
-          unitSelect.appendChild(o);
-        });
-        unitSelect.value = item.unit;
-        unitSelect.addEventListener('change', function () { item.unit = unitSelect.value; serializeIngredients(); });
-
-        var delBtn = document.createElement('button');
-        delBtn.type = 'button'; delBtn.className = 'arm-ing-row__del'; delBtn.setAttribute('aria-label', 'Supprimer cet ingrédient');
-        delBtn.innerHTML = '<i data-lucide="trash-2" width="14" height="14" stroke-width="2"></i>';
-        delBtn.addEventListener('click', function () {
-          ingredientsState.forEach(function (sec) {
-            sec.items = sec.items.filter(function (it) { return it.id !== item.id; });
-          });
-          ingredientsState.forEach(function (sec) {
-            if (!sec.items.length) sec.items.push(newIngredientItem());
-          });
-          renderIngredients();
-        });
-
-        el.appendChild(drag);
-        el.appendChild(iconBtn);
-        el.appendChild(nameInput);
-        el.appendChild(qtyInput);
-        el.appendChild(unitSelect);
-        el.appendChild(delBtn);
-
-        drag.addEventListener('mousedown', function () { el.draggable = true; });
-        el.addEventListener('dragend', function () { el.draggable = false; el.classList.remove('is-dragging'); });
-        el.addEventListener('dragstart', function (e) {
-          el.classList.add('is-dragging');
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/plain', item.id);
-        });
-        el.addEventListener('dragover', function (e) { e.preventDefault(); el.classList.add('is-drag-over'); });
-        el.addEventListener('dragleave', function () { el.classList.remove('is-drag-over'); });
-        el.addEventListener('drop', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          el.classList.remove('is-drag-over');
-          var srcId = e.dataTransfer.getData('text/plain');
-          if (moveIngredientItem(srcId, item.id)) renderIngredients();
-        });
-
-        return el;
-      }
-
-      function buildIngredientSectionEl(section, sectionIdx) {
-        var wrap = document.createElement('div');
-        wrap.className = 'arm-ing-section';
-        wrap.dataset.id = section.id;
-
-        var head = document.createElement('div');
-        head.className = 'arm-ing-section__head';
-
-        var icon = document.createElement('span');
-        icon.className = 'arm-ing-section__icon';
-        icon.innerHTML = '<i data-lucide="folder" width="13" height="13" stroke-width="2"></i>';
-
-        var titleInput = document.createElement('input');
-        titleInput.type = 'text'; titleInput.className = 'arm-ing-section__title';
-        titleInput.placeholder = 'Titre de la section (optionnel — ex. Pâte sablée)';
-        titleInput.value = section.title;
-        titleInput.addEventListener('input', function () { section.title = titleInput.value; serializeIngredients(); });
-
-        head.appendChild(icon);
-        head.appendChild(titleInput);
-
-        if (ingredientsState.length > 1) {
-          var delSecBtn = document.createElement('button');
-          delSecBtn.type = 'button'; delSecBtn.className = 'arm-ing-section__del'; delSecBtn.setAttribute('aria-label', 'Supprimer cette section');
-          delSecBtn.innerHTML = '<i data-lucide="trash-2" width="13" height="13" stroke-width="2"></i>';
-          delSecBtn.addEventListener('click', function () {
-            ingredientsState = ingredientsState.filter(function (s) { return s.id !== section.id; });
-            if (!ingredientsState.length) ingredientsState.push(newIngredientSection(''));
-            renderIngredients();
-          });
-          head.appendChild(delSecBtn);
-        }
-
-        var itemsWrap = document.createElement('div');
-        itemsWrap.className = 'arm-ing-section__items';
-        section.items.forEach(function (item) { itemsWrap.appendChild(buildIngredientRowEl(item)); });
-
-        var addItemBtn = document.createElement('button');
-        addItemBtn.type = 'button'; addItemBtn.className = 'arm-ing-section__add';
-        addItemBtn.innerHTML = '<i data-lucide="plus" width="12" height="12" stroke-width="2.5"></i> Ajouter un ingrédient';
-        addItemBtn.addEventListener('click', function () {
-          section.items.push(newIngredientItem());
-          renderIngredients();
-          var rows = wrap.querySelectorAll('.arm-ing-row__name');
-          var last = rows[rows.length - 1];
-          if (last) last.focus();
-        });
-
-        wrap.appendChild(head);
-        wrap.appendChild(itemsWrap);
-        wrap.appendChild(addItemBtn);
-        return wrap;
-      }
-
-      function renderIngredients() {
-        var list = document.getElementById('ing-list');
-        if (!list) return;
-        list.innerHTML = '';
-        ingredientsState.forEach(function (section, idx) { list.appendChild(buildIngredientSectionEl(section, idx)); });
-        if (window.lucide) lucide.createIcons();
-        serializeIngredients();
-      }
-
-      var ingAddSectionBtn = document.getElementById('ing-add-section-btn');
-      if (ingAddSectionBtn) {
-        ingAddSectionBtn.addEventListener('click', function () {
-          ingredientsState.push(newIngredientSection(''));
-          renderIngredients();
-          var titles = document.querySelectorAll('#ing-list .arm-ing-section__title');
-          var last = titles[titles.length - 1];
-          if (last) last.focus();
-        });
-      }
-
-      renderIngredients();
-
-
-      /* ══════════════════════════════════════════════════════
-         PRÉPARATION — cartes d'étape (timeline), 1 étape = 1 carte
-      ══════════════════════════════════════════════════════ */
-      var STEP_TYPES = [
-        { value: '', label: 'Type…' },
-        { value: 'preparation', label: 'Préparation' },
-        { value: 'cuisson', label: 'Cuisson' },
-        { value: 'repos', label: 'Repos' },
-        { value: 'service', label: 'Service' },
-      ];
-
-      function newStepLine() { return { id: uid(), text: '' }; }
-      function newStepRow() { return { id: uid(), title: '', type: '', duration: '', lines: [newStepLine()] }; }
-      var preparationState = [newStepRow()];
-
-      function buildStepString(step) {
-        var title = (step.title || '').trim();
-        var type = step.type || '';
-        var duration = (step.duration || '').toString().trim();
-        var bodyLines = step.lines
-          .map(function (l) { return escapeHtmlBasic((l.text || '').trim()).replace(/\n/g, '<br>'); })
-          .filter(Boolean);
-        var body = bodyLines.join('<br>');
-        if (!title && !type && !duration && !body) return '';
-        var needsStrong = title || type || duration;
-        if (!needsStrong) return body;
-        var attrs = [];
-        if (type) attrs.push('data-type="' + type + '"');
-        if (duration) attrs.push('data-duration="' + duration + '"');
-        return '<strong' + (attrs.length ? ' ' + attrs.join(' ') : '') + '>' + escapeHtmlBasic(title) + '</strong>' + (body ? '<br>' + body : '');
-      }
-
-      function serializePreparation() {
-        var arr = preparationState.map(buildStepString).filter(Boolean);
-        var ta = document.getElementById('preparation');
-        if (ta) ta.value = JSON.stringify(arr);
-        var countEl = document.getElementById('prepCounter');
-        if (countEl) countEl.textContent = arr.length + (arr.length > 1 ? ' étapes' : ' étape');
-        window.armPreparationCount = arr.length;
-        if (window.checkS3) window.checkS3();
-        return arr;
-      }
-
-      function renumberStepCards() {
-        var cards = document.querySelectorAll('#prep-list .arm-step-card .arm-step-sep__num');
-        cards.forEach(function (bubble, i) { bubble.textContent = String(i + 1).padStart(2, '0'); });
-      }
-
-      /* ── Réorganise les lignes AU SEIN d'une même étape (pas entre étapes) ── */
-      function moveStepLine(step, srcId, targetId) {
-        return reorderById(step.lines, srcId, targetId);
-      }
-
-      function buildStepLineEl(step, line) {
-        var lineEl = document.createElement('div');
-        lineEl.className = 'arm-step-line';
-        lineEl.dataset.id = line.id;
-
-        var drag = document.createElement('button');
-        drag.type = 'button'; drag.className = 'arm-step-line__drag'; drag.setAttribute('aria-label', 'Réorganiser cette ligne');
-        drag.innerHTML = '<i data-lucide="grip-vertical" width="12" height="12" stroke-width="2"></i>';
-
-        var textarea = document.createElement('textarea');
-        textarea.className = 'arm-step-line__text';
-        textarea.placeholder = 'Décrivez cette étape…';
-        textarea.value = line.text;
-        textarea.rows = 1;
-        function autoGrow() { textarea.style.height = 'auto'; textarea.style.height = (textarea.scrollHeight + 2) + 'px'; }
-        textarea.addEventListener('input', function () { line.text = textarea.value; autoGrow(); serializePreparation(); });
-
-        lineEl.appendChild(drag);
-        lineEl.appendChild(textarea);
-
-        if (step.lines.length > 1) {
-          var delBtn = document.createElement('button');
-          delBtn.type = 'button'; delBtn.className = 'arm-step-line__del'; delBtn.setAttribute('aria-label', 'Supprimer cette ligne');
-          delBtn.innerHTML = '<i data-lucide="x" width="12" height="12" stroke-width="2.5"></i>';
-          delBtn.addEventListener('click', function () {
-            step.lines = step.lines.filter(function (l) { return l.id !== line.id; });
-            if (!step.lines.length) step.lines.push(newStepLine());
-            renderPreparation();
-          });
-          lineEl.appendChild(delBtn);
-        }
-
-        setTimeout(autoGrow, 0);
-
-        drag.addEventListener('mousedown', function () { lineEl.draggable = true; });
-        lineEl.addEventListener('dragend', function () { lineEl.draggable = false; lineEl.classList.remove('is-dragging'); });
-        lineEl.addEventListener('dragstart', function (e) {
-          e.stopPropagation();
-          lineEl.classList.add('is-dragging');
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/x-step-line', line.id);
-        });
-        lineEl.addEventListener('dragover', function (e) {
-          if (e.dataTransfer.types.includes('text/x-step-line')) { e.preventDefault(); e.stopPropagation(); lineEl.classList.add('is-drag-over'); }
-        });
-        lineEl.addEventListener('dragleave', function () { lineEl.classList.remove('is-drag-over'); });
-        lineEl.addEventListener('drop', function (e) {
-          if (!e.dataTransfer.types.includes('text/x-step-line')) return;
-          e.preventDefault();
-          e.stopPropagation();
-          lineEl.classList.remove('is-drag-over');
-          var srcId = e.dataTransfer.getData('text/x-step-line');
-          if (moveStepLine(step, srcId, line.id)) renderPreparation();
-        });
-
-        return lineEl;
-      }
-
-      function buildStepCardEl(step, idx) {
-        var card = document.createElement('div');
-        card.className = 'arm-step-card';
-        card.dataset.id = step.id;
-
-        var head = document.createElement('div');
-        head.className = 'arm-step-sep' + (idx === 0 ? ' arm-step-sep--first' : '');
-
-        var bubble = document.createElement('span');
-        bubble.className = 'arm-step-sep__num';
-        bubble.textContent = String(idx + 1).padStart(2, '0');
-
-        var row = document.createElement('div');
-        row.className = 'arm-step-sep__row';
-
-        var titleInput = document.createElement('input');
-        titleInput.type = 'text'; titleInput.className = 'arm-step-sep__title';
-        titleInput.placeholder = 'Titre de l\'étape (optionnel)';
-        titleInput.value = step.title;
-        titleInput.addEventListener('input', function () { step.title = titleInput.value; serializePreparation(); });
-
-        var meta = document.createElement('div');
-        meta.className = 'arm-step-sep__meta';
-
-        var typeSelect = document.createElement('select');
-        typeSelect.className = 'arm-step-sep__type';
-        STEP_TYPES.forEach(function (opt) {
-          var o = document.createElement('option');
-          o.value = opt.value; o.textContent = opt.label;
-          typeSelect.appendChild(o);
-        });
-        typeSelect.value = step.type;
-        typeSelect.addEventListener('change', function () { step.type = typeSelect.value; serializePreparation(); });
-
-        var durationWrap = document.createElement('span');
-        durationWrap.className = 'arm-step-sep__duration-wrap';
-        var durationInput = document.createElement('input');
-        durationInput.type = 'number'; durationInput.min = '0'; durationInput.max = '999';
-        durationInput.className = 'arm-step-sep__duration'; durationInput.placeholder = '—';
-        durationInput.value = step.duration;
-        durationInput.addEventListener('input', function () { step.duration = durationInput.value; serializePreparation(); });
-        var durationUnit = document.createElement('span');
-        durationUnit.className = 'arm-step-sep__duration-unit';
-        durationUnit.textContent = 'min';
-        durationWrap.appendChild(durationInput);
-        durationWrap.appendChild(durationUnit);
-
-        meta.appendChild(typeSelect);
-        meta.appendChild(durationWrap);
-
-        var drag = document.createElement('button');
-        drag.type = 'button'; drag.className = 'arm-step-sep__drag'; drag.setAttribute('aria-label', 'Réorganiser cette étape');
-        drag.innerHTML = '<i data-lucide="grip-vertical" width="14" height="14" stroke-width="2"></i>';
-
-        row.appendChild(titleInput);
-        row.appendChild(meta);
-        row.appendChild(drag);
-
-        if (preparationState.length > 1) {
-          var delBtn = document.createElement('button');
-          delBtn.type = 'button'; delBtn.className = 'arm-step-sep__del'; delBtn.setAttribute('aria-label', 'Supprimer cette étape');
-          delBtn.innerHTML = '&#x2715;';
-          delBtn.addEventListener('click', function () {
-            preparationState = preparationState.filter(function (s) { return s.id !== step.id; });
-            if (!preparationState.length) preparationState.push(newStepRow());
-            renderPreparation();
-          });
-          row.appendChild(delBtn);
-        }
-
-        head.appendChild(bubble);
-        head.appendChild(row);
-
-        var linesWrap = document.createElement('div');
-        linesWrap.className = 'arm-step-lines';
-        step.lines.forEach(function (line) { linesWrap.appendChild(buildStepLineEl(step, line)); });
-
-        var addLineBtn = document.createElement('button');
-        addLineBtn.type = 'button'; addLineBtn.className = 'arm-step-lines__add';
-        addLineBtn.innerHTML = '<i data-lucide="plus" width="11" height="11" stroke-width="2.5"></i> Ajouter une ligne';
-        addLineBtn.addEventListener('click', function () {
-          step.lines.push(newStepLine());
-          renderPreparation();
-          var lineEls = document.querySelectorAll('.arm-step-card[data-id="' + step.id + '"] .arm-step-line__text');
-          var lastLine = lineEls[lineEls.length - 1];
-          if (lastLine) lastLine.focus();
-        });
-
-        card.appendChild(head);
-        card.appendChild(linesWrap);
-        card.appendChild(addLineBtn);
-
-        /* Drag reorder — poignée dédiée pour ne pas gêner la saisie */
-        drag.addEventListener('mousedown', function () { card.draggable = true; });
-        card.addEventListener('dragend', function () { card.draggable = false; card.classList.remove('is-dragging'); });
-        card.addEventListener('dragstart', function (e) {
-          card.classList.add('is-dragging');
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/plain', step.id);
-        });
-        card.addEventListener('dragover', function (e) { e.preventDefault(); card.classList.add('is-drag-over'); });
-        card.addEventListener('dragleave', function () { card.classList.remove('is-drag-over'); });
-        card.addEventListener('drop', function (e) {
-          e.preventDefault();
-          card.classList.remove('is-drag-over');
-          var srcId = e.dataTransfer.getData('text/plain');
-          if (reorderById(preparationState, srcId, step.id)) renderPreparation();
-        });
-
-        return card;
-      }
-
-      function renderPreparation() {
-        var list = document.getElementById('prep-list');
-        if (!list) return;
-        list.innerHTML = '';
-        preparationState.forEach(function (step, idx) { list.appendChild(buildStepCardEl(step, idx)); });
-        if (window.lucide) lucide.createIcons();
-        serializePreparation();
-      }
-
-      var prepAddBtn = document.getElementById('prep-add-btn');
-      if (prepAddBtn) {
-        prepAddBtn.addEventListener('click', function () {
-          preparationState.push(newStepRow());
-          renderPreparation();
-          var textareas = document.querySelectorAll('#prep-list .arm-step-line__text');
-          var last = textareas[textareas.length - 1];
-          if (last) last.focus();
-        });
-      }
-
-      renderPreparation();
-    })();
-    </script>
 
     <!-- ═══════════ TICKET DISABLE / ENABLE LOGIC ═══════════ -->
     <script>

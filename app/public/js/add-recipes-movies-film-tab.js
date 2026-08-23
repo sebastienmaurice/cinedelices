@@ -12,6 +12,15 @@
   var form = document.getElementById("film-preview-form");
   if (!form) return;
 
+  // Film déjà sélectionné côté serveur (arrivée via /add-recipes-movies/:id
+  // depuis "Ajouter une recette" sur une fiche film existante) : le bloc
+  // recherche/import TMDB n'est pas monté (voir add-recipes-movies.ejs,
+  // branche "newMovie"), seul le résumé compact "arm-film-confirmed" est
+  // rendu. Les champs cachés (#film-name, #filmId-hidden, etc.) sont déjà
+  // corrects côté EJS — rien à synchroniser, et tenter de le faire plantait
+  // sur les éléments du bloc d'édition manuelle absents du DOM ici.
+  if (!document.getElementById("dcFilmSearchInput")) return;
+
   /* ── Éléments ── */
   var typeToggle = document.getElementById("dcFilmTypeToggle");
   var searchInput = document.getElementById("dcFilmSearchInput");
@@ -38,6 +47,7 @@
   var tmdbYearHidden = document.getElementById("tmdbYear-hidden");
   var tmdbGenreHidden = document.getElementById("tmdbGenre-hidden");
   var filmTypeHidden = document.getElementById("film-type-hidden");
+  var filmIdHidden = document.getElementById("filmId-hidden");
 
   /* ── État ── */
   var state = {
@@ -64,6 +74,22 @@
     return d.innerHTML;
   }
 
+  /**
+   * Déduit l'onglet Film / Série / Animé à partir des infos disponibles —
+   * cohérent avec le filtre de recherche existant (Animé = genre "animation"
+   * présent parmi les genres TMDB, tous media_type confondus ; sinon
+   * Film/Série selon le media_type). `genresList` = tableau de noms complets
+   * (ex. ["Familial", "Animation", "Aventure"]) — le genre canonique unique
+   * (1er genre reconnu) ne suffit pas : il peut être "familial" alors que le
+   * film est bien un film d'animation.
+   */
+  function detectUiType(genre, mediaType, genresList) {
+    var hasAnimation = (genre || "").toLowerCase() === "animation" ||
+      (Array.isArray(genresList) && genresList.some(function (g) { return (g || "").toLowerCase() === "animation"; }));
+    if (hasAnimation) return "anime";
+    return mediaType === "tv" ? "tv" : "movie";
+  }
+
   /* ══════════════════════════════════════════════════════
      SYNCHRONISATION vers les champs cachés du formulaire unifié
   ══════════════════════════════════════════════════════ */
@@ -81,6 +107,10 @@
         tmdbGenreHidden.value = d.genre || "";
         filmTypeHidden.value = d.media_type || "movie";
       }
+      // Fiche déjà présente en base Ciné Délices : on réutilise directement
+      // ce film (filmId) plutôt que de laisser le serveur recréer une fiche
+      // via tmdbId — évite tout doublon.
+      if (filmIdHidden) filmIdHidden.value = (!state.manuallyEdited && d.cineDelicesId) ? d.cineDelicesId : "";
     } else {
       // Saisie manuelle pure (pas d'import TMDB)
       filmNameHidden.value = (editTitle.value || "").trim();
@@ -92,6 +122,7 @@
       tmdbYearHidden.value = "";
       tmdbGenreHidden.value = "";
       filmTypeHidden.value = state.type === "tv" ? "tv" : "movie";
+      if (filmIdHidden) filmIdHidden.value = "";
     }
     if (window.checkS1) window.checkS1();
   }
@@ -231,19 +262,26 @@
     var html = '<div class="dc-results-list" id="dcFilmResultsList" role="listbox" aria-label="Résultats de recherche">';
     results.forEach(function (r, i) {
       var meta = [r.year].filter(Boolean).join("");
+      var existing = !!r.existsInCineDelices;
       html +=
-        '<div class="dc-result-row" role="option" tabindex="-1" data-idx="' + i + '" aria-selected="false">' +
+        '<div class="dc-result-row' + (existing ? ' dc-result-row--existing' : '') + '" role="option" tabindex="-1" data-idx="' + i + '" aria-selected="false">' +
         (r.poster_thumb
           ? '<img class="dc-result-row__poster" src="' + r.poster_thumb + '" alt="" loading="lazy" />'
           : '<div class="dc-result-row__poster dc-result-row__poster--ph"><i data-lucide="image" width="16" height="16" stroke-width="1.5" aria-hidden="true"></i></div>') +
         '<div class="dc-result-row__info">' +
+        (existing ? '<span class="dc-badge dc-badge--gold dc-badge--xs"><i data-lucide="clapperboard" width="10" height="10" stroke-width="2.2" aria-hidden="true"></i>Ciné Délices</span>' : '') +
         '<span class="dc-result-row__title">' + escHtml(r.title || "—") + "</span>" +
         (meta ? '<span class="dc-result-row__meta">' + escHtml(meta) + "</span>" : "") +
         "</div>" +
-        '<button type="button" class="dc-btn dc-btn--gold dc-result-row__import" tabindex="-1">' +
-        '<i data-lucide="download" width="13" height="13" stroke-width="2" aria-hidden="true"></i>' +
-        "Importer cette fiche" +
-        "</button>" +
+        (existing
+          ? '<button type="button" class="dc-btn dc-btn--sage dc-result-row__import" tabindex="-1">' +
+            '<i data-lucide="clapperboard" width="13" height="13" stroke-width="2" aria-hidden="true"></i>' +
+            "Utiliser cette fiche existante du film Ciné Délices" +
+            "</button>"
+          : '<button type="button" class="dc-btn dc-btn--gold dc-result-row__import" tabindex="-1">' +
+            '<i data-lucide="download" width="13" height="13" stroke-width="2" aria-hidden="true"></i>' +
+            "Importer cette fiche" +
+            "</button>") +
         "</div>";
     });
     html += "</div>";
@@ -274,6 +312,7 @@
         state.manuallyEdited = false;
         editBlock.hidden = true;
         state.editOpen = false;
+        setTypeToggleUI(detectUiType(data.detail.genre, data.detail.media_type, data.detail.genres));
         renderImported();
         syncHiddenFields();
         document.dispatchEvent(new CustomEvent("tmdbFormPrefilled"));
@@ -300,13 +339,17 @@
       ? '<img class="dc-imported__poster" src="' + d.poster_path + '" alt="Affiche officielle de ' + escHtml(d.title) + '" loading="lazy" />'
       : '<div class="dc-imported__poster dc-imported__poster--ph"><i data-lucide="image" width="28" height="28" stroke-width="1.3" aria-hidden="true"></i><span>Pas d’affiche disponible</span></div>';
 
+    var originBadge = d.existsInCineDelices
+      ? '<span class="dc-badge dc-badge--gold"><i data-lucide="clapperboard" width="12" height="12" stroke-width="2.2" aria-hidden="true"></i>Déjà sur Ciné Délices — nouvelle recette pour ce film</span>'
+      : '<span class="dc-badge dc-badge--sage"><i data-lucide="circle-check" width="12" height="12" stroke-width="2.2" aria-hidden="true"></i>Fiche TMDB #' + d.id + ' importée</span>';
+
     resultsZone.innerHTML =
       '<div class="dc-imported" id="dcImportedCard">' +
       '<div class="dc-imported__poster-wrap">' + posterHtml +
       '<p class="dc-imported__poster-caption">Affiche officielle · 2:3 · TMDB</p>' +
       '</div>' +
       '<div class="dc-imported__info">' +
-      '<span class="dc-badge dc-badge--sage"><i data-lucide="circle-check" width="12" height="12" stroke-width="2.2" aria-hidden="true"></i>Fiche TMDB #' + d.id + ' importée</span>' +
+      originBadge +
       '<h3 class="dc-imported__title">' + escHtml(d.title) + '</h3>' +
       (pillsHtml ? '<div class="dc-imported__pills">' + pillsHtml + '</div>' : '') +
       '<p class="dc-imported__synopsis">' + (d.overview ? escHtml(d.overview) : '<span class="dc-text-tertiary">Synopsis non disponible en français</span>') + '</p>' +
@@ -393,6 +436,14 @@
     });
   });
 
+  // Saisie manuelle : si le genre choisi est "Animation", bascule l'onglet
+  // sur Animé — cohérent avec la détection appliquée aux imports TMDB.
+  if (editGenre) {
+    editGenre.addEventListener("change", function () {
+      if (editGenre.value === "animation") setTypeToggleUI("anime");
+    });
+  }
+
   /* ══════════════════════════════════════════════════════
      ÉVÉNEMENTS RECHERCHE
   ══════════════════════════════════════════════════════ */
@@ -436,6 +487,81 @@
     });
   }
 
+  /* ══════════════════════════════════════════════════════
+     PRÉ-REMPLISSAGE VIA QUERY STRING
+     Arrivée depuis la recherche globale (/movies) sur un film qui n'existe
+     pas encore sur Ciné Délices : /add-recipes-movies/?tmdb_id=…&title=…
+     &year=…&genre=…&type=film|serie — on importe directement la fiche TMDB
+     au lieu de laisser l'utilisateur relancer une recherche à la main.
+  ══════════════════════════════════════════════════════ */
+  function setTypeToggleUI(uiType) {
+    if (!typeToggle) return;
+    state.type = uiType;
+    typeToggle.querySelectorAll(".dc-pilltoggle__opt").forEach(function (o) {
+      var active = o.dataset.type === uiType;
+      o.classList.toggle("is-active", active);
+      o.setAttribute("aria-checked", active ? "true" : "false");
+    });
+  }
+
+  function prefillFromQueryString() {
+    var params = new URLSearchParams(window.location.search);
+    var tmdbId = params.get("tmdb_id");
+    if (!tmdbId || !/^\d+$/.test(tmdbId)) return false;
+
+    var rawType = (params.get("type") || "film").toLowerCase();
+    var uiType = rawType === "serie" || rawType === "tv" ? "tv" : (rawType === "anime" ? "anime" : "movie");
+    var apiType = uiType === "movie" ? "movie" : "tv"; // 'anime' interroge aussi movie/tv côté TMDB
+    setTypeToggleUI(uiType);
+
+    var fallbackTitle = params.get("title") || "";
+    var fallbackYear = params.get("year") || "";
+    var fallbackGenre = params.get("genre") || "";
+
+    resultsZone.innerHTML = '<div class="dc-empty-panel"><i data-lucide="loader-circle" width="26" height="26" class="dc-spin" aria-hidden="true"></i><p class="dc-empty-panel__title">Import de la fiche…</p></div>';
+    if (window.lucide) lucide.createIcons();
+
+    fetch("/api/tmdb/detail?id=" + encodeURIComponent(tmdbId) + "&type=" + apiType)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success && data.detail) {
+          state.imported = data.detail;
+        } else {
+          // TMDB indisponible : on retombe sur les infos déjà passées par l'URL.
+          state.imported = {
+            id: parseInt(tmdbId, 10),
+            media_type: apiType,
+            title: fallbackTitle,
+            year: fallbackYear,
+            genre: fallbackGenre,
+            genres: fallbackGenre ? [fallbackGenre] : [],
+            overview: "",
+            poster_path: null,
+          };
+        }
+        state.manuallyEdited = false;
+        editBlock.hidden = true;
+        state.editOpen = false;
+        // Le genre réel (une fois la fiche TMDB résolue) prime sur le "type"
+        // brut passé en query string — ex. media_type "movie" + genre
+        // "animation" doit basculer sur l'onglet Animé, pas rester sur Film.
+        setTypeToggleUI(detectUiType(state.imported.genre, state.imported.media_type, state.imported.genres));
+        renderImported();
+        syncHiddenFields();
+        document.dispatchEvent(new CustomEvent("tmdbFormPrefilled"));
+        // Nettoie l'URL pour éviter un ré-import si l'utilisateur recharge/revient.
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+      })
+      .catch(function () {
+        renderError("Erreur réseau lors de l’import.", prefillFromQueryString);
+      });
+    return true;
+  }
+
   /* Init */
-  syncHiddenFields();
+  if (!prefillFromQueryString()) {
+    syncHiddenFields();
+  }
 })();

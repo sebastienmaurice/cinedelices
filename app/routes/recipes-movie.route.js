@@ -8,6 +8,10 @@ const recipesRouter = Router();
 // toutes les recettes du site
 recipesRouter.get("/", recipesController.allRecipes);
 
+// Recettes déjà publiées pour un film (JSON) — étape 02 du formulaire d'ajout,
+// déclaré avant "/:id" pour ne jamais être intercepté par cette route.
+recipesRouter.get("/api/by-movie/:movieId", recipesController.recipesByMovieJson);
+
 //le detail d'une recette d'un film spécifique
 recipesRouter.get("/details/:id", recipesController.detailRecipes);
 
