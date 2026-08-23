@@ -20,7 +20,7 @@
     />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608306" />
+    <link rel="stylesheet" href="/css/add-recipes-movies.css?v=202608310" />
   </head>
   <body class="arm-full-bleed">
     <!-- HEADER -->
@@ -388,80 +388,73 @@
           <span class="arm-card__num" aria-hidden="true">02</span>
           <div class="arm-body">
 
-            <div class="arm-hd">
-              <div class="arm-hd__step-badge" id="s2badge">
-                <span class="badge-num">2</span>
-                <span class="badge-lbl">Étape</span>
+            <div class="dc-panel__head">
+              <div class="dc-panel__icon">
+                <i data-lucide="chef-hat" stroke-width="1.6" aria-hidden="true"></i>
               </div>
-              <div class="arm-hd__text">
-                <span class="arm-hd__step">Étape 2</span>
-                <h2 class="arm-hd__title" id="arm-s2-title">MA RECETTE</h2>
-                <p class="arm-hd__desc">
-                  Décrivez votre recette, choisissez la catégorie et ajoutez votre photo.
-                </p>
+              <div class="dc-panel__head-text">
+                <h2 class="dc-panel__title" id="arm-s2-title">Ma recette</h2>
+                <p class="dc-panel__sub">Décrivez votre recette, choisissez la catégorie et ajoutez vos photos.</p>
               </div>
-              <div class="arm-hd__rule"></div>
             </div>
 
-
-
             <!-- Nom de la recette -->
-            <div class="arm-field">
-              <label for="recipe-name" class="arm-label">
-                <i data-lucide="sparkles" aria-hidden="true"></i>
+            <div class="dc-field">
+              <label for="recipe-name" class="dc-label">
+                <i data-lucide="sparkles" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                 Nom de la recette
-                <span class="arm-req">*</span>
+                <span class="dc-req">*</span>
               </label>
               <input
                 type="text"
                 name="name"
                 id="recipe-name"
-                class="arm-input arm-input--recipe"
+                class="dc-input"
                 placeholder="Ex : Le Ragoût de l'Explorateur, Tarte des Sorcières…"
                 value="<% if (typeof newRecipe !== 'undefined' && newRecipe && newRecipe.name) { %><%= newRecipe.name %><% } %>"
                 spellcheck="true"
                 lang="fr"
                 required
               />
-              <span class="arm-hint">
-                <i data-lucide="lightbulb" aria-hidden="true"></i>
+              <p class="dc-hint">
+                <i data-lucide="lightbulb" width="12" height="12" stroke-width="1.8" aria-hidden="true"></i>
                 Un nom évocateur qui rappelle le film ou la scène.
-              </span>
+              </p>
               <!-- Recette(s) déjà publiée(s) pour ce film — voir add-recipes-movies-step2.js -->
               <div class="dc-existing-recipes" id="dcExistingRecipes" hidden></div>
             </div>
 
             <!-- Méta : Portions | Temps | Catégorie | Difficulté -->
-            <div class="arm-row arm-row--meta">
+            <div class="dc-row dc-row--recipe-meta">
 
-              <div class="arm-field">
-                <label class="arm-label" for="recipe-servings">
-                  <i data-lucide="users" aria-hidden="true"></i>
+              <div class="dc-field">
+                <label class="dc-label" for="recipe-servings">
+                  <i data-lucide="users" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                   Portions
                 </label>
-                <div class="arm-portions-ctrl" id="arm-portionsCtrl">
-                  <button type="button" class="arm-portions-btn" id="arm-portionsMinus" aria-label="Moins">
-                    <i data-lucide="minus" stroke-width="2.2" aria-hidden="true"></i>
+                <div class="dc-portions-ctrl" id="arm-portionsCtrl">
+                  <button type="button" class="dc-portions-btn" id="arm-portionsMinus" aria-label="Moins">
+                    <i data-lucide="minus" width="13" height="13" stroke-width="2.2" aria-hidden="true"></i>
                   </button>
-                  <span class="arm-portions-val" id="arm-portionsVal">4</span>
+                  <span class="dc-portions-val" id="arm-portionsVal">4</span>
                   <input type="hidden" name="servings" id="recipe-servings" value="4" />
-                  <button type="button" class="arm-portions-btn" id="arm-portionsPlus" aria-label="Plus">
-                    <i data-lucide="plus" stroke-width="2.2" aria-hidden="true"></i>
+                  <button type="button" class="dc-portions-btn" id="arm-portionsPlus" aria-label="Plus">
+                    <i data-lucide="plus" width="13" height="13" stroke-width="2.2" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
 
-              <div class="arm-field">
-                <label for="recipe-time" class="arm-label">
-                  <i data-lucide="clock" aria-hidden="true"></i>
+              <div class="dc-field">
+                <label for="recipe-time" class="dc-label">
+                  <i data-lucide="clock" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                   Temps (min)
-                  <span class="arm-req">*</span>
+                  <span class="dc-req">*</span>
                 </label>
                 <input
                   type="number"
                   name="time"
                   id="recipe-time"
-                  class="arm-input"
+                  class="dc-input"
                   min="1"
                   step="1"
                   placeholder="45"
@@ -469,13 +462,13 @@
                 />
               </div>
 
-              <div class="arm-field">
-                <label for="category" class="arm-label">
-                  <i data-lucide="layout-grid" aria-hidden="true"></i>
+              <div class="dc-field">
+                <label for="category" class="dc-label">
+                  <i data-lucide="layout-grid" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                   Catégorie
-                  <span class="arm-req">*</span>
+                  <span class="dc-req">*</span>
                 </label>
-                <select name="category" id="category" class="arm-select">
+                <select name="category" id="category" class="dc-select">
                   <option value="" disabled selected>Choisir…</option>
                   <option value="apéritif">Apéritif</option>
                   <option value="entrée">Entrée</option>
@@ -486,13 +479,13 @@
                 </select>
               </div>
 
-              <div class="arm-field">
-                <label for="difficulty" class="arm-label">
-                  <i data-lucide="flame" aria-hidden="true"></i>
+              <div class="dc-field">
+                <label for="difficulty" class="dc-label">
+                  <i data-lucide="flame" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                   Difficulté
-                  <span class="arm-req">*</span>
+                  <span class="dc-req">*</span>
                 </label>
-                <select name="difficulty" id="difficulty" class="arm-select">
+                <select name="difficulty" id="difficulty" class="dc-select">
                   <option value="" disabled selected>Niveau…</option>
                   <option value="Facile">Facile</option>
                   <option value="Moyenne">Moyenne</option>
@@ -501,18 +494,16 @@
               </div>
             </div>
 
-            <hr class="arm-sep" />
-
             <!-- Upload photos — 3 slots 3:2 -->
-            <div class="arm-field">
-              <label class="arm-label">
-                <i data-lucide="image" aria-hidden="true"></i>
+            <div class="dc-field">
+              <label class="dc-label">
+                <i data-lucide="image" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                 Photos de la recette
-                <span class="arm-req">*</span>
+                <span class="dc-req">*</span>
               </label>
 
-              <div class="arm-photos-info">
-                <i data-lucide="circle-alert" width="14" height="14" stroke-width="2" aria-hidden="true" style="flex-shrink:0;margin-top:2px"></i>
+              <div class="dc-notice">
+                <i data-lucide="circle-alert" width="14" height="14" stroke-width="2" aria-hidden="true"></i>
                 <span>
                   <strong>Photo en mode paysage uniquement</strong> : la photo doit être plus large que haute (comme une photo de paysage, pas comme un selfie). Les photos prises en mode portrait ou carrées sont refusées.<br>
                   📱 <strong>Vous prenez la photo avec votre téléphone ?</strong> Tournez-le <strong>à l'horizontale</strong> avant de déclencher, comme si vous regardiez une vidéo, sinon la photo sera refusée.<br>
@@ -520,103 +511,101 @@
                 </span>
               </div>
 
-              <div class="arm-upload-grid" id="arm-uploadGrid">
+              <div class="dc-recipe-photo-grid" id="arm-uploadGrid">
 
                 <!-- Slot 1 — Photo principale -->
-                <div class="arm-upload-slot" id="arm-slot1">
+                <div class="dc-recipe-photo-slot" id="arm-slot1">
                   <input
                     type="file"
                     name="pictures"
                     id="recipeImageInput"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
-                    class="arm-upload-slot__input"
+                    class="dc-recipe-photo-slot__input"
                   />
-                  <span class="arm-upload-slot__n">01<span class="arm-upload-slot__badge"> PRINC.</span></span>
-                  <div class="arm-upload-slot__ico">
+                  <span class="dc-recipe-photo-slot__badge dc-recipe-photo-slot__badge--main">Principale</span>
+                  <div class="dc-recipe-photo-slot__prev" id="arm-prev1"></div>
+                  <div class="dc-recipe-photo-slot__empty">
                     <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
+                    <span>Photo principale</span>
                   </div>
-                  <span class="arm-upload-slot__lbl">Photo principale</span>
-                  <div class="arm-upload-slot__prev" id="arm-prev1"></div>
-                  <div class="arm-upload-slot__acts">
-                    <button class="arm-slot-act" type="button" id="arm-chg1" title="Changer">
+                  <div class="dc-recipe-photo-slot__acts">
+                    <button class="dc-photo-act" type="button" id="arm-chg1" title="Changer">
                       <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
                     </button>
-                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del1" title="Supprimer">
+                    <button class="dc-photo-act dc-photo-act--del" type="button" id="arm-del1" title="Supprimer">
                       <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
                     </button>
                   </div>
                 </div>
 
                 <!-- Slot 2 — Photo secondaire -->
-                <div class="arm-upload-slot" id="arm-slot2">
+                <div class="dc-recipe-photo-slot" id="arm-slot2">
                   <input
                     type="file"
                     name="pictures"
                     id="recipeImageInput2"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
-                    class="arm-upload-slot__input"
+                    class="dc-recipe-photo-slot__input"
                   />
-                  <span class="arm-upload-slot__n">02</span>
-                  <div class="arm-upload-slot__ico">
+                  <div class="dc-recipe-photo-slot__prev" id="arm-prev2"></div>
+                  <div class="dc-recipe-photo-slot__empty">
                     <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
+                    <span>Photo secondaire</span>
                   </div>
-                  <span class="arm-upload-slot__lbl">Photo secondaire</span>
-                  <div class="arm-upload-slot__prev" id="arm-prev2"></div>
-                  <div class="arm-upload-slot__acts">
-                    <button class="arm-slot-act" type="button" id="arm-chg2" title="Changer">
+                  <div class="dc-recipe-photo-slot__acts">
+                    <button class="dc-photo-act" type="button" id="arm-chg2" title="Changer">
                       <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
                     </button>
-                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del2" title="Supprimer">
+                    <button class="dc-photo-act dc-photo-act--del" type="button" id="arm-del2" title="Supprimer">
                       <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
                     </button>
                   </div>
                 </div>
 
                 <!-- Slot 3 — Photo détail -->
-                <div class="arm-upload-slot" id="arm-slot3">
+                <div class="dc-recipe-photo-slot" id="arm-slot3">
                   <input
                     type="file"
                     name="pictures"
                     id="recipeImageInput3"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
-                    class="arm-upload-slot__input"
+                    class="dc-recipe-photo-slot__input"
                   />
-                  <span class="arm-upload-slot__n">03</span>
-                  <div class="arm-upload-slot__ico">
+                  <div class="dc-recipe-photo-slot__prev" id="arm-prev3"></div>
+                  <div class="dc-recipe-photo-slot__empty">
                     <i data-lucide="image-plus" stroke-width="1.5" aria-hidden="true"></i>
+                    <span>Photo détail</span>
                   </div>
-                  <span class="arm-upload-slot__lbl">Photo détail</span>
-                  <div class="arm-upload-slot__prev" id="arm-prev3"></div>
-                  <div class="arm-upload-slot__acts">
-                    <button class="arm-slot-act" type="button" id="arm-chg3" title="Changer">
+                  <div class="dc-recipe-photo-slot__acts">
+                    <button class="dc-photo-act" type="button" id="arm-chg3" title="Changer">
                       <i data-lucide="square-pen" stroke-width="2" aria-hidden="true"></i>
                     </button>
-                    <button class="arm-slot-act arm-slot-act--del" type="button" id="arm-del3" title="Supprimer">
+                    <button class="dc-photo-act dc-photo-act--del" type="button" id="arm-del3" title="Supprimer">
                       <i data-lucide="trash-2" stroke-width="2" aria-hidden="true"></i>
                     </button>
                   </div>
                 </div>
 
-              </div><!-- /arm-upload-grid -->
+              </div><!-- /dc-recipe-photo-grid -->
 
               <!-- Compteur photos -->
-              <div class="arm-upload-count">
-                <span class="arm-upload-count__n" id="arm-photoNum">0</span>/3 photos —
+              <div class="dc-panel__footer" id="dc-photo-footer">
+                <span class="dc-photo-count-n" id="arm-photoNum">0</span>/3 photos —
                 <span id="arm-photoLbl">Au moins 1 photo requise · Format paysage requis</span>
               </div>
               <!-- Warning non bloquant ratio -->
-              <p id="arm-ratio-warn" class="arm-ratio-warn" style="display:none"></p>
+              <p id="arm-ratio-warn" class="dc-ratio-warn" style="display:none"></p>
 
               <!-- Toast notification upload erreur -->
-              <div id="arm-upload-toast" class="is-hidden" role="alert" aria-live="assertive">
-                <div class="arm-toast__icon">
+              <div id="arm-upload-toast" class="dc-upload-toast is-hidden" role="alert" aria-live="assertive">
+                <div class="dc-upload-toast__icon">
                   <i data-lucide="triangle-alert" aria-hidden="true"></i>
                 </div>
-                <div class="arm-toast__body">
-                  <p class="arm-toast__title">Photo refusée</p>
-                  <p class="arm-toast__msg" id="arm-toast-msg"></p>
+                <div class="dc-upload-toast__body">
+                  <p class="dc-upload-toast__title">Photo refusée</p>
+                  <p class="dc-upload-toast__msg" id="arm-toast-msg"></p>
                 </div>
-                <button class="arm-toast__close" id="arm-toast-close" type="button" aria-label="Fermer">
+                <button class="dc-upload-toast__close" id="arm-toast-close" type="button" aria-label="Fermer">
                   <i data-lucide="x" aria-hidden="true"></i>
                 </button>
               </div>
@@ -625,36 +614,36 @@
               <img id="recipeImagePreview" src="" alt="" style="display:none;" />
               <button type="button" id="uploadButton" style="display:none;"></button>
 
-              <span class="arm-hint">
-                <i data-lucide="shield" aria-hidden="true"></i>
+              <p class="dc-hint">
+                <i data-lucide="shield" width="12" height="12" stroke-width="1.8" aria-hidden="true"></i>
                 Images validées par l'équipe Ciné Délices (droits d'auteur requis). · Seule la photo principale sera publiée.
-              </span>
+              </p>
             </div>
 
             <!-- Contexte cinématographique -->
-            <div class="arm-field">
-              <label for="recipe-context" class="arm-label">
-                <i data-lucide="message-square" aria-hidden="true"></i>
+            <div class="dc-field">
+              <label for="recipe-context" class="dc-label">
+                <i data-lucide="message-square" width="12" height="12" stroke-width="2" aria-hidden="true"></i>
                 Contexte cinématographique
               </label>
-              <div class="arm-cine-context">
-                <p class="arm-cine-context__quote">
+              <div class="dc-cine-quote">
+                <p class="dc-cine-quote__text">
                   « Quelle scène vous a inspiré cette recette ? »
                 </p>
                 <textarea
                   name="description"
                   id="recipe-context"
-                  class="arm-textarea arm-textarea--bare"
+                  class="dc-textarea dc-cine-quote__textarea"
                   placeholder="Ex : Cette recette m'a été inspirée par la scène où le personnage prépare ce plat…"
                   spellcheck="true"
                   lang="fr"
                   maxlength="500"
                 ></textarea>
               </div>
-              <span class="arm-hint">
-                <i data-lucide="circle-alert" aria-hidden="true"></i>
+              <p class="dc-hint">
+                <i data-lucide="circle-alert" width="12" height="12" stroke-width="1.8" aria-hidden="true"></i>
                 Apparaîtra dans la section "Pourquoi cette recette ?" de votre fiche.
-              </span>
+              </p>
             </div>
 
             <div class="arm-cta-row">

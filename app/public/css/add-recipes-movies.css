@@ -4472,3 +4472,239 @@ body.arm-full-bleed {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .dc-existing-recipe__go { flex-shrink: 0; color: var(--dc-gold-light); }
+
+/* ══════════════════════════════════════════════════════
+   ÉTAPE 02 — « Ma recette »
+══════════════════════════════════════════════════════ */
+.dc-row--recipe-meta {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(160px, 1.2fr) minmax(160px, 1.2fr);
+  gap: 16px;
+}
+
+/* Stepper portions */
+.dc-portions-ctrl {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--dc-well);
+  border: 1px solid var(--dc-well-border);
+  border-radius: var(--dc-r-field);
+  padding: 5px 8px;
+}
+.dc-portions-ctrl:focus-within { border-color: rgba(143, 163, 106, 0.5); box-shadow: 0 0 0 3px rgba(143, 163, 106, 0.1); }
+.dc-portions-btn {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(143, 163, 106, 0.1);
+  border: 1px solid rgba(143, 163, 106, 0.28);
+  border-radius: 8px;
+  color: var(--dc-sage-3);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dc-portions-btn:hover { background: rgba(143, 163, 106, 0.2); border-color: rgba(143, 163, 106, 0.5); }
+.dc-portions-val {
+  font-family: var(--dc-f-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dc-title);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bandeau d'avertissement (règles photos) */
+.dc-notice {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: rgba(232, 194, 94, 0.05);
+  border: 1px solid rgba(232, 194, 94, 0.18);
+  border-radius: var(--dc-r-row);
+  color: var(--dc-text-secondary);
+  font-family: var(--dc-f-sans);
+  font-size: 0.76rem;
+  font-weight: 300;
+  line-height: 1.55;
+}
+.dc-notice > svg, .dc-notice > [data-lucide] { flex-shrink: 0; margin-top: 2px; color: var(--dc-gold-light); }
+.dc-notice strong { color: var(--dc-text); font-weight: 600; }
+
+/* Grille des 3 emplacements photo */
+.dc-recipe-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+@media (max-width: 640px) {
+  .dc-recipe-photo-grid { grid-template-columns: 1fr; }
+}
+.dc-recipe-photo-slot {
+  position: relative;
+  aspect-ratio: 3/2;
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--dc-r-row);
+  background: rgba(5, 9, 16, 0.4);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+.dc-recipe-photo-slot:hover { border-color: rgba(232, 194, 94, 0.4); background: rgba(232, 194, 94, 0.04); }
+.dc-recipe-photo-slot__input {
+  position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%;
+  z-index: 3; display: none; /* géré via .click() par le JS existant */
+}
+.dc-recipe-photo-slot__badge {
+  position: absolute; top: 8px; left: 8px; z-index: 4;
+  padding: 3px 9px;
+  border-radius: var(--dc-r-pill);
+  font-family: var(--dc-f-sans); font-size: 0.6rem; font-weight: 500;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--dc-text-secondary);
+}
+.dc-recipe-photo-slot__badge--main {
+  background: rgba(232, 194, 94, 0.14);
+  border-color: rgba(232, 194, 94, 0.35);
+  color: var(--dc-gold-light);
+}
+.dc-recipe-photo-slot__empty {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  position: relative; z-index: 2;
+  color: rgba(245, 239, 224, 0.3);
+  transition: color 0.2s;
+}
+.dc-recipe-photo-slot__empty svg { width: 22px; height: 22px; stroke: currentColor; }
+.dc-recipe-photo-slot__empty span {
+  font-family: var(--dc-f-sans); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.dc-recipe-photo-slot:hover .dc-recipe-photo-slot__empty { color: rgba(232, 194, 94, 0.7); }
+.dc-recipe-photo-slot__prev {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  display: none; z-index: 1;
+}
+.dc-recipe-photo-slot__prev.on { display: block; }
+.dc-recipe-photo-slot__prev::after {
+  content: ""; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.3);
+}
+.dc-recipe-photo-slot__acts {
+  position: absolute; bottom: 8px; right: 8px; z-index: 5;
+  display: none; gap: 5px;
+}
+.dc-recipe-photo-slot.has-photo .dc-recipe-photo-slot__acts { display: flex; }
+.dc-recipe-photo-slot.has-photo .dc-recipe-photo-slot__empty { opacity: 0; pointer-events: none; }
+.dc-photo-act {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  background: rgba(5, 9, 16, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--dc-gold-light);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dc-photo-act:hover { background: rgba(232, 194, 94, 0.18); border-color: rgba(232, 194, 94, 0.5); }
+.dc-photo-act svg { width: 12px; height: 12px; }
+.dc-photo-act--del { border-color: rgba(242, 131, 106, 0.25); color: var(--dc-coral); }
+.dc-photo-act--del:hover { background: var(--dc-coral-bg); border-color: rgba(242, 131, 106, 0.5); color: var(--dc-coral-hover); }
+
+@keyframes dc-slot-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.dc-recipe-photo-slot.has-error {
+  border-color: rgba(214, 88, 79, 0.7);
+  background: rgba(214, 88, 79, 0.07);
+  animation: dc-slot-shake 0.38s ease;
+}
+
+#dc-photo-footer { margin-top: 10px; }
+.dc-photo-count-n { color: var(--dc-gold-light); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.dc-ratio-warn {
+  margin-top: 8px;
+  padding: 9px 13px;
+  border-radius: var(--dc-r-field);
+  background: rgba(232, 194, 94, 0.08);
+  border: 1px solid rgba(232, 194, 94, 0.28);
+  color: var(--dc-gold-light);
+  font-family: var(--dc-f-sans);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+/* Toast upload — même comportement que l'ancien, palette dc-* */
+@keyframes dc-toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes dc-toast-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+#arm-upload-toast.dc-upload-toast {
+  position: fixed;
+  bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 9999;
+  display: flex; align-items: flex-start; gap: 12px;
+  min-width: 300px; max-width: 480px;
+  padding: 14px 16px 14px 14px;
+  border-radius: var(--dc-r-row);
+  background: #141d2d;
+  border: 1px solid rgba(214, 88, 79, 0.45);
+  box-shadow: var(--dc-shadow-card);
+  pointer-events: auto;
+  animation: dc-toast-in 0.3s var(--dc-ease) both;
+}
+#arm-upload-toast.dc-upload-toast.is-hiding { animation: dc-toast-out 0.25s ease forwards; }
+#arm-upload-toast.dc-upload-toast.is-hidden { display: none; }
+.dc-upload-toast__icon {
+  flex-shrink: 0; width: 24px; height: 24px; margin-top: 1px;
+  border-radius: 50%;
+  background: rgba(214, 88, 79, 0.18);
+  display: flex; align-items: center; justify-content: center;
+}
+.dc-upload-toast__icon svg { width: 13px; height: 13px; stroke: var(--dc-status-locked-light); stroke-width: 2.2; }
+.dc-upload-toast__body { flex: 1; min-width: 0; }
+.dc-upload-toast__title {
+  font-family: var(--dc-f-sans); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--dc-status-locked-light);
+  margin-bottom: 3px;
+}
+.dc-upload-toast__msg { font-family: var(--dc-f-sans); font-size: 0.8rem; font-weight: 300; color: var(--dc-text); line-height: 1.45; }
+.dc-upload-toast__close {
+  flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 2px;
+  color: var(--dc-text-tertiary);
+  transition: color 0.2s;
+}
+.dc-upload-toast__close:hover { color: var(--dc-text); }
+.dc-upload-toast__close svg { width: 14px; height: 14px; }
+
+/* Citation "contexte cinématographique" */
+.dc-cine-quote {
+  background: rgba(232, 194, 94, 0.04);
+  border: 1px solid rgba(232, 194, 94, 0.12);
+  border-left: 3px solid rgba(232, 194, 94, 0.4);
+  border-radius: 0 var(--dc-r-row) var(--dc-r-row) 0;
+  padding: 16px 20px;
+}
+.dc-cine-quote__text {
+  font-family: var(--dc-f-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--dc-gold-light);
+  margin: 0 0 10px;
+  letter-spacing: 0.01em;
+}
+.dc-cine-quote__textarea { background: transparent; border: none; padding: 0; min-height: 70px; }
+.dc-cine-quote__textarea:focus { box-shadow: none; }
