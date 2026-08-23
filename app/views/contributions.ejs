@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Ciné Délices — Mes contributions : recettes, films, avis et activité" />
+    <title>Mes contributions - Ciné Délices</title>
+    <%- include("partials/head-resources") %>
+    <link rel="stylesheet" href="/css/contributions.css?v=1" />
+  </head>
+
+  <body class="ctr-page">
+    <%- include("partials/header") %>
+
+    <%
+      function statusLabel(s) {
+        if (s === 'approved') return 'Approuvée';
+        if (s === 'pending') return 'En attente';
+        if (s === 'rejected') return 'Refusée';
+        return s || '';
+      }
+    %>
+
+    <main class="ctr-main">
+      <h1 class="sr-only">Mes contributions — Ciné Délices</h1>
+
+      <nav class="ctr-breadcrumb" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <span>Contributions</span>
+      </nav>
+
+      <div class="ctr-hero">
+        <div>
+          <p class="ctr-hero__eyebrow"><i data-lucide="clapperboard" width="12" height="12" aria-hidden="true"></i> Ciné Délices</p>
+          <h2 class="ctr-hero__title">Mes <em>contributions</em></h2>
+          <p class="ctr-hero__sub">Ce que vous apportez à la communauté Ciné Délices.</p>
+        </div>
+        <a href="/cinepass/" class="ctr-hero__cinepass">
+          <i data-lucide="ticket" width="14" height="14" aria-hidden="true"></i> Voir mon CinéPass
+        </a>
+      </div>
+
+      <!-- ══════ Bandeau impact ══════ -->
+      <section class="ctr-impact">
+        <div class="ctr-impact__cell">
+          <div class="ctr-impact__icon ctr-impact__icon--recipe"><i data-lucide="utensils" aria-hidden="true"></i></div>
+          <div><span class="ctr-impact__val"><%= stats.recipesTotal %></span><span class="ctr-impact__lbl">Recettes créées</span></div>
+        </div>
+        <div class="ctr-impact__cell">
+          <div class="ctr-impact__icon ctr-impact__icon--movie"><i data-lucide="film" aria-hidden="true"></i></div>
+          <div><span class="ctr-impact__val"><%= stats.moviesTotal %></span><span class="ctr-impact__lbl">Films proposés</span></div>
+        </div>
+        <div class="ctr-impact__cell">
+          <div class="ctr-impact__icon ctr-impact__icon--notice"><i data-lucide="message-square" aria-hidden="true"></i></div>
+          <div><span class="ctr-impact__val"><%= stats.noticesTotal %></span><span class="ctr-impact__lbl">Avis rédigés</span></div>
+        </div>
+        <div class="ctr-impact__cell">
+          <div class="ctr-impact__icon ctr-impact__icon--valid"><i data-lucide="check-circle" aria-hidden="true"></i></div>
+          <div><span class="ctr-impact__val"><%= stats.contributionsValidated %></span><span class="ctr-impact__lbl">Contributions validées</span></div>
+        </div>
+      </section>
+
+      <div class="ctr-row">
+
+        <!-- ══════ Mes recettes ══════ -->
+        <section class="ctr-card">
+          <div class="ctr-card__head">
+            <p class="ctr-card__title"><i data-lucide="utensils" width="14" height="14" aria-hidden="true"></i> Mes recettes</p>
+            <a href="/add-recipes-movies/" class="ctr-card__add"><i data-lucide="plus" width="12" height="12" aria-hidden="true"></i> Ajouter</a>
+          </div>
+          <% if (userRecipes.length > 0) { %>
+          <div class="ctr-list">
+            <% userRecipes.slice(0, 8).forEach(function (r) { %>
+            <a class="ctr-item" href="/recipes-movie/details/<%= r.id %>">
+              <span class="ctr-item__title"><%= r.name %><% if (r.Movie) { %> <em>— <%= r.Movie.title %></em><% } %></span>
+              <span class="ctr-item__status ctr-item__status--<%= r.status %>"><%= statusLabel(r.status) %></span>
+            </a>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <p class="ctr-card__empty">Aucune recette pour le moment.</p>
+          <% } %>
+        </section>
+
+        <!-- ══════ Mes films ══════ -->
+        <section class="ctr-card">
+          <div class="ctr-card__head">
+            <p class="ctr-card__title"><i data-lucide="film" width="14" height="14" aria-hidden="true"></i> Mes films</p>
+          </div>
+          <% if (userMovies.length > 0) { %>
+          <div class="ctr-list">
+            <% userMovies.slice(0, 8).forEach(function (m) { %>
+            <a class="ctr-item" href="/recipes-movie/<%= m.id %>">
+              <span class="ctr-item__title"><%= m.title %></span>
+              <span class="ctr-item__status ctr-item__status--<%= m.status %>"><%= statusLabel(m.status) %></span>
+            </a>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <p class="ctr-card__empty">Aucun film proposé pour le moment.</p>
+          <% } %>
+        </section>
+
+        <!-- ══════ Mes avis ══════ -->
+        <section class="ctr-card">
+          <div class="ctr-card__head">
+            <p class="ctr-card__title"><i data-lucide="message-square" width="14" height="14" aria-hidden="true"></i> Mes avis</p>
+          </div>
+          <% if (userNotices.length > 0) { %>
+          <div class="ctr-list">
+            <% userNotices.slice(0, 8).forEach(function (n) { %>
+            <div class="ctr-item ctr-item--static">
+              <span class="ctr-item__title">
+                <% if (n.Recipe) { %><%= n.Recipe.name %><% } else { %>Avis<% } %>
+              </span>
+              <span class="ctr-item__status ctr-item__status--<%= n.status %>"><%= statusLabel(n.status) %></span>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <p class="ctr-card__empty">Aucun avis pour le moment.</p>
+          <% } %>
+        </section>
+
+      </div>
+
+      <!-- ══════ Mon activité ══════ -->
+      <section class="ctr-card ctr-card--activity">
+        <div class="ctr-card__head">
+          <p class="ctr-card__title"><i data-lucide="history" width="14" height="14" aria-hidden="true"></i> Mon activité</p>
+        </div>
+        <% if (activity.length > 0) { %>
+        <div class="ctr-activity">
+          <% activity.forEach(function (a) { %>
+          <div class="ctr-activity__item">
+            <div class="ctr-activity__icon ctr-activity__icon--<%= a.type %>">
+              <% if (a.type === 'recipe') { %><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i>
+              <% } else if (a.type === 'movie') { %><i data-lucide="film" width="13" height="13" aria-hidden="true"></i>
+              <% } else { %><i data-lucide="message-square" width="13" height="13" aria-hidden="true"></i><% } %>
+            </div>
+            <div class="ctr-activity__body">
+              <p class="ctr-activity__title"><%= a.title %></p>
+              <p class="ctr-activity__sub"><%= a.sub %> · <%= a.time %></p>
+            </div>
+            <span class="ctr-activity__xp">+<%= a.xp %> XP</span>
+          </div>
+          <% }); %>
+        </div>
+        <% } else { %>
+        <p class="ctr-card__empty">Aucune activité pour le moment.</p>
+        <% } %>
+      </section>
+
+    </main>
+
+    <%- include("partials/footer") %>
+  </body>
+</html>

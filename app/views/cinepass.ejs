@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Ciné Délices — Votre CinéPass : parcours, progression et collection de cinéphile gourmand" />
+    <title>Mon CinéPass - Ciné Délices</title>
+    <%- include("partials/head-resources") %>
+    <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
+    <link rel="stylesheet" href="/css/user-profile.css" />
+    <link rel="stylesheet" href="/css/badge-strange.css" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=6" />
+  </head>
+
+  <body class="cp-page">
+    <%- include("partials/header") %>
+
+    <%
+      const cpTier = level >= 11 ? 'legendary' : level >= 7 ? 'gold' : level >= 4 ? 'silver' : 'bronze';
+      const cpUnlockedBadges = 0; // Aperçu mock — aucun badge réellement débloqué pour l'instant
+    %>
+
+    <main class="cp-main">
+      <h1 class="sr-only">Mon CinéPass — Ciné Délices</h1>
+
+      <nav class="cp-breadcrumb" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <span>CinéPass</span>
+      </nav>
+
+      <!-- ══════════════════════════════════════════
+           HERO — bannière cinéma + avatar cadré + identité
+           (même technique que /auth/profil/#, en lecture seule)
+      ══════════════════════════════════════════ -->
+      <section class="cp-hero">
+        <div class="cp-hero__banner">
+          <img src="/images/banner-gamification-section.webp" alt="" />
+        </div>
+        <div class="cp-hero__banner-grad"></div>
+
+        <div class="cp-hero__reel cp-hero__reel--1" aria-hidden="true"></div>
+        <div class="cp-hero__reel cp-hero__reel--2" aria-hidden="true"></div>
+        <div class="cp-hero__scanlines" aria-hidden="true"></div>
+        <div class="cp-hero__vignette" aria-hidden="true"></div>
+
+        <!-- Titre — bloc flottant en haut de bannière -->
+        <div class="cp-hero__masthead">
+          <p class="cp-hero__eyebrow">
+            <i data-lucide="ticket" width="12" height="12" aria-hidden="true"></i>
+            CinéPass
+          </p>
+          <h2 class="cp-hero__title">Mon <em>CinéPass</em></h2>
+          <p class="cp-hero__sub">Votre parcours de cinéphile gourmand</p>
+          <p class="cp-hero__desc">Partagez vos recettes, vos avis et vos découvertes pour débloquer des récompenses exclusives et devenir une référence de la communauté.</p>
+        </div>
+
+        <!-- Identité — ancrée en bas, avatar cadré + stats -->
+        <div class="cp-hero__content">
+          <div class="cp-hero__row">
+            <div class="cp-hero__avatar-block">
+              <% if (activeFrameCode === 'strange') { %>
+              <!-- Cadre CSS pur — mêmes classes que /auth/profil/# -->
+              <div class="profile-badge-hero profile-badge-hero--css-only"
+                   id="profileBadgeHero"
+                   data-frame-code="strange"
+                   data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
+                <%- include('partials/badge-strange-avatar', {
+                  photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
+                  photoAlt: 'Avatar de ' + user.pseudo
+                }) %>
+              </div>
+              <% } else { %>
+              <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
+              <div class="profile-badge-hero"
+                 id="profileBadgeHero"
+                 data-frame-code="<%= activeFrameCode || 'cine' %>"
+                 data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
+                <img
+                  id="pbhPhoto"
+                  class="pbh-photo"
+                  src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>"
+                  alt="Avatar de <%= user.pseudo %>"
+                />
+                <% if (activeFrameUrl) { %>
+                <img class="pbh-frame" src="<%= activeFrameUrl %>" alt="" aria-hidden="true" />
+                <% } else { %>
+                <div class="pbh-ring"></div>
+                <% } %>
+              </div>
+              <% } %>
+              <!-- Template caché : badge Dr Strange CSS — cloné par gamification.js lors d'un changement de cadre -->
+              <template id="bds-badge-tpl">
+                <%- include('partials/badge-strange-avatar', {
+                  photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
+                  photoAlt: 'Avatar de ' + user.pseudo
+                }) %>
+              </template>
+            </div>
+
+            <div class="cp-hero__identity">
+              <p class="cp-hero__name"><%= (user.pseudo || '').toUpperCase() %></p>
+              <p class="cp-hero__rank-row">
+                <span class="cp-hero__rank"><%= rank %></span>
+                <span class="cp-hero__sep" aria-hidden="true">·</span>
+                <span class="cp-hero__lvl-pill">Niveau <%= level %></span>
+              </p>
+
+              <div class="cp-hero__pills">
+                <div class="cp-pill">
+                  <i data-lucide="zap" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= xp.toLocaleString('fr-FR') %></strong><span>XP actuels</span></div>
+                </div>
+                <div class="cp-pill">
+                  <i data-lucide="utensils" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= recipesCount %></strong><span>Recettes</span></div>
+                </div>
+                <div class="cp-pill">
+                  <i data-lucide="message-square" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= notices.length %></strong><span>Avis</span></div>
+                </div>
+                <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
+                  <i data-lucide="compass" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= mockUnivers.length %></strong><span>Univers</span></div>
+                </div>
+                <div class="cp-pill">
+                  <i data-lucide="layout-grid" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= unlockedFrames.length %></strong><span>Cadres</span></div>
+                </div>
+                <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
+                  <i data-lucide="star" width="15" height="15" aria-hidden="true"></i>
+                  <div><strong><%= cpUnlockedBadges %></strong><span>Badges</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           MA PROGRESSION  +  MES UNIVERS (mock)
+      ══════════════════════════════════════════ -->
+      <div class="cp-row cp-row--progress">
+
+        <section class="cp-card cp-progress">
+          <p class="cp-card__eyebrow">Ma progression</p>
+          <div class="cp-progress__medallion cp-progress__medallion--<%= cpTier %>">
+            <span><%= level %></span>
+          </div>
+          <p class="cp-progress__lvl">Niveau <%= level %></p>
+          <p class="cp-progress__rank"><%= rank %></p>
+
+          <div class="cp-xp-track">
+            <div class="cp-xp-fill" style="width:<%= xpProg.pct %>%"></div>
+          </div>
+          <p class="cp-progress__xp"><%= xp.toLocaleString('fr-FR') %> / <%= (xp + xpProg.needed).toLocaleString('fr-FR') %> XP</p>
+          <% if (xpProg.needed > 0) { %>
+          <p class="cp-progress__left"><%= xpProg.needed.toLocaleString('fr-FR') %> XP avant le niveau <%= level + 1 %></p>
+          <% } else { %>
+          <p class="cp-progress__left">Niveau maximum atteint</p>
+          <% } %>
+
+          <% if (nextRank) { %>
+          <div class="cp-progress__next">
+            <p class="cp-progress__next-label">Montée en niveau</p>
+            <div class="cp-progress__next-row">
+              <span class="cp-progress__next-num"><%= level + 1 %></span>
+              <span class="cp-progress__next-title"><%= nextRank %></span>
+            </div>
+          </div>
+          <% } %>
+
+          <a href="#cp-collection-frames" class="cp-link-btn">Voir tous les niveaux <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i></a>
+        </section>
+
+        <section class="cp-card cp-univers">
+          <div class="cp-card__head">
+            <p class="cp-card__eyebrow">Mes univers cinématographiques</p>
+            <span class="cp-card__mock-tag">Aperçu à venir</span>
+          </div>
+          <div class="cp-univers__grid">
+            <% mockUnivers.forEach(function (u) { %>
+            <div class="cp-univers__card<%= u.progress >= u.total ? ' is-mastered' : '' %>" data-accent="<%= u.accent %>">
+              <div class="cp-univers__img">
+                <img src="<%= u.img %>" alt="" loading="lazy" />
+                <div class="cp-univers__img-grad"></div>
+              </div>
+              <div class="cp-univers__body">
+                <p class="cp-univers__label"><%= u.label %></p>
+                <div class="cp-univers__dots">
+                  <% for (let i = 0; i < u.total; i++) { %>
+                  <span class="cp-univers__dot<%= i < u.progress ? ' is-on' : '' %>"></span>
+                  <% } %>
+                </div>
+                <p class="cp-univers__count"><%= u.progress %> / <%= u.total %> cadres</p>
+                <p class="cp-univers__xp"><%= u.xp %> / <%= u.xpMax %> XP</p>
+              </div>
+              <% if (u.progress >= u.total) { %>
+              <span class="cp-univers__mastered">Maîtrisé</span>
+              <% } %>
+            </div>
+            <% }); %>
+          </div>
+          <p class="cp-card__mock-hint">Les Univers ne sont pas encore calculés dynamiquement — aperçu du futur système Ciné Délices.</p>
+        </section>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           MA COLLECTION — Cadres (réel, même composant que /auth/profil/#contributions)
+      ══════════════════════════════════════════ -->
+      <div class="cp-frames-wrap" id="cp-collection-frames">
+        <%- include('partials/frames-collection', {
+          user,
+          userLevel: level,
+          userXP: xp,
+          userActiveFrameId: activeFrameCode,
+          userFrames: frames,
+        }) %>
+      </div>
+
+      <!-- Badges — aperçu du futur système (mock, distinct des cadres) -->
+      <section class="cp-card cp-card--badges">
+        <div class="cp-card__head">
+          <p class="cp-card__eyebrow">Badges</p>
+          <span class="cp-card__mock-tag">Aperçu à venir</span>
+        </div>
+        <div class="cp-badges">
+          <% mockBadges.forEach(function (b) { %>
+          <div class="cp-badge cp-badge--<%= b.tier %>" title="<%= b.label %>">
+            <span class="cp-badge__icon"><%= b.icon %></span>
+            <span class="cp-badge__label"><%= b.label %></span>
+          </div>
+          <% }); %>
+        </div>
+        <p class="cp-card__mock-hint">Aperçu du futur système de badges — aucun accomplissement réel n'est encore calculé.</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           OBJECTIFS · CONTRIBUTIONS · HÉRITAGE
+      ══════════════════════════════════════════ -->
+      <div class="cp-row cp-row--three">
+
+        <section class="cp-card cp-objectives">
+          <p class="cp-card__eyebrow">Mes objectifs</p>
+          <div class="cp-objective">
+            <div class="cp-objective__icon"><i data-lucide="trending-up" width="16" height="16" aria-hidden="true"></i></div>
+            <div class="cp-objective__body">
+              <p class="cp-objective__title">Prochain niveau</p>
+              <p class="cp-objective__sub"><% if (xpProg.needed > 0) { %><%= xpProg.needed.toLocaleString('fr-FR') %> XP restants<% } else { %>Niveau maximum atteint<% } %></p>
+            </div>
+          </div>
+          <% if (nextFrame) { %>
+          <div class="cp-objective">
+            <div class="cp-objective__icon"><i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i></div>
+            <div class="cp-objective__body">
+              <p class="cp-objective__title">Prochain cadre — <%= nextFrame.label %></p>
+              <p class="cp-objective__sub">Niveau <%= nextFrame.minLvl %> requis</p>
+            </div>
+          </div>
+          <% } %>
+          <div class="cp-objective">
+            <div class="cp-objective__icon cp-objective__icon--gold"><i data-lucide="crown" width="16" height="16" aria-hidden="true"></i></div>
+            <div class="cp-objective__body">
+              <p class="cp-objective__title">Grande étape — Page Auteur</p>
+              <p class="cp-objective__sub"><%= hasAuthorPage ? 'Déjà débloquée' : 'Publiez votre 1ère recette approuvée' %></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="cp-card cp-activity">
+          <div class="cp-card__head">
+            <p class="cp-card__eyebrow">Dernières contributions</p>
+            <a href="/contributions/" class="cp-card__more">Voir toutes <i data-lucide="arrow-right" width="12" height="12" aria-hidden="true"></i></a>
+          </div>
+          <% if (recentActivity.length > 0) { %>
+          <div class="cp-activity__list">
+            <% recentActivity.forEach(function (a) { %>
+            <div class="cp-activity__item">
+              <div class="cp-activity__icon cp-activity__icon--<%= a.type %>">
+                <% if (a.type === 'recipe') { %><i data-lucide="utensils" width="14" height="14" aria-hidden="true"></i>
+                <% } else if (a.type === 'movie') { %><i data-lucide="film" width="14" height="14" aria-hidden="true"></i>
+                <% } else { %><i data-lucide="message-square" width="14" height="14" aria-hidden="true"></i><% } %>
+              </div>
+              <div class="cp-activity__body">
+                <p class="cp-activity__title"><%= a.title %></p>
+                <p class="cp-activity__time"><%= a.time %></p>
+              </div>
+              <span class="cp-activity__xp">+<%= a.xp %> XP</span>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <p class="cp-card__empty">Aucune contribution pour le moment. Publiez votre première recette pour gagner vos premiers XP !</p>
+          <% } %>
+        </section>
+
+        <section class="cp-card cp-heritage">
+          <p class="cp-card__eyebrow">Prochaine récompense</p>
+
+          <div class="cp-heritage__panel">
+            <div class="cp-heritage__panel-bg">
+              <img src="/images/pre-footer-bg-1.jpg" alt="" />
+            </div>
+
+            <% if (!hasAuthorPage) { %>
+            <span class="cp-heritage__lock"><i data-lucide="lock" width="16" height="16" aria-hidden="true"></i></span>
+            <% } %>
+
+            <div class="cp-heritage__row">
+              <img class="cp-heritage__avatar" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+              <div class="cp-heritage__intro">
+                <h3 class="cp-heritage__title">Page Auteur</h3>
+                <p class="cp-heritage__desc">Débloquez votre propre page d'auteur et partagez votre univers avec la communauté.</p>
+              </div>
+            </div>
+
+            <div class="cp-heritage__preview">
+              <img class="cp-heritage__preview-avatar" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+              <div class="cp-heritage__preview-info">
+                <span class="cp-heritage__preview-name"><%= (user.pseudo || '').toUpperCase() %></span>
+                <span class="cp-heritage__preview-lvl">Niveau <%= level %></span>
+              </div>
+            </div>
+
+            <% if (hasAuthorPage) { %>
+            <div class="cp-heritage__status cp-heritage__status--done">
+              <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Page Auteur débloquée
+            </div>
+            <% } else { %>
+            <div class="cp-heritage__status">
+              Publiez votre 1ère recette approuvée pour débloquer
+            </div>
+            <% } %>
+          </div>
+
+          <% if (hasAuthorPage) { %>
+          <a href="/auteur/<%= user.id %>" class="cp-heritage__cta" target="_blank" rel="noopener">
+            Découvrir ma Page Auteur <i data-lucide="arrow-right" width="14" height="14" aria-hidden="true"></i>
+          </a>
+          <% } else { %>
+          <a href="/add-recipes-movies/" class="cp-heritage__cta cp-heritage__cta--ghost">
+            Publier ma première recette <i data-lucide="arrow-right" width="14" height="14" aria-hidden="true"></i>
+          </a>
+          <% } %>
+        </section>
+
+      </div>
+
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <!-- Équipement des cadres en direct — mêmes scripts que /auth/profil/#contributions -->
+    <script src="/js/gamification-sherlock.js" defer></script>
+    <script src="/js/gamification-engine.js" defer></script>
+    <script src="/js/gamification.js" defer></script>
+    <script src="/js/cinepass.js?v=1" defer></script>
+  </body>
+</html>

@@ -15,6 +15,8 @@ import noticesRouter from "./notices.route.js";
 import authorRouter from "./author.route.js";
 import mentionsLegalesRouter from "./mentions-legales.route.js";
 import sitemapRouter from "./sitemap.route.js";
+import cinepassRouter from "./cinepass.route.js";
+import contributionsRouter from "./contributions.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
@@ -34,6 +36,8 @@ router.use("/api/favorites", favoritesRouter); // Route API pour les favoris
 router.use("/api/ratings", ratingsRouter); // Route API pour les notes
 router.use("/api/notices", noticesRouter); // Route API pour les interactions sur les avis (like)
 router.use("/auteur", authorRouter); // Page publique auteur (gamification)
+router.use("/cinepass", isLogged, cinepassRouter); // CinéPass — nouvel espace UX de la gamification (V4)
+router.use("/contributions", isLogged, contributionsRouter); // Contributions — recettes/films/avis/activité
 router.use("/mentions-legales", mentionsLegalesRouter); // Page mentions légales
 
 export default router;

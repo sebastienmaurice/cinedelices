@@ -1,0 +1,155 @@
+<%
+  /**
+   * partials/frames-collection.ejs
+   * ─────────────────────────────────────────────────────────────────
+   * "Collection de cadres" — extrait tel quel de l'onglet #contributions
+   * du profil (ctb-frames-section), pour être réutilisé sans duplication
+   * de logique par /auth/profil/:id ET /cinepass/.
+   * Équipement en direct géré par gamification.js (POST /auth/equip-frame),
+   * qui cible cet id="contrib-frames-list" quel que soit la page.
+   *
+   * Locals attendus (mêmes noms que sur la page profil) :
+   *   user, userLevel, userXP, userActiveFrameId, userFrames
+   */
+  const _lvl      = (typeof userLevel  !== 'undefined' && userLevel)  ? parseInt(userLevel)  : 1;
+  const _xp       = (typeof userXP     !== 'undefined' && userXP)     ? parseInt(userXP)     : 0;
+  const _activeId = (typeof userActiveFrameId !== 'undefined' && userActiveFrameId) ? userActiveFrameId : null;
+
+  const XP_TABLE = [0,100,300,600,1100,1800,2800,4200,6000,8500,11500,15000,20000,26000,33000,41000,50000,60000,72000];
+
+  const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
+    ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
+  const _allFrames = [
+    { id:'none',    label:'Sans cadre',      subLabel:'Profil épuré',             theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
+    { id:'cine',    label:'Ciné Délices',   subLabel:'Le Sceau du Cinéphile',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.webp' },
+    { id:'sherlock',label:'Sherlock Holmes', subLabel:'La Loupe de Baker Street', theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.webp' },
+    { id:'matrix',  label:'Matrix',          subLabel:'La Pilule Rouge',           theme:'Science-Fiction',  icon:'🟢', minLvl:3, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
+    { id:'indiana', label:'Indiana Jones',   subLabel:"L'Artefact Légendaire",    theme:'Aventure',         icon:'🎩', minLvl:4, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
+    { id:'harry',   label:'Harry Potter',    subLabel:'Le Cercle de Poudlard',    theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
+    { id:'strange', label:'Doctor Strange',  subLabel:"L'Œil d'Agamotto",         theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
+  ];
+  const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
+  const _activeFrame = _allFrames.find(f => f.id === _activeId) || _deblocked[0] || _allFrames[0];
+%>
+<section class="ctb-frames-section" aria-label="Collection de cadres">
+  <!-- En-tête section -->
+  <div class="cfc-header">
+    <div class="cfc-header__left">
+      <i data-lucide="layout-grid" width="18" height="18" aria-hidden="true"></i>
+      <div>
+        <h3 class="cfc-header__title">Collection de cadres</h3>
+        <p class="cfc-header__sub">Collectionnez et équipez vos cadres pour afficher votre style.</p>
+      </div>
+    </div>
+    <span class="cfc-header__count"><strong><%= _deblocked.length %></strong>/<%= _allFrames.length %> débloqués</span>
+  </div>
+
+  <!-- Grille de cartes -->
+  <div class="cf-grid" id="contrib-frames-list">
+    <% _allFrames.forEach(function(fr) {
+      const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
+      const _isActive   = fr.id === _activeFrame.id;
+    %>
+    <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
+      data-frame-id="<%= fr.id %>"
+      data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>">
+
+      <!-- Pill ACTUEL (carte active uniquement) -->
+      <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
+
+      <!-- Preview circulaire -->
+      <div class="cf-card__preview-wrap">
+        <% if (fr.id === 'none') { %>
+        <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
+          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+        </div>
+        <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+        <div class="frame-row-badge-static cf-card__preview-inner">
+          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+          <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+        </div>
+        <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+        <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
+          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+          <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+          <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
+        </div>
+        <% } else { %>
+        <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
+          <span><%= fr.icon %></span>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Nom + sous-titre + thème -->
+      <div class="cf-card__name"><%= fr.label %></div>
+      <% if (fr.subLabel) { %>
+      <div class="cf-card__sublabel"><%= fr.subLabel %></div>
+      <% } %>
+      <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
+
+      <!-- Bouton équiper -->
+      <div class="cf-card__action">
+        <% if (_isActive) { %>
+        <button class="cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active" aria-disabled="true">
+          <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé
+        </button>
+        <% } else if (_isUnlocked) { %>
+        <button class="cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn">
+          Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>
+        </button>
+        <% } else { %>
+        <button class="cf-card__btn cf-card__btn--locked frame-row-check frame-row-check--locked" disabled>
+          <i data-lucide="lock" width="13" height="13" aria-hidden="true"></i> Niv. <%= fr.minLvl %>
+        </button>
+        <% } %>
+      </div>
+
+      <!-- Tooltip (verrouillés) -->
+      <% if (!_isUnlocked) {
+        const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
+        const _xpGap      = Math.max(0, _xpForFrame - _xp);
+        const _recipesNeeded = Math.ceil(_xpGap / 50);
+        const _reviewsNeeded = Math.ceil(_xpGap / 10);
+        const _lvlsToGo   = fr.minLvl - _lvl;
+      %>
+      <div class="frame-tile__tooltip" role="tooltip">
+        <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
+        <div class="frame-tile__tooltip-row">
+          <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
+          Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
+        </div>
+        <div class="frame-tile__tooltip-row">
+          <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
+          <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
+        </div>
+        <div class="frame-tile__tooltip-hint">
+          <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
+        </div>
+      </div>
+      <% } %>
+
+    </div>
+    <% }); %>
+
+    <!-- Card "À venir" -->
+    <div class="cf-card cf-card--coming-soon">
+      <div class="cf-card__coming-shimmer" aria-hidden="true"></div>
+      <div class="cf-card__coming-img-wrap">
+        <!-- Image placeholder — à remplacer par une vraie image -->
+        <div class="cf-card__coming-img-placeholder" aria-hidden="true">
+          <i data-lucide="sparkles" width="32" height="32" aria-hidden="true"></i>
+        </div>
+      </div>
+      <div class="cf-card__coming-body">
+        <span class="cf-card__coming-eyebrow">Bientôt disponible</span>
+        <p class="cf-card__coming-text">Continuez à contribuer pour les débloquer.</p>
+        <a href="/contact-about/#contact" class="cf-card__coming-btn">
+          <i data-lucide="message-circle" width="11" height="11" aria-hidden="true"></i>
+          Suggérer un thème
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>

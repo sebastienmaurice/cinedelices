@@ -1,0 +1,165 @@
+/**
+ * ======================================================
+ * CONTRIBUTIONS.CSS — Ciné Délices · Mes contributions
+ * Reprend la logique déjà existante de l'onglet #creations du profil
+ * (bandeau impact) dans une page dédiée. Chargé APRÈS base.css.
+ * ======================================================
+ */
+
+body.ctr-page {
+  max-width: unset;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+body.ctr-page main {
+  padding-top: var(--nav-h);
+}
+
+.ctr-main {
+  width: min(1320px, 100% - 3rem);
+  margin: 0 auto;
+  padding: 28px 0 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.ctr-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-body); font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.45);
+}
+.ctr-breadcrumb a { color: rgba(232, 232, 232, 0.6); text-decoration: none; }
+.ctr-breadcrumb a:hover { color: var(--or-titre); }
+.ctr-breadcrumb svg { opacity: 0.5; }
+
+.ctr-hero {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  padding: 26px 30px;
+  background: linear-gradient(160deg, var(--surface-card, #0f1e30) 0%, var(--bleu-nuit) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.14);
+  border-radius: 18px;
+}
+.ctr-hero__eyebrow {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-body); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--or-titre);
+  margin-bottom: 6px;
+}
+.ctr-hero__title { font-family: var(--font-h1); font-size: 1.7rem; font-weight: 700; color: var(--argent-ecran); margin: 0 0 4px; }
+.ctr-hero__title em { font-style: normal; color: var(--or-titre); }
+.ctr-hero__sub { font-family: var(--font-body); font-size: 0.85rem; color: rgba(232, 232, 232, 0.5); }
+.ctr-hero__cinepass {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: rgba(196, 160, 82, 0.12);
+  border: 1px solid rgba(196, 160, 82, 0.4);
+  color: var(--or-titre);
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.ctr-hero__cinepass:hover { background: rgba(196, 160, 82, 0.2); }
+
+/* ── Bandeau impact ── */
+.ctr-impact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.ctr-impact__cell {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 20px;
+  background: var(--surface-card, #0f1e30);
+  border: 1px solid rgba(196, 160, 82, 0.1);
+  border-radius: 14px;
+}
+.ctr-impact__icon {
+  flex-shrink: 0; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--or-titre);
+}
+.ctr-impact__icon--recipe { color: #c97b3a; }
+.ctr-impact__icon--movie { color: #9b79e0; }
+.ctr-impact__icon--notice { color: var(--or-titre); }
+.ctr-impact__icon--valid { color: #2ecc71; }
+.ctr-impact__val { display: block; font-family: var(--font-h1); font-size: 1.5rem; font-weight: 700; color: var(--argent-ecran); font-variant-numeric: tabular-nums; }
+.ctr-impact__lbl { display: block; font-family: var(--font-body); font-size: 0.68rem; color: rgba(232, 232, 232, 0.45); }
+
+/* ── Rangée 3 colonnes ── */
+.ctr-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.ctr-card {
+  background: var(--surface-card, #0f1e30);
+  border: 1px solid rgba(196, 160, 82, 0.1);
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+.ctr-card__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.ctr-card__title {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+  color: var(--argent-ecran);
+}
+.ctr-card__add {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-body); font-size: 0.68rem; font-weight: 600;
+  color: var(--or-titre); text-decoration: none;
+}
+.ctr-card__add:hover { color: var(--dore-clair); }
+.ctr-card__empty { font-family: var(--font-body); font-size: 0.78rem; color: rgba(232, 232, 232, 0.4); }
+
+.ctr-list { display: flex; flex-direction: column; gap: 4px; }
+.ctr-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+a.ctr-item:hover { background: rgba(255, 255, 255, 0.03); }
+.ctr-item--static { cursor: default; }
+.ctr-item__title {
+  font-family: var(--font-body); font-size: 0.78rem; color: var(--argent-ecran);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ctr-item__title em { color: rgba(232, 232, 232, 0.4); font-style: normal; }
+.ctr-item__status {
+  flex-shrink: 0;
+  font-family: var(--font-body); font-size: 0.62rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 100px;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.ctr-item__status--approved { background: rgba(46, 204, 113, 0.14); color: #2ecc71; }
+.ctr-item__status--pending { background: rgba(196, 160, 82, 0.14); color: var(--or-titre); }
+.ctr-item__status--rejected { background: rgba(194, 48, 24, 0.14); color: #e06050; }
+
+/* ── Activité ── */
+.ctr-card--activity { }
+.ctr-activity { display: flex; flex-direction: column; gap: 10px; }
+.ctr-activity__item { display: flex; align-items: center; gap: 12px; }
+.ctr-activity__icon {
+  flex-shrink: 0; width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(232, 232, 232, 0.6);
+}
+.ctr-activity__icon--recipe { color: #c97b3a; }
+.ctr-activity__icon--movie { color: #9b79e0; }
+.ctr-activity__icon--notice { color: var(--or-titre); }
+.ctr-activity__body { flex: 1; min-width: 0; }
+.ctr-activity__title { font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; color: var(--argent-ecran); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctr-activity__sub { font-family: var(--font-body); font-size: 0.68rem; color: rgba(232, 232, 232, 0.4); }
+.ctr-activity__xp { flex-shrink: 0; font-family: var(--font-h1); font-size: 0.8rem; font-weight: 700; color: var(--or-titre); }
+
+@media (max-width: 900px) {
+  .ctr-impact { grid-template-columns: repeat(2, 1fr); }
+  .ctr-row { grid-template-columns: 1fr; }
+}
