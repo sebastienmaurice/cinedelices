@@ -10,7 +10,7 @@
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
     <link rel="stylesheet" href="/css/user-profile.css?v=9" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=14" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=19" />
   </head>
 
   <body class="cp-page">
@@ -41,26 +41,21 @@
         <div class="cp-hero__scanlines" aria-hidden="true"></div>
         <div class="cp-hero__vignette" aria-hidden="true"></div>
 
+        <nav class="cp-breadcrumb cp-hero__breadcrumb" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a>
+          <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+          <span>CinéPass</span>
+        </nav>
+
         <p class="cp-hero__eyebrow">
           <i data-lucide="ticket" width="12" height="12" aria-hidden="true"></i>
           CinéPass
         </p>
 
-        <!-- Titre — bloc flottant en haut de bannière -->
-        <div class="cp-hero__masthead">
-          <nav class="cp-breadcrumb cp-hero__breadcrumb" aria-label="Fil d'Ariane">
-            <a href="/">Accueil</a>
-            <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
-            <span>CinéPass</span>
-          </nav>
-          <h2 class="cp-hero__title">Mon <em>CinéPass</em></h2>
-          <p class="cp-hero__sub">Votre parcours de cinéphile gourmand</p>
-          <p class="cp-hero__desc">Partagez vos recettes, vos avis et vos découvertes pour débloquer des récompenses exclusives et devenir une référence de la communauté.</p>
-        </div>
-
-        <!-- Identité — ancrée en bas, avatar cadré + stats -->
+        <!-- Identité — centrée verticalement dans le hero -->
         <div class="cp-hero__content">
           <div class="cp-hero__row">
+            <div class="cp-hero__identity-col">
             <div class="cp-hero__avatar-block">
               <% if (activeFrameCode === 'strange') { %>
               <!-- Cadre CSS pur — mêmes classes que /auth/profil/# -->
@@ -101,39 +96,69 @@
               </template>
             </div>
 
-            <div class="cp-hero__identity">
               <p class="cp-hero__name"><%= (user.pseudo || '').toUpperCase() %></p>
               <p class="cp-hero__rank-row">
                 <span class="cp-hero__rank"><%= rank %></span>
                 <span class="cp-hero__sep" aria-hidden="true">·</span>
                 <span class="cp-hero__lvl-pill">Niveau <%= level %></span>
               </p>
-              <div class="cp-hero__perf" aria-hidden="true"></div>
+            </div>
+
+            <div class="cp-hero__masthead">
+              <h2 class="cp-hero__title">Mon <em>CinéPass</em></h2>
+              <p class="cp-hero__sub">Votre parcours de cinéphile gourmand</p>
+              <p class="cp-hero__desc">Partagez vos recettes, vos avis et vos découvertes pour débloquer des récompenses exclusives et devenir une référence de la communauté.</p>
+
+              <div class="cp-hero__pills-sep" aria-hidden="true"></div>
 
               <div class="cp-hero__pills">
                 <div class="cp-pill">
-                  <i data-lucide="zap" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= xp.toLocaleString('fr-FR') %></strong><span>XP actuels</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="zap" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= xp.toLocaleString('fr-FR') %></strong>
+                  </div>
+                  <span class="cp-pill__label">XP actuels</span>
+                  <% if (xpProg.needed > 0) { %>
+                  <div class="cp-pill__xp">
+                    <span class="cp-pill__xp-note"><%= xpProg.needed.toLocaleString('fr-FR') %> XP avant le niveau <%= level + 1 %></span>
+                    <div class="cp-pill__xp-track"><div class="cp-pill__xp-fill" style="width:<%= xpProg.pct %>%"></div></div>
+                  </div>
+                  <% } %>
                 </div>
                 <div class="cp-pill">
-                  <i data-lucide="utensils" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= recipesCount %></strong><span>Recettes</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="utensils" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= recipesCount %></strong>
+                  </div>
+                  <span class="cp-pill__label">Recettes</span>
                 </div>
                 <div class="cp-pill">
-                  <i data-lucide="message-square" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= notices.length %></strong><span>Avis</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="message-square" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= notices.length %></strong>
+                  </div>
+                  <span class="cp-pill__label">Avis</span>
                 </div>
                 <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
-                  <i data-lucide="compass" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= mockUnivers.length %></strong><span>Univers</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="compass" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= mockUnivers.length %></strong>
+                  </div>
+                  <span class="cp-pill__label">Univers</span>
                 </div>
                 <div class="cp-pill">
-                  <i data-lucide="layout-grid" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= unlockedFrames.length %></strong><span>Cadres</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= unlockedFrames.length %></strong>
+                  </div>
+                  <span class="cp-pill__label">Cadres</span>
                 </div>
                 <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
-                  <i data-lucide="star" width="15" height="15" aria-hidden="true"></i>
-                  <div><strong><%= cpUnlockedBadges %></strong><span>Badges</span></div>
+                  <div class="cp-pill__row">
+                    <span class="cp-pill__icon"><i data-lucide="star" width="16" height="16" aria-hidden="true"></i></span>
+                    <strong><%= cpUnlockedBadges %></strong>
+                  </div>
+                  <span class="cp-pill__label">Badges</span>
                 </div>
               </div>
             </div>

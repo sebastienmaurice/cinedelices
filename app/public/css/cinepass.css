@@ -70,7 +70,7 @@ body.cp-page main {
 .cp-hero {
   position: relative;
   width: 100%;
-  height: 560px;
+  height: 500px;
   border-radius: 22px;
   overflow: hidden;
   margin-top: 26px;
@@ -133,11 +133,17 @@ body.cp-page main {
   100% { transform: translate(10px, -16px); }
 }
 
-/* Bloc-titre flottant */
-.cp-hero__masthead {
+/* Fil d'Ariane — épinglé en haut à gauche du hero */
+.cp-hero__breadcrumb {
   position: absolute; z-index: 10;
   top: 40px; left: 40px;
-  max-width: 620px;
+  padding: 0; margin: 0;
+  animation: cpFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* Bloc-titre — colonne de droite, centrée verticalement avec l'avatar */
+.cp-hero__masthead {
+  max-width: 820px;
+  flex: 1;
   animation: cpFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 /* En face du fil d'Ariane, en haut à droite du hero */
@@ -169,14 +175,20 @@ body.cp-page main {
 .cp-hero__sub { font-family: var(--font-body); font-size: 1rem; color: rgba(232, 232, 232, 0.82); margin-bottom: 6px; }
 .cp-hero__desc { font-family: var(--font-body); font-size: 0.82rem; font-weight: 300; color: rgba(232, 232, 232, 0.5); max-width: 520px; line-height: 1.55; }
 
-/* Identité — ancrée en bas */
+/* Identité — centrée verticalement dans le hero */
 .cp-hero__content {
   position: absolute; z-index: 10; inset: 0;
-  display: flex; align-items: flex-end;
-  padding: 0 40px 32px;
+  display: flex; align-items: center;
+  padding: 0 40px;
 }
-.cp-hero__row { display: flex; align-items: center; gap: 34px; width: 100%; }
+.cp-hero__row { display: flex; align-items: flex-end; gap: 48px; width: 100%; }
 
+/* Colonne avatar — cadre + nom + rang, empilés et centrés */
+.cp-hero__identity-col {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px;
+}
 .cp-hero__avatar-block { flex-shrink: 0; animation: cpFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
 .cp-hero__badge { position: relative; width: 168px; height: 168px; isolation: isolate; }
 .cp-hero__photo {
@@ -193,15 +205,16 @@ body.cp-page main {
   border-radius: 50%; border: 2px solid rgba(196, 160, 82, 0.45);
 }
 
-.cp-hero__identity { animation: cpFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+.cp-hero__identity-col { animation: cpFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
 .cp-hero__name {
-  font-family: var(--font-h1); font-size: 2.35rem; font-weight: 700;
+  font-family: var(--font-h1); font-size: 1.7rem; font-weight: 700;
   color: var(--argent-ecran); letter-spacing: 0.015em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 40px rgba(226, 168, 76, 0.18);
   line-height: 1.05;
+  text-align: center;
 }
-.cp-hero__rank-row { display: flex; align-items: center; gap: 9px; margin: 7px 0 16px; }
-.cp-hero__rank { font-family: var(--font-body); font-size: 0.95rem; color: var(--or-titre); font-style: italic; }
+.cp-hero__rank-row { display: flex; align-items: center; justify-content: center; gap: 9px; margin: 0; }
+.cp-hero__rank { font-family: var(--font-body); font-size: 0.85rem; color: var(--or-titre); font-style: italic; }
 .cp-hero__sep { color: rgba(232, 232, 232, 0.3); }
 .cp-hero__lvl-pill {
   padding: 3px 14px;
@@ -212,34 +225,43 @@ body.cp-page main {
   font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;
 }
 
-/* Ligne perforée — évoque le talon de billet, sépare identité et stats */
-.cp-hero__perf {
-  width: 100%; max-width: 460px;
-  height: 1px;
-  margin-bottom: 16px;
+/* Séparateur — sépare le descriptif des statistiques, motif billet perforé */
+.cp-hero__pills-sep {
+  width: 100%; height: 1px;
+  margin-top: 20px;
   background-image: linear-gradient(to right, rgba(196, 160, 82, 0.35) 60%, transparent 0%);
   background-size: 9px 1px;
   background-repeat: repeat-x;
   background-position: left center;
-  position: relative;
 }
 
-.cp-hero__pills { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Stats — une seule rangée de pills sous le masthead, façon relevé de guichet */
+.cp-hero__pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 16px; }
 .cp-pill {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 14px;
-  background: rgba(10, 16, 26, 0.55);
+  display: flex; flex-direction: column; gap: 5px;
+  min-width: 0;
+  padding: 12px 12px;
+  background: rgba(8, 13, 22, 0.65);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(196, 160, 82, 0.3);
   border-radius: 12px;
-  color: var(--or-titre);
-  transition: transform 0.22s var(--cp-ease, cubic-bezier(0.22, 1, 0.36, 1)), border-color 0.22s;
+  transition: transform 0.22s var(--cp-ease, cubic-bezier(0.22, 1, 0.36, 1)), border-color 0.22s, background 0.22s;
 }
-.cp-pill:hover { transform: translateY(-2px); border-color: rgba(196, 160, 82, 0.45); }
-.cp-pill div { display: flex; flex-direction: column; line-height: 1.15; }
-.cp-pill strong { font-family: var(--font-h1); font-size: 1rem; color: var(--argent-ecran); font-variant-numeric: tabular-nums; }
-.cp-pill span { font-family: var(--font-body); font-size: 0.62rem; color: rgba(232, 232, 232, 0.55); text-transform: uppercase; letter-spacing: 0.04em; }
+.cp-pill:hover { transform: translateY(-2px); border-color: rgba(196, 160, 82, 0.55); background: rgba(8, 13, 22, 0.85); }
+/* Toutes les pills sauf la 1ère (jauge XP) — format carré, contenu centré */
+.cp-pill:not(:first-child) { aspect-ratio: 1 / 1; align-items: center; justify-content: center; text-align: center; }
+.cp-pill:not(:first-child) .cp-pill__row { flex-direction: column; gap: 4px; }
+.cp-pill__row { display: flex; align-items: center; gap: 8px; }
+.cp-pill__icon { flex-shrink: 0; display: flex; color: var(--or-titre); }
+.cp-pill strong { font-family: var(--font-h1); font-size: 1.3rem; font-weight: 700; line-height: 1; color: var(--or-titre); font-variant-numeric: tabular-nums; }
+.cp-pill__label { font-family: var(--font-body); font-size: 0.62rem; color: rgba(232, 232, 232, 0.6); text-transform: uppercase; letter-spacing: 0.04em; }
 .cp-pill--mock { border-style: dashed; opacity: 0.85; }
+
+/* Mini-jauge XP intégrée à la pill "XP actuels" */
+.cp-pill__xp { margin-top: 2px; }
+.cp-pill__xp-note { display: block; font-family: var(--font-body); font-size: 0.58rem; color: rgba(232, 232, 232, 0.45); margin-bottom: 5px; }
+.cp-pill__xp-track { height: 4px; border-radius: 100px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.cp-pill__xp-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--gold-dark, #b8882a), var(--gold, #d4a843), var(--gold-light, #f2c84b)); }
 
 /* ══════════════════════════════════════════════════════
    Cartes génériques
@@ -744,10 +766,12 @@ body.cp-page main {
 @media (max-width: 1080px) {
   .cp-hero { height: auto; }
   .cp-hero__content { position: relative; padding: 26px 24px; }
-  .cp-hero__masthead { position: relative; top: 0; left: 0; padding: 26px 24px 0; max-width: none; }
-  .cp-hero__eyebrow { position: relative; top: 0; right: 0; justify-content: center; padding: 16px 24px 0; }
-  .cp-hero__row { flex-direction: column; text-align: center; }
-  .cp-hero__pills { justify-content: center; }
+  .cp-hero__breadcrumb { position: relative; top: 0; left: 0; justify-content: center; padding: 16px 24px 0; }
+  .cp-hero__masthead { max-width: none; text-align: center; }
+  .cp-hero__eyebrow { position: relative; top: 0; right: 0; justify-content: center; padding: 4px 24px 0; }
+  .cp-hero__row { flex-direction: column; text-align: center; gap: 28px; }
+  .cp-hero__desc { margin: 0 auto; }
+  .cp-hero__pills { grid-template-columns: repeat(2, 1fr); }
   .cp-row--progress { grid-template-columns: 1fr; }
   .cp-row--two { grid-template-columns: 1fr; }
   .cp-collection__grid { grid-template-columns: 1fr; }
