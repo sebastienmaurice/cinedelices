@@ -3502,52 +3502,33 @@ body.modal-open { overflow: hidden; }
   cursor: default;
 }
 
-/* Anneau extérieur métallique */
+/* Anneau extérieur — désormais un vrai visuel gravé (medallion-{tier}.webp),
+   couronne + lauriers + bobine + gemmes déjà intégrés à l'image. */
 .level-medallion__ring {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  padding: 8px; /* épaisseur du ring */
-  background: conic-gradient(from -30deg,
-    #5A4010 0%, #C4A052 18%, #FFE085 30%,
-    #C4A052 42%, #7A5A14 55%, #C4A052 68%,
-    #FFE085 80%, #C4A052 92%, #5A4010 100%
-  );
-  box-shadow:
-    0 0 0 1.5px rgba(242,200,75,.18),      /* liseré extérieur fin */
-    inset 0 0 0 1px rgba(255,255,255,.08); /* liseré intérieur */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
-/* Reflet lumineux sur le ring */
-.level-medallion__ring::before {
-  content: '';
-  position: absolute;
-  inset: 2px;
-  border-radius: 50%;
-  background: conic-gradient(from 200deg,
-    transparent 0%, rgba(255,255,255,.18) 15%,
-    transparent 30%, transparent 100%
-  );
-  pointer-events: none;
-}
+/* Ancien reflet CSS — inutile, l'éclairage est déjà peint dans l'image */
+.level-medallion__ring::before { content: none; }
 
-/* Face intérieure sombre */
+/* Face — ne sert plus que de zone de positionnement pour le chiffre,
+   dans le disque plat de l'image (sous la couronne, au-dessus des lauriers) */
 .level-medallion__face {
-  width: 100%; height: 100%;
+  position: absolute;
+  inset: 33% 21% 25% 21%;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255,220,80,.06) 0%, transparent 50%),
-    radial-gradient(circle, #1e1508 0%, #100c04 45%, #060502 100%);
+  background: none;
+  box-shadow: none;
   display: flex; align-items: center; justify-content: center;
-  box-shadow:
-    inset 0 0 0 2px rgba(242,200,75,.12),
-    inset 0 3px 12px rgba(0,0,0,.7),
-    inset 0 -1px 4px rgba(255,200,50,.05);
 }
 
 /* Numéro */
 .level-medallion__num {
   font-family: var(--f-display);
-  font-size: 4rem;
+  font-size: 2.85rem;
   line-height: 1;
   background: linear-gradient(170deg,
     #FFF0A0 0%, #FFE085 20%,
@@ -3556,33 +3537,16 @@ body.modal-open { overflow: hidden; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.65));
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.6));
   position: relative; z-index: 1;
 }
 
-/* Gemmes cardinales — plus grandes et visibles */
-.level-medallion__gem {
-  position: absolute;
-  width: 18px; height: 18px;
-  transform: rotate(45deg);
-  left: 50%; margin-left: -9px;
-  z-index: 3;
-  border-radius: 2px;
-}
-.level-medallion__gem--top    { top: -5px; }
-.level-medallion__gem--bottom { bottom: -5px; }
-/* Reflet interne sur la gemme */
-.level-medallion__gem::after {
-  content: '';
-  position: absolute;
-  inset: 2px;
-  background: rgba(255,255,255,.35);
-  border-radius: 1px;
-}
+/* Gemmes cardinales — désormais peintes dans l'image, plus de calque CSS */
+.level-medallion__gem { display: none; }
 
 /* Hover */
 .level-medallion:hover { transform: translateY(-2px); transition: transform .3s ease; }
-.level-medallion:hover .level-medallion__ring { filter: brightness(1.18) saturate(1.1); }
+.level-medallion:hover .level-medallion__ring { filter: brightness(1.12) saturate(1.08); }
 
 /* ── ANIMATIONS IDLE ── */
 @keyframes medallion-glow-gold {
@@ -3602,84 +3566,38 @@ body.modal-open { overflow: hidden; }
   50%      { filter: drop-shadow(0 0 24px rgba(155,126,208,.85)) drop-shadow(0 4px 40px rgba(196,160,82,.40)); }
 }
 
-/* ── VARIANTES ── */
+/* ── VARIANTES — médaillons illustrés (image + numéro dynamique) ── */
 /* Bronze */
 .level-medallion--bronze { animation: medallion-glow-bronze 3.2s ease-in-out infinite; }
-.level-medallion--bronze .level-medallion__ring {
-  background: conic-gradient(from -30deg,
-    #3A2010 0%, #C4874A 18%, #F0C080 30%,
-    #C4874A 42%, #5A3018 55%, #C4874A 68%,
-    #F0C080 80%, #C4874A 92%, #3A2010 100%
-  );
-}
-.level-medallion--bronze .level-medallion__face {
-  background:
-    radial-gradient(circle at 35% 28%, rgba(200,100,40,.07) 0%, transparent 50%),
-    radial-gradient(circle, #1a0e06 0%, #0d0804 45%, #060402 100%);
-  box-shadow: inset 0 0 0 2px rgba(196,135,74,.12), inset 0 3px 12px rgba(0,0,0,.7);
-}
+.level-medallion--bronze .level-medallion__ring { background-image: url('/images/medaillons/medallion-bronze.webp'); }
 .level-medallion--bronze .level-medallion__num {
   background: linear-gradient(170deg, #F8D0A0 0%, #E8A060 30%, #C4874A 60%, #7A4018 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.level-medallion--bronze .level-medallion__gem {
-  background: linear-gradient(135deg, #F0A060, #A05020);
-  box-shadow: 0 0 10px rgba(196,135,74,.85), 0 0 20px rgba(196,135,74,.40);
-}
 
 /* Argent */
 .level-medallion--silver { animation: medallion-glow-silver 3.5s ease-in-out infinite; }
-.level-medallion--silver .level-medallion__ring {
-  background: conic-gradient(from -30deg,
-    #28384A 0%, #A0B4C0 18%, #F0F6FA 30%,
-    #A0B4C0 42%, #28384A 55%, #A0B4C0 68%,
-    #F0F6FA 80%, #A0B4C0 92%, #28384A 100%
-  );
-}
-.level-medallion--silver .level-medallion__face {
-  background:
-    radial-gradient(circle at 35% 28%, rgba(160,200,230,.06) 0%, transparent 50%),
-    radial-gradient(circle, #121c24 0%, #080e16 45%, #040810 100%);
-  box-shadow: inset 0 0 0 2px rgba(160,180,192,.12), inset 0 3px 12px rgba(0,0,0,.7);
-}
+.level-medallion--silver .level-medallion__ring { background-image: url('/images/medaillons/medallion-silver.webp'); }
 .level-medallion--silver .level-medallion__num {
   background: linear-gradient(170deg, #FAFEFF 0%, #D0E0EA 30%, #A0B8C8 60%, #607080 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.level-medallion--silver .level-medallion__gem {
-  background: linear-gradient(135deg, #E8F4FC, #6080A0);
-  box-shadow: 0 0 10px rgba(160,180,192,.80), 0 0 20px rgba(160,180,192,.38);
-}
 
 /* Or — défaut */
 .level-medallion--gold { animation: medallion-glow-gold 3s ease-in-out infinite; }
-.level-medallion--gold .level-medallion__gem {
-  background: linear-gradient(135deg, #FFE8A0, #8B6014);
-  box-shadow: 0 0 10px rgba(242,200,75,.90), 0 0 22px rgba(196,160,82,.45);
+.level-medallion--gold .level-medallion__ring { background-image: url('/images/medaillons/medallion-gold.webp'); }
+.level-medallion--gold .level-medallion__num {
+  background: linear-gradient(170deg, #FFF6DC 0%, #FFE9A8 25%, #F0C24E 55%, #7A4E12 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.75));
 }
 
 /* Légendaire */
 .level-medallion--legendary { animation: medallion-glow-legendary 2.8s ease-in-out infinite; }
-.level-medallion--legendary .level-medallion__ring {
-  background: conic-gradient(from -30deg,
-    #5A4010 0%, #C4A052 15%, #9B7ED0 28%,
-    #C4A052 40%, #5A4010 55%, #C4A052 68%,
-    #B89AE8 80%, #F2C84B 92%, #5A4010 100%
-  );
-}
-.level-medallion--legendary .level-medallion__face {
-  background:
-    radial-gradient(circle at 35% 28%, rgba(155,126,208,.10) 0%, transparent 50%),
-    radial-gradient(circle, #180e2c 0%, #0c0618 45%, #060210 100%);
-  box-shadow: inset 0 0 0 2px rgba(155,126,208,.18), inset 0 3px 12px rgba(0,0,0,.72);
-}
+.level-medallion--legendary .level-medallion__ring { background-image: url('/images/medaillons/medallion-legendary.webp'); }
 .level-medallion--legendary .level-medallion__num {
   background: linear-gradient(170deg, #F2C84B 0%, #D4A843 25%, #9B7ED0 60%, #C4A052 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.level-medallion--legendary .level-medallion__gem {
-  background: linear-gradient(135deg, #E8C050, #9B7ED0);
-  box-shadow: 0 0 12px rgba(155,126,208,.90), 0 0 24px rgba(155,126,208,.48);
 }
 
 /* ── Layout XP bloc avec médaillon ── */
