@@ -40,6 +40,9 @@ body.cp-page main {
 .cp-breadcrumb a:hover { color: var(--or-titre); }
 .cp-breadcrumb svg { opacity: 0.5; }
 
+/* Repris tel quel, mais niché en haut du hero plutôt qu'au-dessus */
+.cp-hero__breadcrumb { padding: 0; margin-bottom: 16px; font-size: 0.72rem; }
+
 @keyframes cpFadeUp {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -70,7 +73,7 @@ body.cp-page main {
   height: 560px;
   border-radius: 22px;
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: 26px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(196, 160, 82, 0.14);
 }
 
@@ -137,12 +140,15 @@ body.cp-page main {
   max-width: 620px;
   animation: cpFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+/* En face du fil d'Ariane, en haut à droite du hero */
 .cp-hero__eyebrow {
+  position: absolute; z-index: 10;
+  top: 40px; right: 40px;
   display: flex; align-items: center; gap: 7px;
   font-family: var(--font-body); font-size: 0.7rem; font-weight: 700;
   letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--or-titre);
-  margin-bottom: 10px;
+  animation: cpFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .cp-hero__eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--or-titre); opacity: 0.6; }
 .cp-hero__title {
@@ -739,6 +745,7 @@ body.cp-page main {
   .cp-hero { height: auto; }
   .cp-hero__content { position: relative; padding: 26px 24px; }
   .cp-hero__masthead { position: relative; top: 0; left: 0; padding: 26px 24px 0; max-width: none; }
+  .cp-hero__eyebrow { position: relative; top: 0; right: 0; justify-content: center; padding: 16px 24px 0; }
   .cp-hero__row { flex-direction: column; text-align: center; }
   .cp-hero__pills { justify-content: center; }
   .cp-row--progress { grid-template-columns: 1fr; }
