@@ -10,7 +10,7 @@
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
     <link rel="stylesheet" href="/css/user-profile.css" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=10" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=11" />
   </head>
 
   <body class="cp-page">
@@ -42,6 +42,8 @@
 
         <div class="cp-hero__reel cp-hero__reel--1" aria-hidden="true"></div>
         <div class="cp-hero__reel cp-hero__reel--2" aria-hidden="true"></div>
+        <div class="cp-hero__spotlight" aria-hidden="true"></div>
+        <div class="cp-hero__dust" aria-hidden="true"></div>
         <div class="cp-hero__scanlines" aria-hidden="true"></div>
         <div class="cp-hero__vignette" aria-hidden="true"></div>
 
@@ -106,6 +108,7 @@
                 <span class="cp-hero__sep" aria-hidden="true">·</span>
                 <span class="cp-hero__lvl-pill">Niveau <%= level %></span>
               </p>
+              <div class="cp-hero__perf" aria-hidden="true"></div>
 
               <div class="cp-hero__pills">
                 <div class="cp-pill">
@@ -209,26 +212,31 @@
             <p class="cp-card__eyebrow">Mes univers cinématographiques</p>
             <span class="cp-card__mock-tag">Aperçu à venir</span>
           </div>
+          <p class="cp-univers__intro">Les mondes cinématographiques dans lesquels vous vous êtes aventuré.</p>
           <div class="cp-univers__grid">
             <% mockUnivers.forEach(function (u) { %>
             <div class="cp-univers__card<%= u.progress >= u.total ? ' is-mastered' : '' %>" data-accent="<%= u.accent %>">
-              <div class="cp-univers__img">
+              <div class="cp-univers__poster">
                 <img src="<%= u.img %>" alt="" loading="lazy" />
-                <div class="cp-univers__img-grad"></div>
-              </div>
-              <div class="cp-univers__body">
-                <p class="cp-univers__label"><%= u.label %></p>
-                <div class="cp-univers__dots">
-                  <% for (let i = 0; i < u.total; i++) { %>
-                  <span class="cp-univers__dot<%= i < u.progress ? ' is-on' : '' %>"></span>
-                  <% } %>
+                <div class="cp-univers__poster-grad"></div>
+                <div class="cp-univers__poster-sheen" aria-hidden="true"></div>
+                <% if (u.progress >= u.total) { %>
+                <span class="cp-univers__mastered">Maîtrisé</span>
+                <% } %>
+                <div class="cp-univers__poster-foot">
+                  <p class="cp-univers__label"><%= u.label %></p>
+                  <div class="cp-univers__dots">
+                    <% for (let i = 0; i < u.total; i++) { %>
+                    <span class="cp-univers__dot<%= i < u.progress ? ' is-on' : '' %>"></span>
+                    <% } %>
+                  </div>
                 </div>
-                <p class="cp-univers__count"><%= u.progress %> / <%= u.total %> cadres</p>
-                <p class="cp-univers__xp"><%= u.xp %> / <%= u.xpMax %> XP</p>
+                <div class="cp-univers__reveal">
+                  <p class="cp-univers__count"><%= u.progress %> / <%= u.total %> cadres découverts</p>
+                  <div class="cp-univers__xp-track"><div class="cp-univers__xp-fill" style="width:<%= Math.round((u.xp / u.xpMax) * 100) %>%"></div></div>
+                  <p class="cp-univers__xp"><%= u.xp %> / <%= u.xpMax %> XP</p>
+                </div>
               </div>
-              <% if (u.progress >= u.total) { %>
-              <span class="cp-univers__mastered">Maîtrisé</span>
-              <% } %>
             </div>
             <% }); %>
           </div>
@@ -240,48 +248,65 @@
       <!-- Badges — aperçu du futur système (mock, distinct des cadres) -->
       <section class="cp-card cp-card--badges">
         <div class="cp-card__head">
-          <p class="cp-card__eyebrow">Badges</p>
-          <span class="cp-card__mock-tag">Aperçu à venir</span>
+          <p class="cp-card__eyebrow">Mes trophées</p>
+          <span class="cp-card__mock-tag">Aperçu du futur système</span>
         </div>
         <div class="cp-badges">
           <% mockBadges.forEach(function (b) { %>
           <div class="cp-badge cp-badge--<%= b.tier %>" title="<%= b.label %>">
-            <span class="cp-badge__icon"><%= b.icon %></span>
+            <span class="cp-badge__medal">
+              <span class="cp-badge__medal-ring"></span>
+              <span class="cp-badge__icon"><%= b.icon %></span>
+            </span>
             <span class="cp-badge__label"><%= b.label %></span>
           </div>
           <% }); %>
+          <% for (let i = 0; i < Math.max(0, 6 - mockBadges.length); i++) { %>
+          <div class="cp-badge cp-badge--locked" title="À débloquer">
+            <span class="cp-badge__medal">
+              <span class="cp-badge__medal-ring"></span>
+              <i data-lucide="lock" width="15" height="15" aria-hidden="true"></i>
+            </span>
+            <span class="cp-badge__label">Verrouillé</span>
+          </div>
+          <% } %>
         </div>
-        <p class="cp-card__mock-hint">Aperçu du futur système de badges — aucun accomplissement réel n'est encore calculé.</p>
+        <p class="cp-card__mock-hint">Ces trophées n'existent pas encore en base — aucun accomplissement réel n'est calculé ici.</p>
       </section>
 
       <!-- ══════════════════════════════════════════
-           OBJECTIFS · CONTRIBUTIONS · HÉRITAGE
+           PROCHAINES ÉTAPES · DERNIÈRES CONTRIBUTIONS
       ══════════════════════════════════════════ -->
-      <div class="cp-row cp-row--three">
+      <div class="cp-row cp-row--two">
 
         <section class="cp-card cp-objectives">
-          <p class="cp-card__eyebrow">Mes objectifs</p>
+          <p class="cp-card__eyebrow">Prochaines étapes</p>
           <div class="cp-objective">
             <div class="cp-objective__icon"><i data-lucide="trending-up" width="16" height="16" aria-hidden="true"></i></div>
             <div class="cp-objective__body">
-              <p class="cp-objective__title">Prochain niveau</p>
-              <p class="cp-objective__sub"><% if (xpProg.needed > 0) { %><%= xpProg.needed.toLocaleString('fr-FR') %> XP restants<% } else { %>Niveau maximum atteint<% } %></p>
+              <% if (xpProg.needed > 0) { %>
+              <p class="cp-objective__title">Encore <%= xpProg.needed.toLocaleString('fr-FR') %> XP</p>
+              <p class="cp-objective__sub">→ atteindre le niveau <%= level + 1 %></p>
+              <% } else { %>
+              <p class="cp-objective__title">Niveau maximum</p>
+              <p class="cp-objective__sub">→ vous avez atteint le sommet du CinéPass</p>
+              <% } %>
             </div>
           </div>
           <% if (nextFrame) { %>
           <div class="cp-objective">
             <div class="cp-objective__icon"><i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i></div>
             <div class="cp-objective__body">
-              <p class="cp-objective__title">Prochain cadre — <%= nextFrame.label %></p>
-              <p class="cp-objective__sub">Niveau <%= nextFrame.minLvl %> requis</p>
+              <p class="cp-objective__title">Niveau <%= nextFrame.minLvl %> requis</p>
+              <p class="cp-objective__sub">→ débloquer le cadre « <%= nextFrame.label %> »</p>
             </div>
           </div>
           <% } %>
           <div class="cp-objective">
             <div class="cp-objective__icon cp-objective__icon--gold"><i data-lucide="crown" width="16" height="16" aria-hidden="true"></i></div>
             <div class="cp-objective__body">
-              <p class="cp-objective__title">Grande étape — Page Auteur</p>
-              <p class="cp-objective__sub"><%= hasAuthorPage ? 'Déjà débloquée' : 'Publiez votre 1ère recette approuvée' %></p>
+              <p class="cp-objective__title">Grande étape</p>
+              <p class="cp-objective__sub">→ <%= hasAuthorPage ? 'votre identité de cinéphile est en ligne' : 'développer votre identité de cinéphile' %></p>
             </div>
           </div>
         </section>
@@ -313,57 +338,59 @@
           <% } %>
         </section>
 
-        <section class="cp-card cp-heritage">
-          <p class="cp-card__eyebrow">Prochaine récompense</p>
+      </div>
 
-          <div class="cp-heritage__panel">
-            <div class="cp-heritage__panel-bg">
-              <img src="/images/pre-footer-bg-1.jpg" alt="" />
-            </div>
+      <!-- ══════════════════════════════════════════
+           PAGE AUTEUR — récompense majeure, mise en scène dédiée
+      ══════════════════════════════════════════ -->
+      <section class="cp-showcase<%= hasAuthorPage ? ' is-unlocked' : '' %>">
+        <div class="cp-showcase__bg">
+          <img src="/images/pre-footer-bg-1.jpg" alt="" />
+        </div>
+        <div class="cp-showcase__grad"></div>
 
-            <% if (!hasAuthorPage) { %>
-            <span class="cp-heritage__lock"><i data-lucide="lock" width="16" height="16" aria-hidden="true"></i></span>
-            <% } %>
-
-            <div class="cp-heritage__row">
-              <img class="cp-heritage__avatar" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-              <div class="cp-heritage__intro">
-                <h3 class="cp-heritage__title">Page Auteur</h3>
-                <p class="cp-heritage__desc">Débloquez votre propre page d'auteur et partagez votre univers avec la communauté.</p>
-              </div>
-            </div>
-
-            <div class="cp-heritage__preview">
-              <img class="cp-heritage__preview-avatar" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-              <div class="cp-heritage__preview-info">
-                <span class="cp-heritage__preview-name"><%= (user.pseudo || '').toUpperCase() %></span>
-                <span class="cp-heritage__preview-lvl">Niveau <%= level %></span>
-              </div>
-            </div>
-
-            <% if (hasAuthorPage) { %>
-            <div class="cp-heritage__status cp-heritage__status--done">
-              <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Page Auteur débloquée
-            </div>
-            <% } else { %>
-            <div class="cp-heritage__status">
-              Publiez votre 1ère recette approuvée pour débloquer
-            </div>
-            <% } %>
-          </div>
-
+        <div class="cp-showcase__text">
+          <p class="cp-showcase__eyebrow"><i data-lucide="film" width="12" height="12" aria-hidden="true"></i> La récompense ultime</p>
+          <h3 class="cp-showcase__title">Votre propre page<br><em>cinématographique</em></h3>
+          <p class="cp-showcase__desc">Une page à votre image pour mettre en avant vos recettes, vos films favoris et votre passion du cinéma gourmand.</p>
+          <ul class="cp-showcase__list">
+            <li><i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Bannière et thème personnalisés</li>
+            <li><i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Recettes et films à la une</li>
+            <li><i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Vos badges et cadres affichés</li>
+          </ul>
           <% if (hasAuthorPage) { %>
-          <a href="/auteur/<%= user.id %>" class="cp-heritage__cta" target="_blank" rel="noopener">
+          <a href="/auteur/<%= user.id %>" class="cp-showcase__cta" target="_blank" rel="noopener">
             Découvrir ma Page Auteur <i data-lucide="arrow-right" width="14" height="14" aria-hidden="true"></i>
           </a>
           <% } else { %>
-          <a href="/add-recipes-movies/" class="cp-heritage__cta cp-heritage__cta--ghost">
+          <a href="/add-recipes-movies/" class="cp-showcase__cta">
             Publier ma première recette <i data-lucide="arrow-right" width="14" height="14" aria-hidden="true"></i>
           </a>
+          <p class="cp-showcase__hint">Publiez votre 1ère recette approuvée pour débloquer</p>
           <% } %>
-        </section>
+        </div>
 
-      </div>
+        <div class="cp-showcase__preview">
+          <% if (!hasAuthorPage) { %>
+          <span class="cp-showcase__lock"><i data-lucide="lock" width="18" height="18" aria-hidden="true"></i></span>
+          <% } %>
+          <div class="cp-showcase__preview-row">
+            <img class="cp-showcase__preview-avatar" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+            <div class="cp-showcase__preview-info">
+              <span class="cp-showcase__preview-name"><%= (user.pseudo || '').toUpperCase() %></span>
+              <span class="cp-showcase__preview-lvl">Niveau <%= level %> · <%= rank %></span>
+            </div>
+          </div>
+          <div class="cp-showcase__preview-stats">
+            <div><strong><%= recipesCount %></strong><span>Recettes</span></div>
+            <div><strong><%= notices.length %></strong><span>Avis</span></div>
+            <div><strong><%= unlockedFrames.length %></strong><span>Cadres</span></div>
+          </div>
+          <% if (hasAuthorPage) { %>
+          <div class="cp-showcase__status"><i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Page Auteur débloquée</div>
+          <% } %>
+        </div>
+      </section>
 
       <!-- ── CTA inviter / partager — même bloc que /auth/profil/#contributions ── -->
       <div class="ctb-invite">
