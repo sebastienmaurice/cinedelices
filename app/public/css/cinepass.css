@@ -292,6 +292,7 @@ body.cp-page main {
 ══════════════════════════════════════════════════════ */
 .cp-card {
   position: relative;
+  z-index: 0; /* contexte d'empilement local pour les pseudo-éléments (fond, liseré) */
   background: linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
   border: 1px solid rgba(196, 160, 82, 0.12);
   border-radius: 18px;
@@ -368,13 +369,45 @@ body.cp-page main {
 .cp-progress {
   text-align: center;
   position: relative;
+}
+/* Image de fond isolée dans un calque dédié (::before) pour lui appliquer les
+   mêmes filtres que la bannière du Hero, sans affecter le texte/contenu au-dessus. */
+.cp-progress::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  height: auto; width: auto; /* neutralise le height:2px hérité de .cp-card::before (filet doré) */
   background:
     linear-gradient(to bottom, transparent 0%, transparent 60%, var(--surface-card, #0f1e30) 100%) top center / 100% 100% no-repeat,
     url('/images/bg-progress-card-1.webp') top center / cover no-repeat,
     linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  filter: brightness(0.85) contrast(1.06) saturate(1.05);
 }
 /* Médaillon — .level-medallion vient de user-profile.css (composant partagé) */
 .cp-progress .level-medallion { margin: 0 auto 16px; }
+
+/* Liseré doré façon cp-hero (conic-gradient + points lumineux) — remplace
+   le simple filet doré du haut sur ces deux cartes précises */
+.cp-progress, .cp-card--collection { border-color: transparent; }
+.cp-card--collection::before { display: none; } /* retire le filet doré simple hérité de .cp-card */
+.cp-progress::after,
+.cp-card--collection::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  border-radius: 18px;
+  padding: 1.5px;
+  background: conic-gradient(from 45deg,
+    rgba(20, 34, 52, 0.9) 0%, rgba(20, 34, 52, 0.9) 8%,
+    var(--or-titre) 13%, rgba(20, 34, 52, 0.9) 18%,
+    rgba(20, 34, 52, 0.9) 40%,
+    var(--or-titre) 47%, rgba(20, 34, 52, 0.9) 54%,
+    rgba(20, 34, 52, 0.9) 76%,
+    var(--or-titre) 82%, rgba(20, 34, 52, 0.9) 88%,
+    rgba(20, 34, 52, 0.9) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
 
 .cp-progress__lvl { font-family: var(--font-h1); font-size: 1.25rem; font-weight: 700; color: var(--argent-ecran); }
 .cp-progress__rank { font-family: var(--font-body); font-size: 0.84rem; color: var(--or-titre); font-style: italic; margin-bottom: 18px; }

@@ -4184,12 +4184,103 @@ body.modal-open { overflow: hidden; }
   color: rgba(232,232,232,.4); text-align: right; white-space: nowrap;
 }
 
-/* ── Grille de cartes cadres ── */
+/* ── Carrousel de cartes cadres ── */
+.cfc-carousel {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 4px;
+}
+.cfc-arrow {
+  flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,20,36,.9);
+  border: 1.5px solid rgba(196,160,82,.3);
+  color: var(--or-titre);
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s, opacity .2s;
+}
+.cfc-arrow:hover:not(:disabled) {
+  background: rgba(196,160,82,.14);
+  border-color: rgba(196,160,82,.6);
+  transform: translateY(-1px);
+}
+.cfc-arrow:disabled { opacity: .28; cursor: default; }
+
 .cf-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 16px;
-  padding-top: 16px; /* espace pour le pill ACTUEL qui déborde en haut */
+  padding: 16px 2px 6px; /* espace pour le pill ACTUEL + hover-lift */
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  flex: 1 1 auto;
+  min-width: 0;
+  scrollbar-width: none;
+}
+.cf-grid::-webkit-scrollbar { display: none; }
+.cf-grid > .cf-card {
+  flex: 0 0 calc((100% - 5 * 16px) / 6);
+  width: calc((100% - 5 * 16px) / 6);
+  scroll-snap-align: start;
+}
+.cf-card--hidden { display: none !important; }
+
+/* ── Filtres + tri ── */
+.cfc-controls {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 16px;
+}
+.cfc-filters { display: flex; flex: 1 1 auto; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.cfc-filter {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 999px;
+  font-family: var(--f-title); font-size: .58rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; white-space: nowrap;
+  color: rgba(232,232,232,.5);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+.cfc-filter span {
+  font-size: .9em; color: rgba(232,232,232,.35);
+}
+.cfc-filter:hover { border-color: rgba(196,160,82,.35); color: rgba(232,232,232,.75); }
+.cfc-filter.is-active {
+  background: rgba(196,160,82,.14);
+  border-color: rgba(196,160,82,.6);
+  color: var(--dore-clair);
+}
+.cfc-filter.is-active span { color: var(--or-titre); }
+.cfc-sort {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 9px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+  color: rgba(232,232,232,.5);
+}
+.cfc-sort__label {
+  font-family: var(--f-title); font-size: .58rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; white-space: nowrap;
+}
+.cfc-sort select {
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-body); font-size: .68rem; font-weight: 500;
+  color: var(--or-titre); cursor: pointer;
+}
+.cfc-sort select option { background: var(--bleu-nuit, #0a1420); color: var(--argent-ecran); }
+.cfc-sort > i { color: var(--or-titre); pointer-events: none; }
+
+@media (max-width: 900px) {
+  .cf-grid > .cf-card { flex: 0 0 172px; width: 172px; }
+}
+@media (max-width: 640px) {
+  .cfc-arrow { width: 30px; height: 30px; }
+  .cf-grid > .cf-card { flex: 0 0 132px; width: 132px; }
+  .cfc-controls { flex-direction: column; align-items: stretch; }
+  .cfc-sort { justify-content: space-between; }
 }
 
 /* ── Card "À venir" ── */
@@ -4267,6 +4358,7 @@ body.modal-open { overflow: hidden; }
 /* ── Carte cadre ── */
 .cf-card {
   position: relative;
+  z-index: 0; /* crée un contexte d'empilement local pour que .cf-card__bg (z-index:-1) reste visible derrière le contenu, au-dessus du fond de carte */
   display: flex; flex-direction: column; align-items: center;
   gap: 10px;
   padding: 20px 14px 16px;
@@ -4280,8 +4372,31 @@ body.modal-open { overflow: hidden; }
     inset 0 0 0 1px rgba(196,160,82,.04),
     inset 0 1px 0 rgba(255,240,180,.05),
     0 8px 28px rgba(0,0,0,.45);
-  overflow: visible; /* pill ACTUEL déborde en haut — ne pas clipper */
+  overflow: visible; /* pill ACTUEL déborde en haut — ne pas clipper la carte elle-même */
 }
+/* Fond thématique — toujours présent, grisé/éteint au repos, révélé en couleur quand actif.
+   Prévu pour des visuels au format 2:3, ancrés en haut, sans recadrage (contain). */
+.cf-card__bg {
+  position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit; overflow: hidden;
+}
+.cf-card__bg img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+  opacity: .58; filter: grayscale(.8) brightness(.8) saturate(.55);
+  transition: opacity .4s ease, filter .4s ease;
+}
+.cf-card__bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,20,36,.12) 0%, rgba(10,20,36,.62) 55%, rgba(10,20,36,.93) 100%);
+  transition: opacity .4s ease;
+}
+/* Carte active — le fond retrouve ses couleurs, la carte "s'illumine" */
+.cf-card--active .cf-card__bg img {
+  opacity: .88; filter: grayscale(0) brightness(1) saturate(1.3);
+}
+.cf-card--active .cf-card__bg::after { opacity: .7; }
 /* Barre dorée haut — centrée */
 .cf-card::before {
   content: '';
@@ -4408,47 +4523,37 @@ body.modal-open { overflow: hidden; }
   color: rgba(232,232,232,.52); text-align: center;
   margin-top: 1px;
 }
+/* Badge thème premium — petite pastille bordée or */
 .cf-card__theme {
-  font-size: .54rem; font-weight: 300;
-  color: rgba(232,232,232,.40); text-align: center;
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px; padding: 3px 9px; border-radius: 999px;
+  font-size: .42rem; font-weight: 600; letter-spacing: .03em;
+  color: rgba(232,232,232,.6); text-align: center;
+  background: rgba(196,160,82,.07);
+  border: 1px solid rgba(196,160,82,.22);
+}
+.cf-card__theme i { color: var(--or-titre); flex-shrink: 0; }
+.cf-card__theme-dot { opacity: .5; }
+.cf-card--active .cf-card__theme {
+  color: var(--dore-clair);
+  background: rgba(196,160,82,.14);
+  border-color: rgba(196,160,82,.45);
 }
 
-/* Boutons */
-.cf-card__action { margin-top: auto; width: 100%; }
-.cf-card__btn {
-  width: 100%; padding: 8px 10px; border-radius: 8px;
-  font-family: var(--f-title); font-size: .52rem; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase;
+/* Étiquette "Niveau requis" (carte verrouillée — remplace l'ancien bouton) */
+.cf-card__locked-tag {
+  margin-top: auto; width: 100%; padding: 7px 8px; border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  cursor: pointer; border: 1.5px solid; transition: all .22s;
-}
-.cf-card__btn--equip {
+  font-family: var(--f-title); font-size: .5rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: rgba(232,232,232,.35);
   background: transparent;
-  border-color: rgba(196,160,82,.4);
-  color: var(--or-titre);
-}
-.cf-card__btn--equip:hover {
-  background: rgba(196,160,82,.12);
-  border-color: rgba(196,160,82,.7);
-  color: var(--dore-clair);
-  transform: translateY(-1px);
-}
-.cf-card__btn--equipped {
-  background: rgba(10,18,30,.85);
-  border-color: rgba(196,160,82,.5);
-  color: var(--dore-clair);
-  cursor: default;
-}
-.cf-card__btn--locked {
-  background: transparent;
-  border-color: rgba(255,255,255,.08);
-  color: rgba(232,232,232,.3);
-  cursor: default;
+  border: 1.5px dashed rgba(255,255,255,.1);
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .cf-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cf-grid { gap: 10px; }
   .cf-card { padding: 14px 10px 12px; }
   /* Garder 100px pour que les cadres restent correctement proportionnés */
   .cf-card__preview-wrap { width: 100px; height: 100px; position: relative; }
@@ -4740,8 +4845,8 @@ body.modal-open { overflow: hidden; }
 @media (max-width: 500px) {
   /* Timeline : 1 colonne sur mobile étroit */
   .ctb-timeline { grid-template-columns: 1fr; }
-  /* cf-grid cadres : 2 colonnes max */
-  .cf-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* cf-grid cadres : carrousel, cartes légèrement réduites */
+  .cf-grid { gap: 10px; }
   /* Masquer XP dans la timeline pour gagner de l'espace */
   .ctb-tl-xp { display: none; }
 }

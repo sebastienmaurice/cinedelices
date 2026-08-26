@@ -7,6 +7,9 @@
    * de logique par /auth/profil/:id ET /cinepass/.
    * Équipement en direct géré par gamification.js (POST /auth/equip-frame),
    * qui cible cet id="contrib-frames-list" quel que soit la page.
+   * Le carrousel/filtres/tri ci-dessous sont purement visuels (aucune
+   * logique métier dupliquée) : le clic carte → équipement reste géré
+   * à 100% par gamification.js via la délégation d'événement existante.
    *
    * Locals attendus (mêmes noms que sur la page profil) :
    *   user, userLevel, userXP, userActiveFrameId, userFrames
@@ -16,6 +19,25 @@
   const _activeId = (typeof userActiveFrameId !== 'undefined' && userActiveFrameId) ? userActiveFrameId : null;
 
   const XP_TABLE = [0,100,300,600,1100,1800,2800,4200,6000,8500,11500,15000,20000,26000,33000,41000,50000,60000,72000];
+
+  // Image de fond dédiée par cadre (illustration sur-mesure, format 2:3).
+  const _frameBg = {
+    'none':     '/images/cadres-collection/img-cadre-collection-sans-cadre.webp',
+    'cine':     '/images/cadres-collection/img-cadre-collection-cine-delices.webp',
+    'sherlock': '/images/cadres-collection/img-cadre-collection-sherlock-holmes.webp',
+    'matrix':   '/images/cadres-collection/img-cadre-collection-matrix.webp',
+    'indiana':  '/images/cadres-collection/img-cadre-collection-indiana-jones.webp',
+    'harry':    '/images/cadres-collection/img-cadre-collection-harry-potter.webp',
+    'strange':  '/images/cadres-collection/img-cadre-collection-doctor-strange.webp',
+  };
+  const _themeIcon = {
+    'Par défaut':       'circle-dashed',
+    'Cinéma':           'clapperboard',
+    'Policier':         'search',
+    'Science-Fiction':  'rocket',
+    'Aventure':         'compass',
+    'Magie':            'sparkles',
+  };
 
   const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
     ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
@@ -30,8 +52,13 @@
   ];
   const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
   const _activeFrame = _allFrames.find(f => f.id === _activeId) || _deblocked[0] || _allFrames[0];
+
+  // Comptage par thème pour les pastilles de filtre (ordre d'apparition des thèmes)
+  const _themeOrder = [];
+  _allFrames.forEach(f => { if (!_themeOrder.includes(f.theme)) _themeOrder.push(f.theme); });
+  const _themeCounts = _themeOrder.map(t => ({ theme: t, count: _allFrames.filter(f => f.theme === t).length }));
 %>
-<section class="ctb-frames-section" aria-label="Collection de cadres">
+<section class="ctb-frames-section cfc--v2" aria-label="Collection de cadres">
   <!-- En-tête section -->
   <div class="cfc-header">
     <div class="cfc-header__left">
@@ -52,92 +79,200 @@
     </div>
   </div>
 
-  <!-- Grille de cartes -->
-  <div class="cf-grid" id="contrib-frames-list">
-    <% _allFrames.forEach(function(fr) {
-      const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
-      const _isActive   = fr.id === _activeFrame.id;
-    %>
-    <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
-      data-frame-id="<%= fr.id %>"
-      data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>">
+  <!-- Carrousel de cartes -->
+  <div class="cfc-carousel">
+    <button type="button" class="cfc-arrow cfc-arrow--prev" data-cfc-arrow="prev" aria-label="Cadres précédents">
+      <i data-lucide="chevron-left" width="18" height="18" aria-hidden="true"></i>
+    </button>
 
-      <!-- Pill ACTUEL (carte active uniquement) -->
-      <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
-
-      <!-- Preview circulaire -->
-      <div class="cf-card__preview-wrap">
-        <% if (fr.id === 'none') { %>
-        <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
-          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-        </div>
-        <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-        <div class="frame-row-badge-static cf-card__preview-inner">
-          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-          <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-        </div>
-        <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-        <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
-          <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-          <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-          <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
-        </div>
-        <% } else { %>
-        <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
-          <span><%= fr.icon %></span>
-        </div>
-        <% } %>
-      </div>
-
-      <!-- Nom + sous-titre + thème -->
-      <div class="cf-card__name"><%= fr.label %></div>
-      <% if (fr.subLabel) { %>
-      <div class="cf-card__sublabel"><%= fr.subLabel %></div>
-      <% } %>
-      <div class="cf-card__theme"><%= fr.theme %> · niv. <%= fr.minLvl %></div>
-
-      <!-- Bouton équiper -->
-      <div class="cf-card__action">
-        <% if (_isActive) { %>
-        <button class="cf-card__btn cf-card__btn--equipped frame-row-check frame-row-check--active" aria-disabled="true">
-          <i data-lucide="check" width="13" height="13" aria-hidden="true"></i> Équipé
-        </button>
-        <% } else if (_isUnlocked) { %>
-        <button class="cf-card__btn cf-card__btn--equip frame-row-check frame-row-check--ok account-edit-btn">
-          Équiper <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i>
-        </button>
-        <% } else { %>
-        <button class="cf-card__btn cf-card__btn--locked frame-row-check frame-row-check--locked" disabled>
-          <i data-lucide="lock" width="13" height="13" aria-hidden="true"></i> Niv. <%= fr.minLvl %>
-        </button>
-        <% } %>
-      </div>
-
-      <!-- Tooltip (verrouillés) -->
-      <% if (!_isUnlocked) {
-        const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
-        const _xpGap      = Math.max(0, _xpForFrame - _xp);
-        const _recipesNeeded = Math.ceil(_xpGap / 50);
-        const _reviewsNeeded = Math.ceil(_xpGap / 10);
-        const _lvlsToGo   = fr.minLvl - _lvl;
+    <div class="cf-grid" id="contrib-frames-list">
+      <% _allFrames.forEach(function(fr) {
+        const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
+        const _isActive   = fr.id === _activeFrame.id;
+        const _bgImg      = _frameBg[fr.id] || null;
       %>
-      <div class="frame-tile__tooltip" role="tooltip">
-        <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
-        <div class="frame-tile__tooltip-row">
-          <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
-          Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
-        </div>
-        <div class="frame-tile__tooltip-row">
-          <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
-          <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
-        </div>
-        <div class="frame-tile__tooltip-hint">
-          <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
-        </div>
-      </div>
-      <% } %>
+      <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
+        data-frame-id="<%= fr.id %>"
+        data-unlocked="<%= _isUnlocked ? 'true' : 'false' %>"
+        data-theme="<%= fr.theme %>"
+        data-level="<%= fr.minLvl %>"
+        data-name="<%= fr.label %>">
 
+        <!-- Fond thématique subtil -->
+        <div class="cf-card__bg" aria-hidden="true">
+          <% if (_bgImg) { %><img src="<%= _bgImg %>" alt="" loading="lazy" /><% } %>
+        </div>
+
+        <!-- Pill ACTUEL (carte active uniquement) -->
+        <% if (_isActive) { %><div class="cf-card__actuel">Actuel</div><% } %>
+
+        <!-- Preview circulaire -->
+        <div class="cf-card__preview-wrap">
+          <% if (fr.id === 'none') { %>
+          <div class="frame-row-badge-static frame-row-badge-static--noframe cf-card__preview-inner">
+            <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+          </div>
+          <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+          <div class="frame-row-badge-static cf-card__preview-inner">
+            <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+            <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+          </div>
+          <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
+          <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
+            <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
+            <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+            <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
+          </div>
+          <% } else { %>
+          <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
+            <span><%= fr.icon %></span>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Nom + sous-titre + badge thème -->
+        <div class="cf-card__name"><%= fr.label %></div>
+        <% if (fr.subLabel) { %>
+        <div class="cf-card__sublabel"><%= fr.subLabel %></div>
+        <% } %>
+        <div class="cf-card__theme"><i data-lucide="<%= _themeIcon[fr.theme] || 'tag' %>" width="10" height="10" aria-hidden="true"></i> <%= fr.theme %> <span class="cf-card__theme-dot">·</span> niv. <%= fr.minLvl %></div>
+
+        <!-- État verrouillé : niveau requis (remplace l'ancien bouton) -->
+        <% if (!_isUnlocked) { %>
+        <div class="cf-card__locked-tag frame-row-check frame-row-check--locked">
+          <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i> Niveau <%= fr.minLvl %> requis
+        </div>
+        <% } %>
+
+        <!-- Tooltip (verrouillés) -->
+        <% if (!_isUnlocked) {
+          const _xpForFrame = XP_TABLE[fr.minLvl - 1] || 0;
+          const _xpGap      = Math.max(0, _xpForFrame - _xp);
+          const _recipesNeeded = Math.ceil(_xpGap / 50);
+          const _reviewsNeeded = Math.ceil(_xpGap / 10);
+          const _lvlsToGo   = fr.minLvl - _lvl;
+        %>
+        <div class="frame-tile__tooltip" role="tooltip">
+          <div class="frame-tile__tooltip-title"><%= fr.label %> · <em><%= fr.theme %></em></div>
+          <div class="frame-tile__tooltip-row">
+            <i data-lucide="lock" width="11" height="11" aria-hidden="true"></i>
+            Niveau <%= fr.minLvl %> requis<% if (_lvlsToGo === 1) { %><span class="frame-tile__tooltip-close"> — encore 1 niveau !</span><% } %>
+          </div>
+          <div class="frame-tile__tooltip-row">
+            <i data-lucide="zap" width="11" height="11" aria-hidden="true"></i>
+            <strong><%= _xpGap.toLocaleString('fr-FR') %> XP</strong> manquants
+          </div>
+          <div class="frame-tile__tooltip-hint">
+            <% if (_recipesNeeded <= 4) { %>≈ <%= _recipesNeeded %> recette<%= _recipesNeeded > 1 ? 's' : '' %> validée<%= _recipesNeeded > 1 ? 's' : '' %><% } else { %>≈ <%= _reviewsNeeded %> avis ou <%= _recipesNeeded %> recettes<% } %>
+          </div>
+        </div>
+        <% } %>
+
+      </div>
+      <% }); %>
     </div>
-    <% }); %>
+
+    <button type="button" class="cfc-arrow cfc-arrow--next" data-cfc-arrow="next" aria-label="Cadres suivants">
+      <i data-lucide="chevron-right" width="18" height="18" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Filtres + tri -->
+  <div class="cfc-controls">
+    <div class="cfc-filters" id="cfcFilters" role="tablist" aria-label="Filtrer par catégorie">
+      <button type="button" class="cfc-filter is-active" data-filter="all">
+        <i data-lucide="layout-grid" width="12" height="12" aria-hidden="true"></i> Tous <span><%= _allFrames.length %></span>
+      </button>
+      <% _themeCounts.forEach(function(tc) { %>
+      <button type="button" class="cfc-filter" data-filter="<%= tc.theme %>">
+        <i data-lucide="<%= _themeIcon[tc.theme] || 'tag' %>" width="12" height="12" aria-hidden="true"></i> <%= tc.theme %> <span><%= tc.count %></span>
+      </button>
+      <% }); %>
+    </div>
+    <label class="cfc-sort">
+      <span class="cfc-sort__label">Trier par</span>
+      <select id="cfcSort" aria-label="Trier les cadres">
+        <option value="level">Niveau</option>
+        <option value="name">Nom</option>
+        <option value="theme">Catégorie</option>
+      </select>
+      <i data-lucide="chevron-down" width="13" height="13" aria-hidden="true"></i>
+    </label>
   </div>
 </section>
+
+<script>
+(function () {
+  // ── UI uniquement : carrousel / filtres / tri. Aucune logique métier.
+  // L'équipement d'un cadre reste géré à 100% par gamification.js, qui
+  // écoute déjà les clics sur .frame-row à l'intérieur de #contrib-frames-list.
+  function initFramesCollectionUI() {
+    var section = document.querySelector('.cfc--v2');
+    if (!section) return;
+    var list   = section.querySelector('#contrib-frames-list');
+    var prev   = section.querySelector('[data-cfc-arrow="prev"]');
+    var next   = section.querySelector('[data-cfc-arrow="next"]');
+    var pills  = section.querySelectorAll('.cfc-filter');
+    var sortEl = section.querySelector('#cfcSort');
+    if (!list) return;
+
+    function updateArrows() {
+      if (!prev || !next) return;
+      var max = list.scrollWidth - list.clientWidth;
+      prev.disabled = list.scrollLeft <= 2;
+      next.disabled = list.scrollLeft >= max - 2;
+    }
+
+    if (prev) prev.addEventListener('click', function () {
+      list.scrollBy({ left: -280, behavior: 'smooth' });
+    });
+    if (next) next.addEventListener('click', function () {
+      list.scrollBy({ left: 280, behavior: 'smooth' });
+    });
+    list.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pills.forEach(function (p) { p.classList.remove('is-active'); });
+        pill.classList.add('is-active');
+        var filter = pill.getAttribute('data-filter');
+        Array.prototype.forEach.call(list.children, function (card) {
+          var show = filter === 'all' || card.getAttribute('data-theme') === filter;
+          card.classList.toggle('cf-card--hidden', !show);
+        });
+        list.scrollTo({ left: 0, behavior: 'smooth' });
+        setTimeout(updateArrows, 320);
+      });
+    });
+
+    if (sortEl) {
+      sortEl.addEventListener('change', function () {
+        var mode = sortEl.value;
+        var cards = Array.prototype.slice.call(list.children);
+        cards.sort(function (a, b) {
+          if (mode === 'name') {
+            return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'), 'fr');
+          }
+          if (mode === 'theme') {
+            var t = a.getAttribute('data-theme').localeCompare(b.getAttribute('data-theme'), 'fr');
+            return t !== 0 ? t : (parseInt(a.getAttribute('data-level')) - parseInt(b.getAttribute('data-level')));
+          }
+          return parseInt(a.getAttribute('data-level')) - parseInt(b.getAttribute('data-level'));
+        });
+        cards.forEach(function (card) { list.appendChild(card); });
+        list.scrollTo({ left: 0, behavior: 'smooth' });
+        setTimeout(updateArrows, 320);
+      });
+    }
+
+    updateArrows();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFramesCollectionUI);
+  } else {
+    initFramesCollectionUI();
+  }
+})();
+</script>
