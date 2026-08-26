@@ -10,7 +10,7 @@
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
     <link rel="stylesheet" href="/css/user-profile.css?v=9" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=19" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=41" />
   </head>
 
   <body class="cp-page">
@@ -30,12 +30,10 @@
       ══════════════════════════════════════════ -->
       <section class="cp-hero">
         <div class="cp-hero__banner">
-          <img src="/images/banner-gamification-section.webp" alt="" />
+          <img src="/images/banner-cinepass-hero-3.webp" alt="" />
         </div>
         <div class="cp-hero__banner-grad"></div>
 
-        <div class="cp-hero__reel cp-hero__reel--1" aria-hidden="true"></div>
-        <div class="cp-hero__reel cp-hero__reel--2" aria-hidden="true"></div>
         <div class="cp-hero__spotlight" aria-hidden="true"></div>
         <div class="cp-hero__dust" aria-hidden="true"></div>
         <div class="cp-hero__scanlines" aria-hidden="true"></div>
@@ -52,115 +50,123 @@
           CinéPass
         </p>
 
-        <!-- Identité — centrée verticalement dans le hero -->
+        <!-- Identité — carte de membre premium, centrée verticalement dans le hero -->
         <div class="cp-hero__content">
-          <div class="cp-hero__row">
-            <div class="cp-hero__identity-col">
-            <div class="cp-hero__avatar-block">
-              <% if (activeFrameCode === 'strange') { %>
-              <!-- Cadre CSS pur — mêmes classes que /auth/profil/# -->
-              <div class="profile-badge-hero profile-badge-hero--css-only"
-                   id="profileBadgeHero"
-                   data-frame-code="strange"
-                   data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
-                <%- include('partials/badge-strange-avatar', {
-                  photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
-                  photoAlt: 'Avatar de ' + user.pseudo
-                }) %>
-              </div>
-              <% } else { %>
-              <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
-              <div class="profile-badge-hero"
-                 id="profileBadgeHero"
-                 data-frame-code="<%= activeFrameCode || 'cine' %>"
-                 data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
-                <img
-                  id="pbhPhoto"
-                  class="pbh-photo"
-                  src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>"
-                  alt="Avatar de <%= user.pseudo %>"
-                />
-                <% if (activeFrameUrl) { %>
-                <img class="pbh-frame" src="<%= activeFrameUrl %>" alt="" aria-hidden="true" />
-                <% } else { %>
-                <div class="pbh-ring"></div>
-                <% } %>
-              </div>
-              <% } %>
-              <!-- Template caché : badge Dr Strange CSS — cloné par gamification.js lors d'un changement de cadre -->
-              <template id="bds-badge-tpl">
-                <%- include('partials/badge-strange-avatar', {
-                  photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
-                  photoAlt: 'Avatar de ' + user.pseudo
-                }) %>
-              </template>
-            </div>
+          <div class="cp-hero__inner">
+            <div class="cp-hero__row">
 
-              <p class="cp-hero__name"><%= (user.pseudo || '').toUpperCase() %></p>
-              <p class="cp-hero__rank-row">
-                <span class="cp-hero__rank"><%= rank %></span>
-                <span class="cp-hero__sep" aria-hidden="true">·</span>
-                <span class="cp-hero__lvl-pill">Niveau <%= level %></span>
-              </p>
-            </div>
-
-            <div class="cp-hero__masthead">
-              <h2 class="cp-hero__title">Mon <em>CinéPass</em></h2>
-              <p class="cp-hero__sub">Votre parcours de cinéphile gourmand</p>
-              <p class="cp-hero__desc">Partagez vos recettes, vos avis et vos découvertes pour débloquer des récompenses exclusives et devenir une référence de la communauté.</p>
-
-              <div class="cp-hero__pills-sep" aria-hidden="true"></div>
-
-              <div class="cp-hero__pills">
-                <div class="cp-pill">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="zap" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= xp.toLocaleString('fr-FR') %></strong>
+              <!-- Colonne 1 — Avatar seul -->
+              <div class="cp-hero__avatar-block">
+                  <% if (activeFrameCode === 'strange') { %>
+                  <!-- Cadre CSS pur — mêmes classes que /auth/profil/# -->
+                  <div class="profile-badge-hero profile-badge-hero--css-only"
+                       id="profileBadgeHero"
+                       data-frame-code="strange"
+                       data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
+                    <%- include('partials/badge-strange-avatar', {
+                      photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
+                      photoAlt: 'Avatar de ' + user.pseudo
+                    }) %>
                   </div>
-                  <span class="cp-pill__label">XP actuels</span>
-                  <% if (xpProg.needed > 0) { %>
-                  <div class="cp-pill__xp">
-                    <span class="cp-pill__xp-note"><%= xpProg.needed.toLocaleString('fr-FR') %> XP avant le niveau <%= level + 1 %></span>
-                    <div class="cp-pill__xp-track"><div class="cp-pill__xp-fill" style="width:<%= xpProg.pct %>%"></div></div>
+                  <% } else { %>
+                  <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
+                  <div class="profile-badge-hero"
+                     id="profileBadgeHero"
+                     data-frame-code="<%= activeFrameCode || 'cine' %>"
+                     data-photo-src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>">
+                    <img
+                      id="pbhPhoto"
+                      class="pbh-photo"
+                      src="<%= cldCard(user.picture || '/images/image-default-profile.jpg') %>"
+                      alt="Avatar de <%= user.pseudo %>"
+                    />
+                    <% if (activeFrameUrl) { %>
+                    <img class="pbh-frame" src="<%= activeFrameUrl %>" alt="" aria-hidden="true" />
+                    <% } else { %>
+                    <div class="pbh-ring"></div>
+                    <% } %>
                   </div>
                   <% } %>
-                </div>
-                <div class="cp-pill">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="utensils" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= recipesCount %></strong>
-                  </div>
-                  <span class="cp-pill__label">Recettes</span>
-                </div>
-                <div class="cp-pill">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="message-square" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= notices.length %></strong>
-                  </div>
-                  <span class="cp-pill__label">Avis</span>
-                </div>
-                <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="compass" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= mockUnivers.length %></strong>
-                  </div>
-                  <span class="cp-pill__label">Univers</span>
-                </div>
-                <div class="cp-pill">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= unlockedFrames.length %></strong>
-                  </div>
-                  <span class="cp-pill__label">Cadres</span>
-                </div>
-                <div class="cp-pill cp-pill--mock" title="Aperçu du futur système — pas encore calculé">
-                  <div class="cp-pill__row">
-                    <span class="cp-pill__icon"><i data-lucide="star" width="16" height="16" aria-hidden="true"></i></span>
-                    <strong><%= cpUnlockedBadges %></strong>
-                  </div>
-                  <span class="cp-pill__label">Badges</span>
+                  <!-- Template caché : badge Dr Strange CSS — cloné par gamification.js lors d'un changement de cadre -->
+                  <template id="bds-badge-tpl">
+                    <%- include('partials/badge-strange-avatar', {
+                      photoSrc: cldCard(user.picture || '/images/image-default-profile.jpg'),
+                      photoAlt: 'Avatar de ' + user.pseudo
+                    }) %>
+                  </template>
+              </div>
+
+              <!-- Colonne 2 — Identité texte + CTA -->
+              <div class="cp-hero__identity-text">
+                <p class="cp-hero__welcome">Bienvenue</p>
+                <p class="cp-hero__name"><%= (user.pseudo || '').toUpperCase() %></p>
+                <p class="cp-hero__rank"><%= rank %></p>
+                <p class="cp-hero__tagline">Votre parcours de cinéphile gourmand. Chaque recette publiée, chaque avis partagé et chaque découverte racontent votre histoire sur Ciné Délices. Ici, votre passion pour le cinéma et la gastronomie prend vie et devient, contribution après contribution, votre identité de cinéphile.</p>
+
+                <div class="cp-hero__cta-row">
+                  <% if (hasAuthorPage) { %>
+                  <a href="/auteur/<%= user.id %>" class="cp-hero__cta" target="_blank" rel="noopener">Voir ma Page Auteur</a>
+                  <% } else { %>
+                  <a href="/add-recipes-movies/" class="cp-hero__cta">Publier ma première recette</a>
+                  <% } %>
+                  <a href="/auth/profil/<%= user.id %>#profil" class="cp-hero__cta cp-hero__cta--ghost">Éditer mon profil</a>
                 </div>
               </div>
+
+              <!-- Colonne 3 — Statut / progression -->
+              <div class="cp-hero__status">
+                <div class="cp-hero__status-top">
+                  <div class="cp-hero__status-ring" style="--pct:<%= xpProg.pct %>">
+                    <span class="cp-hero__status-ring-inner"><%= level %></span>
+                  </div>
+                  <div class="cp-hero__status-info">
+                    <p class="cp-hero__status-eyebrow">Niveau actuel</p>
+                    <p class="cp-hero__status-lvl">Niveau <%= level %></p>
+                    <p class="cp-hero__status-rank"><i data-lucide="flame" width="14" height="14" aria-hidden="true"></i> <%= rank %></p>
+                  </div>
+                </div>
+
+                <div class="cp-hero__status-progress">
+                  <div class="cp-hero__status-track">
+                    <div class="cp-hero__status-fill" style="width:<%= xpProg.pct %>%"></div>
+                    <span class="cp-hero__status-dot" style="left:<%= xpProg.pct %>%"></span>
+                  </div>
+                  <div class="cp-hero__status-labels">
+                    <span><%= xp.toLocaleString('fr-FR') %> XP</span>
+                    <% if (xpProg.needed > 0) { %>
+                    <span class="cp-hero__status-labels-mid"><%= xpProg.needed.toLocaleString('fr-FR') %> XP avant le niveau <%= level + 1 %></span>
+                    <% } else { %>
+                    <span class="cp-hero__status-labels-mid">Niveau maximum atteint</span>
+                    <% } %>
+                    <span><%= (xp + xpProg.needed).toLocaleString('fr-FR') %> XP</span>
+                  </div>
+                </div>
+
+                <!-- Statistiques — relevé discret, dans la même colonne que le statut -->
+                <div class="cp-hero__stats-strip">
+                  <div class="cp-hero__stat">
+                    <span class="cp-hero__stat-icon"><i data-lucide="zap" width="15" height="15" aria-hidden="true"></i></span>
+                    <span>XP gagnés</span>
+                    <strong><%= xp.toLocaleString('fr-FR') %></strong>
+                  </div>
+                  <div class="cp-hero__stat">
+                    <span class="cp-hero__stat-icon"><i data-lucide="utensils" width="15" height="15" aria-hidden="true"></i></span>
+                    <span>Recettes</span>
+                    <strong><%= recipesCount %></strong>
+                  </div>
+                  <div class="cp-hero__stat">
+                    <span class="cp-hero__stat-icon"><i data-lucide="message-square" width="15" height="15" aria-hidden="true"></i></span>
+                    <span>Avis</span>
+                    <strong><%= notices.length %></strong>
+                  </div>
+                  <div class="cp-hero__stat">
+                    <span class="cp-hero__stat-icon"><i data-lucide="layout-grid" width="15" height="15" aria-hidden="true"></i></span>
+                    <span>Cadres</span>
+                    <strong><%= unlockedFrames.length %></strong>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
