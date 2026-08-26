@@ -388,7 +388,17 @@ body.cp-page main {
 /* Liseré doré façon cp-hero (conic-gradient + points lumineux) — remplace
    le simple filet doré du haut sur ces deux cartes précises */
 .cp-progress, .cp-card--collection { border-color: transparent; }
-.cp-card--collection::before { display: none; } /* retire le filet doré simple hérité de .cp-card */
+/* Image de fond de la carte Collection, même traitement que .cp-progress::before */
+.cp-card--collection::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  height: auto; width: auto; /* neutralise le height:2px hérité de .cp-card::before (filet doré) */
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 55%, var(--surface-card, #0f1e30) 100%) top center / 100% 100% no-repeat,
+    url('/images/bg-collection-card-1.webp') top center / cover no-repeat,
+    linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  filter: brightness(0.85) contrast(1.06) saturate(1.05);
+}
 .cp-progress::after,
 .cp-card--collection::after {
   content: "";
