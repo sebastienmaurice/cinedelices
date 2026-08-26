@@ -116,10 +116,10 @@ body.cp-page main {
 /* Lumière de projecteur — faisceau chaud qui tombe derrière l'avatar */
 .cp-hero__spotlight {
   position: absolute; z-index: 2; pointer-events: none;
-  left: 4%; bottom: 0; width: 620px; height: 100%;
+  left: 0; top: 0; width: 560px; height: 100%;
   background:
-    radial-gradient(ellipse 60% 90% at 30% 100%, rgba(226, 168, 76, 0.16) 0%, transparent 62%),
-    radial-gradient(ellipse 40% 70% at 20% 100%, rgba(194, 48, 24, 0.12) 0%, transparent 60%);
+    radial-gradient(ellipse 70% 70% at 25% 48%, rgba(226, 168, 76, 0.16) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 55% at 15% 52%, rgba(194, 48, 24, 0.1) 0%, transparent 62%);
   animation: cpSpotBreathe 7s ease-in-out infinite;
   mix-blend-mode: screen;
 }
@@ -313,6 +313,9 @@ body.cp-page main {
   display: flex; align-items: center; gap: 8px;
 }
 .cp-card__eyebrow::before { content: ""; width: 14px; height: 1px; background: var(--or-titre); opacity: 0.7; }
+/* Plus lisible sur le fond illustré de la card progression */
+.cp-progress .cp-card__eyebrow { color: var(--argent-ecran); text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7); }
+.cp-progress .cp-card__eyebrow::before { opacity: 1; box-shadow: 0 0 6px rgba(196, 160, 82, 0.6); }
 .cp-card__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .cp-card__head .cp-card__eyebrow { margin-bottom: 0; }
 /* Tampon "aperçu" — évoque un cachet de collection, pas une erreur */
@@ -362,7 +365,14 @@ body.cp-page main {
 .cp-row--progress { grid-template-columns: 340px 1fr; }
 .cp-row--two { grid-template-columns: 1fr 1.3fr; }
 
-.cp-progress { text-align: center; }
+.cp-progress {
+  text-align: center;
+  position: relative;
+  background:
+    linear-gradient(to bottom, transparent 0%, transparent 60%, var(--surface-card, #0f1e30) 100%) top center / 100% 100% no-repeat,
+    url('/images/bg-progress-card-1.webp') top center / cover no-repeat,
+    linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+}
 /* Médaillon — .level-medallion vient de user-profile.css (composant partagé) */
 .cp-progress .level-medallion { margin: 0 auto 16px; }
 
