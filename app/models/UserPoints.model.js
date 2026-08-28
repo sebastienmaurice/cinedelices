@@ -23,6 +23,11 @@ const UserPoints = sequelize.define(
       allowNull: false,
       defaultValue: "cine",
     },
+    active_banner_variant: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
     last_weekly_login_at: {
       type: DataTypes.DATE,
       allowNull: true,

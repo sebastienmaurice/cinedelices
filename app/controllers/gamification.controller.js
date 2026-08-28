@@ -1,5 +1,6 @@
 import { UserPoints } from "../models/index.model.js";
 import { computeLevel, FRAME_UNLOCKS, isSuperAdminRole } from "../utils/gamification.utils.js";
+import { FRAME_BANNERS } from "../utils/frame-banners.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -46,6 +47,44 @@ const gamificationController = {
       });
     } catch (error) {
       console.error("[equipFrame]", error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Erreur serveur." });
+    }
+  },
+
+  /**
+   * POST /auth/set-banner-variant
+   * Body : { variant: 3 }
+   * Choisit quelle variante du fond officiel du cadre équipé utiliser
+   * (aucune règle XP/niveau/cadre — juste une préférence d'affichage,
+   * voir app/utils/frame-banners.js). N'affecte jamais une bannière
+   * personnelle uploadée, qui reste toujours prioritaire.
+   */
+  async setBannerVariant(req, res) {
+    try {
+      const variant = parseInt(req.body.variant, 10);
+      const userId = req.userId;
+
+      if (!Number.isInteger(variant) || variant < 1) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Variante invalide." });
+      }
+
+      const row = await UserPoints.findOne({ where: { id_user: userId } });
+      if (!row) {
+        return res.status(StatusCodes.NOT_FOUND).json({ error: "Profil XP introuvable." });
+      }
+
+      const list = FRAME_BANNERS[row.active_frame_code] || [];
+      if (variant > list.length) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: `Le cadre équipé ne propose que ${list.length} fond(s).`,
+        });
+      }
+
+      await row.update({ active_banner_variant: variant });
+
+      return res.json({ success: true, variant, bannerUrl: list[variant - 1] });
+    } catch (error) {
+      console.error("[setBannerVariant]", error);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Erreur serveur." });
     }
   },

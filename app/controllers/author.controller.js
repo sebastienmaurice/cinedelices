@@ -1,9 +1,12 @@
 import { Op, fn, col } from "sequelize";
-import { Recipe, Movie, Notice, User, Favorite, Rating } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, Favorite, Rating, UserPoints } from "../models/index.model.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress } from "../utils/gamification.utils.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
+import { resolveHeroBanner, FRAME_BANNERS } from "../utils/frame-banners.js";
+
+const DEFAULT_HERO_BANNER = "/images/banner-cinepass-hero-3.webp";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)
@@ -137,6 +140,13 @@ const authorController = {
       // Tous les cadres sauf "none" — débloqués et verrouillés affichés sur la page auteur
       const userFrames = gamif.frames.filter((f) => f.code !== 'none');
 
+      // Bannière du Hero — même priorité que sur /cinepass/ (perso approuvée >
+      // variante choisie du cadre équipé > défaut), voir app/utils/frame-banners.js.
+      const points = await UserPoints.findOne({ where: { id_user: userId }, attributes: ["active_banner_variant"] });
+      const activeBannerVariant = points?.active_banner_variant || null;
+      const heroBannerUrl = resolveHeroBanner(author, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
+      const frameBannerVariants = FRAME_BANNERS[gamif.activeFrameCode] || [];
+
       return res.render("author-page", {
         author,
         recipes: enrichedRecipes,
@@ -154,6 +164,9 @@ const authorController = {
         xpCurrent:       xpProg.current,
         xpNeeded:        xpProg.needed,
         ctaMovies,
+        heroBannerUrl,
+        frameBannerVariants,
+        activeBannerVariant,
       });
     } catch (error) {
       return renderServerError(res, error);

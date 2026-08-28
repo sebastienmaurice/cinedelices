@@ -24,7 +24,7 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=42" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
     <link rel="stylesheet" href="/css/author-page.css" />
@@ -72,10 +72,10 @@
     <%- include("partials/header") %>
 
     <%
-      /* Sur la page publique, on n'affiche la bannière que si elle est approuvée par un admin */
-      const bannerUrl = (author.banner_status === 'approved' && (author.banner || author.banner_image))
-        ? (author.banner || author.banner_image)
-        : null;
+      /* heroBannerUrl calculé côté contrôleur (resolveHeroBanner) : bannière perso
+         approuvée > fond officiel du cadre équipé > défaut Ciné Délices. Toujours
+         une image à afficher, plus de fond vide. */
+      const _hasCustomBanner = author.banner_status === 'approved' && (author.banner || author.banner_image);
     %>
 
     <main id="main-content" data-author-id="<%= author.id %>">
@@ -98,15 +98,11 @@
 
         <!-- Bannière -->
         <div class="hero-banner">
-          <% if (bannerUrl) { %>
-          <img src="<%= cldFull(bannerUrl) %>" alt="Bannière de <%= author.pseudo %>" />
-          <% } %>
+          <img src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>" alt="Bannière de <%= author.pseudo %>" />
           <div class="hero-banner-grad"></div>
         </div>
 
         <!-- Déco cinématographique -->
-        <div class="hero-reel hero-reel--1" aria-hidden="true"></div>
-        <div class="hero-reel hero-reel--2" aria-hidden="true"></div>
         <div class="hero-scanlines" aria-hidden="true"></div>
         <div class="hero-vignette" aria-hidden="true"></div>
 
@@ -122,9 +118,32 @@
               <i data-lucide="upload" width="10" height="10" aria-hidden="true"></i>
               Modifier la bannière
             </button>
+            <% if (_hasCustomBanner) { %>
+            <button class="banner-btn banner-btn--reset" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
+              <i data-lucide="rotate-ccw" width="10" height="10" aria-hidden="true"></i>
+              Retirer ma bannière
+            </button>
+            <% } %>
           <% } %>
         </div>
         <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
+
+        <!-- Choix du fond officiel du cadre équipé — seulement si ce cadre propose
+             plusieurs variantes ET qu'aucune bannière perso n'est active dessus -->
+        <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
+        <div class="banner-variants" id="bannerVariants">
+          <% frameBannerVariants.forEach(function (bv, i) { %>
+          <button
+            type="button"
+            class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
+            data-variant="<%= i + 1 %>"
+            aria-label="Choisir ce fond"
+          >
+            <img src="<%= bv %>" alt="" loading="lazy" />
+          </button>
+          <% }); %>
+        </div>
+        <% } %>
         <% } %>
 
         <!-- Contenu hero bas -->
@@ -707,6 +726,67 @@
           }
 
           input.value = '';
+        });
+      })();
+    </script>
+
+    <!-- Retirer la bannière perso (retour au fond du cadre équipé / défaut) -->
+    <script>
+      (function () {
+        const resetBtn = document.getElementById('authorBannerResetBtn');
+        if (!resetBtn) return;
+        const authorId = '<%= author.id %>';
+
+        resetBtn.addEventListener('click', async function () {
+          resetBtn.disabled = true;
+          try {
+            const res  = await fetch('/auth/profil/' + authorId + '/banner/delete', { method: 'POST' });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur.');
+            // Rechargement simple : le serveur recalcule le bon fond (cadre équipé
+            // ou défaut) via resolveHeroBanner, pas de logique à dupliquer ici.
+            window.location.reload();
+          } catch (err) {
+            alert('Erreur : ' + err.message);
+            resetBtn.disabled = false;
+          }
+        });
+      })();
+    </script>
+
+    <!-- Choix d'une variante de fond officiel du cadre équipé -->
+    <script>
+      (function () {
+        const wrap = document.getElementById('bannerVariants');
+        if (!wrap) return;
+
+        wrap.addEventListener('click', async function (e) {
+          const btn = e.target.closest('.banner-variant');
+          if (!btn || btn.classList.contains('banner-variant--active')) return;
+
+          const variant = parseInt(btn.dataset.variant, 10);
+          wrap.querySelectorAll('.banner-variant').forEach(function (b) { b.disabled = true; });
+
+          try {
+            const res  = await fetch('/auth/set-banner-variant', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ variant: variant }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || 'Erreur.');
+
+            const bannerImg = document.querySelector('.hero-banner img');
+            if (bannerImg) bannerImg.src = data.bannerUrl;
+
+            wrap.querySelectorAll('.banner-variant').forEach(function (b) {
+              b.classList.toggle('banner-variant--active', parseInt(b.dataset.variant, 10) === variant);
+              b.disabled = false;
+            });
+          } catch (err) {
+            alert('Erreur : ' + err.message);
+            wrap.querySelectorAll('.banner-variant').forEach(function (b) { b.disabled = false; });
+          }
         });
       })();
     </script>

@@ -44,7 +44,7 @@ body.profile-page main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;
   filter: brightness(0.62) saturate(0.9);
 }
 .hero-banner-grad {
@@ -52,10 +52,10 @@ body.profile-page main {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(10, 18, 30, 0.08) 0%,
-    rgba(10, 18, 30, 0.30) 42%,
-    rgba(13, 27, 42, 0.92) 70%,
-    #0d1b2a 78%
+    rgba(10, 18, 30, 0) 0%,
+    rgba(10, 18, 30, 0.1) 45%,
+    rgba(13, 27, 42, 0.7) 75%,
+    #0d1b2a 90%
   );
 }
 
@@ -166,6 +166,43 @@ body.profile-page main {
   border-color: rgba(194, 48, 24, 0.5);
   color: #e84020;
   cursor: pointer;
+}
+.banner-btn--reset {
+  padding: 6px 12px 6px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(232, 232, 232, 0.6);
+}
+.banner-btn--reset:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: rgba(232, 232, 232, 0.9);
+}
+/* Vignettes de choix du fond officiel du cadre équipé */
+.banner-variants {
+  position: absolute;
+  top: 56px; right: 32px;
+  z-index: 20;
+  display: flex;
+  gap: 6px;
+}
+.banner-variant {
+  width: 40px; height: 26px;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
+}
+.banner-variant img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.banner-variant:hover { opacity: 0.9; transform: translateY(-1px); }
+.banner-variant--active {
+  opacity: 1;
+  border-color: var(--or-titre);
+  box-shadow: 0 0 0 1px rgba(196, 160, 82, 0.4);
 }
 .banner-btn--rejected:hover {
   background: rgba(50, 12, 8, 0.9);

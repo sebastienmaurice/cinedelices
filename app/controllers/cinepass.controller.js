@@ -1,8 +1,11 @@
-import { User, Recipe, Movie, Notice } from "../models/index.model.js";
+import { User, UserPoints, Recipe, Movie, Notice } from "../models/index.model.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress, RANK_TITLES, XP_TABLE } from "../utils/gamification.utils.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { MOCK_BADGES, MOCK_UNIVERS, MOCK_BADGES_TOTAL } from "../utils/cinepass-mock.js";
+import { resolveHeroBanner } from "../utils/frame-banners.js";
+
+const DEFAULT_HERO_BANNER = "/images/banner-cinepass-hero-3.webp";
 
 const cinepassController = {
   /**
@@ -67,8 +70,17 @@ const cinepassController = {
         return { xp: val, pct: Math.round(((val - _xpFloor) / (_xpCeil - _xpFloor)) * 100), reached: gamif.xp >= val };
       });
 
+      // Bannière du Hero — perso approuvée > variante choisie du cadre équipé > défaut
+      // (voir app/utils/frame-banners.js, même priorité que sur /auteur/:id). Le
+      // choix de la variante se fait sur la Page Auteur (où vit déjà toute la
+      // gestion de bannière) ; CinéPass ne fait qu'en refléter le résultat.
+      const points = await UserPoints.findOne({ where: { id_user: userId }, attributes: ["active_banner_variant"] });
+      const activeBannerVariant = points?.active_banner_variant || null;
+      const heroBannerUrl = resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
+
       res.render("cinepass", {
         user,
+        heroBannerUrl,
         xp: gamif.xp,
         level: gamif.level,
         rank: gamif.rank,

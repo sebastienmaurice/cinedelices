@@ -107,6 +107,7 @@ authRouter.post(
 
 // Gamification
 authRouter.post("/equip-frame", isLogged, injectId, gamificationController.equipFrame);
+authRouter.post("/set-banner-variant", isLogged, injectId, gamificationController.setBannerVariant);
 
 // Nettoyage (xss), validation (Joi), puis logique métier
 authRouter.get("/register", (req, res) => res.redirect("/"));
