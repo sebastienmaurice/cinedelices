@@ -43,3 +43,28 @@
     io.observe(el);
   });
 })();
+
+/**
+ * Filtres "Dernières contributions" — UI uniquement (masque/affiche les
+ * lignes déjà rendues côté serveur), aucune donnée recalculée ici.
+ */
+(function () {
+  "use strict";
+  var filters = document.getElementById("cpActivityFilters");
+  var list = document.getElementById("cpActivityList");
+  if (!filters || !list) return;
+
+  filters.addEventListener("click", function (e) {
+    var btn = e.target.closest(".cp-activity__filter");
+    if (!btn) return;
+    filters.querySelectorAll(".cp-activity__filter").forEach(function (b) {
+      b.classList.remove("is-active");
+    });
+    btn.classList.add("is-active");
+    var filter = btn.getAttribute("data-filter");
+    Array.prototype.forEach.call(list.children, function (item) {
+      var show = filter === "all" || item.getAttribute("data-type") === filter;
+      item.style.display = show ? "" : "none";
+    });
+  });
+})();

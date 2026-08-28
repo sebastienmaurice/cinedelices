@@ -10,7 +10,7 @@
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
     <link rel="stylesheet" href="/css/user-profile.css?v=20" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=57" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=59" />
   </head>
 
   <body class="cp-page">
@@ -162,7 +162,7 @@
                   <div class="cp-hero__stat">
                     <span class="cp-hero__stat-icon"><i data-lucide="layout-grid" width="15" height="15" aria-hidden="true"></i></span>
                     <span>Cadres</span>
-                    <strong><%= unlockedFrames.length %></strong>
+                    <strong><%= unlockedFrames.length %>/<%= frames.length %></strong>
                   </div>
                 </div>
               </div>
@@ -210,6 +210,9 @@
           <p class="cp-progress__xp"><%= xp.toLocaleString('fr-FR') %> / <%= (xp + xpProg.needed).toLocaleString('fr-FR') %> XP</p>
           <div class="cp-xp-track">
             <div class="cp-xp-fill" style="width:<%= xpProg.pct %>%"></div>
+            <% xpCheckpoints.forEach(function (cp) { %>
+            <span class="cp-xp-cp<%= cp.reached ? ' cp-xp-cp--done' : '' %>" style="left:<%= cp.pct %>%" title="<%= cp.xp.toLocaleString('fr-FR') %> XP"></span>
+            <% }); %>
           </div>
           <% if (xpProg.needed > 0) { %>
           <p class="cp-progress__left"><strong><%= xpProg.needed.toLocaleString('fr-FR') %> XP</strong> avant le niveau <%= level + 1 %></p>
@@ -234,6 +237,14 @@
             </div>
           </div>
           <% } %>
+
+          <!-- Gains récents — mêmes montants que XP_ACTIONS (gamification.utils.js), texte statique -->
+          <div class="cp-gains">
+            <p class="cp-gains__title">Gains récents</p>
+            <div class="cp-gains__row"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i><span>Recette publiée</span><strong>+50 XP</strong></div>
+            <div class="cp-gains__row"><i data-lucide="film" width="13" height="13" aria-hidden="true"></i><span>Film accepté</span><strong>+25 XP</strong></div>
+            <div class="cp-gains__row"><i data-lucide="message-square" width="13" height="13" aria-hidden="true"></i><span>Avis approuvé</span><strong>+10 XP</strong></div>
+          </div>
 
           <a href="#cp-collection-frames" class="cp-link-btn">Voir tous les niveaux <i data-lucide="arrow-right" width="13" height="13" aria-hidden="true"></i></a>
         </section>
@@ -326,7 +337,11 @@
           </div>
           <% if (nextFrame) { %>
           <div class="cp-objective">
+            <% if (nextFrame.thumbUrl) { %>
+            <div class="cp-objective__thumb"><img src="<%= nextFrame.thumbUrl %>" alt="" loading="lazy" /></div>
+            <% } else { %>
             <div class="cp-objective__icon"><i data-lucide="layout-grid" width="16" height="16" aria-hidden="true"></i></div>
+            <% } %>
             <div class="cp-objective__body">
               <p class="cp-objective__title">Niveau <%= nextFrame.minLvl %> requis</p>
               <p class="cp-objective__sub">→ débloquer le cadre « <%= nextFrame.label %> »</p>
@@ -348,9 +363,15 @@
             <a href="/contributions/" class="cp-card__more">Voir toutes <i data-lucide="arrow-right" width="12" height="12" aria-hidden="true"></i></a>
           </div>
           <% if (recentActivity.length > 0) { %>
-          <div class="cp-activity__list">
+          <div class="cp-activity__filters" id="cpActivityFilters">
+            <button type="button" class="cp-activity__filter is-active" data-filter="all">Tout</button>
+            <button type="button" class="cp-activity__filter" data-filter="recipe">Recettes</button>
+            <button type="button" class="cp-activity__filter" data-filter="movie">Films</button>
+            <button type="button" class="cp-activity__filter" data-filter="notice">Avis</button>
+          </div>
+          <div class="cp-activity__list" id="cpActivityList">
             <% recentActivity.forEach(function (a) { %>
-            <div class="cp-activity__item">
+            <div class="cp-activity__item" data-type="<%= a.type %>">
               <div class="cp-activity__icon cp-activity__icon--<%= a.type %>">
                 <% if (a.type === 'recipe') { %><i data-lucide="utensils" width="14" height="14" aria-hidden="true"></i>
                 <% } else if (a.type === 'movie') { %><i data-lucide="film" width="14" height="14" aria-hidden="true"></i>
@@ -455,6 +476,6 @@
     <script src="/js/gamification-sherlock.js" defer></script>
     <script src="/js/gamification-engine.js" defer></script>
     <script src="/js/gamification.js" defer></script>
-    <script src="/js/cinepass.js?v=1" defer></script>
+    <script src="/js/cinepass.js?v=2" defer></script>
   </body>
 </html>

@@ -53,8 +53,19 @@ const cinepassController = {
         .sort((a, b) => a.minLvl - b.minLvl)[0] || null;
 
       // Dernières contributions — résumé (les mêmes données que l'onglet
-      // #contributions du profil, pas une 2ᵉ logique de calcul).
-      const recentActivity = gamif.activity.slice(0, 4);
+      // #contributions du profil, pas une 2ᵉ logique de calcul). Slice à 10
+      // plutôt que 4 pour que les filtres par type aient de la matière.
+      const recentActivity = gamif.activity.slice(0, 10);
+
+      // Checkpoints XP à 25/50/75% du niveau en cours (même calcul que
+      // l'onglet #contributions du profil — XP_TABLE, aucune nouvelle règle).
+      const _xpFloor = XP_TABLE[gamif.level - 1] || 0;
+      const _xpCeil  = XP_TABLE[gamif.level]     || (gamif.level * 1500);
+      const roundXP  = (v) => Math.round(v / 50) * 50;
+      const xpCheckpoints = [0.25, 0.5, 0.75].map((frac) => {
+        const val = roundXP(_xpFloor + (_xpCeil - _xpFloor) * frac);
+        return { xp: val, pct: Math.round(((val - _xpFloor) / (_xpCeil - _xpFloor)) * 100), reached: gamif.xp >= val };
+      });
 
       res.render("cinepass", {
         user,
@@ -63,6 +74,7 @@ const cinepassController = {
         rank: gamif.rank,
         nextRank,
         xpProg,
+        xpCheckpoints,
         upcomingLevels,
         frames,
         unlockedFrames,
