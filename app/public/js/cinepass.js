@@ -3,11 +3,13 @@
  * ─────────────────────────────────────────────────────────────────────
  * Le CinéPass est une page de LECTURE de la progression déjà calculée
  * côté serveur (cinepass.controller.js → gamification.service.js).
- * L'équipement des cadres reste géré depuis l'onglet #contributions du
- * profil (POST /auth/equip-frame) — on ne duplique pas cette logique ici.
+ * L'équipement des cadres reste géré par gamification.js (POST
+ * /auth/equip-frame, partagé via partials/frames-collection.ejs) — on
+ * ne duplique pas cette logique ici.
  *
- * Ce fichier ne contient QUE du motion design (reveal au scroll) — aucune
- * règle de gamification, aucun appel réseau.
+ * Ce fichier ne contient QUE du motion design (reveal au scroll) et des
+ * interactions d'affichage pur (filtres "Dernières contributions") —
+ * aucune règle de gamification, aucun appel réseau.
  */
 (function () {
   "use strict";

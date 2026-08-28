@@ -246,10 +246,6 @@
             <span class="ptab-badge"><%= totalCreations > 9 ? '9+' : totalCreations %></span>
             <% } %>
           </button>
-          <button class="ptab" data-tab="contributions" role="tab" aria-selected="false">
-            <i data-lucide="star" aria-hidden="true"></i>
-            <span class="ptab-text">Contributions</span>
-          </button>
         </nav>
       </div>
 
@@ -314,7 +310,7 @@
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
                   <span class="widget-head__title">Ma progression</span>
-                  <span class="widget-head__extra" onclick="document.querySelector('[data-tab=\'contributions\']').click()">Détails →</span>
+                  <a href="/cinepass/" class="widget-head__extra">Détails →</a>
                 </div>
                 <%
                   const _ovTotal      = userRecipes.length + userMovies.length;
@@ -380,10 +376,10 @@
                     <div class="qa-icon"><i data-lucide="heart" aria-hidden="true"></i></div>
                     <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
                   </button>
-                  <button class="qa-btn qa-btn--vert" onclick="document.querySelector('[data-tab=\'contributions\']').click()">
-                    <div class="qa-icon"><i data-lucide="star" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Contributions</div><div class="qa-sub">XP, niveaux et cadres</div></div>
-                  </button>
+                  <a href="/cinepass/" class="qa-btn qa-btn--vert">
+                    <div class="qa-icon"><i data-lucide="ticket" aria-hidden="true"></i></div>
+                    <div class="qa-text"><div class="qa-title">Mon CinéPass</div><div class="qa-sub">XP, niveaux et cadres</div></div>
+                  </a>
                 </div>
               </div>
 
@@ -1457,335 +1453,6 @@
 
         </div><!-- /tab-pane#creations -->
 
-
-        <!-- ─────────────────────────────────── -->
-        <!-- TAB : CONTRIBUTIONS                 -->
-        <!-- ─────────────────────────────────── -->
-        <div class="tab-pane" id="contributions" role="tabpanel">
-          <%
-            /* ── Valeurs sécurisées ── */
-            const _lvl      = (typeof userLevel  !== 'undefined' && userLevel)  ? parseInt(userLevel)  : 1;
-            const _xp       = (typeof userXP     !== 'undefined' && userXP)     ? parseInt(userXP)     : 0;
-            const _streak   = (typeof userStreak !== 'undefined' && userStreak) ? parseInt(userStreak) : 0;
-            const _frameUrl = (typeof userActiveFrame   !== 'undefined' && userActiveFrame)   ? userActiveFrame   : null;
-            const _activeId = (typeof userActiveFrameId !== 'undefined' && userActiveFrameId) ? userActiveFrameId : null;
-            const _comments = (typeof userCommentsCount !== 'undefined' && userCommentsCount) ? userCommentsCount : 0;
-
-            /* ── XP par niveau ── */
-            const XP_TABLE = [0,100,300,600,1100,1800,2800,4200,6000,8500,11500,15000,20000,26000,33000,41000,50000,60000,72000];
-            const _xpFloor  = XP_TABLE[_lvl - 1] || 0;
-            const _xpCeil   = XP_TABLE[_lvl]     || (_lvl * 1500);
-            const _xpInLvl  = _xp - _xpFloor;
-            const _xpNeeded = _xpCeil - _xpFloor;
-            const _xpPct    = Math.min(100, Math.round((_xpInLvl / _xpNeeded) * 100));
-            const _xpLeft   = Math.max(0, _xpCeil - _xp);
-
-            /* ── Titres par niveau ── */
-            const _ranks = ['Spectateur Curieux','Cinéphile Amateur','Fin Palais','Analyste du Goût','Connaisseur','Explorateur Cuisinier','Détective des Saveurs','Critique Éclairé','Maître Cinéaste','Grand Gastronome','Virtuose Cinéphile','Légende de Ciné Délices','Ambassadeur','Visionnaire','Architecte des Saveurs','Maître des Écrans','Gardien du Temple','Élu de Ciné Délices','Mythe Vivant'];
-            const _rank = _ranks[Math.min(_lvl - 1, _ranks.length - 1)];
-            const _nextRank = _ranks[_lvl] || 'Rang légendaire';
-
-            /* ── Cadres ── */
-            const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
-              ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
-            const _allFrames = [
-              { id:'none',    label:'Sans cadre',      subLabel:'Profil épuré',             theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
-              { id:'cine',    label:'Ciné Délices',   subLabel:'Le Sceau du Cinéphile',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.webp' },
-              { id:'sherlock',label:'Sherlock Holmes', subLabel:'La Loupe de Baker Street', theme:'Policier',         icon:'🔍', minLvl:2, bg:'rgba(160,120,55,.22)', border:'rgba(188,148,78,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Sherlock Holmes/img/cadre-sherlock-holmes-1440.webp' },
-              { id:'matrix',  label:'Matrix',          subLabel:'La Pilule Rouge',           theme:'Science-Fiction',  icon:'🟢', minLvl:3, bg:'rgba(0,190,75,.18)',   border:'rgba(0,205,80,.4)',    hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Matrix/img/cadre-matrix-260x260.png' },
-              { id:'indiana', label:'Indiana Jones',   subLabel:"L'Artefact Légendaire",    theme:'Aventure',         icon:'🎩', minLvl:4, bg:'rgba(180,100,20,.22)', border:'rgba(190,135,55,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Indiana Jones/img/cadre-indiana-jones-260x260.png' },
-              { id:'harry',   label:'Harry Potter',    subLabel:'Le Cercle de Poudlard',    theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
-              { id:'strange', label:'Doctor Strange',  subLabel:"L'Œil d'Agamotto",         theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
-            ];
-            const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
-            const _locked      = _allFrames.filter(f => _lvl < f.minLvl  && !_unlockedIds.includes(f.id));
-            const _activeFrame = _allFrames.find(f => f.id === _activeId) || _deblocked[0] || _allFrames[0];
-            const _nextUnlock  = _locked[0] || null;
-            const _activity    = (typeof userActivity !== 'undefined' && Array.isArray(userActivity)) ? userActivity : [];
-          %>
-
-          <!-- ═══════════════════════════════════════════════════
-               HERO XP BENTO — Cadre actif + XP hub + Streak
-          ═══════════════════════════════════════════════════ -->
-          <%
-            const _tier = _lvl >= 11 ? 'legendary' : _lvl >= 7 ? 'gold' : _lvl >= 4 ? 'silver' : 'bronze';
-            const _roundXP = (v) => Math.round(v / 50) * 50;
-            const _cp1xp = _roundXP(_xpFloor + _xpNeeded * 0.25);
-            const _cp2xp = _roundXP(_xpFloor + _xpNeeded * 0.50);
-            const _cp3xp = _roundXP(_xpFloor + _xpNeeded * 0.75);
-            const _cp1pct = Math.round((_cp1xp - _xpFloor) / _xpNeeded * 100);
-            const _cp2pct = Math.round((_cp2xp - _xpFloor) / _xpNeeded * 100);
-            const _cp3pct = Math.round((_cp3xp - _xpFloor) / _xpNeeded * 100);
-          %>
-          <%- include('partials/frames-collection', {
-            user,
-            userLevel: _lvl,
-            userXP: _xp,
-            userActiveFrameId: _activeId,
-            userFrames: (typeof userFrames !== 'undefined' ? userFrames : []),
-          }) %>
-
-          <!-- ═══════════════════════════════════════════════════
-               GALERIE DE CADRES — bento
-          ═══════════════════════════════════════════════════ -->
-          <section class="ctb-hero" aria-label="Progression et niveau">
-            <div class="ctb-hero__unified ctb2-card">
-
-              <div class="ctb2-main-row">
-              <!-- ═══ COLONNE GAUCHE — Progression ═══ -->
-              <div class="ctb2-left">
-                <div class="ctb2-left__bg-img" aria-hidden="true">
-                  <img src="/images/ctb2-left-section-img-gb.webp" alt="" />
-                </div>
-
-                <!-- Eyebrow -->
-                <div class="ctb2-eyebrow">
-                  <span class="ctb2-eyebrow__gem" aria-hidden="true">✦</span>
-                  <span>Progression &amp; Niveau</span>
-                </div>
-
-                <!-- Médaillon + [infos niveau / barre XP] -->
-                <div class="ctb2-level-row">
-                  <div class="level-medallion level-medallion--<%= _tier %>" aria-label="Niveau <%= _lvl %>">
-                    <span class="level-medallion__gem level-medallion__gem--top"></span>
-                    <span class="level-medallion__gem level-medallion__gem--bottom"></span>
-                    <div class="level-medallion__ring">
-                      <div class="level-medallion__face">
-                        <span class="level-medallion__num"><%= _lvl %></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="ctb2-level-right">
-                    <!-- Infos niveau -->
-                    <div class="ctb2-level-info">
-                      <p class="ctb2-level-label">Niveau actuel</p>
-                      <h2 class="ctb2-level-title">Niveau&nbsp;<%= _lvl %></h2>
-                      <p class="ctb2-level-rank">« <%= _rank %> »</p>
-                    </div>
-                    <!-- Barre XP avec checkpoints -->
-                    <div class="ctb2-xp-block">
-                  <div class="ctb2-xp-ratio">
-                    <span><strong><%= _xp.toLocaleString('fr-FR') %></strong> / <%= _xpCeil.toLocaleString('fr-FR') %> XP</span>
-                    <span class="ctb2-xp-pct"><%= _xpPct %>%</span>
-                  </div>
-                  <div class="ctb2-xp-track-wrap">
-                    <!-- Barre de base -->
-                    <div class="xp-track ctb2-xp-track">
-                      <div class="xp-fill" data-pct="<%= _xpPct %>" style="width:0%"></div>
-                    </div>
-                    <!-- Checkpoints -->
-                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp1xp ? 'done' : 'next' %>" style="left:<%= _cp1pct %>%">
-                      <div class="ctb2-cp__dot"><% if (_xp >= _cp1xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
-                      <span class="ctb2-cp__lbl"><%= _cp1xp.toLocaleString('fr-FR') %></span>
-                    </div>
-                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp2xp ? 'done' : 'next' %>" style="left:<%= _cp2pct %>%">
-                      <div class="ctb2-cp__dot"><% if (_xp >= _cp2xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
-                      <span class="ctb2-cp__lbl"><%= _cp2xp.toLocaleString('fr-FR') %></span>
-                    </div>
-                    <div class="ctb2-cp ctb2-cp--<%= _xp >= _cp3xp ? 'done' : 'next' %>" style="left:<%= _cp3pct %>%">
-                      <div class="ctb2-cp__dot"><% if (_xp >= _cp3xp) { %><i data-lucide="check" width="8" height="8" aria-hidden="true"></i><% } %></div>
-                      <span class="ctb2-cp__lbl"><%= _cp3xp.toLocaleString('fr-FR') %></span>
-                    </div>
-                  </div>
-                  <div class="ctb2-xp-levels">
-                    <span>NIV. <%= _lvl %></span>
-                    <span>NIV. <%= _lvl + 1 %></span>
-                  </div>
-                </div><!-- /ctb2-xp-block -->
-                  </div><!-- /ctb2-level-right -->
-                </div><!-- /ctb2-level-row -->
-
-                <!-- Prochain palier -->
-                <div class="ctb2-next-card">
-                  <div class="ctb2-next-card__icon" aria-hidden="true">
-                    <i data-lucide="trophy" width="16" height="16"></i>
-                  </div>
-                  <div class="ctb2-next-card__body">
-                    <p class="ctb2-next-card__label">Prochain palier</p>
-                    <p class="ctb2-next-card__title">Niv.&nbsp;<%= _lvl + 1 %> — <%= _nextRank %></p>
-                  </div>
-                  <button class="ctb2-next-card__cta" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})">
-                    Voir les niveaux <i data-lucide="chevron-right" width="13" height="13" aria-hidden="true"></i>
-                  </button>
-                </div>
-
-              </div>
-
-              <!-- Séparateur doré -->
-              <div class="ctb-hero__sep" aria-hidden="true"></div>
-
-              <!-- ═══ COLONNE DROITE — Stats & Récompenses ═══ -->
-              <div class="ctb2-right">
-
-                <!-- Eyebrow -->
-                <div class="ctb2-eyebrow">
-                  <i data-lucide="trophy" width="12" height="12" aria-hidden="true"></i>
-                  <span>Statistiques &amp; Récompenses</span>
-                </div>
-
-                <!-- Stats rapides -->
-                <div class="ctb2-stats-row">
-                  <div class="ctb2-stat">
-                    <div class="ctb2-stat__icon ctb2-stat__icon--flame" aria-hidden="true">
-                      <i data-lucide="flame" width="18" height="18"></i>
-                    </div>
-                    <div class="ctb2-stat__body">
-                      <% if (_streak === 0) { %>
-                      <p class="ctb2-stat__zero">Lancez-vous !</p>
-                      <% } else { %>
-                      <p class="ctb2-stat__val"><%= _streak %></p>
-                      <% } %>
-                      <p class="ctb2-stat__lbl">Jour<%= _streak > 1 ? 's' : '' %> d'affilée</p>
-                    </div>
-                  </div>
-                  <div class="ctb2-stat-sep" aria-hidden="true"></div>
-                  <div class="ctb2-stat">
-                    <div class="ctb2-stat__icon ctb2-stat__icon--star" aria-hidden="true">
-                      <i data-lucide="star" width="18" height="18"></i>
-                    </div>
-                    <div class="ctb2-stat__body">
-                      <p class="ctb2-stat__val"><%= _deblocked.length %>/<%= _allFrames.length %></p>
-                      <p class="ctb2-stat__lbl">Cadres débloqués</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Prochain cadre à débloquer / tous débloqués -->
-                <% if (_nextUnlock) { %>
-                <div class="ctb2-frame-card">
-                  <div class="ctb2-frame-card__thumb">
-                    <% if (_nextUnlock.thumbUrl) { %>
-                    <img src="<%= _nextUnlock.thumbUrl %>" alt="<%= _nextUnlock.label %>" />
-                    <% } else { %>
-                    <span class="ctb2-frame-card__unk">?</span>
-                    <% } %>
-                  </div>
-                  <div class="ctb2-frame-card__body">
-                    <p class="ctb2-frame-card__label">Prochain cadre à débloquer</p>
-                    <p class="ctb2-frame-card__name"><%= _nextUnlock.label %></p>
-                    <p class="ctb2-frame-card__cond">Débloqué au niveau <%= _nextUnlock.minLvl %></p>
-                  </div>
-                  <button class="ctb2-frame-card__btn" onclick="document.getElementById('contrib-frames-list').scrollIntoView({behavior:'smooth',block:'start'})" aria-label="Voir la collection">
-                    <i data-lucide="chevron-right" width="16" height="16" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <% } else { %>
-                <div class="ctb2-all-unlocked">
-                  <i data-lucide="award" width="22" height="22" aria-hidden="true"></i>
-                  <div>
-                    <p class="ctb2-all-unlocked__title">Collection complète</p>
-                    <p class="ctb2-all-unlocked__sub">Tous les cadres sont débloqués. Bravo !</p>
-                  </div>
-                </div>
-                <% } %>
-
-                <!-- Gains récents -->
-                <div class="ctb2-gains">
-                  <p class="ctb2-gains__title">Gains récents</p>
-                  <div class="ctb2-gains__list">
-                    <div class="ctb2-gain"><i data-lucide="utensils" width="13" height="13" aria-hidden="true"></i><span>Recette publiée</span><strong>+50 XP</strong></div>
-                    <div class="ctb2-gain"><i data-lucide="film" width="13" height="13" aria-hidden="true"></i><span>Film accepté</span><strong>+25 XP</strong></div>
-                    <div class="ctb2-gain"><i data-lucide="message-square" width="13" height="13" aria-hidden="true"></i><span>Avis approuvé</span><strong>+10 XP</strong></div>
-                  </div>
-                </div>
-
-              </div>
-
-            </div><!-- /ctb2-main-row -->
-            </div><!-- /ctb-hero__unified -->
-          </section>
-
-          <!-- ═══════════════════════════════════════════════════
-               MAIN — Timeline activité + Next milestone
-          ═══════════════════════════════════════════════════ -->
-          <!-- Timeline pleine largeur -->
-            <section class="ctb-timeline-col ctb-timeline-col--full">
-              <div class="sec-eyebrow">
-                <div class="sec-eyebrow__line"></div>
-                <span class="sec-eyebrow__label">Historique</span>
-              </div>
-              <div class="sec-header">
-                <div class="sec-title">ACTIVITÉ RÉCENTE</div>
-              </div>
-
-              <div class="activity-filters">
-                <button class="af-pill active" data-filter="all">Tout</button>
-                <button class="af-pill" data-filter="recipe"><span class="af-pill__dot" style="background:#c97b3a"></span>Recettes</button>
-                <button class="af-pill" data-filter="notice"><span class="af-pill__dot" style="background:#c4a052"></span>Avis</button>
-                <button class="af-pill" data-filter="movie"><span class="af-pill__dot" style="background:#9b79e0"></span>Films</button>
-                <button class="af-pill" data-filter="comment"><span class="af-pill__dot" style="background:rgba(140,180,225,.8)"></span>Commentaires</button>
-              </div>
-
-              <div class="ctb-timeline" id="contribActivityList">
-                <% if (_activity.length > 0) { %>
-                  <% _activity.forEach(function(act, idx) { %>
-                  <div class="activity-item ctb-tl-item" data-type="<%= act.type %>" style="animation-delay:<%= idx * 60 %>ms;">
-                    <div class="ctb-tl-rail">
-                      <div class="ctb-tl-dot ai--<%= act.type %>"></div>
-                      <div class="ctb-tl-line"></div>
-                    </div>
-                    <div class="ctb-tl-card">
-                      <div class="activity-icon ai--<%= act.type %>">
-                        <% if (act.type === 'recipe') { %>
-                        <i data-lucide="utensils" aria-hidden="true"></i>
-                        <% } else if (act.type === 'notice') { %>
-                        <i data-lucide="star" aria-hidden="true"></i>
-                        <% } else if (act.type === 'movie') { %>
-                        <i data-lucide="film" aria-hidden="true"></i>
-                        <% } else { %>
-                        <i data-lucide="message-square" aria-hidden="true"></i>
-                        <% } %>
-                      </div>
-                      <div class="ctb-tl-body">
-                        <div class="ctb-tl-title"><%= act.title %></div>
-                        <div class="ctb-tl-sub"><%= act.sub %></div>
-                        <div class="ctb-tl-time">
-                          <i data-lucide="clock" aria-hidden="true"></i>
-                          <%= act.time %>
-                        </div>
-                      </div>
-                      <div class="ctb-tl-xp">
-                        <div class="ctb-tl-xp__val">+<%= act.xp %></div>
-                        <div class="ctb-tl-xp__lbl">XP</div>
-                      </div>
-                    </div>
-                  </div>
-                  <% }); %>
-                <% } else { %>
-                <div class="contrib-empty">
-                  <i data-lucide="info" width="28" height="28" stroke-width="1.5" aria-hidden="true"></i>
-                  <p>Aucune activité pour le moment.<br />Publiez votre première recette pour gagner vos premiers XP&nbsp;!</p>
-                </div>
-                <% } %>
-              </div>
-            </section>
-
-            <!-- ── CTA inviter / partager ── -->
-            <div class="ctb-invite">
-              <div class="ctb-invite__bg-img" aria-hidden="true">
-                <img src="/images/banner-gamification-section.webp" alt="" />
-              </div>
-              <div class="ctb-invite__inner">
-                <div class="ctb-invite__left">
-                  <span class="ctb-invite__eyebrow">Rejoignez la communauté</span>
-                  <h3 class="ctb-invite__title"><span>Partagez Ciné Délices</span><br><em>avec vos amis cinéphiles</em></h3>
-                  <p class="ctb-invite__text">Invitez vos amis à rejoindre la plateforme et cuisinez ensemble les plats de vos films préférés.</p>
-                  <div class="ctb-invite__actions">
-                    <a href="/contact-about" class="ctb-invite__btn ctb-invite__btn--ghost">
-                      <i data-lucide="share-2" width="13" height="13" aria-hidden="true"></i>
-                      Partager le site
-                    </a>
-                    <a href="/add-recipes-movies/" class="ctb-invite__btn ctb-invite__btn--primary">
-                      <i data-lucide="plus" width="13" height="13" aria-hidden="true"></i>
-                      Ajouter une recette
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-        </div><!-- /tab-pane#contributions -->
-
       </div><!-- /profile-content -->
 
     </main>
@@ -1908,7 +1575,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/js/profile-tabs.js" defer></script>
+    <script src="/js/profile-tabs.js?v=2" defer></script>
     <script src="/js/rte-mini.js"></script>
     <script src="/js/account.js" defer></script>
     <script>
@@ -2010,52 +1677,6 @@
     <script src="/js/gamification-sherlock.js" defer></script>
     <script src="/js/gamification-engine.js" defer></script>
     <script src="/js/gamification.js" defer></script>
-    <script>
-      /* ── Init onglet Contributions ── */
-      (function () {
-        function initContrib() {
-          /* Count-up stats */
-          document.querySelectorAll('#contributions .stat-num[data-target]').forEach(function (el) {
-            const target = parseInt(el.dataset.target) || 0;
-            if (target === 0) { el.textContent = '0'; return; }
-            const dur = 900, start = performance.now();
-            (function step(now) {
-              const p = Math.min((now - start) / dur, 1);
-              el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
-              if (p < 1) requestAnimationFrame(step);
-            })(performance.now());
-          });
-
-          /* XP bar */
-          const fill = document.querySelector('#contributions .xp-fill');
-          if (fill) {
-            const pct = parseInt(fill.dataset.pct) || 0;
-            setTimeout(function () { fill.style.width = pct + '%'; }, 300);
-          }
-
-          /* Filtres activité */
-          document.querySelectorAll('#contributions .af-pill').forEach(function (pill) {
-            pill.addEventListener('click', function () {
-              document.querySelectorAll('#contributions .af-pill').forEach(function (p) { p.classList.remove('active'); });
-              pill.classList.add('active');
-              const f = pill.dataset.filter;
-              document.querySelectorAll('#contribActivityList .activity-item').forEach(function (item) {
-                item.style.display = (f === 'all' || item.dataset.type === f) ? '' : 'none';
-              });
-            });
-          });
-
-          /* Équiper un cadre — géré par gamification.js (POST /auth/equip-frame) */
-        }
-
-        /* Déclencher au clic sur l'onglet */
-        const tab = document.querySelector('[data-tab="contributions"]');
-        if (tab) tab.addEventListener('click', function () { setTimeout(initContrib, 80); });
-
-        /* Ou si on arrive directement via #contributions */
-        if (window.location.hash === '#contributions') setTimeout(initContrib, 250);
-      })();
-    </script>
     <script>
       /* ── Init onglet Vue d'ensemble ── */
       (function () {

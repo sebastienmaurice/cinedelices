@@ -7,7 +7,7 @@
   'use strict';
 
   var DEFAULT_TAB = 'overview';
-  var VALID_TABS = ['overview', 'profil', 'favoris', 'creations', 'contributions'];
+  var VALID_TABS = ['overview', 'profil', 'favoris', 'creations'];
 
   function getActiveTab() {
     var hash = window.location.hash.replace('#', '');
