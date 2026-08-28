@@ -1,6 +1,6 @@
-import { UserPoints } from "../models/index.model.js";
+import { User, UserPoints } from "../models/index.model.js";
 import { computeLevel, FRAME_UNLOCKS, isSuperAdminRole } from "../utils/gamification.utils.js";
-import { FRAME_BANNERS } from "../utils/frame-banners.js";
+import { FRAME_BANNERS, resolveHeroBanner, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -40,10 +40,17 @@ const gamificationController = {
       // Invalider le cache nav pour que la prochaine page affiche le nouveau cadre
       clearNavCache(userId);
 
+      // Bannière hero à jour immédiatement (CinéPass, sans rechargement) —
+      // même priorité que resolveHeroBanner ailleurs : perso approuvée >
+      // variante choisie du nouveau cadre > défaut Ciné Délices.
+      const user = await User.findByPk(userId, { attributes: ["banner_image", "banner_status"] });
+      const heroBannerUrl = resolveHeroBanner(user, frameCode, DEFAULT_HERO_BANNER, row.active_banner_variant);
+
       return res.json({
         success: true,
         activeFrameCode: frameCode,
         activeFrameUrl:  frame.pngUrl,
+        heroBannerUrl,
       });
     } catch (error) {
       console.error("[equipFrame]", error);

@@ -4,9 +4,7 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress } from "../utils/gamification.utils.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
-import { resolveHeroBanner, FRAME_BANNERS } from "../utils/frame-banners.js";
-
-const DEFAULT_HERO_BANNER = "/images/banner-cinepass-hero-3.webp";
+import { resolveHeroBanner, FRAME_BANNERS, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)

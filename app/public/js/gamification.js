@@ -187,6 +187,14 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
           if (metaPill)  metaPill.textContent  = `✓ Débloqué · Niv. ${lvl}`;
         }
 
+        // ── 1c. Bannière hero CinéPass — reflète le nouveau cadre sans
+        // recharger la page (voir app/utils/frame-banners.js pour la
+        // priorité perso > variante choisie > défaut, calculée côté serveur).
+        const cpHeroBanner = document.querySelector('.cp-hero__banner img');
+        if (cpHeroBanner && data.heroBannerUrl) {
+          cpHeroBanner.src = data.heroBannerUrl;
+        }
+
         // ── 2. Hero profil (avatar-block) ────────────────────────
         const heroEl  = document.getElementById('profileBadgeHero');
         if (heroEl) {

@@ -14,6 +14,12 @@
  * ci-dessous, réutilisée telle quelle sur /cinepass/ et /auteur/#id.
  */
 
+/** Fond de secours Ciné Délices — utilisé quand le cadre équipé n'a pas
+ * de fond dédié (ex : "none") et qu'aucune bannière perso n'est active.
+ * Centralisé ici pour éviter la duplication entre les contrôleurs qui
+ * appellent resolveHeroBanner (cinepass, author, gamification). */
+export const DEFAULT_HERO_BANNER = "/images/banner-cinepass-hero-3.webp";
+
 export const FRAME_BANNERS = {
   cine:     ["/images/cadres-banners/banner-cine-1.webp"],
   sherlock: ["/images/cadres-banners/banner-sherlock-1.webp"],

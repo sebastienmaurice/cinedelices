@@ -3,9 +3,7 @@ import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress, RANK_TITLES, XP_TABLE } from "../utils/gamification.utils.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { MOCK_BADGES, MOCK_UNIVERS, MOCK_BADGES_TOTAL } from "../utils/cinepass-mock.js";
-import { resolveHeroBanner } from "../utils/frame-banners.js";
-
-const DEFAULT_HERO_BANNER = "/images/banner-cinepass-hero-3.webp";
+import { resolveHeroBanner, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 
 const cinepassController = {
   /**

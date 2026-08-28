@@ -29,6 +29,19 @@ body.author-page main {
   padding-bottom: 36px;
 }
 
+/* Remonte et centre le bloc identité dans le hero agrandi (680px, desktop) —
+   plus proche du haut que du centre pour rester visible sans scroll sur les
+   résolutions laptop courantes (1366×768, 1440×900), tout en laissant assez
+   d'image en dessous pour le chevauchement de .author-recipes-section. */
+@media (min-width: 901px) {
+  .author-page .hero-content {
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 140px;
+    padding-bottom: 0;
+  }
+}
+
 /* Gap réduit entre avatar et identité */
 .author-page .hero-row {
   gap: 28px;
@@ -183,6 +196,18 @@ body.author-page main {
   width: min(var(--cd-max, 1440px), 100% - 2 * var(--cd-px, 2rem));
   margin: 0 auto;
   padding: 40px 0 0;
+}
+
+/* Remonte la section par-dessus le bas du hero (zone déjà fondue par
+   .hero-banner-grad) — le fond de la section restant transparent, l'image
+   reste visible derrière, pas de coupure nette entre les deux blocs. */
+@media (min-width: 901px) {
+  .author-recipes-section {
+    margin-top: -260px;
+    padding-top: 60px;
+    position: relative;
+    z-index: 1;
+  }
 }
 
 /* Grille 4 colonnes — surcharge recipes-movie.css (3 col) */
