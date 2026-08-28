@@ -1469,6 +1469,10 @@ body.profile-page main {
   opacity: 0.35;
   cursor: default;
 }
+/* .cf-card porte aussi la classe historique .frame-row--locked, mais sa
+   propre mise en scène verrouillée (fond thématique en couleur) gère déjà
+   la lisibilité — on ne veut pas de l'opacité globale de l'ancien composant */
+.cf-card.frame-row--locked { opacity: 1; }
 .frame-row--next-unlock {
   opacity: 0.55;
   position: relative;
@@ -4211,7 +4215,7 @@ body.modal-open { overflow: hidden; }
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
-  padding: 16px 2px 6px; /* espace pour le pill ACTUEL + hover-lift */
+  padding: 16px 2px 6px; /* espace pour les pills ACTUEL et NIVEAU REQUIS, toutes deux en haut + hover-lift */
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scroll-behavior: smooth;
@@ -4476,6 +4480,22 @@ body.modal-open { overflow: hidden; }
   flex-shrink: 0;
   position: relative;
 }
+/* Cartes débloquées (actives ou non) — le cadre en haut masquait trop le fond
+   thématique ; on réordonne visuellement (nom/sous-titre en haut, cadre au
+   milieu, thème en bas) sans toucher au DOM, via flex order */
+.cf-card:not(.cf-card--locked) .cf-card__name { order: 1; margin-top: 4px; }
+.cf-card:not(.cf-card--locked) .cf-card__preview-wrap { order: 3; margin-top: 6px; }
+.cf-card:not(.cf-card--locked) .cf-card__theme { order: 4; }
+
+/* Sous-titre resserré contre le nom — même espacement sur les 3 états
+   (débloquée active/inactive, verrouillée) */
+.cf-card__sublabel { margin-top: -9px; }
+.cf-card:not(.cf-card--locked) .cf-card__sublabel { order: 2; }
+
+/* Carte verrouillée — pas de cadre à montrer, le bloc nom/thème se centre
+   dans le bas de la carte plutôt que de laisser un vide réservé en haut */
+.cf-card--locked { justify-content: flex-end; }
+.cf-card--locked .cf-card__preview-wrap { display: none; }
 /* frame-row-badge-static dans la preview : remplit exactement les 100px */
 .cf-card__preview-wrap .frame-row-badge-static {
   position: relative !important;
@@ -4496,7 +4516,15 @@ body.modal-open { overflow: hidden; }
   mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
   -webkit-mask: radial-gradient(circle at 50% 50%, transparent 30px, black 31px, black 34px, transparent 35px) !important;
 }
-.cf-card__preview-inner--locked { opacity: .55; }
+/* Carte verrouillée — aucun cadre affiché (boîte 100x100 vide, voir EJS),
+   le fond thématique en pleine couleur, sans filtre, fait tout le travail d'appel */
+.cf-card--locked .cf-card__bg img {
+  opacity: 1;
+  filter: none;
+}
+.cf-card--locked .cf-card__bg::after {
+  background: linear-gradient(180deg, rgba(10,20,36,0) 0%, rgba(10,20,36,.1) 60%, rgba(10,20,36,.55) 100%);
+}
 .cf-card__lock-icon {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
@@ -4517,7 +4545,7 @@ body.modal-open { overflow: hidden; }
   font-size: .7rem; font-weight: 700;
   letter-spacing: .06em; text-align: center;
   color: var(--argent-ecran);
-  line-height: 1.3;
+  line-height: 0;
 }
 .cf-card--active .cf-card__name { color: var(--dore-clair); }
 .cf-card__sublabel {
@@ -4543,14 +4571,22 @@ body.modal-open { overflow: hidden; }
 }
 
 /* Étiquette "Niveau requis" (carte verrouillée — remplace l'ancien bouton) */
+/* Pastille "Niveau X requis" — même forme et même position que .cf-card__actuel
+   (chevauche le haut de la carte), en teinte neutre (le doré reste réservé au cadre actif) */
 .cf-card__locked-tag {
-  margin-top: auto; width: 100%; padding: 7px 8px; border-radius: 8px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  font-family: var(--f-title); font-size: .5rem; font-weight: 700;
-  letter-spacing: .08em; text-transform: uppercase;
-  color: rgba(232,232,232,.35);
-  background: transparent;
-  border: 1.5px dashed rgba(255,255,255,.1);
+  position: absolute;
+  top: -12px; left: 50%; transform: translateX(-50%);
+  width: auto; height: auto; /* neutralise le width/height:20px hérité de .frame-row-check (icône ronde) */
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 5px 16px; border-radius: 999px;
+  font-family: var(--f-title); font-size: .44rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(232,232,232,.75);
+  background: linear-gradient(160deg, rgba(10,20,36,.99), rgba(16,30,50,.98));
+  border: 1.5px solid rgba(196,160,82,.28);
+  box-shadow: 0 3px 12px rgba(0,0,0,.5);
+  z-index: 2;
 }
 
 /* Responsive */

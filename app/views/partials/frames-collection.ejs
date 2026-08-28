@@ -119,11 +119,9 @@
             <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
           </div>
           <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
-          <div class="frame-row-badge-static cf-card__preview-inner cf-card__preview-inner--locked">
-            <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-            <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
-            <div class="cf-card__lock-icon"><i data-lucide="lock" width="20" height="20" stroke-width="1.8" aria-hidden="true"></i></div>
-          </div>
+          <!-- Verrouillé : ni photo ni cadre affichés — le fond thématique en couleur
+               (voir .cf-card__bg plus bas) suffit à donner envie de le débloquer.
+               La boîte reste vide mais garde ses 100x100px pour l'alignement de la grille. -->
           <% } else { %>
           <div class="cf-card__preview-icon" style="background:radial-gradient(circle,<%= fr.bg %>,rgba(10,18,30,.05));border-color:<%= fr.border %>;">
             <span><%= fr.icon %></span>
