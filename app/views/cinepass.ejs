@@ -8,9 +8,9 @@
     <title>Mon CinéPass - Ciné Délices</title>
     <%- include("partials/head-resources") %>
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=19" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=20" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=48" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=57" />
   </head>
 
   <body class="cp-page">
@@ -280,27 +280,27 @@
       <section class="cp-card cp-card--badges">
         <div class="cp-card__head">
           <p class="cp-card__eyebrow">Mes trophées</p>
+          <span class="cp-badges__count"><strong><%= mockBadges.filter(b => b.unlocked).length %></strong>/<%= mockBadgesTotal %> débloqués</span>
           <span class="cp-card__mock-tag">Aperçu du futur système</span>
         </div>
         <div class="cp-badges">
           <% mockBadges.forEach(function (b) { %>
-          <div class="cp-badge cp-badge--<%= b.tier %>" title="<%= b.label %>">
+          <div class="cp-badge cp-badge--<%= b.tier %><%= !b.unlocked ? ' cp-badge--locked' : '' %>" title="<%= b.label %><%= !b.unlocked ? ' — Verrouillé' : '' %>">
+            <% if (b.unlocked) { %>
             <span class="cp-badge__medal">
-              <span class="cp-badge__medal-ring"></span>
-              <span class="cp-badge__icon"><%= b.icon %></span>
+              <img src="<%= b.image %>" alt="<%= b.label %>" loading="lazy" />
             </span>
+            <% } else { %>
+            <!-- Verrouillé : aucune image réelle du trophée envoyée au client, seulement le
+                 blason générique Ciné Délices (identique pour tous, ne révèle rien). -->
+            <span class="cp-badge__medal">
+              <img class="cp-badge__medal-locked" src="/images/trophees/trophee-locked-generic.webp" alt="" loading="lazy" />
+              <span class="cp-badge__medal-lock"><i data-lucide="lock" width="14" height="14" aria-hidden="true"></i></span>
+            </span>
+            <% } %>
             <span class="cp-badge__label"><%= b.label %></span>
           </div>
           <% }); %>
-          <% for (let i = 0; i < Math.max(0, 6 - mockBadges.length); i++) { %>
-          <div class="cp-badge cp-badge--locked" title="À débloquer">
-            <span class="cp-badge__medal">
-              <span class="cp-badge__medal-ring"></span>
-              <i data-lucide="lock" width="15" height="15" aria-hidden="true"></i>
-            </span>
-            <span class="cp-badge__label">Verrouillé</span>
-          </div>
-          <% } %>
         </div>
         <p class="cp-card__mock-hint">Ces trophées n'existent pas encore en base — aucun accomplissement réel n'est calculé ici.</p>
       </section>

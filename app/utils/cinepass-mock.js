@@ -19,10 +19,30 @@
  */
 
 export const MOCK_BADGES = [
-  { code: "popcorn-rookie", label: "Popcorn Rookie", icon: "🍿", tier: "bronze" },
-  { code: "studio-bronze", label: "Studio Bronze", icon: "🎞️", tier: "bronze" },
-  { code: "critique-avise", label: "Critique Avisé", icon: "⭐", tier: "argent" },
-  { code: "cuisinier-curieux", label: "Cuisinier Curieux", icon: "🔪", tier: "argent" },
+  // Premier niveau — pas de palier métal, entrée dans la collection
+  { code: "premier-clap",          label: "Premier Clap",            tier: "default",   image: "/images/trophees/trophee-premier-clap.webp",            unlocked: true },
+  { code: "avis-a-chaud",          label: "Avis à Chaud",            tier: "default",   image: "/images/trophees/trophee-avis-a-chaud.webp",            unlocked: true },
+  { code: "toque-debutante",       label: "Toque Débutante",         tier: "default",   image: "/images/trophees/trophee-toque-debutante.webp",         unlocked: true },
+  // Second niveau — Bronze
+  { code: "burger-rookie",         label: "Burger Rookie",           tier: "bronze",    image: "/images/trophees/trophee-burger-rookie.webp",           unlocked: true },
+  { code: "cine-popcorn",          label: "Ciné Popcorn",            tier: "bronze",    image: "/images/trophees/trophee-cine-popcorn.webp",            unlocked: true },
+  { code: "studio-bronze",         label: "Studio Bronze",           tier: "bronze",    image: "/images/trophees/trophee-studio-bronze.webp",           unlocked: true },
+  // Troisième niveau — Argent
+  { code: "nez-fin",               label: "Nez Fin",                 tier: "argent",    image: "/images/trophees/trophee-nez-fin.webp",                 unlocked: false },
+  { code: "recette-culte",         label: "Recette Culte",           tier: "argent",    image: "/images/trophees/trophee-recette-culte.webp",           unlocked: false },
+  { code: "clap-d-argent",         label: "Clap d'Argent",           tier: "argent",    image: "/images/trophees/trophee-clap-d-argent.webp",           unlocked: false },
+  // Quatrième niveau — Or
+  { code: "realisateur-du-gout",   label: "Réalisateur du Goût",     tier: "or",        image: "/images/trophees/trophee-realisateur-du-gout.webp",     unlocked: false },
+  { code: "palme-du-palais",       label: "Palme du Palais",         tier: "or",        image: "/images/trophees/trophee-palme-du-palais.webp",         unlocked: false },
+  { code: "projecteur-d-or",       label: "Projecteur d'Or",         tier: "or",        image: "/images/trophees/trophee-projecteur-d-or.webp",         unlocked: false },
+  // Cinquième niveau — Superstar
+  { code: "premier-role",          label: "Premier Rôle",            tier: "superstar", image: "/images/trophees/trophee-premier-role.webp",            unlocked: false },
+  { code: "etoile-du-cine-delices",label: "Étoile du Ciné Délices",  tier: "superstar", image: "/images/trophees/trophee-etoile-du-cine-delices.webp",  unlocked: false },
+  { code: "superstar-du-palais",   label: "Superstar du Palais",     tier: "superstar", image: "/images/trophees/trophee-superstar-du-palais.webp",     unlocked: false },
+  // Sixième niveau — Mythique
+  { code: "icone-du-cine-delices", label: "Icône du Ciné Délices",   tier: "mythique",  image: "/images/trophees/trophee-icone-du-cine-delices.webp",   unlocked: false },
+  { code: "empreinte-eternelle",   label: "Empreinte Éternelle",     tier: "mythique",  image: "/images/trophees/trophee-empreinte-eternelle.webp",     unlocked: false },
+  { code: "ticket-d-or",           label: "Ticket d'Or",             tier: "mythique",  image: "/images/trophees/trophee-ticket-d-or.webp",             unlocked: false },
 ];
 
 export const MOCK_UNIVERS = [
@@ -38,5 +58,5 @@ export const MOCK_UNIVERS = [
   { code: "western", label: "Western", img: "/images/categories/western.png", accent: "brown", progress: 1, total: 3, xp: 10, xpMax: 100 },
 ];
 
-/** Nombre total de badges "à débloquer" dans le futur système (mock). */
-export const MOCK_BADGES_TOTAL = 18;
+/** Nombre total de trophées dans le futur système (mock). */
+export const MOCK_BADGES_TOTAL = MOCK_BADGES.length;

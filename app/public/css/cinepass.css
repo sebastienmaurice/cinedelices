@@ -386,8 +386,8 @@ body.cp-page main {
 .cp-progress .level-medallion { margin: 0 auto 16px; }
 
 /* Liseré doré façon cp-hero (conic-gradient + points lumineux) — remplace
-   le simple filet doré du haut sur ces deux cartes précises */
-.cp-progress, .cp-card--collection { border-color: transparent; }
+   le simple filet doré du haut sur ces cartes précises */
+.cp-progress, .cp-card--collection, .cp-univers, .cp-card--badges { border-color: transparent; }
 /* Image de fond de la carte Collection, même traitement que .cp-progress::before */
 .cp-card--collection::before {
   content: "";
@@ -399,8 +399,32 @@ body.cp-page main {
     linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
   filter: brightness(0.85) contrast(1.06) saturate(1.05);
 }
+/* Image de fond de la carte Mes univers, même traitement */
+.cp-univers::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  height: auto; width: auto;
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 55%, var(--surface-card, #0f1e30) 100%) top center / 100% 100% no-repeat,
+    url('/images/bg-univers-section-1.webp') top center / cover no-repeat,
+    linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  filter: brightness(0.85) contrast(1.06) saturate(1.05);
+}
+/* Image de fond de la carte Mes trophées, même traitement */
+.cp-card--badges::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  height: auto; width: auto;
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 55%, var(--surface-card, #0f1e30) 100%) top center / 100% 100% no-repeat,
+    url('/images/bg-trophy-card-1.webp') top center / cover no-repeat,
+    linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  filter: brightness(0.85) contrast(1.06) saturate(1.05);
+}
 .cp-progress::after,
-.cp-card--collection::after {
+.cp-card--collection::after,
+.cp-univers::after,
+.cp-card--badges::after {
   content: "";
   position: absolute; inset: 0; z-index: 5; pointer-events: none;
   border-radius: 18px;
@@ -632,42 +656,75 @@ body.cp-page main {
 }
 .cp-frame__label { font-family: var(--font-body); font-size: 0.62rem; color: rgba(232, 232, 232, 0.6); text-align: center; line-height: 1.25; }
 
-.cp-badges { display: flex; flex-wrap: wrap; gap: 18px; }
+.cp-badges { display: flex; flex-wrap: wrap; gap: 20px 16px; }
 .cp-badge {
   position: relative;
-  display: flex; flex-direction: column; align-items: center; gap: 9px;
-  width: 84px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  width: 104px;
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.cp-badge:hover { transform: translateY(-3px); }
+.cp-badge:hover { transform: translateY(-4px); }
 
-/* Médaillon métallique — anneau + face, façon trophée de collection */
+/* Médaillon illustré — l'image porte déjà son propre cadre/bordure, pas de chrome supplémentaire */
 .cp-badge__medal {
   position: relative;
-  width: 62px; height: 62px;
-  border-radius: 50%;
+  width: 104px; height: 104px;
   display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 35% 30%, #2a3a52 0%, #101c2c 70%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 8px 18px rgba(0, 0, 0, 0.5);
 }
-.cp-badge__medal-ring {
-  position: absolute; inset: 0; border-radius: 50%;
-  border: 2px solid rgba(232, 232, 232, 0.18);
+.cp-badge__medal img {
+  width: 100%; height: 100%; object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+  transition: filter 0.3s, transform 0.3s;
 }
-.cp-badge__icon { position: relative; z-index: 1; font-size: 1.5rem; filter: grayscale(0.15); }
-.cp-badge__label { font-family: var(--font-body); font-size: 0.58rem; color: rgba(232, 232, 232, 0.55); text-align: center; line-height: 1.2; }
+.cp-badge:hover .cp-badge__medal img { transform: scale(1.06); }
+/* Libellé en pastille, plutôt qu'un simple texte posé sous le médaillon */
+.cp-badge__label {
+  display: inline-block;
+  max-width: 100%;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-family: var(--font-body); font-size: 0.56rem; font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(232, 232, 232, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center; line-height: 1.3;
+}
 
-/* Paliers — bronze/argent/or, anneau métallique + léger glow */
-.cp-badge--bronze .cp-badge__medal-ring { border-color: #b98247; box-shadow: 0 0 12px -2px rgba(185, 130, 71, 0.55); }
-.cp-badge--argent .cp-badge__medal-ring { border-color: #c7cfd8; box-shadow: 0 0 12px -2px rgba(199, 207, 216, 0.5); }
-.cp-badge--or .cp-badge__medal-ring,
-.cp-badge--gold .cp-badge__medal-ring { border-color: var(--or-titre); box-shadow: 0 0 14px -2px rgba(196, 160, 82, 0.65); }
+/* Paliers — halo coloré assorti au matériau de chaque médaillon, et pastille assortie au palier */
+.cp-badge--bronze .cp-badge__medal img { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 12px rgba(185, 130, 71, 0.45)); }
+.cp-badge--argent .cp-badge__medal img { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 12px rgba(199, 207, 216, 0.4)); }
+.cp-badge--or .cp-badge__medal img { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 13px rgba(196, 160, 82, 0.5)); }
+.cp-badge--superstar .cp-badge__medal img { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 13px rgba(230, 150, 180, 0.5)); }
+.cp-badge--mythique .cp-badge__medal img { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 15px rgba(163, 92, 235, 0.55)); }
 
-/* Emplacement verrouillé — silhouette éteinte, pas une erreur, une promesse */
-.cp-badge--locked .cp-badge__medal { background: radial-gradient(circle at 35% 30%, #1a2431 0%, #0b131e 70%); }
-.cp-badge--locked .cp-badge__medal-ring { border-style: dashed; border-color: rgba(232, 232, 232, 0.14); box-shadow: none; }
-.cp-badge--locked .cp-badge__icon { color: rgba(232, 232, 232, 0.28); }
-.cp-badge--locked .cp-badge__label { color: rgba(232, 232, 232, 0.3); }
+.cp-badge--bronze .cp-badge__label { color: #c99566; background: rgba(201, 149, 102, 0.12); border-color: rgba(201, 149, 102, 0.35); }
+.cp-badge--argent .cp-badge__label { color: #c7cfd8; background: rgba(199, 207, 216, 0.12); border-color: rgba(199, 207, 216, 0.3); }
+.cp-badge--or .cp-badge__label { color: var(--or-titre); background: rgba(196, 160, 82, 0.12); border-color: rgba(196, 160, 82, 0.4); }
+.cp-badge--superstar .cp-badge__label { color: #e696b4; background: rgba(230, 150, 180, 0.12); border-color: rgba(230, 150, 180, 0.35); }
+.cp-badge--mythique .cp-badge__label { color: #b077ec; background: rgba(176, 119, 236, 0.14); border-color: rgba(176, 119, 236, 0.4); }
+
+/* Trophée verrouillé — blason générique Ciné Délices, identique pour tous, aucune image
+   réelle du trophée chargée ; estompé pour rester discret et se fondre dans le fond de carte. */
+.cp-badge__medal-locked {
+  width: 100%; height: 100%; object-fit: contain;
+  opacity: 0.22;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+.cp-badge__medal-lock {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(232, 232, 232, 0.5);
+}
+.cp-badge--locked .cp-badge__label { color: rgba(232, 232, 232, 0.4); background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.06); }
+
+/* Compteur débloqués — même style que la Collection de cadres */
+.cp-badges__count {
+  font-family: var(--f-title, var(--font-title)); font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.08em; color: rgba(232, 232, 232, 0.45);
+  white-space: nowrap; margin-left: auto; margin-right: 12px;
+}
+.cp-badges__count strong { color: var(--or-titre); }
 
 /* ══════════════════════════════════════════════════════
    Objectifs / Contributions / Héritage
