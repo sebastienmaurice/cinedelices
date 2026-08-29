@@ -208,6 +208,15 @@ a.ctr-item:hover { background: rgba(255, 255, 255, 0.03); }
 .ctr-activity__sub { font-family: var(--font-body); font-size: 0.68rem; color: rgba(232, 232, 232, 0.4); }
 .ctr-activity__xp { flex-shrink: 0; font-family: var(--font-h1); font-size: 0.8rem; font-weight: 700; color: var(--or-titre); }
 
+/* Correctif responsive 1024px (contrôle final Phase 5) : entre 901 et
+   1200px, la grille 3 colonnes ne laisse plus assez de place pour un
+   titre de recette/film (ex. "Le Bœuf Bourguignon..." tronqué en "Le
+   Bœ..."). Passage à 2 colonnes sur cette plage intermédiaire — 1440px
+   (3 colonnes) et ≤900px (1 colonne) restent inchangés. */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .ctr-row { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 900px) {
   .ctr-impact { grid-template-columns: repeat(2, 1fr); }
   .ctr-row { grid-template-columns: 1fr; }
