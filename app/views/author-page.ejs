@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=52" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=55" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
-    <link rel="stylesheet" href="/css/author-page.css?v=13" />
+    <link rel="stylesheet" href="/css/author-page.css?v=18" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -89,6 +89,76 @@
           <span class="bc-sep" aria-hidden="true">›</span>
           <span class="bc-cur">Page auteur · <%= author.pseudo %></span>
         </nav>
+
+        <!-- Personnalisation (propriétaire uniquement) — un seul point d'entrée
+             discret regroupant décor / bannière / repositionnement, plutôt que
+             3 pills en concurrence visuelle avec le contenu du hero. Réutilise
+             le pattern dropdown existant (.dd-filter-wrap/.dropdown-trigger/
+             .dropdown, voir base.css) pour rester cohérent avec le reste du site. -->
+        <% if (isOwner) { %>
+        <div class="dd-filter-wrap dd-filter-wrap--uni" id="uniCustomizeWrap">
+          <button class="dropdown-trigger dropdown-trigger--uni" id="uniCustomizeBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uniCustomizePanel">
+            <span class="uni-star" aria-hidden="true">✦</span>
+            Personnaliser mon univers
+          </button>
+
+          <div class="dropdown uni-panel" id="uniCustomizePanel" role="dialog" aria-label="Personnaliser mon univers" aria-hidden="true">
+            <!-- 1. Décor — variantes officielles du cadre équipé (seulement si
+                 ce cadre en propose plusieurs ET qu'aucune bannière perso n'est
+                 active dessus) -->
+            <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
+            <p class="dropdown__cat">Mon décor</p>
+            <div class="uni-decor-grid" id="bannerVariants">
+              <% frameBannerVariants.forEach(function (bv, i) { %>
+              <button
+                type="button"
+                class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
+                data-variant="<%= i + 1 %>"
+                aria-label="Choisir le décor n°<%= i + 1 %>"
+                aria-pressed="<%= (activeBannerVariant || 1) === (i + 1) ? 'true' : 'false' %>"
+              ><%= String(i + 1).padStart(2, '0') %></button>
+              <% }); %>
+            </div>
+            <div class="dropdown__sep"></div>
+            <% } %>
+
+            <!-- 2. Bannière -->
+            <% if (author.banner_status === 'pending') { %>
+              <p class="dropdown__item uni-status uni-status--pending"><span class="b-dot"></span>Bannière en attente</p>
+            <% } else if (author.banner_status === 'rejected') { %>
+              <p class="dropdown__item uni-status uni-status--rejected"><span class="b-dot"></span>Bannière refusée</p>
+            <% } else { %>
+            <button class="dropdown__item" type="button" id="authorBannerBtn">
+              <span class="dropdown__icon"><i data-lucide="image" aria-hidden="true"></i></span>
+              Modifier ma bannière
+            </button>
+            <% if (_hasCustomBanner) { %>
+            <button class="dropdown__item" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
+              <span class="dropdown__icon"><i data-lucide="rotate-ccw" aria-hidden="true"></i></span>
+              Retirer ma bannière
+            </button>
+            <% } %>
+            <% } %>
+
+            <!-- 3. Positionnement — ouvre la glissière indépendante, ne
+                 s'active jamais tant que l'auteur n'a pas cliqué ici. -->
+            <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
+              <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
+              Repositionner
+            </button>
+          </div>
+        </div>
+        <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
+
+        <!-- Glissière de recentrage vertical du fond — masquée tant que
+             "Repositionner" n'a pas été cliqué dans le popover ci-dessus. -->
+        <div class="hero-position-panel" id="heroPositionPanel" hidden>
+          <span class="hero-position-panel__label">Recentrer le fond</span>
+          <input type="range" id="heroPositionSlider" min="0" max="100" value="<%= author.hero_banner_pos_y ?? 100 %>" />
+          <button type="button" class="hero-position-panel__cancel" id="heroPositionCancelBtn">Annuler</button>
+          <button type="button" class="hero-position-panel__save" id="heroPositionSaveBtn">Enregistrer</button>
+        </div>
+        <% } %>
       </div>
 
       <!-- ══════════════════════════════════════════
@@ -98,52 +168,20 @@
 
         <!-- Bannière -->
         <div class="hero-banner">
-          <img src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>" alt="Bannière de <%= author.pseudo %>" />
+          <img
+            id="heroBannerImg"
+            src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>"
+            alt="Bannière de <%= author.pseudo %>"
+            <% if (author.hero_banner_pos_y !== null && typeof author.hero_banner_pos_y !== 'undefined') { %>
+            style="object-position: center <%= author.hero_banner_pos_y %>%;"
+            <% } %>
+          />
           <div class="hero-banner-grad"></div>
         </div>
 
         <!-- Déco cinématographique -->
         <div class="hero-scanlines" aria-hidden="true"></div>
         <div class="hero-vignette" aria-hidden="true"></div>
-
-        <!-- Modifier la bannière (propriétaire uniquement) -->
-        <% if (isOwner) { %>
-        <div class="hero-banner-status">
-          <!-- Choix du fond officiel du cadre équipé — seulement si ce cadre
-               propose plusieurs variantes ET qu'aucune bannière perso n'est
-               active dessus. Placé à gauche du bouton "Modifier la bannière". -->
-          <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
-          <div class="banner-variants" id="bannerVariants">
-            <span class="banner-variants__label">Choisir mon décor</span>
-            <% frameBannerVariants.forEach(function (bv, i) { %>
-            <button
-              type="button"
-              class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
-              data-variant="<%= i + 1 %>"
-              aria-label="Choisir le fond n°<%= i + 1 %>"
-            ><%= i + 1 %></button>
-            <% }); %>
-          </div>
-          <% } %>
-          <% if (author.banner_status === 'pending') { %>
-            <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
-          <% } else if (author.banner_status === 'rejected') { %>
-            <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
-          <% } else { %>
-            <button class="banner-btn banner-btn--upload" type="button" id="authorBannerBtn">
-              <i data-lucide="upload" width="10" height="10" aria-hidden="true"></i>
-              Modifier la bannière
-            </button>
-            <% if (_hasCustomBanner) { %>
-            <button class="banner-btn banner-btn--reset" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
-              <i data-lucide="rotate-ccw" width="10" height="10" aria-hidden="true"></i>
-              Retirer ma bannière
-            </button>
-            <% } %>
-          <% } %>
-        </div>
-        <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
-        <% } %>
 
         <!-- Contenu hero bas -->
         <div class="hero-content">
@@ -703,6 +741,30 @@
     </script>
 
     <% if (isOwner) { %>
+    <!-- Popover "Personnaliser mon univers" — même pattern d'ouverture/fermeture
+         que les dropdowns de filtres (voir initFilterDropdown plus haut). -->
+    <script>
+      (function () {
+        const wrap    = document.getElementById('uniCustomizeWrap');
+        const trigger = document.getElementById('uniCustomizeBtn');
+        const panel   = document.getElementById('uniCustomizePanel');
+        if (!wrap || !trigger || !panel) return;
+
+        function open()  { wrap.classList.add('is-open'); trigger.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); panel.setAttribute('aria-hidden', 'false'); }
+        function close() { wrap.classList.remove('is-open'); trigger.classList.remove('is-open'); trigger.setAttribute('aria-expanded', 'false'); panel.setAttribute('aria-hidden', 'true'); }
+        function toggle(){ wrap.classList.contains('is-open') ? close() : open(); }
+
+        trigger.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) close(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+        // Exposé pour que le script "Repositionner" puisse refermer ce popover
+        // quand il ouvre sa propre glissière (les deux ne doivent pas être
+        // ouverts en même temps).
+        window._uniCustomizeClose = close;
+      })();
+    </script>
+
     <!-- Upload bannière (propriétaire) -->
     <script>
       (function () {
@@ -868,6 +930,67 @@
             window.location.reload();
           } catch (err) {
             alert('Erreur : ' + err.message);
+            saveBtn.disabled = false;
+          }
+        });
+      })();
+    </script>
+
+    <!-- Recentrage vertical du fond du hero (préférence directe, sans modération) -->
+    <script>
+      (function () {
+        const posBtn    = document.getElementById('heroPositionBtn');
+        const panel     = document.getElementById('heroPositionPanel');
+        const slider    = document.getElementById('heroPositionSlider');
+        const cancelBtn = document.getElementById('heroPositionCancelBtn');
+        const saveBtn   = document.getElementById('heroPositionSaveBtn');
+        const img       = document.getElementById('heroBannerImg');
+        if (!posBtn || !panel || !slider || !img) return;
+        const authorId = '<%= author.id %>';
+        let originalValue = slider.value;
+
+        function applyPosition(val) {
+          img.style.objectPosition = 'center ' + val + '%';
+        }
+
+        posBtn.addEventListener('click', function () {
+          const opening = panel.hidden;
+          panel.hidden = !panel.hidden;
+          if (opening) {
+            originalValue = slider.value;
+            // Un seul panneau flottant ouvert à la fois — referme le popover
+            // "Personnaliser mon univers" d'où vient ce bouton.
+            if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
+          }
+        });
+
+        slider.addEventListener('input', function () {
+          applyPosition(slider.value);
+        });
+
+        cancelBtn.addEventListener('click', function () {
+          slider.value = originalValue;
+          applyPosition(originalValue);
+          panel.hidden = true;
+          posBtn.classList.remove('is-active');
+        });
+
+        saveBtn.addEventListener('click', async function () {
+          saveBtn.disabled = true;
+          try {
+            const res  = await fetch('/auth/profil/' + authorId + '/hero-position', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ posY: parseInt(slider.value, 10) }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur.');
+            originalValue = slider.value;
+            panel.hidden = true;
+            posBtn.classList.remove('is-active');
+          } catch (err) {
+            alert('Erreur : ' + err.message);
+          } finally {
             saveBtn.disabled = false;
           }
         });

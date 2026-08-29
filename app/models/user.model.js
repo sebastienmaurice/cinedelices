@@ -29,6 +29,9 @@ User.init({
   bio: { type: DataTypes.TEXT, allowNull: true },
   pending_bio: { type: DataTypes.TEXT, allowNull: true },
   bio_status: { type: DataTypes.STRING(20), defaultValue: "approved" },
+  /* Position verticale personnalisée du hero banner (page auteur) — % objet
+     object-position (0=haut, 100=bas), NULL = défaut CSS "center bottom". */
+  hero_banner_pos_y: { type: DataTypes.INTEGER, allowNull: true },
   notify_recipes: { type: DataTypes.BOOLEAN, defaultValue: true },
   notify_cinema: { type: DataTypes.BOOLEAN, defaultValue: true },
   role: { type: DataTypes.STRING(50), defaultValue: 'user' },

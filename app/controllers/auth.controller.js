@@ -762,6 +762,54 @@ const authController = {
     }
   },
 
+  /**
+   * POST /auth/profil/:id/hero-position
+   * Body : { posY: 0-100 }
+   * Position verticale personnalisée du hero banner (page auteur) — pure
+   * préférence d'affichage, aucune modération nécessaire (contrairement à
+   * la bio/bannière/pseudo qui sont du contenu public à valider).
+   */
+  async updateHeroPosition(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "ID utilisateur invalide",
+        });
+      }
+
+      if (req.userRole !== "admin" && req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          success: false,
+          message: "Accès interdit",
+        });
+      }
+
+      const posY = parseInt(req.body.posY, 10);
+      if (!Number.isInteger(posY) || posY < 0 || posY > 100) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Position invalide.",
+        });
+      }
+
+      await User.update(
+        { hero_banner_pos_y: posY },
+        { where: { id: userId } }
+      );
+
+      return res.status(StatusCodes.OK).json({ success: true, posY });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Erreur lors de l'enregistrement de la position.",
+        error: error.message,
+      });
+    }
+  },
+
   async deleteAccount(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);

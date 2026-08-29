@@ -17,11 +17,137 @@ body.author-page main {
   padding-top: var(--nav-h); /* compense la nav fixe (identique à body.film-page) */
 }
 
+/* var(--nav-h) seul (70px) est plus court que la hauteur réelle de la nav
+   fixe (94px) — invisible tant que .bc-bar ne contenait que du texte de
+   fil d'Ariane, mais ça masquait la moitié haute des pills d'action
+   (.hero-banner-status) désormais intégrées dans cette barre : leurs clics
+   au centre étaient interceptés par la nav. Marge ajoutée ICI (padding de
+   .bc-bar, pas de .main) pour que le fond de la barre couvre l'espace au
+   lieu de laisser une bande vide entre la nav et la barre. */
+.author-page .bc-bar {
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
 /* ─────────────────────────────────────────────────────
    OVERRIDES hero : read-only (pas de formulaire)
 ───────────────────────────────────────────────────── */
 .author-page .profile-hero {
   margin-bottom: 0;
+}
+
+/* ─────────────────────────────────────────────────────
+   Actions bannière déplacées dans .bc-bar (au lieu de flotter
+   sur l'image du hero) — .hero-banner-status/.hero-position-panel
+   passent d'un positionnement absolu (calé sur .profile-hero) à un
+   flux normal dans la barre de fil d'Ariane.
+───────────────────────────────────────────────────── */
+.author-page .bc-bar {
+  position: relative;
+}
+.author-page .bc-bar .bc {
+  margin: 0;
+}
+.author-page .bc-bar > .bc {
+  flex: 1 1 auto;
+}
+.author-page .bc-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.author-page .bc-bar .hero-position-panel {
+  position: absolute;
+  top: 100%;
+  right: var(--cd-px, 2rem);
+  margin-top: 6px;
+}
+
+/* ─────────────────────────────────────────────────────
+   "✦ Personnaliser mon univers" — point d'entrée unique
+   regroupant décor / bannière / repositionnement. Réutilise le
+   pattern dropdown existant (.dd-filter-wrap/.dropdown-trigger/
+   .dropdown, voir base.css) : mêmes transitions, mêmes tokens,
+   même comportement clic-extérieur/Échap que les filtres films/
+   catégories un peu plus bas sur cette page.
+───────────────────────────────────────────────────── */
+.author-page .dd-filter-wrap--uni {
+  flex-shrink: 0;
+}
+/* Trigger délibérément discret : pill outline fine, pas de fond plein,
+   pas de glow — ne doit jamais concurrencer le nom/portrait/stats. */
+.dropdown-trigger--uni {
+  height: 32px;
+  padding: 0 13px;
+  font-size: 0.56rem;
+  gap: 6px;
+}
+.uni-star {
+  color: rgba(196, 160, 82, 0.7);
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+/* Panel aligné à droite (le trigger est en bout de barre) plutôt qu'à
+   gauche comme les filtres films/catégories. */
+.dd-filter-wrap--uni .dropdown {
+  left: auto;
+  right: 0;
+  min-width: 260px;
+}
+
+.uni-panel .dropdown__cat {
+  padding: 4px 6px 8px;
+}
+.uni-decor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 6px 8px;
+}
+/* Circles agrandis (32px, ex-20px) pour rester confortables au doigt une
+   fois sortis de l'ancienne pill compacte — mêmes classes/JS que la
+   version précédente (.banner-variant/.banner-variant--active). */
+.uni-decor-grid .banner-variant {
+  width: 32px;
+  height: 32px;
+  font-size: 0.56rem;
+}
+
+/* Lignes d'action (bannière / repositionnement) : rows menu classiques,
+   identiques aux autres .dropdown__item du site. */
+.uni-status {
+  cursor: default;
+  gap: 10px;
+}
+.dropdown__item.uni-status:hover {
+  background: transparent;
+}
+.uni-status--pending {
+  color: var(--orange-clair, #e8a33c);
+}
+.uni-status--rejected {
+  color: #e84020;
+}
+
+/* États clavier/hover des vignettes décor — le contour doré identifie
+   déjà l'actif (voir .banner-variant--active dans user-profile.css) ;
+   on ajoute juste un focus-visible cohérent avec le reste du site. */
+.uni-decor-grid .banner-variant:focus-visible,
+.dropdown-trigger--uni:focus-visible,
+.dropdown__item:focus-visible {
+  outline: 2px solid rgba(196, 160, 82, 0.6);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  /* Ancré par la droite comme sur desktop (le trigger reste proche du bord
+     d'écran), mais élargi et plafonné pour ne jamais déborder à gauche. */
+  .dd-filter-wrap--uni .dropdown {
+    min-width: min(320px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+  }
 }
 
 /* Positionnement bas du hero */

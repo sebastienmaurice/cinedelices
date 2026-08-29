@@ -68,6 +68,12 @@ authRouter.post(
   authController.updateBio
 );
 authRouter.post(
+  "/profil/:id/hero-position",
+  isLogged,
+  injectId,
+  authController.updateHeroPosition
+);
+authRouter.post(
   "/profil/:id/delete",
   isLogged,
   injectId,
