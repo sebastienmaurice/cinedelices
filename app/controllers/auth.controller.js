@@ -696,6 +696,72 @@ const authController = {
     }
   },
 
+  /**
+   * POST /auth/profil/:id/bio
+   * Body : { bio: "..." }
+   * Soumet la bio auteur en modération (même convention que le pseudo :
+   * pending_bio + bio_status="pending", publiée après validation admin).
+   */
+  async updateBio(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+
+      if (!userId || Number.isNaN(userId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "ID utilisateur invalide",
+        });
+      }
+
+      if (req.userRole !== "admin" && req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          success: false,
+          message: "Accès interdit",
+        });
+      }
+
+      const bio = (req.body.bio || "").trim();
+      if (!bio) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "La bio ne peut pas être vide.",
+        });
+      }
+      if (bio.length > 500) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "La bio ne peut pas dépasser 500 caractères.",
+        });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: "Utilisateur non trouvé",
+        });
+      }
+
+      await User.update(
+        { pending_bio: bio, bio_status: "pending" },
+        { where: { id: userId } }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Bio soumise — en attente de validation par un admin.",
+        bio_status: "pending",
+        pending_bio: bio,
+      });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Erreur lors de l'enregistrement de la bio.",
+        error: error.message,
+      });
+    }
+  },
+
   async deleteAccount(req, res) {
     try {
       const userId = parseInt(req.params.id, 10);

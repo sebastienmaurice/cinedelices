@@ -586,7 +586,11 @@ class SherlockBadge {
     fr.style.cssText=`position:absolute;top:0;left:0;width:${c.badge.width*5.538}px;height:${c.badge.height*5.538}px;transform:scale(${1/5.538});transform-origin:top left;z-index:20;pointer-events:none;`;
     el.appendChild(fr);
     const cv=document.createElement('canvas');cv.width=this.CVW;cv.height=this.CVH;
-    cv.style.cssText=`position:absolute;width:${this.CVW}px;height:${this.CVH}px;top:-${this.OY}px;left:-${this.OX}px;z-index:30;pointer-events:none;`;
+    // mask-image : fait toujours retomber le glow/brouillard à zéro AVANT le bord
+    // du canvas, quel que soit le overflow du conteneur `el` selon la page
+    // (auteur/cinepass/profil) — évite le carré résiduel visible derrière le
+    // cadre Sherlock (fuite de la lueur ambrée coupée net par overflow:hidden).
+    cv.style.cssText=`position:absolute;width:${this.CVW}px;height:${this.CVH}px;top:-${this.OY}px;left:-${this.OX}px;z-index:30;pointer-events:none;mask-image:radial-gradient(circle at 50% 50%, black 62%, transparent 82%);-webkit-mask-image:radial-gradient(circle at 50% 50%, black 62%, transparent 82%);`;
     el.appendChild(cv);this.ctx=cv.getContext('2d');
   }
   _c(key,a){const c=this.cfg.pal[key]||this.cfg.pal.primary;return `rgba(${c[0]},${c[1]},${c[2]},${a})`;}

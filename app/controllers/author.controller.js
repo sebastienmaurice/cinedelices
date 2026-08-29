@@ -158,6 +158,8 @@ const authorController = {
         userActiveFrame: gamif.activeFrameUrl,
         userActiveFrameId: gamif.activeFrameCode,
         userFrames,
+        noticesCount:    allNotices.length,
+        unlockedFramesCount: userFrames.filter((f) => f.unlocked).length,
         xpPct:           xpProg.pct,
         xpCurrent:       xpProg.current,
         xpNeeded:        xpProg.needed,

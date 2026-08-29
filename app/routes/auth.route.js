@@ -62,6 +62,12 @@ authRouter.post(
   authController.deleteBanner
 );
 authRouter.post(
+  "/profil/:id/bio",
+  isLogged,
+  injectId,
+  authController.updateBio
+);
+authRouter.post(
   "/profil/:id/delete",
   isLogged,
   injectId,

@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=46" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=52" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
-    <link rel="stylesheet" href="/css/author-page.css?v=8" />
+    <link rel="stylesheet" href="/css/author-page.css?v=13" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -109,6 +109,22 @@
         <!-- Modifier la bannière (propriétaire uniquement) -->
         <% if (isOwner) { %>
         <div class="hero-banner-status">
+          <!-- Choix du fond officiel du cadre équipé — seulement si ce cadre
+               propose plusieurs variantes ET qu'aucune bannière perso n'est
+               active dessus. Placé à gauche du bouton "Modifier la bannière". -->
+          <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
+          <div class="banner-variants" id="bannerVariants">
+            <span class="banner-variants__label">Choisir mon décor</span>
+            <% frameBannerVariants.forEach(function (bv, i) { %>
+            <button
+              type="button"
+              class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
+              data-variant="<%= i + 1 %>"
+              aria-label="Choisir le fond n°<%= i + 1 %>"
+            ><%= i + 1 %></button>
+            <% }); %>
+          </div>
+          <% } %>
           <% if (author.banner_status === 'pending') { %>
             <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
           <% } else if (author.banner_status === 'rejected') { %>
@@ -127,23 +143,6 @@
           <% } %>
         </div>
         <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
-
-        <!-- Choix du fond officiel du cadre équipé — seulement si ce cadre propose
-             plusieurs variantes ET qu'aucune bannière perso n'est active dessus -->
-        <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
-        <div class="banner-variants" id="bannerVariants">
-          <% frameBannerVariants.forEach(function (bv, i) { %>
-          <button
-            type="button"
-            class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
-            data-variant="<%= i + 1 %>"
-            aria-label="Choisir ce fond"
-          >
-            <img src="<%= bv %>" alt="" loading="lazy" />
-          </button>
-          <% }); %>
-        </div>
-        <% } %>
         <% } %>
 
         <!-- Contenu hero bas -->
@@ -211,22 +210,56 @@
             <!-- Titre rang -->
             <p class="hero-rank-title"><%= isAdminAuthor ? 'Équipe Ciné Délices' : userRank %></p>
 
+            <!-- Bio auteur — personnalisable par l'auteur uniquement, publiée
+                 après validation admin (même convention que pseudo/bannière) -->
+            <% if (author.bio || isOwner) { %>
+            <div class="hero-bio" id="heroBio">
+              <% if (author.bio) { %>
+              <p class="hero-bio__text" id="heroBioText"><%= author.bio %></p>
+              <% } else if (isOwner) { %>
+              <p class="hero-bio__text hero-bio__text--empty" id="heroBioText">Ajoutez une courte présentation pour vous démarquer — votre passion pour le cinéma, votre style culinaire...</p>
+              <% } %>
+              <% if (isOwner) { %>
+              <% if (author.bio_status === 'pending') { %>
+              <span class="hero-bio__status hero-bio__status--pending"><span class="b-dot"></span>Bio en attente de validation</span>
+              <% } else if (author.bio_status === 'rejected') { %>
+              <span class="hero-bio__status hero-bio__status--rejected"><span class="b-dot"></span>Bio refusée</span>
+              <% } %>
+              <button type="button" class="hero-bio__edit-btn" id="heroBioEditBtn">
+                <i data-lucide="pencil" width="10" height="10" aria-hidden="true"></i>
+                Modifier ma bio
+              </button>
+              <div class="hero-bio__editor" id="heroBioEditor" hidden>
+                <textarea id="heroBioTextarea" maxlength="500" rows="3" placeholder="Parlez de vous, de votre passion pour le cinéma et la cuisine..."><%= author.pending_bio || author.bio || '' %></textarea>
+                <div class="hero-bio__editor-actions">
+                  <span class="hero-bio__counter" id="heroBioCounter">0/500</span>
+                  <button type="button" class="hero-bio__cancel-btn" id="heroBioCancelBtn">Annuler</button>
+                  <button type="button" class="hero-bio__save-btn" id="heroBioSaveBtn">Soumettre</button>
+                </div>
+              </div>
+              <% } %>
+            </div>
+            <% } %>
+
             <!-- Stats -->
+            <%
+              const _padStat = (n) => String(n).padStart(2, '0');
+            %>
             <div class="hero-stats-row">
               <div class="h-stat">
-                <span class="h-stat__num"><%= recipesCount %></span>
-                <span class="h-stat__lbl">Recettes</span>
-              </div>
-              <% if (!isAdminAuthor) { %>
-              <div class="h-stat-div" aria-hidden="true"></div>
-              <div class="h-stat">
-                <span class="h-stat__num"><%= userXP %></span>
-                <span class="h-stat__lbl">XP</span>
+                <span class="h-stat__num"><%= _padStat(recipesCount) %></span>
+                <span class="h-stat__lbl"><i data-lucide="clapperboard" width="12" height="12" aria-hidden="true"></i> Recettes publiées</span>
               </div>
               <div class="h-stat-div" aria-hidden="true"></div>
               <div class="h-stat">
-                <span class="h-stat__num"><%= userLevel %></span>
-                <span class="h-stat__lbl">Niveau</span>
+                <span class="h-stat__num"><%= _padStat(typeof noticesCount !== 'undefined' ? noticesCount : 0) %></span>
+                <span class="h-stat__lbl"><i data-lucide="message-circle" width="12" height="12" aria-hidden="true"></i> Avis partagés</span>
+              </div>
+              <% if (typeof unlockedFramesCount !== 'undefined') { %>
+              <div class="h-stat-div" aria-hidden="true"></div>
+              <div class="h-stat">
+                <span class="h-stat__num"><%= _padStat(unlockedFramesCount) %></span>
+                <span class="h-stat__lbl"><i data-lucide="trophy" width="12" height="12" aria-hidden="true"></i> Cadres débloqués</span>
               </div>
               <% } %>
               <% if (typeof userFrames !== 'undefined' && userFrames.length > 0) { %>
@@ -536,7 +569,7 @@
 
     <!-- Badge gamification -->
     <script src="/js/gamification-sherlock.js" defer></script>
-    <script src="/js/gamification-engine.js" defer></script>
+    <script src="/js/gamification-engine.js?v=2" defer></script>
 
     <!-- Init canvas hero auteur (équivalent de gamification.js pour profileBadgeHero) -->
     <script>
@@ -786,6 +819,56 @@
           } catch (err) {
             alert('Erreur : ' + err.message);
             wrap.querySelectorAll('.banner-variant').forEach(function (b) { b.disabled = false; });
+          }
+        });
+      })();
+    </script>
+
+    <!-- Édition de la bio auteur — soumission en modération (POST /auth/profil/:id/bio) -->
+    <script>
+      (function () {
+        const editBtn   = document.getElementById('heroBioEditBtn');
+        const editor    = document.getElementById('heroBioEditor');
+        const textarea  = document.getElementById('heroBioTextarea');
+        const counter   = document.getElementById('heroBioCounter');
+        const cancelBtn = document.getElementById('heroBioCancelBtn');
+        const saveBtn   = document.getElementById('heroBioSaveBtn');
+        if (!editBtn || !editor || !textarea) return;
+        const authorId = '<%= author.id %>';
+
+        function updateCounter() {
+          counter.textContent = textarea.value.length + '/500';
+        }
+
+        editBtn.addEventListener('click', function () {
+          editor.hidden = !editor.hidden;
+          if (!editor.hidden) { updateCounter(); textarea.focus(); }
+        });
+
+        cancelBtn.addEventListener('click', function () {
+          editor.hidden = true;
+        });
+
+        textarea.addEventListener('input', updateCounter);
+
+        saveBtn.addEventListener('click', async function () {
+          const bio = textarea.value.trim();
+          if (!bio) { alert('La bio ne peut pas être vide.'); return; }
+          saveBtn.disabled = true;
+          try {
+            const res  = await fetch('/auth/profil/' + authorId + '/bio', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bio: bio }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur.');
+            // Rechargement simple : le serveur affiche le bon statut (pending)
+            // et le pill "en attente", pas de logique à dupliquer ici.
+            window.location.reload();
+          } catch (err) {
+            alert('Erreur : ' + err.message);
+            saveBtn.disabled = false;
           }
         });
       })();

@@ -63,6 +63,9 @@ const adminController = {
       const pendingBanners = users.filter(
         (user) => user.pending_banner_image && user.banner_status === "pending"
       );
+      const pendingBios = users.filter(
+        (user) => user.pending_bio && user.bio_status === "pending"
+      );
 
       res.render("admin-dashboard", {
         recipes,
@@ -71,6 +74,7 @@ const adminController = {
         users,
         pendingProfilePhotos,
         pendingBanners,
+        pendingBios,
         pendingMovieDeleteRequests,
         pendingMovieEdits,
         pendingRecipeEdits,
@@ -1789,11 +1793,42 @@ const adminController = {
     }
   },
 
+  /* Modération bio auteur */
+  async validateUserBio(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      const user = await User.findByPk(userId);
+      if (!user || !user.pending_bio) return res.redirect("/admin?success=admin_bio_error");
+      await User.update(
+        { bio: user.pending_bio, pending_bio: null, bio_status: "approved" },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "approve_user_bio", targetType: "user", targetId: userId });
+      return res.redirect("/admin?success=admin_bio_approved");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur validation bio.");
+    }
+  },
+
+  async rejectUserBio(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      await User.update(
+        { pending_bio: null, bio_status: "rejected" },
+        { where: { id: userId } }
+      );
+      logAdminAction({ adminId: req.userId, action: "reject_user_bio", targetType: "user", targetId: userId });
+      return res.redirect("/admin?success=admin_bio_rejected");
+    } catch (error) {
+      return renderServerError(res, error, "Erreur rejet bio.");
+    }
+  },
+
   /* Polling admin : compteurs en attente */
   async getPendingCount(req, res) {
     try {
       const [users, recipes, notices, recipePictures, movieEdits, movieDeletes] = await Promise.all([
-        User.findAll({ attributes: ["banner_status", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status"] }),
+        User.findAll({ attributes: ["banner_status", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status", "pending_bio", "bio_status"] }),
         Recipe.count({ where: { status: "pending" } }),
         Notice.count({ where: { status: "pending" } }),
         RecipePicture.count({ where: { status: "pending" } }),
@@ -1804,10 +1839,11 @@ const adminController = {
       const banners = users.filter(u => u.pending_banner_image && u.banner_status === "pending").length;
       const photos  = users.filter(u => u.pending_picture  && u.picture_status  === "pending").length;
       const pseudos = users.filter(u => u.pending_pseudo   && u.pseudo_status   === "pending").length;
-      const profils = banners + photos + pseudos;
+      const bios    = users.filter(u => u.pending_bio      && u.bio_status      === "pending").length;
+      const profils = banners + photos + pseudos + bios;
       const filmEdits = movieEdits + movieDeletes;
 
-      return res.json({ success: true, banners, photos, pseudos, profils, recipes, notices, recipePictures, filmEdits });
+      return res.json({ success: true, banners, photos, pseudos, bios, profils, recipes, notices, recipePictures, filmEdits });
     } catch (error) {
       return res.status(500).json({ success: false });
     }
