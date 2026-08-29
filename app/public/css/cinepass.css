@@ -329,6 +329,31 @@ body.cp-page main {
   text-transform: uppercase; letter-spacing: 0.06em;
   white-space: nowrap;
 }
+/* Badge "à venir" — Étape 1 (audit UX) : doit être impossible à manquer,
+   contrairement à l'ancien .cp-card__mock-tag (discret, en pointillés fins).
+   Bordure pleine + fond doré plus présent, sans virer au bandeau d'alerte :
+   une promesse ("ce qui arrive ensuite"), pas une limitation technique. */
+.cp-card__future-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--f-title, var(--font-title)); font-size: 0.62rem; font-weight: 700;
+  padding: 6px 14px; border-radius: 100px;
+  background: linear-gradient(135deg, rgba(196, 160, 82, 0.18), rgba(196, 160, 82, 0.08));
+  border: 1.5px solid rgba(196, 160, 82, 0.55);
+  color: var(--or-titre);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px rgba(196, 160, 82, 0.08), 0 4px 14px rgba(196, 160, 82, 0.15);
+}
+.cp-card__future-badge i, .cp-card__future-badge svg { color: var(--or-titre); }
+
+/* Boucle de progression — rendue explicite, Étape 5 (audit UX) */
+.cp-loop {
+  font-family: var(--font-body); font-size: 0.72rem; line-height: 1.7;
+  color: rgba(232, 232, 232, 0.55);
+  margin: 4px 0 16px;
+}
+.cp-loop__arrow { color: rgba(196, 160, 82, 0.55); margin: 0 2px; font-weight: 700; }
+
 .cp-card__mock-hint {
   font-family: var(--font-body); font-size: 0.68rem; color: rgba(232, 232, 232, 0.35);
   margin-top: 14px; font-style: italic;
@@ -742,7 +767,8 @@ body.cp-page main {
   display: flex; align-items: center; justify-content: center;
   color: rgba(232, 232, 232, 0.5);
 }
-.cp-badge--locked .cp-badge__label { color: rgba(232, 232, 232, 0.4); background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.06); }
+.cp-badge--locked .cp-badge__label,
+.cp-badge--preview .cp-badge__label { color: rgba(232, 232, 232, 0.4); background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.06); }
 
 /* Compteur débloqués — même style que la Collection de cadres */
 .cp-badges__count {

@@ -129,9 +129,14 @@ body.author-page main {
 }
 
 @media (max-width: 640px) {
-  /* Ancré par la droite comme sur desktop (le trigger reste proche du bord
-     d'écran), mais élargi et plafonné pour ne jamais déborder à gauche. */
+  /* Sur mobile le trigger n'est plus collé au bord droit (il est en
+     début de ligne, sous le fil d'Ariane) : un ancrage right:0 hérité
+     du desktop fait déborder tout le panneau hors écran à gauche.
+     On ancre donc depuis la gauche du wrap, qui lui reste toujours
+     dans la marge visible de la page. */
   .dd-filter-wrap--uni .dropdown {
+    left: 0;
+    right: auto;
     min-width: min(320px, calc(100vw - 32px));
     max-width: calc(100vw - 32px);
   }

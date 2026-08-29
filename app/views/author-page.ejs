@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=57" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=60" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
-    <link rel="stylesheet" href="/css/author-page.css?v=19" />
+    <link rel="stylesheet" href="/css/author-page.css?v=20" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -103,28 +103,52 @@
           </button>
 
           <div class="dropdown uni-panel" id="uniCustomizePanel" role="dialog" aria-label="Personnaliser mon univers" aria-hidden="true">
-            <!-- 1. Décor — variantes officielles du cadre équipé (seulement si
-                 ce cadre en propose plusieurs ET qu'aucune bannière perso n'est
+            <!-- Étape 4 (audit UX) : décor + bannière + repositionnement
+                 regroupés sous UN SEUL concept "Fond du profil" — l'utilisateur
+                 n'a pas besoin de savoir qu'un "décor" est techniquement une
+                 variante de bannière, c'est la même chose de son point de vue. -->
+            <p class="dropdown__cat">Fond du profil</p>
+            <!-- Choix d'un fond officiel du cadre équipé (seulement si ce
+                 cadre en propose plusieurs ET qu'aucune bannière perso n'est
                  active dessus) -->
             <% if (!_hasCustomBanner && frameBannerVariants.length > 1) { %>
-            <p class="dropdown__cat">Mon décor</p>
             <div class="uni-decor-grid" id="bannerVariants">
               <% frameBannerVariants.forEach(function (bv, i) { %>
               <button
                 type="button"
                 class="banner-variant<%= (activeBannerVariant || 1) === (i + 1) ? ' banner-variant--active' : '' %>"
                 data-variant="<%= i + 1 %>"
-                aria-label="Choisir le décor n°<%= i + 1 %>"
+                aria-label="Choisir le fond n°<%= i + 1 %>"
                 aria-pressed="<%= (activeBannerVariant || 1) === (i + 1) ? 'true' : 'false' %>"
               ><%= String(i + 1).padStart(2, '0') %></button>
               <% }); %>
             </div>
-            <div class="dropdown__sep"></div>
             <% } %>
 
-            <!-- 2. Profil — bio (ouvre l'éditeur déjà présent dans le hero,
+            <!-- Upload perso retiré (10 fonds "by Ciné Délices" à débloquer
+                 suffisent, évite la charge de modération admin). "Retirer ma
+                 bannière" reste pour les fonds perso déjà existants avant ce
+                 changement — ce n'est pas de l'upload, juste un reset. -->
+            <% if (_hasCustomBanner) { %>
+            <button class="dropdown__item" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
+              <span class="dropdown__icon"><i data-lucide="rotate-ccw" aria-hidden="true"></i></span>
+              Retirer mon fond personnalisé
+            </button>
+            <% } %>
+
+            <!-- Repositionnement — ouvre la glissière indépendante, ne
+                 s'active jamais tant que l'auteur n'a pas cliqué ici. -->
+            <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
+              <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
+              Repositionner mon fond
+            </button>
+
+            <div class="dropdown__sep"></div>
+
+            <!-- Mon profil — bio (ouvre l'éditeur déjà présent dans le hero,
                  juste sous le nom) et pseudo (renvoie vers /auth/profil/:id,
                  où vit déjà l'éditeur de pseudo avec validation admin). -->
+            <p class="dropdown__cat">Mon profil</p>
             <button type="button" class="dropdown__item" id="heroBioEditBtn">
               <span class="dropdown__icon"><i data-lucide="pencil" aria-hidden="true"></i></span>
               Modifier ma bio
@@ -133,25 +157,6 @@
               <span class="dropdown__icon"><i data-lucide="user-pen" aria-hidden="true"></i></span>
               Modifier mon pseudo
             </a>
-            <div class="dropdown__sep"></div>
-
-            <!-- 3. Bannière — upload perso retiré (10 décors "by Ciné Délices"
-                 à débloquer suffisent, évite la charge de modération admin).
-                 "Retirer ma bannière" reste pour les fonds perso déjà existants
-                 avant ce changement — ce n'est pas de l'upload, juste un reset. -->
-            <% if (_hasCustomBanner) { %>
-            <button class="dropdown__item" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
-              <span class="dropdown__icon"><i data-lucide="rotate-ccw" aria-hidden="true"></i></span>
-              Retirer ma bannière
-            </button>
-            <% } %>
-
-            <!-- 4. Positionnement — ouvre la glissière indépendante, ne
-                 s'active jamais tant que l'auteur n'a pas cliqué ici. -->
-            <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
-              <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
-              Repositionner
-            </button>
           </div>
         </div>
 
@@ -762,6 +767,14 @@
         document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) close(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
 
+        // Ouverture directe depuis "Mon compte" (?personnaliser=1) — Étape 3
+        // (audit UX) : le chemin "Mon compte → Personnaliser mon profil"
+        // doit amener droit sur ce popover, pas juste sur la page.
+        if (new URLSearchParams(window.location.search).get('personnaliser') === '1') {
+          open();
+          wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         // Exposé pour que le script "Repositionner" puisse refermer ce popover
         // quand il ouvre sa propre glissière (les deux ne doivent pas être
         // ouverts en même temps).
@@ -825,6 +838,10 @@
               b.classList.toggle('banner-variant--active', parseInt(b.dataset.variant, 10) === variant);
               b.disabled = false;
             });
+
+            // Feedback (audit UX, étape 4) : confirmation discrète, l'utilisateur
+            // ne devait auparavant deviner l'enregistrement qu'au changement visuel.
+            if (typeof window._cdToast === 'function') window._cdToast('Fond mis à jour ✓', 'success');
           } catch (err) {
             alert('Erreur : ' + err.message);
             wrap.querySelectorAll('.banner-variant').forEach(function (b) { b.disabled = false; });
@@ -941,6 +958,7 @@
             originalValue = slider.value;
             panel.hidden = true;
             posBtn.classList.remove('is-active');
+            if (typeof window._cdToast === 'function') window._cdToast('Position enregistrée ✓', 'success');
           } catch (err) {
             alert('Erreur : ' + err.message);
           } finally {

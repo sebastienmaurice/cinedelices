@@ -308,6 +308,20 @@ body.profile-page main {
   top: 22px;
   left: 32px;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.author-link--customize {
+  background: rgba(196, 160, 82, 0.1);
+  border-color: rgba(196, 160, 82, 0.4);
+  color: rgba(196, 160, 82, 0.9);
+}
+.author-link--customize:hover {
+  background: rgba(196, 160, 82, 0.2);
+  border-color: rgba(196, 160, 82, 0.7);
+  color: var(--or-titre);
 }
 .author-link {
   display: inline-flex;
@@ -2935,6 +2949,9 @@ body.modal-open { overflow: hidden; }
 }
 .crea-sidebar { display: flex; flex-direction: column; gap: 0; }
 .crea-main    { display: flex; flex-direction: column; gap: 32px; }
+/* Onglet Créations réduit (Étape 2, Phase 5) : plus de sidebar, une seule
+   colonne pleine largeur pour le résumé "Ce que je publie". */
+.crea-layout--single { grid-template-columns: 1fr; }
 
 /* ── Impact banner — variantes couleurs Créations ── */
 .ic--recipe { background: rgba(201,123,58,.12); border: 1px solid rgba(201,123,58,.22); color: var(--caramel); }
@@ -3039,6 +3056,32 @@ body.modal-open { overflow: hidden; }
   width: 11px; height: 11px; stroke: currentColor; stroke-width: 1.5;
   fill: none; flex-shrink: 0;
 }
+
+/* Widget "Ma progression" réduit — Étape 1 (Phase 5, recentrage
+   architecture) : réutilise .hero-sub/.hero-sub__rank/.hero-sub__lvl
+   (même pastille de rang que le hero) + .sec-link (même lien discret
+   que "Voir tout →" ailleurs sur cette page). Aucune nouvelle couleur. */
+.ov-progress-body--mini { padding: 14px 18px 16px; gap: 10px; }
+.ov-mini-rank { margin-bottom: 0; }
+.ov-mini-link { display: inline-block; }
+
+/* Widget "Ce que je publie" — résumé contextuel (compteur + lien),
+   remplace les listes détaillées déplacées vers /contributions/.
+   Typographie/couleurs alignées sur .impact-cell__val (même famille de
+   police, même ton doré) pour rester cohérent avec le bandeau du haut. */
+.ov-contrib-summary { padding: 22px 18px; text-align: center; }
+.ov-contrib-summary__count {
+  font-family: var(--f-display); font-size: 2.2rem; letter-spacing: .04em;
+  color: var(--dore-clair); line-height: 1;
+}
+.ov-contrib-summary__lbl {
+  font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(232,232,232,.4); margin-top: 4px;
+}
+.ov-contrib-summary__breakdown {
+  font-size: .6rem; color: rgba(232,232,232,.25); margin-top: 8px;
+}
+.ov-contrib-summary__cta { margin-top: 16px; }
 
 /* ── Quick actions ── */
 .quick-actions { padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 8px; }

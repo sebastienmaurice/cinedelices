@@ -7,7 +7,12 @@
     <meta name="description" content="Ciné Délices — Mes contributions : recettes, films, avis et activité" />
     <title>Mes contributions - Ciné Délices</title>
     <%- include("partials/head-resources") %>
-    <link rel="stylesheet" href="/css/contributions.css?v=1" />
+    <link rel="stylesheet" href="/css/contributions.css?v=4" />
+    <!-- Modal d'édition recette + toasts : styles repris de user-profile.css
+         (.modal-box, .ci-ef-*, .profile-toast*) — Étape 2, Phase 5. Aucune
+         classe de ce fichier ne recoupe les classes .ctr-* de cette page. -->
+    <link rel="stylesheet" href="/css/user-profile.css?v=60" />
+    <link rel="stylesheet" href="/css/rte-mini.css" />
   </head>
 
   <body class="ctr-page">
@@ -22,7 +27,7 @@
       }
     %>
 
-    <main class="ctr-main">
+    <main class="ctr-main" data-user-id="<%= user.id %>">
       <h1 class="sr-only">Mes contributions — Ciné Délices</h1>
 
       <nav class="ctr-breadcrumb" aria-label="Fil d'Ariane">
@@ -31,15 +36,24 @@
         <span>Contributions</span>
       </nav>
 
+      <!-- Étape 2 (Phase 5, recentrage architecture) : cette page est
+           désormais LA destination de gestion (voir, éditer, supprimer,
+           ajouter). Le sous-titre le dit explicitement, pour ne plus être
+           confondue avec un simple résumé de consultation. -->
       <div class="ctr-hero">
         <div>
           <p class="ctr-hero__eyebrow"><i data-lucide="clapperboard" width="12" height="12" aria-hidden="true"></i> Ciné Délices</p>
           <h2 class="ctr-hero__title">Mes <em>contributions</em></h2>
-          <p class="ctr-hero__sub">Ce que vous apportez à la communauté Ciné Délices.</p>
+          <p class="ctr-hero__sub">Retrouvez, modifiez et gérez tout ce que vous avez publié sur Ciné Délices.</p>
         </div>
-        <a href="/cinepass/" class="ctr-hero__cinepass">
-          <i data-lucide="ticket" width="14" height="14" aria-hidden="true"></i> Voir mon CinéPass
-        </a>
+        <div class="ctr-hero__actions">
+          <a href="/add-recipes-movies" class="ctr-hero__add">
+            <i data-lucide="plus" width="14" height="14" aria-hidden="true"></i> Ajouter une contribution
+          </a>
+          <a href="/cinepass/" class="ctr-hero__cinepass">
+            <i data-lucide="ticket" width="14" height="14" aria-hidden="true"></i> Voir mon CinéPass
+          </a>
+        </div>
       </div>
 
       <!-- ══════ Bandeau impact ══════ -->
@@ -64,19 +78,50 @@
 
       <div class="ctr-row">
 
-        <!-- ══════ Mes recettes ══════ -->
+        <!-- ══════ Mes recettes ══════
+             Étape 2 : Éditer/Supprimer réutilisent exactement les routes
+             et le modal déjà en place sur Mon compte (/auth/profil/:id/
+             recipes/:id/update|delete) — voir contributions.js. -->
         <section class="ctr-card">
           <div class="ctr-card__head">
             <p class="ctr-card__title"><i data-lucide="utensils" width="14" height="14" aria-hidden="true"></i> Mes recettes</p>
-            <a href="/add-recipes-movies/" class="ctr-card__add"><i data-lucide="plus" width="12" height="12" aria-hidden="true"></i> Ajouter</a>
           </div>
           <% if (userRecipes.length > 0) { %>
           <div class="ctr-list">
             <% userRecipes.slice(0, 8).forEach(function (r) { %>
-            <a class="ctr-item" href="/recipes-movie/details/<%= r.id %>">
-              <span class="ctr-item__title"><%= r.name %><% if (r.Movie) { %> <em>— <%= r.Movie.title %></em><% } %></span>
+            <div class="ctr-item ctr-item--manage account-item"
+              data-type="recipe"
+              data-id="<%= r.id %>"
+              data-name="<%= r.name %>"
+              data-status="<%= r.status %>"
+              data-edit-status="<%= r.edit_status || 'none' %>"
+              data-delete-request="<%= r.delete_request_status || 'none' %>"
+              data-category="<%= r.category %>"
+              data-time="<%= r.time %>"
+              data-difficulty="<%= r.difficulty %>"
+              data-description="<%= encodeURIComponent(r.description || '') %>"
+              data-ingredients="<%= encodeURIComponent(r.ingredients || '') %>"
+              data-preparation="<%= encodeURIComponent(r.preparation || '') %>"
+              data-picture="<%= r.picture || '' %>"
+              data-pictures="<%= encodeURIComponent(JSON.stringify((r.RecipePictures || []).sort((a,b)=>a.position-b.position).map(p=>p.file_path))) %>"
+            >
+              <div class="ctr-item__main">
+                <span class="ctr-item__title account-item__title"><%= r.name %><% if (r.Movie) { %> <em>— <%= r.Movie.title %></em><% } %></span>
+                <% if (r.edit_status === 'pending') { %>
+                <p class="ctr-item__hint">⏳ Modification en attente de validation.</p>
+                <% } else if (r.edit_status === 'rejected') { %>
+                <p class="ctr-item__hint ctr-item__hint--rejected">✕ Modification refusée — vous pouvez soumettre une nouvelle modification.</p>
+                <% } %>
+              </div>
               <span class="ctr-item__status ctr-item__status--<%= r.status %>"><%= statusLabel(r.status) %></span>
-            </a>
+              <div class="ctr-item__actions">
+                <% if (r.status === 'approved') { %>
+                <a href="/recipes-movie/details/<%= r.id %>" class="ctr-act-btn ctr-act-btn--view" title="Voir" target="_blank" rel="noopener"><i data-lucide="eye" width="13" height="13" aria-hidden="true"></i></a>
+                <% } %>
+                <button class="ctr-act-btn ctr-act-btn--edit contrib-edit-btn" title="Éditer" <%= r.edit_status === 'pending' ? 'disabled' : '' %>><i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i></button>
+                <button class="ctr-act-btn ctr-act-btn--del contrib-delete-btn" title="Supprimer" <%= r.delete_request_status === 'pending' ? 'disabled' : '' %>><i data-lucide="trash-2" width="13" height="13" aria-hidden="true"></i></button>
+              </div>
+            </div>
             <% }); %>
           </div>
           <% } else { %>
@@ -92,10 +137,18 @@
           <% if (userMovies.length > 0) { %>
           <div class="ctr-list">
             <% userMovies.slice(0, 8).forEach(function (m) { %>
-            <a class="ctr-item" href="/recipes-movie/<%= m.id %>">
-              <span class="ctr-item__title"><%= m.title %></span>
+            <div class="ctr-item ctr-item--manage account-item" data-type="movie" data-id="<%= m.id %>" data-status="<%= m.status %>">
+              <div class="ctr-item__main">
+                <span class="ctr-item__title"><%= m.title %></span>
+              </div>
               <span class="ctr-item__status ctr-item__status--<%= m.status %>"><%= statusLabel(m.status) %></span>
-            </a>
+              <div class="ctr-item__actions">
+                <% if (m.status === 'approved') { %>
+                <a href="/recipes-movie/<%= m.slug || m.id %>" class="ctr-act-btn ctr-act-btn--view" title="Voir" target="_blank" rel="noopener"><i data-lucide="eye" width="13" height="13" aria-hidden="true"></i></a>
+                <% } %>
+                <button class="ctr-act-btn ctr-act-btn--del contrib-delete-btn" title="Retirer"><i data-lucide="trash-2" width="13" height="13" aria-hidden="true"></i></button>
+              </div>
+            </div>
             <% }); %>
           </div>
           <% } else { %>
@@ -111,11 +164,19 @@
           <% if (userNotices.length > 0) { %>
           <div class="ctr-list">
             <% userNotices.slice(0, 8).forEach(function (n) { %>
-            <div class="ctr-item ctr-item--static">
-              <span class="ctr-item__title">
-                <% if (n.Recipe) { %><%= n.Recipe.name %><% } else { %>Avis<% } %>
-              </span>
+            <div class="ctr-item ctr-item--manage account-item" data-type="notice" data-id="<%= n.id %>" data-delete-request="<%= n.delete_request_status || 'none' %>">
+              <div class="ctr-item__main">
+                <span class="ctr-item__title">
+                  <% if (n.Recipe) { %><%= n.Recipe.name %><% } else { %>Avis<% } %>
+                </span>
+                <% if (n.delete_request_status === 'pending') { %>
+                <p class="ctr-item__hint">Suppression en attente de validation.</p>
+                <% } %>
+              </div>
               <span class="ctr-item__status ctr-item__status--<%= n.status %>"><%= statusLabel(n.status) %></span>
+              <div class="ctr-item__actions">
+                <button class="ctr-act-btn ctr-act-btn--del contrib-delete-btn" title="Supprimer" <%= n.delete_request_status === 'pending' ? 'disabled' : '' %>><i data-lucide="trash-2" width="13" height="13" aria-hidden="true"></i></button>
+              </div>
             </div>
             <% }); %>
           </div>
@@ -156,5 +217,114 @@
     </main>
 
     <%- include("partials/footer") %>
+
+    <!-- Modal édition recette — Étape 2 (Phase 5) : copie exacte du modal
+         de Mon compte (mêmes id, mêmes champs), pilotée par contributions.js
+         qui reproduit à l'identique la logique de account.js pour cette
+         seule partie (aucune route ni logique métier modifiée). -->
+    <div class="modal-overlay" id="editRecipeModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="modal-box modal-box--edit">
+        <div class="modal-stripe modal-stripe--gold"></div>
+        <div class="modal-head">
+          <div class="modal-ico modal-ico--edit">✏️</div>
+          <div class="modal-titles">
+            <div class="modal-title" id="editModalTitle">ÉDITER LA RECETTE</div>
+            <div class="modal-sub" id="editModalSub">Les modifications sont soumises à validation</div>
+          </div>
+        </div>
+        <div class="modal-body modal-body--form">
+          <div class="ci-ef-row">
+            <div><label class="ci-ef-label">Titre</label><input class="ci-ef-input" id="editField-name" type="text" name="name" /></div>
+            <div>
+              <label class="ci-ef-label">Catégorie</label>
+              <select class="ci-ef-input ci-ef-select" id="editField-category" name="category">
+                <option value="">Choisir…</option>
+                <option value="entrée">Entrée</option>
+                <option value="plat">Plat</option>
+                <option value="dessert">Dessert</option>
+              </select>
+            </div>
+          </div>
+          <div class="ci-ef-row">
+            <div><label class="ci-ef-label">Temps (min)</label><input class="ci-ef-input" id="editField-time" type="number" name="time" min="1" /></div>
+            <div>
+              <label class="ci-ef-label">Difficulté</label>
+              <select class="ci-ef-input ci-ef-select" id="editField-difficulty" name="difficulty">
+                <option value="">Choisir…</option>
+                <option value="Facile">Facile</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Difficile">Difficile</option>
+              </select>
+            </div>
+          </div>
+          <div class="ci-ef-full"><label class="ci-ef-label">Description</label><textarea class="ci-ef-textarea" id="editField-description" name="description" rows="2"></textarea></div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Ingrédients <span class="ci-ef-label-hint">§ titre de section · • liste</span></label>
+            <div class="rte-mini-wrap">
+              <div class="rte-mini-toolbar" id="profil-ing-tb" role="toolbar" aria-label="Mise en forme ingrédients">
+                <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras"><strong>G</strong></button>
+                <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique"><em>I</em></button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                <button type="button" class="rte-tb-btn" data-cmd="heading" title="Titre de section">§ titre</button>
+              </div>
+              <div class="rte-mini-editor" id="profil-ing-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Ingrédients"></div>
+            </div>
+            <input type="hidden" id="editField-ingredients" name="ingredients" />
+          </div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Préparation <span class="ci-ef-label-hint">Ctrl+↵ ou + étape pour séparer les étapes</span></label>
+            <div class="rte-mini-wrap">
+              <div class="rte-mini-toolbar" id="profil-prep-tb" role="toolbar" aria-label="Mise en forme préparation">
+                <button type="button" class="rte-tb-btn" data-cmd="bold" title="Gras"><strong>G</strong></button>
+                <button type="button" class="rte-tb-btn" data-cmd="italic" title="Italique"><em>I</em></button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="bulletList" title="Liste à puces">• liste</button>
+                <div class="rte-tb-divider"></div>
+                <button type="button" class="rte-tb-btn" data-cmd="separator" title="Nouvelle étape (Ctrl+Entrée)">+ étape</button>
+              </div>
+              <div class="rte-mini-editor" id="profil-prep-rte" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="Préparation"></div>
+            </div>
+            <input type="hidden" id="editField-preparation" name="preparation" />
+          </div>
+          <div class="ci-ef-full">
+            <label class="ci-ef-label">Photos <span class="ci-ef-label-hint">max 3 · ratio 3:2 · 2 Mo par photo · remplace les photos actuelles si modifiées</span></label>
+            <div class="ci-ef-photo-slots" id="editPhotoSlots">
+              <% for (var ps = 1; ps <= 3; ps++) { %>
+              <div class="ci-ef-ps" id="edit-ps-<%= ps %>">
+                <div class="ci-ef-ps__prev" id="edit-ps-prev-<%= ps %>"></div>
+                <span class="ci-ef-ps__n"><%= ps === 1 ? '01 PRINC.' : '0' + ps %></span>
+                <input type="file" name="pictures" id="edit-ps-input-<%= ps %>"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  class="ci-ef-ps__file" />
+                <button type="button" class="ci-ef-ps__del" id="edit-ps-del-<%= ps %>" title="Retirer">×</button>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn--ghost btn--sm" id="editModalCancel">Annuler</button>
+          <button class="btn btn--primary btn--sm" id="editModalSave">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast — même pattern que Mon compte (account.js), pattern local
+         copié dans contributions.js (voir Étape 2, Phase 5). -->
+    <div class="profile-toast-wrap" aria-live="polite"></div>
+
+    <script src="/js/rte-mini.js"></script>
+    <script src="/js/contributions.js?v=1" defer></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var ingRte  = document.getElementById('profil-ing-rte');
+      var ingTb   = document.getElementById('profil-ing-tb');
+      var prepRte = document.getElementById('profil-prep-rte');
+      var prepTb  = document.getElementById('profil-prep-tb');
+      if (ingRte  && ingTb  && window.RteMini) RteMini.initEditor({ rteEl: ingRte,  tbEl: ingTb,  mode: 'ingredients' });
+      if (prepRte && prepTb && window.RteMini) RteMini.initEditor({ rteEl: prepRte, tbEl: prepTb, mode: 'preparation' });
+    });
+    </script>
   </body>
 </html>

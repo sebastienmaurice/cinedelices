@@ -8,9 +8,9 @@
     <title>Mon CinéPass - Ciné Délices</title>
     <%- include("partials/head-resources") %>
     <!-- Réutilisées telles quelles depuis /auth/profil/# — Collection de cadres + avatar cadré -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=57" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=58" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
-    <link rel="stylesheet" href="/css/cinepass.css?v=60" />
+    <link rel="stylesheet" href="/css/cinepass.css?v=63" />
   </head>
 
   <body class="cp-page">
@@ -193,6 +193,14 @@
         <section class="cp-card cp-progress">
           <p class="cp-card__eyebrow">Ma progression</p>
 
+          <!-- Étape 5 (audit UX) : la boucle qui fonctionne (XP → Niveau →
+               Cadre) mérite d'être dite explicitement, pas seulement
+               déductible en reliant plusieurs blocs entre eux. Aucune
+               fausse relation vers Univers/Trophées ici. -->
+          <p class="cp-loop">
+            Je contribue <span class="cp-loop__arrow">→</span> je gagne de l'XP <span class="cp-loop__arrow">→</span> je monte de niveau <span class="cp-loop__arrow">→</span> je débloque un cadre <span class="cp-loop__arrow">→</span> je personnalise mon profil
+          </p>
+
           <!-- Médaillon — même composant que /cinepass/ (ctb2-main-row) -->
           <div class="level-medallion level-medallion--<%= cpTier %>" aria-label="Niveau <%= level %>">
             <span class="level-medallion__gem level-medallion__gem--top"></span>
@@ -252,68 +260,47 @@
         <section class="cp-card cp-univers">
           <div class="cp-card__head">
             <p class="cp-card__eyebrow">Mes univers cinématographiques</p>
-            <span class="cp-card__mock-tag">Aperçu à venir</span>
+            <span class="cp-card__future-badge"><i data-lucide="sparkles" width="11" height="11" aria-hidden="true"></i> À venir</span>
           </div>
-          <p class="cp-univers__intro">Les mondes cinématographiques dans lesquels vous vous êtes aventuré.</p>
+          <p class="cp-univers__intro">Bientôt : explorez vos univers cinématographiques et découvrez ceux que vous maîtrisez.</p>
           <div class="cp-univers__grid">
             <% mockUnivers.forEach(function (u) { %>
-            <div class="cp-univers__card<%= u.progress >= u.total ? ' is-mastered' : '' %>" data-accent="<%= u.accent %>">
+            <div class="cp-univers__card cp-univers__card--preview" data-accent="<%= u.accent %>">
               <div class="cp-univers__poster">
                 <img src="<%= u.img %>" alt="" loading="lazy" />
                 <div class="cp-univers__poster-grad"></div>
                 <div class="cp-univers__poster-sheen" aria-hidden="true"></div>
-                <% if (u.progress >= u.total) { %>
-                <span class="cp-univers__mastered">Maîtrisé</span>
-                <% } %>
                 <div class="cp-univers__poster-foot">
                   <p class="cp-univers__label"><%= u.label %></p>
-                  <div class="cp-univers__dots">
-                    <% for (let i = 0; i < u.total; i++) { %>
-                    <span class="cp-univers__dot<%= i < u.progress ? ' is-on' : '' %>"></span>
-                    <% } %>
-                  </div>
-                </div>
-                <div class="cp-univers__reveal">
-                  <p class="cp-univers__count"><%= u.progress %> / <%= u.total %> cadres découverts</p>
-                  <div class="cp-univers__xp-track"><div class="cp-univers__xp-fill" style="width:<%= Math.round((u.xp / u.xpMax) * 100) %>%"></div></div>
-                  <p class="cp-univers__xp"><%= u.xp %> / <%= u.xpMax %> XP</p>
                 </div>
               </div>
             </div>
             <% }); %>
           </div>
-          <p class="cp-card__mock-hint">Les Univers ne sont pas encore calculés dynamiquement — aperçu du futur système Ciné Délices.</p>
         </section>
 
       </div>
 
-      <!-- Badges — aperçu du futur système (mock, distinct des cadres) -->
+      <!-- Trophées — roadmap assumée (mock, distinct des cadres). Aucune donnée
+           chiffrée (pas de compteur débloqués/total, pas de statut verrouillé
+           par trophée) : ce n'est pas encore un système réel, on ne simule
+           donc aucune précision qui n'existe pas. -->
       <section class="cp-card cp-card--badges">
         <div class="cp-card__head">
           <p class="cp-card__eyebrow">Mes trophées</p>
-          <span class="cp-badges__count"><strong><%= mockBadges.filter(b => b.unlocked).length %></strong>/<%= mockBadgesTotal %> débloqués</span>
-          <span class="cp-card__mock-tag">Aperçu du futur système</span>
+          <span class="cp-card__future-badge"><i data-lucide="sparkles" width="11" height="11" aria-hidden="true"></i> À venir</span>
         </div>
+        <p class="cp-univers__intro">Bientôt : une collection de trophées pour récompenser vos accomplissements sur Ciné Délices.</p>
         <div class="cp-badges">
           <% mockBadges.forEach(function (b) { %>
-          <div class="cp-badge cp-badge--<%= b.tier %><%= !b.unlocked ? ' cp-badge--locked' : '' %>" title="<%= b.label %><%= !b.unlocked ? ' — Verrouillé' : '' %>">
-            <% if (b.unlocked) { %>
-            <span class="cp-badge__medal">
-              <img src="<%= b.image %>" alt="<%= b.label %>" loading="lazy" />
-            </span>
-            <% } else { %>
-            <!-- Verrouillé : aucune image réelle du trophée envoyée au client, seulement le
-                 blason générique Ciné Délices (identique pour tous, ne révèle rien). -->
+          <div class="cp-badge cp-badge--preview" title="<%= b.label %>">
             <span class="cp-badge__medal">
               <img class="cp-badge__medal-locked" src="/images/trophees/trophee-locked-generic.webp" alt="" loading="lazy" />
-              <span class="cp-badge__medal-lock"><i data-lucide="lock" width="14" height="14" aria-hidden="true"></i></span>
             </span>
-            <% } %>
             <span class="cp-badge__label"><%= b.label %></span>
           </div>
           <% }); %>
         </div>
-        <p class="cp-card__mock-hint">Ces trophées n'existent pas encore en base — aucun accomplissement réel n'est calculé ici.</p>
       </section>
 
       <!-- ══════════════════════════════════════════
@@ -357,20 +344,18 @@
           </div>
         </section>
 
+        <!-- Étape 2 (audit UX) : simple aperçu "d'où vient mon XP", pas une
+             gestion complète (filtres retirés, 3 items max) — cette page
+             (/contributions/) reste le seul endroit pour consulter/gérer
+             l'intégralité, évite la duplication constatée entre les deux. -->
         <section class="cp-card cp-activity">
           <div class="cp-card__head">
-            <p class="cp-card__eyebrow">Dernières contributions</p>
-            <a href="/contributions/" class="cp-card__more">Voir toutes <i data-lucide="arrow-right" width="12" height="12" aria-hidden="true"></i></a>
+            <p class="cp-card__eyebrow">D'où vient mon XP</p>
+            <a href="/contributions/" class="cp-card__more">Voir toutes mes contributions <i data-lucide="arrow-right" width="12" height="12" aria-hidden="true"></i></a>
           </div>
           <% if (recentActivity.length > 0) { %>
-          <div class="cp-activity__filters" id="cpActivityFilters">
-            <button type="button" class="cp-activity__filter is-active" data-filter="all">Tout</button>
-            <button type="button" class="cp-activity__filter" data-filter="recipe">Recettes</button>
-            <button type="button" class="cp-activity__filter" data-filter="movie">Films</button>
-            <button type="button" class="cp-activity__filter" data-filter="notice">Avis</button>
-          </div>
           <div class="cp-activity__list" id="cpActivityList">
-            <% recentActivity.forEach(function (a) { %>
+            <% recentActivity.slice(0, 3).forEach(function (a) { %>
             <div class="cp-activity__item" data-type="<%= a.type %>">
               <div class="cp-activity__icon cp-activity__icon--<%= a.type %>">
                 <% if (a.type === 'recipe') { %><i data-lucide="utensils" width="14" height="14" aria-hidden="true"></i>

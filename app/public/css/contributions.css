@@ -65,6 +65,24 @@ body.ctr-page main {
 }
 .ctr-hero__cinepass:hover { background: rgba(196, 160, 82, 0.2); }
 
+/* Étape 2 (Phase 5) : "+ Ajouter" devient un vrai CTA de page, à côté du
+   lien CinéPass déjà existant. Style plein (primaire) vs. le lien
+   CinéPass qui reste en outline (secondaire) — même vocabulaire visuel
+   que .ctr-hero__cinepass, juste inversé fond/texte. */
+.ctr-hero__actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+.ctr-hero__add {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: var(--or-titre);
+  border: 1px solid var(--or-titre);
+  color: #14202f;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, opacity .2s;
+}
+.ctr-hero__add:hover { opacity: 0.88; }
+
 /* ── Bandeau impact ── */
 .ctr-impact {
   display: grid;
@@ -100,6 +118,11 @@ body.ctr-page main {
   border: 1px solid rgba(196, 160, 82, 0.1);
   border-radius: 16px;
   padding: 20px 22px;
+  /* Item grid : sans min-width:0 ici, un titre long empêche la carte de
+     rétrécir sous son contenu et fait déborder toute la colonne (bug
+     classique de CSS Grid) — cassait les actions Éditer/Supprimer en
+     mobile (Étape 2, Phase 5). */
+  min-width: 0;
 }
 .ctr-card__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .ctr-card__title {
@@ -126,8 +149,10 @@ body.ctr-page main {
 a.ctr-item:hover { background: rgba(255, 255, 255, 0.03); }
 .ctr-item--static { cursor: default; }
 .ctr-item__title {
+  display: block;
   font-family: var(--font-body); font-size: 0.78rem; color: var(--argent-ecran);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
 }
 .ctr-item__title em { color: rgba(232, 232, 232, 0.4); font-style: normal; }
 .ctr-item__status {
@@ -139,6 +164,30 @@ a.ctr-item:hover { background: rgba(255, 255, 255, 0.03); }
 .ctr-item__status--approved { background: rgba(46, 204, 113, 0.14); color: #2ecc71; }
 .ctr-item__status--pending { background: rgba(196, 160, 82, 0.14); color: var(--or-titre); }
 .ctr-item__status--rejected { background: rgba(194, 48, 24, 0.14); color: #e06050; }
+
+/* ── Item enrichi : gestion (Étape 2, Phase 5) ──
+   Hiérarchie voulue : contenu → statut → actions, jamais l'inverse —
+   le statut ne doit pas dominer visuellement les boutons d'action. */
+.ctr-item--manage { cursor: default; align-items: center; }
+.ctr-item__main { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; }
+.ctr-item__hint {
+  font-family: var(--font-body); font-size: 0.62rem; color: rgba(196, 160, 82, 0.7);
+  margin: 2px 0 0;
+}
+.ctr-item__hint--rejected { color: rgba(224, 96, 80, 0.85); }
+.ctr-item__actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.ctr-act-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 27px; height: 27px; border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(232, 232, 232, 0.55);
+  cursor: pointer; transition: all 0.18s; text-decoration: none;
+}
+.ctr-act-btn:hover { background: rgba(255, 255, 255, 0.09); color: var(--argent-ecran); }
+.ctr-act-btn--edit:hover { border-color: rgba(196, 160, 82, 0.4); color: var(--or-titre); }
+.ctr-act-btn--del:hover { border-color: rgba(194, 48, 24, 0.4); color: #e06050; }
+.ctr-act-btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
 /* ── Activité ── */
 .ctr-card--activity { }
@@ -162,4 +211,23 @@ a.ctr-item:hover { background: rgba(255, 255, 255, 0.03); }
 @media (max-width: 900px) {
   .ctr-impact { grid-template-columns: repeat(2, 1fr); }
   .ctr-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .ctr-hero { flex-direction: column; align-items: stretch; }
+  .ctr-hero__actions { flex-direction: column; align-items: stretch; }
+  .ctr-hero__add, .ctr-hero__cinepass { justify-content: center; }
+  /* Item de gestion : contenu sur sa ligne, statut + actions sur la
+     suivante — jamais de bouton coupé ou de débordement horizontal. */
+  .ctr-item--manage { flex-wrap: wrap; row-gap: 8px; }
+  .ctr-item--manage .ctr-item__main { flex-basis: 100%; }
+}
+
+/* Toast (.profile-toast-wrap/.profile-toast__item) et modal d'édition
+   (.modal-box/.ci-ef-*/.rte-mini-*) : styles repris tels quels depuis
+   user-profile.css, chargé ci-dessus — voir Étape 2, Phase 5. Petit
+   ajustement responsive local uniquement : */
+@media (max-width: 560px) {
+  .profile-toast-wrap { left: 12px; right: 12px; }
+  .profile-toast__item { min-width: 0; max-width: none; }
 }

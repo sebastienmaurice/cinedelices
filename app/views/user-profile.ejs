@@ -7,7 +7,7 @@
     <meta name="description" content="Ciné Délices — Gérez votre compte et vos préférences cinéma & recettes" />
     <title>Mon compte - Ciné Délices</title>
     <%- include("partials/head-resources") %>
-    <link rel="stylesheet" href="/css/user-profile.css?v=57" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=60" />
     <link rel="stylesheet" href="/css/ctb2-hero.css" />
     <link rel="stylesheet" href="/css/rte-mini.css" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
@@ -45,12 +45,21 @@
         <div class="hero-scanlines" aria-hidden="true"></div>
         <div class="hero-vignette" aria-hidden="true"></div>
 
-        <!-- Page auteur (top-left) -->
+        <!-- Page auteur + personnalisation (top-left) — Étape 3 (audit UX) :
+             le décor/bannière/repositionnement vivent sur la Page Auteur, mais
+             rien sur "Mon compte" ne le laissait deviner. Le lien
+             "Personnaliser mon profil" rend ce chemin explicite et ouvre
+             directement le popover "Personnaliser mon univers" là-bas
+             (voir ?personnaliser=1, géré dans author-page.ejs). -->
         <% if (userRecipes && userRecipes.filter(r => r.status === 'approved').length > 0) { %>
         <div class="hero-author-link">
           <a href="/auteur/<%= user.id %>" class="author-link" target="_blank" rel="noopener">
             <i data-lucide="film" aria-hidden="true"></i>
             Ma page auteur
+          </a>
+          <a href="/auteur/<%= user.id %>?personnaliser=1" class="author-link author-link--customize" target="_blank" rel="noopener">
+            <i data-lucide="sparkles" aria-hidden="true"></i>
+            Personnaliser mon profil
           </a>
         </div>
         <% } %>
@@ -242,9 +251,9 @@
           </button>
           <button class="ptab" data-tab="creations" role="tab" aria-selected="false">
             <i data-lucide="plus" aria-hidden="true"></i>
-            <span class="ptab-text">Créations</span>
-            <% const totalCreations = userRecipes.length + userMovies.length + userNoticesCount; if (totalCreations > 0) { %>
-            <span class="ptab-badge"><%= totalCreations > 9 ? '9+' : totalCreations %></span>
+            <span class="ptab-text">Contributions</span>
+            <% const totalContributions = userRecipes.length + userMovies.length + userNoticesCount; if (totalContributions > 0) { %>
+            <span class="ptab-badge"><%= totalContributions > 9 ? '9+' : totalContributions %></span>
             <% } %>
           </button>
         </nav>
@@ -306,50 +315,30 @@
             <!-- ── SIDEBAR ── -->
             <aside class="crea-sidebar">
 
-              <!-- Ma progression -->
+              <!-- Ma progression — Étape 1 (Phase 5, recentrage architecture) :
+                   résumé contextuel minimal. La mécanique de progression
+                   (barre XP, %, seuils, taux de validation) appartient
+                   exclusivement à CinéPass, seule destination pour "voir sa
+                   progression". Niveau/rang restent ici : ce sont des
+                   repères identitaires ("qui je suis"), pas la mécanique
+                   elle-même. Ne pas réintroduire XP/% ici — voir Phase 5. -->
               <div class="widget">
                 <div class="widget-head">
                   <div class="widget-head__line"></div>
                   <span class="widget-head__title">Ma progression</span>
-                  <a href="/cinepass/" class="widget-head__extra">Détails →</a>
                 </div>
                 <%
-                  const _ovTotal      = userRecipes.length + userMovies.length;
-                  const _ovApproved   = userRecipes.filter(r => r.status === 'approved').length + userMovies.filter(m => m.status === 'approved').length;
-                  const _ovValPct     = _ovTotal > 0 ? Math.round((_ovApproved / _ovTotal) * 100) : 0;
-                  const _ovXP         = (typeof userXP !== 'undefined' && userXP) ? parseInt(userXP) : 0;
-                  const _ovLvl        = (typeof userLevel !== 'undefined' && userLevel) ? parseInt(userLevel) : 1;
-                  const _ovXpTable    = [0,100,300,600,1100,1800,2800,4200,6000,8500,11500,15000,20000,26000,33000,41000,50000,60000,72000];
-                  const _ovXpFloor    = _ovXpTable[_ovLvl - 1] || 0;
-                  const _ovXpCeil     = _ovXpTable[_ovLvl] || (_ovLvl * 1500);
-                  const _ovXpPct      = Math.min(100, Math.round(((_ovXP - _ovXpFloor) / (_ovXpCeil - _ovXpFloor)) * 100));
-                  const _ovSince      = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }) : null;
+                  const _ovSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }) : null;
                 %>
-                <div class="ov-progress-body">
+                <div class="ov-progress-body ov-progress-body--mini">
 
-                  <!-- Taux de validation -->
-                  <div class="ov-prog-row">
-                    <div class="ov-prog-labels">
-                      <span class="ov-prog-label">Taux de validation</span>
-                      <span class="ov-prog-val"><%= _ovApproved %> / <%= _ovTotal %> contenus</span>
-                    </div>
-                    <div class="ov-prog-bar-wrap">
-                      <div class="ov-prog-bar ov-prog-bar--valide" style="width:<%= _ovValPct %>%"></div>
-                    </div>
-                    <span class="ov-prog-pct"><%= _ovValPct %>%</span>
-                  </div>
+                  <p class="hero-sub ov-mini-rank">
+                    <span class="hero-sub__rank"><%= _heroRank %></span>
+                    <span class="hero-sub__sep" aria-hidden="true">·</span>
+                    <span class="hero-sub__lvl">Niv. <%= _heroLvl %></span>
+                  </p>
 
-                  <!-- Barre XP niveau -->
-                  <div class="ov-prog-row">
-                    <div class="ov-prog-labels">
-                      <span class="ov-prog-label">Niveau <%= _ovLvl %> — <%= _ovXP.toLocaleString('fr-FR') %> XP</span>
-                      <span class="ov-prog-val"><%= Math.max(0, _ovXpCeil - _ovXP).toLocaleString('fr-FR') %> XP pour niv. <%= _ovLvl + 1 %></span>
-                    </div>
-                    <div class="ov-prog-bar-wrap">
-                      <div class="ov-prog-bar ov-prog-bar--xp" style="width:<%= _ovXpPct %>%"></div>
-                    </div>
-                    <span class="ov-prog-pct"><%= _ovXpPct %>%</span>
-                  </div>
+                  <a href="/cinepass/" class="sec-link ov-mini-link">Voir ma progression →</a>
 
                   <!-- Membre depuis -->
                   <% if (_ovSince) { %>
@@ -363,184 +352,61 @@
               </div>
 
               <!-- Raccourcis -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Navigation rapide</span>
-                </div>
-                <div class="quick-actions">
-                  <button class="qa-btn qa-btn--gold" onclick="document.querySelector('[data-tab=\'creations\']').click()">
-                    <div class="qa-icon"><i data-lucide="plus" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Mes créations</div><div class="qa-sub">Recettes, films et avis</div></div>
-                  </button>
-                  <button class="qa-btn qa-btn--violet" onclick="document.querySelector('[data-tab=\'favoris\']').click()">
-                    <div class="qa-icon"><i data-lucide="heart" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Mes favoris</div><div class="qa-sub">Films et recettes sauvegardés</div></div>
-                  </button>
-                  <a href="/cinepass/" class="qa-btn qa-btn--vert">
-                    <div class="qa-icon"><i data-lucide="ticket" aria-hidden="true"></i></div>
-                    <div class="qa-text"><div class="qa-title">Mon CinéPass</div><div class="qa-sub">XP, niveaux et cadres</div></div>
-                  </a>
-                </div>
-              </div>
+              <!-- "Navigation rapide" supprimée — Étape 3 (Phase 5, recentrage
+                   architecture) : ses 3 raccourcis étaient tous redondants
+                   une fois l'Étape 2 en place — "Mes créations" ouvrait un
+                   onglet désormais réduit à un simple lien vers
+                   /contributions/ (indirection inutile), "Mes favoris"
+                   duplique le cœur ♥ toujours visible dans le header
+                   (/auth/profil/:id#favoris, voir partials/header.ejs),
+                   et "Mon CinéPass" duplique le lien "Voir ma progression →"
+                   du widget juste au-dessus. Aucun remplacement : les
+                   chemins contextuels déjà en place (widget progression,
+                   "Ce que je publie", hero "Ma page auteur"/"Personnaliser
+                   mon profil") suffisent — voir Phase 5, Étape 3. -->
 
             </aside>
 
             <!-- ── COLONNE PRINCIPALE ── -->
             <div class="crea-main">
 
-              <!-- DERNIÈRES RECETTES -->
+              <!-- Ce que je publie — Étape 1 (Phase 5, recentrage architecture) :
+                   résumé contextuel uniquement (compteur + lien). Le détail
+                   (listes recettes/films/avis, statuts, édition, suppression)
+                   est la responsabilité exclusive de /contributions/, qui ne
+                   doit plus être concurrencée par une deuxième destination de
+                   consultation ici. Ne pas réintroduire de listing détaillé
+                   sur cette page — voir Phase 5, Partie 2/3. -->
+              <%
+                const _ovPubTotal = userRecipes.length + userMovies.length + userNoticesCount;
+              %>
               <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Mes créations culinaires</span>
+                  <span class="sec-eyebrow__label">Ce que je publie</span>
                 </div>
-                <div class="sec-header">
-                  <div class="sec-title">DERNIÈRES RECETTES</div>
-                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
-                </div>
-                <div class="list-grid">
-                  <% if (userRecipes && userRecipes.length > 0) { %>
-                    <% userRecipes.slice(0, 3).forEach(function(recipe) {
-                      const _rsCls = recipe.status === 'approved' ? 'lrs--valide' : recipe.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
-                      const _rsTxt = recipe.status === 'approved' ? 'Validée' : recipe.status === 'pending' ? 'En attente' : 'Refusée';
-                    %>
-                    <div class="list-row list-row--recette">
-                      <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
-                      <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
-                      <% } %>
-                      <div class="list-row__body">
-                        <div class="list-row__top">
-                          <span class="list-row__name"><%= recipe.name %></span>
-                          <span class="lr-status <%= _rsCls %>">
-                            <% if (recipe.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
-                            <%= _rsTxt %>
-                          </span>
-                        </div>
-                        <div class="list-row__tags">
-                          <span class="tag tag--recette-cat lr-tag"><%= recipe.category %></span>
-                          <% if (recipe.Movie) { %><span class="tag tag--or lr-tag"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipe.Movie.title %></span><% } %>
-                        </div>
-                        <div class="list-row__sub">
-                          <i data-lucide="clock" aria-hidden="true"></i>
-                          <%= recipe.time %> min · <%= recipe.difficulty %>
-                        </div>
-                      </div>
-                      <% if (recipe.status === 'approved') { %>
-                      <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
-                        <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
-                      </a>
-                      <% } %>
+                <div class="widget">
+                  <% if (_ovPubTotal > 0) { %>
+                  <div class="ov-contrib-summary">
+                    <div class="ov-contrib-summary__count"><%= _ovPubTotal %></div>
+                    <div class="ov-contrib-summary__lbl">contribution<%= _ovPubTotal > 1 ? 's' : '' %> publiée<%= _ovPubTotal > 1 ? 's' : '' %></div>
+                    <div class="ov-contrib-summary__breakdown">
+                      <%= userRecipes.length %> recette<%= userRecipes.length !== 1 ? 's' : '' %> · <%= userMovies.length %> film<%= userMovies.length !== 1 ? 's' : '' %> · <%= userNoticesCount %> avis
                     </div>
-                    <% }) %>
+                    <a href="/contributions/" class="lr-btn lr-btn--view ov-contrib-summary__cta">
+                      <i data-lucide="folder-open" aria-hidden="true"></i>
+                      <span>Voir mes contributions</span>
+                    </a>
+                  </div>
                   <% } else { %>
                   <div class="crea-empty">
                     <div class="crea-empty__icon">🍽️</div>
-                    <div class="crea-empty__title">Aucune recette</div>
-                    <div class="crea-empty__sub">Partagez votre première création</div>
+                    <div class="crea-empty__title">Aucune contribution</div>
+                    <div class="crea-empty__sub">Partagez votre première contribution</div>
                   </div>
                   <% } %>
                 </div>
               </section>
-
-              <!-- FILMS RÉCENTS -->
-              <% if (userMovies && userMovies.length > 0) { %>
-              <section>
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Films suggérés à la communauté</span>
-                </div>
-                <div class="sec-header">
-                  <div class="sec-title">FILMS RÉCENTS</div>
-                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
-                </div>
-                <div class="list-grid">
-                  <% userMovies.slice(0, 3).forEach(function(movie) {
-                    const _msCls = movie.status === 'approved' ? 'lrs--valide' : movie.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
-                    const _msTxt = movie.status === 'approved' ? 'Validé' : movie.status === 'pending' ? 'En attente' : 'Refusé';
-                  %>
-                  <div class="list-row list-row--film">
-                    <% if (movie.cardPath || movie.picture) { %>
-                    <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
-                    <% } %>
-                    <div class="list-row__body">
-                      <div class="list-row__top">
-                        <span class="list-row__name"><%= movie.title %></span>
-                        <span class="lr-status <%= _msCls %>">
-                          <% if (movie.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
-                          <%= _msTxt %>
-                        </span>
-                      </div>
-                      <% if (movie.genre) { %><div class="list-row__tags"><span class="tag tag--genre-cinema lr-tag"><%= movie.genre %></span></div><% } %>
-                      <div class="list-row__sub">
-                        <i data-lucide="film" aria-hidden="true"></i>
-                        <%= movie.year %>
-                      </div>
-                    </div>
-                    <% if (movie.status === 'approved') { %>
-                    <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
-                      <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
-                    </a>
-                    <% } %>
-                  </div>
-                  <% }) %>
-                </div>
-              </section>
-              <% } %>
-
-              <!-- DERNIERS AVIS -->
-              <% if (userNotices && userNotices.length > 0) { %>
-              <section>
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Critiques &amp; évaluations</span>
-                </div>
-                <div class="sec-header">
-                  <div class="sec-title">DERNIERS AVIS</div>
-                  <button class="sec-link" onclick="document.querySelector('[data-tab=\'creations\']').click()">Voir tout →</button>
-                </div>
-                <div class="avis-grid">
-                  <% userNotices.slice(0, 2).forEach(function(notice) { %>
-                  <div class="avis-card">
-                    <div class="avis-icon">
-                      <i data-lucide="message-square" aria-hidden="true"></i>
-                    </div>
-                    <div class="avis-body">
-                      <div class="avis-top">
-                        <div class="avis-titles">
-                          <% if (notice.Recipe) { %>
-                          <div class="avis-recipe-name">Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a></div>
-                          <% if (notice.Recipe.Movie) { %><div class="avis-film-link">Film : <%= notice.Recipe.Movie.title %></div><% } %>
-                          <% } %>
-                        </div>
-                        <div class="avis-stars-row">
-                          <div class="avis-score">
-                            <% for (let _ai = 1; _ai <= 5; _ai++) { %><span class="star<%= _ai <= parseInt(notice.quote) ? ' star--on' : '' %>">★</span><% } %>
-                          </div>
-                          <span class="avis-score-val"><%= notice.quote %>/5</span>
-                        </div>
-                      </div>
-                      <% if (notice.content) { %><div class="avis-quote"><%= notice.content %></div><% } %>
-                      <div class="avis-footer">
-                        <% if (notice.status === 'approved') { %>
-                        <span class="avis-status-badge ab--valide">✓ Validé</span>
-                        <% } else if (notice.status === 'rejected') { %>
-                        <span class="avis-status-badge ab--refuse">✗ Refusé</span>
-                        <% } else { %>
-                        <span class="avis-status-badge ab--attente">⏳ En attente</span>
-                        <% } %>
-                        <span class="avis-date"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
-                      </div>
-                    </div>
-                  </div>
-                  <% }) %>
-                </div>
-              </section>
-              <% } %>
 
             </div><!-- /crea-main -->
 
@@ -986,21 +852,14 @@
         <!-- ─────────────────────────────────── -->
         <div class="tab-pane" id="creations" role="tabpanel">
 
+          <!-- Onglet "Créations" — Étape 2 (Phase 5, recentrage architecture) :
+               la gestion complète (listes détaillées, filtres, recherche,
+               Éditer, Supprimer) a été déplacée vers /contributions/, qui en
+               est désormais l'unique responsable (voir Phase 5, Étape 2).
+               Ne pas réintroduire de CRUD ici : Mon compte ne doit plus
+               concurrencer /contributions/ pour la gestion de contenu. -->
           <%
-            /* ── Stats créations ── */
-            const _cr = (userRecipes || []);
-            const _cm = (userMovies || []);
-            const _cn = (userNotices || []);
-            const _crApproved  = _cr.filter(r => r.status === 'approved').length;
-            const _crPending   = _cr.filter(r => r.status === 'pending').length;
-            const _crRejected  = _cr.filter(r => r.status === 'rejected').length;
-            const _cmApproved  = _cm.filter(m => m.status === 'approved').length;
-            const _cnApproved  = _cn.filter(n => n.status === 'approved').length;
-            const _crValidated = _crApproved + _cmApproved + _cnApproved;
-            const _crTotal     = _cr.length;
-            const _cmTotal     = _cm.length;
-            const _cnTotal     = (typeof userNoticesCount !== 'undefined' ? userNoticesCount : null) || _cn.length;
-            const _crMax       = Math.max(_crTotal, 1);
+            const _crTabTotal = userRecipes.length + userMovies.length + userNoticesCount;
           %>
 
           <!-- ═══ BANDEAU IMPACT ═══ -->
@@ -1010,7 +869,7 @@
                 <i data-lucide="utensils" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
-                <div class="impact-cell__val" id="creaStatRecettes"><%= _crTotal %></div>
+                <div class="impact-cell__val"><%= userRecipes.length %></div>
                 <div class="impact-cell__lbl">Recettes créées</div>
               </div>
             </div>
@@ -1019,7 +878,7 @@
                 <i data-lucide="film" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
-                <div class="impact-cell__val" id="creaStatFilms"><%= _cmTotal %></div>
+                <div class="impact-cell__val"><%= userMovies.length %></div>
                 <div class="impact-cell__lbl">Films proposés</div>
               </div>
             </div>
@@ -1028,7 +887,7 @@
                 <i data-lucide="message-square" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
-                <div class="impact-cell__val" id="creaStatAvis"><%= _cnTotal %></div>
+                <div class="impact-cell__val"><%= userNoticesCount %></div>
                 <div class="impact-cell__lbl">Avis rédigés</div>
               </div>
             </div>
@@ -1037,420 +896,44 @@
                 <i data-lucide="check" aria-hidden="true"></i>
               </div>
               <div class="impact-cell__body">
-                <div class="impact-cell__val" id="creaStatValide"><%= _crValidated %></div>
-                <div class="impact-cell__lbl">Contenus validés</div>
+                <div class="impact-cell__val"><%= _crTabTotal %></div>
+                <div class="impact-cell__lbl">Contributions</div>
               </div>
             </div>
           </div>
 
-          <!-- ═══ LAYOUT 2 COLONNES ═══ -->
-          <div class="crea-layout">
-
-            <!-- ── SIDEBAR ── -->
-            <aside class="crea-sidebar">
-
-              <!-- STATISTIQUES -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Mes chiffres</span>
-                </div>
-                <div class="stats-grid">
-                  <div class="stat-cell">
-                    <div class="stat-icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-crea-target="<%= _crTotal %>">0</div>
-                      <div class="stat-lbl">Recettes</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><i data-lucide="film" aria-hidden="true"></i></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-crea-target="<%= _cmTotal %>">0</div>
-                      <div class="stat-lbl">Films</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><i data-lucide="message-square" aria-hidden="true"></i></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-crea-target="<%= _cnTotal %>">0</div>
-                      <div class="stat-lbl">Avis</div>
-                    </div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-icon"><i data-lucide="check" aria-hidden="true"></i></div>
-                    <div class="stat-text">
-                      <div class="stat-num" data-crea-target="<%= _crValidated %>">0</div>
-                      <div class="stat-lbl">Validés</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- STATUT DES RECETTES -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Statut des recettes</span>
-                </div>
-                <%
-                  const _sbValide  = _crTotal > 0 ? Math.round((_crApproved / _crTotal) * 100) : 0;
-                  const _sbAttente = _crTotal > 0 ? Math.round((_crPending  / _crTotal) * 100) : 0;
-                  const _sbRefuse  = _crTotal > 0 ? Math.round((_crRejected / _crTotal) * 100) : 0;
-                %>
-                <div class="status-bars">
-                  <div class="status-bar-row sb--valide">
-                    <span class="sb-label">Validées</span>
-                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbValide %>" style="width:0%"></div></div>
-                    <span class="sb-count"><%= _crApproved %></span>
-                  </div>
-                  <div class="status-bar-row sb--attente">
-                    <span class="sb-label">En attente</span>
-                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbAttente %>" style="width:0%"></div></div>
-                    <span class="sb-count"><%= _crPending %></span>
-                  </div>
-                  <div class="status-bar-row sb--refuse">
-                    <span class="sb-label">Refusées</span>
-                    <div class="sb-track"><div class="sb-fill" data-sb-w="<%= _sbRefuse %>" style="width:0%"></div></div>
-                    <span class="sb-count"><%= _crRejected %></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ACTIONS RAPIDES -->
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Actions rapides</span>
-                </div>
-                <div class="quick-actions">
-                  <a href="/add-recipes-movies" class="qa-btn qa-btn--gold">
-                    <div class="qa-icon"><i data-lucide="utensils" aria-hidden="true"></i></div>
-                    <div class="qa-text">
-                      <div class="qa-title">Nouvelle recette</div>
-                      <div class="qa-sub">Partager une création culinaire</div>
-                    </div>
-                  </a>
-                  <a href="/add-recipes-movies" class="qa-btn qa-btn--violet">
-                    <div class="qa-icon"><i data-lucide="film" aria-hidden="true"></i></div>
-                    <div class="qa-text">
-                      <div class="qa-title">Proposer un film</div>
-                      <div class="qa-sub">Suggérer un film à la communauté</div>
-                    </div>
-                  </a>
-                  <a href="/all-recipes" class="qa-btn qa-btn--vert">
-                    <div class="qa-icon"><i data-lucide="message-square" aria-hidden="true"></i></div>
-                    <div class="qa-text">
-                      <div class="qa-title">Rédiger un avis</div>
-                      <div class="qa-sub">Évaluer une recette existante</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-
-              <!-- FILMS PROPOSÉS -->
-              <% if (_cm.length > 0) { %>
-              <div class="widget">
-                <div class="widget-head">
-                  <div class="widget-head__line"></div>
-                  <span class="widget-head__title">Films proposés</span>
-                  <% if (_cm.length > 3) { %>
-                  <span class="widget-head__extra" onclick="document.getElementById('creaFilmsSection').scrollIntoView({behavior:'smooth'})">Voir tout →</span>
-                  <% } %>
-                </div>
-                <div class="film-pending-list">
-                  <% _cm.slice(0, 3).forEach(function(movie) { %>
-                  <div class="fpl-item">
-                    <% if (movie.cardPath || movie.picture) { %>
-                    <img class="fpl-poster" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                    <% } else { %>
-                    <div class="fpl-poster fpl-poster--ph"></div>
-                    <% } %>
-                    <div class="fpl-info">
-                      <div class="fpl-title"><%= movie.title %></div>
-                      <div class="fpl-sub"><%= movie.year %><% if (movie.genre) { %> · <%= movie.genre %><% } %></div>
-                    </div>
-                    <% if (movie.status === 'approved') { %>
-                    <span class="fpl-status fpl-status--valide">Validé</span>
-                    <% } else if (movie.status === 'rejected') { %>
-                    <span class="fpl-status fpl-status--refuse">Refusé</span>
-                    <% } else { %>
-                    <span class="fpl-status fpl-status--pending">En attente</span>
-                    <% } %>
-                  </div>
-                  <% }) %>
-                </div>
-              </div>
-              <% } %>
-
-            </aside>
-
-            <!-- ── COLONNE PRINCIPALE ── -->
+          <!-- ═══ RÉSUMÉ + LIEN DE GESTION ═══ -->
+          <div class="crea-layout crea-layout--single">
             <div class="crea-main">
-
-              <!-- ═══ MES RECETTES ═══ -->
-              <section id="creaRecettesSection">
+              <section>
                 <div class="sec-eyebrow">
                   <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Mes créations culinaires</span>
+                  <span class="sec-eyebrow__label">Ce que je publie</span>
                 </div>
-                <div class="sec-header">
-                  <div class="sec-title">MES RECETTES</div>
-                  <a href="/add-recipes-movies" class="sec-link">+ Ajouter</a>
-                </div>
-                <div class="filter-bar" id="creaRecetteFilters">
-                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Toutes</button>
-                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validées</button>
-                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
-                  <button class="f-pill fp--refuse" data-crea-filter="rejected" data-crea-grid="creaRecettesGrid"><span class="f-pill__dot" style="background:#e84020"></span>Refusées</button>
-                  <div class="filter-sep"></div>
-                  <div class="crea-search-wrap">
-                    <i data-lucide="search" class="crea-search-icon" aria-hidden="true"></i>
-                    <input class="crea-search-input" type="text" placeholder="Filtrer mes recettes…" data-crea-search="creaRecettesGrid" />
-                  </div>
-                </div>
-                <div class="list-grid" id="creaRecettesGrid">
-                  <% if (_cr.length > 0) { %>
-                    <% _cr.forEach(function(recipe) {
-                      const rsCls = recipe.status === 'approved' ? 'lrs--valide' : recipe.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
-                      const rsTxt = recipe.status === 'approved' ? 'Validée' : recipe.status === 'pending' ? 'En attente' : 'Refusée';
-                      const diffCls = recipe.difficulty === 'Facile' ? 'tag--recette-facile' : recipe.difficulty === 'Difficile' ? 'tag--recette-difficile' : 'tag--recette-moyen';
-                    %>
-                    <div class="list-row list-row--recette account-item"
-                      data-type="recipe"
-                      data-id="<%= recipe.id %>"
-                      data-name="<%= recipe.name %>"
-                      data-crea-name="<%= recipe.name.toLowerCase() %>"
-                      data-crea-status="<%= recipe.status %>"
-                      data-status="<%= recipe.status %>"
-                      data-edit-status="<%= recipe.edit_status || 'none' %>"
-                      data-delete-request="<%= recipe.delete_request_status || 'none' %>"
-                      data-category="<%= recipe.category %>"
-                      data-time="<%= recipe.time %>"
-                      data-difficulty="<%= recipe.difficulty %>"
-                      data-description="<%= encodeURIComponent(recipe.description || '') %>"
-                      data-ingredients="<%= encodeURIComponent(recipe.ingredients || '') %>"
-                      data-preparation="<%= encodeURIComponent(recipe.preparation || '') %>"
-                      data-picture="<%= recipe.picture || '' %>"
-                      data-pictures="<%= encodeURIComponent(JSON.stringify((recipe.RecipePictures || []).sort((a,b)=>a.position-b.position).map(p=>p.file_path))) %>"
-                    >
-                      <% if (recipe.picture) { %>
-                      <img class="list-row__thumb" src="<%= cldAvatar(recipe.picture) %>" alt="<%= recipe.name %>" loading="lazy" />
-                      <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--ph">🍽️</div>
-                      <% } %>
-                      <div class="list-row__body">
-                        <div class="list-row__top">
-                          <span class="list-row__name account-item__title"><%= recipe.name %></span>
-                          <span class="lr-status <%= rsCls %>">
-                            <% if (recipe.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
-                            <%= rsTxt %>
-                          </span>
-                        </div>
-                        <div class="list-row__tags">
-                          <span class="tag tag--recette-cat lr-tag"><%= recipe.category %></span>
-                          <span class="tag <%= diffCls %> lr-tag"><%= recipe.difficulty %></span>
-                          <% if (recipe.Movie) { %><span class="tag tag--or lr-tag"><i data-lucide="film" width="10" height="10" aria-hidden="true"></i> <%= recipe.Movie.title %></span><% } %>
-                        </div>
-                        <div class="list-row__sub account-item__meta">
-                          <i data-lucide="clock" aria-hidden="true"></i>
-                          <%= recipe.time %> min<% if (recipe.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
-                        </div>
-                        <% if (recipe.edit_status === 'pending') { %>
-                        <p class="account-item__hint account-item__hint--pending">⏳ Modification en attente de validation.</p>
-                        <% } else if (recipe.edit_status === 'approved') { %>
-                        <p class="account-item__hint account-item__hint--approved">✓ Modification approuvée.</p>
-                        <% } else if (recipe.edit_status === 'rejected') { %>
-                        <p class="account-item__hint account-item__hint--rejected">✕ Modification refusée. Vous pouvez soumettre une nouvelle modification.</p>
-                        <% } %>
-                      </div>
-                      <div class="list-row__actions">
-                        <% if (recipe.status === 'approved') { %>
-                        <a href="/recipes-movie/details/<%= recipe.id %>" class="lr-btn lr-btn--view" target="_blank" rel="noopener">
-                          <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
-                        </a>
-                        <% } %>
-                        <button class="lr-btn lr-btn--edit account-edit-btn" <%= recipe.edit_status === 'pending' ? 'disabled' : '' %>>
-                          <i data-lucide="square-pen" aria-hidden="true"></i><span>Éditer</span>
-                        </button>
-                        <% if (recipe.delete_request_status === 'pending') { %>
-                        <button class="lr-btn lr-btn--del account-delete-btn" disabled>
-                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Suppr.</span>
-                        </button>
-                        <% } else { %>
-                        <button class="lr-btn lr-btn--del account-delete-btn">
-                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Suppr.</span>
-                        </button>
-                        <% } %>
-                      </div>
+                <div class="widget">
+                  <% if (_crTabTotal > 0) { %>
+                  <div class="ov-contrib-summary">
+                    <div class="ov-contrib-summary__count"><%= _crTabTotal %></div>
+                    <div class="ov-contrib-summary__lbl">contribution<%= _crTabTotal > 1 ? 's' : '' %> publiée<%= _crTabTotal > 1 ? 's' : '' %></div>
+                    <div class="ov-contrib-summary__breakdown">
+                      <%= userRecipes.length %> recette<%= userRecipes.length !== 1 ? 's' : '' %> · <%= userMovies.length %> film<%= userMovies.length !== 1 ? 's' : '' %> · <%= userNoticesCount %> avis
                     </div>
-                    <% }) %>
+                    <a href="/contributions/" class="lr-btn lr-btn--edit ov-contrib-summary__cta">
+                      <i data-lucide="settings-2" aria-hidden="true"></i>
+                      <span>Gérer mes contributions</span>
+                    </a>
+                  </div>
                   <% } else { %>
                   <div class="crea-empty">
                     <div class="crea-empty__icon">🍽️</div>
-                    <div class="crea-empty__title">Aucune recette</div>
-                    <div class="crea-empty__sub">Partagez votre première création culinaire</div>
-                  </div>
-                  <% } %>
-                  <div class="crea-no-results" style="display:none">Aucun résultat pour cette recherche.</div>
-                </div>
-              </section>
-
-              <!-- ═══ MES FILMS ═══ -->
-              <section id="creaFilmsSection">
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Films suggérés à la communauté</span>
-                </div>
-                <div class="sec-header">
-                  <div class="sec-title">MES FILMS</div>
-                  <a href="/add-recipes-movies" class="sec-link">+ Proposer</a>
-                </div>
-                <div class="filter-bar" id="creaFilmFilters">
-                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--violet-clair)"></span>Tous</button>
-                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
-                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaFilmsGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
-                  <div class="filter-sep"></div>
-                  <div class="crea-search-wrap">
-                    <i data-lucide="search" class="crea-search-icon" aria-hidden="true"></i>
-                    <input class="crea-search-input" type="text" placeholder="Filtrer mes films…" data-crea-search="creaFilmsGrid" />
-                  </div>
-                </div>
-                <div class="list-grid" id="creaFilmsGrid">
-                  <% if (_cm.length > 0) { %>
-                    <% _cm.forEach(function(movie) {
-                      const msCls = movie.status === 'approved' ? 'lrs--valide' : movie.status === 'pending' ? 'lrs--attente' : 'lrs--refuse';
-                      const msTxt = movie.status === 'approved' ? 'Validé' : movie.status === 'pending' ? 'En attente' : 'Refusé';
-                    %>
-                    <div class="list-row list-row--film account-item"
-                      data-type="movie"
-                      data-id="<%= movie.id %>"
-                      data-title="<%= movie.title %>"
-                      data-year="<%= movie.year %>"
-                      data-genre="<%= movie.genre %>"
-                      data-status="<%= movie.status %>"
-                      data-crea-name="<%= movie.title.toLowerCase() %>"
-                      data-crea-status="<%= movie.status %>"
-                    >
-                      <% if (movie.cardPath || movie.picture) { %>
-                      <img class="list-row__thumb list-row__thumb--film" src="<%= movie.cardPath || movie.picture %>" alt="<%= movie.title %>" loading="lazy" />
-                      <% } else { %>
-                      <div class="list-row__thumb list-row__thumb--film list-row__thumb--ph"><i data-lucide="film" width="20" height="20" stroke-width="1.5" aria-hidden="true"></i></div>
-                      <% } %>
-                      <div class="list-row__body">
-                        <div class="list-row__top">
-                          <span class="list-row__name"><%= movie.title %></span>
-                          <span class="lr-status <%= msCls %>">
-                            <% if (movie.status !== 'rejected') { %><span class="lr-status-dot"></span><% } %>
-                            <%= msTxt %>
-                          </span>
-                        </div>
-                        <% if (movie.genre) { %>
-                        <div class="list-row__tags"><span class="tag tag--genre-cinema lr-tag"><%= movie.genre %></span></div>
-                        <% } %>
-                        <div class="list-row__sub">
-                          <i data-lucide="film" aria-hidden="true"></i>
-                          <%= movie.year %><% if (movie.status === 'pending') { %> <span class="lr-sub-muted">· En cours de modération…</span><% } %>
-                        </div>
-                      </div>
-                      <div class="list-row__actions">
-                        <% if (movie.status === 'approved') { %>
-                        <a href="/recipes-movie/<%= movie.slug || movie.id %>" class="lr-btn lr-btn--violet" target="_blank" rel="noopener">
-                          <i data-lucide="eye" aria-hidden="true"></i><span>Voir</span>
-                        </a>
-                        <% } %>
-                        <button class="lr-btn lr-btn--del account-delete-btn">
-                          <i data-lucide="trash-2" aria-hidden="true"></i><span>Retirer</span>
-                        </button>
-                      </div>
-                    </div>
-                    <% }) %>
-                  <% } else { %>
-                  <div class="crea-empty">
-                    <div class="crea-empty__icon"><i data-lucide="film" width="36" height="36" stroke-width="1" aria-hidden="true"></i></div>
-                    <div class="crea-empty__title">Aucun film proposé</div>
-                    <div class="crea-empty__sub">Suggérez un film à la communauté</div>
-                  </div>
-                  <% } %>
-                  <div class="crea-no-results" style="display:none">Aucun résultat pour cette recherche.</div>
-                </div>
-              </section>
-
-              <!-- ═══ MES AVIS ═══ -->
-              <section id="creaAvisSection">
-                <div class="sec-eyebrow">
-                  <div class="sec-eyebrow__line"></div>
-                  <span class="sec-eyebrow__label">Critiques &amp; évaluations</span>
-                </div>
-                <div class="sec-header">
-                  <div class="sec-title">MES AVIS</div>
-                </div>
-                <div class="filter-bar" id="creaAvisFilters">
-                  <button class="f-pill active" data-crea-filter="all" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--dore-clair)"></span>Tous</button>
-                  <button class="f-pill fp--valide" data-crea-filter="approved" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Validés</button>
-                  <button class="f-pill fp--attente" data-crea-filter="pending" data-crea-grid="creaAvisGrid"><span class="f-pill__dot" style="background:var(--orange-clair)"></span>En attente</button>
-                </div>
-                <div class="avis-grid" id="creaAvisGrid">
-                  <% if (_cn.length > 0) { %>
-                    <% _cn.forEach(function(notice) { %>
-                    <div class="avis-card account-item account-item--notice"
-                      data-type="notice"
-                      data-id="<%= notice.id %>"
-                      data-delete-request="<%= notice.delete_request_status || 'none' %>"
-                      data-crea-status="<%= notice.status %>"
-                    >
-                      <div class="avis-icon">
-                        <i data-lucide="message-square" aria-hidden="true"></i>
-                      </div>
-                      <div class="avis-body">
-                        <div class="avis-top">
-                          <div class="avis-titles">
-                            <% if (notice.Recipe) { %>
-                            <div class="avis-recipe-name">Recette : <a class="account-item__link" href="/recipes-movie/details/<%= notice.Recipe.id %>"><%= notice.Recipe.name %></a></div>
-                            <% if (notice.Recipe.Movie) { %><div class="avis-film-link">Film : <a class="account-item__link" href="/recipes-movie/<%= notice.Recipe.Movie.id %>"><%= notice.Recipe.Movie.title %></a></div><% } %>
-                            <% } %>
-                          </div>
-                          <div class="avis-stars-row">
-                            <div class="avis-score">
-                              <% for (let _i = 1; _i <= 5; _i++) { %><span class="star<%= _i <= parseInt(notice.quote) ? ' star--on' : '' %>">★</span><% } %>
-                            </div>
-                            <span class="avis-score-val"><%= notice.quote %>/5</span>
-                          </div>
-                        </div>
-                        <% if (notice.content) { %><div class="avis-quote"><%= notice.content %></div><% } %>
-                        <div class="avis-footer">
-                          <% if (notice.status === 'approved') { %>
-                          <span class="avis-status-badge ab--valide">✓ Validé</span>
-                          <% } else if (notice.status === 'rejected') { %>
-                          <span class="avis-status-badge ab--refuse">✗ Refusé</span>
-                          <% } else { %>
-                          <span class="avis-status-badge ab--attente">⏳ En attente</span>
-                          <% } %>
-                          <span class="avis-date"><%= notice.createdAt ? new Date(notice.createdAt).toLocaleDateString('fr-FR') : '' %></span>
-                          <% if (notice.delete_request_status === 'pending') { %>
-                          <span class="account-item__hint">Suppression en attente.</span>
-                          <% } else { %>
-                          <button class="avis-del-btn account-delete-btn">
-                            <i data-lucide="trash-2" aria-hidden="true"></i>Supprimer
-                          </button>
-                          <% } %>
-                        </div>
-                      </div>
-                    </div>
-                    <% }) %>
-                  <% } else { %>
-                  <div class="crea-empty">
-                    <div class="crea-empty__icon">💬</div>
-                    <div class="crea-empty__title">Aucun avis</div>
-                    <div class="crea-empty__sub">Rédigez votre premier avis sur une recette</div>
+                    <div class="crea-empty__title">Aucune contribution</div>
+                    <div class="crea-empty__sub">Partagez votre première contribution</div>
                   </div>
                   <% } %>
                 </div>
               </section>
-
-            </div><!-- /crea-main -->
-
-          </div><!-- /crea-layout -->
+            </div>
+          </div>
 
         </div><!-- /tab-pane#creations -->
 
