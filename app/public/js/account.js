@@ -55,7 +55,7 @@
     }, 3500);
   };
 
-  // Exposer pour les scripts inline de la page (banner upload, etc.)
+  // Exposer pour les scripts inline de la page (édition pseudo, avatar, etc.)
   window.showProfileToast = showToast;
 
   const setEditingState = (enabled) => {

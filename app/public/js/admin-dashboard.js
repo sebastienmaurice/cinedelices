@@ -1163,7 +1163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const items = [];
     if (d.recipes  > 0) items.push(`<li class="activity-item activity-item--or"><span class="activity-dot"></span><span><strong>${d.recipes}</strong> recette(s) en attente de validation</span></li>`);
     if (d.notices  > 0) items.push(`<li class="activity-item activity-item--violet"><span class="activity-dot"></span><span><strong>${d.notices}</strong> avis en attente de validation</span></li>`);
-    if (d.profils  > 0) items.push(`<li class="activity-item activity-item--vert"><span class="activity-dot"></span><span><strong>${d.profils}</strong> profil(s) à modérer (photo/bannière/pseudo)</span></li>`);
+    if (d.profils  > 0) items.push(`<li class="activity-item activity-item--vert"><span class="activity-dot"></span><span><strong>${d.profils}</strong> profil(s) à modérer (photo/bio/pseudo)</span></li>`);
     if (d.filmEdits > 0) items.push(`<li class="activity-item activity-item--or"><span class="activity-dot"></span><span><strong>${d.filmEdits}</strong> demande(s) sur des films</span></li>`);
     if (items.length === 0) items.push(`<li class="activity-item"><span class="activity-dot activity-dot--vert"></span><span>Tout est à jour — aucune modération en attente.</span></li>`);
     feed.innerHTML = items.join("");
@@ -1201,13 +1201,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Toasts pour les nouvelles demandes
-      const newBanners = (d.banners  || 0) - (_pendingSnapshot.banners  || 0);
       const newPhotos  = (d.photos   || 0) - (_pendingSnapshot.photos   || 0);
       const newRecipes = (d.recipes  || 0) - (_pendingSnapshot.recipes  || 0);
       const newPseudos = (d.pseudos  || 0) - (_pendingSnapshot.pseudos  || 0);
       const newNotices = (d.notices  || 0) - (_pendingSnapshot.notices  || 0);
 
-      if (newBanners > 0) showToast(`${newBanners} nouvelle${newBanners > 1 ? 's' : ''} bannière${newBanners > 1 ? 's' : ''} en attente`, "warning");
       if (newPhotos  > 0) showToast(`${newPhotos} nouvelle${newPhotos > 1 ? 's' : ''} photo${newPhotos > 1 ? 's' : ''} de profil en attente`, "warning");
       if (newRecipes > 0) showToast(`${newRecipes} nouvelle${newRecipes > 1 ? 's' : ''} recette${newRecipes > 1 ? 's' : ''} en attente`, "warning");
       if (newPseudos > 0) showToast(`${newPseudos} nouveau${newPseudos > 1 ? 'x' : ''} pseudo${newPseudos > 1 ? 's' : ''} en attente`, "warning");

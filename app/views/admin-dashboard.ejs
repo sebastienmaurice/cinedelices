@@ -47,7 +47,7 @@
           <i data-lucide="user" width="18" height="18" aria-hidden="true"></i>
           <span>Profils</span>
           <% const pendingPseudosNav = users ? users.filter(u => u.pending_pseudo && u.pseudo_status === 'pending').length : 0; %>
-          <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + (pendingBanners ? pendingBanners.length : 0) + pendingPseudosNav + (pendingBios ? pendingBios.length : 0); %>
+          <% const pendingProfilsTotal = (pendingProfilePhotos ? pendingProfilePhotos.length : 0) + pendingPseudosNav + (pendingBios ? pendingBios.length : 0); %>
           <% if (pendingProfilsTotal > 0) { %><span class="nav-badge"><%= pendingProfilsTotal %></span><% } %>
         </button>
         <button class="nav-item" data-nav-view="photos-recettes" data-pending-key="recipePictures">
@@ -208,13 +208,7 @@
                   <span><strong><%= pendingProfilePhotos.length %></strong> photo(s) de profil à modérer</span>
                 </li>
                 <% } %>
-                <% if (pendingBanners && pendingBanners.length > 0) { %>
-                <li class="activity-item activity-item--vert">
-                  <span class="activity-dot"></span>
-                  <span><strong><%= pendingBanners.length %></strong> bannière(s) à modérer</span>
-                </li>
-                <% } %>
-                <% if ((recipes ? recipes.filter(r => r.status === 'pending').length : 0) === 0 && (avis ? avis.filter(a => a.status === 'pending').length : 0) === 0 && (!pendingProfilePhotos || pendingProfilePhotos.length === 0) && (!pendingBanners || pendingBanners.length === 0)) { %>
+                <% if ((recipes ? recipes.filter(r => r.status === 'pending').length : 0) === 0 && (avis ? avis.filter(a => a.status === 'pending').length : 0) === 0 && (!pendingProfilePhotos || pendingProfilePhotos.length === 0)) { %>
                 <li class="activity-item">
                   <span class="activity-dot activity-dot--vert"></span>
                   <span>Tout est à jour — aucune modération en attente.</span>
@@ -722,10 +716,6 @@
               Photos de profil
               <% if (pendingProfilePhotos && pendingProfilePhotos.length > 0) { %><span class="queue-tab__count"><%= pendingProfilePhotos.length %></span><% } %>
             </button>
-            <button class="queue-tab" data-sub-tab="profils-bannieres" role="tab">
-              Bannières
-              <% if (pendingBanners && pendingBanners.length > 0) { %><span class="queue-tab__count"><%= pendingBanners.length %></span><% } %>
-            </button>
             <button class="queue-tab" data-sub-tab="profils-pseudos" role="tab">
               Pseudos
               <% if (pendingPseudosNav > 0) { %><span class="queue-tab__count"><%= pendingPseudosNav %></span><% } %>
@@ -762,44 +752,6 @@
                     </button>
                   </form>
                   <form action="/admin/users/<%= photo.id %>/photo/reject" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--reject">
-                      <i data-lucide="x" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                      <span>Refuser</span>
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <% }) %>
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Sous-panel : Bannières -->
-          <div class="sub-panel" id="profils-bannieres">
-            <% if (!pendingBanners || pendingBanners.length === 0) { %>
-            <div class="empty-state">
-              <i data-lucide="check" width="48" height="48" stroke-width="1.5" aria-hidden="true"></i>
-              <p>Aucune bannière en attente de validation.</p>
-            </div>
-            <% } else { %>
-            <div class="media-approval-grid media-approval-grid--wide">
-              <% pendingBanners.forEach(function(banner) { %>
-              <div class="media-card media-card--banner">
-                <div class="media-card__img-wrap media-card__img-wrap--banner">
-                  <img src="<%= banner.pending_banner_image %>" alt="Bannière" class="media-card__img" />
-                </div>
-                <div class="media-card__body">
-                  <p class="media-card__user"><%= banner.pseudo || 'Utilisateur inconnu' %></p>
-                  <span class="badge-status badge-status--pending">En attente</span>
-                </div>
-                <div class="media-card__actions">
-                  <form action="/admin/users/<%= banner.id %>/banner/approve" method="POST" style="display:inline;">
-                    <button type="submit" class="act-btn act-btn--approve">
-                      <i data-lucide="check" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-                      <span>Valider</span>
-                    </button>
-                  </form>
-                  <form action="/admin/users/<%= banner.id %>/banner/reject" method="POST" style="display:inline;">
                     <button type="submit" class="act-btn act-btn--reject">
                       <i data-lucide="x" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
                       <span>Refuser</span>
@@ -1925,7 +1877,7 @@
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
     <script src="/js/rte-mini.js"></script>
-    <script src="/js/admin-dashboard.js"></script>
+    <script src="/js/admin-dashboard.js?v=2"></script>
     <script src="/js/recipe-detail.js"></script>
     <script>if (window.lucide) lucide.createIcons();</script>
   </body>

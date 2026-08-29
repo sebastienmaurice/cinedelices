@@ -5,7 +5,6 @@ import gamificationController from "../controllers/gamification.controller.js";
 import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
 import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../validators/user.validator.js";
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
-import uploadBanner from "../middlewares/upload-banner.middleware.js";
 import uploadRecipe, { uploadRecipePhotos } from "../middlewares/upload.middleware.js";
 
 // Rate limiting — protège les endpoints d'authentification contre le brute-force
@@ -46,15 +45,7 @@ authRouter.post(
   handleAvatarUpload,
   authController.uploadProfilePhoto
 );
-authRouter.get("/profil/:id/banner/status", isLogged, injectId, authController.getBannerStatus);
 authRouter.get("/profil/:id/pseudo/status", isLogged, injectId, authController.getPseudoStatus);
-authRouter.post(
-  "/profil/:id/banner",
-  isLogged,
-  injectId,
-  uploadBanner.single("banner"),
-  authController.uploadBanner
-);
 authRouter.post(
   "/profil/:id/banner/delete",
   isLogged,

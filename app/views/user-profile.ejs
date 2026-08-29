@@ -7,7 +7,7 @@
     <meta name="description" content="Ciné Délices — Gérez votre compte et vos préférences cinéma & recettes" />
     <title>Mon compte - Ciné Délices</title>
     <%- include("partials/head-resources") %>
-    <link rel="stylesheet" href="/css/user-profile.css?v=55" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=57" />
     <link rel="stylesheet" href="/css/ctb2-hero.css" />
     <link rel="stylesheet" href="/css/rte-mini.css" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
@@ -16,7 +16,12 @@
   <body class="profile-page" data-user-role="<%= user.role %>">
     <%- include("partials/header") %>
 
-    <% const bannerUrl = user.banner || user.banner_image || null; %>
+    <%
+      /* heroBannerUrl calculé côté contrôleur (resolveHeroBanner) : bannière perso
+         approuvée > fond officiel du cadre équipé > défaut Ciné Délices — même
+         logique que /cinepass/ et /auteur/:id. */
+      const _hasCustomBanner = user.banner_status === 'approved' && (user.banner || user.banner_image);
+    %>
 
     <!-- MAIN -->
     <main data-user-id="<%= user.id %>" data-picture-status="<%= user.picture_status || 'approved' %>">
@@ -30,9 +35,7 @@
 
         <!-- Bannière -->
         <div class="hero-banner">
-          <% if (bannerUrl) { %>
-          <img src="<%= bannerUrl %>" alt="Bannière de <%= user.pseudo %>" />
-          <% } %>
+          <img src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>" alt="Bannière de <%= user.pseudo %>" />
           <div class="hero-banner-grad"></div>
         </div>
 
@@ -52,22 +55,20 @@
         </div>
         <% } %>
 
-        <!-- Statut bannière (top-right) -->
+        <!-- Statut bannière (top-right) — upload perso retiré (voir page
+             auteur) : les fonds "by Ciné Délices" liés au cadre équipé
+             suffisent, plus besoin de modération admin. Les statuts pending/
+             rejected restent affichés en info pure pour les fonds perso déjà
+             soumis avant ce changement, sans action de nouvel upload. -->
+        <% if (user.banner_status === 'pending') { %>
         <div class="hero-banner-status">
-          <% if (user.banner_status === 'pending') { %>
-            <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
-          <% } else if (user.banner_status === 'rejected') { %>
-            <button class="banner-btn banner-btn--rejected" type="button" onclick="document.getElementById('bannerInput').click()" title="Votre bannière a été refusée — cliquez pour en proposer une nouvelle">
-              <span class="b-dot"></span>Bannière refusée — Réessayer
-            </button>
-          <% } else { %>
-            <button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById('bannerInput').click()">
-              <i data-lucide="upload" width="10" height="10" aria-hidden="true"></i>
-              Modifier la bannière
-            </button>
-          <% } %>
+          <span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>
         </div>
-        <input id="bannerInput" type="file" name="banner" accept="image/*" hidden />
+        <% } else if (user.banner_status === 'rejected') { %>
+        <div class="hero-banner-status">
+          <span class="banner-btn banner-btn--rejected"><span class="b-dot"></span>Bannière refusée</span>
+        </div>
+        <% } %>
 
         <!-- Contenu hero bas -->
         <form id="profileAvatarForm" class="hero-content">
@@ -1590,90 +1591,6 @@
     });
     </script>
 
-    <!-- Upload bannière -->
-    <script>
-      (function () {
-        const input = document.getElementById('bannerInput');
-        if (!input) return;
-        const userId = '<%= user.id %>';
-
-        let bannerPollInterval = null;
-
-        function stopBannerPoll() {
-          if (bannerPollInterval) { clearInterval(bannerPollInterval); bannerPollInterval = null; }
-        }
-
-        function startBannerPoll() {
-          stopBannerPoll();
-          bannerPollInterval = setInterval(async function () {
-            try {
-              const r = await fetch('/auth/profil/' + userId + '/banner/status');
-              const d = await r.json();
-              if (!d.success) return;
-
-              if (d.banner_status === 'approved') {
-                stopBannerPoll();
-                /* Afficher la bannière approuvée */
-                const heroDiv = document.querySelector('.hero-banner');
-                if (heroDiv) {
-                  let img = heroDiv.querySelector('img');
-                  if (img) { img.src = d.banner_image; }
-                  else { img = document.createElement('img'); img.src = d.banner_image; img.alt = ''; heroDiv.prepend(img); }
-                }
-                /* Remettre le bouton "Modifier" */
-                const wrap = document.querySelector('.hero-banner-status');
-                if (wrap) {
-                  wrap.innerHTML = '<button class="banner-btn banner-btn--upload" type="button" onclick="document.getElementById(\'bannerInput\').click()"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Modifier la bannière</button>';
-                }
-              } else if (d.banner_status === 'rejected') {
-                stopBannerPoll();
-                const wrap = document.querySelector('.hero-banner-status');
-                if (wrap) {
-                  wrap.innerHTML = '<button class="banner-btn banner-btn--rejected" type="button" onclick="document.getElementById(\'bannerInput\').click()" title="Bannière refusée — cliquez pour réessayer"><span class="b-dot"></span>Bannière refusée — Réessayer</button>';
-                }
-              }
-            } catch { /* silencieux */ }
-          }, 5000);
-        }
-
-        /* Si au chargement la bannière est déjà en pending, démarrer le poll */
-        <% if (user.banner_status === 'pending') { %>
-        startBannerPoll();
-        <% } %>
-
-        input.addEventListener('change', async function () {
-          const file = input.files[0];
-          if (!file) return;
-          if (!file.type.startsWith('image/')) return;
-
-          const formData = new FormData();
-          formData.append('banner', file);
-
-          try {
-            const res  = await fetch('/auth/profil/' + userId + '/banner', { method: 'POST', body: formData });
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur upload.');
-
-            /* Mettre le badge "en attente" et démarrer le poll */
-            const wrap = document.querySelector('.hero-banner-status');
-            if (wrap) {
-              wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
-            }
-            if (typeof window.showProfileToast === 'function') {
-              window.showProfileToast('Bannière envoyée ✓ Un administrateur va l\'examiner avant de la publier.', 'success');
-            }
-            startBannerPoll();
-          } catch (err) {
-            console.error('Banner upload error:', err);
-            if (typeof window.showProfileToast === 'function') {
-              window.showProfileToast(err.message || 'Erreur lors de l\'envoi de la bannière.', 'error');
-            }
-          }
-
-          input.value = '';
-        });
-      })();
-    </script>
     <script src="/js/gamification-sherlock.js" defer></script>
     <script src="/js/gamification-engine.js?v=2" defer></script>
     <script src="/js/gamification.js?v=2" defer></script>

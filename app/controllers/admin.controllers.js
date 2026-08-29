@@ -12,10 +12,7 @@ import {
 import * as argon2 from "argon2";
 import { Op } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
-import {
-  enrichMovieWithImagePaths,
-  enrichMoviesWithImagePaths,
-} from "../utils/movie-image-helper.js";
+import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
@@ -60,9 +57,6 @@ const adminController = {
       const pendingProfilePhotos = users.filter(
         (user) => user.pending_picture && user.picture_status === "pending"
       );
-      const pendingBanners = users.filter(
-        (user) => user.pending_banner_image && user.banner_status === "pending"
-      );
       const pendingBios = users.filter(
         (user) => user.pending_bio && user.bio_status === "pending"
       );
@@ -73,7 +67,6 @@ const adminController = {
         avis,
         users,
         pendingProfilePhotos,
-        pendingBanners,
         pendingBios,
         pendingMovieDeleteRequests,
         pendingMovieEdits,
@@ -90,111 +83,6 @@ const adminController = {
       });
     } catch (error) {
       // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error);
-    }
-  },
-
-  // Page validation recette admin
-
-  async editRecipe(req, res) {
-    try {
-      // Refactoring : utilisation du helper centralisé loadAdminData()
-      const {
-        recipes,
-        movies,
-        avis,
-        users,
-        pendingMovieDeleteRequests,
-        pendingMovieEdits,
-        pendingRecipeEdits,
-        pendingNoticeEdits,
-        pendingNoticeDeleteRequests,
-        pendingRecipeDeleteRequests,
-        validatedMovies,
-        validatedRecipes,
-        validatedNotices,
-      } = await loadAdminData();
-      const pendingProfilePhotos = users.filter(
-        (user) => user.pending_picture && user.picture_status === "pending"
-      );
-
-      const recipeId = req.params.id;
-      const upRecipe = await Recipe.findByPk(recipeId);
-
-      res.render("admin-dashboard", {
-        recipes,
-        movies,
-        avis,
-        users,
-        pendingProfilePhotos,
-        pendingMovieDeleteRequests,
-        pendingMovieEdits,
-        pendingRecipeEdits,
-        pendingNoticeEdits,
-        pendingNoticeDeleteRequests,
-        pendingRecipeDeleteRequests,
-        validatedMovies,
-        validatedRecipes,
-        validatedNotices,
-        upRecipe,
-        success: req.query.success,
-      });
-    } catch (error) {
-      // Refactoring : utilisation du helper centralisé renderServerError()
-      return renderServerError(res, error);
-    }
-  },
-
-  // Page validation film admin
-
-  async editMovie(req, res) {
-    try {
-      const {
-        recipes,
-        movies,
-        avis,
-        users,
-        pendingMovieDeleteRequests,
-        pendingMovieEdits,
-        pendingRecipeEdits,
-        pendingNoticeEdits,
-        pendingNoticeDeleteRequests,
-        pendingRecipeDeleteRequests,
-        validatedMovies,
-        validatedRecipes,
-        validatedNotices,
-      } = await loadAdminData();
-      const pendingProfilePhotos = users.filter(
-        (user) => user.pending_picture && user.picture_status === "pending"
-      );
-      const movieId = req.params.id;
-      const upMovie = await Movie.findByPk(movieId);
-
-      // Enrichir upMovie avec les chemins d'images (cardPath pour la prévisualisation)
-      const enrichedUpMovie = upMovie
-        ? enrichMovieWithImagePaths(upMovie)
-        : null;
-      const enrichedMovies = movies;
-
-      res.render("admin-dashboard", {
-        recipes,
-        movies: enrichedMovies,
-        avis,
-        users,
-        pendingProfilePhotos,
-        pendingMovieDeleteRequests,
-        pendingMovieEdits,
-        pendingRecipeEdits,
-        pendingNoticeEdits,
-        pendingNoticeDeleteRequests,
-        pendingRecipeDeleteRequests,
-        validatedMovies,
-        validatedRecipes,
-        validatedNotices,
-        upMovie: enrichedUpMovie,
-        success: req.query.success,
-      });
-    } catch (error) {
       return renderServerError(res, error);
     }
   },
@@ -1026,58 +914,6 @@ const adminController = {
     }
   },
 
-  async validateUserBanner(req, res) {
-    try {
-      const userId = parseInt(req.params.id, 10);
-      const user = await User.findByPk(userId);
-      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
-
-      // Supprimer l'ancienne bannière approuvée si elle existe (distincte de la pending)
-      if (user.banner_image) await deleteAsset(user.banner_image);
-
-      // Promouvoir pending_banner_image → banner_image
-      await User.update(
-        { banner_image: user.pending_banner_image, pending_banner_image: null, banner_status: "approved" },
-        { where: { id: userId } }
-      );
-      logAdminAction({ adminId: req.userId, action: "approve_user_banner", targetType: "user", targetId: userId });
-      res.redirect("/admin?success=user_banner_approved");
-    } catch (error) {
-      return renderServerError(
-        res,
-        error,
-        "Erreur lors de la validation de la bannière."
-      );
-    }
-  },
-
-  async rejectUserBanner(req, res) {
-    try {
-      const userId = parseInt(req.params.id, 10);
-      const user = await User.findByPk(userId);
-      if (!user) return renderNotFound(res, "Utilisateur introuvable.");
-
-      // Supprimer uniquement la bannière EN ATTENTE — conserver banner_image (approuvée)
-      if (user.pending_banner_image) await deleteAsset(user.pending_banner_image);
-
-      // Si l'utilisateur avait déjà une bannière approuvée, on la restaure visuellement
-      // Sinon on indique "rejected" pour qu'il puisse réessayer
-      const newStatus = user.banner_image ? "approved" : "rejected";
-      await User.update(
-        { pending_banner_image: null, banner_status: newStatus },
-        { where: { id: userId } }
-      );
-      logAdminAction({ adminId: req.userId, action: "reject_user_banner", targetType: "user", targetId: userId });
-      res.redirect("/admin?success=user_banner_rejected");
-    } catch (error) {
-      return renderServerError(
-        res,
-        error,
-        "Erreur lors du refus de la bannière."
-      );
-    }
-  },
-
   async validateNotice(req, res) {
     try {
       const noticeId = parseInt(req.params.id, 10);
@@ -1827,23 +1663,36 @@ const adminController = {
   /* Polling admin : compteurs en attente */
   async getPendingCount(req, res) {
     try {
-      const [users, recipes, notices, recipePictures, movieEdits, movieDeletes] = await Promise.all([
-        User.findAll({ attributes: ["banner_status", "pending_banner_image", "pending_picture", "picture_status", "pending_pseudo", "pseudo_status", "pending_bio", "bio_status"] }),
+      const [
+        users,
+        recipesPending, recipeEdits, recipeDeletes,
+        noticesPending, noticeEdits, noticeDeletes,
+        recipePictures,
+        movieEdits, movieDeletes,
+      ] = await Promise.all([
+        User.findAll({ attributes: ["pending_picture", "picture_status", "pending_pseudo", "pseudo_status", "pending_bio", "bio_status"] }),
         Recipe.count({ where: { status: "pending" } }),
+        Recipe.count({ where: { edit_status: "pending" } }),
+        Recipe.count({ where: { delete_request_status: "pending" } }),
         Notice.count({ where: { status: "pending" } }),
+        Notice.count({ where: { edit_status: "pending" } }),
+        Notice.count({ where: { delete_request_status: "pending" } }),
         RecipePicture.count({ where: { status: "pending" } }),
         Movie.count({ where: { edit_status: "pending" } }),
         Movie.count({ where: { delete_request_status: "pending" } }),
       ]);
 
-      const banners = users.filter(u => u.pending_banner_image && u.banner_status === "pending").length;
       const photos  = users.filter(u => u.pending_picture  && u.picture_status  === "pending").length;
       const pseudos = users.filter(u => u.pending_pseudo   && u.pseudo_status   === "pending").length;
       const bios    = users.filter(u => u.pending_bio      && u.bio_status      === "pending").length;
-      const profils = banners + photos + pseudos + bios;
+      const profils = photos + pseudos + bios;
+      // Alignés sur le rendu initial (admin-dashboard.ejs) qui additionne déjà
+      // demandes de création + d'édition + de suppression pour ces badges.
+      const recipes  = recipesPending + recipeEdits + recipeDeletes;
+      const notices  = noticesPending + noticeEdits + noticeDeletes;
       const filmEdits = movieEdits + movieDeletes;
 
-      return res.json({ success: true, banners, photos, pseudos, bios, profils, recipes, notices, recipePictures, filmEdits });
+      return res.json({ success: true, photos, pseudos, bios, profils, recipes, notices, recipePictures, filmEdits });
     } catch (error) {
       return res.status(500).json({ success: false });
     }

@@ -28,8 +28,6 @@ adminRouter.post("/validateNotice/:id", adminController.validateNotice);
 adminRouter.post("/rejectNotice/:id", adminController.rejectNotice);
 adminRouter.post("/users/:id/photo/approve", adminController.validateUserPhoto);
 adminRouter.post("/users/:id/photo/reject", adminController.rejectUserPhoto);
-adminRouter.post("/users/:id/banner/approve", adminController.validateUserBanner);
-adminRouter.post("/users/:id/banner/reject", adminController.rejectUserBanner);
 adminRouter.post("/users/:id/pseudo/approve", adminController.validateUserPseudo);
 adminRouter.post("/users/:id/pseudo/reject", adminController.rejectUserPseudo);
 adminRouter.post("/users/:id/bio/approve", adminController.validateUserBio);
@@ -40,7 +38,6 @@ adminRouter.post("/users/:id/bio/reject", adminController.rejectUserBio);
    =============================================== */
 
 //Ajouter une recette inspirée d’un film à valider
-adminRouter.get("/recipe/:id", adminController.editRecipe);
 
 // Valider un film
 adminRouter.post("/validateRecipe/:id", adminController.validateRecipe);
@@ -59,7 +56,6 @@ adminRouter.post("/recipe-pictures/:pictureId/delete", adminController.deleteRec
    =============================================== */
 
 // ajouter un film à valdier
-adminRouter.get("/movie/:id", adminController.editMovie);
 
 // Valider un film — l'affiche est importée depuis TMDB à la création (plus d'upload admin)
 adminRouter.post("/validateMovie/:id", adminController.validateMovie);

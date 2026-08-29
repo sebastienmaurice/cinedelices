@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=55" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=57" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
-    <link rel="stylesheet" href="/css/author-page.css?v=18" />
+    <link rel="stylesheet" href="/css/author-page.css?v=19" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -122,25 +122,31 @@
             <div class="dropdown__sep"></div>
             <% } %>
 
-            <!-- 2. Bannière -->
-            <% if (author.banner_status === 'pending') { %>
-              <p class="dropdown__item uni-status uni-status--pending"><span class="b-dot"></span>Bannière en attente</p>
-            <% } else if (author.banner_status === 'rejected') { %>
-              <p class="dropdown__item uni-status uni-status--rejected"><span class="b-dot"></span>Bannière refusée</p>
-            <% } else { %>
-            <button class="dropdown__item" type="button" id="authorBannerBtn">
-              <span class="dropdown__icon"><i data-lucide="image" aria-hidden="true"></i></span>
-              Modifier ma bannière
+            <!-- 2. Profil — bio (ouvre l'éditeur déjà présent dans le hero,
+                 juste sous le nom) et pseudo (renvoie vers /auth/profil/:id,
+                 où vit déjà l'éditeur de pseudo avec validation admin). -->
+            <button type="button" class="dropdown__item" id="heroBioEditBtn">
+              <span class="dropdown__icon"><i data-lucide="pencil" aria-hidden="true"></i></span>
+              Modifier ma bio
             </button>
+            <a href="/auth/profil/<%= author.id %>" class="dropdown__item">
+              <span class="dropdown__icon"><i data-lucide="user-pen" aria-hidden="true"></i></span>
+              Modifier mon pseudo
+            </a>
+            <div class="dropdown__sep"></div>
+
+            <!-- 3. Bannière — upload perso retiré (10 décors "by Ciné Délices"
+                 à débloquer suffisent, évite la charge de modération admin).
+                 "Retirer ma bannière" reste pour les fonds perso déjà existants
+                 avant ce changement — ce n'est pas de l'upload, juste un reset. -->
             <% if (_hasCustomBanner) { %>
             <button class="dropdown__item" type="button" id="authorBannerResetBtn" title="Revenir au fond de mon cadre équipé (ou au défaut Ciné Délices)">
               <span class="dropdown__icon"><i data-lucide="rotate-ccw" aria-hidden="true"></i></span>
               Retirer ma bannière
             </button>
             <% } %>
-            <% } %>
 
-            <!-- 3. Positionnement — ouvre la glissière indépendante, ne
+            <!-- 4. Positionnement — ouvre la glissière indépendante, ne
                  s'active jamais tant que l'auteur n'a pas cliqué ici. -->
             <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
               <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
@@ -148,7 +154,6 @@
             </button>
           </div>
         </div>
-        <input id="authorBannerInput" type="file" name="banner" accept="image/*" hidden />
 
         <!-- Glissière de recentrage vertical du fond — masquée tant que
              "Repositionner" n'a pas été cliqué dans le popover ci-dessus. -->
@@ -263,10 +268,9 @@
               <% } else if (author.bio_status === 'rejected') { %>
               <span class="hero-bio__status hero-bio__status--rejected"><span class="b-dot"></span>Bio refusée</span>
               <% } %>
-              <button type="button" class="hero-bio__edit-btn" id="heroBioEditBtn">
-                <i data-lucide="pencil" width="10" height="10" aria-hidden="true"></i>
-                Modifier ma bio
-              </button>
+              <!-- Le déclencheur "Modifier ma bio" vit maintenant dans le
+                   popover "Personnaliser mon univers" (#heroBioEditBtn) —
+                   cet éditeur reste ici, juste sous le texte qu'il édite. -->
               <div class="hero-bio__editor" id="heroBioEditor" hidden>
                 <textarea id="heroBioTextarea" maxlength="500" rows="3" placeholder="Parlez de vous, de votre passion pour le cinéma et la cuisine..."><%= author.pending_bio || author.bio || '' %></textarea>
                 <div class="hero-bio__editor-actions">
@@ -765,67 +769,10 @@
       })();
     </script>
 
-    <!-- Upload bannière (propriétaire) -->
+    <!-- Retirer la bannière perso (retour au fond du cadre équipé / défaut) —
+         upload retiré (voir plus haut), ce reset reste pour nettoyer les fonds
+         perso déjà existants avant ce changement. -->
     <script>
-      (function () {
-        const btn   = document.getElementById('authorBannerBtn');
-        const input = document.getElementById('authorBannerInput');
-        const authorId = '<%= author.id %>';
-
-        if (!btn || !input) return;
-
-        btn.addEventListener('click', function () { input.click(); });
-
-        input.addEventListener('change', async function () {
-          const file = input.files[0];
-          if (!file) return;
-          if (!file.type.startsWith('image/')) {
-            alert('Veuillez sélectionner une image.');
-            return;
-          }
-
-          btn.disabled = true;
-          btn.textContent = 'Envoi en cours…';
-
-          const formData = new FormData();
-          formData.append('banner', file);
-
-          try {
-            const res  = await fetch('/auth/profil/' + authorId + '/banner', { method: 'POST', body: formData });
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur upload.');
-
-            // Prévisualisation immédiate
-            const bannerImg = document.querySelector('.hero-banner img');
-            if (bannerImg) {
-              bannerImg.src = data.banner_image;
-            } else {
-              const heroDiv = document.querySelector('.hero-banner');
-              if (heroDiv) {
-                const img = document.createElement('img');
-                img.src = data.banner_image;
-                img.alt = 'Bannière';
-                heroDiv.prepend(img);
-              }
-            }
-
-            // Remplacer le bouton par le badge "en attente"
-            const wrap = btn.closest('.hero-banner-status');
-            if (wrap) {
-              wrap.innerHTML = '<span class="banner-btn banner-btn--pending"><span class="b-dot"></span>Bannière en attente</span>';
-            }
-          } catch (err) {
-            alert('Erreur : ' + err.message);
-            btn.disabled = false;
-            btn.textContent = 'Modifier la bannière';
-          }
-
-          input.value = '';
-        });
-      })();
-    </script>
-
-    <!-- Retirer la bannière perso (retour au fond du cadre équipé / défaut) -->
     <script>
       (function () {
         const resetBtn = document.getElementById('authorBannerResetBtn');
@@ -904,7 +851,13 @@
 
         editBtn.addEventListener('click', function () {
           editor.hidden = !editor.hidden;
-          if (!editor.hidden) { updateCounter(); textarea.focus(); }
+          if (!editor.hidden) {
+            updateCounter();
+            textarea.focus();
+            // Le bouton vit dans le popover "Personnaliser mon univers" —
+            // on le referme pour laisser place à l'éditeur dans le hero.
+            if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
+          }
         });
 
         cancelBtn.addEventListener('click', function () {

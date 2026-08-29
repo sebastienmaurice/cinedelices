@@ -100,9 +100,12 @@ body.author-page main {
 .uni-panel .dropdown__cat {
   padding: 4px 6px 8px;
 }
+/* Grille fixe 5 colonnes : jusqu'à 10 décors par thème tiennent en 2 lignes
+   de 5, quelle que soit la largeur du popover (pas de flex-wrap dépendant
+   du conteneur). */
 .uni-decor-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 32px);
   gap: 8px;
   padding: 0 6px 8px;
 }
@@ -113,22 +116,6 @@ body.author-page main {
   width: 32px;
   height: 32px;
   font-size: 0.56rem;
-}
-
-/* Lignes d'action (bannière / repositionnement) : rows menu classiques,
-   identiques aux autres .dropdown__item du site. */
-.uni-status {
-  cursor: default;
-  gap: 10px;
-}
-.dropdown__item.uni-status:hover {
-  background: transparent;
-}
-.uni-status--pending {
-  color: var(--orange-clair, #e8a33c);
-}
-.uni-status--rejected {
-  color: #e84020;
 }
 
 /* États clavier/hover des vignettes décor — le contour doré identifie

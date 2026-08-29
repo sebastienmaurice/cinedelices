@@ -1,7 +1,8 @@
-import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture, UserPoints } from "../models/index.model.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { getUserGamificationData, awardWeeklyLoginXP, awardDailyLoginXP } from "../services/gamification.service.js";
 import { isStaffRole } from "../utils/gamification.utils.js";
+import { resolveHeroBanner, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 import {
   createAndSendResetToken,
   findActiveToken,
@@ -16,11 +17,6 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { deleteAsset, uploadBufferToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import sharp from "sharp";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -311,9 +307,18 @@ const authController = {
         userRole: req.userRole,
       });
 
+      // Bannière du Hero — même priorité que sur /cinepass/ et /auteur/:id
+      // (perso approuvée > variante choisie du cadre équipé > défaut), voir
+      // app/utils/frame-banners.js. Le sélecteur de variantes ne vit que sur
+      // la Page Auteur ; ici on ne fait qu'en refléter le résultat.
+      const points = await UserPoints.findOne({ where: { id_user: user.id }, attributes: ["active_banner_variant"] });
+      const activeBannerVariant = points?.active_banner_variant || null;
+      const heroBannerUrl = resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
+
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {
         user,
+        heroBannerUrl,
         userRecipes,
         userMovies,
         userNotices,
@@ -541,101 +546,6 @@ const authController = {
    * - Le système de fichiers est optimisé pour servir des images statiques
    * - On stocke uniquement le chemin relatif (ex: /images/banner-auteur/user-42.webp)
    */
-  async uploadBanner(req, res) {
-    try {
-      const userId = parseInt(req.params.id, 10);
-
-      if (!userId || Number.isNaN(userId)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          success: false,
-          message: "ID utilisateur invalide",
-        });
-      }
-
-      if (req.userRole !== "admin" && req.userId !== userId) {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          success: false,
-          message: "Accès interdit",
-        });
-      }
-
-      if (!req.file) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          success: false,
-          message: "Aucun fichier sélectionné",
-        });
-      }
-
-      const user = await User.findByPk(userId);
-      if (!user) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          success: false,
-          message: "Utilisateur non trouvé",
-        });
-      }
-
-      const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-      // --- VALIDATION DU RATIO (paysage uniquement) ---
-      const meta = await sharp(req.file.path).metadata();
-      const ratio = meta.width / meta.height;
-      if (ratio < 1.5) {
-        fs.unlink(req.file.path, () => {});
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          success: false,
-          message: "L'image doit être en format paysage (ratio minimum 3:2). Les formats portrait ou carré ne sont pas acceptés.",
-        });
-      }
-
-      // --- SUPPRESSION de la bannière EN ATTENTE précédente si elle existe ---
-      // On ne touche PAS à banner_image (bannière approuvée) pour ne pas la perdre en cas de refus
-      if (user.pending_banner_image) {
-        await deleteAsset(user.pending_banner_image);
-      }
-
-      // --- TRAITEMENT avec Sharp → Buffer WebP ---
-      // Sharp redimensionne en 1408×350 (fit: cover) et convertit en WebP qualité 80
-      const buffer = await sharp(req.file.path)
-        .resize(1408, 350, { fit: "cover" })
-        .webp({ quality: 80 })
-        .toBuffer();
-
-      // Suppression du fichier temporaire Multer
-      fs.unlink(req.file.path, () => {});
-
-      // --- UPLOAD du buffer WebP sur Cloudinary ---
-      // public_id distinct (-pending) pour ne pas écraser la bannière approuvée existante
-      const cloudResult = await uploadBufferToCloudinary(buffer, {
-        folder:    "cinedelices/banners",
-        public_id: `user-${userId}-pending`,
-        overwrite: true,
-      });
-
-      const bannerPath = cloudResult.secure_url;
-      await User.update(
-        { pending_banner_image: bannerPath, banner_status: "pending" },
-        { where: { id: userId } }
-      );
-
-      return res.status(StatusCodes.OK).json({
-        success: true,
-        message: "Bannière envoyée. En attente de validation.",
-        banner_image: bannerPath,
-        banner_status: "pending",
-      });
-    } catch (error) {
-      // Nettoyer le fichier temporaire en cas d'erreur
-      if (req.file && req.file.path) {
-        fs.unlink(req.file.path, () => {});
-      }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: "Erreur lors de l'upload de la bannière.",
-        error: error.message,
-      });
-    }
-  },
-
   /**
    * Suppression de la bannière auteur (retour à la bannière par défaut)
    *
@@ -1481,18 +1391,6 @@ const authController = {
   },
 
   /* Polling user : statut bannière courant */
-  async getBannerStatus(req, res) {
-    try {
-      const userId = parseInt(req.params.id, 10);
-      if (req.userId !== userId) return res.status(StatusCodes.FORBIDDEN).json({ success: false });
-      const user = await User.findByPk(userId, { attributes: ["banner_status", "banner_image"] });
-      if (!user) return res.status(StatusCodes.NOT_FOUND).json({ success: false });
-      return res.json({ success: true, banner_status: user.banner_status, banner_image: user.banner_image });
-    } catch {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
-    }
-  },
-
   // ─────────────────────────────────────────────────────────────
   //  FORGOT / RESET PASSWORD
   // ─────────────────────────────────────────────────────────────
