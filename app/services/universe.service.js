@@ -30,8 +30,10 @@
  * référence (id_movie/id_recipe) est NULL ou invalide.
  */
 
-import { Recipe, Movie, Notice } from "../models/index.model.js";
-import { buildUnivers, summarize } from "../utils/collection-mock.js";
+import { Recipe, Movie, Notice, UserPoints, UserUniversEquipement } from "../models/index.model.js";
+import { buildUnivers, summarize, UNIVERS_DEFINITIONS } from "../utils/collection-mock.js";
+
+const UNIVERS_CODES = UNIVERS_DEFINITIONS.map((u) => u.code);
 
 /**
  * Contributions réelles d'un utilisateur, par genre — uniquement les
@@ -91,25 +93,103 @@ export async function getUserContributionsByGenre(userId) {
 }
 
 /**
+ * Charge l'équipement (Fond/Cadre) réel d'un utilisateur pour tous ses
+ * Univers, au format attendu par buildUnivers() : { [code]: {fond, cadre} }.
+ * Une seule requête, aucune ligne = aucun équipement pour cet Univers
+ * (équivalent à { fond: null, cadre: null }, buildUnivers gère déjà l'absence
+ * de clé — cf. `equipements[def.code] || {}`).
+ */
+async function getUserEquipements(userId) {
+  const rows = await UserUniversEquipement.findAll({
+    where: { id_user: userId },
+    attributes: ["code_univers", "fond_equipe", "cadre_equipe"],
+  });
+  const equipements = {};
+  rows.forEach((row) => {
+    equipements[row.code_univers] = { fond: row.fond_equipe || null, cadre: row.cadre_equipe || null };
+  });
+  return equipements;
+}
+
+/**
  * Progression Univers réelle d'un utilisateur — même contrat de sortie
  * que getMockCollectionData(preset) (collection-mock.js), pour que
  * /collection/ n'ait aucune distinction à faire entre réel et mock côté
- * vue. `universActifCode`/`equipements` restent null/{} pour un vrai
- * utilisateur (Game Design Phase 10 §2) : aucune préférence d'Univers
- * actif ni d'équipement Fond/Cadre n'est encore persistée nulle part —
- * ce n'est PAS le même système que `UserPoints.active_frame_code` (cadre
- * de profil réel), qu'on ne touche pas ici.
+ * vue.
+ *
+ * Phase 15 — `universActifCode`/`equipements` sont désormais réellement
+ * persistés (user_points.active_univers_code + table
+ * user_univers_equipements, Option B validée) — plus de null/{} en dur.
+ * Système strictement indépendant de `UserPoints.active_frame_code` (cadre
+ * de profil), qu'on ne touche jamais ici.
  *
  * @param {number} userId
  * @returns {Promise<{universList: object[], summary: object}>}
  */
 export async function getUserUniverseProgress(userId) {
-  const contributionsByGenre = await getUserContributionsByGenre(userId);
+  const [contributionsByGenre, userPoints, equipements] = await Promise.all([
+    getUserContributionsByGenre(userId),
+    UserPoints.findOne({ where: { id_user: userId }, attributes: ["active_univers_code"] }),
+    getUserEquipements(userId),
+  ]);
 
   const universList = buildUnivers(contributionsByGenre, {
-    universActifCode: null,
-    equipements: {},
+    universActifCode: userPoints?.active_univers_code || null,
+    equipements,
   });
 
   return { universList, summary: summarize(universList) };
+}
+
+/**
+ * Définit l'Univers actif d'un utilisateur — validation Phase 15 : un
+ * Univers "exploré" (>=1 contribution) suffit, pas besoin d'attendre un
+ * palier Fond/Cadre. `null` retire l'Univers actif (aucune identité
+ * affichée). Ne touche jamais `active_frame_code`.
+ *
+ * @returns {Promise<{success:boolean, error?:string}>}
+ */
+export async function setActiveUnivers(userId, code) {
+  if (code !== null && !UNIVERS_CODES.includes(code)) {
+    return { success: false, error: "univers_inconnu" };
+  }
+  if (code !== null) {
+    const contributionsByGenre = await getUserContributionsByGenre(userId);
+    if (!(contributionsByGenre[code] > 0)) {
+      return { success: false, error: "univers_non_explore" };
+    }
+  }
+  await UserPoints.update({ active_univers_code: code }, { where: { id_user: userId } });
+  return { success: true };
+}
+
+/**
+ * Équipe un Fond ou un Cadre pour un Univers donné, après revalidation
+ * complète du déblocage réel (jamais de confiance dans l'index envoyé par
+ * le client) — recalcule l'état de l'Univers à partir des contributions
+ * réelles, exactement comme /collection/ le fait pour l'affichage.
+ *
+ * @param {number} userId
+ * @param {"fond"|"cadre"} kind
+ * @param {string} code code_univers
+ * @param {number} index 1-5 (fond) ou 1-2 (cadre)
+ * @returns {Promise<{success:boolean, error?:string}>}
+ */
+export async function equipUniversReward(userId, kind, code, index) {
+  if (!UNIVERS_CODES.includes(code)) return { success: false, error: "univers_inconnu" };
+  if (kind !== "fond" && kind !== "cadre") return { success: false, error: "type_invalide" };
+
+  const contributionsByGenre = await getUserContributionsByGenre(userId);
+  const [univers] = buildUnivers(contributionsByGenre).filter((u) => u.code === code);
+  const list = kind === "fond" ? univers.fonds : univers.cadres;
+  const item = list.find((it) => it.index === index);
+  if (!item || !item.unlocked) return { success: false, error: "non_debloque" };
+
+  const field = kind === "fond" ? "fond_equipe" : "cadre_equipe";
+  const [row] = await UserUniversEquipement.findOrCreate({
+    where: { id_user: userId, code_univers: code },
+    defaults: { id_user: userId, code_univers: code, [field]: index },
+  });
+  await row.update({ [field]: index, updated_at: new Date() });
+  return { success: true };
 }

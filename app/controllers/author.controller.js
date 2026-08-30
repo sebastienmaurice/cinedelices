@@ -5,6 +5,7 @@ import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress } from "../utils/gamification.utils.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { resolveHeroBanner, FRAME_BANNERS, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
+import { getUserUniverseProgress } from "../services/universe.service.js";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)
@@ -145,6 +146,14 @@ const authorController = {
       const heroBannerUrl = resolveHeroBanner(author, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
       const frameBannerVariants = FRAME_BANNERS[gamif.activeFrameCode] || [];
 
+      // Phase 15 — Univers actif + Sceau de Maître (Ma Collection). Texte/
+      // accent uniquement pour l'instant (pas de visuel Fond/Cadre réel).
+      // Sceau calculé à la volée depuis le statut de l'Univers actif —
+      // aucune donnée persistée dédiée (validation Phase 15).
+      const { universList } = await getUserUniverseProgress(userId);
+      const activeUnivers = universList.find((u) => u.actif) || null;
+      const hasSceauDeMaitre = !!(activeUnivers && activeUnivers.status === "maitrise");
+
       return res.render("author-page", {
         author,
         recipes: enrichedRecipes,
@@ -167,6 +176,8 @@ const authorController = {
         heroBannerUrl,
         frameBannerVariants,
         activeBannerVariant,
+        activeUnivers,
+        hasSceauDeMaitre,
       });
     } catch (error) {
       return renderServerError(res, error);

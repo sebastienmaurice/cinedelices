@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/contributions.css?v=5" />
     <!-- .cp-card / tokens couleurs réutilisés depuis CinéPass. -->
     <link rel="stylesheet" href="/css/cinepass.css?v=63" />
-    <link rel="stylesheet" href="/css/collection.css?v=12" />
+    <link rel="stylesheet" href="/css/collection.css?v=13" />
   </head>
 
   <body class="ctr-page collection-page collection-univers-page">
@@ -99,6 +99,14 @@
           <span class="coll-actif-badge uf-hero__actif" title="Cet Univers est actif sur votre profil">
             <i data-lucide="star" width="11" height="11" aria-hidden="true"></i> Univers actif
           </span>
+          <!-- Phase 15 : un seul Univers actif à la fois — désactiver ici
+               reviendrait à n'avoir aucune identité affichée, choix non
+               demandé pour l'instant (on ne propose que "activer" un autre
+               Univers, jamais "désactiver" celui-ci). -->
+          <% } else if (!isNonExplore) { %>
+          <button type="button" class="uf-equip-btn uf-actif-btn" id="ufSetActifBtn" data-code="<%= univers.code %>">
+            <i data-lucide="star" width="12" height="12" aria-hidden="true"></i> Définir comme Univers actif
+          </button>
           <% } %>
         </div>
       </div>
@@ -171,7 +179,7 @@
             <p class="uf-fond-card__sub"><%= f.nom %></p>
             <% if (f.unlocked) { %>
             <p class="uf-fond-card__state uf-state--obtenu"><i data-lucide="check" width="12" height="12" aria-hidden="true"></i> Obtenu</p>
-            <button type="button" class="uf-equip-btn" data-kind="fond" data-index="<%= f.index %>" <%= isEquipped ? 'disabled' : '' %>>
+            <button type="button" class="uf-equip-btn" data-kind="fond" data-code="<%= univers.code %>" data-index="<%= f.index %>" <%= isEquipped ? 'disabled' : '' %>>
               <%= isEquipped ? 'ACTIF' : 'Utiliser ce Fond' %>
             </button>
             <% } else { %>
@@ -201,7 +209,7 @@
             <p class="uf-cadre-card__sub"><%= c.nom %></p>
             <% if (c.unlocked) { %>
             <p class="uf-fond-card__state uf-state--obtenu"><i data-lucide="check" width="12" height="12" aria-hidden="true"></i> Obtenu</p>
-            <button type="button" class="uf-equip-btn" data-kind="cadre" data-index="<%= c.index %>" <%= isEquipped ? 'disabled' : '' %>>
+            <button type="button" class="uf-equip-btn" data-kind="cadre" data-code="<%= univers.code %>" data-index="<%= c.index %>" <%= isEquipped ? 'disabled' : '' %>>
               <%= isEquipped ? 'ACTIF' : 'Équiper' %>
             </button>
             <% } else { %>
@@ -216,6 +224,6 @@
 
     <%- include("partials/footer") %>
 
-    <script src="/js/collection-univers.js?v=1" defer></script>
+    <script src="/js/collection-univers.js?v=2" defer></script>
   </body>
 </html>

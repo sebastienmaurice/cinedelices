@@ -2,7 +2,7 @@ import { User } from "../models/index.model.js";
 import { getMockCollectionData, getMockUniversDetail, MOCK_PRESET_NAMES } from "../utils/collection-mock.js";
 import { MOCK_BADGES } from "../utils/cinepass-mock.js";
 import { checkUserTrophies, getUserTrophyCodes, REAL_TROPHY_CODES } from "../services/trophy.service.js";
-import { getUserUniverseProgress } from "../services/universe.service.js";
+import { getUserUniverseProgress, equipUniversReward, setActiveUnivers } from "../services/universe.service.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 
 const collectionController = {
@@ -102,6 +102,53 @@ const collectionController = {
       });
     } catch (error) {
       return renderServerError(res, error);
+    }
+  },
+
+  /**
+   * POST /collection/univers/:genre/fond
+   * Équipe un Fond débloqué pour cet Univers (Phase 15). Body: { index }.
+   * Revalidation complète côté service — jamais de confiance dans
+   * l'index envoyé par le client.
+   */
+  async equiperFond(req, res) {
+    try {
+      const index = parseInt(req.body?.index, 10);
+      if (!Number.isInteger(index)) return res.status(400).json({ success: false, error: "index_invalide" });
+      const result = await equipUniversReward(req.userId, "fond", req.params.genre, index);
+      return res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      return res.status(500).json({ success: false, error: "server_error" });
+    }
+  },
+
+  /**
+   * POST /collection/univers/:genre/cadre
+   * Équipe un Cadre débloqué pour cet Univers (Phase 15). Body: { index }.
+   */
+  async equiperCadre(req, res) {
+    try {
+      const index = parseInt(req.body?.index, 10);
+      if (!Number.isInteger(index)) return res.status(400).json({ success: false, error: "index_invalide" });
+      const result = await equipUniversReward(req.userId, "cadre", req.params.genre, index);
+      return res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      return res.status(500).json({ success: false, error: "server_error" });
+    }
+  },
+
+  /**
+   * POST /collection/univers-actif
+   * Définit l'Univers actif (Phase 15). Body: { code }. Un Univers exploré
+   * (>=1 contribution) suffit — pas besoin d'attendre un palier.
+   */
+  async setUniversActif(req, res) {
+    try {
+      const code = req.body?.code ?? null;
+      const result = await setActiveUnivers(req.userId, code);
+      return res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      return res.status(500).json({ success: false, error: "server_error" });
     }
   },
 };

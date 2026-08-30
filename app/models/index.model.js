@@ -13,6 +13,7 @@ import PasswordReset from './password_reset.model.js';
 import NoticeLike from './notice-like.model.js';
 import NoticePicture from './notice-picture.model.js';
 import UserTrophy from './UserTrophy.model.js';
+import UserUniversEquipement from './UserUniversEquipement.model.js';
 
 
 // Définition des relations entre les modèles
@@ -97,8 +98,13 @@ NoticePicture.belongsTo(Notice, { foreignKey: 'id_notice' });
 User.hasMany(UserTrophy, { foreignKey: 'id_user' });
 UserTrophy.belongsTo(User, { foreignKey: 'id_user' });
 
+// Équipements Univers (Phase 15, Ma Collection) — un utilisateur peut avoir
+// un enregistrement d'équipement (Fond/Cadre) par Univers.
+User.hasMany(UserUniversEquipement, { foreignKey: 'id_user' });
+UserUniversEquipement.belongsTo(User, { foreignKey: 'id_user' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture, UserTrophy };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture, UserTrophy, UserUniversEquipement };
 
 
 

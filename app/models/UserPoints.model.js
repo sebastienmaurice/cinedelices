@@ -23,6 +23,14 @@ const UserPoints = sequelize.define(
       allowNull: false,
       defaultValue: "cine",
     },
+    // Phase 15 — Univers cinématographique actif (Ma Collection), même
+    // pattern que active_frame_code mais système indépendant (cadre de
+    // profil vs Univers de contribution). NULL = aucun Univers actif.
+    active_univers_code: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+      defaultValue: null,
+    },
     active_banner_variant: {
       type: DataTypes.INTEGER,
       allowNull: true,

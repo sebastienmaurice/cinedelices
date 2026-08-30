@@ -114,4 +114,30 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration user_trophies :", err.message);
   }
+
+  // Phase 15 — Mécanique réelle des Univers cinématographiques : Fond/Cadre
+  // équipés par Univers (table dédiée, Option B validée) + Univers actif
+  // (même pattern que active_frame_code, sur user_points). Ne touche à
+  // aucun schéma existant — voir
+  // app/database/migrations/20260830-add-user-univers-equipements.sql
+  try {
+    await sequelize.query(`
+      CREATE TABLE IF NOT EXISTS user_univers_equipements (
+        id           SERIAL PRIMARY KEY,
+        id_user      INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        code_univers VARCHAR(30) NOT NULL,
+        fond_equipe  INT NULL,
+        cadre_equipe INT NULL,
+        created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+        UNIQUE (id_user, code_univers)
+      );
+      CREATE INDEX IF NOT EXISTS idx_user_univers_equipements_user_id ON user_univers_equipements(id_user);
+
+      ALTER TABLE user_points ADD COLUMN IF NOT EXISTS active_univers_code VARCHAR(30) NULL;
+    `);
+    console.log("✅ Migration user_univers_equipements + user_points.active_univers_code OK");
+  } catch (err) {
+    console.error("⚠️  Migration user_univers_equipements :", err.message);
+  }
 }

@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="/css/user-profile.css?v=60" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
     <link rel="stylesheet" href="/css/all-recipes.css" />
-    <link rel="stylesheet" href="/css/author-page.css?v=23" />
+    <link rel="stylesheet" href="/css/author-page.css?v=24" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -257,6 +257,25 @@
 
             <!-- Titre rang -->
             <p class="hero-rank-title"><%= isAdminAuthor ? 'Équipe Ciné Délices' : userRank %></p>
+
+            <!-- Univers actif (Phase 15, Ma Collection) — texte + accent
+                 couleur uniquement pour l'instant : aucun visuel de Fond/
+                 Cadre réel n'existe encore (voir collection-univers.ejs,
+                 même placeholder dégradé). Sceau de Maître : calculé à la
+                 volée (statut "maitrise" de l'Univers actif), pas de
+                 donnée persistée dédiée. -->
+            <% if (typeof activeUnivers !== 'undefined' && activeUnivers) { %>
+            <div class="hero-univers-badge" style="--hu-accent: <%= activeUnivers.accent %>">
+              <i data-lucide="<%= activeUnivers.icon %>" width="12" height="12" aria-hidden="true"></i>
+              Univers <%= activeUnivers.label %>
+            </div>
+            <% if (hasSceauDeMaitre) { %>
+            <div class="hero-seal-badge" title="Sceau de Maître — Univers <%= activeUnivers.label %> maîtrisé (10+ contributions)">
+              <i data-lucide="shield-check" width="12" height="12" aria-hidden="true"></i>
+              Sceau de Maître
+            </div>
+            <% } %>
+            <% } %>
 
             <!-- Bio auteur — personnalisable par l'auteur uniquement, publiée
                  après validation admin (même convention que pseudo/bannière) -->
