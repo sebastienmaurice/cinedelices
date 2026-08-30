@@ -1,17 +1,31 @@
 /**
- * profile-tabs.js — Navigation onglets premium Mon Compte
+ * profile-tabs.js — Navigation onglets premium (classes .ptab / .tab-pane)
  * Vanilla JS — Hash URL — Transition opacity + translateY
- * Moodboard v2 : classes .ptab / .tab-pane / .active
+ *
+ * Générique : les onglets valides et l'onglet par défaut sont déduits du
+ * DOM de la page (tous les data-tab présents), pas d'une liste figée —
+ * ce script est partagé par Mon compte (4 onglets) et Ma Collection
+ * (4 onglets différents) sans duplication (Phase 1, Ma Collection).
  */
 (function () {
   'use strict';
 
-  var DEFAULT_TAB = 'overview';
-  var VALID_TABS = ['overview', 'profil', 'favoris', 'creations'];
+  function getValidTabs() {
+    return Array.prototype.map.call(document.querySelectorAll('.ptab[data-tab]'), function (el) {
+      return el.dataset.tab;
+    });
+  }
+
+  function getDefaultTab(validTabs) {
+    var activeEl = document.querySelector('.ptab.active[data-tab]');
+    if (activeEl) return activeEl.dataset.tab;
+    return validTabs[0];
+  }
 
   function getActiveTab() {
+    var validTabs = getValidTabs();
     var hash = window.location.hash.replace('#', '');
-    return VALID_TABS.indexOf(hash) !== -1 ? hash : DEFAULT_TAB;
+    return validTabs.indexOf(hash) !== -1 ? hash : getDefaultTab(validTabs);
   }
 
   function activateTab(tabId) {

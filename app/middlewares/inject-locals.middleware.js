@@ -14,8 +14,12 @@
 import { QueryTypes } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { User, Recipe, Movie, Notice } from "../models/index.model.js";
-import { FRAME_UNLOCKS } from "../utils/gamification.utils.js";
 import { cldCard, cldAvatar, cldFull } from "../utils/cloudinary-url.js";
+// Phase 13 : le calcul du Top Contributeurs (et le petit helper frameUrl
+// qu'il partage avec getNavData) vivent désormais dans ranking.service.js
+// — réutilisé tel quel ici ET par trophy.service.js (Premier Rôle), une
+// seule définition du classement, un seul cache.
+import { getTopContributors, frameUrl as _frameUrl } from "../services/ranking.service.js";
 
 /* ──────────────────────────────────────────────────────────────
    Cache en mémoire — évite de refaire les COUNT à chaque requête
@@ -24,17 +28,10 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 let _statsCache      = null;
 let _statsCacheTime  = 0;
-let _contribCache    = null;
-let _contribCacheTime = 0;
 
 // Cache nav frame par userId (TTL court — 2 min)
 const _navCache    = new Map();
 const NAV_TTL      = 2 * 60 * 1000;
-
-function _frameUrl(code) {
-  const f = FRAME_UNLOCKS.find(f => f.code === (code || "cine"));
-  return f ? f.pngUrl : FRAME_UNLOCKS[0].pngUrl;
-}
 
 async function getGlobalStats() {
   if (_statsCache && Date.now() - _statsCacheTime < CACHE_TTL) {
@@ -49,29 +46,6 @@ async function getGlobalStats() {
   _statsCache     = { members, recipes, films, avis };
   _statsCacheTime = Date.now();
   return _statsCache;
-}
-
-async function getTopContributors() {
-  if (_contribCache && Date.now() - _contribCacheTime < CACHE_TTL) {
-    return _contribCache;
-  }
-  const rows = await sequelize.query(
-    `SELECT u.id, u.pseudo AS username, u.picture,
-            COUNT(r.id)::int AS count,
-            COALESCE(up.active_frame_code, 'cine') AS active_frame_code
-     FROM   users u
-     JOIN   recipes r ON r.id_user = u.id AND r.status = 'approved'
-     LEFT JOIN user_points up ON up.id_user = u.id
-     WHERE  u.role NOT IN ('admin', 'superadmin', 'super_admin')
-     GROUP  BY u.id, u.pseudo, u.picture, up.active_frame_code
-     ORDER  BY COUNT(r.id) DESC
-     LIMIT  3`,
-    { type: QueryTypes.SELECT }
-  );
-  const enriched = rows.map(r => ({ ...r, frameUrl: _frameUrl(r.active_frame_code) }));
-  _contribCache     = enriched;
-  _contribCacheTime = Date.now();
-  return _contribCache;
 }
 
 async function getNavData(userId) {

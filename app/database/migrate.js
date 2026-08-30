@@ -91,4 +91,27 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration notices social features :", err.message);
   }
+
+  // Trophées obtenus par utilisateur (Phase 9, Ma Collection) — table
+  // additive, ne modifie aucun schéma existant (notamment pas `users`).
+  // Le référentiel des 18 trophées reste MOCK_BADGES ; cette table ne
+  // persiste que l'obtention réelle pour 9 d'entre eux — voir
+  // app/database/migrations/20260830-add-user-trophies.sql
+  try {
+    await sequelize.query(`
+      CREATE TABLE IF NOT EXISTS user_trophies (
+        id          SERIAL PRIMARY KEY,
+        id_user     INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        trophy_code VARCHAR(50) NOT NULL,
+        unlocked_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+        UNIQUE (id_user, trophy_code)
+      );
+      CREATE INDEX IF NOT EXISTS idx_user_trophies_user_id ON user_trophies(id_user);
+    `);
+    console.log("✅ Migration user_trophies OK");
+  } catch (err) {
+    console.error("⚠️  Migration user_trophies :", err.message);
+  }
 }

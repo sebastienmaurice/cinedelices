@@ -99,10 +99,10 @@
         <div class="dd-filter-wrap dd-filter-wrap--uni" id="uniCustomizeWrap">
           <button class="dropdown-trigger dropdown-trigger--uni" id="uniCustomizeBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uniCustomizePanel">
             <span class="uni-star" aria-hidden="true">✦</span>
-            Personnaliser mon univers
+            Personnaliser mon profil
           </button>
 
-          <div class="dropdown uni-panel" id="uniCustomizePanel" role="dialog" aria-label="Personnaliser mon univers" aria-hidden="true">
+          <div class="dropdown uni-panel" id="uniCustomizePanel" role="dialog" aria-label="Personnaliser mon profil" aria-hidden="true">
             <!-- Étape 4 (audit UX) : décor + bannière + repositionnement
                  regroupés sous UN SEUL concept "Fond du profil" — l'utilisateur
                  n'a pas besoin de savoir qu'un "décor" est techniquement une
@@ -274,7 +274,7 @@
               <span class="hero-bio__status hero-bio__status--rejected"><span class="b-dot"></span>Bio refusée</span>
               <% } %>
               <!-- Le déclencheur "Modifier ma bio" vit maintenant dans le
-                   popover "Personnaliser mon univers" (#heroBioEditBtn) —
+                   popover "Personnaliser mon profil" (#heroBioEditBtn) —
                    cet éditeur reste ici, juste sous le texte qu'il édite. -->
               <div class="hero-bio__editor" id="heroBioEditor" hidden>
                 <textarea id="heroBioTextarea" maxlength="500" rows="3" placeholder="Parlez de vous, de votre passion pour le cinéma et la cuisine..."><%= author.pending_bio || author.bio || '' %></textarea>
@@ -750,7 +750,7 @@
     </script>
 
     <% if (isOwner) { %>
-    <!-- Popover "Personnaliser mon univers" — même pattern d'ouverture/fermeture
+    <!-- Popover "Personnaliser mon profil" — même pattern d'ouverture/fermeture
          que les dropdowns de filtres (voir initFilterDropdown plus haut). -->
     <script>
       (function () {
@@ -870,7 +870,7 @@
           if (!editor.hidden) {
             updateCounter();
             textarea.focus();
-            // Le bouton vit dans le popover "Personnaliser mon univers" —
+            // Le bouton vit dans le popover "Personnaliser mon profil" —
             // on le referme pour laisser place à l'éditeur dans le hero.
             if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
           }
@@ -928,7 +928,7 @@
           if (opening) {
             originalValue = slider.value;
             // Un seul panneau flottant ouvert à la fois — referme le popover
-            // "Personnaliser mon univers" d'où vient ce bouton.
+            // "Personnaliser mon profil" d'où vient ce bouton.
             if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
           }
         });

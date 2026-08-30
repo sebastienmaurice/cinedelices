@@ -1,0 +1,944 @@
+/**
+ * ======================================================
+ * COLLECTION.CSS — Ciné Délices · Ma Collection
+ * Phase 1 : structure uniquement. Réutilise .ctr-hero/.ctr-breadcrumb
+ * (contributions.css), .profile-tabs/.ptab/.tab-pane/.impact-banner/
+ * .filter-bar/.f-pill (user-profile.css). Ce fichier ne contient que ce
+ * qui n'existe nulle part ailleurs.
+ * ======================================================
+ */
+
+body.collection-page main.ctr-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* .impact-banner (user-profile.css) applique un max-width qui suppose
+   d'être un enfant direct de .ctr-main. Ici il est niché dans
+   .profile-content/.tab-pane, qui a déjà appliqué le même padding une
+   fois — sans ce correctif, la largeur est soustraite deux fois et le
+   texte des cellules est tronqué en mobile. Correctif isolé à cette
+   page (aucune autre page n'utilise .impact-banner dans un .tab-pane
+   avec cette structure). */
+body.collection-page .impact-banner {
+  max-width: 100%;
+}
+
+/* Bandeau de développement — préréglages mock (Phase 1 uniquement,
+   à retirer quand la donnée réelle remplacera collection-mock.js). */
+.coll-mock-notice {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(196, 160, 82, 0.08);
+  border: 1px dashed rgba(196, 160, 82, 0.35);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: rgba(232, 232, 232, 0.6);
+}
+.coll-mock-notice strong { color: var(--or-titre); }
+.coll-mock-notice a { color: var(--or-titre); text-decoration: underline; }
+.coll-mock-notice a:hover { color: var(--dore-clair); }
+
+/* Note de phase — même ton discret que .cp-card__future-badge (déjà
+   utilisé pour "À venir" sur CinéPass), en version texte simple. */
+.coll-phase-note {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.4);
+  font-style: italic;
+  padding: 4px 0 8px;
+}
+
+.coll-filters { margin-top: 4px; }
+
+/**
+ * ------------------------------------------------------------------
+ * PHASE 2 — Onglet Univers : grille des 19 cartes.
+ * Réutilise .cp-univers__grid/.cp-univers__card/.cp-univers__poster/
+ * .cp-univers__poster-grad/.cp-univers__poster-foot/.cp-univers__label/
+ * .cp-univers__reveal/.is-mastered TELLES QUELLES (cinepass.css) —
+ * ce bloc ne contient que ce qui n'existe nulle part ailleurs :
+ * le badge de statut, le badge "actif", la barre de progression et
+ * les compteurs compacts Fonds/Cadres.
+ * ------------------------------------------------------------------
+ */
+
+.coll-univers-grid { margin-top: 4px; }
+
+/* Fond de secours pour les 3 genres sans affiche dédiée
+   (familial, mystère, téléfilm) — dégradé utilisant l'accent de
+   l'Univers, jamais une image générique ou approximative. */
+.coll-poster-fallback {
+  position: absolute;
+  inset: 0;
+}
+
+/* Statut de progression — TOUJOURS en haut à gauche. Ne représente
+   jamais l'équipement (règle : jamais le même badge pour statut et
+   actif). Une seule valeur possible parmi les 4 (Game Design §6-7). */
+.coll-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.85);
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(232, 232, 232, 0.18);
+  backdrop-filter: blur(3px);
+}
+.coll-status--exploration {
+  border-color: rgba(122, 201, 160, 0.4);
+  color: var(--vert-clair, #7ac9a0);
+}
+.coll-status--specialisation {
+  border-color: rgba(224, 194, 58, 0.4);
+  color: #e0c23a;
+}
+.coll-status--maitrise {
+  color: #0a0e14;
+  background: linear-gradient(135deg, var(--dore-clair, #d4b25a), var(--or-titre, #c4a052));
+  border-color: transparent;
+  font-weight: 700;
+}
+.coll-status--non-explore {
+  color: rgba(232, 232, 232, 0.45);
+}
+
+/* Badge "actif" — TOUJOURS en haut à droite, jamais confondu avec le
+   statut : c'est un état d'équipement, pas une progression. Peut
+   coexister avec n'importe quel statut, y compris "Maîtrisé". */
+.coll-actif-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--or-titre, #c4a052);
+  background: rgba(10, 14, 20, 0.55);
+  border: 1px solid rgba(196, 160, 82, 0.55);
+  backdrop-filter: blur(3px);
+}
+.coll-actif-badge i { color: var(--or-titre, #c4a052); }
+
+.coll-progress-track {
+  margin-top: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(232, 232, 232, 0.15);
+  overflow: hidden;
+}
+.coll-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--or-titre, #c4a052), var(--dore-clair, #d4b25a));
+}
+.coll-pct-label {
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  color: rgba(232, 232, 232, 0.55);
+}
+
+.coll-rewards-compact {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  color: rgba(232, 232, 232, 0.6);
+}
+.coll-rewards-compact--full {
+  color: var(--or-titre, #c4a052);
+}
+
+.coll-reveal-line {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.85);
+}
+.coll-reveal-next {
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: rgba(232, 232, 232, 0.5);
+}
+.coll-reveal-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--or-titre, #c4a052);
+  text-decoration: none;
+}
+
+.coll-empty-filter {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(232, 232, 232, 0.45);
+  font-style: italic;
+  padding: 24px 0;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .coll-mock-notice { font-size: 0.68rem; }
+  .coll-status, .coll-actif-badge { font-size: 0.6rem; }
+  /* Mobile : 1 colonne pleine largeur (cf. spec Phase 2 §responsive) —
+     .cp-univers__grid par défaut est auto-fit/minmax(128px,1fr), ce qui
+     tient encore 2 colonnes à 390px. Scoped à Ma Collection uniquement,
+     ne touche pas la grille (différente) de /cinepass/. */
+  .coll-univers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/**
+ * ------------------------------------------------------------------
+ * PHASE 3 — Fiche détaillée d'un Univers (collection-univers.ejs).
+ * Réutilise .cp-card/.coll-status/.coll-progress-track/.coll-actif-badge
+ * tels quels. Seul composant réellement nouveau : la timeline de paliers
+ * (.coll-timeline) — tout le reste s'appuie sur le design system existant.
+ * ------------------------------------------------------------------
+ */
+
+/* Retour "← Ma Collection" — même vocabulaire que .ctr-hero__cinepass
+   (pilule outline dorée), en lien autonome hors du hero. */
+.uf-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(196, 160, 82, 0.1);
+  border: 1px solid rgba(196, 160, 82, 0.35);
+  color: var(--or-titre, #c4a052);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.uf-back:hover { background: rgba(196, 160, 82, 0.18); }
+
+/* ── Hero de l'Univers ────────────────────────────────────────────── */
+.uf-hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  min-height: 220px;
+  padding: 26px 30px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(196, 160, 82, 0.14);
+  background: var(--bleu-nuit, #0a1220);
+}
+.uf-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.uf-hero__media img,
+.uf-hero__media-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) brightness(0.6);
+}
+.uf-hero__media-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(6, 10, 18, 0.94) 20%, rgba(6, 10, 18, 0.55) 65%, rgba(6, 10, 18, 0.3) 100%);
+}
+.uf-hero__body {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+}
+.uf-hero__eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.55);
+  margin-bottom: 6px;
+}
+.uf-hero__title {
+  font-family: var(--font-h1);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--argent-ecran, #e8e8e8);
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.6);
+  margin-bottom: 14px;
+  line-height: 1;
+}
+.uf-hero__status {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.uf-hero__status-pill {
+  position: static; /* neutralise le positionnement absolu de .coll-status (pensé pour les cartes) */
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+}
+.uf-hero__pct {
+  font-family: var(--font-h1);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--or-titre, #c4a052);
+}
+.uf-hero__count {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: rgba(232, 232, 232, 0.7);
+}
+.uf-hero__track {
+  max-width: 340px;
+  margin-bottom: 12px;
+}
+.uf-hero__hint {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(232, 232, 232, 0.5);
+  max-width: 480px;
+  margin-bottom: 10px;
+}
+.uf-hero__actif {
+  position: static;
+  display: inline-flex;
+}
+
+/* ── Prochain objectif ────────────────────────────────────────────── */
+.uf-next__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-h1);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--argent-ecran, #e8e8e8);
+  margin-bottom: 4px;
+}
+.uf-next--done .uf-next__title { color: var(--or-titre, #c4a052); }
+.uf-next__sub {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: rgba(232, 232, 232, 0.55);
+}
+
+/* ── Sections génériques ──────────────────────────────────────────── */
+.uf-section__title {
+  font-family: var(--font-h1);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--argent-ecran, #e8e8e8);
+  margin-bottom: 16px;
+}
+
+/* ── Timeline de progression — seul composant réellement nouveau ───── */
+.coll-timeline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.coll-timeline__node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  padding-top: 2px;
+}
+/* Ligne de connexion entre les paliers */
+.coll-timeline__node:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: rgba(232, 232, 232, 0.15);
+  z-index: 0;
+}
+.coll-timeline__node--reached:not(:first-child)::before,
+.coll-timeline__node--next:not(:first-child)::before {
+  background: linear-gradient(90deg, var(--or-titre, #c4a052), rgba(196, 160, 82, 0.25));
+}
+.coll-timeline__dot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(232, 232, 232, 0.08);
+  border: 2px solid rgba(232, 232, 232, 0.2);
+  color: rgba(232, 232, 232, 0.35);
+  margin-bottom: 10px;
+}
+.coll-timeline__node--reached .coll-timeline__dot {
+  background: linear-gradient(135deg, var(--dore-clair, #d4b25a), var(--or-titre, #c4a052));
+  border-color: transparent;
+  color: #0a0e14;
+}
+.coll-timeline__node--next .coll-timeline__dot {
+  background: rgba(196, 160, 82, 0.12);
+  border-color: var(--or-titre, #c4a052);
+  border-style: dashed;
+  color: var(--or-titre, #c4a052);
+}
+.coll-timeline__seuil {
+  font-family: var(--font-h1);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(232, 232, 232, 0.5);
+  margin-bottom: 4px;
+}
+.coll-timeline__node--reached .coll-timeline__seuil,
+.coll-timeline__node--next .coll-timeline__seuil {
+  color: var(--argent-ecran, #e8e8e8);
+}
+.coll-timeline__reward {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: rgba(232, 232, 232, 0.45);
+  line-height: 1.4;
+}
+.coll-timeline__node--reached .coll-timeline__reward,
+.coll-timeline__node--next .coll-timeline__reward {
+  color: rgba(232, 232, 232, 0.75);
+}
+.coll-timeline__reward em {
+  display: block;
+  font-style: normal;
+  color: var(--or-titre, #c4a052);
+  font-weight: 600;
+}
+
+/* ── Fonds cinématographiques ─────────────────────────────────────── */
+.uf-fonds-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+.uf-fond-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 16px 12px 18px;
+  border-radius: 14px;
+  background: linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.12);
+}
+.uf-fond-card--verrouille { opacity: 0.6; }
+.uf-fond-card--prochain { border-color: rgba(196, 160, 82, 0.4); }
+.uf-fond-card__preview {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(232, 232, 232, 0.4);
+  margin-bottom: 4px;
+}
+.uf-fond-card--verrouille .uf-fond-card__preview { filter: grayscale(0.6); }
+.uf-fond-card__name {
+  font-family: var(--font-h1);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--argent-ecran, #e8e8e8);
+}
+.uf-fond-card__sub {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: rgba(232, 232, 232, 0.5);
+  margin-bottom: 6px;
+}
+.uf-fond-card__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+.uf-state--obtenu { color: var(--vert-clair, #7ac9a0); }
+.uf-state--verrouille { color: rgba(232, 232, 232, 0.4); }
+
+.uf-equip-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--or-titre, #c4a052);
+  background: transparent;
+  color: var(--or-titre, #c4a052);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.uf-equip-btn:hover:not(:disabled) { background: rgba(196, 160, 82, 0.14); }
+.uf-equip-btn:disabled {
+  background: var(--or-titre, #c4a052);
+  color: #0a0e14;
+  border-color: transparent;
+  cursor: default;
+  letter-spacing: 0.04em;
+}
+
+/* ── Cadres d'Univers — section volontairement distincte des Fonds ─── */
+.uf-cadres-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 20px;
+}
+.uf-cadre-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 22px 18px 24px;
+  border-radius: 16px;
+  background: linear-gradient(165deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.18);
+}
+.uf-cadre-card--verrouille { opacity: 0.6; }
+/* Cadre II (Maître) — légèrement plus prestigieux, sans sombrer dans le
+   gaming excessif (pas de glow permanent, juste un liseré plus affirmé). */
+.uf-cadre-card--prestige.uf-cadre-card--obtenu {
+  border-color: rgba(196, 160, 82, 0.5);
+  box-shadow: 0 0 0 1px rgba(196, 160, 82, 0.15);
+}
+.uf-cadre-card__preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(232, 232, 232, 0.5);
+  margin-bottom: 6px;
+}
+.uf-cadre-card--verrouille .uf-cadre-card__preview { filter: grayscale(0.6); }
+.uf-cadre-card__name {
+  font-family: var(--font-h1);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--argent-ecran, #e8e8e8);
+}
+.uf-cadre-card__sub {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: rgba(232, 232, 232, 0.55);
+  margin-bottom: 6px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .uf-fonds-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .uf-hero { flex-direction: column; align-items: flex-start; min-height: 0; }
+  .uf-hero__title { font-size: 1.8rem; }
+  .uf-hero__track { max-width: 100%; }
+
+  .uf-fonds-grid { grid-template-columns: repeat(2, 1fr); }
+  .uf-cadres-grid { grid-template-columns: 1fr; }
+
+  /* La timeline horizontale devient verticale (spec §19) */
+  .coll-timeline {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .coll-timeline__node {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 14px;
+    padding: 6px 0;
+  }
+  .coll-timeline__node:not(:first-child)::before {
+    top: 0;
+    left: 14px;
+    right: auto;
+    width: 2px;
+    height: 100%;
+  }
+  .coll-timeline__dot { margin-bottom: 0; flex-shrink: 0; }
+  .coll-timeline__seuil { margin-bottom: 0; width: 22px; flex-shrink: 0; }
+  .coll-timeline__reward { text-align: left; }
+}
+
+@media (max-width: 560px) {
+  .uf-back { font-size: 0.72rem; padding: 7px 14px; }
+}
+
+/**
+ * ------------------------------------------------------------------
+ * PHASE 4 — Onglet Fonds : vue globale des 75 Fonds, regroupée par
+ * Univers (Option C — audit Phase 4). Réutilise .cp-card (groupe),
+ * .coll-status, .cp-univers__dots, .cp-link-btn, .filter-bar/.f-pill
+ * tels quels. Seul élément nouveau : la puce Fond compacte (.fnd-chip),
+ * volontairement distincte de .uf-fond-card (Phase 3) qui est pensée
+ * pour une carte pleine taille, pas pour 95 répétitions à l'échelle.
+ * ------------------------------------------------------------------
+ */
+
+.fnd-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fnd-group__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.fnd-group__id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fnd-group__label {
+  font-family: var(--font-h1);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--argent-ecran, #e8e8e8);
+}
+/* .coll-status est pensé en position:absolute pour les cartes Univers —
+   ici il vit dans un flux normal, à côté du label. */
+.fnd-group__status {
+  position: static;
+}
+.fnd-group__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fnd-group__count {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.6);
+}
+
+.fnd-group__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* Puce Fond compacte — reprend le vocabulaire d'état de la fiche Univers
+   (obtenu/prochain/verrouillé/actif) mais en format réduit, pensé pour
+   être répété jusqu'à 95 fois sans peser visuellement ni techniquement. */
+.fnd-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.15);
+  flex-shrink: 0;
+}
+.fnd-chip__roman {
+  font-family: var(--font-h1);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: rgba(232, 232, 232, 0.45);
+}
+.fnd-chip__icon { color: rgba(232, 232, 232, 0.35); }
+/* .fnd-chip fixe son propre `display: flex`, qui l'emporterait sinon sur
+   la règle UA `[hidden]{display:none}` (même spécificité, feuille auteur
+   prioritaire) — sans ce correctif le filtre masque bien l'élément en
+   JS (hidden=true) mais rien ne disparaît visuellement. */
+.fnd-chip[hidden] { display: none; }
+
+.fnd-chip--obtenu { border-color: rgba(122, 201, 160, 0.35); }
+.fnd-chip--obtenu .fnd-chip__roman { color: var(--vert-clair, #7ac9a0); }
+.fnd-chip--obtenu .fnd-chip__icon { color: var(--vert-clair, #7ac9a0); }
+
+.fnd-chip--verrouille { opacity: 0.55; }
+
+/* "Prochain" ne s'applique qu'à un Fond encore verrouillé — distinction
+   légère (bordure pointillée dorée), jamais confondue avec "obtenu"
+   (couleur différente : or vs vert). */
+.fnd-chip--verrouille.fnd-chip--prochain {
+  opacity: 0.85;
+  border-color: var(--or-titre, #c4a052);
+  border-style: dashed;
+}
+.fnd-chip--verrouille.fnd-chip--prochain .fnd-chip__roman { color: var(--or-titre, #c4a052); }
+
+/* "Actif" (fond équipé) — bordure pleine dorée + étiquette, jamais le
+   même traitement que "obtenu" (règle déjà appliquée en Phase 2/3 :
+   statut de progression ≠ état d'équipement). */
+.fnd-chip--actif {
+  border: 2px solid var(--or-titre, #c4a052);
+  box-shadow: 0 0 0 1px rgba(196, 160, 82, 0.15);
+}
+.fnd-chip__actif-tag {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: var(--or-titre, #c4a052);
+  color: #0a0e14;
+  font-family: var(--font-body);
+  font-size: 0.52rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .fnd-group__head { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 560px) {
+  .fnd-chip { width: 40px; height: 40px; }
+  .fnd-chip__roman { font-size: 0.7rem; }
+}
+
+/**
+ * ------------------------------------------------------------------
+ * PHASE 5 — Onglet Cadres : vue globale des 30 Cadres d'Univers, même
+ * architecture que l'onglet Fonds (Phase 4) — .fnd-group__head/__id/
+ * __meta/__chips sont réutilisés tels quels pour la structure de groupe.
+ * Seule nouveauté : .cdr-chip, volontairement CIRCULAIRE (contre le
+ * .fnd-chip carré) pour ne jamais mélanger visuellement Fonds et Cadres,
+ * même règle que sur la fiche Univers (Phase 3).
+ * ------------------------------------------------------------------
+ */
+
+.cdr-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cdr-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--surface-card, #0f1e30) 0%, rgba(13, 27, 42, 0.9) 100%);
+  border: 1px solid rgba(196, 160, 82, 0.18);
+  flex-shrink: 0;
+}
+.cdr-chip__roman {
+  font-family: var(--font-h1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(232, 232, 232, 0.45);
+}
+.cdr-chip__icon { color: rgba(232, 232, 232, 0.35); }
+.cdr-chip[hidden] { display: none; }
+
+.cdr-chip--obtenu { border-color: rgba(122, 201, 160, 0.4); }
+.cdr-chip--obtenu .cdr-chip__roman { color: var(--vert-clair, #7ac9a0); }
+.cdr-chip--obtenu .cdr-chip__icon { color: var(--vert-clair, #7ac9a0); }
+
+.cdr-chip--verrouille { opacity: 0.55; }
+
+/* "Actif" (cadre équipé) — même règle qu'ailleurs : jamais le même
+   traitement que "obtenu" seul seul (bordure pleine + étiquette dédiée). */
+.cdr-chip--actif {
+  border: 2px solid var(--or-titre, #c4a052);
+  box-shadow: 0 0 0 1px rgba(196, 160, 82, 0.18);
+}
+.cdr-chip__actif-tag {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: var(--or-titre, #c4a052);
+  color: #0a0e14;
+  font-family: var(--font-body);
+  font-size: 0.52rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .cdr-chip { width: 44px; height: 44px; }
+  .cdr-chip__roman { font-size: 0.74rem; }
+}
+
+/**
+ * ------------------------------------------------------------------
+ * PHASE 6 — Onglet Trophées : grille UNIQUE des 18 trophées (pas de
+ * groupes par catégorie — voir audit Phase 6, une collection de 18
+ * éléments fixes reste scannable sans sur-structurer). Réutilise
+ * .filter-bar/.f-pill, .uf-state--obtenu/--verrouille (Phase 3) et le
+ * vocabulaire visuel obtenu/verrouillé déjà établi. Le visuel réel du
+ * trophée (pas une icône générique) reste visible même verrouillé,
+ * simplement désaturé — jamais mystérieux, même règle que les Fonds.
+ * ------------------------------------------------------------------
+ */
+
+.trp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 22px 16px;
+  margin-top: 4px;
+}
+
+.trp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.trp-card[hidden] { display: none; }
+.trp-card:hover { transform: translateY(-4px); }
+
+.trp-card__medal {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trp-card__medal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+  transition: filter 0.3s, transform 0.3s;
+}
+.trp-card:hover .trp-card__medal img { transform: scale(1.05); }
+
+/* Obtenu — visuel plein, léger halo doré neutre (pas de couleur de
+   palier : un seul traitement "obtenu", quel que soit le trophée). */
+.trp-card--obtenu .trp-card__medal img {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 14px rgba(196, 160, 82, 0.35));
+}
+
+/* Verrouillé — le VRAI visuel du trophée, désaturé/assombri (jamais
+   l'image générique) : l'utilisateur sait toujours ce qu'il vise. */
+.trp-card--verrouille .trp-card__medal img {
+  filter: grayscale(0.85) brightness(0.45);
+}
+
+.trp-card__label {
+  font-family: var(--font-h1);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--argent-ecran, #e8e8e8);
+  line-height: 1.25;
+}
+.trp-card--verrouille .trp-card__label { color: rgba(232, 232, 232, 0.45); }
+
+/* Catégorie — Phase 7 : simple métadonnée discrète, jamais une nouvelle
+   section/pill visuelle (règle explicite du Game Design). Un seul mot,
+   plus petit et plus sobre que le nom du trophée. */
+.trp-card__category {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(196, 160, 82, 0.55);
+}
+
+/* Condition — toujours concise, jamais la seule info dépendant du survol.
+   "Condition secrète" (Ticket d'Or verrouillé) prend le même style,
+   volontairement neutre — ni alarmant ni décoratif. */
+.trp-card__condition {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  color: rgba(232, 232, 232, 0.55);
+  line-height: 1.3;
+}
+.trp-card--verrouille .trp-card__condition { color: rgba(232, 232, 232, 0.4); }
+
+.trp-card__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .trp-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 20px 14px; }
+  .trp-card__medal { width: 110px; height: 110px; }
+}
+@media (max-width: 560px) {
+  .trp-grid { grid-template-columns: repeat(3, 1fr); gap: 18px 10px; }
+  .trp-card__medal { width: 88px; height: 88px; }
+  .trp-card__label { font-size: 0.72rem; }
+  .trp-card__category { font-size: 0.56rem; }
+  .trp-card__condition { font-size: 0.6rem; }
+}

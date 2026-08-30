@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Ciné Délices — Ma Collection : Univers cinématographiques, Fonds, Cadres et Trophées" />
+    <title>Ma Collection - Ciné Délices</title>
+    <%- include("partials/head-resources") %>
+    <!-- Onglets (.profile-tabs/.ptab/.tab-pane) + bandeau impact réutilisés
+         tels quels depuis Mon compte — Phase 1, Ma Collection. -->
+    <link rel="stylesheet" href="/css/user-profile.css?v=60" />
+    <!-- Hero + filtres réutilisés tels quels depuis Mes contributions. -->
+    <link rel="stylesheet" href="/css/contributions.css?v=5" />
+    <!-- Grille/carte Univers (.cp-univers__grid/.cp-univers__card) réutilisée
+         telle quelle depuis CinéPass — Phase 2, Ma Collection. Ce fichier
+         n'est pas modifié : aucune régression possible sur /cinepass/. -->
+    <link rel="stylesheet" href="/css/cinepass.css?v=63" />
+    <link rel="stylesheet" href="/css/collection.css?v=12" />
+  </head>
+
+  <body class="ctr-page collection-page">
+    <%- include("partials/header") %>
+
+    <main class="ctr-main" data-user-id="<%= user.id %>">
+      <h1 class="sr-only">Ma Collection — Ciné Délices</h1>
+
+      <nav class="ctr-breadcrumb" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <a href="/cinepass/">CinéPass</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <span>Ma Collection</span>
+      </nav>
+
+      <!-- Phase 1 (Ma Collection) : "Mes Univers" n'est plus une destination
+           séparée — c'est l'onglet "Univers" de cette page (décision
+           verrouillée). Le hero réutilise .ctr-hero tel quel. -->
+      <div class="ctr-hero">
+        <div>
+          <p class="ctr-hero__eyebrow"><i data-lucide="clapperboard" width="12" height="12" aria-hidden="true"></i> Ciné Délices</p>
+          <h2 class="ctr-hero__title">Ma <em>Collection</em></h2>
+          <p class="ctr-hero__sub">Explorez les univers du cinéma et développez votre collection.</p>
+        </div>
+        <div class="ctr-hero__actions">
+          <a href="/cinepass/" class="ctr-hero__cinepass">
+            <i data-lucide="ticket" width="14" height="14" aria-hidden="true"></i> Voir mon CinéPass
+          </a>
+        </div>
+      </div>
+
+      <!-- Phase 10 : la progression Univers est réelle par défaut — cette
+           bannière ne s'affiche plus que si ?mock=<preset> est utilisé
+           (dev/QA), comme annoncé dès sa création ("disparaîtra quand la
+           couche de données réelle remplacera le mock"). -->
+      <% if (isMockMode) { %>
+      <p class="coll-mock-notice">
+        <i data-lucide="flask-conical" width="13" height="13" aria-hidden="true"></i>
+        Aperçu en données de test — préréglage actif : <strong><%= mockPreset %></strong>
+        (<a href="?mock=default">default</a> · <a href="?mock=specialiste">spécialiste</a> · <a href="?mock=explorateur">explorateur</a>)
+      </p>
+      <% } %>
+
+      <!-- ══════════════════════════════════════════
+           ONGLETS — même pattern que Mon compte (.profile-tabs/.ptab)
+      ══════════════════════════════════════════ -->
+      <div class="profile-tabs-wrap">
+        <nav class="profile-tabs" role="tablist" aria-label="Navigation de Ma Collection">
+          <button class="ptab active" data-tab="univers" role="tab" aria-selected="true">
+            <i data-lucide="globe" aria-hidden="true"></i>
+            <span class="ptab-text">Univers</span>
+          </button>
+          <button class="ptab" data-tab="fonds" role="tab" aria-selected="false">
+            <i data-lucide="image" aria-hidden="true"></i>
+            <span class="ptab-text">Fonds</span>
+          </button>
+          <button class="ptab" data-tab="cadres" role="tab" aria-selected="false">
+            <i data-lucide="layout-grid" aria-hidden="true"></i>
+            <span class="ptab-text">Cadres</span>
+          </button>
+          <button class="ptab" data-tab="trophees" role="tab" aria-selected="false">
+            <i data-lucide="trophy" aria-hidden="true"></i>
+            <span class="ptab-text">Trophées</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="profile-content">
+
+        <!-- ─────────────────────────────────── -->
+        <!-- ONGLET : UNIVERS                     -->
+        <!-- ─────────────────────────────────── -->
+        <div class="tab-pane active" id="univers" role="tabpanel">
+
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--recipe"><i data-lucide="globe" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.explores %>/<%= collection.summary.total %></div>
+                <div class="impact-cell__lbl">Univers explorés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--valide"><i data-lucide="crown" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.maitrises %>/<%= collection.summary.total %></div>
+                <div class="impact-cell__lbl">Univers maîtrisés</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film"><i data-lucide="image" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.fondsObtenus %>/<%= collection.summary.fondsTotal %></div>
+                <div class="impact-cell__lbl">Fonds débloqués</div>
+              </div>
+            </div>
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--avis"><i data-lucide="layout-grid" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.cadresObtenus %>/<%= collection.summary.cadresTotal %></div>
+                <div class="impact-cell__lbl">Cadres débloqués</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtres — 4 exactement, verrouillés par le Game Design.
+               Réutilise .filter-bar/.f-pill (user-profile.css). Câblage
+               réel dans collection.js (filtrage pur front, sans rechargement). -->
+          <div class="filter-bar coll-filters" id="collUniversFilters" role="tablist" aria-label="Filtrer les Univers">
+            <button class="f-pill active" data-coll-filter="all" aria-pressed="true"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Tous</button>
+            <button class="f-pill" data-coll-filter="en-cours" aria-pressed="false"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>En progression</button>
+            <button class="f-pill" data-coll-filter="maitrise" aria-pressed="false"><span class="f-pill__dot" style="background:var(--dore-clair)"></span>Maîtrisés</button>
+            <button class="f-pill" data-coll-filter="non-explore" aria-pressed="false"><span class="f-pill__dot" style="background:rgba(232,232,232,.3)"></span>Jamais explorés</button>
+          </div>
+
+          <!-- Grille des 15 Univers — réutilise .cp-univers__grid/.cp-univers__card
+               (cinepass.css) telles quelles, aucune nouvelle mécanique de
+               carte créée (Phase 2, règle §5/§11). -->
+          <div class="cp-univers__grid coll-univers-grid" id="collUniversGrid">
+            <% collection.universList.forEach(function (u) { %>
+            <div class="cp-univers__card<%= u.status === 'maitrise' ? ' is-mastered' : '' %>"
+              data-filter-status="<%= u.status %>"
+              data-univers-code="<%= u.code %>"
+              data-href="/collection/univers/<%= encodeURIComponent(u.code) %><%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>"
+            >
+              <div class="cp-univers__poster" style="--cp-univers-accent:<%= u.accent %>" role="group" aria-label="Univers <%= u.label %>, <%= u.statusLabel %><%= u.actif ? ', actif' : '' %>">
+                <% if (u.img) { %>
+                <img src="<%= u.img %>" alt="" loading="lazy" />
+                <% } else { %>
+                <div class="coll-poster-fallback" style="background:linear-gradient(160deg, <%= u.accent %>3d, #0a1220 85%)"></div>
+                <% } %>
+                <div class="cp-univers__poster-grad"></div>
+                <div class="cp-univers__poster-sheen" aria-hidden="true"></div>
+
+                <!-- Statut — un seul badge principal, jamais confondu avec "Actif" (règle §8) -->
+                <span class="coll-status coll-status--<%= u.status %>"><%= u.statusLabel %></span>
+
+                <% if (u.actif) { %>
+                <span class="coll-actif-badge" title="Univers actif sur votre profil">
+                  <i data-lucide="star" width="10" height="10" aria-hidden="true"></i> Actif
+                </span>
+                <% } %>
+
+                <div class="cp-univers__poster-foot">
+                  <p class="cp-univers__label"><%= u.label %></p>
+
+                  <% if (u.status === 'exploration' || u.status === 'specialisation') { %>
+                  <div class="coll-progress-track" role="progressbar" aria-valuenow="<%= u.pct %>" aria-valuemin="0" aria-valuemax="100" aria-label="Progression <%= u.label %>">
+                    <div class="coll-progress-fill" style="width:<%= u.pct %>%"></div>
+                  </div>
+                  <p class="coll-pct-label"><%= u.pct %>%</p>
+                  <div class="coll-rewards-compact">
+                    <span>▣ <%= u.fondsUnlockedCount %>/5 Fonds</span>
+                    <span>▣ <%= u.cadresUnlockedCount %>/2 Cadres</span>
+                  </div>
+                  <% } else if (u.status === 'maitrise') { %>
+                  <div class="coll-rewards-compact coll-rewards-compact--full">
+                    <span>▣ 5/5 Fonds</span>
+                    <span>▣ 2/2 Cadres</span>
+                  </div>
+                  <% } %>
+                </div>
+
+                <!-- Détail au survol — information supplémentaire, jamais
+                     la seule source des données essentielles (règle §14). -->
+                <div class="cp-univers__reveal">
+                  <% if (u.status === 'non-explore') { %>
+                  <p class="coll-reveal-line">Aucune contribution pour l'instant</p>
+                  <% } else if (u.status === 'maitrise') { %>
+                  <p class="coll-reveal-line">Univers maîtrisé<% if (u.hasExtra) { %> · <%= u.contributions %> contributions au total<% } %></p>
+                  <% } else { %>
+                  <p class="coll-reveal-line"><%= u.contributions %> / 10 contributions</p>
+                  <% if (u.nextObjectif) { %>
+                  <p class="coll-reveal-next">Prochain palier dans <%= u.nextObjectif.restant %> contribution<%= u.nextObjectif.restant > 1 ? 's' : '' %></p>
+                  <% } %>
+                  <% } %>
+                  <a class="coll-reveal-cta" href="/collection/univers/<%= encodeURIComponent(u.code) %><%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>">Voir l'Univers <i data-lucide="arrow-right" width="11" height="11" aria-hidden="true"></i></a>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+
+          <p class="coll-empty-filter" id="collEmptyFilter" hidden>Aucun Univers ne correspond à ce filtre pour l'instant.</p>
+        </div>
+
+        <!-- ─────────────────────────────────── -->
+        <!-- ONGLET : FONDS                       -->
+        <!-- Phase 4 — vue globale des 75 Fonds, TOUJOURS regroupée par
+             Univers (jamais une grille plate). Option C retenue (audit
+             Phase 4) : cartes de groupe compactes + puces Fonds + lien
+             vers la fiche détaillée. Aucun bouton "Utiliser" ici — l'action
+             d'équipement reste unique, sur la fiche Univers. -->
+        <div class="tab-pane" id="fonds" role="tabpanel">
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--film"><i data-lucide="image" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.fondsObtenus %>/<%= collection.summary.fondsTotal %></div>
+                <div class="impact-cell__lbl">Fonds débloqués (5 par Univers)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-bar coll-filters" id="fondsFilters" role="tablist" aria-label="Filtrer les Fonds">
+            <button class="f-pill active" data-fonds-filter="all" aria-pressed="true"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Tous</button>
+            <button class="f-pill" data-fonds-filter="obtenus" aria-pressed="false"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Obtenus</button>
+            <button class="f-pill" data-fonds-filter="verrouilles" aria-pressed="false"><span class="f-pill__dot" style="background:rgba(232,232,232,.3)"></span>À débloquer</button>
+          </div>
+
+          <div class="fnd-groups" id="fondsGroups">
+            <% collection.universList.forEach(function (u) {
+              const nextFondIndex = (u.fonds.find((f) => !f.unlocked) || {}).index;
+              const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+            %>
+            <div class="cp-card fnd-group" data-univers-code="<%= u.code %>">
+              <div class="fnd-group__head">
+                <div class="fnd-group__id">
+                  <span class="fnd-group__label"><%= u.label %></span>
+                  <span class="coll-status coll-status--<%= u.status %> fnd-group__status"><%= u.statusLabel %></span>
+                </div>
+                <div class="fnd-group__meta">
+                  <span class="fnd-group__count"><%= u.fondsUnlockedCount %>/5 Fonds</span>
+                  <div class="cp-univers__dots" aria-hidden="true" style="--cp-univers-accent:<%= u.accent %>">
+                    <% u.fonds.forEach(function (f) { %>
+                    <span class="cp-univers__dot<%= f.unlocked ? ' is-on' : '' %>"></span>
+                    <% }); %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fnd-group__chips">
+                <% u.fonds.forEach(function (f, i) {
+                  const isNext = !f.unlocked && f.index === nextFondIndex;
+                  const isActif = u.fondEquipeIndex === f.index;
+                  const chipStatus = f.unlocked ? 'obtenu' : 'verrouille';
+                %>
+                <div class="fnd-chip fnd-chip--<%= chipStatus %><%= isNext ? ' fnd-chip--prochain' : '' %><%= isActif ? ' fnd-chip--actif' : '' %>" data-fonds-status="<%= chipStatus %>">
+                  <span class="fnd-chip__roman"><%= ROMAN[i] %></span>
+                  <i class="fnd-chip__icon" data-lucide="<%= f.unlocked ? 'check' : 'lock' %>" width="11" height="11" aria-hidden="true"></i>
+                  <% if (isActif) { %><span class="fnd-chip__actif-tag">Actif</span><% } %>
+                  <span class="sr-only">
+                    Fond <%= ROMAN[i] %> — <%= f.nom %> —
+                    <%= f.unlocked ? ('obtenu' + (isActif ? ', actif' : '')) : `verrouillé, débloqué à ${f.seuil} contribution${f.seuil > 1 ? 's' : ''}` %>
+                  </span>
+                </div>
+                <% }); %>
+              </div>
+
+              <a class="cp-link-btn" href="/collection/univers/<%= encodeURIComponent(u.code) %><%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>">
+                → Voir l'Univers
+              </a>
+            </div>
+            <% }); %>
+          </div>
+
+          <p class="coll-empty-filter" id="fondsEmptyFilter" hidden>Aucun Fonds ne correspond à ce filtre pour l'instant.</p>
+        </div>
+
+        <!-- ─────────────────────────────────── -->
+        <!-- ONGLET : CADRES                      -->
+        <!-- Phase 5 — vue globale des 30 Cadres d'Univers, même architecture
+             que l'onglet Fonds (Option C, Phase 4) : groupée par Univers,
+             jamais une grille plate. Puces CIRCULAIRES (vs carrées pour les
+             Fonds) pour ne jamais mélanger visuellement les deux familles,
+             même règle qu'en Phase 3 sur la fiche Univers. Pas de bouton
+             "Équiper" ici (même choix qu'en Phase 4 pour "Utiliser ce
+             Fond") : l'action reste unique, sur la fiche Univers.
+             ⚠️ Ces Cadres d'Univers sont un système MOCK indépendant du
+             vrai système de cadre de profil (frames-collection.ejs /
+             POST /auth/equip-frame, lié au niveau XP réel) — seul le
+             vocabulaire visuel obtenu/verrouillé est repris, aucun appel
+             au vrai endpoint n'a de sens ici (mécaniques différentes). -->
+        <div class="tab-pane" id="cadres" role="tabpanel">
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--avis"><i data-lucide="layout-grid" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= collection.summary.cadresObtenus %>/<%= collection.summary.cadresTotal %></div>
+                <div class="impact-cell__lbl">Cadres débloqués (2 par Univers)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-bar coll-filters" id="cadresFilters" role="tablist" aria-label="Filtrer les Cadres">
+            <button class="f-pill active" data-cadres-filter="all" aria-pressed="true"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Tous</button>
+            <button class="f-pill" data-cadres-filter="obtenus" aria-pressed="false"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Obtenus</button>
+            <button class="f-pill" data-cadres-filter="verrouilles" aria-pressed="false"><span class="f-pill__dot" style="background:rgba(232,232,232,.3)"></span>À débloquer</button>
+          </div>
+
+          <div class="cdr-groups" id="cadresGroups">
+            <% collection.universList.forEach(function (u) {
+              const CADRE_LABELS = ['I', 'II'];
+            %>
+            <div class="cp-card cdr-group" data-univers-code="<%= u.code %>">
+              <div class="fnd-group__head">
+                <div class="fnd-group__id">
+                  <span class="fnd-group__label"><%= u.label %></span>
+                  <span class="coll-status coll-status--<%= u.status %> fnd-group__status"><%= u.statusLabel %></span>
+                </div>
+                <div class="fnd-group__meta">
+                  <span class="fnd-group__count"><%= u.cadresUnlockedCount %>/2 Cadres</span>
+                  <div class="cp-univers__dots" aria-hidden="true" style="--cp-univers-accent:<%= u.accent %>">
+                    <% u.cadres.forEach(function (c) { %>
+                    <span class="cp-univers__dot<%= c.unlocked ? ' is-on' : '' %>"></span>
+                    <% }); %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fnd-group__chips">
+                <% u.cadres.forEach(function (c) {
+                  const isActif = u.cadreEquipeIndex === c.index;
+                  const chipStatus = c.unlocked ? 'obtenu' : 'verrouille';
+                %>
+                <div class="cdr-chip cdr-chip--<%= chipStatus %><%= isActif ? ' cdr-chip--actif' : '' %>" data-cadres-status="<%= chipStatus %>">
+                  <span class="cdr-chip__roman"><%= CADRE_LABELS[c.index - 1] %></span>
+                  <i class="cdr-chip__icon" data-lucide="<%= c.unlocked ? 'check' : 'lock' %>" width="12" height="12" aria-hidden="true"></i>
+                  <% if (isActif) { %><span class="cdr-chip__actif-tag">Actif</span><% } %>
+                  <span class="sr-only">
+                    Cadre <%= CADRE_LABELS[c.index - 1] %> — <%= c.nom %> —
+                    <%= c.unlocked ? ('obtenu' + (isActif ? ', actif' : '')) : `verrouillé, débloqué à ${c.seuil} contributions` %>
+                  </span>
+                </div>
+                <% }); %>
+              </div>
+
+              <a class="cp-link-btn" href="/collection/univers/<%= encodeURIComponent(u.code) %><%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>">
+                → Voir l'Univers
+              </a>
+            </div>
+            <% }); %>
+          </div>
+
+          <p class="coll-empty-filter" id="cadresEmptyFilter" hidden>Aucun Cadre ne correspond à ce filtre pour l'instant.</p>
+        </div>
+
+        <!-- ─────────────────────────────────── -->
+        <!-- ONGLET : TROPHÉES                    -->
+        <!-- Phase 6/7/9 — grille UNIQUE des 18 trophées (pas de regroupement
+             en sections, pas de fiche individuelle, pas de modal, pas de
+             bouton d'action). Référentiel : MOCK_BADGES (cinepass-mock.js),
+             aucune duplication. `category` reste une métadonnée discrète
+             (pas de nouvelle section visuelle, pas de filtre par catégorie —
+             Game Design Phase 7). Ticket d'Or (`secret:true`) n'affiche sa
+             condition que si obtenu — jamais avant.
+             Phase 9 : `t.unlocked` est désormais réel pour 9 trophées
+             (Groupe A — fusionné par collection.controller.js depuis
+             UserTrophy), toujours mock pour les 9 autres. La vue ne fait
+             aucune distinction entre les deux — elle consomme `unlocked`
+             tel quel, peu importe sa provenance. -->
+        <div class="tab-pane" id="trophees" role="tabpanel">
+          <div class="impact-banner">
+            <div class="impact-cell">
+              <div class="impact-cell__icon ic--valide"><i data-lucide="trophy" aria-hidden="true"></i></div>
+              <div class="impact-cell__body">
+                <div class="impact-cell__val"><%= trophies.filter(function (t) { return t.unlocked; }).length %>/<%= trophies.length %></div>
+                <div class="impact-cell__lbl">Trophées débloqués</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-bar coll-filters" id="trpFilters" role="tablist" aria-label="Filtrer les Trophées">
+            <button class="f-pill active" data-trp-filter="all" aria-pressed="true"><span class="f-pill__dot" style="background:var(--or-titre)"></span>Tous</button>
+            <button class="f-pill" data-trp-filter="obtenus" aria-pressed="false"><span class="f-pill__dot" style="background:var(--vert-clair)"></span>Obtenus</button>
+            <button class="f-pill" data-trp-filter="verrouilles" aria-pressed="false"><span class="f-pill__dot" style="background:rgba(232,232,232,.3)"></span>À débloquer</button>
+          </div>
+
+          <div class="trp-grid" id="trpGrid">
+            <% trophies.forEach(function (t) {
+              // Ticket d'Or verrouillé : ne jamais révéler la vraie condition
+              // (ni dans le texte visible, ni dans le sr-only).
+              const revealCondition = !t.secret || t.unlocked;
+              const conditionText = revealCondition ? t.condition : 'Condition secrète';
+            %>
+            <div class="trp-card<%= t.unlocked ? ' trp-card--obtenu' : ' trp-card--verrouille' %>" data-trp-status="<%= t.unlocked ? 'obtenu' : 'verrouille' %>">
+              <div class="trp-card__medal">
+                <img src="<%= t.image %>" alt="Trophée <%= t.label %>" loading="lazy" />
+              </div>
+              <p class="trp-card__label"><%= t.label %></p>
+              <p class="trp-card__category"><%= t.category %></p>
+              <p class="trp-card__condition"><%= conditionText %></p>
+              <p class="trp-card__state <%= t.unlocked ? 'uf-state--obtenu' : 'uf-state--verrouille' %>">
+                <i data-lucide="<%= t.unlocked ? 'check' : 'lock' %>" width="11" height="11" aria-hidden="true"></i>
+                <%= t.unlocked ? 'Obtenu' : 'Verrouillé' %>
+              </p>
+              <span class="sr-only">Trophée <%= t.label %>, catégorie <%= t.category %> — <%= t.unlocked ? 'obtenu' : 'verrouillé' %> — <%= conditionText %></span>
+            </div>
+            <% }); %>
+          </div>
+
+          <p class="coll-empty-filter" id="trpEmptyFilter" hidden>Aucun trophée ne correspond à ce filtre pour l'instant.</p>
+        </div>
+
+      </div><!-- /profile-content -->
+
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script src="/js/profile-tabs.js?v=3" defer></script>
+    <script src="/js/collection.js?v=5" defer></script>
+  </body>
+</html>

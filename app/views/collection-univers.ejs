@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Ciné Délices — Univers <%= univers.label %> : progression, Fonds et Cadres." />
+    <title><%= univers.label %> — Ma Collection · Ciné Délices</title>
+    <%- include("partials/head-resources") %>
+    <!-- Hero/breadcrumb (.ctr-*) réutilisés depuis Mes contributions. -->
+    <link rel="stylesheet" href="/css/contributions.css?v=5" />
+    <!-- .cp-card / tokens couleurs réutilisés depuis CinéPass. -->
+    <link rel="stylesheet" href="/css/cinepass.css?v=63" />
+    <link rel="stylesheet" href="/css/collection.css?v=12" />
+  </head>
+
+  <body class="ctr-page collection-page collection-univers-page">
+    <%- include("partials/header") %>
+
+    <%
+      const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+      const isMaitrise = univers.status === 'maitrise';
+      const isNonExplore = univers.status === 'non-explore';
+      // Le premier Fond/Cadre non débloqué == le "prochain" pour la timeline
+      // et les cartes Fonds/Cadres (un seul "prochain" à la fois).
+      const nextFondIndex  = isMaitrise ? null : (univers.fonds.find(f => !f.unlocked)  || {}).index;
+      const nextCadreIndex = isMaitrise ? null : (univers.cadres.find(c => !c.unlocked) || {}).index;
+    %>
+
+    <main class="ctr-main" data-user-id="<%= user.id %>">
+      <h1 class="sr-only"><%= univers.label %> — Ma Collection — Ciné Délices</h1>
+
+      <nav class="ctr-breadcrumb" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <a href="/cinepass/">CinéPass</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <a href="/collection/<%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>#univers">Ma Collection</a>
+        <i data-lucide="chevron-right" width="12" height="12" aria-hidden="true"></i>
+        <span><%= univers.label %></span>
+      </nav>
+
+      <a class="uf-back" href="/collection/<%= mockPreset !== 'default' ? '?mock=' + mockPreset : '' %>#univers">
+        <i data-lucide="arrow-left" width="14" height="14" aria-hidden="true"></i> Ma Collection
+      </a>
+
+      <!-- Phase 10 : progression réelle par défaut — bannière visible
+           uniquement en mode ?mock=<preset> (dev/QA). -->
+      <% if (isMockMode) { %>
+      <p class="coll-mock-notice">
+        <i data-lucide="flask-conical" width="13" height="13" aria-hidden="true"></i>
+        Aperçu en données de test — préréglage actif : <strong><%= mockPreset %></strong>
+        (<a href="?mock=default">default</a> · <a href="?mock=specialiste">spécialiste</a> · <a href="?mock=explorateur">explorateur</a>)
+      </p>
+      <% } %>
+
+      <!-- ══════════════════════════════════════════
+           HERO DE L'UNIVERS
+      ══════════════════════════════════════════ -->
+      <div class="uf-hero" style="--uf-accent: <%= univers.accent %>">
+        <div class="uf-hero__media">
+          <% if (univers.img) { %>
+          <img src="<%= univers.img %>" alt="" />
+          <% } else { %>
+          <div class="uf-hero__media-fallback" style="background:linear-gradient(160deg, <%= univers.accent %>4d, #0a1220 85%)"></div>
+          <% } %>
+          <div class="uf-hero__media-grad"></div>
+        </div>
+
+        <div class="uf-hero__body">
+          <p class="uf-hero__eyebrow">Univers cinématographique</p>
+          <h2 class="uf-hero__title"><%= univers.label %></h2>
+
+          <% if (isNonExplore) { %>
+          <div class="uf-hero__status">
+            <span class="coll-status coll-status--non-explore uf-hero__status-pill">À découvrir</span>
+            <p class="uf-hero__count">0 / 10 contributions</p>
+          </div>
+          <p class="uf-hero__hint">Aucune contribution dans cet Univers pour l'instant — publiez une recette, un film ou un avis dans ce genre pour commencer à le développer.</p>
+
+          <% } else if (isMaitrise) { %>
+          <div class="uf-hero__status">
+            <span class="coll-status coll-status--maitrise uf-hero__status-pill"><i data-lucide="check" width="12" height="12" aria-hidden="true"></i> Univers maîtrisé</span>
+          </div>
+          <p class="uf-hero__hint">Vos nouvelles contributions dans cet Univers continuent d'alimenter votre XP et vos trophées.</p>
+
+          <% } else { %>
+          <div class="uf-hero__status">
+            <span class="coll-status coll-status--<%= univers.status %> uf-hero__status-pill"><%= univers.statusLabel %></span>
+            <p class="uf-hero__pct"><%= univers.pct %>%</p>
+            <p class="uf-hero__count"><%= univers.contributions %> / 10 contributions</p>
+          </div>
+          <div class="coll-progress-track uf-hero__track" role="progressbar" aria-valuenow="<%= univers.pct %>" aria-valuemin="0" aria-valuemax="100" aria-label="Progression de l'Univers <%= univers.label %>">
+            <div class="coll-progress-fill" style="width:<%= univers.pct %>%"></div>
+          </div>
+          <% } %>
+
+          <% if (univers.actif) { %>
+          <span class="coll-actif-badge uf-hero__actif" title="Cet Univers est actif sur votre profil">
+            <i data-lucide="star" width="11" height="11" aria-hidden="true"></i> Univers actif
+          </span>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PROCHAIN OBJECTIF
+      ══════════════════════════════════════════ -->
+      <div class="cp-card uf-next<%= isMaitrise ? ' uf-next--done' : '' %>">
+        <p class="cp-card__eyebrow">Prochain objectif</p>
+        <% if (isMaitrise) { %>
+        <p class="uf-next__title"><i data-lucide="check-circle-2" width="18" height="18" aria-hidden="true"></i> Univers maîtrisé</p>
+        <p class="uf-next__sub">Toutes les récompenses de cet Univers sont débloquées.</p>
+        <% } else {
+          const no = univers.nextObjectif;
+        %>
+        <p class="uf-next__title">
+          Fond <%= ROMAN[no.fond ? no.fond.index - 1 : nextFondIndex - 1] %><% if (no.cadre) { %> + Cadre <%= no.cadre.index === 1 ? 'I' : 'II' %><% } %>
+        </p>
+        <p class="uf-next__sub"><%= no.restant %> contribution<%= no.restant > 1 ? 's' : '' %> restante<%= no.restant > 1 ? 's' : '' %></p>
+        <% } %>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TIMELINE — 5 PALIERS (1 → 3 → 5 → 7 → 10)
+      ══════════════════════════════════════════ -->
+      <section class="uf-section">
+        <h2 class="uf-section__title">Progression</h2>
+        <ol class="coll-timeline" aria-label="Paliers de progression de l'Univers <%= univers.label %>">
+          <% univers.fonds.forEach(function (f, i) {
+            const cadreHere = univers.cadres.find(c => c.seuil === f.seuil);
+            let state = 'locked';
+            if (f.unlocked) state = 'reached';
+            else if (f.index === nextFondIndex) state = 'next';
+            const srText = f.unlocked
+              ? `Fond ${ROMAN[i]} — obtenu`
+              : (state === 'next'
+                  ? `Fond ${ROMAN[i]} — prochain palier, encore ${univers.nextObjectif ? univers.nextObjectif.restant : f.seuil - univers.contributions} contribution(s)`
+                  : `Fond ${ROMAN[i]} — verrouillé, débloqué à ${f.seuil} contributions`);
+          %>
+          <li class="coll-timeline__node coll-timeline__node--<%= state %>">
+            <span class="coll-timeline__dot" aria-hidden="true">
+              <% if (state === 'reached') { %><i data-lucide="check" width="12" height="12"></i><% } %>
+            </span>
+            <span class="coll-timeline__seuil" aria-hidden="true"><%= f.seuil %></span>
+            <span class="coll-timeline__reward" aria-hidden="true">
+              Fond <%= ROMAN[i] %>
+              <% if (cadreHere) { %><em>+ Cadre <%= cadreHere.index === 1 ? 'I' : 'II' %></em><% } %>
+            </span>
+            <span class="sr-only"><%= srText %><% if (cadreHere) { %>, <%= cadreHere.unlocked ? `Cadre ${cadreHere.index === 1 ? 'I' : 'II'} obtenu` : `Cadre ${cadreHere.index === 1 ? 'I' : 'II'} verrouillé, débloqué à ${cadreHere.seuil} contributions` %><% } %></span>
+          </li>
+          <% }); %>
+        </ol>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           FONDS CINÉMATOGRAPHIQUES
+      ══════════════════════════════════════════ -->
+      <section class="uf-section">
+        <h2 class="uf-section__title">Fonds cinématographiques</h2>
+        <div class="uf-fonds-grid">
+          <% univers.fonds.forEach(function (f, i) {
+            const isNext = !f.unlocked && f.index === nextFondIndex;
+            const isEquipped = univers.fondEquipeIndex === f.index;
+          %>
+          <div class="uf-fond-card<%= f.unlocked ? ' uf-fond-card--obtenu' : (isNext ? ' uf-fond-card--prochain' : ' uf-fond-card--verrouille') %>">
+            <div class="uf-fond-card__preview" style="background:linear-gradient(160deg, <%= univers.accent %><%= f.unlocked ? '55' : '22' %>, #0a1220 85%)">
+              <i data-lucide="image" width="20" height="20" aria-hidden="true"></i>
+            </div>
+            <p class="uf-fond-card__name">Fond <%= ROMAN[i] %></p>
+            <p class="uf-fond-card__sub"><%= f.nom %></p>
+            <% if (f.unlocked) { %>
+            <p class="uf-fond-card__state uf-state--obtenu"><i data-lucide="check" width="12" height="12" aria-hidden="true"></i> Obtenu</p>
+            <button type="button" class="uf-equip-btn" data-kind="fond" data-index="<%= f.index %>" <%= isEquipped ? 'disabled' : '' %>>
+              <%= isEquipped ? 'ACTIF' : 'Utiliser ce Fond' %>
+            </button>
+            <% } else { %>
+            <p class="uf-fond-card__state uf-state--verrouille"><i data-lucide="lock" width="12" height="12" aria-hidden="true"></i> Débloqué à <%= f.seuil %> contribution<%= f.seuil > 1 ? 's' : '' %></p>
+            <% } %>
+            <span class="sr-only">Fond <%= ROMAN[i] %> — <%= f.nom %> — <%= f.unlocked ? 'obtenu' : `verrouillé, débloqué à ${f.seuil} contributions` %></span>
+          </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════
+           CADRES D'UNIVERS — section distincte, jamais mélangée aux Fonds
+      ══════════════════════════════════════════ -->
+      <section class="uf-section uf-section--cadres">
+        <h2 class="uf-section__title">Cadres d'Univers</h2>
+        <div class="uf-cadres-grid">
+          <% univers.cadres.forEach(function (c) {
+            const isEquipped = univers.cadreEquipeIndex === c.index;
+            const cadreLabel = c.index === 1 ? 'I' : 'II';
+          %>
+          <div class="uf-cadre-card<%= c.unlocked ? ' uf-cadre-card--obtenu' : ' uf-cadre-card--verrouille' %><%= c.index === 2 ? ' uf-cadre-card--prestige' : '' %>">
+            <div class="uf-cadre-card__preview" style="background:linear-gradient(160deg, <%= univers.accent %><%= c.unlocked ? '66' : '22' %>, #0a1220 85%)">
+              <i data-lucide="shield" width="24" height="24" aria-hidden="true"></i>
+            </div>
+            <p class="uf-cadre-card__name">Cadre <%= cadreLabel %></p>
+            <p class="uf-cadre-card__sub"><%= c.nom %></p>
+            <% if (c.unlocked) { %>
+            <p class="uf-fond-card__state uf-state--obtenu"><i data-lucide="check" width="12" height="12" aria-hidden="true"></i> Obtenu</p>
+            <button type="button" class="uf-equip-btn" data-kind="cadre" data-index="<%= c.index %>" <%= isEquipped ? 'disabled' : '' %>>
+              <%= isEquipped ? 'ACTIF' : 'Équiper' %>
+            </button>
+            <% } else { %>
+            <p class="uf-fond-card__state uf-state--verrouille"><i data-lucide="lock" width="12" height="12" aria-hidden="true"></i> <%= c.seuil %> contributions requises</p>
+            <% } %>
+            <span class="sr-only">Cadre <%= cadreLabel %> — <%= c.nom %> — <%= c.unlocked ? 'obtenu' : `verrouillé, débloqué à ${c.seuil} contributions` %></span>
+          </div>
+          <% }); %>
+        </div>
+      </section>
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script src="/js/collection-univers.js?v=1" defer></script>
+  </body>
+</html>

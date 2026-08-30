@@ -12,6 +12,7 @@ import RecipePicture from './RecipePicture.model.js';
 import PasswordReset from './password_reset.model.js';
 import NoticeLike from './notice-like.model.js';
 import NoticePicture from './notice-picture.model.js';
+import UserTrophy from './UserTrophy.model.js';
 
 
 // Définition des relations entre les modèles
@@ -90,8 +91,14 @@ NoticeLike.belongsTo(User, { foreignKey: 'id_user' });
 Notice.hasMany(NoticePicture, { foreignKey: 'id_notice', as: 'pictures' });
 NoticePicture.belongsTo(Notice, { foreignKey: 'id_notice' });
 
+// Trophées obtenus (Phase 9, Ma Collection) — un utilisateur peut obtenir
+// plusieurs trophées ; le référentiel descriptif (label/image/condition...)
+// reste dans MOCK_BADGES, cette table ne stocke que l'obtention.
+User.hasMany(UserTrophy, { foreignKey: 'id_user' });
+UserTrophy.belongsTo(User, { foreignKey: 'id_user' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture, UserTrophy };
 
 
 

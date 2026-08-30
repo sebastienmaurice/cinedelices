@@ -18,6 +18,7 @@ import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
 import { awardActionXP, checkFirstRecipeMonth } from "../services/gamification.service.js";
+import { checkUserTrophies } from "../services/trophy.service.js";
 import searchCache from "../utils/search-cache.js";
 import { invalidatePublicMovieIdsCache } from "../utils/movie-visibility-helper.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
@@ -113,6 +114,7 @@ const adminController = {
       // XP bonus au contributeur pour film validé
       if (movie?.id_user) {
         awardActionXP(movie.id_user, "user", "movie_accepted").catch(() => {});
+        checkUserTrophies(movie.id_user).catch(() => {});
       }
 
       res.redirect("/admin?success=movie_validated");
@@ -623,6 +625,7 @@ const adminController = {
       if (recipe?.id_user) {
         awardActionXP(recipe.id_user, "user", "recipe_published").catch(() => {});
         checkFirstRecipeMonth(recipe.id_user).catch(() => {});
+        checkUserTrophies(recipe.id_user).catch(() => {});
       }
 
       invalidatePublicMovieIdsCache(); // une recette approuvée peut rendre son film public
@@ -923,6 +926,7 @@ const adminController = {
       // XP bonus au contributeur pour avis validé
       if (notice?.id_user) {
         awardActionXP(notice.id_user, "user", "review_approved").catch(() => {});
+        checkUserTrophies(notice.id_user).catch(() => {});
       }
 
       logAdminAction({ adminId: req.userId, action: "approve_notice", targetType: "notice", targetId: noticeId });

@@ -17,6 +17,7 @@ import mentionsLegalesRouter from "./mentions-legales.route.js";
 import sitemapRouter from "./sitemap.route.js";
 import cinepassRouter from "./cinepass.route.js";
 import contributionsRouter from "./contributions.route.js";
+import collectionRouter from "./collection.route.js";
 import { isAdmin } from "../middlewares/is-admin.middleware.js";
 import { isLogged } from "../middlewares/is-authed.middleware.js";
 
@@ -38,6 +39,7 @@ router.use("/api/notices", noticesRouter); // Route API pour les interactions su
 router.use("/auteur", authorRouter); // Page publique auteur (gamification)
 router.use("/cinepass", isLogged, cinepassRouter); // CinéPass — nouvel espace UX de la gamification (V4)
 router.use("/contributions", isLogged, contributionsRouter); // Contributions — recettes/films/avis/activité
+router.use("/collection", isLogged, collectionRouter); // Ma Collection — Univers cinématographiques / Fonds / Cadres / Trophées (V1 mock)
 router.use("/mentions-legales", mentionsLegalesRouter); // Page mentions légales
 
 export default router;
