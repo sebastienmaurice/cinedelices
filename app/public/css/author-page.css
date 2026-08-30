@@ -803,3 +803,47 @@ body.author-page main {
     width: min(1440px, 100% - 2 * 1rem);
   }
 }
+
+/* ─────────────────────────────────────────────────────
+   AVATAR BADGE — agrandi sur /auteur/# uniquement (260px → 300px,
+   soit ×1.15385), page auteur seule (pas /auth/profil/# ni
+   /cinepass/, qui restent sur la base 260px de user-profile.css).
+   Desktop uniquement (>900px) : sous 900px, user-profile.css pilote
+   ce même composant via `transform: scale()` calibré sur 260px pour
+   les breakpoints tablette/mobile — on ne touche pas à ce calcul ici.
+
+   Technique : `transform: scale()` sur le conteneur, PAS de
+   redimensionnement direct de .pbh-photo/.pbh-frame. Les cadres
+   animés (Harry Potter, Matrix, Indiana Jones, Sherlock, Ciné
+   Délices) sont générés par gamification-engine.js — un moteur
+   canvas avec des dizaines de coordonnées pixel calibrées pile pour
+   260px (anneaux, particules...). Redimensionner le conteneur en dur
+   désynchronise ces coordonnées du cadre PNG (vérifié en live : vide
+   visible en bas à droite du cadre Sherlock). `transform: scale()`
+   agrandit le rendu déjà composé (photo + cadre + canvas) comme un
+   bloc, sans toucher à une seule coordonnée interne — même principe
+   que les breakpoints mobile/tablette ci-dessus, en sens inverse.
+   `.avatar-block` porte l'empreinte visuelle finale (300px) pour que
+   le flex layout réserve la bonne place.
+
+   Variante Dr Strange (badge CSS animé, `--css-only`) : composant à
+   part (badge-strange.css, SVG + spans positionnés en absolu pour un
+   cercle de 260px — sparks, fumée, braises). Même technique que
+   ci-dessus : `.bds-badge-aura` (conteneur racine du composant) est
+   scalé comme un bloc plutôt que de recalculer chaque position.
+
+   `.avatar-actions`/`.avatar-photo-status` non utilisés sur cette
+   page (vérifié dans author-page.ejs) — aucun override nécessaire. */
+@media (min-width: 901px) {
+  .author-page .avatar-block {
+    width: 300px;
+  }
+  .author-page .profile-badge-hero:not(.profile-badge-hero--css-only) {
+    transform: scale(1.15385);
+    transform-origin: top left;
+  }
+  .author-page .bds-badge-aura {
+    transform: scale(1.15385);
+    transform-origin: top left;
+  }
+}
