@@ -2219,7 +2219,16 @@ body.lightbox-open { overflow: hidden; }
      Le fondu passe d'horizontal (gauche→droite) à vertical (image→texte)
      puisque l'image n'est plus partagée avec le texte sur la même ligne. */
   .recipe-hero { display: flex; flex-direction: column; min-height: 0; }
-  .recipe-hero__media { position: relative; inset: auto; width: 100%; height: 300px; flex-shrink: 0; }
+  /* overflow:hidden indispensable ici : en position:absolute (desktop),
+     .recipe-hero (overflow:hidden) suffisait à clipper le zoom animé de
+     l'image (heroImgZoom, scale 1.04→1.15). En position:relative avec une
+     hauteur fixe (mobile/tablette), l'image zoomée déborde de sa propre
+     boîte sans être clippée par l'ancêtre (le débordement reste dans les
+     bornes de .recipe-hero, qui englobe aussi .recipe-hero__content juste
+     en dessous) — le fondu (.recipe-hero__fade, calé sur cette même
+     hauteur) ne couvre alors pas la portion débordante, laissant une
+     bande d'image non fondue visible juste avant le bloc de contenu. */
+  .recipe-hero__media { position: relative; inset: auto; width: 100%; height: 300px; flex-shrink: 0; overflow: hidden; }
   .recipe-hero__fade {
     background: linear-gradient(to bottom, transparent 45%, var(--bleu-nuit-80) 82%, var(--bleu-nuit) 100%);
   }

@@ -60,7 +60,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/css/recipe-detail.css?v=202608292" />
+    <link rel="stylesheet" href="/css/recipe-detail.css?v=202608293" />
   </head>
 
   <body class="recipe-page">
@@ -276,10 +276,16 @@
           <!-- Fondu bleu nuit — du centre-gauche vers la gauche, ~55% de la largeur du hero,
                pour que le contenu rh-info reste lisible par-dessus l'image -->
           <div class="recipe-hero__fade" aria-hidden="true"></div>
+          <!-- Scanlines + vignette déplacés ICI (dans .recipe-hero__media, pas
+               .recipe-hero) : en mobile/tablette .recipe-hero englobe aussi le
+               bloc de texte en dessous (colonne flex), donc leurs dégradés
+               (inset:0) s'étiraient sur toute cette hauteur au lieu de rester
+               cantonnés à l'image — créait une bande visible à la jonction
+               avec .recipe-hero__content. Aucun changement visuel sur desktop
+               (.recipe-hero__media y couvre déjà exactement .recipe-hero). -->
+          <div class="recipe-hero__scanlines" aria-hidden="true"></div>
+          <div class="recipe-hero__vignette" aria-hidden="true"></div>
         </div>
-
-        <div class="recipe-hero__scanlines" aria-hidden="true"></div>
-        <div class="recipe-hero__vignette" aria-hidden="true"></div>
 
         <div class="recipe-hero__content">
           <!-- Colonne infos gauche -->
