@@ -26,9 +26,9 @@
     <link rel="canonical" href="<%= siteUrl %>/recipes-movie" />
 
     <!-- styles -->
-    <link rel="stylesheet" href="/css/movies.css" />
+    <link rel="stylesheet" href="/css/movies.css?v=3" />
     <link rel="stylesheet" href="/css/recipes-movie.css" />
-    <link rel="stylesheet" href="/css/all-recipes.css" />
+    <link rel="stylesheet" href="/css/all-recipes.css?v=2" />
 
     <!-- scripts -->
     <script src="/js/more-views.js" defer></script>
@@ -83,26 +83,30 @@
           </div>
 
           <!-- Colonne droite : recherche simplifiée -->
-          <div class="page-hero__search-col" aria-label="Recherche de recettes">
+          <div class="page-hero__search-col" aria-label="Recherche de recettes ou de films">
             <p class="page-hero__search-label">
               <i data-lucide="search" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
-              Trouver une recette
+              Trouver une recette ou un film
             </p>
             <form class="search-main-row" action="/recipes-movie/" method="GET" role="search">
               <% if (categoryFilter !== 'all') { %>
               <input type="hidden" name="category" value="<%= categoryFilter %>" />
               <% } %>
-              <div class="search-input-wrap">
+              <!-- search-input-wrapper = classe attendue par recipes-movie-search.js
+                   (même convention que search-results-parent sur movies.ejs) -->
+              <div class="search-input-wrap search-input-wrapper" id="ar-search-results-parent" style="position:relative;">
                 <input
                   type="text"
                   id="ar-search-input"
                   name="q"
                   class="search__input__film"
-                  placeholder="Rechercher une recette..."
+                  placeholder="Rechercher une recette ou un film..."
                   value="<%= searchQuery %>"
                   autocomplete="off"
-                  aria-label="Rechercher une recette"
+                  aria-label="Rechercher une recette ou un film"
                 />
+                <!-- Dropdown résultats (recipes-movie-search.js) -->
+                <div id="ar-search-results" class="search-results" aria-live="polite"></div>
               </div>
               <button type="submit" class="btn-search-boost" aria-label="Lancer la recherche">
                 <i data-lucide="search" width="20" height="20" aria-hidden="true"></i>
@@ -362,6 +366,7 @@
       };
     </script>
     <script src="/js/favorites.js" defer></script>
+    <script src="/js/recipes-movie-search.js?v=3" defer></script>
 
     <!-- Tri des recettes : dropdown custom — préserve category + q dans l'URL -->
     <script>

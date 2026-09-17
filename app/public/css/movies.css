@@ -258,11 +258,28 @@ body.movies-page main {
 .search-results {
   display: none; /* caché par défaut, JS ajoute .active */
   position: absolute; top: calc(100% + 8px); left: 0; right: 0;
-  background: linear-gradient(160deg, rgba(10,20,34,.98) 0%, rgba(15,28,46,.99) 100%);
+  background: linear-gradient(160deg, rgb(10,20,34) 0%, rgb(15,28,46) 100%);
   border: 1px solid rgba(196, 160, 82, 0.2);
   border-radius: 16px; z-index: 200; overflow: hidden;
   box-shadow: 0 28px 80px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter: blur(20px);
+  /* isolation: force un nouveau contexte d'empilement propre — le fond
+     étant déjà quasi opaque (99%), backdrop-filter: blur() n'apportait
+     qu'un flou imperceptible tout en causant un artefact de rendu (le
+     contenu de la grille en dessous "perçait" par endroits à travers le
+     dropdown sur /recipes-movie/, là où celui-ci recouvre la grille en
+     position absolue) — fond rendu 100% opaque + isolation au lieu du
+     flou pour éliminer le bug plutôt que de le masquer.
+     translateZ(0) : force en plus une vraie couche de composition GPU
+     dédiée pour ce dropdown — palliatif standard pour un bug de rendu
+     Chromium où du contenu plus bas dans la page (ici la grille de
+     recettes, un CSS Grid) "perce" visuellement à travers un
+     position:absolute qui le recouvre pourtant (confirmé : masquer la
+     grille fait disparaître l'artefact ; le hit-testing DOM/JS
+     (elementFromPoint) a toujours été correct — c'est un bug de peinture
+     GPU, pas un mauvais z-index). */
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform;
   max-height: 480px; overflow-y: auto;
 }
 .search-results.active { display: block; }

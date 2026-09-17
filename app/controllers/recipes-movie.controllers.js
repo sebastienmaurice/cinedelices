@@ -6,6 +6,7 @@ import { awardActionXP } from "../services/gamification.service.js";
 import { computeLevel, xpProgress, FRAME_UNLOCKS, RANK_TITLES } from "../utils/gamification.utils.js";
 import { processStepImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { timeAgo } from "../utils/time-ago.js";
+import { calculateRecipeRelevanceScore } from "../utils/search-utils.js";
 
 // Nombre maximum de photos jointes à un avis (cf. uploadNoticePhotos, champ "noticePictures").
 const NOTICE_MAX_PICTURES = 3;
@@ -162,6 +163,52 @@ const recipesController = {
       return renderServerError(res, error);
     }
   },
+
+  /**
+   * GET /recipes-movie/search-advanced?query=...
+   * Recherche live (dropdown) parmi les recettes approuvées — pendant
+   * miroir de movies.controllers.js:searchMoviesAdvanced, mais sans TMDB
+   * (les recettes n'existent que localement). Même seuil de score (35)
+   * et mêmes 5 résultats max, pour un comportement cohérent entre les
+   * deux dropdowns.
+   */
+  async searchRecipesAdvanced(req, res) {
+    try {
+      const { query } = req.query;
+      if (!query || query.trim().length < 2) {
+        return res.json({ success: true, results: [], hasResults: false });
+      }
+      const searchTerm = query.trim();
+
+      const recipes = await Recipe.findAll({
+        where: { status: "approved" },
+        include: [
+          { model: Movie, attributes: ["title", "slug"], required: false },
+          { model: RecipePicture, as: "RecipePictures", attributes: ["file_path"], where: { position: 1 }, required: false },
+        ],
+      });
+
+      const MIN_SCORE_THRESHOLD = 35;
+      const results = recipes
+        .map((r) => ({ ...r.toJSON(), score: calculateRecipeRelevanceScore(r, searchTerm) }))
+        .filter((r) => r.score >= MIN_SCORE_THRESHOLD)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5)
+        .map((r) => ({
+          id: r.id,
+          slug: r.slug,
+          name: r.name,
+          category: r.category,
+          picture: r.RecipePictures?.[0]?.file_path || r.picture || null,
+          movieTitle: r.Movie?.title || null,
+        }));
+
+      return res.json({ success: true, results, hasResults: results.length > 0 });
+    } catch (error) {
+      return res.status(500).json({ success: false, results: [], hasResults: false });
+    }
+  },
+
   // Afficher le film et ses recettes
   async movieRecipes(req, res) {
     try {

@@ -12,6 +12,9 @@ recipesRouter.get("/", recipesController.allRecipes);
 // déclaré avant "/:id" pour ne jamais être intercepté par cette route.
 recipesRouter.get("/api/by-movie/:movieId", recipesController.recipesByMovieJson);
 
+// Recherche live (dropdown) — déclaré avant "/:id" pour la même raison.
+recipesRouter.get("/search-advanced", recipesController.searchRecipesAdvanced);
+
 //le detail d'une recette d'un film spécifique
 recipesRouter.get("/details/:id", recipesController.detailRecipes);
 

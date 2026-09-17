@@ -166,6 +166,54 @@ export function calculateRelevanceScore(movie, query) {
 }
 
 /**
+ * Score de pertinence pour une recette (même logique que
+ * calculateRelevanceScore pour les films, adaptée à recipe.name — les
+ * recettes n'ont pas de genre/année propres, on utilise en complément le
+ * titre du film associé pour ne pas rater "Alien Romulus" tapé alors que
+ * la recette s'appelle "Facehugger Ramen").
+ *
+ * @param {object} recipe - Objet recette (avec éventuellement .Movie inclus)
+ * @param {string} query - Requête de recherche
+ * @returns {number} - Score de pertinence (0-100)
+ */
+export function calculateRecipeRelevanceScore(recipe, query) {
+  if (!recipe || !query) return 0;
+
+  const normalizedQuery = normalizeText(query);
+  let score = 0;
+
+  // 1. Correspondance exacte dans le nom de la recette (poids: 40)
+  const nameNormalized = normalizeText(recipe.name || "");
+  if (nameNormalized === normalizedQuery) {
+    score += 40;
+  } else if (nameNormalized.startsWith(normalizedQuery)) {
+    score += 35;
+  } else if (exactMatch(recipe.name, query)) {
+    score += 30;
+  }
+
+  // 2. Score de similarité fuzzy sur le nom (poids: 30)
+  score += similarityScore(recipe.name, query) * 30;
+
+  // 3. Correspondance dans le titre du film associé (poids: 35 — aussi
+  // fort qu'un match direct sur le nom de la recette : "chercher une
+  // recette via le film" est un cas d'usage central, pas secondaire, cf.
+  // le test "silence" → doit remonter "Le Silence des Agneaux" même si
+  // la recette elle-même s'appelle "le foie et ses fèves au beurre").
+  const movieTitle = recipe.Movie?.title;
+  if (movieTitle && exactMatch(movieTitle, query)) {
+    score += 35;
+  }
+
+  // 4. Bonus recette validée (poids: 5)
+  if (recipe.status === "approved") {
+    score += 5;
+  }
+
+  return Math.min(score, 100);
+}
+
+/**
  * Trie les films par score de pertinence décroissant
  * 
  * @param {Array} movies - Tableau de films avec scores

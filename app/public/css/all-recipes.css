@@ -7,6 +7,24 @@
  *  - recipes-movie.css fournit : recipe-card, badge, rating, author…
  */
 
+/* ── DROPDOWN DE RECHERCHE — position:fixed calculée en JS ──
+   Bug de rendu confirmé (Chromium) : en position:absolute (comportement
+   par défaut de .search-results, cf. movies.css), le dropdown recouvre
+   visuellement la grille de recettes plus bas sur cette page précise, et
+   du contenu de cette grille "perce" par endroits à travers le dropdown
+   malgré un z-index/isolation/translateZ corrects (hit-testing DOM
+   confirmé correct via elementFromPoint — c'est un bug de peinture GPU,
+   pas un mauvais z-index ; masquer la grille fait disparaître
+   l'artefact). /movies/ n'est pas concerné (son dropdown ne recouvre
+   jamais sa propre grille aux tailles testées), donc ce correctif reste
+   scopé à cette page plutôt que touché globalement dans movies.css.
+   position:fixed échappe structurellement à tout contexte d'empilement
+   ambigu : top/left/width recalculés en JS (recipes-movie-search.js)
+   à l'ouverture, au resize et au scroll. */
+.all-recipes-page #ar-search-results {
+  position: fixed !important;
+}
+
 /* ── FULL-BLEED ── */
 body.all-recipes-page {
   max-width: unset;
