@@ -439,10 +439,22 @@
 </div>
 
 <meta name="google-client-id" content="<%= googleClientId || '' %>">
+<script>
+  /* Défini globalement ici (header, chargé sur toutes les pages) pour que
+     tout script puisse tester la connexion sans dépendre d'une définition
+     par vue (certaines vues le redéfinissent encore localement avec les
+     mêmes valeurs — c'est inoffensif, mais celle-ci est désormais la
+     source garantie sur toutes les pages, y compris celles qui ne le
+     faisaient pas). */
+  window.CINEDELICES = window.CINEDELICES || {};
+  window.CINEDELICES.isLoggedIn = <%= typeof userId !== 'undefined' && userId !== null %>;
+  window.CINEDELICES.userId = <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>;
+</script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="/js/popup-connexion.js" defer></script>
 <script src="/js/register-form.js" defer></script>
 <script src="/js/google-auth.js" defer></script>
+<script src="/js/add-recipe-guard.js" defer></script>
 
 <script>
 (function () {
