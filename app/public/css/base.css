@@ -4492,6 +4492,23 @@ main {
   -webkit-backdrop-filter: blur(24px) saturate(1.6);
   border-bottom-color: rgba(196, 160, 82, 0.14);
 }
+/* Perf mobile : backdrop-filter sur un élément position:fixed force le
+   navigateur à recalculer le flou à chaque frame pendant tout le scroll
+   (nav-bar est fixed sur TOUTES les pages) — un des effets CSS les plus
+   coûteux sur GPU mobile, identifié comme cause de latence au scroll
+   sur iPhone 12 / Xiaomi 13 Pro. Le fond est déjà quasi opaque (92% une
+   fois "scrolled") : réduire fortement le flou au lieu de le supprimer
+   garde l'effet verre dépoli visuellement, à un coût bien moindre. */
+@media (max-width: 800px) {
+  .nav-bar::before {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .nav-bar.scrolled::before {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
 .site-nav {
   position: relative;
   z-index: 1; /* passe au-dessus du ::before */
