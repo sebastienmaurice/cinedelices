@@ -89,7 +89,7 @@
       }
       .confirm-modal__msg {
         margin: 0 0 22px;
-        font-size: .78rem; color: rgba(232,232,232,.65); line-height: 1.5;
+        font-size: .85rem; color: rgba(232,232,232,.65); line-height: 1.5;
       }
       .confirm-modal__foot {
         display: flex; justify-content: flex-end; gap: 10px;
@@ -99,7 +99,7 @@
         background: transparent;
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 8px; cursor: pointer;
-        font-size: .7rem; font-weight: 600; letter-spacing: .05em;
+        font-size: .75rem; font-weight: 600; letter-spacing: .05em;
         color: rgba(232,232,232,.55);
         transition: border-color .15s, color .15s;
       }
@@ -108,7 +108,7 @@
         padding: 0 16px; height: 34px;
         border: none; border-radius: 8px; cursor: pointer;
         font-family: var(--f-title, sans-serif);
-        font-size: .7rem; font-weight: 700; letter-spacing: .07em;
+        font-size: .75rem; font-weight: 700; letter-spacing: .07em;
         text-transform: uppercase;
         transition: opacity .15s, filter .15s;
       }

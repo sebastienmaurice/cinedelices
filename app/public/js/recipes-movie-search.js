@@ -155,7 +155,7 @@
   }
 
   function sectionLabelHtml(text) {
-    return `<p style="margin:10px 12px 4px;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(232,232,232,.45);">${text}</p>`;
+    return `<p style="margin:10px 12px 4px;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(232,232,232,.45);">${text}</p>`;
   }
 
   function emptyStateHtml(query) {
