@@ -516,6 +516,15 @@ body.author-page main {
     padding-top: 60px;
     position: relative;
     z-index: 1;
+    /* La section chevauche le bas du hero et passe au-dessus (z-index) : sa boîte, même vide,
+       interceptait les clics sur les boutons de la bio (Annuler / Soumettre) et tout ce qui se
+       trouve dans le hero. Elle laisse donc passer les clics dans ses zones vides, et seuls ses
+       éléments interactifs les captent. */
+    pointer-events: none;
+  }
+  .author-recipes-section :is(a, button, input, select, textarea, label, summary, article, [role="button"],
+      .dd-filter-wrap, .dropdown, .quick-tags-row, .ar-grid-wrap, .recipes-grid) {
+    pointer-events: auto;
   }
 }
 
