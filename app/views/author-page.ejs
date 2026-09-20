@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=fs10" />
-    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs10" />
-    <link rel="stylesheet" href="/css/all-recipes.css?v=fs10" />
-    <link rel="stylesheet" href="/css/author-page.css?v=fs10" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=fs20" />
+    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs20" />
+    <link rel="stylesheet" href="/css/all-recipes.css?v=fs20" />
+    <link rel="stylesheet" href="/css/author-page.css?v=fs20" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -183,7 +183,7 @@
             src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>"
             alt="Bannière de <%= author.pseudo %>"
             <% if (author.hero_banner_pos_y !== null && typeof author.hero_banner_pos_y !== 'undefined') { %>
-            style="object-position: center <%= author.hero_banner_pos_y %>%;"
+            style="--hero-pos-y: <%= author.hero_banner_pos_y %>%;"
             <% } %>
           />
           <div class="hero-banner-grad"></div>
@@ -938,7 +938,7 @@
         let originalValue = slider.value;
 
         function applyPosition(val) {
-          img.style.objectPosition = 'center ' + val + '%';
+          img.style.setProperty('--hero-pos-y', val + '%'); // position verticale (l'ancrage horizontal est géré en CSS)
         }
 
         posBtn.addEventListener('click', function () {
