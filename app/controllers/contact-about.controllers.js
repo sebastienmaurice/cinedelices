@@ -1,5 +1,13 @@
 import { Recipe, Movie, User } from "../models/index.model.js";
 import { sendMail } from "../services/mail.service.js";
+import {
+  issueFormToken,
+  checkFormToken,
+  detectSpamContent,
+  verifyTurnstile,
+  turnstileEnabled,
+  escapeHtml,
+} from "../utils/contact-guard.js";
 
 const CONTACT_RECIPIENT = "cinedelices.team@gmail.com";
 
@@ -16,16 +24,44 @@ const contactAboutController = {
       movieCount,
       recipeCount,
       userCount,
+      formToken: issueFormToken(),
+      turnstileSiteKey: turnstileEnabled() ? process.env.TURNSTILE_SITE_KEY : null,
     });
   },
 
   // POST /contact-about/contact — réception du formulaire de contact
   async sendContact(req, res) {
-    const { name, email, subject, message, website } = req.body;
+    const { name, email, subject, message, website, formToken } = req.body;
+    const fakeOk = () =>
+      res.json({ success: true, message: "Votre message a bien été envoyé. Nous vous répondrons rapidement !" });
 
     // Honeypot : les bots remplissent ce champ caché, les humains non
     if (website && website.trim() !== "") {
-      return res.json({ success: true, message: "Votre message a bien été envoyé. Nous vous répondrons rapidement !" });
+      return fakeOk();
+    }
+
+    // Jeton signé émis au rendu de la page : absent/invalide = POST direct d'un bot
+    const tokenState = checkFormToken(formToken);
+    if (tokenState === "too_fast") {
+      console.warn("[Contact] spam bloqué (formulaire rempli trop vite)");
+      return fakeOk();
+    }
+    if (tokenState !== "ok") {
+      console.warn(`[Contact] spam bloqué (jeton ${tokenState})`);
+      return res.status(400).json({
+        success: false,
+        message: "Session expirée. Rechargez la page puis renvoyez votre message.",
+      });
+    }
+
+    // Cloudflare Turnstile (actif seulement si les clés sont configurées)
+    const clientIp = req.headers["cf-connecting-ip"] || req.ip;
+    if (!(await verifyTurnstile(req.body["cf-turnstile-response"], clientIp))) {
+      console.warn("[Contact] spam bloqué (Turnstile)");
+      return res.status(400).json({
+        success: false,
+        message: "Vérification anti-spam échouée. Réessayez.",
+      });
     }
 
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
@@ -36,6 +72,19 @@ const contactAboutController = {
     if (!emailRe.test(email)) {
       return res.status(400).json({ success: false, message: "Adresse email invalide." });
     }
+
+    // Heuristiques de contenu : on répond "ok" sans envoyer, pour ne pas renseigner le bot
+    const spamReason = detectSpamContent({ name, subject, message });
+    if (spamReason) {
+      console.warn(`[Contact] spam bloqué (${spamReason})`);
+      return fakeOk();
+    }
+
+    // Les valeurs sont insérées dans un email HTML : on les échappe
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeSubject = escapeHtml(subject);
+    const safeMessage = escapeHtml(message);
 
     try {
       await sendMail({
@@ -55,7 +104,7 @@ const contactAboutController = {
             <tr><td style="padding:0 40px 20px;">
               <table cellpadding="0" cellspacing="0"><tr>
                 <td style="background:${cat.bg};border:1px solid ${cat.border};border-radius:20px;padding:5px 14px;">
-                  <span style="font-size:12px;font-weight:700;color:${cat.text};font-family:Arial,sans-serif;letter-spacing:1px;">${subject}</span>
+                  <span style="font-size:12px;font-weight:700;color:${cat.text};font-family:Arial,sans-serif;letter-spacing:1px;">${safeSubject}</span>
                 </td>
               </tr></table>
             </td></tr>` : '';
@@ -85,14 +134,14 @@ const contactAboutController = {
               <tr>
                 <td style="padding:10px 16px;background:#0d1525;border-radius:8px;border-left:3px solid #c9a84c;">
                   <p style="margin:0 0 6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9a84c;font-family:Arial,sans-serif;">De</p>
-                  <p style="margin:0;font-size:15px;color:#ffffff;">${name} &mdash; <a href="mailto:${email}" style="color:#c9a84c;text-decoration:none;">${email}</a></p>
+                  <p style="margin:0;font-size:15px;color:#ffffff;">${safeName} &mdash; <a href="mailto:${safeEmail}" style="color:#c9a84c;text-decoration:none;">${safeEmail}</a></p>
                 </td>
               </tr>
               <tr><td style="height:12px;"></td></tr>
               <tr>
                 <td style="padding:10px 16px;background:#0d1525;border-radius:8px;border-left:3px solid #415a77;">
                   <p style="margin:0 0 6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8ab0c8;font-family:Arial,sans-serif;">Sujet</p>
-                  <p style="margin:0;font-size:15px;color:#ffffff;">${subject || "Question générale"}</p>
+                  <p style="margin:0;font-size:15px;color:#ffffff;">${safeSubject || "Question générale"}</p>
                 </td>
               </tr>
             </table>
@@ -104,7 +153,7 @@ const contactAboutController = {
           <td style="background:#141e30;padding:24px 40px;">
             <p style="margin:0 0 12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8ab0c8;font-family:Arial,sans-serif;">Message</p>
             <div style="background:#0d1525;border-radius:8px;padding:20px 22px;border:1px solid rgba(196,160,82,0.15);">
-              <p style="margin:0;font-size:15px;line-height:1.7;color:#d4d8e0;">${message.replace(/\n/g, "<br>")}</p>
+              <p style="margin:0;font-size:15px;line-height:1.7;color:#d4d8e0;">${safeMessage.replace(/\n/g, "<br>")}</p>
             </div>
           </td>
         </tr>

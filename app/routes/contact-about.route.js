@@ -10,6 +10,8 @@ const contactLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  // Derrière Cloudflare, req.ip peut être l'IP du proxy : on utilise l'IP visiteur réelle
+  keyGenerator: (req) => req.headers["cf-connecting-ip"] || req.ip,
   message: { success: false, message: "Trop de messages envoyés. Réessayez dans une heure." },
 });
 

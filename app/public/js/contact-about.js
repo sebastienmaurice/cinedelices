@@ -230,7 +230,9 @@
           }, 800);
         } else {
           btn.disabled = false;
-          btn.textContent = 'Envoyer le message';
+          btn.textContent = json.message || 'Envoyer le message';
+          if (window.turnstile) { try { window.turnstile.reset(); } catch (_) {} }
+          setTimeout(function () { btn.textContent = 'Envoyer le message'; }, 4000);
         }
       })
       .catch(function () {

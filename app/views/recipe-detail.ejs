@@ -31,34 +31,65 @@
     <!-- Canonical -->
     <link rel="canonical" href="<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>" />
     <!-- JSON-LD Recipe Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Recipe",
-      "name": "<%- (recipe.name || '').replace(/"/g, '&quot;') %>",
-      "description": "<%- _rdDesc.replace(/"/g, '&quot;') %>",
-      "image": "<%= _rdImg %>",
-      "author": {
-        "@type": "Person",
-        "name": "<%- _rdAuthor.replace(/"/g, '&quot;') %>"
-      },
-      "datePublished": "<%= recipe.createdAt ? new Date(recipe.createdAt).toISOString().split('T')[0] : '' %>",
-      <% if (recipe.time) { %>"totalTime": "PT<%= recipe.time %>M",<% } %>
-      <% if (recipe.servings) { %>"recipeYield": "<%= recipe.servings %> portion<%= recipe.servings > 1 ? 's' : '' %>",<% } %>
-      <% if (recipe.category) { %>"recipeCategory": "<%= recipe.category %>",<% } %>
-      <% if (recipe.difficulty) { %>"keywords": "<%= recipe.difficulty %>",<% } %>
-      <% if (typeof averageQuote !== 'undefined' && averageQuote && totalAvis > 0) { %>
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "<%= averageQuote %>",
-        "ratingCount": "<%= totalAvis %>",
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      <% } %>
-      "url": "<%= siteUrl %>/recipes-movie/details/<%= _rdSlug %>"
-    }
-    </script>
+    <%
+      /* Données structurées Recipe (résultats enrichis Google).
+         Objet construit en JS puis sérialisé : pas d'échappement manuel, et
+         "<" est neutralisé pour empêcher toute sortie de la balise <script>. */
+      const _ldPlain = (h) => String(h || '')
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+        .replace(/\s+/g, ' ').trim();
+      const _ldAbs = (u) => (/^https?:\/\//i.test(u) ? u : siteUrl + u);
+      const _ldUrl = siteUrl + '/recipes-movie/details/' + _rdSlug;
+      const _ldImages = [_rdImg].concat(
+        (typeof recipePictures !== 'undefined' && recipePictures ? recipePictures : [])
+          .filter((p) => p.file_path && !p.step_number)
+          .map((p) => _ldAbs(p.file_path))
+      ).filter((u, i, a) => a.indexOf(u) === i);
+      const _ldIngredients = (typeof ingredientsBlocks !== 'undefined' && ingredientsBlocks ? ingredientsBlocks : [])
+        .filter((i) => !String(i).startsWith('<h3'))
+        .map(_ldPlain).filter(Boolean);
+      const _ldSteps = (typeof preparationBlocks !== 'undefined' && preparationBlocks ? preparationBlocks : [])
+        .map((st) => {
+          const text = _ldPlain(st.body).replace(/^[\s:\-–—]+/, '');
+          const name = _ldPlain(st.title);
+          return text ? Object.assign({ '@type': 'HowToStep', text }, name ? { name } : {}) : null;
+        }).filter(Boolean);
+      const _ldKeywords = [recipe.category, movie && movie.title, recipe.difficulty]
+        .filter(Boolean).join(', ');
+      const _ld = {
+        '@context': 'https://schema.org',
+        '@type': 'Recipe',
+        name: recipe.name || '',
+        description: _rdDesc,
+        image: _ldImages,
+        author: { '@type': 'Person', name: _rdAuthor },
+        publisher: { '@type': 'Organization', name: 'Ciné Délices', url: siteUrl },
+        url: _ldUrl,
+        mainEntityOfPage: _ldUrl,
+        inLanguage: 'fr-FR'
+      };
+      if (recipe.createdAt) _ld.datePublished = new Date(recipe.createdAt).toISOString().split('T')[0];
+      if (recipe.time) _ld.totalTime = 'PT' + recipe.time + 'M';
+      if (recipe.servings) _ld.recipeYield = String(recipe.servings);
+      if (recipe.category) _ld.recipeCategory = recipe.category;
+      if (_ldKeywords) _ld.keywords = _ldKeywords;
+      if (_ldIngredients.length) _ld.recipeIngredient = _ldIngredients;
+      if (_ldSteps.length) _ld.recipeInstructions = _ldSteps;
+      if (typeof averageQuote !== 'undefined' && averageQuote && totalAvis > 0) {
+        _ld.aggregateRating = {
+          '@type': 'AggregateRating',
+          ratingValue: String(averageQuote),
+          ratingCount: String(totalAvis),
+          bestRating: '5',
+          worstRating: '1'
+        };
+      }
+    %>
+    <script type="application/ld+json"><%- JSON.stringify(_ld).replace(/</g, '\\u003c') %></script>
 
     <link rel="stylesheet" href="/css/recipe-detail.css?v=202608293" />
   </head>
