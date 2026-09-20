@@ -7,6 +7,10 @@
 /* Guard : ne s'exécute que sur les pages ayant le carousel */
 if (!document.getElementById('track')) return;
 
+/* Carousel masqué en CSS sous 1024px (home.css) : ne pas initialiser
+   canvas de bordure, drag/molette ni observers pour rien. */
+if (window.matchMedia('(max-width: 1024px)').matches) return;
+
 const PAD = 14;
 
 function buildGenreMoviesLink(genre) {

@@ -74,21 +74,21 @@ export const MAITRISE_SEUIL = 10;
  * présentes dans app/public/images/categories/.
  */
 export const UNIVERS_DEFINITIONS = [
-  { code: "action",           label: "Action",           icon: "zap",         img: "/images/categories/action.png",       accent: "#e0524a" },
-  { code: "aventure",         label: "Aventure",         icon: "compass",     img: "/images/categories/aventure.png",     accent: "#c98a3a" },
-  { code: "animation",        label: "Animation",        icon: "palette",     img: "/images/categories/animation.png",    accent: "#5aa0e0" },
-  { code: "comédie",          label: "Comédie",          icon: "smile",       img: "/images/categories/comedie.png",      accent: "#e0c23a" },
-  { code: "crime",            label: "Crime",            icon: "search",      img: "/images/categories/policier.png",     accent: "#8a8a8a" },
-  { code: "drame",            label: "Drame",            icon: "drama",       img: "/images/categories/drame.png",        accent: "#7a4a6a" },
-  { code: "fantastique",      label: "Fantastique",      icon: "sparkles",    img: "/images/categories/fantastique.png",  accent: "#9a6ae0" },
-  { code: "guerre",           label: "Guerre",           icon: "shield",      img: "/images/categories/guerre.png",       accent: "#8a7a5a" },
-  { code: "histoire",         label: "Historique",       icon: "landmark",    img: "/images/categories/historique.png",   accent: "#b08a55" },
-  { code: "horreur",          label: "Horreur",          icon: "ghost",       img: "/images/categories/horreur.png",      accent: "#a83a3a" },
-  { code: "musique",          label: "Musical",          icon: "music",       img: "/images/categories/musical.png",      accent: "#c04a9a" },
-  { code: "romance",          label: "Romance",          icon: "heart",       img: "/images/categories/romance.png",      accent: "#e08aa0" },
-  { code: "science-fiction",  label: "Science-Fiction",  icon: "rocket",      img: "/images/categories/sci-fi.png",       accent: "#3ac9e0" },
-  { code: "thriller",         label: "Thriller",         icon: "eye",         img: "/images/categories/thriller.png",     accent: "#3a4a5a" },
-  { code: "western",          label: "Western",          icon: "flag",        img: "/images/categories/western.png",      accent: "#c9863a" },
+  { code: "action",           label: "Action",           icon: "zap",         img: "/images/categories/action.webp",       accent: "#e0524a" },
+  { code: "aventure",         label: "Aventure",         icon: "compass",     img: "/images/categories/aventure.webp",     accent: "#c98a3a" },
+  { code: "animation",        label: "Animation",        icon: "palette",     img: "/images/categories/animation.webp",    accent: "#5aa0e0" },
+  { code: "comédie",          label: "Comédie",          icon: "smile",       img: "/images/categories/comedie.webp",      accent: "#e0c23a" },
+  { code: "crime",            label: "Crime",            icon: "search",      img: "/images/categories/policier.webp",     accent: "#8a8a8a" },
+  { code: "drame",            label: "Drame",            icon: "drama",       img: "/images/categories/drame.webp",        accent: "#7a4a6a" },
+  { code: "fantastique",      label: "Fantastique",      icon: "sparkles",    img: "/images/categories/fantastique.webp",  accent: "#9a6ae0" },
+  { code: "guerre",           label: "Guerre",           icon: "shield",      img: "/images/categories/guerre.webp",       accent: "#8a7a5a" },
+  { code: "histoire",         label: "Historique",       icon: "landmark",    img: "/images/categories/historique.webp",   accent: "#b08a55" },
+  { code: "horreur",          label: "Horreur",          icon: "ghost",       img: "/images/categories/horreur.webp",      accent: "#a83a3a" },
+  { code: "musique",          label: "Musical",          icon: "music",       img: "/images/categories/musical.webp",      accent: "#c04a9a" },
+  { code: "romance",          label: "Romance",          icon: "heart",       img: "/images/categories/romance.webp",      accent: "#e08aa0" },
+  { code: "science-fiction",  label: "Science-Fiction",  icon: "rocket",      img: "/images/categories/sci-fi.webp",       accent: "#3ac9e0" },
+  { code: "thriller",         label: "Thriller",         icon: "eye",         img: "/images/categories/thriller.webp",     accent: "#3a4a5a" },
+  { code: "western",          label: "Western",          icon: "flag",        img: "/images/categories/western.webp",      accent: "#c9863a" },
 ];
 
 /**

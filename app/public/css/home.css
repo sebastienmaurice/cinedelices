@@ -1258,6 +1258,11 @@ main {
   position: relative;
   width: 100%;
 }
+/* Mobile + tablette : carousel de genres masqué (drag/molette/survol sans
+   intérêt au tactile, et coûteux : 15 badges avec canvas de bordure animée). */
+@media (max-width: 1024px) {
+  .carousel-container { display: none; }
+}
 .carousel-nav {
   position: absolute;
   top: 50%;
@@ -2050,6 +2055,15 @@ main {
   margin: 0 auto 36px;
   position: relative;
   z-index: 40;
+}
+/* Mobile + tablette : en-tête lié au carousel masqué avec lui. */
+@media (max-width: 1024px) {
+  .section-header-wrap,
+  .carousel-progress,
+  .scroll-hint,
+  .genres-separator { display: none; }
+  /* Plus rien à afficher dedans : on retire aussi le padding résiduel. */
+  .genres-section { display: none; }
 }
 
 .genres-see-all {

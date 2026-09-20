@@ -77,16 +77,16 @@ export const MOCK_BADGES = [
 ];
 
 export const MOCK_UNIVERS = [
-  { code: "horreur", label: "Horreur", img: "/images/categories/horreur.png", accent: "red", progress: 2, total: 3, xp: 35, xpMax: 100 },
-  { code: "comedie", label: "Comédie", img: "/images/categories/comedie.png", accent: "gold", progress: 3, total: 3, xp: 100, xpMax: 100 },
-  { code: "aventure", label: "Aventure", img: "/images/categories/aventure.png", accent: "orange", progress: 1, total: 3, xp: 20, xpMax: 100 },
-  { code: "scifi", label: "Sci-Fi", img: "/images/categories/sci-fi.png", accent: "blue", progress: 2, total: 3, xp: 60, xpMax: 100 },
-  { code: "fantastique", label: "Fantastique", img: "/images/categories/fantastique.png", accent: "purple", progress: 1, total: 3, xp: 15, xpMax: 100 },
-  { code: "action", label: "Action", img: "/images/categories/action.png", accent: "steel", progress: 3, total: 3, xp: 100, xpMax: 100 },
-  { code: "drame", label: "Drame", img: "/images/categories/drame.png", accent: "green", progress: 1, total: 3, xp: 25, xpMax: 100 },
-  { code: "romance", label: "Romance", img: "/images/categories/romance.png", accent: "pink", progress: 2, total: 3, xp: 55, xpMax: 100 },
-  { code: "thriller", label: "Thriller", img: "/images/categories/thriller.png", accent: "teal", progress: 0, total: 3, xp: 0, xpMax: 100 },
-  { code: "western", label: "Western", img: "/images/categories/western.png", accent: "brown", progress: 1, total: 3, xp: 10, xpMax: 100 },
+  { code: "horreur", label: "Horreur", img: "/images/categories/horreur.webp", accent: "red", progress: 2, total: 3, xp: 35, xpMax: 100 },
+  { code: "comedie", label: "Comédie", img: "/images/categories/comedie.webp", accent: "gold", progress: 3, total: 3, xp: 100, xpMax: 100 },
+  { code: "aventure", label: "Aventure", img: "/images/categories/aventure.webp", accent: "orange", progress: 1, total: 3, xp: 20, xpMax: 100 },
+  { code: "scifi", label: "Sci-Fi", img: "/images/categories/sci-fi.webp", accent: "blue", progress: 2, total: 3, xp: 60, xpMax: 100 },
+  { code: "fantastique", label: "Fantastique", img: "/images/categories/fantastique.webp", accent: "purple", progress: 1, total: 3, xp: 15, xpMax: 100 },
+  { code: "action", label: "Action", img: "/images/categories/action.webp", accent: "steel", progress: 3, total: 3, xp: 100, xpMax: 100 },
+  { code: "drame", label: "Drame", img: "/images/categories/drame.webp", accent: "green", progress: 1, total: 3, xp: 25, xpMax: 100 },
+  { code: "romance", label: "Romance", img: "/images/categories/romance.webp", accent: "pink", progress: 2, total: 3, xp: 55, xpMax: 100 },
+  { code: "thriller", label: "Thriller", img: "/images/categories/thriller.webp", accent: "teal", progress: 0, total: 3, xp: 0, xpMax: 100 },
+  { code: "western", label: "Western", img: "/images/categories/western.webp", accent: "brown", progress: 1, total: 3, xp: 10, xpMax: 100 },
 ];
 
 /** Nombre total de trophées dans le futur système (mock). */

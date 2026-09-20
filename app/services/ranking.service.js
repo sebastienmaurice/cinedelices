@@ -28,8 +28,10 @@ let _contribCacheTime = 0;
 
 /** Résout l'URL png d'un cadre équipé — utilisé pour l'avatar du widget public. */
 export function frameUrl(code) {
-  const f = FRAME_UNLOCKS.find((f) => f.code === (code || "cine"));
-  return f ? f.pngUrl : FRAME_UNLOCKS[0].pngUrl;
+  const f = FRAME_UNLOCKS.find((f) => f.code === (code || "cine")) || FRAME_UNLOCKS[0];
+  // Variante 160px (-nav.webp, ~10 Ko) au lieu du cadre 260-600px (~100 Ko) :
+  // cet URL n'alimente que de petits avatars (nav, widget Top Contributeurs).
+  return f.pngUrl ? f.pngUrl.replace(/\.(png|webp)$/, "-nav.webp") : f.pngUrl;
 }
 
 /**

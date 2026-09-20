@@ -4492,6 +4492,39 @@ main {
   -webkit-backdrop-filter: blur(24px) saturate(1.6);
   border-bottom-color: rgba(196, 160, 82, 0.14);
 }
+/* Perf mobile : animations CSS décoratives INFINIES coupées sous 800px.
+   Identifiées à l'audit (scroll encore saccadé après starfield/nav) :
+   bobines qui tournent dans les heros (rotateReel), zoom continu de la
+   grande image hero recette (heroImgZoom, image plein cadre remise à
+   l'échelle en boucle), bandes d'affiches défilantes des bannières CTA
+   (dizaines d'images animées en permanence), faisceau/poussière CinéPass
+   (mix-blend-mode: screen + 8 dégradés animés), particules contact,
+   shimmer doré des cartes. Toutes purement décoratives et sans survol
+   sur tactile — l'état statique reste identique visuellement. */
+@media (max-width: 800px) {
+  .page-hero__reel,
+  .hero-reel,
+  .ca-hero__reel,
+  .reel,
+  .recipe-hero__img,
+  .fcard--cta__poster-track,
+  .cp-hero__spotlight,
+  .cp-hero__dust,
+  .ca-particle,
+  .hero__slide-badge::before,
+  .hero__slide-badge--welcome::before,
+  .badge__skeleton,
+  .now-showing__dot,
+  .genres-separator__arrow,
+  .duo-jour-header__live-dot,
+  .level-medallion--bronze,
+  .level-medallion--silver,
+  .level-medallion--gold,
+  .level-medallion--legendary {
+    animation: none !important;
+  }
+}
+
 /* Perf mobile : backdrop-filter sur un élément position:fixed force le
    navigateur à recalculer le flou à chaque frame pendant tout le scroll
    (nav-bar est fixed sur TOUTES les pages) — un des effets CSS les plus
