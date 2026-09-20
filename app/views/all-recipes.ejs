@@ -74,10 +74,10 @@
               </div>
               <div class="quick-tags-row">
                 <span class="qt-label">Catégorie :</span>
-                <a href="/recipes-movie/" class="qtag qtag-or <%= categoryFilter === 'all' ? 'active' : '' %>">Toutes</a>
-                <a href="/recipes-movie/?category=entr%C3%A9e" class="qtag qtag-vert <%= categoryFilter === 'entrée' ? 'active' : '' %>">Entrée</a>
-                <a href="/recipes-movie/?category=plat" class="qtag qtag-bleu <%= categoryFilter === 'plat' ? 'active' : '' %>">Plat</a>
-                <a href="/recipes-movie/?category=dessert" class="qtag qtag-rouge <%= categoryFilter === 'dessert' ? 'active' : '' %>">Dessert</a>
+                <a href="/recipes-movie" class="qtag qtag-or <%= categoryFilter === 'all' ? 'active' : '' %>">Toutes</a>
+                <a href="/recipes-movie?category=entr%C3%A9e" class="qtag qtag-vert <%= categoryFilter === 'entrée' ? 'active' : '' %>">Entrée</a>
+                <a href="/recipes-movie?category=plat" class="qtag qtag-bleu <%= categoryFilter === 'plat' ? 'active' : '' %>">Plat</a>
+                <a href="/recipes-movie?category=dessert" class="qtag qtag-rouge <%= categoryFilter === 'dessert' ? 'active' : '' %>">Dessert</a>
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
               <i data-lucide="search" width="13" height="13" stroke-width="2.5" aria-hidden="true"></i>
               Trouver une recette ou un film
             </p>
-            <form class="search-main-row" action="/recipes-movie/" method="GET" role="search">
+            <form class="search-main-row" action="/recipes-movie" method="GET" role="search">
               <% if (categoryFilter !== 'all') { %>
               <input type="hidden" name="category" value="<%= categoryFilter %>" />
               <% } %>
@@ -386,7 +386,7 @@
           btn.addEventListener('click', function() {
             const params = new URLSearchParams(window.location.search);
             params.set('sort', btn.dataset.sort);
-            window.location.href = '/recipes-movie/?' + params.toString();
+            window.location.href = '/recipes-movie?' + params.toString();
           });
         });
 

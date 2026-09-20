@@ -52,6 +52,14 @@ app.use(express.static("./app/public", {
   etag: true,
 }));
 
+// SEO : /recipes-movie/ et /recipes-movie servent le même contenu, mais la canonical
+// et le sitemap déclarent la version sans slash. 301 pour que Google consolide.
+app.use((req, res, next) => {
+  if (req.method === "GET" && req.path === "/recipes-movie/") {
+    return res.redirect(301, "/recipes-movie" + req.url.slice(req.path.length));
+  }
+  next();
+});
 app.use(express.urlencoded({ extended: true })); // pour parser les données des formulaires
 app.use(express.json()); // permet de parser le JSON
 app.use(verifyToken); // Middleware global pour vérifier le token et définir req.user si connecté
