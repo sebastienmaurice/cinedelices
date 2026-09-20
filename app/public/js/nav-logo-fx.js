@@ -457,6 +457,24 @@
   const prefersReducedMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (scenes.length && !prefersReducedMotion) loop();
+  // Perf mobile : ce logo tourne dans la nav FIXE, présente sur toutes
+  // les pages — jusqu'à ~150-200 créations de dégradé (createRadialGradient/
+  // createLinearGradient) PAR FRAME rien que pour le néon/les reflets/les
+  // étoiles, à 60fps, en continu, jamais mis en pause (contrairement au
+  // logo du footer qui l'est déjà via IntersectionObserver). Identifié
+  // comme cause probable de latence au scroll sur mobile. Le survol
+  // (hoverIntensity, sweep filmique) n'a de toute façon aucun sens sur
+  // écran tactile. Sous 800px : un seul rendu (comme reduced-motion),
+  // pas de boucle.
+  const isSmallViewport = window.matchMedia &&
+    window.matchMedia('(max-width: 800px)').matches;
+
+  if (scenes.length) {
+    if (prefersReducedMotion || isSmallViewport) {
+      scenes.forEach(s => s.tick());
+    } else {
+      loop();
+    }
+  }
 
 })();
