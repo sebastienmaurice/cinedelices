@@ -831,6 +831,23 @@ body.author-page main {
 @media (max-width:900px) { .fcard--cta__deco{display:none} .fcard--cta__link{padding:32px 36px} }
 @media (max-width:600px) { .fcard--cta__title{font-size:2rem} .fcard--cta__link{padding:28px 24px} }
 
+/* Tablette / petit desktop (641–1200px) : la rangée de stats (3 blocs + pastilles de cadres,
+   ~800px de large, "nowrap") ne tenait pas. Elle débordait à droite et, comme la ligne
+   avatar + identité se recentrait en débordant des deux côtés, l'avatar sortait de l'écran
+   à gauche (-59px à 1024px). Elle passe maintenant à la ligne. */
+@media (min-width: 641px) and (max-width: 1200px) {
+  .author-page .hero-identity { min-width: 0; }
+  .author-page .hero-stats-row { flex-wrap: wrap; gap: 14px 28px; }
+  .author-page .hero-stats-row .h-stat-div { display: none; }
+}
+/* Tablette portrait (641–900px) : le hero a une hauteur fixe de 310px (user-profile.css),
+   trop courte pour avatar + pseudo + bio + stats sur 2 lignes : le contenu remontait sous
+   le header et était coupé. La hauteur suit désormais le contenu. */
+@media (min-width: 641px) and (max-width: 900px) {
+  .author-page .profile-hero { height: auto; min-height: 310px; }
+  .author-page .hero-content { padding-top: 96px; height: auto; }
+}
+
 @media (max-width: 640px) {
   /* Libellés des stats hero : "nowrap" les faisait sortir de l'écran */
   /* Icône au-dessus du libellé : colonne étroite, texte sur 2 lignes max */
