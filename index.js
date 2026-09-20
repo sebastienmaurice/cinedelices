@@ -26,6 +26,7 @@ import jwt from "jsonwebtoken";
 import router from "./app/routes/index.route.js";
 import { verifyToken } from "./app/middlewares/is-authed.middleware.js";
 import { injectLocals } from "./app/middlewares/inject-locals.middleware.js";
+import { notifyAdmin } from "./app/services/admin-notify.service.js";
 
 const app = express();
 
@@ -95,6 +96,28 @@ if (process.env.MAINTENANCE === "true") {
   });
 }
 
+// Notification des erreurs serveur (5xx) à l'équipe — dédoublonnée et plafonnée (voir admin-notify.service.js).
+// Couvre aussi les contrôleurs qui répondent eux-mêmes res.status(500) dans un catch.
+app.use((req, res, next) => {
+  res.on("finish", () => {
+    if (res.statusCode < 500 || req.path === "/health") return;
+    const err = res.locals.__error;
+    notifyAdmin({
+      type: "error",
+      title: `Erreur ${res.statusCode} sur ${req.method} ${req.path}`,
+      dedupeKey: `${res.statusCode} ${req.method} ${req.path} ${err?.message || ""}`,
+      rows: [
+        ["Page", `${req.method} ${req.originalUrl}`.slice(0, 200)],
+        ["Statut", res.statusCode],
+        ["Message", err?.message],
+        ["Utilisateur", req.userId ? `#${req.userId}${req.userRole ? " (" + req.userRole + ")" : ""}` : "visiteur"],
+        ["Navigateur", (req.headers["user-agent"] || "").slice(0, 120)],
+      ],
+    });
+  });
+  next();
+});
+
 // Routes normales
 app.use(router);
 
@@ -108,6 +131,7 @@ app.use((req, res) => {
 // Global error handler pour attraper les erreurs non gérées et éviter un 500 générique
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
+  res.locals.__error = err; // repris par la notification d'erreur ci-dessus
   const acceptsJson =
     req.xhr || req.headers.accept?.includes("application/json");
   if (acceptsJson) {

@@ -1363,7 +1363,7 @@ const adminController = {
         email: email.trim().toLowerCase(),
         password: hash,
         role: userRole,
-      });
+      }, { notifyAdmin: false }); // créé par l'admin lui-même : pas d'email de notification
 
       logAdminAction({ adminId: req.userId, action: "create_user", targetType: "user", targetId: newUser.id, detail: `${pseudo.trim()} (${userRole})` });
       return res.json({ success: true, userId: newUser.id });
