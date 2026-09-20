@@ -271,9 +271,14 @@
   .ck-icon { font-size: 2rem; }
   .ck-actions {
     flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
   }
-  .ck-btn { flex: 1; min-width: 0; font-size: 0.75rem; white-space: normal; text-align: center; }
+  /* 2 boutons par ligne max : "ENREGISTRER MES CHOIX" débordait à 360px */
+  .ck-btn {
+    flex: 1 1 calc(50% - 6px); min-width: 0; font-size: 0.75rem; white-space: normal; text-align: center;
+    letter-spacing: 0.08em; padding: 10px 8px; overflow-wrap: anywhere;
+  }
   .ck-choices { flex-direction: row; gap: 12px; }
   .ck-choice { flex: 1; }
 }

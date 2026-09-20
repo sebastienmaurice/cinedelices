@@ -2879,7 +2879,8 @@ body.modal-open { overflow: hidden; }
   .author-link { padding: 5px 10px 5px 9px; font-size: 0.75rem; }
 
   /* Layout : colonne centrée — avatar en haut, identity en bas */
-  .hero-content { padding-top: 80px; padding-bottom: 24px; width: 100%; }
+  /* Garde les gouttières latérales : "width: 100%" collait bio et stats aux bords de l'écran */
+  .hero-content { padding-top: 80px; padding-bottom: 24px; width: min(var(--cd-max, 1440px), 100% - 32px); }
   .hero-row { flex-direction: column; align-items: center; gap: 6px; width: 100%; }
   .hero-identity { flex: unset; width: 100%; min-width: 0; text-align: center; }
 
@@ -2904,7 +2905,17 @@ body.modal-open { overflow: hidden; }
   .hero-sub { justify-content: center; font-size: 1.2rem; color: rgba(232, 232, 232, 0.65); }
   .hero-sub__rank { color: rgba(232, 232, 232, 0.65); }
   .hero-sub__lvl { font-size: 0.8125rem; padding: 3px 9px; }
-  .hero-stats-row { justify-content: center; gap: 20px; margin-top: 8px; }
+  /* Stats : grille à 3 colonnes (chiffre au-dessus du libellé), le bloc "cadres"
+     passe pleine largeur dessous. Plus de débordement, hauteur réduite. */
+  .hero-stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    justify-items: center; align-items: start; gap: 12px 6px; margin-top: 10px; width: 100%;
+  }
+  .hero-stats-row .h-stat { align-items: center; text-align: center; gap: 4px; min-width: 0; }
+  .hero-stats-row .h-stat-div { display: none; }
+  .hero-stats-row .h-stat--frames { grid-column: 1 / -1; padding-top: 6px; }
+  .h-stat__num { font-size: 2rem; }
+  .hero-stats-row .h-stat__lbl { letter-spacing: 0.08em; line-height: 1.3; }
 
   /* Tabs : icônes seules, pleine largeur équitable */
   .profile-tabs { width: 100%; }
