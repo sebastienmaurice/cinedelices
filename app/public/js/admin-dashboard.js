@@ -313,11 +313,53 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
   const mainWrapper = document.querySelector(".main-wrapper");
 
+  const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+  const sidebarClose = document.getElementById("sidebar-close");
+  const DESKTOP_MQ = window.matchMedia("(min-width: 960px)");
+  const RAIL_KEY = "admin_sidebar_collapsed";
+
+  // PC : rail d'icônes (mémorisé). Mobile / tablette : tiroir avec fond cliquable.
+  function setRail(collapsed) {
+    sidebar.classList.toggle("is-collapsed", collapsed);
+    mainWrapper?.classList.toggle("sidebar-collapsed", collapsed);
+    try { localStorage.setItem(RAIL_KEY, collapsed ? "1" : "0"); } catch (_) {}
+  }
+  function setDrawer(open) {
+    sidebar.classList.toggle("is-open", open);
+    document.body.classList.toggle("sidebar-open", open);
+    if (sidebarBackdrop) sidebarBackdrop.hidden = !open;
+    sidebarToggle?.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  function resetForViewport() {
+    if (DESKTOP_MQ.matches) {
+      setDrawer(false);
+      let saved = false;
+      try { saved = localStorage.getItem(RAIL_KEY) === "1"; } catch (_) {}
+      sidebar.classList.toggle("is-collapsed", saved);
+      mainWrapper?.classList.toggle("sidebar-collapsed", saved);
+    } else {
+      sidebar.classList.remove("is-collapsed");
+      mainWrapper?.classList.remove("sidebar-collapsed");
+      setDrawer(false);
+    }
+  }
+
   if (sidebarToggle && sidebar) {
+    resetForViewport();
+    DESKTOP_MQ.addEventListener("change", resetForViewport);
     sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("is-collapsed");
-      mainWrapper?.classList.toggle("sidebar-collapsed");
+      if (DESKTOP_MQ.matches) setRail(!sidebar.classList.contains("is-collapsed"));
+      else setDrawer(!sidebar.classList.contains("is-open"));
     });
+    sidebarClose?.addEventListener("click", () => setDrawer(false));
+    sidebarBackdrop?.addEventListener("click", () => setDrawer(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && sidebar.classList.contains("is-open")) setDrawer(false);
+    });
+    // Choisir une vue referme le tiroir (sinon il masquerait le contenu choisi)
+    sidebar.querySelectorAll(".nav-item").forEach((item) =>
+      item.addEventListener("click", () => { if (!DESKTOP_MQ.matches) setDrawer(false); })
+    );
   }
 
   // ══════════════════════════════════════════════════════
