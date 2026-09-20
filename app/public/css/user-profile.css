@@ -2968,6 +2968,19 @@ body.modal-open { overflow: hidden; }
   .hero-banner-status .banner-btn--rejected { max-width: 110px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
 
+/* Tablette portrait (641–900px) : avatar agrandi de 80px à 180px (échelle 0.692 du badge 260px).
+   À 80px le cadre gamification était illisible alors que le hero offre beaucoup de place.
+   Le hero suit la hauteur de son contenu (310px fixes ne suffisent plus). */
+@media (min-width: 641px) and (max-width: 900px) {
+  .profile-hero { height: auto; min-height: 310px; }
+  .hero-content { height: auto; padding-top: 64px; padding-bottom: 28px; }
+  .profile-page .hero-content { padding-bottom: 28px; } /* la page "Mon compte" force 0 (spécificité) */
+  .avatar-block { width: 180px; height: 180px; overflow: visible; }
+  .profile-badge-hero { transform: scale(0.6923); transform-origin: top left; }
+  /* Boutons d'avatar : contre-échelle 1/0.6923 pour rester à taille réelle, décalés de ~9px */
+  .avatar-actions { right: -13px; transform: scale(1.4444); transform-origin: top right; }
+}
+
 /* ≤ 360px : l'avatar (248px) est centré, ses boutons en left:270px sortaient de l'écran
    (293→321px sur 320px). On les place en bas à droite de l'avatar, en ligne. */
 @media (max-width: 360px) {
@@ -5211,4 +5224,10 @@ body.modal-open { overflow: hidden; }
 
   /* Actions status badge ne déborde pas */
   .lr-status { font-size: 0.75rem; padding: 1px 5px; }
+}
+
+/* 641–760px : les 4 onglets (texte + badge "9+") ne tenaient pas et "Contributions" était coupé */
+@media (min-width: 641px) and (max-width: 760px) {
+  .ptab { padding-left: 10px; padding-right: 10px; gap: 5px; }
+  .ptab .ptab-text { letter-spacing: 0.03em; }
 }
