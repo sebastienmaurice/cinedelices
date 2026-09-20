@@ -949,3 +949,21 @@ body.collection-page .impact-banner {
   .trp-card__category { font-size: 0.75rem; }
   .trp-card__condition { font-size: 0.75rem; }
 }
+
+/* Mobile/tablette : .ctr-main applique déjà ses marges ; .profile-content (width: min(..., 100% - 2rem)
+   + margin auto) les retirait une 2e fois → contenu de 263px au lieu de 327px, la grille des trophées
+   (3 x 114px) débordait et la 3e carte était coupée. */
+@media (max-width: 900px) {
+  .ctr-main .profile-content { width: 100%; margin-left: 0; margin-right: 0; }
+}
+
+/* ≤560px : colonnes "minmax(0, 1fr)" (le contenu minimal des cartes, agrandi par le plancher de
+   police de 12px, dépassait la colonne et coupait la 3e carte) ; 2 colonnes sous 430px. */
+@media (max-width: 560px) {
+  .trp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .trp-card { min-width: 0; }
+  .trp-card__label, .trp-card__category, .trp-card__condition { overflow-wrap: anywhere; }
+}
+@media (max-width: 430px) {
+  .trp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; }
+}

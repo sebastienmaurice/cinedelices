@@ -5231,3 +5231,11 @@ body.modal-open { overflow: hidden; }
   .ptab { padding-left: 10px; padding-right: 10px; gap: 5px; }
   .ptab .ptab-text { letter-spacing: 0.03em; }
 }
+
+/* Mobile (≤640px) : en-tête "Collection de cadres" — titre et bloc compteur/suggestion
+   étaient côte à côte en nowrap et le bloc de droite dépassait de l'écran (~63px). */
+@media (max-width: 640px) {
+  .cfc-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .cfc-header__right { flex-shrink: 1; align-items: flex-start; width: 100%; min-width: 0; }
+  .cfc-header__suggest-hint { white-space: normal; text-align: left; }
+}
