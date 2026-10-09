@@ -63,6 +63,12 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true })); // pour parser les données des formulaires
 app.use(express.json()); // permet de parser le JSON
+// Un POST sans Content-Type reconnu (robots, scanners) laisse req.body à undefined : tous les
+// contrôleurs qui font `const { x } = req.body` plantaient en 500. On garantit un objet vide.
+app.use((req, res, next) => {
+  if (req.body === undefined || req.body === null) req.body = {};
+  next();
+});
 app.use(verifyToken); // Middleware global pour vérifier le token et définir req.user si connecté
 app.use(injectLocals); // Middleware global pour injecter les variables locales dans les vues
 // Middleware global : nettoie automatiquement req.body, req.query, req.params.

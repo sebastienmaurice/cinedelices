@@ -124,6 +124,14 @@ const authController = {
     // Note : sanitization à prévoir pour le pseudo (futur amélioration sécurité)
     const { pseudo, email, password, rgpd_consent } = req.body;
 
+    // Champs obligatoires : sans eux (requête de robot), 400 propre au lieu d'une erreur 500
+    if (!pseudo || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Pseudo, email et mot de passe sont obligatoires.",
+      });
+    }
+
     // Vérification consentement RGPD obligatoire
     if (!rgpd_consent) {
       return res.status(400).json({
