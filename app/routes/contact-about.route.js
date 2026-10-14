@@ -1,5 +1,5 @@
 import { Router } from "express";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import contactAboutController from "../controllers/contact-about.controllers.js";
 
 const router = Router();
@@ -11,7 +11,7 @@ const contactLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   // Derrière Cloudflare, req.ip peut être l'IP du proxy : on utilise l'IP visiteur réelle
-  keyGenerator: (req) => req.headers["cf-connecting-ip"] || req.ip,
+  keyGenerator: (req) => ipKeyGenerator(req.headers["cf-connecting-ip"] || req.ip),
   message: { success: false, message: "Trop de messages envoyés. Réessayez dans une heure." },
 });
 
