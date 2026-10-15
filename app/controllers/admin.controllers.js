@@ -1389,8 +1389,17 @@ const adminController = {
         return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier ce compte." });
       }
 
-      const { pseudo, email, password, role } = req.body;
+      const { pseudo, email, password, role, special_title } = req.body;
       const updateData = {};
+
+      // Mention spéciale : réservée aux super admins, texte court sans effet sur les droits
+      if (special_title !== undefined) {
+        if (!callerIsSuperAdmin) {
+          return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut attribuer une mention." });
+        }
+        const t = String(special_title).trim().slice(0, 60);
+        updateData.special_title = t || null;
+      }
 
       if (pseudo?.trim()) updateData.pseudo = pseudo.trim();
       if (email?.trim()) {

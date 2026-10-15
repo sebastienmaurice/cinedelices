@@ -24,10 +24,10 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=fs45" />
-    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs45" />
-    <link rel="stylesheet" href="/css/all-recipes.css?v=fs45" />
-    <link rel="stylesheet" href="/css/author-page.css?v=fs45" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=fs46" />
+    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs46" />
+    <link rel="stylesheet" href="/css/all-recipes.css?v=fs46" />
+    <link rel="stylesheet" href="/css/author-page.css?v=fs46" />
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -254,6 +254,10 @@
               const _pRest = _pp.join(' ');
             %>
             <h1 class="hero-pseudo hero-pseudo--static" id="authorName"><% if (_pRest) { %><%= _pRest %> <% } %><em><%= _pLast %></em></h1>
+
+            <% if (author.special_title) { %>
+            <p class="hero-special-title"><i data-lucide="award" width="13" height="13" aria-hidden="true"></i><%= author.special_title %></p>
+            <% } %>
 
             <!-- Titre rang -->
             <p class="hero-rank-title"><%= isAdminAuthor ? 'Équipe Ciné Délices' : userRank %></p>

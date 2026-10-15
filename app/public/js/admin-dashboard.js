@@ -896,6 +896,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const pseudoInput = document.getElementById("ur-pseudo");
       const emailInput  = document.getElementById("ur-email");
       const roleSelect  = document.getElementById("ur-role");
+      const titleInput  = document.getElementById("ur-title");
+      if (titleInput)  titleInput.value  = data.title  || "";
       if (pseudoInput) pseudoInput.value = data.pseudo || "";
       if (emailInput)  emailInput.value  = data.email  || "";
       if (roleSelect)  roleSelect.value  = data.role   || "user";
@@ -923,6 +925,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email    = document.getElementById("ur-email")?.value?.trim();
     const password = document.getElementById("ur-password")?.value;
     const role     = document.getElementById("ur-role")?.value;
+    const titleEl  = document.getElementById("ur-title");
 
     const url = urMode === "create"
       ? "/admin/users/create"
@@ -932,7 +935,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res  = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pseudo, email, password, role }),
+        body: JSON.stringify(titleEl && urMode !== "create" ? { pseudo, email, password, role, special_title: titleEl.value } : { pseudo, email, password, role }),
       });
       const data = await res.json();
       if (data.success) {
@@ -956,6 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pseudo: editBtn.dataset.editUserPseudo,
         email:  editBtn.dataset.editUserEmail,
         role:   editBtn.dataset.editUserRole,
+        title:  editBtn.dataset.editUserTitle,
       });
     }
   });

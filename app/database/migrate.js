@@ -140,4 +140,13 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration user_univers_equipements :", err.message);
   }
+
+  // Mention spéciale utilisateur (créateurs partenaires, membres fondateurs) —
+  // voir app/database/migrations/20261015-add-user-special-title.sql
+  try {
+    await sequelize.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS special_title VARCHAR(60) NULL;`);
+    console.log("✅ Migration users.special_title OK");
+  } catch (err) {
+    console.error("⚠️  Migration users.special_title :", err.message);
+  }
 }

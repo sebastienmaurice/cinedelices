@@ -6,8 +6,8 @@
     <title>Administration — Ciné Délices</title>
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin-dashboard.css?v=8" />
-    <link rel="stylesheet" href="/css/rte-mini.css?v=fs45" />
+    <link rel="stylesheet" href="/css/admin-dashboard.css?v=9" />
+    <link rel="stylesheet" href="/css/rte-mini.css?v=fs46" />
     <!-- Lucide Icons — version fixée pour éviter les breaking changes de @latest -->
     <script src="https://unpkg.com/lucide@0.309.0/dist/umd/lucide.min.js"></script>
   </head>
@@ -971,7 +971,7 @@
                 <td class="user-cell">
                   <div class="user-cell__inner">
                     <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
-                    <span><%= user.pseudo || '—' %></span>
+                    <span><%= user.pseudo || '—' %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
                   </div>
                 </td>
                 <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
@@ -997,7 +997,8 @@
                     data-edit-user-id="<%= user.id %>"
                     data-edit-user-pseudo="<%= user.pseudo || '' %>"
                     data-edit-user-email="<%= user.email || '' %>"
-                    data-edit-user-role="<%= user.role || 'user' %>">
+                    data-edit-user-role="<%= user.role || 'user' %>"
+                    data-edit-user-title="<%= user.special_title || '' %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1049,7 +1050,7 @@
                 <td class="user-cell">
                   <div class="user-cell__inner">
                     <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
-                    <span><%= user.pseudo || '—' %></span>
+                    <span><%= user.pseudo || '—' %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
                   </div>
                 </td>
                 <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
@@ -1075,7 +1076,8 @@
                     data-edit-user-id="<%= user.id %>"
                     data-edit-user-pseudo="<%= user.pseudo || '' %>"
                     data-edit-user-email="<%= user.email || '' %>"
-                    data-edit-user-role="<%= user.role || 'user' %>">
+                    data-edit-user-role="<%= user.role || 'user' %>"
+                    data-edit-user-title="<%= user.special_title || '' %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1855,6 +1857,19 @@
             </select>
           </div>
           <% } %>
+          <% if (role === 'superadmin') { %>
+          <div class="admin-modal__field" id="ur-title-field">
+            <label class="admin-modal__label" for="ur-title">Mention spéciale <span style="opacity:.6;font-weight:400">(optionnel, décorative)</span></label>
+            <input type="text" id="ur-title" name="special_title" class="admin-modal__input" maxlength="60" list="ur-title-list" placeholder="Ex : Contributrice Fondatrice" autocomplete="off" />
+            <datalist id="ur-title-list">
+              <option value="Contributrice Fondatrice"></option>
+              <option value="Contributeur Fondateur"></option>
+              <option value="Créatrice Partenaire"></option>
+              <option value="Créateur Partenaire"></option>
+              <option value="Membre Fondateur"></option>
+            </datalist>
+          </div>
+          <% } %>
           <div class="admin-modal__footer">
             <button type="submit" id="ur-submit-btn" class="act-btn act-btn--approve">
               <i data-lucide="check" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
@@ -1884,7 +1899,7 @@
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
     <script src="/js/rte-mini.js"></script>
-    <script src="/js/admin-dashboard.js?v=3"></script>
+    <script src="/js/admin-dashboard.js?v=4"></script>
     <script src="/js/recipe-detail.js"></script>
     <script>if (window.lucide) lucide.createIcons();</script>
   </body>

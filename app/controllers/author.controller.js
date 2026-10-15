@@ -70,6 +70,9 @@ function _enrichRecipes(recipes, favoriteIds, userRatingsMap, avgRatingsMap) {
 /* ─────────────────────────────────────────────────────
    Controller
 ───────────────────────────────────────────────────── */
+/* Mentions spéciales donnant droit à une page auteur sans recette publiée */
+const PARTNER_TITLES = ["Créatrice Partenaire", "Créateur Partenaire"];
+
 const authorController = {
   /**
    * GET /auteur/:id
@@ -85,11 +88,14 @@ const authorController = {
       });
       if (!author) return renderNotFound(res, "Auteur");
 
-      // Seuls les auteurs avec au moins 1 recette approuvée ont une page auteur
+      // Seuls les auteurs avec au moins 1 recette approuvée ont une page auteur,
+      // sauf les créateurs partenaires (mention spéciale) dont la page est visible
+      // dès l'inscription pour pouvoir la partager avant la première recette.
+      const isPartner = PARTNER_TITLES.includes(author.special_title);
       const approvedCount = await Recipe.count({
         where: { id_user: userId, status: "approved" },
       });
-      if (approvedCount === 0) return renderNotFound(res, "Auteur");
+      if (approvedCount === 0 && !isPartner) return renderNotFound(res, "Auteur");
 
       // Recettes approuvées de l'auteur (avec film et notes)
       const recipes = await Recipe.findAll({
