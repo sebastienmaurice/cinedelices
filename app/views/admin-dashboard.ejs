@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin-dashboard.css?v=9" />
-    <link rel="stylesheet" href="/css/rte-mini.css?v=fs46" />
+    <link rel="stylesheet" href="/css/rte-mini.css?v=fs47" />
     <!-- Lucide Icons — version fixée pour éviter les breaking changes de @latest -->
     <script src="https://unpkg.com/lucide@0.309.0/dist/umd/lucide.min.js"></script>
   </head>
@@ -998,7 +998,8 @@
                     data-edit-user-pseudo="<%= user.pseudo || '' %>"
                     data-edit-user-email="<%= user.email || '' %>"
                     data-edit-user-role="<%= user.role || 'user' %>"
-                    data-edit-user-title="<%= user.special_title || '' %>">
+                    data-edit-user-title="<%= user.special_title || '' %>"
+                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1077,7 +1078,8 @@
                     data-edit-user-pseudo="<%= user.pseudo || '' %>"
                     data-edit-user-email="<%= user.email || '' %>"
                     data-edit-user-role="<%= user.role || 'user' %>"
-                    data-edit-user-title="<%= user.special_title || '' %>">
+                    data-edit-user-title="<%= user.special_title || '' %>"
+                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1870,6 +1872,15 @@
             </datalist>
           </div>
           <% } %>
+          <% if (role === 'superadmin') { %>
+          <fieldset class="admin-modal__field" id="ur-social-field" style="border:0;padding:0;margin:0;">
+            <legend class="admin-modal__label">Réseaux sociaux <span style="opacity:.6;font-weight:400">(optionnel, affichés sur la page auteur)</span></legend>
+            <input type="text" id="ur-soc-tiktok" class="admin-modal__input" placeholder="TikTok : @pseudo ou lien" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-soc-instagram" class="admin-modal__input" placeholder="Instagram : @pseudo ou lien" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-soc-youtube" class="admin-modal__input" placeholder="YouTube : lien de la chaîne" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-soc-website" class="admin-modal__input" placeholder="Site web : https://..." maxlength="300" autocomplete="off" />
+          </fieldset>
+          <% } %>
           <div class="admin-modal__footer">
             <button type="submit" id="ur-submit-btn" class="act-btn act-btn--approve">
               <i data-lucide="check" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
@@ -1899,7 +1910,7 @@
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
     <script src="/js/rte-mini.js"></script>
-    <script src="/js/admin-dashboard.js?v=4"></script>
+    <script src="/js/admin-dashboard.js?v=5"></script>
     <script src="/js/recipe-detail.js"></script>
     <script>if (window.lucide) lucide.createIcons();</script>
   </body>

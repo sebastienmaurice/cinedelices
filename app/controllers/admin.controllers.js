@@ -17,6 +17,7 @@ import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
+import { cleanSocialLinks } from "../services/social-links.service.js";
 import { awardActionXP, checkFirstRecipeMonth } from "../services/gamification.service.js";
 import { checkUserTrophies } from "../services/trophy.service.js";
 import searchCache from "../utils/search-cache.js";
@@ -1389,7 +1390,7 @@ const adminController = {
         return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier ce compte." });
       }
 
-      const { pseudo, email, password, role, special_title } = req.body;
+      const { pseudo, email, password, role, special_title, social_links } = req.body;
       const updateData = {};
 
       // Mention spéciale : réservée aux super admins, texte court sans effet sur les droits
@@ -1399,6 +1400,18 @@ const adminController = {
         }
         const t = String(special_title).trim().slice(0, 60);
         updateData.special_title = t || null;
+      }
+
+      // Réseaux sociaux : réservés aux super admins, URLs validées (https, domaines attendus)
+      if (social_links !== undefined) {
+        if (!callerIsSuperAdmin) {
+          return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier les réseaux sociaux." });
+        }
+        const { value, invalid } = cleanSocialLinks(social_links);
+        if (invalid.length) {
+          return res.json({ success: false, message: "Lien invalide : " + invalid.join(", ") + " (https et bon domaine attendus)." });
+        }
+        updateData.social_links = value;
       }
 
       if (pseudo?.trim()) updateData.pseudo = pseudo.trim();

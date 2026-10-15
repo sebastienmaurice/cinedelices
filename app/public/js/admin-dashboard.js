@@ -898,6 +898,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const roleSelect  = document.getElementById("ur-role");
       const titleInput  = document.getElementById("ur-title");
       if (titleInput)  titleInput.value  = data.title  || "";
+      let soc = {};
+      try { soc = JSON.parse(data.social || "{}"); } catch { soc = {}; }
+      ["tiktok", "instagram", "youtube", "website"].forEach((k) => {
+        const inp = document.getElementById("ur-soc-" + k);
+        if (inp) inp.value = soc[k] || "";
+      });
       if (pseudoInput) pseudoInput.value = data.pseudo || "";
       if (emailInput)  emailInput.value  = data.email  || "";
       if (roleSelect)  roleSelect.value  = data.role   || "user";
@@ -926,6 +932,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("ur-password")?.value;
     const role     = document.getElementById("ur-role")?.value;
     const titleEl  = document.getElementById("ur-title");
+    const socialLinks = {};
+    ["tiktok", "instagram", "youtube", "website"].forEach((k) => {
+      const inp = document.getElementById("ur-soc-" + k);
+      if (inp) socialLinks[k] = inp.value;
+    });
 
     const url = urMode === "create"
       ? "/admin/users/create"
@@ -935,7 +946,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res  = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(titleEl && urMode !== "create" ? { pseudo, email, password, role, special_title: titleEl.value } : { pseudo, email, password, role }),
+        body: JSON.stringify(titleEl && urMode !== "create" ? { pseudo, email, password, role, special_title: titleEl.value, social_links: socialLinks } : { pseudo, email, password, role }),
       });
       const data = await res.json();
       if (data.success) {
@@ -960,6 +971,7 @@ document.addEventListener("DOMContentLoaded", () => {
         email:  editBtn.dataset.editUserEmail,
         role:   editBtn.dataset.editUserRole,
         title:  editBtn.dataset.editUserTitle,
+        social: editBtn.dataset.editUserSocial,
       });
     }
   });

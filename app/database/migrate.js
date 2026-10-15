@@ -149,4 +149,13 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration users.special_title :", err.message);
   }
+
+  // Réseaux sociaux utilisateur (créateurs partenaires) —
+  // voir app/database/migrations/20261015-add-user-social-links.sql
+  try {
+    await sequelize.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS social_links JSONB NULL;`);
+    console.log("✅ Migration users.social_links OK");
+  } catch (err) {
+    console.error("⚠️  Migration users.social_links :", err.message);
+  }
 }

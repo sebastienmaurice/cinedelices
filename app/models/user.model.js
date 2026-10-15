@@ -38,6 +38,8 @@ User.init({
   /* Mention spéciale (créateur partenaire, membre fondateur...) : purement
      décorative, sans effet sur les droits. Attribuée par un super admin. */
   special_title: { type: DataTypes.STRING(60), allowNull: true },
+  /* Réseaux sociaux (créateurs partenaires) : { tiktok, instagram, youtube, website } */
+  social_links: { type: DataTypes.JSONB, allowNull: true },
   suspended: { type: DataTypes.BOOLEAN, defaultValue: false },
   suspended_until: { type: DataTypes.DATE, allowNull: true },
   suspension_reason: { type: DataTypes.STRING(500), allowNull: true },
