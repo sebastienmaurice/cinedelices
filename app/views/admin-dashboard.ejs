@@ -6,7 +6,7 @@
     <title>Administration — Ciné Délices</title>
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/admin-dashboard.css?v=9" />
+    <link rel="stylesheet" href="/css/admin-dashboard.css?v=10" />
     <link rel="stylesheet" href="/css/rte-mini.css?v=fs56" />
     <!-- Lucide Icons — version fixée pour éviter les breaking changes de @latest -->
     <script src="https://unpkg.com/lucide@0.309.0/dist/umd/lucide.min.js"></script>
@@ -971,7 +971,7 @@
                 <td class="user-cell">
                   <div class="user-cell__inner">
                     <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
-                    <span><%= user.pseudo || '—' %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
+                    <span><%= user.pseudo || '—' %></span><span class="user-cell__id" title="Numéro d'utilisateur">#<%= user.id %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
                   </div>
                 </td>
                 <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
@@ -1052,7 +1052,7 @@
                 <td class="user-cell">
                   <div class="user-cell__inner">
                     <% if (user.picture) { %><img src="<%= user.picture %>" alt="" class="user-cell__avatar" /><% } %>
-                    <span><%= user.pseudo || '—' %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
+                    <span><%= user.pseudo || '—' %></span><span class="user-cell__id" title="Numéro d'utilisateur">#<%= user.id %></span><% if (user.special_title) { %><span class="user-cell__title"><%= user.special_title %></span><% } %>
                   </div>
                 </td>
                 <td style="font-size:.68rem; color:rgba(255,255,255,.55);"><%= user.email || '—' %></td>
@@ -1909,6 +1909,7 @@
             <button type="button" id="ur-post-add" class="act-btn act-btn--approve" style="align-self:flex-start"><i data-lucide="plus" width="14" height="14" aria-hidden="true"></i><span>Ajouter ce post</span></button>
           </div>
           <% } %>
+          <p id="ur-view-page-wrap" hidden style="margin:0;font-size:12px"><a id="ur-view-page" href="#" target="_blank" rel="noopener" style="color:#E8C25E">Voir sa page auteur (nouvel onglet) ↗</a></p>
           <div class="admin-modal__footer">
             <button type="submit" id="ur-submit-btn" class="act-btn act-btn--approve">
               <i data-lucide="check" width="14" height="14" stroke-width="2.5" aria-hidden="true"></i>
@@ -1938,7 +1939,7 @@
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
     <script src="/js/rte-mini.js"></script>
-    <script src="/js/admin-dashboard.js?v=14"></script>
+    <script src="/js/admin-dashboard.js?v=15"></script>
     <script src="/js/recipe-detail.js"></script>
     <script>if (window.lucide) lucide.createIcons();</script>
   </body>

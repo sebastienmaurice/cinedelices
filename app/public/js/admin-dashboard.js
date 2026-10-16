@@ -925,6 +925,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("modal-open");
     document.getElementById("ur-pseudo")?.focus();
     if (typeof loadCreatorPosts === "function") loadCreatorPosts(mode === "edit" ? userId : null);
+    const viewWrap = document.getElementById("ur-view-page-wrap");
+    if (viewWrap) {
+      viewWrap.hidden = mode !== "edit";
+      const viewLink = document.getElementById("ur-view-page");
+      if (viewLink && mode === "edit") viewLink.href = "/auteur/" + encodeURIComponent(userId);
+    }
   };
 
   const closeUserRoleModal = () => {
