@@ -14,6 +14,7 @@ import NoticeLike from './notice-like.model.js';
 import NoticePicture from './notice-picture.model.js';
 import UserTrophy from './UserTrophy.model.js';
 import UserUniversEquipement from './UserUniversEquipement.model.js';
+import CreatorPost from './CreatorPost.model.js';
 import { registerNotifyHooks } from './notify-hooks.js';
 
 
@@ -104,11 +105,15 @@ UserTrophy.belongsTo(User, { foreignKey: 'id_user' });
 User.hasMany(UserUniversEquipement, { foreignKey: 'id_user' });
 UserUniversEquipement.belongsTo(User, { foreignKey: 'id_user' });
 
+// Posts mis en avant dans la bande carrousel d'un créateur partenaire
+User.hasMany(CreatorPost, { foreignKey: 'id_user', as: 'creatorPosts' });
+CreatorPost.belongsTo(User, { foreignKey: 'id_user' });
+
 // Exportation des modèles pour utilisation dans d'autres parties de l'application
 // Notifications email à l'équipe (inscriptions, contenus à modérer) — voir notify-hooks.js
 registerNotifyHooks({ User, Recipe, Movie, Notice, RecipePicture });
 
-export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture, UserTrophy, UserUniversEquipement };
+export { User, Recipe, Movie, Notice, UsersRecipes, Favorite, Rating, UserPoints, RecipePicture, PasswordReset, NoticeLike, NoticePicture, UserTrophy, UserUniversEquipement, CreatorPost };
 
 
 

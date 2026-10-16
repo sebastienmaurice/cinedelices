@@ -3,6 +3,8 @@ import adminController from "../controllers/admin.controllers.js";
 import uploadMovie from "../middlewares/upload-movie.middleware.js";
 import uploadRecipe from "../middlewares/upload.middleware.js";
 import { isSuperAdmin } from "../middlewares/is-superadmin.middleware.js";
+import creatorPostsController from "../controllers/creator-posts.controller.js";
+import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
 
 const adminRouter = Router();
 
@@ -24,6 +26,12 @@ adminRouter.post("/deleteUser/:id",  isSuperAdmin, adminController.deleteUser);
 adminRouter.post("/users/create",    isSuperAdmin, adminController.createUser);
 adminRouter.post("/users/:id/edit",               adminController.editUser);
 adminRouter.post("/users/:id/role",  isSuperAdmin, adminController.changeUserRole);
+
+// Bande carrousel des posts d'un créateur partenaire (super admin)
+adminRouter.get("/users/:id/posts",  isSuperAdmin, creatorPostsController.list);
+adminRouter.post("/users/:id/posts", isSuperAdmin, uploadAvatar.single("cover"), creatorPostsController.add);
+adminRouter.post("/creator-posts/:postId/delete", isSuperAdmin, creatorPostsController.remove);
+adminRouter.post("/creator-posts/:postId/move",   isSuperAdmin, creatorPostsController.move);
 adminRouter.post("/validateNotice/:id", adminController.validateNotice);
 adminRouter.post("/rejectNotice/:id", adminController.rejectNotice);
 adminRouter.post("/users/:id/photo/approve", adminController.validateUserPhoto);

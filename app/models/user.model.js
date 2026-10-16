@@ -40,6 +40,8 @@ User.init({
   special_title: { type: DataTypes.STRING(60), allowNull: true },
   /* Réseaux sociaux (créateurs partenaires) : { tiktok, instagram, youtube, website } */
   social_links: { type: DataTypes.JSONB, allowNull: true },
+  /* Thème de la bannière espace créateur : { signature, title, primary, accent } */
+  creator_theme: { type: DataTypes.JSONB, allowNull: true },
   suspended: { type: DataTypes.BOOLEAN, defaultValue: false },
   suspended_until: { type: DataTypes.DATE, allowNull: true },
   suspension_reason: { type: DataTypes.STRING(500), allowNull: true },

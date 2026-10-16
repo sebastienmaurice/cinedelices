@@ -158,4 +158,34 @@ export async function runStartupMigration() {
   } catch (err) {
     console.error("⚠️  Migration users.social_links :", err.message);
   }
+
+  // Thème de la bannière espace créateur —
+  // voir app/database/migrations/20261016-add-user-creator-theme.sql
+  try {
+    await sequelize.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS creator_theme JSONB NULL;`);
+    console.log("✅ Migration users.creator_theme OK");
+  } catch (err) {
+    console.error("⚠️  Migration users.creator_theme :", err.message);
+  }
+
+  // Bande carrousel des posts d'un créateur partenaire —
+  // voir app/database/migrations/20261015-add-creator-posts.sql
+  try {
+    await sequelize.query(`
+      CREATE TABLE IF NOT EXISTS creator_posts (
+        id         SERIAL PRIMARY KEY,
+        id_user    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        title      VARCHAR(120) NULL,
+        url        VARCHAR(300) NOT NULL,
+        platform   VARCHAR(20) NOT NULL DEFAULT 'tiktok',
+        cover_url  VARCHAR(500) NULL,
+        position   INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_creator_posts_user ON creator_posts(id_user, position);
+    `);
+    console.log("✅ Migration creator_posts OK");
+  } catch (err) {
+    console.error("⚠️  Migration creator_posts :", err.message);
+  }
 }

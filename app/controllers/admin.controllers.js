@@ -18,6 +18,7 @@ import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { loadAdminData } from "../utils/admin-data-loader.js";
 import { logAdminAction } from "../utils/admin-logger.js";
 import { cleanSocialLinks } from "../services/social-links.service.js";
+import { cleanCreatorTheme } from "../services/creator-theme.service.js";
 import { awardActionXP, checkFirstRecipeMonth } from "../services/gamification.service.js";
 import { checkUserTrophies } from "../services/trophy.service.js";
 import searchCache from "../utils/search-cache.js";
@@ -1390,7 +1391,7 @@ const adminController = {
         return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier ce compte." });
       }
 
-      const { pseudo, email, password, role, special_title, social_links } = req.body;
+      const { pseudo, email, password, role, special_title, social_links, creator_theme } = req.body;
       const updateData = {};
 
       // Mention spéciale : réservée aux super admins, texte court sans effet sur les droits
@@ -1412,6 +1413,18 @@ const adminController = {
           return res.json({ success: false, message: "Lien invalide : " + invalid.join(", ") + " (https et bon domaine attendus)." });
         }
         updateData.social_links = value;
+      }
+
+      // Thème de la bannière espace créateur : super admin, couleurs #RRGGBB, textes courts
+      if (creator_theme !== undefined) {
+        if (!callerIsSuperAdmin) {
+          return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier le thème créateur." });
+        }
+        const { value, invalid } = cleanCreatorTheme(creator_theme);
+        if (invalid.length) {
+          return res.json({ success: false, message: "Thème invalide : " + invalid.join(", ") + " (couleurs #RRGGBB, image : /images/... ou https)." });
+        }
+        updateData.creator_theme = value;
       }
 
       if (pseudo?.trim()) updateData.pseudo = pseudo.trim();

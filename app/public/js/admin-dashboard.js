@@ -898,6 +898,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const roleSelect  = document.getElementById("ur-role");
       const titleInput  = document.getElementById("ur-title");
       if (titleInput)  titleInput.value  = data.title  || "";
+      let th = {};
+      try { th = JSON.parse(data.theme || "{}"); } catch { th = {}; }
+      const setTheme = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+      setTheme("ur-theme-title", th.title || "");
+      setTheme("ur-theme-signature", th.signature || "");
+      setTheme("ur-theme-herobg", th.heroBg || "");
+      setTheme("ur-theme-bannerbg", th.bannerBg || "");
+      setTheme("ur-theme-frame", th.frame || "");
+      setTheme("ur-theme-primary", th.primary || "#c23018");
+      setTheme("ur-theme-accent", th.accent || "#e3b148");
+      const themeMarker = document.getElementById("ur-theme-primary");
+      if (themeMarker) themeMarker.dataset.touched = th.primary || th.accent ? "1" : "";
       let soc = {};
       try { soc = JSON.parse(data.social || "{}"); } catch { soc = {}; }
       ["tiktok", "instagram", "youtube", "website"].forEach((k) => {
@@ -912,6 +924,7 @@ document.addEventListener("DOMContentLoaded", () => {
     userRoleModal?.classList.add("is-open");
     document.body.classList.add("modal-open");
     document.getElementById("ur-pseudo")?.focus();
+    if (typeof loadCreatorPosts === "function") loadCreatorPosts(mode === "edit" ? userId : null);
   };
 
   const closeUserRoleModal = () => {
@@ -919,6 +932,139 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("modal-open");
     urTargetId = null;
   };
+
+  // ── Posts du carrousel (créateurs partenaires) ──
+  const postsField = document.getElementById("ur-posts-field");
+  const postsList  = document.getElementById("ur-posts-list");
+  let postsUserId  = null;
+
+  const renderCreatorPosts = (posts) => {
+    if (!postsList) return;
+    postsList.innerHTML = "";
+    if (!posts.length) {
+      const li = document.createElement("li");
+      li.style.cssText = "font-size:12px;color:rgba(255,255,255,.6)";
+      li.textContent = "Aucun post pour l'instant.";
+      postsList.appendChild(li);
+      return;
+    }
+    posts.forEach((p, i) => {
+      const li = document.createElement("li");
+      li.style.cssText = "display:flex;align-items:center;gap:8px;padding:6px;border:1px solid rgba(255,255,255,.12);border-radius:8px;";
+      const img = document.createElement("img");
+      img.src = p.cover_url || "";
+      img.alt = "";
+      img.style.cssText = "width:30px;height:54px;object-fit:cover;border-radius:4px;flex-shrink:0;";
+      const label = document.createElement("span");
+      label.style.cssText = "flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+      label.textContent = (p.title || p.url);
+      const mk = (txt, title, fn, disabled) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "act-btn act-btn--sm"; b.title = title; b.textContent = txt; b.disabled = !!disabled;
+        b.addEventListener("click", fn);
+        return b;
+      };
+      li.append(img, label,
+        mk("↑", "Monter", () => movePost(p.id, "up"), i === 0),
+        mk("↓", "Descendre", () => movePost(p.id, "down"), i === posts.length - 1),
+        mk("✕", "Supprimer", () => deletePost(p.id)));
+      postsList.appendChild(li);
+    });
+  };
+
+  async function loadCreatorPosts(userId) {
+    postsUserId = userId;
+    if (!postsField) return;
+    postsField.hidden = !userId;
+    if (!userId) return;
+    try {
+      const res = await fetch(`/admin/users/${userId}/posts`);
+      const data = await res.json();
+      renderCreatorPosts(data.success ? data.posts : []);
+    } catch {
+      renderCreatorPosts([]);
+    }
+  }
+
+  const postJson = async (url, body) => {
+    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+    return res.json();
+  };
+  const movePost = async (id, dir) => { const d = await postJson(`/admin/creator-posts/${id}/move`, { dir }); if (d.success) loadCreatorPosts(postsUserId); else showToast(d.message || "Erreur", "error"); };
+  const deletePost = async (id) => {
+    if (!window.confirm("Supprimer ce post du carrousel ?")) return;
+    const d = await postJson(`/admin/creator-posts/${id}/delete`);
+    if (d.success) { showToast("Post supprimé", "success"); loadCreatorPosts(postsUserId); } else showToast(d.message || "Erreur", "error");
+  };
+
+  document.getElementById("ur-post-add")?.addEventListener("click", async () => {
+    const url   = document.getElementById("ur-post-url")?.value?.trim();
+    const title = document.getElementById("ur-post-title")?.value?.trim();
+    const file  = document.getElementById("ur-post-cover")?.files?.[0];
+    if (!postsUserId) return;
+    if (!url) { showToast("Lien du post obligatoire", "error"); return; }
+    if (!file && !/tiktok.com/i.test(url)) { showToast("Image de couverture obligatoire (hors TikTok)", "error"); return; }
+    const fd = new FormData();
+    fd.append("url", url); fd.append("title", title || ""); fd.append("cover", file);
+    const btn = document.getElementById("ur-post-add");
+    btn.disabled = true;
+    try {
+      const res = await fetch(`/admin/users/${postsUserId}/posts`, { method: "POST", body: fd });
+      const d = await res.json();
+      if (d.success) {
+        showToast("Post ajouté", "success");
+        ["ur-post-url", "ur-post-title", "ur-post-cover"].forEach((i) => { const el = document.getElementById(i); if (el) el.value = ""; });
+        loadCreatorPosts(postsUserId);
+      } else {
+        showToast(d.message || "Erreur", "error");
+      }
+    } catch {
+      showToast("Erreur réseau", "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  // Ajout en lot : un lien par ligne, traités l'un après l'autre (ordre conservé)
+  document.getElementById("ur-post-bulk-add")?.addEventListener("click", async () => {
+    const box = document.getElementById("ur-post-bulk");
+    const btn = document.getElementById("ur-post-bulk-add");
+    const covers = Array.from(document.getElementById("ur-post-bulk-files")?.files || []);
+    const links = (box?.value || "").split(/\s+/).map((l) => l.trim()).filter(Boolean);
+    if (!postsUserId || !links.length) { showToast("Collez au moins un lien", "error"); return; }
+    btn.disabled = true;
+    let ok = 0;
+    const failed = [];
+    for (let i = 0; i < links.length; i++) {
+      showToast("Ajout " + (i + 1) + " / " + links.length + "...");
+      try {
+        const fd = new FormData();
+        fd.append("url", links[i]);
+        if (covers[i]) fd.append("cover", covers[i]);
+        const res = await fetch("/admin/users/" + postsUserId + "/posts", { method: "POST", body: fd });
+        const d = await res.json();
+        if (d.success) ok++; else failed.push({ link: links[i], msg: d.message });
+      } catch {
+        failed.push({ link: links[i], msg: "erreur réseau" });
+      }
+    }
+    btn.disabled = false;
+    if (box) box.value = failed.map((f) => f.link).join("\n");
+    const fileInput = document.getElementById("ur-post-bulk-files");
+    if (fileInput) fileInput.value = "";
+    showToast(ok + " ajouté(s)" + (failed.length ? ", " + failed.length + " à revoir (" + failed[0].msg + ")" : ""), failed.length ? "error" : "success");
+    loadCreatorPosts(postsUserId);
+  });
+
+  // Entrée dans ces champs ne doit pas soumettre tout le formulaire
+  ["ur-post-url", "ur-post-title"].forEach((i) => document.getElementById(i)?.addEventListener("keydown", (e) => { if (e.key === "Enter") e.preventDefault(); }));
+
+  // Couleurs du thème : une fois touchées, elles sont enregistrées ; « Par défaut » les efface
+  ["ur-theme-primary", "ur-theme-accent"].forEach((i) => document.getElementById(i)?.addEventListener("input", () => { const p = document.getElementById("ur-theme-primary"); if (p) p.dataset.touched = "1"; }));
+  document.getElementById("ur-theme-reset")?.addEventListener("click", () => {
+    const p = document.getElementById("ur-theme-primary"); const a = document.getElementById("ur-theme-accent");
+    if (p) { p.value = "#c23018"; p.dataset.touched = ""; }
+    if (a) a.value = "#e3b148";
+  });
 
   document.getElementById("ur-modal-close")?.addEventListener("click", closeUserRoleModal);
   document.getElementById("ur-modal-cancel")?.addEventListener("click", closeUserRoleModal);
@@ -932,6 +1078,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("ur-password")?.value;
     const role     = document.getElementById("ur-role")?.value;
     const titleEl  = document.getElementById("ur-title");
+    const themeEl = document.getElementById("ur-theme-primary");
+    const creatorTheme = themeEl ? {
+      title: document.getElementById("ur-theme-title")?.value || "",
+      signature: document.getElementById("ur-theme-signature")?.value || "",
+      heroBg: document.getElementById("ur-theme-herobg")?.value || "",
+      bannerBg: document.getElementById("ur-theme-bannerbg")?.value || "",
+      frame: document.getElementById("ur-theme-frame")?.value || "",
+      // couleurs envoyées seulement si l'admin les a modifiées (sinon : défaut du site)
+      primary: themeEl.dataset.touched ? themeEl.value : "",
+      accent: themeEl.dataset.touched ? document.getElementById("ur-theme-accent")?.value : "",
+    } : null;
     const socialLinks = {};
     ["tiktok", "instagram", "youtube", "website"].forEach((k) => {
       const inp = document.getElementById("ur-soc-" + k);
@@ -946,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res  = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(titleEl && urMode !== "create" ? { pseudo, email, password, role, special_title: titleEl.value, social_links: socialLinks } : { pseudo, email, password, role }),
+        body: JSON.stringify(titleEl && urMode !== "create" ? { pseudo, email, password, role, special_title: titleEl.value, social_links: socialLinks, creator_theme: creatorTheme } : { pseudo, email, password, role }),
       });
       const data = await res.json();
       if (data.success) {
@@ -972,6 +1129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         role:   editBtn.dataset.editUserRole,
         title:  editBtn.dataset.editUserTitle,
         social: editBtn.dataset.editUserSocial,
+        theme:  editBtn.dataset.editUserTheme,
       });
     }
   });

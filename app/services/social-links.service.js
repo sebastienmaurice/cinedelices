@@ -69,3 +69,17 @@ export function cleanSocialLinks(input) {
   }
   return { value: Object.keys(value).length ? value : null, invalid };
 }
+
+/**
+ * Lien d'un post (carrousel) : URL complète https obligatoire, sur TikTok,
+ * Instagram ou YouTube. Retourne { url, platform } ou null.
+ */
+export function cleanPostUrl(raw) {
+  const value = String(raw ?? "").trim();
+  if (!/^https?:\/\//i.test(value)) return null;
+  for (const platform of ["tiktok", "instagram", "youtube"]) {
+    const url = cleanSocialUrl(platform, value);
+    if (url) return { url, platform };
+  }
+  return null;
+}

@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin-dashboard.css?v=9" />
-    <link rel="stylesheet" href="/css/rte-mini.css?v=fs47" />
+    <link rel="stylesheet" href="/css/rte-mini.css?v=fs56" />
     <!-- Lucide Icons — version fixée pour éviter les breaking changes de @latest -->
     <script src="https://unpkg.com/lucide@0.309.0/dist/umd/lucide.min.js"></script>
   </head>
@@ -999,7 +999,8 @@
                     data-edit-user-email="<%= user.email || '' %>"
                     data-edit-user-role="<%= user.role || 'user' %>"
                     data-edit-user-title="<%= user.special_title || '' %>"
-                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>">
+                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>"
+                    data-edit-user-theme="<%= JSON.stringify(user.creator_theme || {}) %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1079,7 +1080,8 @@
                     data-edit-user-email="<%= user.email || '' %>"
                     data-edit-user-role="<%= user.role || 'user' %>"
                     data-edit-user-title="<%= user.special_title || '' %>"
-                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>">
+                    data-edit-user-social="<%= JSON.stringify(user.social_links || {}) %>"
+                    data-edit-user-theme="<%= JSON.stringify(user.creator_theme || {}) %>">
                     <i data-lucide="square-pen" width="13" height="13" aria-hidden="true"></i>
                   </button>
                   <% if (user.suspended) { %>
@@ -1880,6 +1882,32 @@
             <input type="text" id="ur-soc-youtube" class="admin-modal__input" placeholder="YouTube : lien de la chaîne" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
             <input type="text" id="ur-soc-website" class="admin-modal__input" placeholder="Site web : https://..." maxlength="300" autocomplete="off" />
           </fieldset>
+          <fieldset class="admin-modal__field" id="ur-theme-field" style="border:0;padding:0;margin:0;">
+            <legend class="admin-modal__label">Bannière créateur <span style="opacity:.6;font-weight:400">(optionnel)</span></legend>
+            <input type="text" id="ur-theme-title" class="admin-modal__input" placeholder="Début du titre de la bannière du bas (défaut : Les créations de)" maxlength="40" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-theme-signature" class="admin-modal__input" placeholder="Catégories (ex : Recettes • Culture • Petits bonheurs)" maxlength="80" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-theme-frame" class="admin-modal__input" placeholder="Cadre sur mesure (/images/creators/xxx-frame.png, centre transparent)" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-theme-bannerbg" class="admin-modal__input" placeholder="Filigrane de la bannière du bas (/images/creators/xxx.webp)" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-theme-herobg" class="admin-modal__input" placeholder="Image de fond du héros (/images/creators/... ou https://...)" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:rgba(255,255,255,.8)">
+              <label style="display:flex;gap:6px;align-items:center">Couleur principale <input type="color" id="ur-theme-primary" value="#c23018" style="width:44px;height:28px;border:0;background:none" /></label>
+              <label style="display:flex;gap:6px;align-items:center">Accent <input type="color" id="ur-theme-accent" value="#e3b148" style="width:44px;height:28px;border:0;background:none" /></label>
+              <button type="button" id="ur-theme-reset" class="act-btn act-btn--sm" title="Revenir aux couleurs par défaut">Par défaut</button>
+            </div>
+          </fieldset>
+          <div class="admin-modal__field" id="ur-posts-field" hidden>
+            <span class="admin-modal__label">Posts du carrousel <span style="opacity:.6;font-weight:400">(page auteur, 12 max)</span></span>
+            <ul id="ur-posts-list" style="list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:6px;"></ul>
+            <input type="text" id="ur-post-url" class="admin-modal__input" placeholder="Lien du post (https://www.tiktok.com/@.../video/...)" maxlength="300" autocomplete="off" style="margin-bottom:6px" />
+            <input type="text" id="ur-post-title" class="admin-modal__input" placeholder="Titre court (optionnel, repris de TikTok si vide)" maxlength="120" autocomplete="off" style="margin-bottom:6px" />
+            <span style="font-size:12px;color:rgba(255,255,255,.7);margin-bottom:4px">Couverture : automatique pour TikTok, sinon envoyez une image.</span>
+            <input type="file" id="ur-post-cover" class="admin-modal__input" accept="image/jpeg,image/png,image/webp" style="margin-bottom:6px" />
+            <textarea id="ur-post-bulk" class="admin-modal__input" rows="3" placeholder="Ou collez plusieurs liens TikTok (un par ligne, du plus populaire au moins populaire) : couvertures et titres récupérés automatiquement" style="margin-bottom:6px;resize:vertical"></textarea>
+            <input type="file" id="ur-post-bulk-files" class="admin-modal__input" accept="image/jpeg,image/png,image/webp" multiple style="margin-bottom:6px" />
+            <span style="font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px">Posts photo TikTok (sans couverture automatique) : sélectionnez les images dans le même ordre que les liens.</span>
+            <button type="button" id="ur-post-bulk-add" class="act-btn act-btn--approve" style="align-self:flex-start;margin-bottom:8px"><i data-lucide="list-plus" width="14" height="14" aria-hidden="true"></i><span>Ajouter tous ces liens</span></button>
+            <button type="button" id="ur-post-add" class="act-btn act-btn--approve" style="align-self:flex-start"><i data-lucide="plus" width="14" height="14" aria-hidden="true"></i><span>Ajouter ce post</span></button>
+          </div>
           <% } %>
           <div class="admin-modal__footer">
             <button type="submit" id="ur-submit-btn" class="act-btn act-btn--approve">
@@ -1910,7 +1938,7 @@
     <!-- Scripts -->
     <script src="/js/confirm-action.js"></script>
     <script src="/js/rte-mini.js"></script>
-    <script src="/js/admin-dashboard.js?v=5"></script>
+    <script src="/js/admin-dashboard.js?v=14"></script>
     <script src="/js/recipe-detail.js"></script>
     <script>if (window.lucide) lucide.createIcons();</script>
   </body>
