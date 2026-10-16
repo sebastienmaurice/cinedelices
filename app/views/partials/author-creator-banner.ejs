@@ -30,7 +30,6 @@
 
       <div class="creator-banner__left">
         <div class="cb-top">
-            <span class="cb-avatar"><img src="<%= _mini %>" alt="Avatar de <%= author.pseudo %>" width="120" height="120" loading="lazy" decoding="async" /></span>
           <div class="cb-headline">
             <h2 class="cb-title" id="creatorBannerTitle">
               <span class="cb-title__brush"><%= th.title || 'Les créations de' %></span>
@@ -39,10 +38,11 @@
             <% if (th.signature) { %>
             <p class="cb-signature"><% th.signature.split(/\s*[•·|]\s*/).filter(Boolean).forEach(function(part, i) { %><% if (i) { %><span class="cb-heart" aria-hidden="true">•</span><% } %><span><%= part %></span><% }) %></p>
             <% } %>
-            </div>
+          </div>
         </div>
 
         <div class="cb-profile">
+          <span class="cb-avatar"><img src="<%= _mini %>" alt="Avatar de <%= author.pseudo %>" width="124" height="124" loading="lazy" decoding="async" /></span>
           <div class="cb-info">
             <div class="cb-id">
               <p class="cb-handle"><%= cb.handle ? '@' + cb.handle : author.pseudo %></p>
@@ -60,6 +60,7 @@
             <% } %>
           </div>
         </div>
+        <% if (author.bio) { %><p class="cb-bio"><%= author.bio.replace(/\n{2,}/g, "\n") %></p><% } %>
       </div>
 
       <% if (_n) { %>
