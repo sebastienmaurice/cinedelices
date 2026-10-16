@@ -1429,7 +1429,7 @@ const adminController = {
         return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier ce compte." });
       }
 
-      const { pseudo, email, password, role, special_title, social_links, creator_theme } = req.body;
+      const { pseudo, email, password, role, special_title, social_links, creator_theme, bio } = req.body;
       const updateData = {};
 
       // Mention spéciale : réservée aux super admins, texte court sans effet sur les droits
@@ -1439,6 +1439,17 @@ const adminController = {
         }
         const t = String(special_title).trim().slice(0, 60);
         updateData.special_title = t || null;
+      }
+
+      // Bio : posée directement par un super admin (texte brut, 500 caractères max, sans modération)
+      if (bio !== undefined) {
+        if (!callerIsSuperAdmin) {
+          return res.json({ success: false, message: "Permission insuffisante : seul un super administrateur peut modifier la bio d'un membre." });
+        }
+        const b = String(bio).replace(/&amp;/g, "&").trim().slice(0, 500);
+        updateData.bio = b || null;
+        updateData.pending_bio = null;
+        updateData.bio_status = "approved";
       }
 
       // Réseaux sociaux : réservés aux super admins, URLs validées (https, domaines attendus)
