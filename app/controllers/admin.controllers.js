@@ -644,6 +644,25 @@ const adminController = {
     }
   },
 
+  // Super admin : remplace directement la photo de profil d'un membre (sans modération)
+  async setUserAvatar(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || !req.file) return res.status(400).json({ success: false, message: "Utilisateur ou fichier manquant." });
+      const user = await User.findByPk(userId, { attributes: ["id", "picture", "pending_picture"] });
+      if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
+      const up = await uploadBufferToCloudinary(req.file.buffer, { folder: "cinedelices/profiles" });
+      if (user.picture) await deleteAsset(user.picture);
+      if (user.pending_picture) await deleteAsset(user.pending_picture);
+      await User.update({ picture: up.secure_url, pending_picture: null, picture_status: "approved" }, { where: { id: userId } });
+      clearNavCache(userId);
+      logAdminAction({ adminId: req.userId, action: "set_user_avatar", targetType: "user", targetId: userId });
+      return res.json({ success: true, picture: up.secure_url });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
   // Super admin : rattache une recette à un autre compte (ex. recette déposée pour un créateur partenaire)
   async changeRecipeAuthor(req, res) {
     try {
