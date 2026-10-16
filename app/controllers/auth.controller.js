@@ -1,4 +1,5 @@
 import { Recipe, Movie, Notice, User, UsersRecipes, Favorite, Rating, RecipePicture, UserPoints } from "../models/index.model.js";
+import { getCreatorHeroBg } from "../services/creator-frame.service.js";
 import { processRecipeImages, cleanupFiles } from "../utils/recipe-image-processor.js";
 import { getUserGamificationData, awardWeeklyLoginXP, awardDailyLoginXP } from "../services/gamification.service.js";
 import { isStaffRole } from "../utils/gamification.utils.js";
@@ -322,7 +323,7 @@ const authController = {
       // la Page Auteur ; ici on ne fait qu'en refléter le résultat.
       const points = await UserPoints.findOne({ where: { id_user: user.id }, attributes: ["active_banner_variant"] });
       const activeBannerVariant = points?.active_banner_variant || null;
-      const heroBannerUrl = resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
+      const heroBannerUrl = (await getCreatorHeroBg(userId)) || resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
 
       // Rendu de la vue avec les données utilisateur
       res.render("user-profile", {

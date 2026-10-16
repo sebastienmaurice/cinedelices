@@ -28,26 +28,34 @@ function navVariant(url) {
   return url;
 }
 
-/** @returns {Promise<{url:string, navUrl:string, style:string}|null>} */
-export async function getCreatorFrame(userId) {
-  if (!userId) return null;
+async function load(userId) {
+  if (!userId) return { frame: null, heroBg: null };
   const hit = cache.get(userId);
   if (hit && Date.now() - hit.t < TTL) return hit.v;
-  let v = null;
+  let v = { frame: null, heroBg: null };
   try {
     const u = await User.findByPk(userId, { attributes: ["special_title", "creator_theme"] });
-    const frame = u && PARTNER_TITLES.includes(u.special_title) ? u.creator_theme?.frame : null;
-    if (frame) {
-      const g = await getFrameGeometry(frame);
-      if (g) {
-        const scale = (REF_D / g.d).toFixed(4);
-        const style = `transform-origin: ${g.cx}% ${g.cy}%; transform: translate(${(50 - g.cx).toFixed(2)}%, ${(50 - g.cy).toFixed(2)}%) scale(${scale});`;
-        v = { url: frame, navUrl: navVariant(frame), style };
+    if (u && PARTNER_TITLES.includes(u.special_title)) {
+      const theme = u.creator_theme || {};
+      if (/^\/images\/[\w./-]+\.(png|webp|jpe?g)$/i.test(theme.heroBg || "") && !theme.heroBg.includes("..")) v.heroBg = theme.heroBg;
+      if (theme.frame) {
+        const g = await getFrameGeometry(theme.frame);
+        if (g) {
+          const scale = (REF_D / g.d).toFixed(4);
+          const style = `transform-origin: ${g.cx}% ${g.cy}%; transform: translate(${(50 - g.cx).toFixed(2)}%, ${(50 - g.cy).toFixed(2)}%) scale(${scale});`;
+          v.frame = { url: theme.frame, navUrl: navVariant(theme.frame), style };
+        }
       }
     }
-  } catch { v = null; }
+  } catch { /* défaut : aucun réglage créateur */ }
   cache.set(userId, { t: Date.now(), v });
   return v;
 }
+
+/** @returns {Promise<{url:string, navUrl:string, style:string}|null>} */
+export async function getCreatorFrame(userId) { return (await load(userId)).frame; }
+
+/** Image de fond du héros du créateur (la même que sur sa page auteur), ou null. */
+export async function getCreatorHeroBg(userId) { return (await load(userId)).heroBg; }
 
 export function clearCreatorFrameCache(userId) { cache.delete(userId); }

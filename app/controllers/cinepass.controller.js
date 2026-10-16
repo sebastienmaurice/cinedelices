@@ -1,4 +1,5 @@
 import { User, UserPoints, Recipe, Movie, Notice } from "../models/index.model.js";
+import { getCreatorHeroBg } from "../services/creator-frame.service.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress, RANK_TITLES, XP_TABLE } from "../utils/gamification.utils.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
@@ -74,7 +75,7 @@ const cinepassController = {
       // gestion de bannière) ; CinéPass ne fait qu'en refléter le résultat.
       const points = await UserPoints.findOne({ where: { id_user: userId }, attributes: ["active_banner_variant"] });
       const activeBannerVariant = points?.active_banner_variant || null;
-      const heroBannerUrl = resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
+      const heroBannerUrl = (await getCreatorHeroBg(userId)) || resolveHeroBanner(user, gamif.activeFrameCode, DEFAULT_HERO_BANNER, activeBannerVariant);
 
       res.render("cinepass", {
         user,
