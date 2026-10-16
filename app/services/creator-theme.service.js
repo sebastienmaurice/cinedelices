@@ -29,7 +29,7 @@ export function cleanCreatorTheme(input) {
   const value = {};
   const invalid = [];
   const text = (k, max) => {
-    const v = String(input?.[k] ?? "").trim().slice(0, max);
+    const v = String(input?.[k] ?? "").replace(/&amp;/g, "&").trim().slice(0, max);
     if (v) value[k] = v;
   };
   text("signature", 80);
