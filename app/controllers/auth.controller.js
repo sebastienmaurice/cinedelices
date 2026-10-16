@@ -13,6 +13,7 @@ import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
 import { StatusCodes } from "http-status-codes";
+import { cleanSocialLinks } from "../services/social-links.service.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { deleteAsset, uploadBufferToCloudinary } from "../utils/asset-manager.js";
@@ -677,6 +678,50 @@ const authController = {
         message: "Erreur lors de l'enregistrement de la bio.",
         error: error.message,
       });
+    }
+  },
+
+  /**
+   * POST /auth/profil/:id/creator-settings
+   * Body : { tagline?, tiktok? } — réservé au créateur partenaire lui-même.
+   * Slogan sous le pseudo (80 car. max, texte brut) et lien TikTok (@pseudo ou URL, validé).
+   */
+  async updateCreatorSettings(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId || Number.isNaN(userId) || req.userId !== userId) {
+        return res.status(StatusCodes.FORBIDDEN).json({ success: false, message: "Accès interdit" });
+      }
+      const user = await User.findByPk(userId, { attributes: ["id", "special_title", "creator_theme", "social_links"] });
+      if (!user || !["Créatrice Partenaire", "Créateur Partenaire"].includes(user.special_title)) {
+        return res.status(StatusCodes.FORBIDDEN).json({ success: false, message: "Réservé aux créateurs partenaires." });
+      }
+
+      const updateData = {};
+      if (req.body.tagline !== undefined) {
+        // le middleware anti-XSS encode « & » en « &amp; » : on stocke le texte brut (EJS échappe à l'affichage)
+        const tagline = String(req.body.tagline).replace(/&amp;/g, "&").trim().slice(0, 80);
+        const theme = { ...(user.creator_theme || {}) };
+        if (tagline) theme.tagline = tagline; else delete theme.tagline;
+        updateData.creator_theme = theme;
+      }
+      if (req.body.tiktok !== undefined) {
+        const links = { ...(user.social_links || {}) };
+        const t = String(req.body.tiktok).trim();
+        if (t) links.tiktok = t; else delete links.tiktok;
+        const { value, invalid } = cleanSocialLinks(links);
+        if (invalid.length) {
+          return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Lien TikTok invalide : utilisez @votrepseudo ou un lien https://www.tiktok.com/@votrepseudo." });
+        }
+        updateData.social_links = value;
+      }
+      if (!Object.keys(updateData).length) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Aucune modification." });
+      }
+      await User.update(updateData, { where: { id: userId } });
+      return res.status(StatusCodes.OK).json({ success: true });
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: "Erreur lors de l'enregistrement." });
     }
   },
 

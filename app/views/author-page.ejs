@@ -30,8 +30,8 @@
     <link rel="stylesheet" href="/css/author-page.css?v=fs56" />
     <% if (typeof creatorBanner !== 'undefined' && creatorBanner) { %>
     <link rel="stylesheet" href="/css/creator-banner.css?v=15" />
-    <link rel="stylesheet" href="/css/creator-hero.css?v=14" />
-    <link rel="stylesheet" href="/css/creator-page.css?v=14" />
+    <link rel="stylesheet" href="/css/creator-hero.css?v=15" />
+    <link rel="stylesheet" href="/css/creator-page.css?v=15" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" />
     <% } %>
     <link rel="stylesheet" href="/css/badge-strange.css" />
@@ -114,6 +114,14 @@
                  regroupés sous UN SEUL concept "Fond du profil" — l'utilisateur
                  n'a pas besoin de savoir qu'un "décor" est techniquement une
                  variante de bannière, c'est la même chose de son point de vue. -->
+            <% if (_pcb) { %>
+            <p class="dropdown__cat">Fond du profil</p>
+            <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
+              <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
+              Repositionner mon fond
+            </button>
+            <div class="dropdown__sep"></div>
+            <% } %>
             <% if (!_pcb) { %>
             <p class="dropdown__cat">Fond du profil</p>
             <!-- Choix d'un fond officiel du cadre équipé (seulement si ce
@@ -166,6 +174,22 @@
               <span class="dropdown__icon"><i data-lucide="user-pen" aria-hidden="true"></i></span>
               Modifier mon pseudo
             </a>
+            <% if (_pcb) { %>
+            <div class="dropdown__sep"></div>
+            <p class="dropdown__cat">Mon espace créateur</p>
+            <button type="button" class="dropdown__item" id="creatorSettingsBtn">
+              <span class="dropdown__icon"><i data-lucide="sparkles" aria-hidden="true"></i></span>
+              Mon slogan et mon TikTok
+            </button>
+            <a href="/add-recipes-movies/" class="dropdown__item">
+              <span class="dropdown__icon"><i data-lucide="chef-hat" aria-hidden="true"></i></span>
+              Ajouter une recette
+            </a>
+            <button type="button" class="dropdown__item" id="creatorCopyLinkBtn" data-link="<%= siteUrl %>/auteur/<%= author.id %>">
+              <span class="dropdown__icon"><i data-lucide="link" aria-hidden="true"></i></span>
+              Copier le lien de ma page
+            </button>
+            <% } %>
           </div>
         </div>
 
@@ -249,7 +273,12 @@
           <div class="hero-identity">
 
             <!-- Badge rang / niveau -->
-            <% if (isAdminAuthor) { %>
+            <% if (_cb) { %>
+            <div class="hero-rank-badge hero-rank-badge--official gamification-badge gamification-badge--official">
+              <i data-lucide="star" width="12" height="12" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
+              <%= author.special_title %>
+            </div>
+            <% } else if (isAdminAuthor) { %>
             <div class="hero-rank-badge hero-rank-badge--official gamification-badge gamification-badge--official">
               <i data-lucide="star" width="12" height="12" fill="currentColor" stroke="currentColor" aria-hidden="true"></i>
               Ciné Délices
@@ -803,6 +832,61 @@
         new window.BadgeEngine(inner, frameCode, photoSrc);
       });
     </script>
+
+    <% if (isOwner && _pcb) { %>
+    <dialog class="creator-dialog" id="creatorSettingsDialog" aria-labelledby="creatorSettingsTitle">
+      <form method="dialog" class="creator-dialog__form" id="creatorSettingsForm">
+        <h2 id="creatorSettingsTitle">Mon slogan et mon TikTok</h2>
+        <label for="csTagline">Slogan sous mon pseudo</label>
+        <input type="text" id="csTagline" maxlength="80" value="<%= _pcb.theme.tagline || '' %>" placeholder="Ex : Recettes, Culture &amp; Petits Bonheurs" autocomplete="off" />
+        <label for="csTiktok">Mon compte TikTok</label>
+        <input type="text" id="csTiktok" maxlength="200" value="<%= (author.social_links && author.social_links.tiktok) || '' %>" placeholder="@votrepseudo ou lien TikTok" autocomplete="off" />
+        <p class="creator-dialog__error" id="csError" hidden></p>
+        <div class="creator-dialog__actions">
+          <button type="button" id="csCancel" class="creator-dialog__btn">Annuler</button>
+          <button type="submit" id="csSave" class="creator-dialog__btn creator-dialog__btn--primary">Enregistrer</button>
+        </div>
+      </form>
+    </dialog>
+    <script>
+      (function () {
+        const dlg = document.getElementById('creatorSettingsDialog');
+        const openBtn = document.getElementById('creatorSettingsBtn');
+        const copyBtn = document.getElementById('creatorCopyLinkBtn');
+        if (copyBtn) copyBtn.addEventListener('click', async function () {
+          try { await navigator.clipboard.writeText(copyBtn.dataset.link); if (typeof window._cdToast === 'function') window._cdToast('Lien copié ✓', 'success'); else alert('Lien copié'); }
+          catch (_) { window.prompt('Copiez ce lien :', copyBtn.dataset.link); }
+          if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
+        });
+        if (!dlg || !openBtn) return;
+        const form = document.getElementById('creatorSettingsForm');
+        const err  = document.getElementById('csError');
+        openBtn.addEventListener('click', function () {
+          err.hidden = true;
+          if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
+          dlg.showModal();
+        });
+        document.getElementById('csCancel').addEventListener('click', function () { dlg.close(); });
+        form.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const save = document.getElementById('csSave');
+          save.disabled = true; err.hidden = true;
+          try {
+            const res = await fetch('/auth/profil/<%= author.id %>/creator-settings', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ tagline: document.getElementById('csTagline').value, tiktok: document.getElementById('csTiktok').value }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur.');
+            window.location.reload();
+          } catch (ex) {
+            err.textContent = ex.message; err.hidden = false; save.disabled = false;
+          }
+        });
+      })();
+    </script>
+    <% } %>
 
     <% if (isOwner) { %>
     <!-- Popover "Personnaliser mon profil" — même pattern d'ouverture/fermeture

@@ -43,7 +43,7 @@
 
 /* ── Colonne d'identité ── */
 .author-page .profile-hero--creator .hero-identity { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; max-width: 660px; min-width: 0; }
-.author-page .profile-hero--creator .hero-rank-badge,
+.author-page .profile-hero--creator .hero-rank-badge:not(.hero-rank-badge--official),
 .author-page .profile-hero--creator .hero-special-title,
 .author-page .profile-hero--creator .hero-rank-title,
 .author-page .profile-hero--creator .hero-univers-badge,
@@ -86,14 +86,14 @@
 .author-page .profile-hero--creator .hero-social:focus-visible { color: #fff; border-color: var(--creator-primary); background: color-mix(in srgb, var(--creator-primary) 28%, rgba(7,19,33,.7)); transform: translateY(-2px); }
 
 /* Slogan du compte, sous le pseudo */
-.hero-creator-tagline { order: 1; display: flex; align-items: center; gap: 9px; margin: -4px 0 4px 6px; font-family: var(--f-body, "Lato", sans-serif); font-size: 1.05rem; font-weight: 700; letter-spacing: .03em; color: color-mix(in srgb, var(--creator-primary) 30%, #fff); }
+.hero-creator-tagline { order: 1; display: flex; align-items: center; gap: 9px; margin: -4px 0 4px 6px; font-family: var(--f-body, "Lato", sans-serif); font-size: .92rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--creator-primary) 30%, #fff); }
 
 /* « Découvrez les réseaux de @pseudo sur [TikTok] » sur une seule ligne */
 .hero-creator-reach { order: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-top: 2px; }
 .hero-creator-handle { margin: 0; font-family: var(--f-body, "Lato", sans-serif); font-size: 1rem; font-weight: 400; letter-spacing: .02em; color: #F4F1E9; }
 .hero-creator-handle strong { font-weight: 700; }
 .author-page .profile-hero--creator .hero-bio { order: 4; max-width: 56ch; }
-.author-page .profile-hero--creator .hero-bio__text { font-family: var(--f-body, "Lato", sans-serif); font-size: 1rem; line-height: 1.5; color: #F4F1E9; white-space: pre-line; }
+.author-page .profile-hero--creator .hero-bio__text { font-family: var(--f-body, "Lato", sans-serif); font-size: 1rem; line-height: 1.5; font-style: italic; color: color-mix(in srgb, var(--creator-primary) 30%, #fff); white-space: pre-line; }
 .author-page .profile-hero--creator .hero-bio__text--empty { color: #AEB8C5; }
 
 /* Marguerite du slogan */
@@ -121,4 +121,12 @@
   .author-page .profile-hero--creator .hero-bio { max-width: 100%; }
   .author-page .profile-hero--creator .hero-stats-row { justify-content: center; }
   .author-page .profile-hero--creator .hero-banner::after { background: linear-gradient(180deg, rgba(7,19,33,.35) 0%, rgba(7,19,33,.7) 100%); }
+}
+
+/* Badge « Créatrice Partenaire » au-dessus du pseudo : pastille aux couleurs du créateur (remplace le rouge « officiel ») */
+.author-page .profile-hero--creator .hero-rank-badge--official {
+  display: inline-flex; align-items: center; gap: 6px; order: 0;
+  color: color-mix(in srgb, var(--creator-primary) 30%, #fff);
+  background: color-mix(in srgb, var(--creator-primary) 16%, rgba(7, 19, 33, .6));
+  border-color: color-mix(in srgb, var(--creator-primary) 55%, transparent);
 }

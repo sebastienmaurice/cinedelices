@@ -59,6 +59,12 @@ authRouter.post(
   authController.updateBio
 );
 authRouter.post(
+  "/profil/:id/creator-settings",
+  isLogged,
+  injectId,
+  authController.updateCreatorSettings
+);
+authRouter.post(
   "/profil/:id/hero-position",
   isLogged,
   injectId,
