@@ -1514,7 +1514,7 @@ document.addEventListener("click", async (e) => {
   if (!btn) return;
   const id = btn.getAttribute("data-change-author");
   const num = window.prompt("Numéro du nouvel auteur (visible à côté du pseudo, ex. 196) :");
-  if (!num || !/^d+$/.test(num.trim())) return;
+  if (!num || !/^\d+$/.test(num.trim())) return;
   try {
     const r = await fetch("/admin/recipes/" + id + "/author", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id_user: num.trim() }) });
     const j = await r.json();
