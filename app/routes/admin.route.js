@@ -55,6 +55,7 @@ adminRouter.post("/rejectRecipe/:id", adminController.rejectRecipe);
 
 // Mettre à jour une recette avant validation
 adminRouter.post("/recipes/:id/update", adminController.updateRecipeAdmin);
+adminRouter.post("/recipes/:id/author", isSuperAdmin, adminController.changeRecipeAuthor);
 
 // Refuser / supprimer une photo complémentaire spécifique (position 2 ou 3)
 adminRouter.post("/recipe-pictures/:pictureId/delete", adminController.deleteRecipePicture);

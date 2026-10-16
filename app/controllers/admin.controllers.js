@@ -643,6 +643,24 @@ const adminController = {
     }
   },
 
+  // Super admin : rattache une recette à un autre compte (ex. recette déposée pour un créateur partenaire)
+  async changeRecipeAuthor(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      const userId = parseInt(req.body?.id_user, 10);
+      if (!recipeId || !userId) return res.status(400).json({ success: false, message: "Numéros invalides." });
+      const recipe = await Recipe.findByPk(recipeId);
+      if (!recipe) return res.status(404).json({ success: false, message: "Recette introuvable." });
+      const user = await User.findByPk(userId, { attributes: ["id", "pseudo"] });
+      if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
+      await Recipe.update({ id_user: userId }, { where: { id: recipeId } });
+      logAdminAction({ adminId: req.userId, action: "change_recipe_author", targetType: "recipe", targetId: recipeId });
+      return res.json({ success: true, pseudo: user.pseudo });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+  },
+
   async updateRecipeAdmin(req, res) {
     try {
       if (req.userRole !== "admin") {

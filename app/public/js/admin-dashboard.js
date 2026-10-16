@@ -1440,3 +1440,19 @@ document.addEventListener("DOMContentLoaded", () => {
   checkPendingCount();
   setInterval(checkPendingCount, 15000);
 });
+
+// Changer l'auteur d'une recette (super admin)
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-change-author]");
+  if (!btn) return;
+  const id = btn.getAttribute("data-change-author");
+  const num = window.prompt("Numéro du nouvel auteur (visible à côté du pseudo, ex. 196) :");
+  if (!num || !/^d+$/.test(num.trim())) return;
+  try {
+    const r = await fetch("/admin/recipes/" + id + "/author", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id_user: num.trim() }) });
+    const j = await r.json();
+    if (!j.success) return window.alert(j.message || "Échec.");
+    window.alert("Auteur changé : " + j.pseudo);
+    window.location.reload();
+  } catch (_) { window.alert("Erreur réseau."); }
+});
