@@ -1,7 +1,7 @@
 /**
  * Thème de la bannière « espace créateur » (page auteur d'un créateur partenaire).
  * Stocké en JSONB sur users.creator_theme :
- *   { signature, tagline, title, primary, accent, heroBg, bannerBg, frame }
+ *   { signature, tagline, title, heroBgOptions, heroBgChoice, primary, accent, heroBg, bannerBg, frame }
  * Tout le reste de la palette (fonds, bordures, survols) est dérivé de la
  * couleur principale côté CSS (color-mix), pour qu'un seul choix suffise.
  * Aucune valeur n'est interprétée comme du code : couleurs en #RRGGBB strict,
@@ -24,6 +24,18 @@ const HERO_BG = /^(\/images\/[\w./-]+|https:\/\/[^\s"'<>]+)$/;
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
+// Fonds proposés au créateur (chemins du site uniquement, 6 maximum)
+const BG_PATH = /^\/images\/[\w./-]+\.(png|webp|jpe?g)$/i;
+const isBgPath = (p) => typeof p === "string" && BG_PATH.test(p) && p.length <= 300 && !p.includes("..");
+
+/** Fond effectif du héros : le choix du créateur s'il figure parmi les fonds autorisés, sinon le fond par défaut. */
+export function effectiveHeroBg(theme) {
+  const t = theme || {};
+  const allowed = [t.heroBg, ...(Array.isArray(t.heroBgOptions) ? t.heroBgOptions : [])].filter(Boolean);
+  if (t.heroBgChoice && allowed.includes(t.heroBgChoice)) return t.heroBgChoice;
+  return t.heroBg || "";
+}
+
 /** Nettoie l'objet reçu du formulaire admin. Retourne { value, invalid }. */
 export function cleanCreatorTheme(input) {
   const value = {};
@@ -32,6 +44,10 @@ export function cleanCreatorTheme(input) {
     const v = String(input?.[k] ?? "").replace(/&amp;/g, "&").trim().slice(0, max);
     if (v) value[k] = v;
   };
+  const opts = Array.isArray(input?.heroBgOptions) ? input.heroBgOptions : String(input?.heroBgOptions ?? "").split(/[\r\n,]+/);
+  const cleanedOpts = [...new Set(opts.map((o) => String(o).trim()).filter(Boolean))];
+  if (cleanedOpts.some((o) => !isBgPath(o))) invalid.push("heroBgOptions");
+  else if (cleanedOpts.length) value.heroBgOptions = cleanedOpts.slice(0, 6);
   text("signature", 80);
   text("tagline", 80);
   text("title", 40);
@@ -68,7 +84,9 @@ export function resolveCreatorTheme(user) {
     title: t.title || "",
     primary: HEX.test(t.primary || "") ? t.primary : DEFAULT_CREATOR_THEME.primary,
     accent: HEX.test(t.accent || "") ? t.accent : DEFAULT_CREATOR_THEME.accent,
-    heroBg: HERO_BG.test(t.heroBg || "") ? t.heroBg : "",
+    heroBgDefault: HERO_BG.test(t.heroBg || "") ? t.heroBg : "",
+    heroBgOptions: (Array.isArray(t.heroBgOptions) ? t.heroBgOptions : []).filter(isBgPath),
+    heroBg: HERO_BG.test(effectiveHeroBg(t) || "") ? effectiveHeroBg(t) : "",
     bannerBg: /^\/images\/[\w./-]+\.(png|webp|jpe?g)$/i.test(t.bannerBg || "") && !String(t.bannerBg).includes("..") ? t.bannerBg : "",
     frame: /^\/images\/[\w./-]+\.(png|webp)$/i.test(t.frame || "") && !String(t.frame).includes("..") ? t.frame : "",
   };

@@ -31,7 +31,7 @@
     <% if (typeof creatorBanner !== 'undefined' && creatorBanner) { %>
     <link rel="stylesheet" href="/css/creator-banner.css?v=15" />
     <link rel="stylesheet" href="/css/creator-hero.css?v=16" />
-    <link rel="stylesheet" href="/css/creator-page.css?v=16" />
+    <link rel="stylesheet" href="/css/creator-page.css?v=17" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" />
     <% } %>
     <link rel="stylesheet" href="/css/badge-strange.css" />
@@ -116,6 +116,13 @@
                  variante de bannière, c'est la même chose de son point de vue. -->
             <% if (_pcb) { %>
             <p class="dropdown__cat">Fond du profil</p>
+            <% if (_pcb.theme.heroBgOptions && _pcb.theme.heroBgOptions.length) { %>
+            <div class="uni-decor-grid creator-bg-grid" id="creatorBgGrid">
+              <% [_pcb.theme.heroBgDefault].concat(_pcb.theme.heroBgOptions).filter(Boolean).forEach(function (bg, i) { %>
+              <button type="button" class="creator-bg-thumb<%= bg === _pcb.theme.heroBg ? ' creator-bg-thumb--active' : '' %>" data-bg="<%= bg %>" aria-label="Choisir le fond n°<%= i + 1 %>" aria-pressed="<%= bg === _pcb.theme.heroBg ? 'true' : 'false' %>" style="background-image:url('<%= bg %>')"></button>
+              <% }) %>
+            </div>
+            <% } %>
             <button class="dropdown__item" type="button" id="heroPositionBtn" title="Recentrer le fond verticalement">
               <span class="dropdown__icon"><i data-lucide="move-vertical" aria-hidden="true"></i></span>
               Repositionner mon fond
@@ -859,6 +866,24 @@
           if (typeof window._uniCustomizeClose === 'function') window._uniCustomizeClose();
         });
         if (!dlg || !openBtn) return;
+        const bgGrid = document.getElementById('creatorBgGrid');
+        if (bgGrid) bgGrid.addEventListener('click', async function (e) {
+          const b = e.target.closest('.creator-bg-thumb');
+          if (!b || b.classList.contains('creator-bg-thumb--active')) return;
+          try {
+            const res = await fetch('/auth/profil/<%= author.id %>/creator-settings', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ heroBg: b.dataset.bg }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Erreur.');
+            const img = document.getElementById('heroBannerImg');
+            if (img) img.src = b.dataset.bg;
+            bgGrid.querySelectorAll('.creator-bg-thumb').forEach(function (x) { const on = x === b; x.classList.toggle('creator-bg-thumb--active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+            if (typeof window._cdToast === 'function') window._cdToast('Fond mis à jour ✓', 'success');
+          } catch (ex) { alert('Erreur : ' + ex.message); }
+        });
         const form = document.getElementById('creatorSettingsForm');
         const err  = document.getElementById('csError');
         openBtn.addEventListener('click', function () {

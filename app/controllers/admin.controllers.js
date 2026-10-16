@@ -1495,6 +1495,10 @@ const adminController = {
         if (invalid.length) {
           return res.json({ success: false, message: "Thème invalide : " + invalid.join(", ") + " (couleurs #RRGGBB, image : /images/... ou https)." });
         }
+        if (value && user.creator_theme?.heroBgChoice) {
+          const allowed = [value.heroBg, ...(value.heroBgOptions || [])].filter(Boolean);
+          if (allowed.includes(user.creator_theme.heroBgChoice)) value.heroBgChoice = user.creator_theme.heroBgChoice;
+        }
         updateData.creator_theme = value;
       }
 

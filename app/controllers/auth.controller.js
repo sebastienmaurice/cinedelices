@@ -728,6 +728,16 @@ const authController = {
         if (tagline) theme.tagline = tagline; else delete theme.tagline;
         updateData.creator_theme = theme;
       }
+      if (req.body.heroBg !== undefined) {
+        const th = updateData.creator_theme || { ...(user.creator_theme || {}) };
+        const allowed = [th.heroBg, ...(Array.isArray(th.heroBgOptions) ? th.heroBgOptions : [])].filter(Boolean);
+        const choice = String(req.body.heroBg);
+        if (!allowed.includes(choice)) {
+          return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Fond non proposé." });
+        }
+        if (choice === th.heroBg) delete th.heroBgChoice; else th.heroBgChoice = choice;
+        updateData.creator_theme = th;
+      }
       if (req.body.tiktok !== undefined) {
         const links = { ...(user.social_links || {}) };
         const t = String(req.body.tiktok).trim();

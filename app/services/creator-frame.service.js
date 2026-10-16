@@ -12,6 +12,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { User } from "../models/index.model.js";
 import { getFrameGeometry } from "./frame-geometry.service.js";
+import { effectiveHeroBg } from "./creator-theme.service.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.resolve(__dirname, "../public");
@@ -37,7 +38,8 @@ async function load(userId) {
     const u = await User.findByPk(userId, { attributes: ["special_title", "creator_theme"] });
     if (u && PARTNER_TITLES.includes(u.special_title)) {
       const theme = u.creator_theme || {};
-      if (/^\/images\/[\w./-]+\.(png|webp|jpe?g)$/i.test(theme.heroBg || "") && !theme.heroBg.includes("..")) v.heroBg = theme.heroBg;
+      const bg = effectiveHeroBg(theme);
+      if (/^\/images\/[\w./-]+\.(png|webp|jpe?g)$/i.test(bg) && !bg.includes("..")) v.heroBg = bg;
       if (theme.frame) {
         const g = await getFrameGeometry(theme.frame);
         if (g) {

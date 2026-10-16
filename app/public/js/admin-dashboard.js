@@ -905,6 +905,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTheme("ur-theme-signature", th.signature || "");
       setTheme("ur-theme-tagline", th.tagline || "");
       setTheme("ur-theme-herobg", th.heroBg || "");
+      setTheme("ur-theme-herobgoptions", (th.heroBgOptions || []).join("\n"));
       setTheme("ur-theme-bannerbg", th.bannerBg || "");
       setTheme("ur-theme-frame", th.frame || "");
       setTheme("ur-theme-primary", th.primary || "#c23018");
@@ -1091,6 +1092,7 @@ document.addEventListener("DOMContentLoaded", () => {
       signature: document.getElementById("ur-theme-signature")?.value || "",
       tagline: document.getElementById("ur-theme-tagline")?.value || "",
       heroBg: document.getElementById("ur-theme-herobg")?.value || "",
+      heroBgOptions: document.getElementById("ur-theme-herobgoptions")?.value || "",
       bannerBg: document.getElementById("ur-theme-bannerbg")?.value || "",
       frame: document.getElementById("ur-theme-frame")?.value || "",
       // couleurs envoyées seulement si l'admin les a modifiées (sinon : défaut du site)
