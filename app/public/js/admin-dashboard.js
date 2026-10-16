@@ -1235,7 +1235,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       photosGrid.innerHTML = "";
 
-      const pics = data.success ? data.pictures : [];
+      const allPics = data.success ? data.pictures : [];
+      const pics = allPics.filter(p => !p.step_number);
       const byPos = {};
       pics.forEach(p => byPos[p.position] = p);
       const count = pics.length;
@@ -1255,6 +1256,70 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // ── Photos de préparation (super admin) : 8 emplacements, un par étape ──
+  const stepsGrid  = document.getElementById("recipe-steps-grid");
+  const stepsBadge = document.getElementById("recipe-steps-count-badge");
+
+  const refreshStepPhotos = async (recipeId) => {
+    if (!stepsGrid) return;
+    stepsGrid.innerHTML = '<span style="font-size:.7rem; opacity:.35;">Chargement…</span>';
+    try {
+      const res  = await fetch(`/admin/recipes/${recipeId}/pictures`);
+      const data = await res.json();
+      const byStep = {};
+      (data.success ? data.pictures : []).filter(p => p.step_number).forEach(p => { byStep[p.step_number] = p; });
+      if (stepsBadge) stepsBadge.textContent = `${Object.keys(byStep).length} / 8`;
+      stepsGrid.innerHTML = "";
+      for (let n = 1; n <= 8; n++) {
+        const pic = byStep[n];
+        const card = document.createElement("div");
+        card.style.cssText = "width:120px; flex-shrink:0; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:10px; overflow:hidden; display:flex; flex-direction:column;";
+        card.innerHTML = `
+          <div style="height:84px; background:rgba(0,0,0,.3); position:relative;">
+            ${pic ? `<img src="${pic.file_path}" alt="Étape ${n}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />` : ""}
+            <span style="position:absolute; top:5px; left:5px; font-size:.55rem; font-weight:700; background:rgba(0,0,0,.75); color:rgba(255,255,255,.85); border-radius:4px; padding:2px 6px;">Étape ${n}</span>
+          </div>
+          <div style="padding:6px; display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:.58rem; padding:4px 6px; cursor:pointer; text-align:center; background:rgba(196,160,82,.12); color:rgba(196,160,82,.9); border:1px solid rgba(196,160,82,.22); border-radius:5px;">
+              ${pic ? "↺ Remplacer" : "+ Ajouter"}
+              <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;" data-step-upload="${n}" />
+            </label>
+            ${pic ? `<button type="button" class="act-btn act-btn--delete" style="font-size:.58rem; padding:4px 6px;" data-step-delete="${pic.id}">✕ Supprimer</button>` : ""}
+          </div>`;
+        stepsGrid.appendChild(card);
+      }
+    } catch {
+      stepsGrid.innerHTML = '<span style="font-size:.7rem; color:rgba(220,60,60,.7);">Erreur de chargement.</span>';
+    }
+  };
+
+  document.addEventListener("change", async (e) => {
+    const input = e.target.closest("[data-step-upload]");
+    if (!input || !currentRecipeId) return;
+    const file = input.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("picture", file);
+    fd.append("step_number", input.dataset.stepUpload);
+    try {
+      const res  = await fetch(`/admin/recipes/${currentRecipeId}/step-pictures`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) { showToast("Photo de préparation enregistrée", "success"); refreshStepPhotos(currentRecipeId); }
+      else showToast(data.message || "Erreur", "error");
+    } catch { showToast("Erreur réseau", "error"); }
+  });
+
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-step-delete]");
+    if (!btn || !currentRecipeId) return;
+    try {
+      const res  = await fetch(`/admin/recipe-pictures/${btn.dataset.stepDelete}/delete-json`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) { showToast("Photo supprimée", "success"); refreshStepPhotos(currentRecipeId); }
+      else showToast(data.message || "Erreur", "error");
+    } catch { showToast("Erreur réseau", "error"); }
+  });
+
   // Brancher loadRecipePhotos lors de l'ouverture du modal recette
   const origOpenEditModal = openEditModal;
   // Patch : hook sur activateView → pas nécessaire, on appelle refreshPhotosPanel depuis openEditModal
@@ -1268,7 +1333,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rid) {
       currentRecipeId = rid;
       // Lancer le fetch photos (légèrement différé pour que le modal s'ouvre d'abord)
-      setTimeout(() => refreshPhotosPanel(rid), 80);
+      setTimeout(() => { refreshPhotosPanel(rid); refreshStepPhotos(rid); }, 80);
     }
   });
 

@@ -24,6 +24,7 @@ import { checkUserTrophies } from "../services/trophy.service.js";
 import searchCache from "../utils/search-cache.js";
 import { invalidatePublicMovieIdsCache } from "../utils/movie-visibility-helper.js";
 import { downloadTmdbPoster } from "../utils/tmdb-image-downloader.js";
+import { processStepImages } from "../utils/recipe-image-processor.js";
 import { deleteAsset, uploadToCloudinary, uploadBufferToCloudinary } from "../utils/asset-manager.js";
 import fs from "fs";
 import path from "path";
@@ -1513,6 +1514,48 @@ const adminController = {
     }
   },
 
+  // POST /admin/recipes/:id/step-pictures — super admin, JSON, multer single "picture" + step_number (1 à 8)
+  // Ajoute (ou remplace) la photo de préparation d'une étape, sans contrainte de ratio.
+  async setRecipeStepPicture(req, res) {
+    try {
+      const recipeId = parseInt(req.params.id, 10);
+      const step = parseInt(req.body?.step_number, 10);
+      if (!recipeId || !(step >= 1 && step <= 8)) {
+        if (req.file) fs.unlink(req.file.path, () => {});
+        return res.json({ success: false, message: "Recette ou numéro d'étape invalide." });
+      }
+      if (!req.file) return res.json({ success: false, message: "Aucun fichier reçu" });
+      const recipe = await Recipe.findByPk(recipeId, { attributes: ["id"] });
+      if (!recipe) {
+        fs.unlink(req.file.path, () => {});
+        return res.json({ success: false, message: "Recette introuvable." });
+      }
+
+      const [processed] = await processStepImages([req.file]);
+
+      const previous = await RecipePicture.findAll({ where: { recipe_id: recipeId, step_number: step } });
+      for (const old of previous) {
+        await deleteAsset(old.file_path);
+        await RecipePicture.destroy({ where: { id: old.id } });
+      }
+
+      const pic = await RecipePicture.create({
+        recipe_id: recipeId,
+        file_path: processed.relPath,
+        position: 100 + step,
+        step_number: step,
+        status: "approved",
+        approved_at: new Date(),
+        created_at: new Date(),
+      });
+      logAdminAction({ adminId: req.userId, action: "set_recipe_step_picture", targetType: "photo", targetId: pic.id, detail: `recipe #${recipeId} step ${step}` });
+      return res.json({ success: true, picture: pic });
+    } catch (error) {
+      if (req.file?.path) fs.unlink(req.file.path, () => {});
+      return res.json({ success: false, message: error.message === "invalid_image" ? "Image invalide (JPG, PNG ou WEBP)." : error.message });
+    }
+  },
+
   // POST /admin/recipes/:id/pictures/add — JSON, multer single "picture"
   async addRecipePicture(req, res) {
     try {
@@ -1522,7 +1565,7 @@ const adminController = {
         return res.json({ success: false, message: "ID invalide" });
       }
 
-      const count = await RecipePicture.count({ where: { recipe_id: recipeId } });
+      const count = await RecipePicture.count({ where: { recipe_id: recipeId, step_number: null } });
       if (count >= 3) {
         if (req.file) fs.unlink(req.file.path, () => {}); // nettoyer le fichier temp
         return res.json({ success: false, message: "Limite de 3 photos atteinte" });
@@ -1536,7 +1579,7 @@ const adminController = {
       const cloudResult = await uploadBufferToCloudinary(buffer, { folder: "cinedelices/recipes" });
       const cloudinaryUrl = cloudResult.secure_url;
 
-      const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId } });
+      const maxPos = await RecipePicture.max("position", { where: { recipe_id: recipeId, step_number: null } });
       const nextPosition = (maxPos || 0) + 1;
 
       const pic = await RecipePicture.create({

@@ -157,6 +157,7 @@ adminRouter.post("/recipe-pictures/:id/approve", adminController.approveRecipePi
 
 // Photo panel (AJAX/JSON — utilisé par le modal d'édition recette)
 adminRouter.get("/recipes/:id/pictures", adminController.getRecipePictures);
+adminRouter.post("/recipes/:id/step-pictures", isSuperAdmin, uploadRecipe.single("picture"), adminController.setRecipeStepPicture);
 adminRouter.post("/recipes/:id/pictures/add", uploadRecipe.single("picture"), adminController.addRecipePicture);
 adminRouter.post("/recipe-pictures/:id/delete-json", adminController.deleteRecipePictureJson);
 adminRouter.post("/recipe-pictures/:id/approve-json", adminController.approveRecipePictureJson);
