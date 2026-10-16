@@ -24,10 +24,16 @@
     <%- include("partials/head-resources") %>
 
     <!-- Styles : hero profil + cards recettes + surcharges auteur -->
-    <link rel="stylesheet" href="/css/user-profile.css?v=fs47" />
-    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs47" />
-    <link rel="stylesheet" href="/css/all-recipes.css?v=fs47" />
-    <link rel="stylesheet" href="/css/author-page.css?v=fs47" />
+    <link rel="stylesheet" href="/css/user-profile.css?v=fs56" />
+    <link rel="stylesheet" href="/css/recipes-movie.css?v=fs56" />
+    <link rel="stylesheet" href="/css/all-recipes.css?v=fs56" />
+    <link rel="stylesheet" href="/css/author-page.css?v=fs56" />
+    <% if (typeof creatorBanner !== 'undefined' && creatorBanner) { %>
+    <link rel="stylesheet" href="/css/creator-banner.css?v=15" />
+    <link rel="stylesheet" href="/css/creator-hero.css?v=12" />
+    <link rel="stylesheet" href="/css/creator-page.css?v=13" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" />
+    <% } %>
     <link rel="stylesheet" href="/css/badge-strange.css" />
     <style>
       /* Titre + temps — identique à recipes-movie.ejs */
@@ -68,7 +74,8 @@
 
   </head>
 
-  <body class="author-page">
+  <% const _pcb = (typeof creatorBanner !== 'undefined') ? creatorBanner : null; %>
+  <body class="author-page<%= _pcb ? ' author-page--creator' : '' %>"<% if (_pcb) { %> style="--creator-primary: <%= _pcb.theme.primary %>; --creator-accent: <%= _pcb.theme.accent %>;"<% } %>>
     <%- include("partials/header") %>
 
     <%
@@ -107,6 +114,7 @@
                  regroupés sous UN SEUL concept "Fond du profil" — l'utilisateur
                  n'a pas besoin de savoir qu'un "décor" est techniquement une
                  variante de bannière, c'est la même chose de son point de vue. -->
+            <% if (!_pcb) { %>
             <p class="dropdown__cat">Fond du profil</p>
             <!-- Choix d'un fond officiel du cadre équipé (seulement si ce
                  cadre en propose plusieurs ET qu'aucune bannière perso n'est
@@ -144,6 +152,7 @@
             </button>
 
             <div class="dropdown__sep"></div>
+            <% } %>
 
             <!-- Mon profil — bio (ouvre l'éditeur déjà présent dans le hero,
                  juste sous le nom) et pseudo (renvoie vers /auth/profil/:id,
@@ -174,13 +183,14 @@
       <!-- ══════════════════════════════════════════
            HERO AUTEUR (même structure que profile-hero)
       ══════════════════════════════════════════ -->
-      <section class="profile-hero" aria-labelledby="authorName">
+      <% const _cb = (typeof creatorBanner !== 'undefined') ? creatorBanner : null; %>
+      <section class="profile-hero<%= _cb ? ' profile-hero--rich profile-hero--creator' : '' %>" aria-labelledby="authorName"<% if (_cb) { %> style="--creator-primary: <%= _cb.theme.primary %>; --creator-accent: <%= _cb.theme.accent %>;"<% } %>>
 
         <!-- Bannière -->
         <div class="hero-banner">
           <img
             id="heroBannerImg"
-            src="<%= _hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl %>"
+            src="<%= (_cb && _cb.theme.heroBg) ? _cb.theme.heroBg : (_hasCustomBanner ? cldFull(heroBannerUrl) : heroBannerUrl) %>"
             alt="Bannière de <%= author.pseudo %>"
             <% if (author.hero_banner_pos_y !== null && typeof author.hero_banner_pos_y !== 'undefined') { %>
             style="--hero-pos-y: <%= author.hero_banner_pos_y %>%;"
@@ -212,8 +222,9 @@
             </div>
             <% } else { %>
             <!-- Standard — photo + cadre PNG (BadgeEngine si animé) -->
-            <div class="profile-badge-hero"
+            <div class="profile-badge-hero<%= (_cb && _cb.theme.frame) ? ' profile-badge-hero--creator-frame' : '' %>"
                  id="authorBadgeHero"
+                 <% if (_cb && _cb.theme.frame) { const _g = _cb.frameGeom || { cx: 50, cy: 50, d: 52 }; %>style="--fx: <%= _g.cx %>%; --fy: <%= _g.cy %>%; --fd: <%= (_g.d * 1.15).toFixed(2) %>%;"<% } %>
                  data-frame-code="<%= typeof userActiveFrameId !== 'undefined' ? userActiveFrameId : 'cine' %>"
                  data-photo-src="<%= cldCard(author.picture || '/images/image-default-profile.jpg') %>">
 
@@ -222,6 +233,9 @@
                 src="<%= cldCard(author.picture || '/images/image-default-profile.jpg') %>"
                 alt="Avatar de <%= author.pseudo %>"
               />
+              <% if (_cb && _cb.theme.frame) { %>
+              <img class="creator-frame-img" src="<%= _cb.theme.frame %>" alt="" aria-hidden="true" width="300" height="300" />
+              <% } %>
               <% if (typeof userActiveFrame !== 'undefined' && userActiveFrame) { %>
               <img class="pbh-frame" src="<%= userActiveFrame %>" alt="" aria-hidden="true" />
               <% } else { %>
@@ -255,6 +269,8 @@
             %>
             <h1 class="hero-pseudo hero-pseudo--static" id="authorName"><% if (_pRest) { %><%= _pRest %> <% } %><em><%= _pLast %></em></h1>
 
+            <% if (_cb) { %><p class="hero-creator-handle"><%= _cb.handle ? '@' + _cb.handle : author.pseudo %></p><% } %>
+
             <% if (author.special_title) { %>
             <p class="hero-special-title"><i data-lucide="award" width="13" height="13" aria-hidden="true"></i><%= author.special_title %></p>
             <% } %>
@@ -286,7 +302,7 @@
             <% if (author.bio || isOwner) { %>
             <div class="hero-bio" id="heroBio">
               <% if (author.bio) { %>
-              <p class="hero-bio__text" id="heroBioText"><%= author.bio %></p>
+              <p class="hero-bio__text" id="heroBioText"><%= _cb ? author.bio.replace(/\n{2,}/g, "\n") : author.bio %></p>
               <% } else if (isOwner) { %>
               <p class="hero-bio__text hero-bio__text--empty" id="heroBioText">Ajoutez une courte présentation pour vous démarquer — votre passion pour le cinéma, votre style culinaire...</p>
               <% } %>
@@ -311,22 +327,30 @@
             </div>
             <% } %>
 
+            <% if (_cb && _cb.theme.signature) { %>
+            <ul class="hero-creator-tags" aria-label="Catégories de <%= author.pseudo %>">
+              <% _cb.theme.signature.split(/\s*[•·|]\s*/).filter(Boolean).forEach(function(part) { %>
+              <li><svg class="hct-daisy" viewBox="0 0 40 40" aria-hidden="true"><g fill="#fff" stroke="rgba(0,0,0,.15)" stroke-width=".6"><ellipse cx="20" cy="8" rx="5" ry="8"/><ellipse cx="20" cy="32" rx="5" ry="8"/><ellipse cx="8" cy="20" rx="8" ry="5"/><ellipse cx="32" cy="20" rx="8" ry="5"/><ellipse cx="11.5" cy="11.5" rx="5" ry="8" transform="rotate(-45 11.5 11.5)"/><ellipse cx="28.5" cy="28.5" rx="5" ry="8" transform="rotate(-45 28.5 28.5)"/><ellipse cx="28.5" cy="11.5" rx="8" ry="5" transform="rotate(-45 28.5 11.5)"/><ellipse cx="11.5" cy="28.5" rx="8" ry="5" transform="rotate(-45 11.5 28.5)"/></g><circle cx="20" cy="20" r="5.2" fill="#F6C945"/></svg><%= part %></li>
+              <% }) %>
+            </ul>
+            <% } %>
+
             <% if (author.social_links && Object.keys(author.social_links).length) { %>
             <nav class="hero-socials" aria-label="Réseaux sociaux de <%= author.pseudo %>">
               <% if (author.social_links.tiktok) { %>
-              <a class="hero-social hero-social--tiktok" href="<%= author.social_links.tiktok %>" target="_blank" rel="noopener noreferrer nofollow">
+              <a class="hero-social hero-social--tiktok" href="<%= author.social_links.tiktok %>" target="_blank" rel="noopener noreferrer nofollow" aria-label="TikTok (nouvel onglet)" title="TikTok">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
                 TikTok
               </a>
               <% } %>
               <% if (author.social_links.instagram) { %>
-              <a class="hero-social" href="<%= author.social_links.instagram %>" target="_blank" rel="noopener noreferrer nofollow"><i data-lucide="instagram" width="15" height="15" aria-hidden="true"></i>Instagram</a>
+              <a class="hero-social" href="<%= author.social_links.instagram %>" target="_blank" rel="noopener noreferrer nofollow" aria-label="Instagram (nouvel onglet)" title="Instagram"><i data-lucide="instagram" width="15" height="15" aria-hidden="true"></i>Instagram</a>
               <% } %>
               <% if (author.social_links.youtube) { %>
-              <a class="hero-social" href="<%= author.social_links.youtube %>" target="_blank" rel="noopener noreferrer nofollow"><i data-lucide="youtube" width="15" height="15" aria-hidden="true"></i>YouTube</a>
+              <a class="hero-social" href="<%= author.social_links.youtube %>" target="_blank" rel="noopener noreferrer nofollow" aria-label="YouTube (nouvel onglet)" title="YouTube"><i data-lucide="youtube" width="15" height="15" aria-hidden="true"></i>YouTube</a>
               <% } %>
               <% if (author.social_links.website) { %>
-              <a class="hero-social" href="<%= author.social_links.website %>" target="_blank" rel="noopener noreferrer nofollow"><i data-lucide="globe" width="15" height="15" aria-hidden="true"></i>Site web</a>
+              <a class="hero-social" href="<%= author.social_links.website %>" target="_blank" rel="noopener noreferrer nofollow" aria-label="Site web (nouvel onglet)" title="Site web"><i data-lucide="globe" width="15" height="15" aria-hidden="true"></i>Site web</a>
               <% } %>
             </nav>
             <% } %>
@@ -428,6 +452,7 @@
             <div class="tb-label">Créations de <%= author.pseudo %></div>
             <h2 class="tb-title" id="authorRecipesTitle">SES RECETTES</h2>
           </div>
+
 
           <% if (_uniqueMovies.length > 0 || _uniqueCats.length > 0) { %>
           <div class="tb-right">
@@ -611,8 +636,11 @@
 
       </section>
 
+
       <!-- CTA — Proposer un film -->
-      <% if (ctaMovies && ctaMovies.length > 0) { %>
+      <% if (typeof creatorBanner !== 'undefined' && creatorBanner) { %>
+      <%- include("partials/author-creator-banner") %>
+      <% } else if (ctaMovies && ctaMovies.length > 0) { %>
       <%
         const ctaMoviesRev = ctaMovies.slice().reverse();
       %>
@@ -695,6 +723,8 @@
         userId: <%= typeof userId !== 'undefined' && userId !== null ? userId : 'null' %>
       };
     </script>
+    <script src="/js/author-posts-carousel.js?v=1" defer></script>
+    <% if (typeof creatorBanner !== 'undefined' && creatorBanner && creatorBanner.hasPosts) { %><script src="/js/creator-banner.js?v=4" defer></script><% } %>
     <script src="/js/favorites.js" defer></script>
     <script src="/js/recipe-card-click.js" defer></script>
 

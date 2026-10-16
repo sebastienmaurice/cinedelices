@@ -1,0 +1,44 @@
+/* ══════════════════════════════════════════════════════════════════
+   Page auteur « créateur » : petits accents aux couleurs du créateur sur une page qui reste
+   Ciné Délices (fond bleu nuit, cartes sombres, filtres, pied de page). Uniquement des détails :
+   avatar de l'auteur sur les cartes, pastille, favori. Piloté par --creator-primary.
+══════════════════════════════════════════════════════════════════ */
+body.author-page--creator .recipe-card .contrib__av img { box-shadow: 0 0 0 1.5px var(--creator-primary), 0 0 10px color-mix(in srgb, var(--creator-primary) 40%, transparent); }
+body.author-page--creator .recipe-card .contrib__pill { color: color-mix(in srgb, var(--creator-primary) 60%, #fff); border-color: color-mix(in srgb, var(--creator-primary) 55%, transparent); }
+body.author-page--creator .recipe-card .contrib__pill-dot { background: var(--creator-primary); }
+body.author-page--creator .recipe-card .btn-fav { color: var(--creator-primary); border-color: color-mix(in srgb, var(--creator-primary) 55%, transparent); }
+body.author-page--creator .recipe-card .btn-fav:hover { background: var(--creator-primary); color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Teinte du créateur à la place du doré : titres, sous-titres, chiffres et libellés.
+   Un rose poudré lumineux, calculé depuis la couleur principale du créateur (mélange avec du blanc) :
+   il garde un contraste élevé sur le bleu nuit (≈ 10:1) et s'harmonise avec son univers.
+   Le doré reste réservé à la navigation et au reste du site.
+══════════════════════════════════════════════════════════════════ */
+body.author-page--creator {
+  --creator-tint: color-mix(in srgb, var(--creator-primary) 20%, #fff);        /* titres, libellés */
+  --creator-tint-strong: color-mix(in srgb, var(--creator-primary) 30%, #fff); /* chiffres */
+}
+
+/* Héros : chiffres */
+.author-page .profile-hero--creator .h-stat__num { color: var(--creator-tint-strong); text-shadow: 0 0 22px color-mix(in srgb, var(--creator-primary) 32%, transparent); }
+
+/* Fil d'Ariane : page courante */
+body.author-page--creator .bc-cur { color: var(--creator-tint); }
+
+/* Section des recettes : surtitre, titre, filtres */
+body.author-page--creator .author-films-toolbar .tb-label { color: var(--creator-tint); }
+body.author-page--creator .author-films-toolbar .tb-label::before { background: var(--creator-tint); }
+body.author-page--creator .author-films-toolbar .tb-title { color: #fff; text-shadow: 0 0 28px color-mix(in srgb, var(--creator-primary) 22%, transparent); }
+body.author-page--creator .author-recipe-count { color: var(--creator-tint); }
+body.author-page--creator .af-label { color: var(--creator-tint); }
+body.author-page--creator .author-films-toolbar .dropdown-trigger { border-color: color-mix(in srgb, var(--creator-primary) 45%, transparent); }
+body.author-page--creator .author-films-toolbar .dropdown-trigger:hover { border-color: var(--creator-tint); }
+body.author-page--creator .author-films-toolbar .dropdown-trigger svg,
+body.author-page--creator .author-films-toolbar .dropdown-trigger i { color: var(--creator-tint); }
+body.author-page--creator .dropdown .dropdown__cat { color: var(--creator-tint); }
+body.author-page--creator .dropdown .dropdown__item--active { color: var(--creator-tint); }
+
+/* Cartes : titres des recettes */
+body.author-page--creator .recipe-ttl { color: var(--creator-tint); }
+body.author-page--creator .recipe-card:hover .recipe-ttl { color: #fff; }

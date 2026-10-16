@@ -1,0 +1,119 @@
+/* ══════════════════════════════════════════════════════════════════
+   Héros d'un créateur partenaire (page auteur) : le héros Ciné Délices (bleu nuit, statistiques,
+   cadres de contribution) personnalisé par l'univers du créateur. Le décor du créateur n'occupe que
+   la droite, fondu dans le bleu nuit ; le texte reste sur fond sombre. Activé par .profile-hero--creator.
+   Couleurs : --creator-primary (rose) / --creator-accent (turquoise), posées par le thème du créateur.
+══════════════════════════════════════════════════════════════════ */
+.author-page .profile-hero--creator {
+  height: auto; min-height: 0; overflow: hidden;
+  background: var(--bleu-nuit, #142234);
+  --creator-glow: color-mix(in srgb, var(--creator-primary) 45%, transparent);
+}
+
+/* ── Décor : panorama sombre du créateur (déjà bleu nuit au centre, décors rose aux bords) ── */
+.author-page .profile-hero--creator .hero-banner img { object-fit: cover; object-position: center center; }
+/* Léger voile pour garantir le contraste du texte, sans éteindre les décors des bords */
+.author-page .profile-hero--creator .hero-banner::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 52% 80% at 50% 50%, rgba(7,19,33,.55) 0%, rgba(7,19,33,0) 100%);
+}
+/* Fondu haut (sous la navigation) et bas (vers le fond du site) */
+.author-page .profile-hero--creator .hero-banner-grad {
+  display: block; z-index: 1;
+  background: linear-gradient(180deg, rgba(10,18,30,.55) 0%, rgba(10,18,30,0) 22%, rgba(10,18,30,0) 62%, var(--bleu-nuit, #142234) 100%);
+}
+.author-page .profile-hero--creator .hero-scanlines,
+.author-page .profile-hero--creator .hero-vignette { display: none; }
+
+.author-page .profile-hero--creator .hero-content { position: relative; z-index: 2; padding: 38px var(--cd-px, 2rem) 44px; justify-content: center; align-items: center; }
+.author-page .profile-hero--creator .hero-row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 44px; width: min(1320px, 100%); margin: 0 auto; }
+
+/* ── Avatar : même taille que sur les autres pages (300 px), cadre sur mesure si défini ── */
+.author-page .profile-hero--creator .profile-badge-hero { width: 300px; height: 300px; transform: none !important; }
+.author-page .profile-hero--creator .avatar-block { width: auto !important; height: auto; }
+.author-page .profile-hero--creator .pbh-photo { object-position: center center; background: #0d1c2d; box-shadow: 0 0 0 4px rgba(7,19,33,.9), 0 0 0 7px var(--creator-primary), 0 14px 34px rgba(0,0,0,.5); }
+.author-page .profile-hero--creator .pbh-frame { display: none; }
+.author-page .profile-hero--creator .profile-badge-hero > div:not(.avatar-actions):not(.avatar-photo-status),
+.author-page .profile-hero--creator .profile-badge-hero > canvas { display: none !important; }
+.author-page .profile-hero--creator .profile-badge-hero--creator-frame .pbh-photo {
+  left: calc(var(--fx, 50%) - var(--fd, 50%) / 2) !important; top: calc(var(--fy, 50%) - var(--fd, 50%) / 2) !important;
+  width: var(--fd, 50%) !important; height: var(--fd, 50%) !important; box-shadow: none !important; z-index: 1;
+}
+.creator-frame-img { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 12px 22px rgba(0,0,0,.45)); }
+
+/* ── Colonne d'identité ── */
+.author-page .profile-hero--creator .hero-identity { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; max-width: 660px; min-width: 0; }
+.author-page .profile-hero--creator .hero-rank-badge,
+.author-page .profile-hero--creator .hero-special-title,
+.author-page .profile-hero--creator .hero-rank-title,
+.author-page .profile-hero--creator .hero-univers-badge,
+.author-page .profile-hero--creator .hero-seal-badge,
+.author-page .profile-hero--creator .hero-xp { display: none; }
+
+/* Nom : écriture manuscrite rose à reflet satiné (dégradé rose clair vers rose), soulignement fin et cœur fuchsia.
+   Aucune pastille de fond : le nom se détache directement sur le décor sombre. */
+.author-page .profile-hero--creator #authorName {
+  order: 1; position: relative; display: inline-block; margin: 0 0 6px; padding: 0 58px 14px 6px;
+  font-family: "Yellowtail", "Brush Script MT", cursive; font-weight: 400; font-size: clamp(3.6rem, 6.2vw, 5.6rem); line-height: 1.05;
+  letter-spacing: 0; text-transform: none; z-index: 0;
+  color: #F8B4D0; /* repli si le dégradé n'est pas supporté */
+  background: linear-gradient(180deg, #FFE0EC 0%, #FDB6D2 42%, #F58FBD 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--creator-primary) 38%, transparent)) drop-shadow(0 2px 3px rgba(0,0,0,.45));
+}
+.author-page .profile-hero--creator #authorName em { font-style: normal; color: inherit; -webkit-text-fill-color: transparent; }
+/* trait de soulignement légèrement incliné, plus fin vers les bords */
+.author-page .profile-hero--creator #authorName::before {
+  content: ""; position: absolute; left: 4%; right: 14%; bottom: 2px; height: 4px; z-index: -1;
+  background: linear-gradient(90deg, transparent 0%, #F9A8CB 12%, #FDB6D2 50%, #F58FBD 88%, transparent 100%);
+  border-radius: 999px; transform: rotate(-.8deg); box-shadow: 0 0 12px color-mix(in srgb, var(--creator-primary) 45%, transparent);
+}
+/* cœur fuchsia, en bas à droite du nom */
+.author-page .profile-hero--creator #authorName::after {
+  content: "♥"; position: absolute; right: 2px; bottom: 6px;
+  font-family: var(--f-body, "Lato", sans-serif); font-size: .3em; line-height: 1; color: var(--creator-primary); -webkit-text-fill-color: var(--creator-primary);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--creator-primary) 60%, transparent));
+}
+
+/* TikTok : seul réseau affiché */
+.author-page .profile-hero--creator .hero-socials { order: 2; margin: 2px 0 0; gap: 10px; }
+.author-page .profile-hero--creator .hero-social {
+  gap: 9px; padding: 10px 22px; border-radius: 999px; font-family: var(--f-body, "Lato", sans-serif); font-size: .92rem; font-weight: 700; letter-spacing: .02em; text-transform: none;
+  color: #fff; background: rgba(7,19,33,.62); border: 1.5px solid rgba(255,255,255,.6); box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.author-page .profile-hero--creator .hero-social::after { content: "↗"; font-size: .85em; opacity: .85; }
+.author-page .profile-hero--creator .hero-social:hover,
+.author-page .profile-hero--creator .hero-social:focus-visible { color: #fff; border-color: var(--creator-primary); background: color-mix(in srgb, var(--creator-primary) 28%, rgba(7,19,33,.7)); transform: translateY(-2px); }
+
+.hero-creator-handle { order: 3; margin: -2px 0 0 4px; font-family: var(--f-body, "Lato", sans-serif); font-size: 1rem; font-weight: 700; letter-spacing: .02em; color: #F4F1E9; }
+.author-page .profile-hero--creator .hero-bio { order: 4; max-width: 56ch; }
+.author-page .profile-hero--creator .hero-bio__text { font-family: var(--f-body, "Lato", sans-serif); font-size: 1rem; line-height: 1.5; color: #F4F1E9; white-space: pre-line; }
+.author-page .profile-hero--creator .hero-bio__text--empty { color: #AEB8C5; }
+
+/* Catégories : pastilles à marguerite */
+.hero-creator-tags { order: 5; display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0; padding: 0; list-style: none; }
+.hero-creator-tags li { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px 6px 10px; border-radius: 999px; font-family: var(--f-title, "Cinzel", serif); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #F4F1E9; background: rgba(7,19,33,.6); border: 1px solid rgba(255,255,255,.32); }
+.hero-creator-tags .hct-daisy { width: 20px; height: 20px; flex: 0 0 auto; }
+
+/* Statistiques et cadres de contribution : présentation Ciné Délices d'origine, sous l'identité */
+.author-page .profile-hero--creator .hero-stats-row { order: 6; margin-top: 8px; }
+
+/* Sous le héros, flux normal (plus de chevauchement avec les recettes) */
+@media (min-width: 901px) {
+  .author-page .profile-hero--creator ~ .author-recipes-section { margin-top: 0; padding-top: 36px; }
+}
+
+/* Tablette */
+@media (max-width: 1100px) { .author-page .profile-hero--creator .hero-row { gap: 28px; } }
+/* Mobile : empilé et centré, décor plus discret */
+@media (max-width: 900px) {
+  .author-page .profile-hero--creator .hero-content { padding: 26px 18px 36px; }
+  .author-page .profile-hero--creator .hero-row { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 18px; text-align: center; }
+  .author-page .profile-hero--creator .profile-badge-hero { width: 260px; height: 260px; }
+  .author-page .profile-hero--creator .hero-identity { align-items: center; max-width: 100%; }
+  .author-page .profile-hero--creator .hero-socials,
+  .hero-creator-tags { justify-content: center; }
+  .author-page .profile-hero--creator .hero-bio { max-width: 100%; }
+  .author-page .profile-hero--creator .hero-stats-row { justify-content: center; }
+  .author-page .profile-hero--creator .hero-banner::after { background: linear-gradient(180deg, rgba(7,19,33,.35) 0%, rgba(7,19,33,.7) 100%); }
+}

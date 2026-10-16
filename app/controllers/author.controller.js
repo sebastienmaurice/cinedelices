@@ -1,11 +1,13 @@
 import { Op, fn, col } from "sequelize";
-import { Recipe, Movie, Notice, User, Favorite, Rating, UserPoints } from "../models/index.model.js";
+import { Recipe, Movie, Notice, User, Favorite, Rating, UserPoints, CreatorPost } from "../models/index.model.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress } from "../utils/gamification.utils.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
 import { resolveHeroBanner, FRAME_BANNERS, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 import { getUserUniverseProgress } from "../services/universe.service.js";
+import { resolveCreatorTheme } from "../services/creator-theme.service.js";
+import { getFrameGeometry } from "../services/frame-geometry.service.js";
 
 /* ─────────────────────────────────────────────────────
    Helpers partagés (favoris, notes, enrichissement)
@@ -70,6 +72,17 @@ function _enrichRecipes(recipes, favoriteIds, userRatingsMap, avgRatingsMap) {
 /* ─────────────────────────────────────────────────────
    Controller
 ───────────────────────────────────────────────────── */
+/* Date de publication d'un post TikTok : les 32 bits de poids fort de son identifiant
+   sont un horodatage Unix (secondes). Retourne un timestamp en ms, ou 0 si illisible. */
+function tiktokPublishedAt(url) {
+  const m = String(url || "").match(/\/(?:video|photo)\/(\d{15,22})/);
+  if (!m) return 0;
+  try {
+    const sec = Number(BigInt(m[1]) >> 32n);
+    return sec > 1.4e9 && sec < 2.2e9 ? sec * 1000 : 0;
+  } catch { return 0; }
+}
+
 /* Mentions spéciales donnant droit à une page auteur sans recette publiée */
 const PARTNER_TITLES = ["Créatrice Partenaire", "Créateur Partenaire"];
 
@@ -160,8 +173,33 @@ const authorController = {
       const activeUnivers = universList.find((u) => u.actif) || null;
       const hasSceauDeMaitre = !!(activeUnivers && activeUnivers.status === "maitrise");
 
+      // Bande carrousel des posts (créateurs partenaires)
+      const creatorPosts = await CreatorPost.findAll({
+        where: { id_user: userId },
+        order: [["position", "ASC"], ["id", "ASC"]],
+      });
+
+      // Bannière « espace créateur » (remplace la bannière rouge pour les partenaires)
+      const socials = author.social_links || {};
+      const handleMatch = String(socials.tiktok || socials.instagram || "").match(/\/@?([A-Za-z0-9._]+)\/?$/);
+      const creatorPostsView = creatorPosts.map((p) => ({ ...p.toJSON(), publishedAt: tiktokPublishedAt(p.url) }));
+      const _theme = isPartner ? resolveCreatorTheme(author) : null;
+      const _frameGeom = _theme && _theme.frame ? await getFrameGeometry(_theme.frame) : null;
+      const creatorBanner = isPartner
+        ? {
+            theme: _theme,
+            frameGeom: _frameGeom,
+            socials,
+            handle: handleMatch ? handleMatch[1] : null,
+            primaryUrl: socials.tiktok || socials.instagram || socials.youtube || socials.website || null,
+            hasPosts: creatorPosts.length > 0,
+          }
+        : null;
+
       return res.render("author-page", {
         author,
+        creatorPosts: creatorPostsView,
+        creatorBanner,
         recipes: enrichedRecipes,
         recipesCount: approvedCount,
         isOwner,
