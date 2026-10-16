@@ -45,7 +45,7 @@ async function load(userId) {
         if (g) {
           const scale = (REF_D / g.d).toFixed(4);
           const style = `transform-origin: ${g.cx}% ${g.cy}%; transform: translate(${(50 - g.cx).toFixed(2)}%, ${(50 - g.cy).toFixed(2)}%) scale(${scale});`;
-          v.frame = { url: theme.frame, navUrl: navVariant(theme.frame), style };
+          v.frame = { url: theme.frame, navUrl: navVariant(theme.frame), style, title: u.special_title, bg: v.heroBg };
         }
       }
     }

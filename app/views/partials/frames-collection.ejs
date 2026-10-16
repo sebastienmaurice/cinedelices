@@ -33,6 +33,7 @@
   };
   const _themeIcon = {
     'Par défaut':       'circle-dashed',
+    'Partenaire':       'award',
     'Cinéma':           'clapperboard',
     'Policier':         'search',
     'Science-Fiction':  'rocket',
@@ -42,6 +43,7 @@
 
   const _unlockedIds = (typeof userFrames !== 'undefined' && Array.isArray(userFrames))
     ? userFrames.filter(f => f.unlocked !== false).map(f => f.code || f.id || f) : [];
+  const _cf = (typeof creatorFrame !== 'undefined' && creatorFrame) ? creatorFrame : null;
   const _allFrames = [
     { id:'none',    label:'Sans cadre',      subLabel:'Profil épuré',             theme:'Par défaut',       icon:'○',  minLvl:1, bg:'rgba(65,90,119,.1)',   border:'rgba(65,90,119,.35)', hasRealFrame:false, pngUrl:null },
     { id:'cine',    label:'Ciné Délices',   subLabel:'Le Sceau du Cinéphile',   theme:'Cinéma',          icon:'🎬', minLvl:1, bg:'rgba(196,160,82,.18)', border:'rgba(196,160,82,.5)',  hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Ciné Délices/img/cadre-cine-delices-v2.webp' },
@@ -51,6 +53,11 @@
     { id:'harry',   label:'Harry Potter',    subLabel:'Le Cercle de Poudlard',    theme:'Magie',            icon:'⚡', minLvl:5, bg:'rgba(80,130,255,.22)', border:'rgba(130,185,255,.5)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Harry Potter/img/cadre-harry-potter-260x260.png' },
     { id:'strange', label:'Doctor Strange',  subLabel:"L'Œil d'Agamotto",         theme:'Magie',            icon:'✨', minLvl:6, bg:'rgba(63,224,161,.15)', border:'rgba(63,224,161,.45)', hasRealFrame:true,  pngUrl:'/images/cadres-gamification/Dr Strange/img/cadre-dr-strange.png', isCssOnly:true },
   ];
+  // Créateur partenaire : sa carte remplace « Ciné Délices » (même code « cine », donc le cadre par défaut), accessible dès le niveau 0
+  if (_cf) {
+    const _i = _allFrames.findIndex(f => f.id === 'cine');
+    if (_i >= 0) _allFrames[_i] = { id:'cine', label:_cf.title || 'Créateur Partenaire', subLabel:'Le cadre de ma page auteur', theme:'Partenaire', icon:'🌸', minLvl:0, bg:'rgba(245,47,131,.18)', border:'rgba(245,47,131,.5)', hasRealFrame:true, pngUrl:_cf.url, style:_cf.style, bgImg:_cf.bg };
+  }
   const _deblocked   = _allFrames.filter(f => _lvl >= f.minLvl || _unlockedIds.includes(f.id));
   const _activeFrame = _allFrames.find(f => f.id === _activeId) || _deblocked[0] || _allFrames[0];
 
@@ -90,7 +97,7 @@
       <% _allFrames.forEach(function(fr) {
         const _isUnlocked = _lvl >= fr.minLvl || _unlockedIds.includes(fr.id);
         const _isActive   = fr.id === _activeFrame.id;
-        const _bgImg      = _frameBg[fr.id] || null;
+        const _bgImg      = fr.bgImg || _frameBg[fr.id] || null;
       %>
       <div class="cf-card frame-row<%= _isActive ? ' cf-card--active frame-row--active is-active' : '' %><%= !_isUnlocked ? ' cf-card--locked frame-row--locked is-locked' : '' %>"
         data-frame-id="<%= fr.id %>"
@@ -116,7 +123,7 @@
           <% } else if (_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
           <div class="frame-row-badge-static cf-card__preview-inner">
             <img class="bsp" src="<%= cldAvatar(user.picture || '/images/image-default-profile.jpg') %>" alt="" />
-            <img class="bsf" src="<%= fr.pngUrl %>" alt="" />
+            <img class="bsf" src="<%= fr.pngUrl %>" alt=""<% if (fr.style) { %> style="<%= fr.style %>"<% } %> />
           </div>
           <% } else if (!_isUnlocked && fr.hasRealFrame && fr.pngUrl) { %>
           <!-- Verrouillé : ni photo ni cadre affichés — le fond thématique en couleur

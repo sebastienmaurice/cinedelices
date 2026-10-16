@@ -15,7 +15,7 @@
 ═══════════════════════════════════════════════════════════════ */
 const ANIMATED_FRAMES = ['sherlock', 'matrix', 'indiana', 'harry', 'cine'];
 
-function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
+function _buildHero(heroEl, frameCode, frameUrl, photoSrc, frameStyle) {
   // Détruire le moteur animé existant si présent
   if (heroEl._badgeEngine) {
     heroEl._badgeEngine.destroy();
@@ -43,7 +43,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
       if (photo) photo.src = photoSrc;
       heroEl.insertBefore(clone, actions || null);
     }
-  } else if (ANIMATED_FRAMES.includes(frameCode) && window.BadgeEngine) {
+  } else if (ANIMATED_FRAMES.includes(frameCode) && !frameStyle && window.BadgeEngine) {
     // Cadre animé canvas
     const inner = document.createElement('div');
     inner.style.cssText = 'position:absolute;inset:0;width:260px;height:260px;overflow:visible;';
@@ -65,6 +65,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
       fr.src       = frameUrl;
       fr.alt       = '';
       fr.setAttribute('aria-hidden', 'true');
+      if (frameStyle) fr.style.cssText = frameStyle;
       heroEl.insertBefore(fr, actions || null);
     } else {
       const ring = document.createElement('div');
@@ -73,7 +74,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
     }
   }
 
-  heroEl.dataset.frameCode = frameCode;
+  heroEl.dataset.frameCode = frameStyle ? 'creator' : frameCode;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -159,6 +160,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
             activePreview.classList.remove('active-frame-preview--noframe');
             if (existingFrame) {
               existingFrame.src = data.activeFrameUrl;
+              existingFrame.style.cssText = data.activeFrameStyle || '';
             } else {
               const fr = document.createElement('img');
               fr.className = 'bsf';
@@ -199,7 +201,7 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
         const heroEl  = document.getElementById('profileBadgeHero');
         if (heroEl) {
           const photoSrc = heroEl.dataset.photoSrc || '';
-          _buildHero(heroEl, frameCode, data.activeFrameUrl, photoSrc);
+          _buildHero(heroEl, frameCode, data.activeFrameUrl, photoSrc, data.activeFrameStyle || '');
         }
 
         // ── 3. Nav badge ─────────────────────────────────────────
@@ -217,12 +219,13 @@ function _buildHero(heroEl, frameCode, frameUrl, photoSrc) {
 
         if (data.activeFrameUrl) {
           if (navFrame) {
-            navFrame.src = data.activeFrameUrl;
-            navFrame.style.display = '';
+            navFrame.src = data.navFrameUrl || data.activeFrameUrl;
+            navFrame.style.cssText = data.activeFrameStyle || '';
           } else if (navBadge) {
             const fr = document.createElement('img');
             fr.className = 'nav-badge-static__frame';
-            fr.src = data.activeFrameUrl;
+            fr.src = data.navFrameUrl || data.activeFrameUrl;
+            if (data.activeFrameStyle) fr.style.cssText = data.activeFrameStyle;
             fr.alt = '';
             navBadge.appendChild(fr);
           }

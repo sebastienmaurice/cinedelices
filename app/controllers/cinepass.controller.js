@@ -1,5 +1,5 @@
 import { User, UserPoints, Recipe, Movie, Notice } from "../models/index.model.js";
-import { getCreatorHeroBg } from "../services/creator-frame.service.js";
+import { getCreatorHeroBg, getCreatorFrame } from "../services/creator-frame.service.js";
 import { getUserGamificationData } from "../services/gamification.service.js";
 import { xpProgress, RANK_TITLES, XP_TABLE } from "../utils/gamification.utils.js";
 import { renderNotFound, renderServerError } from "../utils/error-handler.js";
@@ -93,6 +93,7 @@ const cinepassController = {
         activeFrameCode: gamif.activeFrameCode,
         activeFrameUrl: gamif.activeFrameUrl,
         activeFrameStyle: gamif.activeFrameStyle,
+        creatorFrame: await getCreatorFrame(userId),
         recentActivity,
         recipesCount: userRecipes.length,
         notices: userNotices,

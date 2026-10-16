@@ -3,6 +3,7 @@ import { computeLevel, FRAME_UNLOCKS, isSuperAdminRole } from "../utils/gamifica
 import { FRAME_BANNERS, resolveHeroBanner, DEFAULT_HERO_BANNER } from "../utils/frame-banners.js";
 import { clearNavCache } from "../middlewares/inject-locals.middleware.js";
 import { StatusCodes } from "http-status-codes";
+import { getCreatorFrame, getCreatorHeroBg } from "../services/creator-frame.service.js";
 
 const VALID_FRAME_CODES = FRAME_UNLOCKS.map((f) => f.code);
 
@@ -44,12 +45,18 @@ const gamificationController = {
       // même priorité que resolveHeroBanner ailleurs : perso approuvée >
       // variante choisie du nouveau cadre > défaut Ciné Délices.
       const user = await User.findByPk(userId, { attributes: ["banner_image", "banner_status"] });
-      const heroBannerUrl = resolveHeroBanner(user, frameCode, DEFAULT_HERO_BANNER, row.active_banner_variant);
+      // Créateur partenaire : le fond du héros reste le sien, et le cadre par défaut (« cine ») est son cadre sur mesure
+      const creatorBg = await getCreatorHeroBg(userId);
+      const heroBannerUrl = creatorBg || resolveHeroBanner(user, frameCode, DEFAULT_HERO_BANNER, row.active_banner_variant);
+      const cf = frameCode === "cine" ? await getCreatorFrame(userId) : null;
 
       return res.json({
         success: true,
         activeFrameCode: frameCode,
-        activeFrameUrl:  frame.pngUrl,
+        activeFrameUrl:  cf ? cf.url : frame.pngUrl,
+        activeFrameStyle: cf ? cf.style : "",
+        navFrameUrl:     cf ? cf.navUrl : null,
+        creatorFrame:    !!cf,
         heroBannerUrl,
       });
     } catch (error) {
