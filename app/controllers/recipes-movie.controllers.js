@@ -131,7 +131,7 @@ const recipesController = {
       const recipes = await Recipe.findAll({
         where: whereClause,
         include: [
-          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role", "special_title"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
           { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"], where: { position: 1 }, required: false },
         ],
@@ -236,7 +236,7 @@ const recipesController = {
           {
             model: User,
             as: "contributor",
-            attributes: ["id", "pseudo", "picture", "role"],
+            attributes: ["id", "pseudo", "picture", "role", "special_title"],
           },
           {
             model: RecipePicture,
@@ -296,7 +296,7 @@ const recipesController = {
 
       // Jointure User via alias "contributor" — même include dans les 2 cas
       const userInclude = [
-        { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
+        { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role", "special_title"] },
         { model: RecipePicture, as: "RecipePictures", attributes: ["file_path", "position"], where: { position: 1 }, required: false },
       ];
 

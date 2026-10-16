@@ -361,7 +361,7 @@
                   <div class="contrib__av"><img src="<%= cldAvatar(trContrib && trContrib.picture ? trContrib.picture : '/images/image-default-profile.jpg') %>" alt="<%= trContrib ? trContrib.pseudo : 'Chef' %>" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= trContrib ? trContrib.pseudo : 'Chef Ciné Délices' %></span>
-                    <span class="contrib__pill <%= trIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= trIsStaff ? 'Ciné Délices' : 'Membre' %></span>
+                    <span class="contrib__pill <%= trIsStaff ? 'contrib__pill--admin' : ('contrib__pill--membre' + (partnerPill(trContrib) ? ' contrib__pill--partner' : '')) %>"><span class="contrib__pill-dot"></span><%= trIsStaff ? 'Ciné Délices' : (partnerPill(trContrib) || 'Membre') %></span>
                   </div>
                 </div>
                 <button
@@ -458,7 +458,7 @@
                   <div class="contrib__av"><img src="<%= cldAvatar(c0 && c0.picture ? c0.picture : '/images/image-default-profile.jpg') %>" alt="" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= c0 ? c0.pseudo : 'Chef Ciné Délices' %></span>
-                    <span class="contrib__pill <%= c0isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c0isStaff ? 'Ciné Délices' : 'Membre' %></span>
+                    <span class="contrib__pill <%= c0isStaff ? 'contrib__pill--admin' : ('contrib__pill--membre' + (partnerPill(c0) ? ' contrib__pill--partner' : '')) %>"><span class="contrib__pill-dot"></span><%= c0isStaff ? 'Ciné Délices' : (partnerPill(c0) || 'Membre') %></span>
                   </div>
                 </div>
                 <button
@@ -524,7 +524,7 @@
                   <div class="contrib__av"><img src="<%= cldAvatar(c1 && c1.picture ? c1.picture : '/images/image-default-profile.jpg') %>" alt="" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= c1 ? c1.pseudo : 'Chef Ciné Délices' %></span>
-                    <span class="contrib__pill <%= c1isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c1isStaff ? 'Ciné Délices' : 'Membre' %></span>
+                    <span class="contrib__pill <%= c1isStaff ? 'contrib__pill--admin' : ('contrib__pill--membre' + (partnerPill(c1) ? ' contrib__pill--partner' : '')) %>"><span class="contrib__pill-dot"></span><%= c1isStaff ? 'Ciné Délices' : (partnerPill(c1) || 'Membre') %></span>
                   </div>
                 </div>
                 <button class="btn-fav" data-entity-id="<%= recipes[1].id %>" data-entity-type="recipe" data-is-favorite="<%= recipes[1].isFavorite || false %>" aria-label="<%= recipes[1].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>" title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipes[1].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>">
@@ -583,7 +583,7 @@
                   <div class="contrib__av"><img src="<%= cldAvatar(c2 && c2.picture ? c2.picture : '/images/image-default-profile.jpg') %>" alt="" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= c2 ? c2.pseudo : 'Chef Ciné Délices' %></span>
-                    <span class="contrib__pill <%= c2isStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= c2isStaff ? 'Ciné Délices' : 'Membre' %></span>
+                    <span class="contrib__pill <%= c2isStaff ? 'contrib__pill--admin' : ('contrib__pill--membre' + (partnerPill(c2) ? ' contrib__pill--partner' : '')) %>"><span class="contrib__pill-dot"></span><%= c2isStaff ? 'Ciné Délices' : (partnerPill(c2) || 'Membre') %></span>
                   </div>
                 </div>
                 <button class="btn-fav" data-entity-id="<%= recipes[2].id %>" data-entity-type="recipe" data-is-favorite="<%= recipes[2].isFavorite || false %>" aria-label="<%= recipes[2].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' %>" title="<%= typeof userId === 'undefined' || !userId ? 'Connectez-vous pour ajouter aux favoris' : (recipes[2].isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris') %>">

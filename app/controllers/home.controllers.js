@@ -26,7 +26,7 @@ const homeController = {
           where: { status: "approved" },
           include: [
             { model: Movie, attributes: ["title"], where: { status: "approved" } },
-            { model: User, as: "contributor", attributes: ["pseudo", "picture", "role"] },
+            { model: User, as: "contributor", attributes: ["pseudo", "picture", "role", "special_title"] },
           ],
           order: [["quote", "DESC"]],
           limit: 3,
@@ -36,7 +36,7 @@ const homeController = {
           where: { status: "approved" },
           include: [
             { model: Movie, where: { status: "approved" } },
-            { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
+            { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role", "special_title"] },
           ],
           order: [Sequelize.literal("RANDOM()")], // PostgreSQL utilise RANDOM()
         }),

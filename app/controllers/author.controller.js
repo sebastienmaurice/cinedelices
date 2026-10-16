@@ -114,7 +114,7 @@ const authorController = {
       const recipes = await Recipe.findAll({
         where: { id_user: userId, status: "approved" },
         include: [
-          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role"] },
+          { model: User, as: "contributor", attributes: ["id", "pseudo", "picture", "role", "special_title"] },
           { model: Movie, attributes: ["id", "title", "slug"], required: false },
         ],
         order: [["validated_at", "DESC"]],

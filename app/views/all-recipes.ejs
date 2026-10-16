@@ -256,7 +256,7 @@
                   <div class="contrib__av"><img src="<%= cldAvatar(arContrib && arContrib.picture ? arContrib.picture : '/images/image-default-profile.jpg') %>" alt="<%= arContrib ? arContrib.pseudo : 'Chef' %>" loading="lazy"></div>
                   <div class="contrib__info">
                     <span class="contrib__pseudo"><%= arContrib ? arContrib.pseudo : '—' %></span>
-                    <span class="contrib__pill <%= arIsStaff ? 'contrib__pill--admin' : 'contrib__pill--membre' %>"><span class="contrib__pill-dot"></span><%= arIsStaff ? 'Ciné Délices' : 'Membre' %></span>
+                    <span class="contrib__pill <%= arIsStaff ? 'contrib__pill--admin' : ('contrib__pill--membre' + (partnerPill(arContrib) ? ' contrib__pill--partner' : '')) %>"><span class="contrib__pill-dot"></span><%= arIsStaff ? 'Ciné Délices' : (partnerPill(arContrib) || 'Membre') %></span>
                   </div>
                 <% if (arContrib && arContrib.id) { %></a><% } else { %></div><% } %>
                 <button
