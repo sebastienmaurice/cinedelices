@@ -1525,9 +1525,9 @@ document.addEventListener("click", async (e) => {
 });
 
 // Session « connecté en tant que » un membre (super admin)
-document.addEventListener("click", async (e) => {
-  const btn = e.target.closest("#ur-impersonate");
-  if (!btn) return;
+// Écouteur posé directement sur le bouton : la fenêtre d'édition arrête la propagation des clics vers document
+const impersonateBtn = document.getElementById("ur-impersonate");
+if (impersonateBtn) impersonateBtn.addEventListener("click", async () => {
   const link = document.getElementById("ur-view-page");
   const m = link && /\/auteur\/(\d+)/.exec(link.getAttribute("href") || "");
   if (!m) return;
