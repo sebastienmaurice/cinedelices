@@ -37,8 +37,9 @@ export async function getFrameGeometry(publicPath) {
     if (n < 100) return cacheSet(key, null);
     let cx = Math.round(sx / n), cy = Math.round(sy / n);
 
-    // Rayon mesuré dans 24 directions : le plus petit retenu (cercle inscrit sûr)
-    let rMin = Infinity;
+    // Rayon mesuré dans 24 directions : la médiane est retenue (un décor qui déborde dans le trou ne doit pas
+    // rétrécir le portrait ; le cadre, placé au-dessus, masque le léger débord)
+    const radii = [];
     for (let a = 0; a < 24; a++) {
       const dx = Math.cos((a * Math.PI) / 12), dy = Math.sin((a * Math.PI) / 12);
       let r = 0;
@@ -47,8 +48,10 @@ export async function getFrameGeometry(publicPath) {
         if (x < 0 || y < 0 || x >= w || y >= h || !clear(x, y)) break;
         r++;
       }
-      rMin = Math.min(rMin, r);
+      radii.push(r);
     }
+    radii.sort((p, q) => p - q);
+    const rMin = radii[Math.floor(radii.length / 2)];
     if (!isFinite(rMin) || rMin < 20) return cacheSet(key, null);
     return cacheSet(key, {
       cx: +((cx / w) * 100).toFixed(2),

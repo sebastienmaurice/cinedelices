@@ -903,6 +903,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const setTheme = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
       setTheme("ur-theme-title", th.title || "");
       setTheme("ur-theme-signature", th.signature || "");
+      setTheme("ur-theme-tagline", th.tagline || "");
       setTheme("ur-theme-herobg", th.heroBg || "");
       setTheme("ur-theme-bannerbg", th.bannerBg || "");
       setTheme("ur-theme-frame", th.frame || "");
@@ -1088,6 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const creatorTheme = themeEl ? {
       title: document.getElementById("ur-theme-title")?.value || "",
       signature: document.getElementById("ur-theme-signature")?.value || "",
+      tagline: document.getElementById("ur-theme-tagline")?.value || "",
       heroBg: document.getElementById("ur-theme-herobg")?.value || "",
       bannerBg: document.getElementById("ur-theme-bannerbg")?.value || "",
       frame: document.getElementById("ur-theme-frame")?.value || "",

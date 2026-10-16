@@ -1,7 +1,7 @@
 /**
  * Thème de la bannière « espace créateur » (page auteur d'un créateur partenaire).
  * Stocké en JSONB sur users.creator_theme :
- *   { signature, title, primary, accent, heroBg, bannerBg, frame }
+ *   { signature, tagline, title, primary, accent, heroBg, bannerBg, frame }
  * Tout le reste de la palette (fonds, bordures, survols) est dérivé de la
  * couleur principale côté CSS (color-mix), pour qu'un seul choix suffise.
  * Aucune valeur n'est interprétée comme du code : couleurs en #RRGGBB strict,
@@ -10,6 +10,7 @@
 
 export const DEFAULT_CREATOR_THEME = {
   signature: "",
+  tagline: "",        // slogan affiché sous le pseudo dans le héros
   title: "",          // début du titre de la bannière du bas (défaut : « Les créations de »)
   primary: "#C23018", // rouge Ciné Délices
   accent: "#E3B148",  // or Ciné Délices
@@ -32,6 +33,7 @@ export function cleanCreatorTheme(input) {
     if (v) value[k] = v;
   };
   text("signature", 80);
+  text("tagline", 80);
   text("title", 40);
   const bg = String(input?.heroBg ?? "").trim();
   if (bg) {
@@ -62,6 +64,7 @@ export function resolveCreatorTheme(user) {
   const t = (user && user.creator_theme) || {};
   return {
     signature: t.signature || DEFAULT_CREATOR_THEME.signature,
+    tagline: t.tagline || "",
     title: t.title || "",
     primary: HEX.test(t.primary || "") ? t.primary : DEFAULT_CREATOR_THEME.primary,
     accent: HEX.test(t.accent || "") ? t.accent : DEFAULT_CREATOR_THEME.accent,
