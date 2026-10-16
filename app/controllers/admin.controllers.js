@@ -10,6 +10,7 @@ import {
   UserPoints,
 } from "../models/index.model.js";
 import * as argon2 from "argon2";
+import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 import sequelize from "../database/sequelize-client.js";
 import { enrichMoviesWithImagePaths } from "../utils/movie-image-helper.js";
@@ -641,6 +642,27 @@ const adminController = {
         error,
         "Erreur lors de la validation de la recette"
       );
+    }
+  },
+
+  // Super admin : ouvre une session « connecté en tant que » un membre (pour vérifier son espace). 1 h, journalisée.
+  async impersonateUser(req, res) {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (!userId) return res.status(400).json({ success: false, message: "ID invalide." });
+      if (req.impersonatorId) return res.status(400).json({ success: false, message: "Revenez d'abord à votre compte." });
+      const user = await User.findByPk(userId, { attributes: ["id", "pseudo", "role", "special_title"] });
+      if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
+      if (["admin", "superadmin", "super_admin"].includes(user.role)) {
+        return res.status(403).json({ success: false, message: "Impossible de se connecter en tant qu'un compte administrateur." });
+      }
+      const token = jwt.sign({ user_id: user.id, pseudo: user.pseudo, role: user.role, imp: req.userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 1000 * 60 * 60 });
+      logAdminAction({ adminId: req.userId, action: "impersonate_user", targetType: "user", targetId: userId });
+      const isPartner = ["Créatrice Partenaire", "Créateur Partenaire"].includes(user.special_title);
+      return res.json({ success: true, redirect: isPartner ? "/auteur/" + user.id : "/auth/profil/" + user.id });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 

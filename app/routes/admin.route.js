@@ -29,6 +29,7 @@ adminRouter.post("/users/:id/role",  isSuperAdmin, adminController.changeUserRol
 
 // Bande carrousel des posts d'un créateur partenaire (super admin)
 adminRouter.get("/users/:id/posts",  isSuperAdmin, creatorPostsController.list);
+adminRouter.post("/users/:id/impersonate", isSuperAdmin, adminController.impersonateUser);
 adminRouter.post("/users/:id/avatar", isSuperAdmin, uploadAvatar.single("avatar"), adminController.setUserAvatar);
 adminRouter.post("/users/:id/posts", isSuperAdmin, uploadAvatar.single("cover"), creatorPostsController.add);
 adminRouter.post("/creator-posts/:postId/delete", isSuperAdmin, creatorPostsController.remove);

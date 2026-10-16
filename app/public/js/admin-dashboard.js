@@ -1523,3 +1523,19 @@ document.addEventListener("click", async (e) => {
     window.location.reload();
   } catch (_) { window.alert("Erreur réseau."); }
 });
+
+// Session « connecté en tant que » un membre (super admin)
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest("#ur-impersonate");
+  if (!btn) return;
+  const link = document.getElementById("ur-view-page");
+  const m = link && /\/auteur\/(\d+)/.exec(link.getAttribute("href") || "");
+  if (!m) return;
+  if (!window.confirm("Vous allez quitter votre session pour naviguer en tant que ce membre (1 h, journalisé). Un bandeau « Revenir à mon compte » restera affiché. Continuer ?")) return;
+  try {
+    const res = await fetch("/admin/users/" + m[1] + "/impersonate", { method: "POST" });
+    const data = await res.json();
+    if (data.success) window.location.href = data.redirect;
+    else window.alert(data.message || "Échec.");
+  } catch { window.alert("Erreur réseau."); }
+});

@@ -2,7 +2,7 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import authController from "../controllers/auth.controller.js";
 import gamificationController from "../controllers/gamification.controller.js";
-import { injectId, isLogged } from "../middlewares/is-authed.middleware.js";
+import { injectId, isLogged, denyWhenImpersonating } from "../middlewares/is-authed.middleware.js";
 import { validateUserRegister, validateUserUpdate, validateUserLogin } from "../validators/user.validator.js";
 import uploadAvatar from "../middlewares/upload-avatar.middleware.js";
 import uploadRecipe, { uploadRecipePhotos } from "../middlewares/upload.middleware.js";
@@ -22,6 +22,7 @@ authRouter.get("/profil/:id", isLogged, injectId, authController.profil); // vé
 authRouter.post(
   "/profil/:id/update",
   isLogged,
+  denyWhenImpersonating,
   injectId,
   uploadAvatar.single("avatar"),
   validateUserUpdate,
@@ -73,6 +74,7 @@ authRouter.post(
 authRouter.post(
   "/profil/:id/delete",
   isLogged,
+  denyWhenImpersonating,
   injectId,
   authController.deleteAccount
 );
@@ -125,6 +127,7 @@ authRouter.post("/register", validateUserRegister, authController.register);
 authRouter.post("/login", authLimiter, validateUserLogin, authController.login);
 authRouter.get("/logout", authController.logout);
 authRouter.post("/logout", isLogged, authController.logout);
+authRouter.post("/stop-impersonation", authController.stopImpersonation);
 
 // Google OAuth
 authRouter.post("/google", authController.googleAuth);           // One Tap credential

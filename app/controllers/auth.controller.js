@@ -682,6 +682,27 @@ const authController = {
   },
 
   /**
+   * POST /auth/stop-impersonation
+   * Termine une session « connecté en tant que » : restaure la session du super admin d'origine
+   * (le claim imp du JWT, re-vérifié en base : le compte doit toujours être super admin).
+   */
+  async stopImpersonation(req, res) {
+    try {
+      if (!req.impersonatorId) return res.redirect("/");
+      const admin = await User.findByPk(req.impersonatorId, { attributes: ["id", "pseudo", "role"] });
+      if (!admin || !["superadmin", "super_admin"].includes(admin.role)) {
+        res.clearCookie("token");
+        return res.redirect("/");
+      }
+      const token = jwt.sign({ user_id: admin.id, pseudo: admin.pseudo, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "2h" });
+      res.cookie("token", token, { httpOnly: true, secure: isProduction, sameSite: "strict", maxAge: 1000 * 60 * 60 * 2 });
+      return res.redirect("/admin/");
+    } catch (error) {
+      return renderServerError(res, error);
+    }
+  },
+
+  /**
    * POST /auth/profil/:id/creator-settings
    * Body : { tagline?, tiktok? } — réservé au créateur partenaire lui-même.
    * Slogan sous le pseudo (80 car. max, texte brut) et lien TikTok (@pseudo ou URL, validé).

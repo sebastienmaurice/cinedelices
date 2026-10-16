@@ -45,6 +45,7 @@ function verifyToken(req, res, next) {
     req.userId = decoded.user_id;     // ID de l'utilisateur
     req.userPseudo = decoded.pseudo;  // Pseudo de l'utilisateur
     req.userRole = decoded.role;      // Rôle (admin ou user)
+    req.impersonatorId = decoded.imp || null; // Super admin connecté en tant que ce membre (sinon null)
     
     // ➡️ Tout est OK, on passe à la suite (route suivante ou middleware suivant)
     next();
@@ -159,4 +160,10 @@ function isLoggedApi(req, res, next) {
   }
 }
 
-export { verifyToken, injectId, isLogged, isLoggedApi };
+/** Refuse l'action pendant une session « connecté en tant que » (suppression de compte, e-mail, mot de passe). */
+function denyWhenImpersonating(req, res, next) {
+  if (!req.impersonatorId) return next();
+  return res.status(403).json({ success: false, message: "Action indisponible pendant une session « connecté en tant que »." });
+}
+
+export { verifyToken, injectId, isLogged, isLoggedApi, denyWhenImpersonating };

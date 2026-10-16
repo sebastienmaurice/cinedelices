@@ -83,6 +83,7 @@ async function injectLocals(req, res, next) {
   // Données synchrones — toujours définies en premier
   res.locals.role           = req.userRole || undefined;
   res.locals.userId         = req.userId   || null;
+  res.locals.impersonating  = req.impersonatorId ? { pseudo: req.userPseudo } : null;
   res.locals.siteUrl        = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
   res.locals.googleClientId = process.env.GOOGLE_CLIENT_ID || '';
   res.locals.path           = req.path;
