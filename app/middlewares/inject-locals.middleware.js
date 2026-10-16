@@ -19,6 +19,7 @@ import { cldCard, cldAvatar, cldFull } from "../utils/cloudinary-url.js";
 // qu'il partage avec getNavData) vivent désormais dans ranking.service.js
 // — réutilisé tel quel ici ET par trophy.service.js (Premier Rôle), une
 // seule définition du classement, un seul cache.
+import { getCreatorFrame } from "../services/creator-frame.service.js";
 import { getTopContributors, frameUrl as _frameUrl } from "../services/ranking.service.js";
 
 /* ──────────────────────────────────────────────────────────────
@@ -65,10 +66,13 @@ async function getNavData(userId) {
       { replacements: { userId }, type: QueryTypes.SELECT }
     ),
   ]);
+  // Créateur partenaire : son cadre sur mesure fait office de cadre par défaut (code « cine »)
+  const cf = (row?.active_frame_code || 'cine') === 'cine' ? await getCreatorFrame(userId) : null;
   const data = {
     navAvatar:      row?.picture || '/images/image-default-profile.jpg',
     navPseudo:      row?.pseudo  || '',
-    navFrameUrl:    _frameUrl(row?.active_frame_code),
+    navFrameUrl:    cf ? cf.navUrl : _frameUrl(row?.active_frame_code),
+    navFrameStyle:  cf ? cf.style : '',
     hasAuthorPage:  count > 0,
     t: Date.now(),
   };
@@ -105,6 +109,7 @@ async function injectLocals(req, res, next) {
       res.locals.navAvatar      = navData.navAvatar;
       res.locals.navPseudo      = navData.navPseudo;
       res.locals.navFrameUrl    = navData.navFrameUrl;
+      res.locals.navFrameStyle  = navData.navFrameStyle || '';
       res.locals.hasAuthorPage  = navData.hasAuthorPage;
     }
   } catch {

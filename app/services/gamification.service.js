@@ -1,4 +1,5 @@
 import { UserPoints } from "../models/index.model.js";
+import { getCreatorFrame } from "./creator-frame.service.js";
 import { computeLevel, FRAME_UNLOCKS, RANK_TITLES, XP_ACTIONS, isStaffRole, isSuperAdminRole } from "../utils/gamification.utils.js";
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -122,6 +123,8 @@ export async function getUserGamificationData(userId, { recipes = [], movies = [
   }));
 
   const activeFrame = frames.find((f) => f.code === activeFrameCode) ?? frames[0];
+  // Créateur partenaire : cadre sur mesure en cadre par défaut (tant qu'il n'a pas équipé un autre cadre)
+  const creatorFrame = activeFrameCode === "cine" ? await getCreatorFrame(userId) : null;
 
   // Feed d'activité : fusion recipes + movies + notices, triés par date desc
   const activity = [
@@ -157,7 +160,8 @@ export async function getUserGamificationData(userId, { recipes = [], movies = [
     rank,
     frames,
     activeFrameCode,
-    activeFrameUrl: activeFrame?.pngUrl ?? null,
+    activeFrameUrl: creatorFrame ? creatorFrame.url : (activeFrame?.pngUrl ?? null),
+    activeFrameStyle: creatorFrame ? creatorFrame.style : "",
     activity,
   };
 }

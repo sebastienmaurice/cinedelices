@@ -91,6 +91,7 @@ const cinepassController = {
         nextFrame,
         activeFrameCode: gamif.activeFrameCode,
         activeFrameUrl: gamif.activeFrameUrl,
+        activeFrameStyle: gamif.activeFrameStyle,
         recentActivity,
         recipesCount: userRecipes.length,
         notices: userNotices,

@@ -348,6 +348,7 @@ const authController = {
         userLevel:        gamif.level,
         userStreak:       0,
         userActiveFrame:  gamif.activeFrameUrl,
+        userActiveFrameStyle: gamif.activeFrameStyle,
         userActiveFrameId:gamif.activeFrameCode,
         userFrames:       gamif.frames,
         userActivity:     gamif.activity,
